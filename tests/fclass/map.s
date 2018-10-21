@@ -70,94 +70,92 @@ Linker script and memory map
  *(.text)
  .text          0x00401000       0x60 crt0.o
                 0x00401000                _main
- .text          0x00401060      0x230 main.o
+ .text          0x00401060      0x240 main.o
                 0x0040109a                Add
                 0x00401060                get_a
                 0x004010b1                app_main
                 0x004010a5                Multi
                 0x00401087                do_print_string
- .text          0x00401290       0xe0 ctype.o
-                0x0040132a                isspace
-                0x00401350                isxdigit
-                0x0040133d                isupper
-                0x004012a3                isalpha
-                0x004012ef                islower
-                0x00401290                isalnum
-                0x00401302                isprint
-                0x004012dc                isgraph
-                0x004012c9                isdigit
-                0x004012b6                iscntrl
-                0x00401317                ispunct
- .text          0x00401370     0x1380 stdio.o
-                0x00401b9d                putchar
-                0x00401370                stdio_fntos
-                0x00401b59                sprintf
-                0x004022d1                feof
-                0x004023fb                stdioSetCursor
-                0x00402233                ungetc
-                0x00401657                puts
-                0x004023af                fputc
-                0x00402451                stdioGetCursorY
-                0x00402532                scanf
-                0x00402149                fputs
-                0x0040230f                ferror
-                0x00401d7f                input
-                0x0040155d                scroll
-                0x004021be                gets
-                0x00401bc9                outbyte
-                0x00402065                fflush
-                0x004020d4                fprintf
-                0x00401ee7                stdio_system_call
-                0x004014c5                fopen
-                0x00402425                stdioGetCursorX
-                0x00401f0f                getchar
-                0x0040247d                stdio_atoi
-                0x00401f41                stdioInitialize
-                0x00402270                fgetc
-                0x0040145f                fclose
-                0x00402335                fseek
-                0x00401d4c                _outbyte
-                0x00401b3e                printf
-                0x0040161f                app_clear
- .text          0x004026f0      0xaf0 stdlib.o
-                0x004029e6                FreeHeap
-                0x00402718                rtGetHeapStart
-                0x00402c3a                free
-                0x004026f0                stdlib_system_call
-                0x00402bcf                rand
-                0x00402b46                stdlibInitMM
-                0x004029f0                heapInit
-                0x004030d4                __findenv
-                0x0040272c                rtGetHeapPointer
-                0x00402736                rtGetAvailableHeap
-                0x00402bec                srand
-                0x00402ba6                libcInitRT
-                0x00402740                heapSetLibcHeap
-                0x0040319f                getenv
-                0x00402bf9                malloc
-                0x004029d3                AllocateHeapEx
-                0x004027e7                AllocateHeap
-                0x0040304b                stdlib_strncmp
-                0x004030a9                exit
-                0x00402722                rtGetHeapEnd
-                0x00402c3f                system
- .text          0x004031e0      0x4a0 string.o
-                0x00403447                strcspn
-                0x004033aa                strcat
-                0x004031e0                strcmp
-                0x00403401                bzero
-                0x00403587                strtok_r
-                0x0040333d                memcpy
-                0x00403314                memoryZeroMemory
-                0x004033da                bcopy
-                0x0040337a                strcpy
-                0x004034e7                strspn
-                0x0040365c                strtok
-                0x00403299                str_cmp
-                0x0040323b                strncmp
-                0x0040341c                strlen
+ .text          0x004012a0       0xe0 ctype.o
+                0x0040133a                isspace
+                0x00401360                isxdigit
+                0x0040134d                isupper
+                0x004012b3                isalpha
+                0x004012ff                islower
+                0x004012a0                isalnum
+                0x00401312                isprint
+                0x004012ec                isgraph
+                0x004012d9                isdigit
+                0x004012c6                iscntrl
+                0x00401327                ispunct
+ .text          0x00401380     0x1360 stdio.o
+                0x00401b96                putchar
+                0x00401380                stdio_fntos
+                0x00401b52                sprintf
+                0x004022c4                feof
+                0x004023ea                stdioSetCursor
+                0x00402226                ungetc
+                0x00401650                puts
+                0x004023a2                fputc
+                0x00402440                stdioGetCursorY
+                0x00402521                scanf
+                0x0040213c                fputs
+                0x00402302                ferror
+                0x00401d78                input
+                0x0040158e                scroll
+                0x004021b1                gets
+                0x00401bc2                outbyte
+                0x00402058                fflush
+                0x004020c7                fprintf
+                0x00401ee0                stdio_system_call
+                0x004014d5                fopen
+                0x00402414                stdioGetCursorX
+                0x00401f08                getchar
+                0x0040246c                stdio_atoi
+                0x00401f34                stdioInitialize
+                0x00402263                fgetc
+                0x0040146f                fclose
+                0x00402328                fseek
+                0x00401d45                _outbyte
+                0x00401b37                printf
+ .text          0x004026e0      0xaf0 stdlib.o
+                0x004029d6                FreeHeap
+                0x00402708                rtGetHeapStart
+                0x00402c2a                free
+                0x004026e0                stdlib_system_call
+                0x00402bbf                rand
+                0x00402b36                stdlibInitMM
+                0x004029e0                heapInit
+                0x004030c4                __findenv
+                0x0040271c                rtGetHeapPointer
+                0x00402726                rtGetAvailableHeap
+                0x00402bdc                srand
+                0x00402b96                libcInitRT
+                0x00402730                heapSetLibcHeap
+                0x0040318f                getenv
+                0x00402be9                malloc
+                0x004029c3                AllocateHeapEx
+                0x004027d7                AllocateHeap
+                0x0040303b                stdlib_strncmp
+                0x00403099                exit
+                0x00402712                rtGetHeapEnd
+                0x00402c2f                system
+ .text          0x004031d0      0x430 string.o
+                0x004033bc                strcspn
+                0x0040331f                strcat
+                0x004031d0                strcmp
+                0x00403376                bzero
+                0x004034fc                strtok_r
+                0x004032b2                memcpy
+                0x00403289                memoryZeroMemory
+                0x0040334f                bcopy
+                0x004032ef                strcpy
+                0x0040345c                strspn
+                0x004035d1                strtok
+                0x0040322b                strncmp
+                0x00403391                strlen
                 0x00404000                . = ALIGN (0x1000)
- *fill*         0x00403680      0x980 00
+ *fill*         0x00403600      0xa00 00
 
 .rdata          0x00404000      0x5e0
  .rdata         0x00404000      0x460 stdlib.o

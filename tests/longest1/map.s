@@ -54,64 +54,81 @@ Linker script and memory map
                 0x0040112b                copy
                 0x0040109e                getlinelength
                 0x00401000                app_test
- .text          0x00401160     0x10e0 stdio.o
-                0x00401aa9                putchar
+ .text          0x00401160     0x1360 stdio.o
+                0x00401976                putchar
                 0x00401160                stdio_fntos
-                0x00401a65                sprintf
-                0x00402106                feof
-                0x004021e6                fputc
-                0x00401fe9                fputs
-                0x00402144                ferror
-                0x00401c95                input
-                0x0040134f                scroll
-                0x00401c8b                printf_main
-                0x0040205e                gets
-                0x00401ad5                outbyte
-                0x004014f9                app_print
-                0x00401f04                fflush
-                0x00401f74                fprintf
-                0x00401d8c                stdio_system_call
+                0x00401932                sprintf
+                0x004020a4                feof
+                0x004021ca                stdioSetCursor
+                0x00402006                ungetc
+                0x00401430                puts
+                0x00402182                fputc
+                0x00402220                stdioGetCursorY
+                0x00402301                scanf
+                0x00401f1c                fputs
+                0x004020e2                ferror
+                0x00401b58                input
+                0x0040136e                scroll
+                0x00401f91                gets
+                0x004019a2                outbyte
+                0x00401e38                fflush
+                0x00401ea7                fprintf
+                0x00401cc0                stdio_system_call
                 0x004012b5                fopen
-                0x00401db4                getchar
-                0x00401de0                stdioInitialize
-                0x004020d3                fgetc
+                0x004021f4                stdioGetCursorX
+                0x00401ce8                getchar
+                0x0040224c                stdio_atoi
+                0x00401d14                stdioInitialize
+                0x00402043                fgetc
                 0x0040124f                fclose
-                0x0040216c                fseek
-                0x00401c58                _outbyte
-                0x00401a4a                printf
-                0x0040148d                app_clear
- .text          0x00402240      0x4a0 string.o
-                0x004024a7                strcspn
-                0x0040240a                strcat
-                0x00402240                strcmp
-                0x00402461                bzero
-                0x004025e7                strtok_r
-                0x0040239d                memcpy
-                0x00402374                memoryZeroMemory
-                0x0040243a                bcopy
-                0x004023da                strcpy
-                0x00402547                strspn
-                0x004026bc                strtok
-                0x004022f9                str_cmp
-                0x0040229b                strncmp
-                0x0040247c                strlen
+                0x00402108                fseek
+                0x00401b25                _outbyte
+                0x00401917                printf
+ .text          0x004024c0      0x430 string.o
+                0x004026ac                strcspn
+                0x0040260f                strcat
+                0x004024c0                strcmp
+                0x00402666                bzero
+                0x004027ec                strtok_r
+                0x004025a2                memcpy
+                0x00402579                memoryZeroMemory
+                0x0040263f                bcopy
+                0x004025df                strcpy
+                0x0040274c                strspn
+                0x004028c1                strtok
+                0x0040251b                strncmp
+                0x00402681                strlen
+ .text          0x004028f0       0xe0 ctype.o
+                0x0040298a                isspace
+                0x004029b0                isxdigit
+                0x0040299d                isupper
+                0x00402903                isalpha
+                0x0040294f                islower
+                0x004028f0                isalnum
+                0x00402962                isprint
+                0x0040293c                isgraph
+                0x00402929                isdigit
+                0x00402916                iscntrl
+                0x00402977                ispunct
                 0x00403000                . = ALIGN (0x1000)
- *fill*         0x004026e0      0x920 00
+ *fill*         0x004029d0      0x630 00
 
-.rdata          0x00403000       0xb0
- .rdata         0x00403000       0x40 stdio.o
- .rdata         0x00403040       0x70 main.o
+.rdata          0x00403000       0xe0
+ .rdata         0x00403000       0x70 stdio.o
+ .rdata         0x00403070       0x70 main.o
 
-.data           0x004030b0      0xf50
-                0x004030b0                data = .
-                0x004030b0                _data = .
-                0x004030b0                __data = .
+.data           0x004030e0      0xf20
+                0x004030e0                data = .
+                0x004030e0                _data = .
+                0x004030e0                __data = .
  *(.data)
- .data          0x004030b0        0x0 main.o
- .data          0x004030b0        0x0 stdio.o
- .data          0x004030b0        0x0 string.o
+ .data          0x004030e0        0x0 main.o
+ .data          0x004030e0        0x0 stdio.o
+ .data          0x004030e0        0x0 string.o
+ .data          0x004030e0      0x120 ctype.o
+                0x004030e0                _ctype_
                 0x00404000                . = ALIGN (0x1000)
- *fill*         0x004030b0      0xf50 00
+ *fill*         0x00403200      0xe00 00
 
 .bss            0x00404000     0x1d40
                 0x00404000                bss = .
@@ -121,6 +138,7 @@ Linker script and memory map
  .bss           0x00404000        0x0 main.o
  .bss           0x00404000       0x10 stdio.o
  .bss           0x00404010       0x10 string.o
+ .bss           0x00404020        0x0 ctype.o
                 0x00405000                . = ALIGN (0x1000)
  *fill*         0x00404020      0xfe0 00
  COMMON         0x00405000      0xd40 main.o
@@ -146,4 +164,5 @@ Linker script and memory map
 LOAD main.o
 LOAD stdio.o
 LOAD string.o
+LOAD ctype.o
 OUTPUT(LONGEST1.BIN pe-i386)
