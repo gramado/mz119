@@ -8,14 +8,14 @@
 #     2019 - Luciano Gonçalez.
 
 
-#important
-#We will have a new name just when the release changes.
+# important
+# We will have a new name just when the release changes.
 
 VERSION = 1
-PATCHLEVEL = 4
+PATCHLEVEL = 5
 SUBLEVEL = 0
-EXTRAVERSION = -rc6
-NAME = 
+EXTRAVERSION = 0
+NAME = W
 
 
 ARCH ?= x86
@@ -27,11 +27,6 @@ ARCH ?= x86
 # You can setup this options in:
 # arch/x86/boot/bl/include/config/config.h for the boot loader and
 # include/kernel/config/config.h for the kernel.
-
-
-
-#todo:
-#We need to simplify these flags, but it's working.
 
 
 #funciona

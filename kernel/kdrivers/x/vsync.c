@@ -26,19 +26,40 @@
 // Funções internas.
 char vsync_inb (int port);
 
-
  
 void vsync (void)
 {	
-	while ( ( vsync_inb (0x3DA) & 8 ) != 8 );
+	// Método 1
+	//================================
 	
-	while ( ( vsync_inb (0x3DA) & 8 ) == 8 );
+	// while ( ( vsync_inb (0x3DA) & 8 ) != 8 );
+	// while ( ( vsync_inb (0x3DA) & 8 ) == 8 );
+	// return;
+	
+	// Método 2
+	//================================
+	
+	// Checar se vsync foi gerado.
+    
+	unsigned long MaxDelay;
+	
+	outportb ( 0x3c4, 0 );
+
+    if (  vsync_inb( 0x3c5 ) & 0x2 ) 
+	{
+        MaxDelay = 100000;
+        while ( ( ( vsync_inb (0x3DA) & 8 ) == 8 ) && MaxDelay-- );
+		
+		MaxDelay = 100000;
+		while ( ( ( vsync_inb (0x3DA) & 8 ) == 0  ) && MaxDelay-- );
+    }	
 }
 
 
 /*
  * vsync_inb: 
- *     Pega um byte na porta. */
+ *     Pega um byte na porta. 
+ */
 
 char vsync_inb (int port){
 	
