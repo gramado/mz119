@@ -2739,7 +2739,7 @@ do_compare:
 	// clear-screen-buffer
 	if ( strncmp( prompt, "clear-screen-buffer", 19 ) == 0 )
 	{
-		shellClearBuffer();
+		shellClearBuffer ();
 		goto exit_cmp;
 	}	
 	
@@ -3272,17 +3272,19 @@ do_compare:
 	
 	
 	//scroll1
+	//usado para teste de scroll
 	if ( strncmp( prompt, "scroll1", 7 ) == 0 )
 	{
-	    testScrollChar((int) '1');
+	    testScrollChar ((int) '1');
         goto exit_cmp;		
 	}
 	
 	
 	//scroll2
+	//usado para teste de scroll
 	if ( strncmp( prompt, "scroll2", 7 ) == 0 )
 	{
-	     testScrollChar((int) '2');
+	     testScrollChar ((int) '2');
         goto exit_cmp;		
 	}	
 	
@@ -3300,9 +3302,10 @@ do_compare:
 	
 	
 	// show-screen-buffer
+	// Mostra a área visível dentro do buffer de linhas.
 	if ( strncmp( prompt, "show-screen-buffer", 18 ) == 0 )
 	{
-		shellShowScreenBuffer();
+		shellShowScreenBuffer ();
 		goto exit_cmp;
 	}
 
@@ -3505,19 +3508,22 @@ do_compare:
 		goto exit_cmp;
 	};	
 
+	
+	// t9 - Show lines.
 	if ( strncmp( prompt, "t9", 2 ) == 0 )
     {    
-        testShowLines();	
+        testShowLines ();	
 		goto exit_cmp;
 	};
 	
-
+	
+    // t10 - Show visible area.
 	if ( strncmp( prompt, "t10", 3 ) == 0 )
     {    
-	    testChangeVisibleArea();
-
+	    testChangeVisibleArea ();
 		goto exit_cmp;
 	};
+	
 	
 	// t11 - 
     // Envia uma mensagem para a thread atual.
@@ -4924,15 +4930,17 @@ void shellTree (){
  * shellPrompt:
  *     Inicializa o prompt.
  *     Na inicialização de stdio, 
- * prompt foi definido como stdin->_base.
- *
+ *     prompt foi definido como stdin->_base.
  */
+
 void shellPrompt (){
 	
 	int i;
 	
-	//Linpando o buffer de entrada.
-	for ( i=0; i<PROMPT_MAX_DEFAULT; i++ ){
+	// Limpando o buffer de entrada.
+	
+	for ( i=0; i<PROMPT_MAX_DEFAULT; i++ )
+	{
 		prompt[i] = (char) '\0';
 	}
 	
@@ -4941,22 +4949,29 @@ void shellPrompt (){
     prompt_status = 0;
 	prompt_max = PROMPT_MAX_DEFAULT;  
 
-    printf("\n");
-    printf("[%s]", current_workingdiretory_string );	
-	printf("%s", SHELL_PROMPT );
-};
+    printf ("\n");
+    printf ("[%s]", current_workingdiretory_string );	
+	printf ("%s ", SHELL_PROMPT );
+	
+	// #bugbug
+	// Me parece que isso deixou tudo mais lento.
+	// Seriam os vários argumentos ??
+    //printf ("\n[%s]%s ", current_workingdiretory_string, SHELL_PROMPT );		
+}
 
 
 /*
+ ****************************************
  * shellClearBuffer:
  *     Limpa o buffer da tela.
+ *     Inicializamos com espaços.
  */
+
 void shellClearBuffer (){
 	
 	int i = 0;
-	int j = 0;
-	
-	//inicializamos com espaços.
+	int j = 0;	
+
 	for ( i=0; i<32; i++ )
 	{
 		for ( j=0; j<80; j++ )
@@ -4969,7 +4984,7 @@ void shellClearBuffer (){
 		LINES[i].right = 0;
 		LINES[i].pos = 0;
 	};
-};
+}
 
 
 
@@ -4983,14 +4998,15 @@ void shellClearBuffer (){
 //armazenados os caracteres e atributos datela
 //do terminal virtual.
 
-//#importante: vamos mostrar todo o buffer de words, a partir 
-//da posição atual do cursor, forçando um scroll
+// #importante: 
+// vamos mostrar todo o buffer de words, a partir 
+// da posição atual do cursor, forçando um scroll
 
-//Isso é só um teste.
 void shellShowScreenBuffer (){
 	
-    shellRefreshVisibleArea();
-};
+	// Mostra a área visível dentro do buffer de linhas.
+    shellRefreshVisibleArea ();
+}
 
 
 /*
@@ -5416,30 +5432,28 @@ shellInsertCharXY ( unsigned long x,
                     unsigned long y, 
 				    char c )
 {
-	
-	if ( x >= wlMaxColumns || y >= wlMaxRows ){
-		
+	if ( x >= wlMaxColumns || y >= wlMaxRows )
+	{	
 		return;
 	}
 
 	LINES[y].CHARS[x] = (char) c;
 	LINES[y].ATTRIBUTES[x] = 7;
-};
+}
 
 
  // Insere um caractere sentro do buffer.
 char 
 shellGetCharXY ( unsigned long x, 
                  unsigned long y )
-{
-	
-	if ( x >= wlMaxColumns || y >= wlMaxRows ){
-		
+{	
+	if ( x >= wlMaxColumns || y >= wlMaxRows )
+	{	
 		return;
 	}
 
 	return (char) LINES[y].CHARS[x];
-};
+}
 
 
 /*
@@ -5461,8 +5475,10 @@ void shellFillOutputBuffer( char element, int element_type )
 */
 
 
-//usado para teste de scroll.
-//imprime varias vezes o char indicado.
+
+// usado para teste de scroll.
+// imprime varias vezes o char indicado.
+
 void testScrollChar ( int c ){
 	
     int i;
@@ -5473,7 +5489,7 @@ void testScrollChar ( int c ){
 		//...
 		shellInsertNextChar ((char) c);	
 	}		
-};
+}
 
 
 /*
@@ -5481,17 +5497,31 @@ void testScrollChar ( int c ){
  * shellInsertNextChar:
  *     Coloca um char na próxima posição do buffer.
  *     Memória de vídeo virtual, semelhante a vga.
+ *     #todo: Esse buffer poderia ser um arquivo que o kernel
+ * pudesse usar, ou o servidor de recursos gráficos pudesse usar.
  */
+
 void shellInsertNextChar (char c){
-		
-	//cursor da linha
+	
+	// #todo
+	// para alguns caracteres temos que efetuar o flush.
+	// \n \r ... ??
+			
+	// Coloca no buffer.
+	// cursor da linha	
 	
 	LINES[textCurrentRow].CHARS[textCurrentCol] = (char) c;
 	
-	//refresh
-	shellRefreshCurrentChar();
+	// refresh
+	// mostra na tela. 
+	// #todo
+	// Tem caracteres que não são imprimíveis.
 	
-	//update
+	shellRefreshCurrentChar ();
+	
+	// Atualiza os deslocamanentos dentro do buffer.
+	
+	// update
 	textCurrentCol++;
 	
 	if (textCurrentCol >= 80 )
@@ -5503,32 +5533,31 @@ void shellInsertNextChar (char c){
 		if ( textCurrentRow >= 25 )
 		{
 			shellScroll ();
-			while(1){}
+			while (1){}
 		}
 	}
 	
 	LINES[textCurrentRow].pos = textCurrentCol;
 	LINES[textCurrentRow].right = textCurrentCol;
-};
-
+}
 
 
 void shellInsertCR (){
     
 	shellInsertNextChar ( (char) '\r' );		
-};
+}
 
 
 void shellInsertLF (){
 	
 	shellInsertNextChar ( (char) '\n' );
-};
+}
 
 
 void shellInsertNullTerminator (){
 	
 	shellInsertNextChar ( (char) '\0' );	
-};
+}
 
 
 
@@ -5537,8 +5566,8 @@ void shellInsertNullTerminator (){
  * shellTestMBR:
  *     Testar a leitura de um setor do disco.
  *     Testaremos o setor do mbr.
- *
  */
+
 void shellTestMBR (){
 	
 	unsigned char buffer[512];
@@ -5583,6 +5612,7 @@ void shellTestMBR (){
  *    Move o cursor de posição.
  *    Assim o próximo char será em outro lugar da janela.
  */
+
 void move_to ( unsigned long x, unsigned long y )
 {	
 	if ( x > wlMaxColumns || y > wlMaxRows )
@@ -5595,7 +5625,7 @@ void move_to ( unsigned long x, unsigned long y )
 	textCurrentRow = y;
 	
 	//screen_buffer_pos = ( screen_buffer_y * wlMaxColumns + screen_buffer_x ) ;
-};
+}
 
 
 //show shell info
@@ -6352,10 +6382,8 @@ feedterminalDialog ( struct window_d *window,
 	
     };
 	
-//done:
-
-    return (int) 0;
-};
+    return 0;
+}
 
 
 void die (char *str){
@@ -7198,28 +7226,31 @@ read_name (str, infile)
 }
 */
 
+
 //Qual será a linha que estará no topo da janela.
 void textSetTopRow ( int number )
 {
     textTopRow = (int) number; 	
-};
+}
+
 
 int textGetTopRow ()
 {
     return (int) textTopRow; 	
-};
+}
+
 
 //Qual será a linha que estará na parte de baixo da janela.
 void textSetBottomRow ( int number )
 {
     textBottomRow = (int) number; 	
-};
+}
+
 
 int textGetBottomRow ()
 {
     return (int) textBottomRow; 	
-};
-
+}
 
 
 void clearLine ( int line_number )
@@ -7251,9 +7282,20 @@ void clearLine ( int line_number )
 };
 
 
-//um teste mostrando todas as linhas do boffer de linhas.
-void testShowLines()
+
+/*
+ **********************************************
+ * testShowLines:
+ *     #importante
+ *     Um teste mostrando todas as linhas do buffer de linhas.
+ *     #bugbug: Essa rotina é muito lenta. A linha demora para ser 
+ * mostrada na tela.    
+ */
+
+void testShowLines ()
 {
+	//enterCriticalSection (); 
+	
 	//desabilita o cursor
 	system_call ( 245, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);
 	
@@ -7263,30 +7305,66 @@ void testShowLines()
 	for ( i=0; i<32; i++ )
 	{
 		for ( j=0; j<80; j++ )
-		{
-		    //LINES[i].CHARS[j] = (char) 'x';
-		    //LINES[i].ATTRIBUTES[j] = (char) 7;
-	        
+		{	        
 			printf ("%c", LINES[i].CHARS[j] );
 		}
+		
 		printf ("\n");
 	};
 
 	//reabilita o cursor
 	system_call ( 244, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);	
-};
+	
+	//exitCriticalSection (); 
+}
 
 
-//mostra a área visível dentro do buffer de linhas.
+/*
+   #todo
+ * Return true if any character cell starting at [row,col], for len-cells is
+ * nonnull.
+ */
+/*
+int
+non_blank_line ( int row,
+	             int col,
+	             int len)
+{
+    int i;
+    int found = 0;
+	
+	if ( row < 0 )
+		return -1;
+	
+	if ( col < 0 )
+		return -1;
+	
+	if ( len < 0 )
+		return -1;
+	
+	for (i = col; i < len; i++) 
+	{
+	    if ( LINES[row].CHARS[i] ) 
+		{
+	        found = 1;
+	        break;
+	    }
+	}
+	
+    return found;
+}
+*/
+
+
+// Mostra a área visível dentro do buffer de linhas.
+
 void shellRefreshVisibleArea (){
 	
 	//desabilita o cursor
 	system_call ( 245, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);
 	
 	
-	//
 	//seta o cursor no início da janela.
-	//
 	
 	unsigned long left, top, right, bottom;
  
@@ -7295,11 +7373,8 @@ void shellRefreshVisibleArea (){
 	
     shellSetCursor ( left, top );
 	
-
-	//
 	// efetua o refresh do char atual, que agora é o primeiro 
 	// depois os outros consecutivos.
-	//
 	
 	int i=0;
 	int j=0;
@@ -7325,7 +7400,7 @@ void shellRefreshVisibleArea (){
 
 	//reabilita o cursor
 	system_call ( 244, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);	
-};
+}
 
 
 void testChangeVisibleArea()

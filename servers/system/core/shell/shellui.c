@@ -464,7 +464,7 @@ void *shellTopbarProcedure ( struct window_d *window,
 
 done:
     return NULL;	
-};
+}
 
 
 
@@ -735,8 +735,7 @@ loadFile:
 	//printf("data area address %x \n",&bmp[base]);
 	
 	return 0;
-};
-
+}
 
 
 /*
@@ -807,6 +806,7 @@ loadFile:
  *     Mostra na tela uma imagem .bmp carregada na memória.
  *     #todo: No kernel ou na api tem rotina mais aprimorada que essa.
  */
+
 void bmpDisplayBMP ( void *address, 
                      unsigned long x, 
 					 unsigned long y, 
@@ -880,8 +880,9 @@ void bmpDisplayBMP ( void *address,
 	};
 	
 	*/
+	
 	return;
-};
+}
 
 
 /*
@@ -999,8 +1000,6 @@ int shellTestButtons (){
     APIRegisterWindow (app3_button);
 
 
-
-
 	//
 	// botão de close
 	//
@@ -1012,8 +1011,13 @@ int shellTestButtons (){
                                 0, 0, xCOLOR_GRAY1, xCOLOR_GRAY1 );
 								
     APIRegisterWindow (app4_button);	
-    
-
-	
+    	
     return 0;	
-};
+}
+
+//
+// End.
+//
+
+
+
