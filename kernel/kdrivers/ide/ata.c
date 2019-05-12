@@ -4,7 +4,7 @@
  * IDE/AHCI support.
  *
  * History: 
- *     2018 - Created by Nelson Cole. <nelsoncole72@gmail.com>
+ *     2018 - Created by Nelson Cole. 
  *     2019 - Revision by Fred Nora.
  *     ...
  */
@@ -39,10 +39,8 @@ static const char *ata_sub_class_code_register_strings[] = {
 */
 
 
-//
 // Obs: 
-// o foco está na lista de discos. diskList
-//
+// O foco está na lista de discos. diskList
 
 
 #include <kernel.h>
@@ -1039,7 +1037,7 @@ done:
 //#endif 
 	
     return (int) Status;	
-};
+}
  
 
 /*

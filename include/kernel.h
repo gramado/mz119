@@ -217,9 +217,11 @@ extern void do_executa_new_task (void);
 #include <kernel/gramado/hal/arch/x86/portsx86.h>
 
 
-//execve
-//disk1 - nelson
-//#include <kernel/3rdparty/sirius.h>
+
+// osdev friends.
+// #include <kernel/chicago.h>  // Italo.
+// #include <kernel/sirius.h>   // Nelson.
+// ...
 
 #include <kernel/gramado/kdrivers/ide/ata.h>
 

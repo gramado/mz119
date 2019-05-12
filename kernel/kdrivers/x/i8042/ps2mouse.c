@@ -1,79 +1,82 @@
 /*
- * File: i8042/ps2mouse.c
+ * File: ps2mouse.c
  * 
- * env:
  *     Ring 0. Kernel base persistent code.
+ *
  * History:
- *     2018 - Created by fred Nora.
+ *     2018 - Created by Fred Nora.
  */
 
  
 #include <kernel.h>
 
 
-extern unsigned long SavedX;            //Screen width. 
-extern unsigned long SavedY;            //Screen height.
+// Screen width and height
+
+extern unsigned long SavedX;            
+extern unsigned long SavedY;            
 
 
 int MOUSE_BAT_TEST (void);
 
+
 /*
  * mouse_write:
  *     Envia um byte para a porta 0x60.
- *     (Nelson Cole) */
+ */
 
 void mouse_write (unsigned char write){
 	
-	kbdc_wait(1);
+	kbdc_wait (1);
 	outportb (0x64,0xD4);
 	
-	kbdc_wait(1);
+	kbdc_wait (1);
 	outportb (0x60,write);
 }
 
 
 /*
- **************************
  * mouse_read:
  *     Pega um byte na porta 0x60.
- *     (Nelson Cole) 
  */
 
 unsigned char mouse_read (void)
 {	
 	kbdc_wait (0);
-	
+
 	return (unsigned char) inportb (0x60);
 }
 
 
-// Esta rotina faz o Auto-teste 0xaa êxito, 0xfc erro
+// Esta rotina faz o Auto-teste 0xaa êxito, 0xfc erro.
+// Created by Fed Nora.
+
 int MOUSE_BAT_TEST (void){
-    
+
     int val = -1;
-	
-	int i;
+
+    int i;
 
 	// #todo:
 	// Cuidado.
 	// Diminuir isso se for possivel.
 	// Nao funciona na maquina reala sem esse delay.
-	
+
 	for (i=0; i<99000; i++)
 	{
-		wait_ns(200);
-	}		
-	
-	
-    //while (1)
+		wait_ns (200);
+	}
+
+
+	//while (1)
 	for ( i=0; i<999; i++ )
 	{
-        val = mouse_read();
+        val = mouse_read ();
 
         if(val == 0xAA)
 		{
 			printf ("ps2mouse.c: MOUSE_BAT_TEST OK\n");
-			return (int) 0;
+			return 0;
         
 		}else if(val == 0xFC){
 			
@@ -83,12 +86,12 @@ int MOUSE_BAT_TEST (void){
     
         	// Reenviar o comando. 
         	// OBS: este comando não é colocado em buffer
-        	mouse_write(0xFE);       
+        	
+		    mouse_write (0xFE);       
     };
-	
-	printf ("ps2kbd.c: MOUSE_BAT_TEST %d times\n",i);
-}
 
+    printf ("ps2kbd.c: MOUSE_BAT_TEST %d times\n", i );
+}
 
 
 /*
@@ -98,10 +101,6 @@ int MOUSE_BAT_TEST (void){
  */
 
 void mouse_install (void){
-	
-	
-	//printf ("mouse_install: 1\n");
-	//refresh_screen();
 	
 	// 0xFF
 	// Espera o dados descer (ACK)	
@@ -182,17 +181,17 @@ void kernelPS2MouseDriverReadData (void){
  *     Carregando o arquivo MOUSE.BMP que é o ponteiro de mouse.
  *     Usar isso na inicialização do mouse.
  *     #bugbug isso pode ir para windowLoadGramadoIcons
+ *     2018 - Created by Fred Nora.
  */
 
 int load_mouse_bmp (void){
 	
 	int Status = 1;
-	int Index;
- 
+	int Index; 
 	unsigned long fileret;
 	
 #ifdef KERNEL_VERBOSE
-	printf("load_mouse_bmp:\n");
+	printf ("load_mouse_bmp:\n");
 #endif	
 	
 	// #Importante
@@ -207,7 +206,7 @@ int load_mouse_bmp (void){
 	
 	if ( (void *) mouseBMPBuffer == NULL )
 	{	
-	    printf("unblocked-ldisc-load_mouse_bmp: mouseBMPBuffer\n");
+	    printf ("load_mouse_bmp: mouseBMPBuffer\n");
 		goto fail;		
 	};
 	
@@ -229,7 +228,7 @@ int load_mouse_bmp (void){
 								  
 	if ( fileret != 0 )
 	{
-		printf("MOUSE.BMP FAIL\n");		
+		printf ("MOUSE.BMP FAIL\n");		
 		// Escrevendo string na janela.
 		//draw_text( gui->main, 10, 500, COLOR_WINDOWTEXT, "MOUSE.BMP FAIL");
 		goto fail;	
@@ -249,17 +248,16 @@ int load_mouse_bmp (void){
 	goto done;
 	
 fail:
-    printf("fail\n");
+    printf ("fail\n");
     Status = (int) 1;		
 done:
 
 #ifdef KERNEL_VERBOSE
-    printf("done\n");
+    printf ("done\n");
 #endif	
 	//refresh_screen();
     return (int) Status;	
-};
-
+}
 
 
 // events.h
@@ -297,24 +295,23 @@ char mouse_packet_y = 0;
 char mouse_packet_scroll = 0;
 
 /*
- * ;;=====================================================
- * ;; _update_mouse:
- * ;;     Updates the mouse position.
- * ;;
+ * =====================================================
+ * update_mouse:
+ *     Updates the mouse position.
  */
 
-void update_mouse ( void ){
-	
+void update_mouse (void){
 	
 //======== X ==========	
-//Testando o sinal de x.
-//Do the x pos first.	
+// Testando o sinal de x.
+// Do the x pos first.	
+	
 do_x:
     
 	//pega o delta x
     //testa o sinal para x
 	
-	if( mouse_packet_data & MOUSE_X_SIGN ) 
+	if ( mouse_packet_data & MOUSE_X_SIGN ) 
 	{
 	    goto x_neg;
 	}
@@ -336,8 +333,9 @@ x_neg:
     mouse_x = 0;
  
 //======== Y ==========	
-//Testando o sinal de x. 
-//Do the same for y position.	
+// Testando o sinal de x. 
+// Do the same for y position.	
+	
 do_y:
     
 	//Pega o delta y.
@@ -416,8 +414,8 @@ void mouseHandler (void)
     // Obs: Isso pode ser global.
     // O tratador em assembly tem as variáveis globais do posicionamento.
     
-	int posX=0;
-    int posY=0;	
+	int posX = 0;
+    int posY = 0;	
 
     //Char para o cursor provisório.
 	//#todo: Isso foi subtituido por uma bmp. Podemos deletar.
@@ -428,7 +426,7 @@ void mouseHandler (void)
 
 	// Lendo um char no controlador.
 	
-	*_byte = (char) mouse_read();
+	*_byte = (char) mouse_read ();
 	
 	
 	// #importante:
@@ -489,10 +487,7 @@ void mouseHandler (void)
 		    // #importante:
 			// Agora vamos manipular os valores obtidos através da 
 			// função de atualização dos valores.
-			
-			//mouse_x = (mouse_x & 0x00000FFF ); 
-		    //mouse_y = (mouse_y & 0x00000FFF );
-			
+		
 			mouse_x = (mouse_x & 0x000003FF ); 
 		    mouse_y = (mouse_y & 0x000003FF );		
 		    
@@ -529,8 +524,7 @@ void mouseHandler (void)
           
             //#debug		  
 		    //draw_text ( gui->main, mouse_x, mouse_y, COLOR_YELLOW, "+" );
-		    //refresh_rectangle ( mouse_x, mouse_y, 8, 8 );		
-			
+		    //refresh_rectangle ( mouse_x, mouse_y, 8, 8 );					
 			
 			//#bugbug:
 			//testando .... naõ vamos exibir o ponteiro ..
@@ -642,8 +636,6 @@ void mouseHandler (void)
 	// e depois tem a mensagem para 'descapturar'.
 	
 	
-
-
     //##### sem escaneamento de janelas por enquanto, apenas mostre e mova o ponteiro #####
 	
 	//## então não enviaremos mensagens para a thread ###
@@ -657,7 +649,6 @@ void mouseHandler (void)
 	//
 
 
-	
 	// wID = ID da janela.
 	// Escaneamos para achar qual janela bate com os valores indicados.
 	// Ou seja. Sobre qual janela o mouse está passando.
@@ -1065,28 +1056,30 @@ void mouseHandler (void)
  * ps2_mouse_initialize :
  *     Configurando o controlador PS/2, 
  *     e activar a segunda porta PS/2 (mouse).
- *     (Nelson Cole)(Fred Nora)
  *     É uma rotina de inicialização do controlador i8042 para 
  *     habilitar o segundo dispositivo, o mouse.
  *     Essa rotina deve rodar somente uma vez, durante inicialização.
+ *
+ * Credits:
+ *     2018 - Fred Nora.
+ *     2018 - Nelson Cole.
  */
  
 void ps2_mouse_initialize (void){
-	
+
 	int error_code = 0;
-	
+
 	unsigned char status;
-	
-    // Flush the output buffer
+
+	// Flush the output buffer
 	//while ((inportb(0x64) & 1)) {
 	//	inportb(0x60);
 	//}
-	
-	
+
 	//printf("ps2_mouse_initialize: enable second port\n");
 	//refresh_screen();
-	
-	
+
+
 	// Ativar a segunda porta PS/2.
 	//kbdc_wait(1);
 	//outportb(0x64,I8042_WRITE);    
@@ -1094,11 +1087,9 @@ void ps2_mouse_initialize (void){
 	//outportb(0x64,I8042_ENABLE_SECOND_PORT); //0xA8
 
 
-	
 	//printf("ps2_mouse_initialize: enable second device\n");
 	//refresh_screen();
-	
-	
+
 	// Activar o segundo despositivo PS/2, modificando o status de 
 	// configuração do controlador PS/2. 
 	// Lembrando que o bit 1 é o responsável por habilitar, desabilitar o 
@@ -1108,68 +1099,65 @@ void ps2_mouse_initialize (void){
 	
 	// Defina a leitura do byte actual de configuração do controlador PS/2.
 	//0x20 Read "byte 0" from internal RAM
-	
-	kbdc_wait(1);    
-	outportb(0x64,I8042_READ);    
+
+	kbdc_wait(1);
+	outportb(0x64,I8042_READ);
 	kbdc_wait(0);
 	status = inportb(0x60)|2;  
 	//status = inportb(0x60)| 3;  
-	
+
 	// defina, a escrita  de byte de configuração do controlador PS/2.
 	kbdc_wait(1);
 	outportb(0x64,I8042_WRITE);  
 	// devolvemos o byte de configuração modificado.
 	kbdc_wait(1);
 	outportb(0x60,status);  	
-	
 
-    //Agora temos dois dispositivos sereais teclado e mouse (PS/2).
+	//Agora temos dois dispositivos sereais teclado e mouse (PS/2).
 
-    //Activar a primeira porta PS/2
+	//Activar a primeira porta PS/2
 	kbdc_wait(1);
 	outportb(0x64,0xAE);  
 
-    // activar a segunda porta PS/2
+	// activar a segunda porta PS/2
 	kbdc_wait(1);
 	outportb(0x64,0xA8);
 
-    // espera   
+	// espera   
 	kbdc_wait(1);	
-	
+
 
 	//## step 2 ##
 	//checar se o mouse é de rolar ou não.
 	
-	
 	//## step 3 ##
 	//detectar a quantidade de botões.
-	
+
 	//## step 4 ##
 	//configurar o sampling rate.
 	//ativa o modo escrita,
 	//envia o comando seguido de parâmetros.
 	//0xF3 ...
-	
+
 	//## step 5 ##
 	//configura a resolução do mouse
 	//0xE8 ...
-	
-	
-	//## step 6 ##	
-	
 
- 	//printf("ps2_mouse_initialize: restores defaults\n");
+	//## step 6 ##	
+
+
+	//printf("ps2_mouse_initialize: restores defaults\n");
 	//refresh_screen();
 
-    //Restaura defaults do PS/2 mouse.
+	//Restaura defaults do PS/2 mouse.
 	//kbdc_wait(1);
 	//outportb(0x64,I8042_WRITE);    
-    //kbdc_wait(1);
-    //mouse_write(MOUSE_SET_DEFAULTS);  //0xf6
-    //while ( mouse_read() != I8042_ACKNOWLEDGE );
+	//kbdc_wait(1);
+	//mouse_write(MOUSE_SET_DEFAULTS);  //0xf6
+	//while ( mouse_read() != I8042_ACKNOWLEDGE );
 
-	
- 	//printf("ps2_mouse_initialize: enable transmission\n");
+
+	//printf("ps2_mouse_initialize: enable transmission\n");
 	//refresh_screen();	
 
    // TODO: Pode ser interessante diminuir a sensibilidade do mouse
@@ -1185,36 +1173,33 @@ void ps2_mouse_initialize (void){
     //kbdc_wait(1);
     //mouse_write(MOUSE_ENABLE_DATA_REPORTING);  //0xf4
     //while ( mouse_read() != I8042_ACKNOWLEDGE );        
-	
-	
-	
+
+
 	//uint8_t tmp = inportb(0x61);
 	//outportb(0x61, tmp | 0x80);
 	//outportb(0x61, tmp & 0x7F);
 	//inportb(0x60);	//mouse port
-	
-	 // Flush the output buffer
-    //while ((inportb(0x64) & 1)) {
+
+	// Flush the output buffer
+	//while ((inportb(0x64) & 1)) {
 	//	inportb(0x60);
-	//}	
-  
-  
+	//}
+
 init_mouse_exit:
-    
+
 	// Se ouve um erro, então analisamos e exibimos mensagem sobre ele.
-	if (error_code != 0)
+    if ( error_code != 0 )
     {
-	    //
-        		
-	}		
-	
- 	//printf("ps2_mouse_initialize: done\n");
+        //
+    }
+
+	//printf("ps2_mouse_initialize: done\n");
 	//refresh_screen();		
-	
-    //#imporante:
+
+	//#imporante:
 	//não habilitaremos e não resetaremos o dispositivo.
-    //habilitar e resetar fica para a inicialização do ps2.
-};
+	//habilitar e resetar fica para a inicialização do ps2.
+}
 
 
 /*
@@ -1222,6 +1207,7 @@ init_mouse_exit:
  * init_mouse:
  *     Inicializando o mouse no controlador 8042.
  *     Carregando o bmp para o curso do mouse.
+ * 2018 - Created by Fred Nora.  
  */		
 
 int ps2_mouse_globals_initialize (void){
@@ -1305,8 +1291,8 @@ int ps2_mouse_globals_initialize (void){
 	
 	if (mouse_ret != 0)
 	{
-		printf("ldisc-init_mouse: load_mouse_bmp");
-		die();
+		printf ("init_mouse: load_mouse_bmp");
+		die ();
 	}
 	
 	//printf("ps2_mouse_globals_initialize: done\n");
@@ -1314,8 +1300,8 @@ int ps2_mouse_globals_initialize (void){
 
     //initialized = 1;
     //return (kernelDriverRegister(mouseDriver, &defaultMouseDriver));	
-	return (int) 0;
-};
+	return 0;
+}
 
 
 //

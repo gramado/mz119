@@ -1,12 +1,12 @@
 /*
- * File: i8042/ps2kbd.c
+ * File: ps2kbd.c
  *
- *     keyboard controller support.     
- *
- * env:
+ *     Keyboard controller support.     
  *     Ring 0. Kernel base persistent code.
  *
- * 2018 - Created by Fred Nora.
+ * Credits:
+ *     2018 - Nelson Cole.
+ *     2019 - Fred Nora.
  */
 
 
@@ -17,33 +17,32 @@ int BAT_TEST (void);
  
 
 // Esta função será usada para ler dados do teclado na porta 0x60, fora do IRQ1
-
 uint8_t keyboard_read (void){
  
 	kbdc_wait (0);
 	
 	uint8_t val = inportb (0x60);
     
-	// ??
 	wait_ns (200);
     
 	return (uint8_t) val;
 }
 
 
-// Esta função será usada para escrever dados do teclado na porta 0x60, fora do IRQ1
+// Esta função será usada para escrever dados do teclado na porta 0x60, fora do IRQ1.
 void keyboard_write (uint8_t write){
 
-	kbdc_wait(1);
+	kbdc_wait (1);
 	
-	outb (0x60,write);
+	outb ( 0x60, write );
     
-	// ??
 	wait_ns (200);
 }
 
 
 // Esta rotina faz o Auto-teste 0xaa êxito, 0xfc erro
+// Credits: Nelson Cole.
+
 int BAT_TEST (void){
 	
     int val = -1;
@@ -95,27 +94,25 @@ int BAT_TEST (void){
 
 
 /*
- ********************************** #bugbug: essa rotina falhou em gigabyte/intel/chipset=via
+ **********************************
  * init_keyboard:
- *     ??
  *     Inicializa o driver de teclado.
  *
  *  @todo: enviar para o driver de teclado o que for de lá.
  *         criar a variável keyboard_type ;;; ABNT2 
+ * 2018 - Fred Nora.
  */
 
 void ps2_keyboard_initialize (void){
 	
-	
-	//printf ("ps2_keyboard_initialize: 1\n");
-	//refresh_screen();	
+	int i;
 	
 	//user.h
-	ioControl_keyboard = (struct ioControl_d *) malloc( sizeof(struct ioControl_d) );
+	ioControl_keyboard = (struct ioControl_d *) malloc ( sizeof(struct ioControl_d) );
 	
 	if ( (void *) ioControl_keyboard == NULL )
 	{
-		printf("ps2_keyboard_initialize: ioControl_keyboard fail");
+		printf ("ps2_keyboard_initialize: ioControl_keyboard fail");
 		die ();
 		
 	} else {
@@ -124,19 +121,17 @@ void ps2_keyboard_initialize (void){
 	    ioControl_keyboard->used = 1;
 	    ioControl_keyboard->magic = 1234;
 	    
-		ioControl_keyboard->tid = 0;  //qual threa está usando o dispositivo.
+		//qual thread está usando o dispositivo.
+		ioControl_keyboard->tid = 0;  
 	    //ioControl_keyboard->
 	};
 	
     //int Type = 0;
 
-    //
     // @todo: 
 	//     Checar se o teclado é do tipo abnt2.   
 	//     É necessário sondar parâmetros de hardware,
-	//     como fabricante, modelo para configirar estruturas 
-	//     e variáveis.
-	//
+	//     como fabricante, modelo para configirar estruturas e variáveis.
 
 
 /*
@@ -174,13 +169,15 @@ void ps2_keyboard_initialize (void){
 	// Inicializando o buffer de teclado.
 	// #bugbug: Não sabemos se nesse momento a estrutura de stream já é válida.
 	
-	int i;
+
 	
-	for ( i=0; i< current_stdin->_cnt ; i++){
+	for ( i=0; i< current_stdin->_cnt; i++ )
+	{
 		current_stdin->_base[i] = (char) 0;
 	}
 	
-	for ( i=0; i<128; i++){
+	for ( i=0; i<128; i++ )
+	{
 	    keybuffer[i] = 0;
 	}
 	
@@ -223,37 +220,34 @@ void ps2_keyboard_initialize (void){
 	//0x04 data line stuck high
 	
 
-
 	//Leds.
 	//LED_SCROLLLOCK 
 	//LED_NUMLOCK 
 	//LED_CAPSLOCK  	
 	//keyboard_set_leds(LED_NUMLOCK);
 	
- 
-	
+ 	
 	//#debug
 	//Tentando suprimir esse delay. OK
 	//printf ("ps2_keyboard_initialize: 3\n");
 	//refresh_screen();	
 
-	
-	
     //#imporante:
 	//não habilitaremos e não resetaremos o dispositivo.
     //habilitar e resetar fica para a inicialização do ps2.
 	
 	
 	//Reseta o teclado
-	kbdc_wait(1);
-	outb(0x60,0xFF);
 	
-	wait_ns(200);
+	kbdc_wait (1);
+	outb ( 0x60, 0xFF );
+	
+	wait_ns (200);
 	
 	// #bugbug
 	// Isso pode travar ??
 	// Espera os dados descer, ACK
-    while(keyboard_read() != 0xFA);
+    while ( keyboard_read() != 0xFA );
 	
 
 	// #debug
@@ -272,26 +266,18 @@ void ps2_keyboard_initialize (void){
 	}
 	*/
 	
-    // Basic Assurance Test (BAT)
-    
-	if ( BAT_TEST () != 0) 
+	// Basic Assurance Test - (BAT)
+    // Aqui precisaremos de criar uma rotina de tratamento de erro do teclado.
+	
+	if ( BAT_TEST () != 0 ) 
 	{
-        // Nelson aqui precisaremos de criar uma rotina de tratamento de erro do teclado
         printf ("[WARMING] ps2kbd.c:  BAT_TEST ignored\n");
-		
-		//#debug
-		//refresh_screen();
-		//while(1){}
+		// #todo: tratamento do erro.
     }  
 
-	// #debug
-	// Tentando suprimir esse delay. OK
-	//printf ("ps2_keyboard_initialize: 5\n");
-	//refresh_screen();	
-
 	
-    // espera nossa controladora termina
-	kbdc_wait(1);
+    // Espera nossa controladora termina
+	kbdc_wait (1);
 	
 	//Debug support.
 	scStatus = 0;
@@ -686,7 +672,6 @@ int get_shift_status (void)
 /*
  * kbdc_wait:
  *     Espera por flag de autorização para ler ou escrever.
- *     (Nelson Cole) 
  */
 
 void kbdc_wait (unsigned char type){
@@ -712,7 +697,7 @@ void kbdc_wait (unsigned char type){
 			outanyb (0x80);
 		};
 	};
-};
+}
 
 
 //events.h
@@ -757,6 +742,7 @@ void keyboard()
 	return;
 }
 */
+
 
 //
 // End.
