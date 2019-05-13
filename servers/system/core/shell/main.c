@@ -6291,11 +6291,10 @@ execve:
 		ShellFlag = SHELLFLAG_COMMANDLINE;
 		
         goto fail;
-
     };
 
 
-	//fail.
+	// fail.
 	// Retornaremos. 
 	// Quem chamou essa rotina que tome a decisão 
 	// se entra em wait ou não.

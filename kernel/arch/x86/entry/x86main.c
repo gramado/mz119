@@ -1,6 +1,6 @@
 /*
  * Gramado Operating System - The main file for the kernel.
- * (c) Copyright 2015~2018 - Fred Nora.
+ * (c) Copyright 2015~2019 - Fred Nora.
  *
  * File: kernel/entry/x86/x86main.c 
  * 
@@ -128,13 +128,13 @@ void x86mainStartFirstThread ( int n ){
         if ( Thread->saved != 0 )
         {
             printf("x86mainStartFirstThread: saved\n");
-            die();
+            die ();
         };
 
         if ( Thread->used != 1 || Thread->magic != 1234)
         {
             printf("x86mainStartFirstThread: tid={%d} magic \n", Thread->tid);
-            die();
+            die ();
         };
 
         set_current ( Thread->tid );       
@@ -145,7 +145,7 @@ void x86mainStartFirstThread ( int n ){
     if ( Thread->state != STANDBY )
     {
         printf ("x86mainStartFirstThread: state tid={%d}\n", Thread->tid);
-        die();
+        die ();
     }
 
     // * MOVEMENT 2 ( Standby --> Running)
@@ -191,7 +191,6 @@ void x86mainStartFirstThread ( int n ){
 
 	//timerInit8253 ( HZ );
 	//timerInit8253 ( 800 );
-
     timerInit8253 ( 900 );
 
 	//nesse momento usaremos o mapeamento do processo alvo ..
@@ -406,6 +405,7 @@ void x86main (void){
     {
         debug_print ("x86main: systemInit fail\n");
         printf ("x86main: systemInit fail\n");
+		
         KernelStatus = KERNEL_ABORTED;
 
         goto fail;
@@ -426,8 +426,10 @@ void x86main (void){
 
 	debug_print ("x86main: processes and threads\n");
 
+	//
 	//  ## Processes ##
-
+    //
+	
     //=================================================
     // processes and threads initialization.
     // Creating processes and threads.
@@ -658,42 +660,7 @@ void x86main (void){
     };
 	
 #endif		
-
-
-//testando carregar uma segunda thread no mesmo endereço virtual.
-//dessa forma mais de uma thread rodará no mesmo endeereço virtual,
-//mas em processos diferentes.
-#ifdef ENTRY_CREATE_THREAD_400000
-  //#bugbug:
-  //Me parece que esse rotina afeta o funcionamento 
-  //do mecanismo improvisado de execve dentro do gramado core 
-  //usando o processo init.
-  //Suspenderemos isso e tentaremos outra abordagem. :(
-/*
-    //#ok funcionou. :)
-	//Que vários processo tenham threads em 0x400000
-	//Ok a thread foi criada,
-	//para ela rodar nessa fase de inicialização 
-	//precisamos deixa-la no mesmo estado que as outras.
-	//Nesse teste estamos usando um mesmo programa já 
-	//carregado por outro processo.
 	
-    struct thread_d *xxx;
-	xxx = (void *) create_thread( 
-			                NULL,                        // w. station 
-							NULL,                        // desktop
-							NULL,                        // w.
-							IdleThread->eip,             // init eip
-							IdleThread->esp,             // init stack
-							TaskManProcess->pid,         // pid (determinado)(provisório).
-							(char *) "XXX-thread" );     // name	
-							
-							
-    queue_insert_data ( queue, (unsigned long) xxx, QUEUE_INITIALIZED);
-    SelectForExecution (xxx);    // * MOVEMENT 1 (Initialized --> Standby).
-*/	
-#endif	
-
     //
 	//===============================================
 	//

@@ -1258,44 +1258,45 @@ void *gde_services ( unsigned long number,
 		    return (void *) current_group;
 			break;
 			
-		// 167
-        // SYS_GRAMADOCORE_INIT_EXECVE
-        // executa um novo programa dentro do processo INIT 
+		// 167 - SYS_GRAMADOCORE_INIT_EXECVE
+        // Executa um novo programa dentro do processo INIT 
 		// do ambiente Gramado Core.	
-        //
         // #importante:
-        // os argumentos recebidos aqui precisam ir para ipc/spawn.c 
+        // Os argumentos recebidos aqui precisam ir para ipc/spawn.c 
         // que serão enviados via registradores para o aplicativo.
         // Obs: Não adianta enviar ponteiros para o aplicativo, 
         // pois ele não pode pegar no kernel.	
-		
-		//167:
-		//EXECUTA .BIN COM ENTRYPOINT EM 0x1000
-		case SYS_GRAMADOCORE_INIT_EXECVE_BIN:
-		    // Testar
-			// execve.c
-		    // Obs: É dever dessa rotina colocar a thread em estado standby,
-			// onde ela fica selecionada para execussão.
-			// pois um exit pode deixar o estado da thread reaproveitada 
-			// de um jeito que não rode.
-			return (void *) sys_executive_gramado_core_init_execve( 0,  //serviço 
-			                (const char *) arg2,                //name
-			                (const char *) arg3,                //(arg)(endereço da linha de comando)
-							(const char *) arg4 );              //env
-			break;
-			
-		//168
-        //EXECUTA .EXE COM ENTRYPOINT EM 0x400		
-		case SYS_GRAMADOCORE_INIT_EXECVE_EXE:
-            //# cancelada ;;; substituir por alguma rotina de execução de formato binário como COFF;
-			break;			
-			
+
+		// 167:
+		// Executa elf .BIN com entrypoint em 0x401000.
+		// executive_gramado_core_init_execve (execve.c)	
+        case SYS_GRAMADOCORE_INIT_EXECVE_BIN:
+
+			//serviço, name, (arg)(endereço da linha de comando), env
+
+            return (void *) sys_executive_gramado_core_init_execve ( 0, 
+                                (const char *) arg2, 
+                                (const char *) arg3, 
+                                (const char *) arg4 ); 
+            break;
+
+
+		// 168
+		// Executa .EXE com entrypoint em 0x400400
+		// #Cancelada. Substituir por alguma rotina de execução 
+		// de formato binário como COFF;
+        case SYS_GRAMADOCORE_INIT_EXECVE_EXE: 
+			// #todo
+            break;
+
+
 		//157 - get user session id	
-		case SYS_GETCURRENTUSERSESSION:
-		    return (void *) current_usersession;
-			break;
-			
-        //158 - get window station id		
+        case SYS_GETCURRENTUSERSESSION:
+            return (void *) current_usersession;
+            break;
+
+
+		//158 - get window station id		
 		case SYS_GETCURRENTWINDOWSTATION:	
 		    return (void *) current_room; 
 			break;	

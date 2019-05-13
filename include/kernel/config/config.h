@@ -148,13 +148,7 @@ sixth..     ide5, usually PCI, probed
 
 
 //Cria uma thread para o processo kernel, que irá rodar em ring0.
-#define ENTRY_CREATE_KERNELTHREAD_RING0    
-
-//#bugbug: isso pode afetar a execução de aplicativos usando o processo init.
-//testando carregar uma segunda thread no mesmo endereço virtual.
-//dessa forma mais de uma thread rodará no mesmo endeereço virtual,
-//mas em processos diferentes.
-#define ENTRY_CREATE_THREAD_400000 
+#define ENTRY_CREATE_KERNELTHREAD_RING0
 
 
 //====================================================
