@@ -356,6 +356,12 @@ void x86mainStartFirstThread ( int n ){
 }
 
 
+
+//
+//  ## MAIN ##
+//
+
+
 /*
  *************************************************
  * x86main: 
@@ -371,11 +377,11 @@ void x86main (void){
     int Status = 0;
 
 
-    debug_print("[x86] x86main:\n");
+    debug_print ("[x86] x86main:\n");
 
 
 #ifdef ENTRY_VERBOSE
-    debug_print("[x86] x86main: starting x86 kernel ..\n");
+    debug_print ("[x86] x86main: Starting x86 kernel ..\n");
 	//printf("x86main: Starting kernel..\n");
 	//refresh_screen(); 
 #endif
@@ -424,7 +430,7 @@ void x86main (void){
 	init_gdt ();
 
 
-	debug_print ("x86main: processes and threads\n");
+	debug_print ("[x86] x86main: processes and threads\n");
 
 	//
 	//  ## Processes ##
@@ -442,94 +448,107 @@ void x86main (void){
     // printf ("creating kernel process ...\n");
 
     // Creating Kernel process. PID=0.
-    KernelProcess = (void *) create_process( NULL, // Window station.
-                                             NULL, // Desktop.
-                                             NULL, // Window.
-                                             (unsigned long) 0xC0000000,  // base address. 
-                                             PRIORITY_HIGH,               // Priority.
-                                             (int) 0,                     // ppid.
-                                             "KERNEL-PROCESS",            // Name.
+	
+    KernelProcess = (void *) create_process ( NULL, // Window station.
+                                              NULL, // Desktop.
+                                              NULL, // Window.
+                                              (unsigned long) 0xC0000000,  // base address. 
+                                              PRIORITY_HIGH,               // Priority.
+                                              (int) 0,                     // ppid.
+                                              "KERNEL-PROCESS",            // Name.
                                               RING0,                       // iopl. 
-                                              (unsigned long ) gKernelPageDirectoryAddress ); // Page directory.	
+                                              (unsigned long ) gKernelPageDirectoryAddress ); // Page directory.
     if( (void *) KernelProcess == NULL )
-	{
+    {
         panic ("x86main: KernelProcess\n");
 
     }else{
-		
-		fs_initialize_process_pwd ( KernelProcess->pid, "no-directory" ); 
-		
+
+        fs_initialize_process_pwd ( KernelProcess->pid, "no-directory" ); 
+
         //...
     };
+
 	
-   
-	// Cria um diretório que é clone do diretório do kernel base 
-	// e retorna o endereço físico desse novo diretório.
-	// gInitPageDirectoryAddress = (unsigned long) CreatePageDirectory();
-		
-    //Creating init process.
-	//UPROCESS_IMAGE_BASE;
+	//
+	// ## INIT ##
+	//
+
+	// Creating init process.
 	
+	// > Cria um diretório que é clone do diretório do kernel base 
+	// Retornaremos o endereço virtual, para que a função create_process possa usar 
+	// tanto o endereço virtual quanto o físico.
+	
+	// > UPROCESS_IMAGE_BASE;
+
     InitProcess = (void *) create_process ( NULL, NULL, NULL, 
-										  (unsigned long) 0x00400000, 
-                                          PRIORITY_HIGH, 
-										  (int) KernelProcess->pid, 
-										  "INITPROCESS", 
-										  RING3, 
-										  (unsigned long ) CreatePageDirectory () ); 	
+                                           (unsigned long) 0x00400000, 
+                                           PRIORITY_HIGH, 
+                                           (int) KernelProcess->pid, 
+                                           "INIT-PROCESS", 
+                                           RING3, 
+                                           (unsigned long ) CreatePageDirectory() );
+
     if ( (void *) InitProcess == NULL )
-	{
+    {
         panic ("x86main: InitProcess\n");
 
     }else{
-		
-		fs_initialize_process_pwd ( InitProcess->pid, "no-directory" );
-		
-        //processor->IdleProcess = (void*) IdleProcess;	
+
+        fs_initialize_process_pwd ( InitProcess->pid, "no-directory" );
+
+		//processor->IdleProcess = (void*) IdleProcess;	
     };
+
+
+	//====================================================
+	//Create Idle Thread. tid=0. ppid=0.
 	
-		
-    //====================================================
-    //Create Idle Thread. tid=0. ppid=0.
     IdleThread = (void *) KiCreateIdle ();
+
     if ( (void *) IdleThread == NULL )
-	{
+    {
         panic ("x86main: IdleThread\n");
 
     }else{
 
         //IdleThread->ownerPID = (int) InitProcess->pid;
 
-        //#importante
+		//#importante
 		//Thread.
+		
         processor->CurrentThread = (void *) IdleThread;
         processor->NextThread    = (void *) IdleThread;
         processor->IdleThread    = (void *) IdleThread;
-		
-		
-		IdleThread->tss = current_tss;
-			
-			
-        //...
-        
-	    // ## importante ## 
-	    // Temos aqui alguma configuração.        
-        
+
+
+        IdleThread->tss = current_tss;
+
+
+		//...
+
+		// ## importante ## 
+		// Temos aqui alguma configuração. 
+
         current_thread = IdleThread->tid;
         next_thread = IdleThread->tid;
         idle = IdleThread->tid; 
-    };	
-	
-	InitProcess->Heap = (unsigned long) g_gramadocore_init_heap_va;
-	InitProcess->control = IdleThread;
-		
+
+    };
+
+    InitProcess->Heap = (unsigned long) g_gramadocore_init_heap_va;
+
+    InitProcess->control = IdleThread;
+
 	//registra um dos servidores do gramado core.
 	//server_index, process, thread
-	ipccore_register ( (int) 0, (struct process_d *) InitProcess, (struct thread_d *) IdleThread );
 
-    
-	//==============================================    
-    
+    ipccore_register ( (int) 0, (struct process_d *) InitProcess, (struct thread_d *) IdleThread );
+
+
+	//==============================================   
+
 
 	// #importante
 	// Daqui pra baixo temos a opção de criarmos ou não os processos
@@ -537,15 +556,16 @@ void x86main (void){
 
 #ifdef ENTRY_CREATE_SHELL
 
-    //Creating Shell process.
+    // Creating Shell process.
     ShellProcess = (void *) create_process ( NULL, NULL, NULL, 
 										   (unsigned long) 0x00450000, 
                                            PRIORITY_HIGH, 
 										   (int) KernelProcess->pid, 
-										   "SHELLPROCESS", 
+										   "SHELL-PROCESS", 
 										   RING3, 
-										   (unsigned long )  CreatePageDirectory () );
-    if((void *) ShellProcess == NULL){
+										   (unsigned long )  CreatePageDirectory() );
+    if ( (void *) ShellProcess == NULL )
+	{
         panic ("x86main: ShellProcess\n");
 
     }else{
@@ -557,7 +577,8 @@ void x86main (void){
 		
     //=============================================
     // Create shell Thread. tid=1. 
-    ShellThread = (void *) KiCreateShell();
+    ShellThread = (void *) KiCreateShell ();
+	
     if( (void *) ShellThread == NULL )
 	{
         panic ("x86main: ShellThread\n");
@@ -590,9 +611,9 @@ void x86main (void){
 											 (unsigned long) 0x004A0000, 
                                              PRIORITY_LOW, 
 											 KernelProcess->pid, 
-											 "TASKMANPROCESS", 
+											 "TASKMAN-PROCESS", 
 											 RING3, 
-											 (unsigned long )  CreatePageDirectory () ); 	
+											 (unsigned long )  CreatePageDirectory() ); 	
     if ( (void *) TaskManProcess == NULL ){
 		
         panic ("x86main: TaskManProcess\n");
@@ -607,7 +628,7 @@ void x86main (void){
     //===================================
     //Create taskman Thread. tid=2.   
 	
-	TaskManThread = (void *) KiCreateTaskManager();
+	TaskManThread = (void *) KiCreateTaskManager ();
     	
 	if( (void *) TaskManThread == NULL )
 	{
@@ -678,9 +699,11 @@ void x86main (void){
 
     if ( Status != 0 )
     {
-        printf("x86main: debug\n");
+        printf ("[x86] x86main: debug\n");
         KernelStatus = KERNEL_ABORTED;
-        goto fail;
+        
+		goto fail;
+		
     }else{
         KernelStatus = KERNEL_INITIALIZED;
     };
@@ -708,7 +731,8 @@ void x86main (void){
 
 	// Initializing ps/2 controller.
 	// ldisc.c
-	debug_print("x86main: ps2\n");    
+	
+	debug_print ("[x86] x86main: ps2\n");    
 
 
 	//#DEBUG

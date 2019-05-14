@@ -1,7 +1,11 @@
+/*
+ * File: mminfo.c
+ *
+ * Informações sobre a gerência de memória.
+ * Valores em variáveis e estruturas.
+ * Testes para mostrar informações.
+ */
 
-// gerenciar informações sobre a gerência de memória.
-// pegar valores em variáveis e estruturas.
-// fazer testes para mostrar informações.
 
 #include <kernel.h>
 
@@ -9,26 +13,27 @@
 /*
  ************************************
  * memoryShowMemoryInfo:
- *     Show memory info. */
+ *     Show memory info. 
+ */
 
 void memoryShowMemoryInfo (void){
 	
 	unsigned long HeapTotal = ((kernel_heap_end - kernel_heap_start)/1024);
 	unsigned long StackTotal = ((kernel_stack_start - kernel_stack_end)/1024);
 	
-	printf(" RAM Memory info:\n");
+	printf (" RAM Memory info:\n");
 	
-	printf("\n");
-	printf(" BaseMemory     = (%d KB)\n", memorysizeBaseMemory );
-	printf(" OtherMemory    = (%d KB)\n", memorysizeOtherMemory );
-	printf(" ExtendedMemory = (%d KB)\n", memorysizeExtendedMemory );
-	printf(" TotalMemory    = (%d KB)\n", memorysizeTotal );
+	printf ("\n");
+	printf (" BaseMemory     = (%d KB)\n", memorysizeBaseMemory );
+	printf (" OtherMemory    = (%d KB)\n", memorysizeOtherMemory );
+	printf (" ExtendedMemory = (%d KB)\n", memorysizeExtendedMemory );
+	printf (" TotalMemory    = (%d KB)\n", memorysizeTotal );
 	
-	printf("\n");
-	printf(" TotalUsed      = (%d KB)\n", memorysizeUsed );
-	printf(" TotalFree      = (%d KB)\n", memorysizeFree );	
+	printf ("\n");
+	printf (" TotalUsed      = (%d KB)\n", memorysizeUsed );
+	printf (" TotalFree      = (%d KB)\n", memorysizeFree );	
 	
-	printf("\n This is a ");
+	printf ("\n This is a ");
 		
 	// System type
 	

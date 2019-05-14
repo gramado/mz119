@@ -1,15 +1,16 @@
 /*
  * Gramado Executive - The main file for the Executive module in the 
  * kernel base. 
- * (c) Copyright 2015-2016 Fred Nora.
+ * (c) Copyright 2015-2019 Fred Nora.
  *
- * File: execve\execve.c 
+ * File: execve.c 
  * 
  */
  
  
 #include <kernel.h>
 //#include "eidata.h"  //Executive Internal Data.
+
 
 //unsigned char  EcecutiveName[] = "EXECUTIVE LAYER";
 
@@ -165,6 +166,16 @@ executive_gramado_core_init_execve ( int i,
 	//
 	// Load file.
 	//
+	
+	// #importante:
+	// Carregaremos o programa no endereço lógico 0x400000, usando o
+	// diretório de páginas do processo kernel.
+	
+	// #todo:
+	// Nas rotinas de execução, temos que usar o diretorio de páginas
+	// do processo que está solicitando o carregamento e execução.
+	// Ou carregarmos em um endereço físico e mapearmos no
+	// diretório de páginas do processo na posição 0x400000.
 	
     Status = (int) fsLoadFile ( VOLUME1_FAT_ADDRESS, VOLUME1_ROOTDIR_ADDRESS, 
 	                   (unsigned char *) arg1, (unsigned long) 0x00400000 );

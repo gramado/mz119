@@ -103,7 +103,6 @@ unsigned long mm_prev_pointer;    //Endereço da úntima estrutura alocada.
  *     Testando manualmente o tamanho da memória.
  *     ## Adaptado de SANOS - Michael Ringgaard.
  *     @todo: Corrigir o asm inline. usar padrão gcc.
- *
  */
 
 /* 
@@ -196,17 +195,18 @@ unsigned long get_process_heap_pointer ( int pid ){
 	unsigned long heapLimit;
 	
 	//@todo: Limite máximo.
-	if (pid < 0){
-		
-		printf("get_process_heap_pointer: pid fail\n");
+	
+	if (pid < 0)
+	{	
+		printf ("get_process_heap_pointer: pid fail\n");
 		goto fail;
 	};
 	
 	P = (void *) processList[pid];
 	
-	if ( (void *) P == NULL ){
-		
-		printf("get_process_heap_pointer: struct fail\n");
+	if ( (void *) P == NULL )
+	{	
+		printf ("get_process_heap_pointer: struct fail\n");
 		goto fail;
 	};
 	
@@ -220,15 +220,18 @@ unsigned long get_process_heap_pointer ( int pid ){
 	heapLimit = (unsigned long) (P->Heap + P->HeapSize);
 	
 	//Se for menor que o início ou maior que o limite.
-	if ( P->HeapPointer < P->Heap || P->HeapPointer >= heapLimit ){
-		
-		printf("get_process_heap_pointer: heapLimit\n");
+	if ( P->HeapPointer < P->Heap || P->HeapPointer >= heapLimit )
+	{	
+		printf ("get_process_heap_pointer: heapLimit\n");
 		goto fail;
 	};
 
+	
     //Retorna o heap pointer do processo. 
 	return (unsigned long) P->HeapPointer;
+	
 fail:
+	
     return (unsigned long) 0;    
 }
 
@@ -386,19 +389,19 @@ unsigned long heapAllocateMemory ( unsigned long size ){
     // Uma opção seria tentar almentar o heap, se isso for possível.
 
     // Available heap.
+	
     if (g_available_heap == 0)
     {
-        //
-        // @todo: Tentar crescer o heap para atender o size requisitado.
-        //
+        // #todo: 
+		// Tentar crescer o heap para atender o size requisitado.
 
         //try_grow_heap() ...
 
-        //
-        // @todo: Aqui poderia parar o sistema e mostrar essa mensagem.
-        //
+        // #todo: 
+		// Aqui poderia parar o sistema e mostrar essa mensagem.
 
-        printf("heapAllocateMemory fail: g_available_heap={0}\n");
+        printf ("heapAllocateMemory fail: g_available_heap={0}\n");
+		
         goto fail;
     };
 
@@ -410,6 +413,7 @@ unsigned long heapAllocateMemory ( unsigned long size ){
     // Se o tamanho desejado for igual a zero.
     // @todo: Aqui podemos converter o size para o tamanho mínimo.
     // não há problema nisso.
+	
     if( size == 0 )
 	{
         //size = 1;
@@ -430,10 +434,11 @@ unsigned long heapAllocateMemory ( unsigned long size ){
 
         //try_grow_heap() ...
 
-        printf("heapAllocateMemory error: size >= g_available_heap\n");
+        printf ("heapAllocateMemory error: size >= g_available_heap\n");
         goto fail;
     };
     
+	
     //Salvando o tamanho desejado.
     last_size = (unsigned long) size;
     
@@ -446,15 +451,15 @@ try_again:
     // #bugbug
     // Mesmo tendo espaço suficiente no heap, estamos chegando 
 	// nesse limite de indices.
-    // Obs: Temos um limite para a quantidade de índices 
-	// na lista de blocos.	
+    // Obs: 
+	// Temos um limite para a quantidade de índices na lista de blocos.	
 
     mmblockCount++;  
         
 	if ( mmblockCount >= MMBLOCK_COUNT_MAX )
 	{
-        printf("pc-mm-memory-heapAllocateMemory: MMBLOCK_COUNT_MAX");
-        die();
+        printf ("heapAllocateMemory: MMBLOCK_COUNT_MAX");
+        die ();
     };
 
 	// #importante
@@ -490,17 +495,19 @@ try_again:
         if ( last_valid < KERNEL_HEAP_START || 
              last_valid >= KERNEL_HEAP_END )
         {
-            printf("pc-mm-memory-heapAllocateMemory: last_valid");
-            die();
+            printf ("pc-mm-memory-heapAllocateMemory: last_valid");
+            die ();
         };
 
-        //
-        // @todo: Checar a disponibilidade desse último válido.
+        // #todo: 
+		// Checar a disponibilidade desse último válido.
         // Ele é válido, mas não sabemos se está disponível.
 		
 		//Havendo um last heap pointer válido.
 		//?? isso não faz sentido.
+		
 		g_heap_pointer = (unsigned long) last_valid + last_size;
+		
 		goto try_again;
 	};
 	
@@ -539,6 +546,7 @@ try_again:
 		// Id do mmblock. (Índice na lista)
 		// used and magic flags.
 		// 0=not free 1=FREE (*SUPER IMPORTANTE)
+		
 		Current->Header = (unsigned long) g_heap_pointer;  
         Current->headerSize = MMBLOCK_HEADER_SIZE;         
         Current->Id = mmblockCount;                        
@@ -592,9 +600,8 @@ try_again:
         //}
 
 
-        //
-        // Obs: O limite da contagem de blocos foi checado acima.
-        //
+        // Obs: 
+		// O limite da contagem de blocos foi checado acima.
 
         //
         // Coloca o ponteiro na lista de blocos.
@@ -607,11 +614,10 @@ try_again:
 
         mm_prev_pointer  = (unsigned long) g_heap_pointer; 
 
-        //
+		
         // *****************************************************
         //                **** SUPER IMPORTANTE ****
         // *****************************************************
-        //
         // Atualiza o ponteiro. 
 		// Deve ser onde termina o último bloco configurado.
         // Isso significa que o próximo ponteiro onde começaremos 
@@ -619,7 +625,6 @@ try_again:
 		// dessa estrutura.
         // Obs: O footer está aqui somente para isso. Para ajudar
         // a localizamarmos o início da próxima estrutura.
-        //
 
         g_heap_pointer = (unsigned long) Current->Footer;
 
@@ -647,29 +652,29 @@ try_again:
         // *Aviso: Cuidado com isso. @todo: Como corrigir.?? O que fazer??
 
         return (unsigned long) Current->userArea;
+		
         //Nothing.
 
     }else{
 
         //Se o ponteiro da estrutura de mmblock for inválido.
-        printf("heapAllocateMemory fail: struct.\n");
+		
+        printf ("heapAllocateMemory fail: struct\n");
+		
         goto fail;
     };
 
-
-    // @todo: 
+	
+    // #todo: 
     // Checar novamente aqui o heap disponível. Se esgotou, tentar crescer.
-
-
-    //@todo:
-    //Colocar o conteúdo da estrutura no lugar destinado para o header.
-    //O header conterá informações sobre o heap.
-
+    // Colocar o conteúdo da estrutura no lugar destinado para o header.
+    // O header conterá informações sobre o heap.
+	// Se falhamos, retorna 0. Que equivalerá à NULL.
+	
 fail:
 	
-    refresh_screen();
+    refresh_screen ();
     
-	//Se falhamos, retorna 0. Que equivalerá à NULL.
     return (unsigned long) 0;
 }
 
@@ -861,21 +866,21 @@ int init_stack (void){
     //End.
 	if ( kernel_stack_end == 0 )
 	{
-	    printf("init_stack fail: StackEnd={%x}\n", kernel_stack_end );
+	    printf ("init_stack: fail StackEnd={%x}\n", kernel_stack_end );
 	    goto fail;
 	};
 	
 	//Start.
 	if ( kernel_stack_start == 0 )
 	{
-	    printf("init_stack fail: StackStart={%x}\n", kernel_stack_start );
+	    printf ("init_stack: fail StackStart={%x}\n", kernel_stack_start );
 	    goto fail;
 	};
 	
-	//Nothing.
-//done:
+	// Done.
 
-    return (int) 0;
+    return 0;
+	
 fail:
     return (int) 1;
 }
@@ -903,41 +908,27 @@ int init_mm (void){
 	// Clear BSS.
 	// Criar mmClearBSS()
 	
-	//falhou antes disso.
-    //printf ("init_mm: debug breakpoint, real machine, gigabyte/intel ..\n");
-    //refresh_screen (); 
-    //while(1){}		
-	
 
 	//#importante:
 	//Inicializa heap e stack.
 	
-	Status = (int) init_heap();
+	Status = (int) init_heap ();
+	
 	if (Status != 0)
 	{
 	    printf("init_mm fail: Heap\n");
 	    return (int) 1;
 	};	
 	
-	//#debug, esta falhando antes disso.
-    //printf ("init_mm: debug breakpoint, real machine, gigabyte/intel ..\n");
-    //refresh_screen (); 
-    //while(1){}	
-
 	
+	Status = (int) init_stack ();
 	
-	Status = (int) init_stack();
 	if (Status != 0)
 	{
 	    printf("init_mm fail: Stack\n");
 	    return (int) 1;
 	};		
 
-    //printf ("init_mm: debug breakpoint, real machine, gigabyte/intel ..\n");
-    //refresh_screen (); 
-    //while(1){}	
-
-	
 	
 	// Zerar a lista.
 	// Lista de blocos de memória dentro do heap do kernel.
@@ -945,6 +936,7 @@ int init_mm (void){
 	while ( i < MMBLOCK_COUNT_MAX )
 	{
         mmblockList[i] = (unsigned long) 0;
+		
 		i++;
     };
 	
@@ -954,6 +946,7 @@ int init_mm (void){
 	//#importante:
 	//#inicializando o índice la lista de ponteiros 
 	//par estruturas de alocação.
+	
 	mmblockCount = 0;
 	
 	
@@ -1334,7 +1327,9 @@ int gc (void){
 		return (int) 1;
 	}
 
-    return (int) 0;	
+	// Done.
+	
+    return 0;	
 }
 
 

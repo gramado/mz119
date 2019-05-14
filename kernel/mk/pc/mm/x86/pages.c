@@ -153,12 +153,9 @@ static inline void __native_flush_tlb_single (unsigned long addr)
  *
  *     Cria um page directory para um processo.
  *
- *     Obs:
  *     + O endereço precisa ser alocado antes.
  *     + Precisa ser um endereço ( ## físico  ## ).
- *     +...
  *
- * Obs:
  *    **  Aviso importante!  **
  *    O endereço precisa ser um endereço físico.
  *    O endereço passado via argumento pode ser alocado dinamicamente antes 
@@ -166,74 +163,84 @@ static inline void __native_flush_tlb_single (unsigned long addr)
  *    Antes de chamar essa rotina devemos alocar memória do tamanho de 
  * um diretório, que é de 1024 entradas de 4 bytes. (1024*4).
  *
- * #obs: 
- * #bugbug: 
  * Quando criamos um novo diretório de páginas ele esta' vazio, nem mesmo o
  * kernel base foi mapeado na parte superior da memória virtual.
  * Para todo novo diretório criado, precisamos mapear as páginas que o 
  * kernel base vai usar. Por isso que clonar o diretório de páginas do 
  * kernel parece se uma boa opção.
+ *
+ * #importante:
+ * Deve retornar o endereço do diretório de páginas criado,
+ * que é um clone do diretório de páginas do kernel.
+ * Retornaremos o endereço virtual, para que a função create_process possa usar 
+ * tanto o endereço virtual quanto o físico.
  */
- 
-//deve retornar o endereço do diretório de páginas criado,
-//que é um clone do diretório de páginas do kernel.
-
-
-//#importante:
-//retornaremos o endereço virtual, para que a função create_process possa usar 
-//tanto o endereço virtual quanto o físico.
 
 void *CreatePageDirectory (void){
 	
 	int i;
 	
-	//virtual.
+	// virtual address.
+	
 	unsigned long destAddressVA;  
 	
-	//alocaremos uma página apenas, pois tem 4KB.
+	// Alocaremos uma página apenas, pois tem 4KB.
+	
 	destAddressVA = (unsigned long) newPage (); 
+	
 	if ( destAddressVA == 0 )
 	{
+		// #bugbug
+		// #todo: Colocar uma mensagem aqui.
+		
 		return NULL;
 	}
 	
-	//o endereço do diretório de páginas clone.
-    //precisamos uar o endereço virtual para manipularmos os dados,
-	//pois estamos no esquema de memória do kernel base.
+	//
+	// 'src' and 'dest'
+	//	
+
+	// src.
+	// O endereço do diretório de páginas do kernel.
+	// #importante: 
+	// Os endereços físico e virtual dessa tabela são iguais.
+	
+	unsigned long *src = (unsigned long *) gKernelPageDirectoryAddress;  
+
+	// dest.
+	// O endereço do diretório de páginas clone.
+	// #importante:
+    // Precisamos usar o endereço virtual para manipularmos os dados,
+	// pois estamos no esquema de memória do kernel base.
+	
 	unsigned long *dest = (unsigned long *) destAddressVA;  
 	
-	//o endereço do diretório de páginas do kernel.
-	// #importante: O endereço dessa físico e virtual dessa tabela são iguais.
-	unsigned long *src = (unsigned long *) gKernelPageDirectoryAddress;  
-	
-	
-    //Nesse momento já temos o endereço da origem e do destino.
-    //O endereço lógico e físico do diretório de páginas do kernel 
-    //são iguais, porém os endereços físico e virtual do diretório 
-    //de páginas clone são diferentes.
-    //#importante: A rotina de cópia do conteúdo entre os buffers precisa usar 
-    //endereços lógicos, pois estamos usando o kernel base e sua 
-    //configuração de memória.	
 	
 	//
 	// ## Copiar ##
 	//
 
-	// Agora vamos apenas copiar o diretório de páginas do kernel 
-	// para o diretório de páginas clone.
-	// São 1024 dwords.
+	// #obs:
+    // Nesse momento já temos o endereço da origem e do destino.
+    // O endereço lógico e físico do diretório de páginas do kernel 
+    // são iguais, porém os endereços físico e virtual do diretório 
+    // de páginas clone são diferentes.
+    // #importante: 
+	// A rotina de cópia do conteúdo entre os buffers precisa usar 
+    // endereços lógicos, pois estamos usando o kernel base e sua 
+    // configuração de memória.	
 	
-	// Criamos um diretório vazio com páginas não presentes.
-	// 0010 em binário.	
+	// Agora vamos apenas copiar o diretório de páginas do kernel 
+	// para o diretório de páginas clone. São 1024 dwords.	
+	
+	// #importante
+	// Retornamos um endereço lógico, que será transformado em físico
+	// para colocarmos no cr3.	
 	
 	for ( i=0; i < 1024; i++ )
 	{
 		dest[i] = (unsigned long) src[i];    
 	};	
-	
-	// #importante
-	// Retornamos um endereço lógico, que será transformado em físico
-	// para colocarmos no cr3.
 	
 	return (void *) destAddressVA;
 }
@@ -273,22 +280,22 @@ void *CreatePageDirectory (void){
  */ 
 
 void *CreatePageTable ( unsigned long directory_address, 
-                       int offset, 
-					   unsigned long region_address )
+                        int offset, 
+                        unsigned long region_address )
 {
-	
-	int i;
-	
+
+    int i;
+
 	//
-    // ### pd  ###
-    //	
-	
+	// ### pd  ###
+	//	
+
 	// #importante:
 	// Endereço virtual do diretório de páginas.
 	// Precisamos do endereço virtual do diretório para editá-lo.
-	
-	unsigned long *PD = (unsigned long *) directory_address;       
-	
+
+    unsigned long *PD = (unsigned long *) directory_address; 
+
 	if ( directory_address == 0 ){
 		
 		return NULL;

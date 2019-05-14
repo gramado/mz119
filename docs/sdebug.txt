@@ -3,7 +3,7 @@
 [Kernel] kernel_main: Initializing runtime
 KiInitRuntime
 [x86] x86main:
-[x86] x86main: starting x86 kernel ..
+[x86] x86main: Starting x86 kernel ..
 systemInit:
 systemStartUp:
 init:
@@ -22,8 +22,8 @@ init_executive: diskATADialog
 init_architecture_dependent
 create_logon
 init_logon
-x86main: processes and threads
-x86main: ps2
+[x86] x86main: processes and threads
+[x86] x86main: ps2
 fsLoadFile:
 fsLoadFile:
 fsLoadFile:
@@ -32,3 +32,4 @@ fsLoadFile:
 fsLoadFile:
 fsLoadFile:
 x86main: done
+fsLoadFile:

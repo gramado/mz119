@@ -1,9 +1,9 @@
 /*
- * File: mmpool.c
- *     ?
+ * File: mmpool.c  ??
  *
  * g_pagedpool_va é o endereço virtual de uma área de memória pré alocada
  * de onde tiraremos páginas para o alocador.
+ *
  */
 
 
@@ -13,29 +13,30 @@
 /*
  ******************************************************
  * newPageFrame:
- *    Aloca apenas uma página e retorna retorna o ponteiro de 
- * estrutura de página.
+ *
+ *     Cria uma estrutura de página.
+ *     Procura um slot vazio para registrar ela.
+ *     Inicializa a estrutura.
+ *     Retorna o ponteiro da estrutura criada.
  */
 
 void *page (void){
 	
-	//#importante: 
-	//Essa estrutura é para frame na memória física.
 	struct page_d *New;
 	
 	int Index;	
-
-	//procura slot vazio.
+	
     for ( Index=0; Index < PAGE_COUNT_MAX; Index++ )
 	{
 	    New = (void*) pageAllocList[Index];
 		
 		if ( New == NULL )
 		{
-			New = (void*) malloc ( sizeof( struct page_d ) );
+			New = (void *) malloc ( sizeof( struct page_d ) );
 			
-			if ( New == NULL ){
-				printf("pc-mm-page:\n");
+			if ( New == NULL )
+			{
+				printf ("pc-mm-page:\n");
 				//free
 				goto fail;
 			}
@@ -59,11 +60,13 @@ void *page (void){
 			//...
 			
 			pageAllocList[Index] = ( unsigned long ) New; 
-		    return (void*) New;
+			
+		    return (void *) New;
 		};
 	};	
 
 fail:
+	
     return NULL;    
 }
 
@@ -71,20 +74,18 @@ fail:
 /*
  *********************************************************************
  * newPage:
- *     Aloca uma página e retorna seu endereço virtual inicial com base 
- * no id do pageframe e no endereço virtual inicial do pool de pageframes.
+ *     Aloca uma página e retorna seu endereço virtual inicial. 
+ *     Isso é feito com base no id do pageframe e no endereço virtual inicial 
+ * do pool de pageframes.
  * 
- *     ? kernel Mode ? ou user mode ?
- *     Obs: Isso funciona bem.
- * Obs: Alocaremos uma página de memória virtual e retornaremos 
+ * Obs: 
+ * Alocaremos uma página de memória virtual e retornaremos 
  * o ponteiro para o início da página.
  * Para isso usaremos o alocador de frames de memória física.
  */
 
 void *newPage (void){
 	
-	//#importante: 
-	//Essa estrutura é para frame na memória física.	
 	struct page_d *New;
 	
 	// Esse é o endereço virtual do início do pool de pageframes.
@@ -94,12 +95,15 @@ void *newPage (void){
 	
 	unsigned long va;
     unsigned long pa;
+	
+	// Cria e registra uma estrutura de página.
 	   
 	New	= (void *) page ();	
 	
 	if ( New == NULL )
 	{
-		printf("pc-mm-newPage: New\n");
+		printf ("pc-mm-newPage: New\n");
+		
 		goto fail;
 		
 	}else{
@@ -138,21 +142,16 @@ void *newPage (void){
 			        New->frame_number = 0;
 			    }
 				
-				//retorn o endereço virtual	
+				// Retorna o endereço virtual.	
+				
 				return (void *) ( base + (New->id * 4096) );
-				//return (void *) va;
 			}				
 		};		
 	};
 	
- //
- // Fail !
- //
-	
 fail:
+	
     return NULL;	
-};
-
-
+}
 
 

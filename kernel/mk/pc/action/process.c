@@ -1,5 +1,5 @@
 /*
- * File: pc/process.c 
+ * File: pc/action/process.c 
  *
  * Descrição:
  *     Gerenciamento de processos.
@@ -169,7 +169,7 @@ do_clone:
 			
 		if ( PID == -1 || PID == 0 )
 		{	
-			printf("do_fork_process: getNewPID fail %d \n", PID);
+			printf ("do_fork_process: getNewPID fail %d \n", PID );
 			goto fail;
 		}
 		
@@ -202,7 +202,7 @@ do_clone:
 		
 		if ( Ret != 0 )
 		{
-			printf("do_fork_process: processCopyProcess fail \n");
+			printf ("do_fork_process: processCopyProcess fail\n");
 		    goto fail;	
 		}
 		    
@@ -295,15 +295,20 @@ int processTesting (int pid){
 	
 	if ( (void *) P == NULL )
 	{
-		return (int) 0;
+		return 0;
+		
 	}else{		
 		
-		if ( P->used == 1 && P->magic == 1234 ){
+		if ( P->used == 1 && P->magic == 1234 )
+		{
+			// magic.
+			
 	        return (int) 1234;			
 		}
 	};
 	
-//fail:
+	// Fail.
+	
 	return 0;
 }
 
@@ -365,7 +370,8 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
     struct process_d *Process1;	
 	struct process_d *Process2;
 	
-	if ( p1 == p2 ){
+	if ( p1 == p2 )
+	{
 		goto fail;
 	}
 	
@@ -481,6 +487,7 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 fail:
 	Status = 1;
     printf("processCopyProcess: fail:\n");
+	
 done:
     return (int) Status;	
 };
@@ -546,6 +553,7 @@ struct process_d *create_process ( struct room_d *room,
     // @todo:
     // Melhorar esse esquema de numeração e 
 	// contagem de processos criados.
+	// processNewPID é global ?
 	
     if ( processNewPID < USER_BASE_PID || processNewPID >= PROCESS_COUNT_MAX )
 	{
@@ -558,14 +566,14 @@ struct process_d *create_process ( struct room_d *room,
 	
 	if ( (void *) Process == NULL )
 	{
-	    printf("pc-process-create_process: Process");
-		die();
+	    printf ("pc-process-create_process: Process");
+		die ();
 		
 		//@todo: Aqui pode retornar NULL.
 	};
 
 
-    //Loop.	
+    // Loop.	
 	// #BugBug: 
 	// Isso pode virar um loop infinito.
 	
@@ -590,14 +598,15 @@ get_next:
 */	
 	
 	// Get empty.
-		// Obtêm um índice para um slot vazio na lista de processos.
+	// Obtêm um índice para um slot vazio na lista de processos.
 		
 	PID = (int) getNewPID ();
 			
 	if ( PID == -1 || PID == 0 )
 	{	
-		printf("do_fork_process: getNewPID fail %d \n", PID);
-		refresh_screen();
+		printf ("create_process: getNewPID fail %d \n", PID);
+		refresh_screen ();
+		
 		return NULL;
 	}
 		
@@ -617,35 +626,41 @@ get_next:
 		//Object.
 		Process->objectType = ObjectTypeProcess;
 		Process->objectClass = ObjectClassKernelObjects;
-		
+
 		processNewPID = (int) PID;
-		
-		//Identificadores.
-		Process->pid  = (int) PID;                  //PID.
-        Process->ppid = (int) ppid;                 //PPID. 
-		Process->uid  = (int) GetCurrentUserId();   //UID. 
-        Process->gid  = (int) GetCurrentGroupId();  //GID. 
+
+		// Identificadores.
+		// PID. PPID. UID. GID.
+
+        Process->pid  = (int) PID; 
+        Process->ppid = (int) ppid; 
+        Process->uid  = (int) GetCurrentUserId (); 
+        Process->gid  = (int) GetCurrentGroupId (); 
 
 		//State of process
-		Process->state = INITIALIZED;  
+
+        Process->state = INITIALIZED;  
 
 		//@TODO: ISSO DEVERIA VIR POR ARGUMENTO
         Process->plane = FOREGROUND;		
-		
+
 		//Error.
 		//Process->error = 0;
-		
+
 		Process->used = 1;
-		Process->magic = 1234;	
+		Process->magic = 1234;
 		
 		//Name.
 		//Process->name = name; //@todo: usar esse.
 		//Process->cmd = NULL;  //nome curto que serve de comando.
 		Process->name_address = (unsigned long) name;
 		
-		//lista de streams...
-		//#todo temos que zerar essa lista e criarmos 3 streams para o processo.
-		for ( i=0; i< NUMBER_OF_FILES; i++ ){
+		// Lista de streams...
+		// #todo: 
+		// Temos que zerar essa lista e criarmos 3 streams para o processo.
+		
+		for ( i=0; i< NUMBER_OF_FILES; i++ )
+		{
 		    Process->Streams[i] = 0;
 	    }
 		
@@ -680,11 +695,9 @@ get_next:
 		//Process->processHeapMemory =
 		//Process->processStackMemory =
 		
-	    //
-	    // ORDEM: O que segue é referenciado durante o processo de task switch.
-	    //
+	    // ORDEM: 
+		// O que segue é referenciado durante o processo de task switch.
 
-		//
 		// Page Directory: 
 		//     Alocar um endereço físico para o diretório de páginas do 
 		// processo a ser criado, depois chamar a função que cria o diretório.
@@ -702,23 +715,25 @@ get_next:
 		//@todo: 
         //opção: KERNEL_PAGEDIRECTORY; //@todo: Usar um pra cada processo.
 
+		// #obs:
+		// Variável recebida via argumento.
+		
         if (directory_address == 0)
         {
-			printf("create_process: page directory address fail\n");
+			printf ("create_process: page directory address fail\n");
+			
 			return NULL;
 		}			
-		
-		//Process->Directory = (unsigned long ) directory_address; 
 		
 		Process->DirectoryVA = (unsigned long ) directory_address;
 		Process->DirectoryPA = (unsigned long) virtual_to_physical ( directory_address, gKernelPageDirectoryAddress );
 		
-        //cancelados. 
-		//Process->mmBlocks[32]
-		//Process->mmblockList[32]
+        // cancelados. 
+		// Process->mmBlocks[32]
+		// Process->mmblockList[32]
 		
 		
-		//Process->processMemoryInfo
+		// Process->processMemoryInfo
 		
 		
 		// #todo: 
@@ -791,13 +806,16 @@ get_next:
         // endereço virtual do pool de heaps.
         // os heaps nessa área serão dados para os processos.
 		// base + (n*size)
-		if (g_heap_count < 0 || g_heap_count >= g_heap_count_max)
+		
+		if ( g_heap_count < 0 || g_heap_count >= g_heap_count_max )
 		{
-			//erro 
-			printf("create_process: g_heap_count limits");
-			die();
-			//refresh_screen();
-			//while(1){ asm ("hlt"); };
+			
+			printf ("create_process: g_heap_count limits");
+			die ();
+			
+			// #debug
+			// refresh_screen();
+			// while(1){ asm ("hlt"); };
 		}
 		
 		Process->Heap = (unsigned long) g_heappool_va + (g_heap_count * g_heap_size);
@@ -904,9 +922,7 @@ get_next:
 		
 		//Process->base_priority
 		
-		
-		
-		
+			
 	    // wait4pid: 
         // O processo esta esperando um processo filho fechar.
 	    // Esse é o PID do processo que ele está esperando fechar.
@@ -917,12 +933,16 @@ get_next:
 		
 		Process->exit_code = 0;
 		
-
-		//procedimento eem ring 0 por enquanto.
+        // ?? 
+		// Procedimento eem ring 0 por enquanto.
 		Process->dialog_address = (unsigned long) &system_procedure;
 
 		Process->signal = 0;
 		Process->signal_mask = 0;
+		
+		//
+		// Msg
+		//
 		
 		//Msg support.
 		//Argumentos do procedimento de janela.
@@ -936,25 +956,20 @@ get_next:
 		Process->prev = NULL; 
 		Process->next = NULL; 
 
-		//Coloca o processo criado na lista de processos.
+		// List.
+		// Coloca o processo criado na lista de processos.
+		
 		processList[PID] = (unsigned long) Process;		
-		//Nothing.
 	};	
-
 	
-	//
-	// ?? O que falta mais aqui. ??
-	//
+	// More ?
 	
-    // ...	
-	
-//Done.
-done:
     return (void *) Process;
 }
 
  
 /*
+ *******************************************************
  * CloseAllProcesses:
  *     Bloqueia todos os processos da lista de processos.
  *     Menos o processo '0'.
@@ -1400,13 +1415,14 @@ void SetProcessDirectory ( struct process_d *process, unsigned long Address ){
  * @todo: processGetDirectory(...)
  */
 
-unsigned long GetProcessDirectory( struct process_d *process )
-{
-    if( (void*) process != NULL )
+unsigned long GetProcessDirectory ( struct process_d *process ){
+	
+    if( (void *) process != NULL )
 	{
 		//@todo: checar used e magic.
         return (unsigned long) process->DirectoryPA;
 	};
+	
 	return (unsigned long) 0;
 };
 
@@ -1503,16 +1519,11 @@ void init_processes (void){
 	while (i < PROCESS_COUNT_MAX)
     {
 	    processList[i] = (unsigned long) 0;
+		
         i++;
 	};
 
-
-	//
-	// @todo: mais algo??
-	//
-	
-//Done:	
-	//return;
+    // More ?
 }
 
 
@@ -1542,24 +1553,27 @@ void exit_process ( pid_t pid, int code ){
 	//...
 
 	// Não fechar o processo 0. Ele é o kernel.
-	if ( pid == 0 ){
+	
+	if ( pid == 0 )
+	{
 		return;
 	}
 	
 	//Limits. 
-	if ( pid < 0 || pid >= PROCESS_COUNT_MAX ){
+	
+	if ( pid < 0 || pid >= PROCESS_COUNT_MAX )
+	{
 	    return;	
 	}
 	
 	// Mais limites ??
 
 #ifdef MK_VERBOSE	
-	//Debug:
+	// Debug:
 	printf ("exit_process: Terminating process %d\n", pid );
-	refresh_screen();
+	refresh_screen ();
 #endif	
 	
-
 	// Pega o ponteiro para a estrutura, muda o código de saída 
 	// e o status.
 	
@@ -1586,8 +1600,8 @@ void exit_process ( pid_t pid, int code ){
 		
 #ifdef MK_VERBOSE
 	//Debug:
-	printf("exit_process: Terminating threads..\n");
-	refresh_screen();
+	printf ("exit_process: Terminating threads..\n");
+	refresh_screen ();
 #endif		
 
 	// Agora temos que terminar as threads que estão na lista 
@@ -1616,11 +1630,11 @@ void exit_process ( pid_t pid, int code ){
 	{
 		// ?? Qual deve fechar depois. ??
 		
-		printf(".\n");
-		refresh_screen();
+		printf (".\n");
+		refresh_screen ();
 		
 		// Salva o ponteiro para o próximo thread.
-		Next = (void*) Thread->Next;
+		Next = (void *) Thread->Next;
 		
 		// Confere se chegamos ao fim da lista.
 		// 'Thread' fecha agora.
@@ -1633,7 +1647,7 @@ void exit_process ( pid_t pid, int code ){
     
 #ifdef MK_VERBOSE    
 		    //fecha a thread.
-		    printf ("exit_process: Killing thread %d.\n", Thread->tid );
+		    printf ("exit_process: Killing thread %d\n", Thread->tid );
 #endif			
 			
 			// Kill !
@@ -1647,10 +1661,11 @@ void exit_process ( pid_t pid, int code ){
 			Thread = (void *) Next;
 		 };
         //Nothing.
-	};		
-	//nothing
-done:
+	};
 	
+	//nothing
+	
+done:
 	
 	//@todo:
 	//    Escalonar o processo atual. Se o processo fechado foi o processo 
@@ -1672,8 +1687,11 @@ done:
 	//Process = NULL;
 	
 	
-	//#todo: chamar o scheduler.
+	// #todo: 
+	// chamar o scheduler.
+	
 	//scheduler ();
+	
 	return;
 }
 
@@ -1759,7 +1777,8 @@ unsigned long GetProcessHeapStart ( pid_t pid ){
 		return (unsigned long) process->Heap;
 	};
 	
-fail:	
+fail:
+	
     return (unsigned long) 0;
 }
 
@@ -1796,7 +1815,8 @@ unsigned long GetProcessPageDirectoryAddress ( pid_t pid ){
 		return (unsigned long) process->DirectoryPA;
 	};
 	
-fail:	
+fail:
+	
     return (unsigned long) 0;
 }
 
@@ -1834,6 +1854,8 @@ int process_find_empty_stream_slot ( struct process_d *process ){
 } 
 */
 
+
 //
 // End.
 //
+
