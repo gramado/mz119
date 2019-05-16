@@ -759,7 +759,6 @@ get_next:
 		//
 		
 		// Base da imagem do processo.
-
 		
 		//Na verdade precisamos aceitar o endereço passado via argumento,
 		//pois nem todos processos começam no endereço default.
@@ -796,8 +795,8 @@ get_next:
 		
 		// #### HEAP ####
 		
+        // directory va, index, region pa
 		//CreatePageTable ( Process->DirectoryVA, 512, 0 );
-		
 		
 		//Process->Heap = (unsigned long) 0x00400000; //funciona
 		//Process->Heap = (unsigned long) 0xC0C00000; //funciona
@@ -989,6 +988,7 @@ void CloseAllProcesses (void){
 		//Pega, bloqueia e tira da lista.
 		P = (void*) processList[Index];
 		P->state = PROCESS_BLOCKED;
+        
         processList[Index] = (unsigned long) 0;		
 	};		
 	
@@ -997,7 +997,7 @@ void CloseAllProcesses (void){
 	
 	if ( (void *) P == NULL )
 	{
-		panic("CloseAllProcesses: P\n");
+		panic ("CloseAllProcesses: P\n");
 	};
 }
 
@@ -1012,7 +1012,6 @@ void KeSaveCurrentContext (void)
 {
    //sendo uma interface pode chamar a rotina de acordo com a arquitetura presente.
    //para isso pode-se usar hal.
-    //return;
 }
 
 
@@ -1050,12 +1049,12 @@ void KeCpuFaults (unsigned long fault_number){
  * uma tarefa em user mode.
  * @todo: deletar.  * obs: Não usaremos inicial Ke_
  */
-void KeSpawnTask(int id)
-{
-    KiSpawnTask(id);
-	//no return.
-};
 
+void KeSpawnTask (int id){
+    
+    KiSpawnTask (id);
+	//no return.
+}
 
 
 
@@ -1076,18 +1075,19 @@ int KeSelectNextThread(int current)
 /*
  * KeCheckTaskContext:
  *     Interface para chamar uma rotina de análise de contexto.
-  * obs: Não usaremos inicial Ke_
+ * obs: Não usaremos inicial Ke_
  */
-int KeCheckTaskContext( int task_id )
+
+int KeCheckTaskContext ( int task_id )
 {
 	//#bugbug Aqui estamos chamando uma rotina detro do 
 	//kernel base, não é essa a ideia.
 	// e se alguma rotina dentro do kernel estava chamando essa 
 	// função é bom substituir a chamada por KiCheckTaskContext
     //@todo: preparação antes de chamar.filtros.
-	return (int) KiCheckTaskContext(task_id);
-};
-
+    
+	return (int) KiCheckTaskContext (task_id);
+}
 
 
 /*
@@ -1819,6 +1819,39 @@ fail:
 	
     return (unsigned long) 0;
 }
+
+
+// Isso vai alterar uma das entradas do diretório de páginas do processo.
+// Criando uma pagetable e mapeando nela 4MB da memória física.
+// Usaremos isso para carregar a imagem do programa em 0x400000.
+// #bugbug: Na verdade precisamos saber quantas páginas o programa precisa.
+// e Carregarmos só as páginas que ele precisa, ou menos caso a paginação
+// por demanda esteja funcionando..
+
+/*
+int xxxloadHere4MB ( struct process_d *process, unsigned long region4MB_PA );
+int xxxloadHere4MB ( struct process_d *process, unsigned long region4MB_PA )
+{
+    
+    //#todo melhorar esses filtros.
+    
+    if ( (void *) process == NULL )
+        return -1;
+    
+    if ( region4MB_PA == 0 )
+        return -1;
+    
+    
+    // Cria uma pagetable em um dado diretório de páginas.
+    // Uma região de 4MB da memória física é mapeanda nessa pt.
+    
+    CreatePageTable ( process->DirectoryPA, ENTRY_USERMODE_PAGES, region4MB_PA );
+    
+    return 0;
+}
+*/
+
+
 
 
 //#todo

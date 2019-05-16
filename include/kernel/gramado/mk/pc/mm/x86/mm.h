@@ -1190,10 +1190,12 @@ void *CreatePageDirectory (void);
 // Page tables.
 //
 
+// Cria uma pagetable em um dado diretório de páginas.
+// Uma região de 4MB da memória física é mapeanda nessa pt.
 
-void *CreatePageTable ( unsigned long directory_address, 
+void *CreatePageTable ( unsigned long directory_address_va, 
                         int offset, 
-					    unsigned long region_address );
+                        unsigned long region_address );
 
 
 int pEmpty (struct page_d *p);

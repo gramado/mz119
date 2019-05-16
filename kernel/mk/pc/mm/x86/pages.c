@@ -267,6 +267,8 @@ void *CreatePageDirectory (void){
  * que estamos criando.
  * @todo: Na hora de salvarmos esse endereço também 
  * temos que incluir as flags.
+ * #importante:
+ * O offset é um índice dentro do diretório de páginas.
  *
  *     page_address
  * O endereço da página que estamos criando.
@@ -275,11 +277,12 @@ void *CreatePageDirectory (void){
  * Obs: Uma pagetable tem 4096 bytes de tamanho.
  * Obs: Criamos uma tabela de páginas, com páginas em user mode.
  *
- * #importante:
- * O offset é um índice dentro do diretório de páginas.
  */ 
 
-void *CreatePageTable ( unsigned long directory_address, 
+// Cria uma pagetable em um dado diretório de páginas.
+// Uma região de 4MB da memória física é mapeanda nessa pt.
+
+void *CreatePageTable ( unsigned long directory_address_va, 
                         int offset, 
                         unsigned long region_address )
 {
@@ -294,17 +297,16 @@ void *CreatePageTable ( unsigned long directory_address,
 	// Endereço virtual do diretório de páginas.
 	// Precisamos do endereço virtual do diretório para editá-lo.
 
-    unsigned long *PD = (unsigned long *) directory_address; 
-
-	if ( directory_address == 0 ){
-		
+	if ( directory_address_va == 0 )
 		return NULL;
-	}	
+
+    unsigned long *PD = (unsigned long *) directory_address_va; 
+
 
 
 	//
-    // ### pt  ###
-    //	
+	// ### pt  ###
+	//	
 	
 	//#importante:
 	//Endereço virtual da tabela de páginas.
@@ -312,10 +314,9 @@ void *CreatePageTable ( unsigned long directory_address,
 	//pois o kernel trabalha com os endereços virtuais ...
 	//só depois converteremos e salvaremos na entrada do diretório 
 	//o ponteiro que é um endereço físico.
-	
+
 
     unsigned long ptVA = (unsigned long) malloc (4096);
-	//unsigned long ptVA = (unsigned long) newPage(); 
 	
 	if ( ptVA == 0 ){
 		
@@ -324,37 +325,37 @@ void *CreatePageTable ( unsigned long directory_address,
 	
 
 	//o endereço virtual permite manipularmos a pagetable daqui do kernel.
-	unsigned long *newPT = (unsigned long *) ptVA;     
-	
-	
-	//
-    // ### Offset  ###
-    //	
+	unsigned long *newPT = (unsigned long *) ptVA;
 
-	
+
+	//
+	// ### Offset  ###
+	//
+
+
 	//Limits.
 	if( offset < 0 )
 	{
 		return NULL;
 	}
-	
-	
+
+
 	//
-    // ### region  ###
-    //		
+	// ### region  ###
+	//
 
 	//Limits.
 	if( region_address == 0 )
 	{
 		return NULL;
-	}	
-	
-	
-	
+	}
+
+
+
 	//
-    // ### pt  ###
-    //		
-	
+	// ### pt  ###
+	//
+
 
 	// Criando uma pagetable.
 	// 4MB de memória física.

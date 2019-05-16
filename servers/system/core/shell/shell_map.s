@@ -415,7 +415,7 @@ Linker script and memory map
                 0x0000000000459a10                open
                 0x0000000000459a36                close
                 0x0000000000459a54                pipe
- .text          0x0000000000459a75     0x20cc api.o
+ .text          0x0000000000459a75     0x20d0 api.o
                 0x0000000000459a75                system_call
                 0x0000000000459a9d                apiSystem
                 0x0000000000459ea5                system1
@@ -485,91 +485,91 @@ Linker script and memory map
                 0x000000000045b253                apiFOpen
                 0x000000000045b27f                gde_save_file
                 0x000000000045b2d2                apiDown
-                0x000000000045b325                apiUp
-                0x000000000045b378                enterCriticalSection
-                0x000000000045b3b3                exitCriticalSection
-                0x000000000045b3cc                initializeCriticalSection
-                0x000000000045b3e5                gde_begin_paint
-                0x000000000045b3f0                gde_end_paint
-                0x000000000045b3fb                apiPutChar
-                0x000000000045b417                apiDefDialog
-                0x000000000045b421                apiGetSystemMetrics
-                0x000000000045b43f                api_set_current_keyboard_responder
-                0x000000000045b45e                api_get_current_keyboard_responder
-                0x000000000045b476                api_set_current_mouse_responder
-                0x000000000045b495                api_get_current_mouse_responder
-                0x000000000045b4ad                api_set_window_with_text_input
-                0x000000000045b4ef                api_get_window_with_text_input
-                0x000000000045b507                gramadocore_init_execve
-                0x000000000045b511                apiDialog
-                0x000000000045b5a0                api_getchar
-                0x000000000045b5b8                apiDisplayBMP
-                0x000000000045b9bf                apiSendMessageToProcess
-                0x000000000045ba02                apiSendMessageToThread
-                0x000000000045ba45                apiSendMessage
-                0x000000000045ba7b                apiDrawText
-                0x000000000045baba                apiGetWSScreenWindow
-                0x000000000045bad2                apiGetWSMainWindow
-                0x000000000045baea                apiCreateTimer
-                0x000000000045bb07                apiGetSysTimeInfo
-                0x000000000045bb25                apiShowWindow
- .text          0x000000000045bb41      0x877 shellui.o
-                0x000000000045bb41                shellui_fntos
-                0x000000000045bc5b                shellTopbarProcedure
-                0x000000000045bdb4                shellCreateEditBox
-                0x000000000045be22                shellCreateMainWindow
-                0x000000000045bede                testCreateWindow
-                0x000000000045bf70                shellDisplayBMP
-                0x000000000045bfe4                shellDisplayBMPEx
-                0x000000000045c070                shellTestDisplayBMP
-                0x000000000045c0d2                bmpDisplayBMP
-                0x000000000045c0ef                shellCreateTaskBar
-                0x000000000045c22a                shellTestButtons
- .text          0x000000000045c3b8      0x16f builtins.o
-                0x000000000045c3b8                cd_buitins
-                0x000000000045c3d1                cls_builtins
-                0x000000000045c3df                copy_builtins
-                0x000000000045c3e5                date_builtins
-                0x000000000045c3eb                del_builtins
-                0x000000000045c3f1                dir_builtins
-                0x000000000045c42d                echo_builtins
-                0x000000000045c449                exec_builtins
-                0x000000000045c462                exit_builtins
-                0x000000000045c488                getpid_builtins
-                0x000000000045c49a                getppid_builtins
-                0x000000000045c4ac                getuid_builtins
-                0x000000000045c4be                getgid_builtins
-                0x000000000045c4d0                help_builtins
-                0x000000000045c50b                pwd_builtins
- .text          0x000000000045c527       0x9c desktop.o
-                0x000000000045c527                desktopInitialize
-                0x000000000045c570                desktopProcedure
-                0x000000000045c59c                shellStartDesktopMode
- .text          0x000000000045c5c3       0x10 login.o
-                0x000000000045c5c3                loginCheckPassword
- .text          0x000000000045c5d3      0x15a tests.o
-                0x000000000045c5d3                testsTimerUpdateObject
-                0x000000000045c6ab                testsInitTimer
- .text          0x000000000045c72d       0x1b pixel.o
-                0x000000000045c72d                gws_backbuffer_putpixel
- .text          0x000000000045c748       0x2b line.o
-                0x000000000045c748                my_buffer_horizontal_line
- .text          0x000000000045c773       0x86 rect.o
-                0x000000000045c773                drawDataRectangle
- .text          0x000000000045c7f9      0x1c7 char.o
-                0x000000000045c7f9                my_buffer_char_blt
-                0x000000000045c816                set_char_width
-                0x000000000045c824                set_char_height
-                0x000000000045c832                get_char_width
-                0x000000000045c83c                get_char_height
-                0x000000000045c846                gws_drawchar_transparent
-                0x000000000045c900                gws_draw_char
- .text          0x000000000045c9c0      0x1f3 gws.o
-                0x000000000045c9c0                gws_init
-                0x000000000045c9f2                serverInit
-                0x000000000045ca0f                serverDialog
+                0x000000000045b327                apiUp
+                0x000000000045b37c                enterCriticalSection
+                0x000000000045b3b7                exitCriticalSection
+                0x000000000045b3d0                initializeCriticalSection
+                0x000000000045b3e9                gde_begin_paint
+                0x000000000045b3f4                gde_end_paint
+                0x000000000045b3ff                apiPutChar
+                0x000000000045b41b                apiDefDialog
+                0x000000000045b425                apiGetSystemMetrics
+                0x000000000045b443                api_set_current_keyboard_responder
+                0x000000000045b462                api_get_current_keyboard_responder
+                0x000000000045b47a                api_set_current_mouse_responder
+                0x000000000045b499                api_get_current_mouse_responder
+                0x000000000045b4b1                api_set_window_with_text_input
+                0x000000000045b4f3                api_get_window_with_text_input
+                0x000000000045b50b                gramadocore_init_execve
+                0x000000000045b515                apiDialog
+                0x000000000045b5a4                api_getchar
+                0x000000000045b5bc                apiDisplayBMP
+                0x000000000045b9c3                apiSendMessageToProcess
+                0x000000000045ba06                apiSendMessageToThread
+                0x000000000045ba49                apiSendMessage
+                0x000000000045ba7f                apiDrawText
+                0x000000000045babe                apiGetWSScreenWindow
+                0x000000000045bad6                apiGetWSMainWindow
+                0x000000000045baee                apiCreateTimer
+                0x000000000045bb0b                apiGetSysTimeInfo
+                0x000000000045bb29                apiShowWindow
+ .text          0x000000000045bb45      0x877 shellui.o
+                0x000000000045bb45                shellui_fntos
+                0x000000000045bc5f                shellTopbarProcedure
+                0x000000000045bdb8                shellCreateEditBox
+                0x000000000045be26                shellCreateMainWindow
+                0x000000000045bee2                testCreateWindow
+                0x000000000045bf74                shellDisplayBMP
+                0x000000000045bfe8                shellDisplayBMPEx
+                0x000000000045c074                shellTestDisplayBMP
+                0x000000000045c0d6                bmpDisplayBMP
+                0x000000000045c0f3                shellCreateTaskBar
+                0x000000000045c22e                shellTestButtons
+ .text          0x000000000045c3bc      0x16f builtins.o
+                0x000000000045c3bc                cd_buitins
+                0x000000000045c3d5                cls_builtins
+                0x000000000045c3e3                copy_builtins
+                0x000000000045c3e9                date_builtins
+                0x000000000045c3ef                del_builtins
+                0x000000000045c3f5                dir_builtins
+                0x000000000045c431                echo_builtins
+                0x000000000045c44d                exec_builtins
+                0x000000000045c466                exit_builtins
+                0x000000000045c48c                getpid_builtins
+                0x000000000045c49e                getppid_builtins
+                0x000000000045c4b0                getuid_builtins
+                0x000000000045c4c2                getgid_builtins
+                0x000000000045c4d4                help_builtins
+                0x000000000045c50f                pwd_builtins
+ .text          0x000000000045c52b       0x9c desktop.o
+                0x000000000045c52b                desktopInitialize
+                0x000000000045c574                desktopProcedure
+                0x000000000045c5a0                shellStartDesktopMode
+ .text          0x000000000045c5c7       0x10 login.o
+                0x000000000045c5c7                loginCheckPassword
+ .text          0x000000000045c5d7      0x15a tests.o
+                0x000000000045c5d7                testsTimerUpdateObject
+                0x000000000045c6af                testsInitTimer
+ .text          0x000000000045c731       0x1b pixel.o
+                0x000000000045c731                gws_backbuffer_putpixel
+ .text          0x000000000045c74c       0x2b line.o
+                0x000000000045c74c                my_buffer_horizontal_line
+ .text          0x000000000045c777       0x86 rect.o
+                0x000000000045c777                drawDataRectangle
+ .text          0x000000000045c7fd      0x1c7 char.o
+                0x000000000045c7fd                my_buffer_char_blt
+                0x000000000045c81a                set_char_width
+                0x000000000045c828                set_char_height
+                0x000000000045c836                get_char_width
+                0x000000000045c840                get_char_height
+                0x000000000045c84a                gws_drawchar_transparent
+                0x000000000045c904                gws_draw_char
+ .text          0x000000000045c9c4      0x1f3 gws.o
+                0x000000000045c9c4                gws_init
+                0x000000000045c9f6                serverInit
+                0x000000000045ca13                serverDialog
                 0x000000000045d000                . = ALIGN (0x1000)
- *fill*         0x000000000045cbb3      0x44d 
+ *fill*         0x000000000045cbb7      0x449 
 
 .iplt           0x000000000045d000        0x0
  .iplt          0x000000000045d000        0x0 crt0.o
@@ -958,7 +958,7 @@ OUTPUT(SHELL.BIN elf32-i386)
  .comment       0x000000000000002b       0x1b socket.o
  .comment       0x000000000000002b       0x1b signal.o
  .comment       0x000000000000002b       0x1b unistd.o
- .comment       0x000000000000002b       0x1b api.o
+ .comment       0x000000000000002b       0x12 api.o
  .comment       0x000000000000002b       0x12 shellui.o
  .comment       0x000000000000002b       0x12 builtins.o
  .comment       0x000000000000002b       0x12 desktop.o
