@@ -62,6 +62,7 @@
 
 
 #include "terminal/include/desktop.h"
+#include "terminal/include/terminal.h"
 
 //# bash 1.05 stuff #
 #include "variables.h"
@@ -295,82 +296,6 @@ COMMAND_T *CurrentCommand;
 
 
 
-typedef struct line_d line_t;
-struct line_d
-{
-	int id;     //identificação da linha.
-	
-	int used;
-	int magic;  //Validade e característica da estrutura.
-	
-	int Start;
-	int End;
-	
-	//Deslocamentos em relação ao Start.
-	int LeftOffset;    //Onde começa o texto dentro da linha.   
-	int RightOffset;   //Onde termina o texto dentro da linha.
-	
-	// Continua
-	// ...
-	
-	int SizeInChars;  // Quantos chars tem na linha.
-	int SizeInBytes;  // Quantos bytes tem na linha. (char + atrr)	
-	
-    struct line_d *next;	
-};
-
-
-
-
-//Conterá ponteiros para estruturas de linha.
-unsigned long lineList[LINE_COUNT_MAX];
-
-
-
-
-//
-// Estrutura de suporte ao screen buffer.
-//
-
-typedef struct screen_buffer_d screen_buffer_t;
-struct screen_buffer_d
-{
-	int id;
-	
-	int used;
-	int magic;
-	
-	char *name;
-	char *description;
-	
-		
-    //
-    // Current line support.
-    //
-	
-	int current_line_id;              //id.
-	struct line_d *current_line;   //struct 
-	//...
-	
-    //
-    // lines.
-    //	
-	
-	struct line_d *first_line;
-	struct line_d *last_line;
-	//...
-	
-	
-	//Continua ...
-	
-	//Número total de linhas no buffer.
-	int total_lines;
-	
-	struct screen_buffer_d *next;
-};
-
-//Conterá ponteiros para estruturas de linha.
-unsigned long screenbufferList[8];
 
  
 
@@ -423,35 +348,6 @@ struct connection_d
 connection_t *current_connection;
 */
 
-
-
-
-
-
-//
-// ## Text support #@#
-//
-
-struct shell_line
-{
-    char CHARS[80];
-    char ATTRIBUTES[80];	
-	
-	//início e fim da string dentro da linha.
-	//o resto é espaço.
-	int left;
-	int right;
-	
-	//posição do cursor dentro da linha.
-	int pos;
-};
-
-//PROVISÓRIO
-//O TEXTO TEM 32 LINHAS NO MÁXIMO.
-//ESSA É A PARTE DO TEXTO QUE PODERÁ SER MANIPULADA,
-//O RESTO DO TEXTO DEVERÁ FICAR ESPERANDO NO BUFFER.
-//#IMPORTANTE: 25 DESSAS 32 LINHAS SERÃO VISÍVEIS.
-struct shell_line LINES[32]; 
 
 
 //
@@ -775,15 +671,12 @@ char screen_buffer[SCREEN_BUFFER_SIZE];
 int main ( int argc, char *argv[] );
  
  
-//
-// Screen support.
-//
 
-void shellClearScreen();
-void shellRefreshScreen(); //copia o conteúdo do buffer para a tela. (dentro da janela)
-void shellRefreshLine ( int line_number );
-void shellRefreshChar ( int line_number, int col_number );
-void shellRefreshCurrentChar(); //refresh do char que está na posição usada pelo input.
+
+
+
+
+
 
 
 
@@ -801,24 +694,7 @@ void shellShowScreenBuffer();
 //...
 
 
-//
-// Typing support.
-//
 
-void shellInsertCR();
-void shellInsertLF();
-void shellInsertNullTerminator();
-void shellInsertNextChar(char c);
-
-void shellInsertCharXY(unsigned long x, unsigned long y, char c);
-char 
-shellGetCharXY ( unsigned long x, 
-                 unsigned long y );
- 
-static void lf(void);
-static void ri(void);
-static void cr(void);
-static void del(void);
 void move_to( unsigned long x, unsigned long y);
 //...
 
@@ -828,8 +704,8 @@ void move_to( unsigned long x, unsigned long y);
 //
 
 void shellSetCursor(unsigned long x, unsigned long y);
-static void save_cur(void);
-static void restore_cur(void);
+
+
 
 
 //

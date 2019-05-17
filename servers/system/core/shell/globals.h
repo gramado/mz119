@@ -15,8 +15,6 @@ typedef unsigned long POOLLIST;
 
  
 
-
-
 /* Values that can be returned by execute_command (). */
 #define EXECUTION_FAILURE 1
 #define EXECUTION_SUCCESS 0
@@ -66,40 +64,7 @@ typedef unsigned long POOLLIST;
 
 //#define FILENAME_LENGTH (8+3) 
 
-//
-// SCREEN SUPPORT
-//
 
-#define DEFAULT_WINDOW_X 0
-#define DEFAULT_WINDOW_Y 0
-
-//Obs: aumentar essas constantes aumenta o tamanho da janela.
-#define DEFAULT_MAX_COLUMNS 80
-#define DEFAULT_MAX_ROWS    50 //25 
-  
-
-//linux 
-//#define SCREEN_START 0xb8000
-//#define SCREEN_END   0xc0000
-//#define LINES 25
-//#define COLUMNS 80
-//#define NPAR 16
-
-
-//
-// BUFFER SUPPORT
-//
-
-//
-// Screen Buffer: 
-// Igual a tela do vga, com caracteres e atributos.
-// @todo: O buffer deve ser maior, com várias vistas para rolagem.
-// mas apenas uma parte do buffer será mostrada na tela por vez.
-//
-
-#define DEFAULT_BUFFER_MAX_COLUMNS 80
-#define DEFAULT_BUFFER_MAX_ROWS    25
-#define SCREEN_BUFFER_SIZE ( ((DEFAULT_BUFFER_MAX_COLUMNS*DEFAULT_BUFFER_MAX_ROWS)*2)+1)
 
 
  
@@ -117,7 +82,7 @@ typedef unsigned long POOLLIST;
 //...
 
 
-#define TAB_SIZE 8
+
 
 //
 // Strings
@@ -208,156 +173,12 @@ typedef unsigned long POOLLIST;
 #define SHELL_TERMINAL_COLOR2 0x303030
 //...
 
-
-
-/*
-#define BLACK       0
-#define RED         1
-#define GREEN       2
-#define BROWN       3
-#define BLUE        4
-#define MAGENTA     5
-#define CYAN        6
-#define LIGHTGRAY   7
-#define DARKGRAY    8
-#define LIGHTRED    9
-#define LIGHTGREEN  10
-#define YELLOW      11
-#define LIGHTBLUE   12
-#define PINK        13
-#define LIGHTCYAN   14
-#define WHITE       15 
-*/ 
  
- 
- 
-//#ifndef whitespace
-//#define whitespace(c) (((c) == ' ') || ((c) == '\t'))
-//#endif 
-
-
-//#ifndef digit
-//#define digit(c)  ((c) >= '0' && (c) <= '9')
-//#endif
-
-//#ifndef isletter
-//#define isletter(c) (((c) >= 'A' && (c) <= 'Z') || ((c) >= 'a' && (c) <= 'z'))
-//#endif
-
-//#ifndef digit_value
-//#define digit_value(c) ((c) - '0')
-//#endif
- 
- 
-//#define NEWLINE '\n' 
-//#define TAB '\t'
-//#define SPACE 0x020
- 
-
-
-
-//
-// Estrutura para mainpular linhas dentro do screen_buffer[]
-//
-
-
-#define MAGIC_NORMALLINE 1234
-//...
-
-#define LINE_SIZE_MAX 80
-
-#define LINE_COUNT_MAX 2048
-
-
-#define SCREENBUFFER_COUNT_MAX 8
-
-
-
-
-
-//
-// ## System Metrics ##
-//
-
-int smScreenWidth;                   //1 
-int smScreenHeight;                  //2
-unsigned long smCursorWidth;         //3
-unsigned long smCursorHeight;        //4
-unsigned long smMousePointerWidth;   //5
-unsigned long smMousePointerHeight;  //6
-unsigned long smCharWidth;           //7
-unsigned long smCharHeight;          //8
-//...
-
-//
-// ## Window limits ##
-//
-
-//full screen support
-unsigned long wlFullScreenLeft;
-unsigned long wlFullScreenTop;
-unsigned long wlFullScreenWidth;
-unsigned long wlFullScreenHeight;
-
-//limite de tamanho da janela.
-unsigned long wlMinWindowWidth;
-unsigned long wlMinWindowHeight;
-unsigned long wlMaxWindowWidth;
-unsigned long wlMaxWindowHeight;
-
-//quantidade de linhas e colunas na área de cliente.
-int wlMinColumns;
-int wlMinRows;
-int wlMaxColumns;
-int wlMaxRows;
-
-
-//
-//  ## Window size ##
-//
-
-unsigned long wsWindowWidth;
-unsigned long wsWindowHeight;
-//...
-
-
-//
-//  ## Window position ##
-//
-
-unsigned long wpWindowLeft;
-unsigned long wpWindowTop;
-//..
-
-
-
 
 
 //@todo:
 //devemos criar uma rotina que inicialisa
 //esses buffers.
-
-
-
-//#importante:
-//Linhas visíveis.
-//número da linha
-//isso será atualizado na hora do scroll.
-int textTopRow;  //Top nem sempre será '0'.
-int textBottomRow;
-
-//linha e coluna atuais
-int textCurrentRow;
-int textCurrentCol;
-
-int textSavedRow;
-int textSavedCol;
-
-
-int textWheelDelta; //delta para rolagem do texto.
-int textMinWheelDelta;  //mínimo que se pode rolar o texto
-int textMaxWheelDelta;  //máximo que se pode rolar o texto
-//...
 
 
 
@@ -374,13 +195,6 @@ char pathname_buffer[PATHNAME_LENGHT];
 int pathname_lenght; //tamanho do atual pathname.
 int pathname_initilized;
 
-
-// Colors
- 
- 
-//cores do texto. 
-unsigned long backgroung_color;  //pano de fundo.
-unsigned long foregroung_color;  //texto.
 
 
 
@@ -400,15 +214,6 @@ int filename_initilized;
 //...
 
 
-
-//marcador do cursor.
-unsigned long screen_buffer_pos;    //(offset) 
-
-unsigned long screen_buffer_x;      //current col 
-unsigned long screen_buffer_y;      //current row
-
-static unsigned long screen_buffer_saved_x = 0;
-static unsigned long screen_buffer_saved_y = 0;
 
 
 
@@ -434,15 +239,6 @@ int g_current_workingdirectory_id;  //??
 char current_workingdiretory_string[WORKINGDIRECTORY_STRING_MAX];
 int pwd_initialized;
 
-#define CalculateRowScanLine(WindowY,CharHeight) \
-    ( WindowY * CharHeight )
-
-
-#define CalculateColumnScanLine(WindowX,CharWidth) \
-    ( WindowX * CharWidth )
-	
-	
-	
 
 
 
@@ -554,23 +350,8 @@ static const char tests_banner[] =
 	"\n";
 
 
-// tree
-static const char tree_banner[] =
-"\n"
-"\n"	
-"     \\o/    \n"
-"      d      \n"
-"     ccc     \n"
-"    bbbbb    \n"
-"   aaaaaaa   \n"
-"  ggggggggg  \n" 
-" fffffffffff \n"
-"eeeeeeeeeeeee\n" 
-"     ||      \n"  
-"     ||      \n"
-"     ||      \n"
-"    ~~~~     \n"
-"\n";	
+// tree // cancelada.
+static const char tree_banner[] = "tree command\n";	
 //... 
 
 // usage	
@@ -675,32 +456,6 @@ static const char init_file_name[] = "INIT    TXT";
 
 
 
-//
-// Comunicação Cliente/Servidor:
-// Número da mensagem enviada pelo terminal virtual.
-// São apenas mensagens usadas pelo terminal virtual 
-// em modo texto, relativas a input e output de textos.
-// 
-//
-
-
-typedef enum terminal_api_message_number_d {
-	
-	terminalNull,          // 0
-	terminalOpenTerminal,  // Inicia a estrutura de terminal virtual.
-    terminalCloseTerminal, // Fecha a estrutura de terminal.
-	terminalGetWindow,     //
-    terminalGetMessage,    //
-    terminalGetLong1,      //
-    terminalGetLong2, 	   //
-    terminalScreenWidth,
-    terminalScreenHeight,
-    terminalCursorWidth,
-    terminalCursorHeight,
-    terminalCharWidth,
-    terminalCharHeight	
-	
-}terminal_api_message_number_t;
 
 
 
