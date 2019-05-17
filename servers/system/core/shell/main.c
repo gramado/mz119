@@ -864,7 +864,7 @@ noArgs:
 	    {
 		    mainwindow_used = 0;
 		
-            shellCreateTaskBar ();	
+            terminalCreateTaskBar ();	
 		
 	        // # Main window #		
 	    }else{
@@ -872,7 +872,7 @@ noArgs:
 		    mainwindow_used = 1;
 		
 	        enterCriticalSection ();    
-            hWindow = shellCreateMainWindow (1);
+            hWindow = (struct window_d *) terminalCreateMainWindow (1);
 	        exitCriticalSection ();
 		
 		    shell_info.main_window = ( struct window_d * ) hWindow;			
@@ -1816,7 +1816,7 @@ void *shellProcedure ( struct window_d *window,
 				    //printf("up button 1\n");
 					if (window == taskbar_button1)
 					{
-	                    //shellTestButtons ();	
+	                    //terminalTestButtons ();	
 		                //refresh_screen ();
 						printf ("Start menu \n");
 					}
@@ -2669,18 +2669,10 @@ do_compare:
 			printf("Error: No name!\n");
 		}else{
 			
-			//@todo: podemos checar se o pathname é absoluto,
-			//e onde se encontra o arquivo que queremos.
-			//shellDisplayBMP ( (char *) tokenList[i] );
-		
-		   //test 2MB
-		   //o argumento tamanho é dado  em kb.
-		   //printf("test 2mb\n");
-		   //shellDisplayBMPEx ( (char *) tokenList[i], (int) (1024*2) );
-		   
 		   //test 200kb
-		   printf("test 200kb\n");
-		   shellDisplayBMPEx ( (char *) tokenList[i], (int) (200) );
+		   printf ("test 200kb\n");
+			
+		   terminalDisplayBMPEx ( (char *) tokenList[i], (int) (200) );
 		};
 		goto exit_cmp;
     };	
@@ -2725,7 +2717,8 @@ do_compare:
 			
 			//@todo: podemos checar se o pathname é absoluto,
 			//e onde se encontra o arquivo que queremos.
-			//shellDisplayBMP( (char*) tokenList[i] );
+			
+			//terminalDisplayBMP ( (char*) tokenList[i] );
 		};		
 		
 		
@@ -2909,7 +2902,7 @@ do_compare:
 	if ( strncmp( prompt, "edit-box", 8 ) == 0 )
 	{
 	    enterCriticalSection();    
-	    shellCreateEditBox();
+	    terminalCreateEditBox ();
 	    exitCriticalSection();    
 		
 		goto exit_cmp;
@@ -3391,7 +3384,7 @@ do_compare:
 	// t2 - Test bmp
 	if ( strncmp( prompt, "t2", 2 ) == 0 )
 	{
-		shellTestDisplayBMP();
+		terminalTestDisplayBMP ();
         goto exit_cmp;
     };	
 	
@@ -3503,8 +3496,9 @@ do_compare:
 	//Testando a criação de botão e a interação com ele através do mouse.
 	if ( strncmp( prompt, "t8", 2 ) == 0 )
     {
-	    shellTestButtons ();	
+	    terminalTestButtons ();	
 		refresh_screen ();
+		
 		goto exit_cmp;
 	};	
 
@@ -3591,12 +3585,12 @@ do_compare:
 	if ( strncmp( prompt, "t14", 3 ) == 0 )
 	{
 		
-		printf("t14:\n");
-	    testCreateWindow ();
+		printf ("t14:\n");
+	    terminalCreateWindow ();
 		
 		//#bubug
 		//Vamos abortar por causa de uma page fault.
-		printf("t14: debug *hang");
+		printf ("t14: debug *hang");
 		while(1){}
 		
 		goto exit_cmp;
@@ -3794,7 +3788,7 @@ do_compare:
 	// taskbar
     if ( strncmp( prompt, "taskbar", 7 ) == 0 )
 	{
-		shellCreateTaskBar ();
+		terminalCreateTaskBar ();
 		goto exit_cmp;
     };			
 	

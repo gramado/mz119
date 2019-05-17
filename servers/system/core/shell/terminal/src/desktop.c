@@ -56,7 +56,7 @@ int shellStartDesktopMode (){
 	//criamos a barra.
 	//lembrando que o ponteiro é global.
 	
-	shellCreateTaskBar ();
+	terminalCreateTaskBar ();
 	
 
     //#todo	

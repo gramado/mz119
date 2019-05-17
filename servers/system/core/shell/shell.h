@@ -61,7 +61,7 @@
 #include <gws.h>
 
 
-#include "desktop.h"
+#include "terminal/include/desktop.h"
 
 //# bash 1.05 stuff #
 #include "variables.h"
@@ -937,28 +937,13 @@ int shell_gramado_core_init_execve( const char *arg1,
 // shelui.c
 //
 
-void shellCreateEditBox();
-
-
-struct window_d *shellCreateMainWindow( int status );
-//struct window_d *shellCreatemainWindow ();
 
 
 
 
-int shellDisplayBMP( char *file_name );
 
 
 
-int shellDisplayBMPEx (char *file_name, int size );
-void shellTestDisplayBMP();
-
-
-void bmpDisplayBMP ( void* address, 
-                     unsigned long x, 
-					 unsigned long y, 
-					 int width, 
-					 int height );
 					
 				
 
@@ -1008,25 +993,7 @@ int is_bin ( char *cmd );
 /* Check if it's a .sh1 file */
 int is_sh1 ( char *cmd );
 
-int shellCheckPassword();
-
-
-//testando botão.
-int shellTestButtons ();
-
-
-//tests
-void testCreateWindow ();
-
-
-int shellCreateTaskBar();
-
-
-// Procedimento de janela da topbar.							  
-void *shellTopbarProcedure ( struct window_d *window, 
-                             int msg, 
-			                 unsigned long long1, 
-					         unsigned long long2 );
+int shellCheckPassword ();
 
 
 

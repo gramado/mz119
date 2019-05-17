@@ -1,8 +1,10 @@
 /*
- * File shellui.c 
+ * File termui.c 
  *
- * Shell User Interface.
- *     Suporte às rotinas gráficas do aplicativo shell.
+ * Terminal User Interface.
+ *
+ *     Suporte às rotinas gráficas do aplicativo terminal.
+ *
  *     #importante: A intenção é usar esse módulo do aplicativo shell 
  *                  para construir e testar os recursos gráicos do sistema.
  *                  Aqui é um campo de testes. 
@@ -25,7 +27,7 @@ extern int ShellFlag;
 //...
 
 
-void shellui_fntos (char *name){
+void termui_fntos (char *name){
 	
     int  i, ns = 0;
     char ext[4];
@@ -68,12 +70,12 @@ void shellui_fntos (char *name){
 
 /*
  ***********************************************
- * shellTopbarProcedure:
+ * terminalTopbarProcedure:
  *     Procedimento de janela.
  *     LOCAL
  */
 
-void *shellTopbarProcedure ( struct window_d *window, 
+void *terminalTopbarProcedure ( struct window_d *window, 
                              int msg, 
 				             unsigned long long1, 
 				             unsigned long long2 )
@@ -472,7 +474,7 @@ done:
 // o tipo dois funciona.
 // testando colocar o ponteiro no edit box. setar foco.
 
-void shellCreateEditBox (){
+void terminalCreateEditBox (){
     
 	editboxWindow = (void *) APICreateWindow ( WT_EDITBOX, 1, 1, "shell-editbox1",     
                                 10, 600-100, 300, 24,    
@@ -481,7 +483,7 @@ void shellCreateEditBox (){
 									   
 	if ( (void *) editboxWindow == NULL)
 	{	
-		printf ("shellCreateEditBox: fail");
+		printf ("terminalCreateEditBox: fail");
 		
 		refresh_screen();
 		while(1){}
@@ -501,7 +503,7 @@ void shellCreateEditBox (){
  * Create main window;
  */
  
-struct window_d *shellCreateMainWindow ( int status ){
+struct window_d *terminalCreateMainWindow ( int status ){
 
 	unsigned long left;
 	unsigned long top;
@@ -543,12 +545,11 @@ struct window_d *shellCreateMainWindow ( int status ){
 	
 	if ( (void *) w == NULL )
 	{	
-		printf ("shellCreateMainWindow: Window fail");
+		printf ("terminalCreateMainWindow: Window fail");
 		
-		while (1){
-			asm("pause");
-		}
-		//exit(0);
+		while (1){ asm ("pause"); }
+		
+		//exit (0);
 	}
 	
 	//Registrar e mostrar.
@@ -563,12 +564,12 @@ struct window_d *shellCreateMainWindow ( int status ){
 
 
 
-void testCreateWindow (){
+void terminalCreateWindow (){
 	
 	struct window_d *hWindow;
 	
 	//#debug
-	printf("testCreateWindow:\n");
+	printf("terminalCreateWindow:\n");
 	
 	//apiBeginPaint ();
 	
@@ -579,10 +580,10 @@ void testCreateWindow (){
 	
 	if ( (void *) hWindow == NULL )
 	{
-		printf ("testCreateWindow: FAIL!");
+		printf ("terminalCreateWindow: FAIL");
 		while(1){}
 		
-		die ("shell.bin: hWindow fail");
+		die ("terminalCreateWindow: hWindow fail");
 	}
 	
 	//Registrar.
@@ -592,8 +593,8 @@ void testCreateWindow (){
 
     //apiEndPaint();
 	
-    printf("ok\n");
-};
+    printf ("ok\n");
+}
 
 
 /*
@@ -601,7 +602,8 @@ void testCreateWindow (){
  * shellDisplayBMP:
  *     Carrega um arquivo .bmp na memória e decodifica, mostrando na tela.
  */
-int shellDisplayBMP (char *file_name){	
+
+int terminalDisplayBMP (char *file_name){	
 	
 	// #bugbug @todo: Aumenta o tamanho do heap do processo.
 	// Esse heap é gerenciando nas bibliotecas ou na API.
@@ -612,7 +614,7 @@ int shellDisplayBMP (char *file_name){
     
 	if ( (void *) b == NULL )
 	{
-		printf("shellTestDisplayBMP: allocation fail\n");
+		printf ("terminalDisplayBMP: allocation fail\n");
 		//while(1){}
 		return -1;
 	}
@@ -620,7 +622,7 @@ int shellDisplayBMP (char *file_name){
 	//Carregando o arquivo.
 loadFile:
 
-    shellui_fntos ( (char *) file_name );
+    termui_fntos ( (char *) file_name );
 
     //@todo: Usar alguma rotina da API específica para carregar arquivo.
 	// na verdade tem que fazer essas rotinas na API.
@@ -662,16 +664,17 @@ loadFile:
 	//printf("data area address %x \n",&bmp[base]);
 	
 	return 0;
-};
+}
 
 
 /*
  *************************************
- * shellDisplayBMP:
+ * terminalDisplayBMPEx:
  *     Carrega um arquivo .bmp na memória e decodifica, mostrando na tela.
  *  tamanho dado em kb
  */
-int shellDisplayBMPEx (char *file_name, int size ){	
+
+int terminalDisplayBMPEx (char *file_name, int size ){	
 	
 	
     //naõ pode ser igual a zero, nem menor que zero, nem maior que 3mb.	
@@ -693,7 +696,7 @@ int shellDisplayBMPEx (char *file_name, int size ){
 	//Carregando o arquivo.
 loadFile:
 
-    shellui_fntos ( (char *) file_name );
+    termui_fntos ( (char *) file_name );
 
     //@todo: Usar alguma rotina da API específica para carregar arquivo.
 	// na verdade tem que fazer essas rotinas na API.
@@ -739,11 +742,12 @@ loadFile:
 
 
 /*
- * shellTestDisplayBMP:
+ * terminalTestDisplayBMP:
  *     Carrega um arquivo .bmp na memória e decodifica, mostrando na tela.
  *     Devemos usar a função oferecida pela api.
  */
-void shellTestDisplayBMP (){
+
+void terminalTestDisplayBMP (){
 	
 	
 	// #bugbug @todo: Aumenta o tamanho do heap do processo.
@@ -754,7 +758,7 @@ void shellTestDisplayBMP (){
     
 	if ( (void *) b == NULL )
 	{
-		printf("shellTestDisplayBMP: allocation fail\n");
+		printf ("terminalTestDisplayBMP: allocation fail\n");
 		//while(1){}
 	}
 	
@@ -807,13 +811,13 @@ loadFile:
  *     #todo: No kernel ou na api tem rotina mais aprimorada que essa.
  */
 
-void bmpDisplayBMP ( void *address, 
-                     unsigned long x, 
-					 unsigned long y, 
-					 int width, 
-					 int height )
+void 
+bmpDisplayBMP ( void *address, 
+                unsigned long x, 
+				unsigned long y, 
+				int width, 
+				int height )
 {
-
     apiDisplayBMP ( (char *) address, x, y ); 
     
 	/*
@@ -887,11 +891,11 @@ void bmpDisplayBMP ( void *address,
 
 /*
  **********************************************
- * shellCreateTaskBar:
+ * terminalCreateTaskBar:
  *
  */
 
-int shellCreateTaskBar (){
+int terminalCreateTaskBar (){
 	
 	// Tamanho da tela.	
 	unsigned long ScreenWidth = apiGetSystemMetrics(1);
@@ -942,10 +946,9 @@ int shellCreateTaskBar (){
 //testando botão.
 //quando clicamos no menu da barra de tarefas.
 //todo mudar o nome da função.
-int shellTestButtons (){
-	
-	
-	
+
+int terminalTestButtons (){
+		
 	// Tamanho da tela.	
 	unsigned long ScreenWidth = apiGetSystemMetrics(1);
     unsigned long ScreenHeight = apiGetSystemMetrics(2); 	
@@ -962,7 +965,6 @@ int shellTestButtons (){
 	unsigned long app4Top = app1Top;
 	
 	
-    
 	//
 	// botão de reboot
 	//
@@ -1014,6 +1016,7 @@ int shellTestButtons (){
     	
     return 0;	
 }
+
 
 //
 // End.

@@ -42,7 +42,7 @@ APIOBJ  = ../../../../lib/gramlibs/api02/obj
 GWS    = gws/include/   
 #GWSOBJ = gws/obj cancelado
 
-
+TERMINAL    = terminal/include/   
 
 	##
 	## Objects
@@ -53,9 +53,9 @@ myObjects = crt0.o main.o \
 stubs.o \
 ctype.o stdio.o stdlib.o string.o conio.o socket.o signal.o unistd.o \
 api.o \
-shellui.o builtins.o desktop.o login.o tests.o \
-pixel.o line.o rect.o char.o gws.o    
-
+builtins.o desktop.o login.o tests.o \
+pixel.o line.o rect.o char.o gws.o \
+terminal.o termui.o   
 
 
 
@@ -74,11 +74,11 @@ main.o:
 	gcc  -c  main.c -I $(LIBC) -I $(API01) -I $(GWS) $(CFLAGS) -o main.o
 
 all-c:
-	gcc  -c  shellui.c   -I $(LIBC) -I $(API01) -I $(GWS) $(CFLAGS) -o shellui.o
+
 	gcc  -c  builtins.c  -I $(LIBC) -I $(API01) -I $(GWS) $(CFLAGS) -o builtins.o
 	gcc  -c  login.c     -I $(LIBC) -I $(API01) -I $(GWS) $(CFLAGS) -o login.o
 	gcc  -c  tests.c     -I $(LIBC) -I $(API01) -I $(GWS) $(CFLAGS) -o tests.o
-	gcc  -c  desktop.c   -I $(LIBC) -I $(API01) -I $(GWS) $(CFLAGS) -o desktop.o	
+
 	
 #gws
 	gcc  -c  gws/src/gws/char.c     -I $(LIBC) -I $(API01) -I $(GWS) $(CFLAGS) -o char.o
@@ -87,12 +87,18 @@ all-c:
 	gcc  -c  gws/src/gws/rect.c     -I $(LIBC) -I $(API01) -I $(GWS) $(CFLAGS) -o rect.o
 	gcc  -c  gws/src/gws.c          -I $(LIBC) -I $(API01) -I $(GWS) $(CFLAGS) -o gws.o
 # ...	
+
+#terminal
+	gcc  -c  terminal/src/terminal.c  -I $(LIBC) -I $(API01) -I $(TERMINAL) $(CFLAGS) -o terminal.o
+	gcc  -c  terminal/src/termui.c    -I $(LIBC) -I $(API01) -I $(TERMINAL) -I $(GWS) -I . $(CFLAGS) -o termui.o
+	gcc  -c  terminal/src/desktop.c   -I $(LIBC) -I $(API01) -I $(TERMINAL) -I $(GWS) -I . $(CFLAGS) -o desktop.o	
 	
 	
 #	gcc  -c  parser.c    -I ../../../include/libc/ $(CFLAGS) -o parser.o
 #	gcc  -c  lexer.c     -I ../../../include/libc/ $(CFLAGS) -o lexer.o
 #	gcc  -c  net.c       -I ../../../include/libc/ $(CFLAGS) -o net.o
-#	gcc  -c  terminal.c  -I ../../../include/libc/ $(CFLAGS) -o terminal.o
+
+
 
 	cp $(APIOBJ)/api.o .
 	
