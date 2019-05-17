@@ -1,9 +1,9 @@
 /*
  * File: main.c 
  *
- * Essa é uma versão do shell apenas par ao kernel norax,
- * deve ser full screens sem frames. Só o suficiente para digitar
- * linhas de comando.
+ * About: It's a multi-porpose application for gramado kernel development support.
+ *        It's a terminal, a shell and a graphical server.
+ *
  *
  * Gramado Core Shell.
  * A shell to run only on Gramado Core environment. 
