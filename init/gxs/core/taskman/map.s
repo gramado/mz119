@@ -326,15 +326,15 @@ Linker script and memory map
  *fill*         0x00000000004a7515      0xaeb 
 
 .iplt           0x00000000004a8000        0x0
- .iplt          0x00000000004a8000        0x0 stubs.o
+ .iplt          0x00000000004a8000        0x0 crt0.o
 
 .rodata         0x00000000004a8000      0xeae
  .rodata        0x00000000004a8000        0x6 crt0.o
  *fill*         0x00000000004a8006        0x2 
- .rodata        0x00000000004a8008      0x1f1 main.o
- *fill*         0x00000000004a81f9        0x3 
- .rodata        0x00000000004a81fc      0x3ab api.o
- *fill*         0x00000000004a85a7       0x19 
+ .rodata        0x00000000004a8008      0x201 main.o
+ *fill*         0x00000000004a8209        0x3 
+ .rodata        0x00000000004a820c      0x3ab api.o
+ *fill*         0x00000000004a85b7        0x9 
  .rodata        0x00000000004a85c0      0x100 ctype.o
                 0x00000000004a85c0                _ctype
  .rodata        0x00000000004a86c0      0x2d4 stdio.o
@@ -362,46 +362,41 @@ Linker script and memory map
  .eh_frame      0x00000000004aaf44       0x24 stubs.o
                                          0x3c (size before relaxing)
 
-.note.gnu.property
-                0x00000000004aaf68       0x1c
- .note.gnu.property
-                0x00000000004aaf68       0x1c stubs.o
+.rel.dyn        0x00000000004aaf68        0x0
+ .rel.got       0x00000000004aaf68        0x0 crt0.o
+ .rel.iplt      0x00000000004aaf68        0x0 crt0.o
+ .rel.text      0x00000000004aaf68        0x0 crt0.o
 
-.rel.dyn        0x00000000004aaf84        0x0
- .rel.got       0x00000000004aaf84        0x0 stubs.o
- .rel.iplt      0x00000000004aaf84        0x0 stubs.o
- .rel.text      0x00000000004aaf84        0x0 stubs.o
-
-.data           0x00000000004aafa0     0x1060
-                0x00000000004aafa0                data = .
-                0x00000000004aafa0                _data = .
-                0x00000000004aafa0                __data = .
+.data           0x00000000004aaf80     0x1080
+                0x00000000004aaf80                data = .
+                0x00000000004aaf80                _data = .
+                0x00000000004aaf80                __data = .
  *(.data)
- .data          0x00000000004aafa0      0x448 crt0.o
- *fill*         0x00000000004ab3e8       0x18 
- .data          0x00000000004ab400      0x444 main.o
-                0x00000000004ab840                listening
- *fill*         0x00000000004ab844       0x1c 
- .data          0x00000000004ab860      0x440 api.o
- .data          0x00000000004abca0        0x0 ctype.o
- .data          0x00000000004abca0        0x0 stdio.o
- .data          0x00000000004abca0        0x8 stdlib.o
-                0x00000000004abca0                _infinity
- .data          0x00000000004abca8        0x0 string.o
- .data          0x00000000004abca8        0x0 conio.o
- .data          0x00000000004abca8        0x0 unistd.o
- .data          0x00000000004abca8        0x0 stubs.o
+ .data          0x00000000004aaf80      0x448 crt0.o
+ *fill*         0x00000000004ab3c8       0x18 
+ .data          0x00000000004ab3e0      0x444 main.o
+                0x00000000004ab820                listening
+ *fill*         0x00000000004ab824       0x1c 
+ .data          0x00000000004ab840      0x440 api.o
+ .data          0x00000000004abc80        0x0 ctype.o
+ .data          0x00000000004abc80        0x0 stdio.o
+ .data          0x00000000004abc80        0x8 stdlib.o
+                0x00000000004abc80                _infinity
+ .data          0x00000000004abc88        0x0 string.o
+ .data          0x00000000004abc88        0x0 conio.o
+ .data          0x00000000004abc88        0x0 unistd.o
+ .data          0x00000000004abc88        0x0 stubs.o
                 0x00000000004ac000                . = ALIGN (0x1000)
- *fill*         0x00000000004abca8      0x358 
+ *fill*         0x00000000004abc88      0x378 
 
 .got            0x00000000004ac000        0x0
- .got           0x00000000004ac000        0x0 stubs.o
+ .got           0x00000000004ac000        0x0 crt0.o
 
 .got.plt        0x00000000004ac000        0x0
- .got.plt       0x00000000004ac000        0x0 stubs.o
+ .got.plt       0x00000000004ac000        0x0 crt0.o
 
 .igot.plt       0x00000000004ac000        0x0
- .igot.plt      0x00000000004ac000        0x0 stubs.o
+ .igot.plt      0x00000000004ac000        0x0 crt0.o
 
 .bss            0x00000000004ac000    0x127b4
                 0x00000000004ac000                bss = .
@@ -494,18 +489,19 @@ LOAD unistd.o
 LOAD stubs.o
 OUTPUT(TASKMAN.BIN elf32-i386)
 
-.comment        0x0000000000000000       0x1a
- .comment       0x0000000000000000       0x1a crt0.o
+.comment        0x0000000000000000       0x2b
+ .comment       0x0000000000000000       0x11 crt0.o
+                                         0x12 (size before relaxing)
+ .comment       0x0000000000000011       0x12 main.o
+ .comment       0x0000000000000011       0x1a api.o
                                          0x1b (size before relaxing)
- .comment       0x000000000000001a       0x1b main.o
- .comment       0x000000000000001a       0x1b api.o
- .comment       0x000000000000001a       0x1b ctype.o
- .comment       0x000000000000001a       0x1b stdio.o
- .comment       0x000000000000001a       0x1b stdlib.o
- .comment       0x000000000000001a       0x1b string.o
- .comment       0x000000000000001a       0x1b conio.o
- .comment       0x000000000000001a       0x1b unistd.o
- .comment       0x000000000000001a       0x1b stubs.o
+ .comment       0x000000000000002b       0x1b ctype.o
+ .comment       0x000000000000002b       0x1b stdio.o
+ .comment       0x000000000000002b       0x1b stdlib.o
+ .comment       0x000000000000002b       0x1b string.o
+ .comment       0x000000000000002b       0x1b conio.o
+ .comment       0x000000000000002b       0x1b unistd.o
+ .comment       0x000000000000002b       0x1b stubs.o
 
 .note.GNU-stack
                 0x0000000000000000        0x0

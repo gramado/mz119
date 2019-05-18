@@ -501,7 +501,7 @@ int main ( int argc, char *argv[] ){
 #endif	
 	
 	//window, x, y, color, string.
-    apiDrawText ( NULL, 0, 16, COLOR_RED, "TASKMAN.BIN is alive!" );
+    apiDrawText ( NULL, 0, 16, COLOR_RED, "Gramado X Server Taskman is alive!" );
 	refresh_screen ();
 	
 //loop:
@@ -875,9 +875,12 @@ int main ( int argc, char *argv[] ){
 	//
 	
 done:   
-   //exit(0);         //Obs: Não usar por enquanto. 
-   return (int) 0;    //Obs: Retornar com um valor para cr0.s ou head.s.
-};
+   
+    //exit (0);         //Obs: Não usar por enquanto. 
+    
+    // Obs: Retornar com um valor para cr0.s ou head.s.
+    return 0;    
+}
 
 
 
