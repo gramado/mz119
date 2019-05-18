@@ -1,5 +1,5 @@
 /*
- * File: unb\ldisc.c
+ * File: ldisc.c
  *
  * Descrição:
  *    Esse será o gerenciador de Line Discipline.
@@ -11,6 +11,18 @@
  *
  */
 
+
+// #todo
+// A disciplina de linhas poderia chamar o procedimento de janelas padrão
+// do gramado x-server ao invés de chamar o procedimento de janelas do sistema.
+
+
+// #importante
+// Essas rotinas estão ligadas as formas de input.
+// seus possíveis lugares são: 
+// + line discipline
+// + x server
+// + terminal virtual.
 
 #include <kernel.h>
 
@@ -126,6 +138,11 @@ LINE_DISCIPLINE ( struct window_d *window,
  * encontrar um lugar melhor.
  */
 	
+// #importante
+// A disciplina de linha referente ao input de teclado pode
+// estar presente no x server. Ainda mais que lida com janelas.
+
+
 int KEYBOARD_LINE_DISCIPLINE ( unsigned char SC ){
 	
 	struct thread_d *t;		
@@ -536,11 +553,39 @@ done:
 	// ## window ##
 	
 	// #importante
-	// +Pegamos a janela com o foco de entrada, pois ela 
-	// será um elemento da mensagem.	
-	// Mas enviaremos a mensagem para a fila da thread atual.
+	// +Pegamos a janela com o foco de entrada, pois ela será um elemento 
+	// da mensagem.	
+	// Mas enviaremos a mensagem para a fila da thread de input associada
+	// a essa janela.
 	
+	// ### super importante ###
+    // Estamos enviando esse input para a thread de input de uma janela.
+	// Mas poderíamos por padrão mandar para uma thread específica do
+	// servidor de recursos gráficos, x server, ele por sua vez
+	// envia a mensagem para o servidor de janelas que mandará para
+	// thread de input associada à janela com o foco de entrada.
+	
+	// >> kbd driver >> ldisc >> x server >> wm >> thread.
 
+	
+	// #importante
+	// Caso tenhamos um servidor x-server carregável e funcionando
+	// então podemos mandar a mensagem para a thread de controle dele.
+	// Essa mensagem será armazenada. O wm chamará o servidor e pegará essa
+	// mensagem.
+	
+	//if ( x_server_status == 1)
+	//{
+	//	t = x_server_thread;
+	//}
+	
+	
+	// #importante
+	// Mas como o wm já está presente aqui no kernel, então
+	// já podemos enviar para o window manager. Ou melhor
+	// para a thread de input associada a janela com o foco.
+	
+	
 	w = (void *) windowList[window_with_focus];
 	
 	if ( (void *) w == NULL )
@@ -596,42 +641,41 @@ done:
 		t->long2 = tmp;    // Scan code.
 			
 		t->newmessageFlag = 1;
-		
+
+		// F5 F6 F7 F8		
 		// Teclas para teste.
-		// F5 F6 F7 F8
 		// Teclas usadas exclusivamente pelo 
 		// procedimento de janelas do sistema.
 		// Os aplicativos não devem usar essas teclas por enquanto.
 		// Então Essas teclas funcionarão mesmo que os aplicativos estejam com problema.
 		
 	    switch (message)
-		{
+		{		
 			case MSG_SYSKEYDOWN:  
-			    switch (ch)
-				{
-					// Used on system procedure for tests.
+			    switch (ch){
 					case VK_F5:	
 					case VK_F6:	
 					case VK_F7:	
 					case VK_F8:	
-		               
 						system_procedure (  w, (int) message, 
 					        (unsigned long) ch, (unsigned long) tmp );					
-					    
 						break;
 				}
-			break;
+			    break;
 		};
 	};	
  
-    return (int) 0;
+    return 0;
 }
-
 
  
 // Mouse #todo
 // A entrada é um ponteiro para um buffer que contenha os 
 // 3 chars usados pelo mouse.
+
+// #importante
+// A disciplina de linha referente ao input de teclado pode
+// estar presente no x server. Ainda mais que lida com janelas.
 
 int MOUSE_LINE_DISCIPLINE ( void *buffer ) {
 	

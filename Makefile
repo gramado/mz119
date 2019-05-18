@@ -14,7 +14,7 @@
 VERSION = 1
 PATCHLEVEL = 5
 SUBLEVEL = 0
-EXTRAVERSION = -rc5
+EXTRAVERSION = -rc6
 NAME = 
 
 
@@ -113,10 +113,9 @@ ifeq ($(ARCH),x86)
 	
 	EXECVE_OBJECTS := pipe.o socket.o cedge.o ctype.o  stdio.o stdlib.o string.o unistd.o \
 	devmgr.o \
-	ldisc.o \
 	gde_serv.o \
 	debug.o diskvol.o install.o object.o runtime.o \
-	abort.o info.o io.o modules.o proc.o signal.o sm.o \
+	abort.o info.o io.o modules.o signal.o sm.o \
 	init.o system.o \
 	execve.o 
 	
@@ -129,8 +128,8 @@ ifeq ($(ARCH),x86)
 	pci.o pciinfo.o pciscan.o \
 	tty.o \
 	usb.o \
-	video.o vsync.o screen.o \
-	i8042.o keyboard.o mouse.o ps2kbd.o ps2mouse.o \
+	video.o vsync.o screen.o xproc.o \
+	i8042.o keyboard.o mouse.o ps2kbd.o ps2mouse.o ldisc.o \
 	apic.o pic.o rtc.o serial.o timer.o  
 	
 	KSERVERS_OBJECTS := cf.o format.o fs.o read.o search.o write.o \
@@ -309,21 +308,21 @@ compile-kernel:
 	gcc -c kernel/kdrivers/x/video.c   -I include/ $(CFLAGS) -o video.o
 	gcc -c kernel/kdrivers/x/vsync.c   -I include/ $(CFLAGS) -o vsync.o
 	gcc -c kernel/kdrivers/x/screen.c  -I include/ $(CFLAGS) -o screen.o
+	gcc -c kernel/kdrivers/x/xproc.c   -I include/ $(CFLAGS) -o xproc.o	
 	# kdrivers/x/i8042
 	gcc -c kernel/kdrivers/x/i8042/i8042.c     -I include/ $(CFLAGS) -o i8042.o
 	gcc -c kernel/kdrivers/x/i8042/keyboard.c  -I include/ $(CFLAGS) -o keyboard.o
 	gcc -c kernel/kdrivers/x/i8042/mouse.c     -I include/ $(CFLAGS) -o mouse.o
 	gcc -c kernel/kdrivers/x/i8042/ps2kbd.c    -I include/ $(CFLAGS) -o ps2kbd.o
 	gcc -c kernel/kdrivers/x/i8042/ps2mouse.c  -I include/ $(CFLAGS) -o ps2mouse.o
-
+	gcc -c kernel/kdrivers/x/i8042/ldisc.c     -I include/ $(CFLAGS) -o ldisc.o
 
 
 	# devmgr
 	gcc -c kernel/execve/devmgr/devmgr.c  -I include/ $(CFLAGS) -o devmgr.o
 
 
-	# execve/ldisc
-	gcc -c kernel/execve/ldisc/ldisc.c  -I include/ $(CFLAGS) -o ldisc.o
+
 
 	# /fs
 	gcc -c kernel/kservers/fs/fs.c      -I include/ $(CFLAGS) -o fs.o
@@ -351,7 +350,6 @@ compile-kernel:
 	gcc -c kernel/execve/sm/sys/info.c     -I include/ $(CFLAGS) -o info.o
 	gcc -c kernel/execve/sm/sys/io.c       -I include/ $(CFLAGS) -o io.o
 	gcc -c kernel/execve/sm/sys/modules.c  -I include/ $(CFLAGS) -o modules.o
-	gcc -c kernel/execve/sm/sys/proc.c     -I include/ $(CFLAGS) -o proc.o
 	gcc -c kernel/execve/sm/sys/signal.c   -I include/ $(CFLAGS) -o signal.o
 	gcc -c kernel/execve/sm/sys/sm.c       -I include/ $(CFLAGS) -o sm.o
 

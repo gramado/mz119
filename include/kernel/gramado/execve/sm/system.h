@@ -427,19 +427,7 @@ void systemSetTerminalRectangle( unsigned long left,
 								 unsigned long height );
 			   
 												
-/*
- * system_procedure:
- *     O procedimento default do sistema.
- *     Obs: Essa rotina está em procedure.c.  
- */			
- 
-unsigned long 
-system_procedure ( struct window_d *window, 
-                   int msg, 
-				   unsigned long long1, 
-				   unsigned long long2 );
-
-													  
+												  
 /*
  * systemcall:
  *     @todo: Essa função deve ser chamada via kernel request quando em kernel mode.

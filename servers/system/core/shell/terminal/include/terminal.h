@@ -116,11 +116,20 @@ struct terminal_line
 	int pos;
 };
 
-//PROVISÓRIO
-//O TEXTO TEM 32 LINHAS NO MÁXIMO.
-//ESSA É A PARTE DO TEXTO QUE PODERÁ SER MANIPULADA,
-//O RESTO DO TEXTO DEVERÁ FICAR ESPERANDO NO BUFFER.
-//#IMPORTANTE: 25 DESSAS 32 LINHAS SERÃO VISÍVEIS.
+// #importante
+// É nesse buffer que estamos escrevendo. É como um arquivo.
+
+// PROVISÓRIO
+// O TEXTO TEM 32 LINHAS NO MÁXIMO.
+// ESSA É A PARTE DO TEXTO QUE PODERÁ SER MANIPULADA,
+// O RESTO DO TEXTO DEVERÁ FICAR ESPERANDO NO BUFFER.
+// #IMPORTANTE: 25 DESSAS 32 LINHAS SERÃO VISÍVEIS.
+// #importante: O início dessas estruturas pode representar o inpicio de 
+// um arquivo.
+// Esse arquivo pode ser um buffer
+// Um arquivo no servidor de recursos gráficos pode ser usado para escrevermos 
+// nele usando as rotinas da libc.
+
 struct terminal_line LINES[32]; 
 
 

@@ -246,12 +246,16 @@ extern void do_executa_new_task (void);
 #include <kernel/gramado/kdrivers/floppy/floppy.h>
 
 
+//
+// gramado x-server
+//
+
+#include <kernel/gramado/kdrivers/x/xproc.h>
+
 #include <kernel/gramado/kdrivers/x/i8042/keyboard.h>
 #include <kernel/gramado/kdrivers/x/i8042/vk.h>
 #include <kernel/gramado/kdrivers/x/i8042/kbdabnt2.h>
-
-
-#include <kernel/gramado/execve/ldisc/ldisc.h>
+#include <kernel/gramado/kdrivers/x/i8042/ldisc.h>
 
 
 #include <kernel/gramado/kdrivers/ide/ide.h>
