@@ -2151,12 +2151,11 @@ Linker script and memory map
  *(.rodata)
  .rodata        0x00000000c002b000       0xba main.o
  *fill*         0x00000000c002b0ba        0x2 
- .rodata        0x00000000c002b0bc      0x3a2 x86main.o
- .rodata        0x00000000c002b45e        0xf pipe.o
- *fill*         0x00000000c002b46d        0x3 
- .rodata        0x00000000c002b470       0x71 socket.o
- .rodata        0x00000000c002b4e1       0x54 cedge.o
- *fill*         0x00000000c002b535        0xb 
+ .rodata        0x00000000c002b0bc      0x3a1 x86main.o
+ .rodata        0x00000000c002b45d        0xf pipe.o
+ .rodata        0x00000000c002b46c       0x71 socket.o
+ .rodata        0x00000000c002b4dd       0x54 cedge.o
+ *fill*         0x00000000c002b531        0xf 
  .rodata        0x00000000c002b540      0x120 ctype.o
                 0x00000000c002b560                __ctype
  .rodata        0x00000000c002b660      0x1ec stdio.o
