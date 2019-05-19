@@ -94,39 +94,12 @@ void x86mainStartFirstThread ( void ){
     // Select the idle thread.
     //
     
-    Thread = IdleThread; 
-    
-    /*
-    if (n < 0)
-    {
-        printf ("x86mainStartFirstThread: thread number fail");
-        die ();
-    }
-
-    switch (n){
-
-        case 1:
-            Thread = IdleThread; 
-            break;
-
-        case 2:
-            Thread = ShellThread;
-            break;
-
-        case 3:
-            Thread = TaskManThread;
-            break;
-
-        default:
-            panic ("x86mainStartFirstThread.default: thread number fail");
-            break;
-    };
-    */
-
-
 	// #importante
 	// Sempre checar a validade da estrutura.
-
+    
+    
+    Thread = IdleThread; 
+    
 
     if ( (void *) Thread == NULL )
     {
@@ -136,13 +109,13 @@ void x86mainStartFirstThread ( void ){
 
         if ( Thread->saved != 0 )
         {
-            printf("x86mainStartFirstThread: saved\n");
+            printf ("x86mainStartFirstThread: saved\n");
             die ();
         };
 
         if ( Thread->used != 1 || Thread->magic != 1234)
         {
-            printf("x86mainStartFirstThread: tid={%d} magic \n", Thread->tid);
+            printf ("x86mainStartFirstThread: tid={%d} magic \n", Thread->tid);
             die ();
         };
 
@@ -172,28 +145,18 @@ void x86mainStartFirstThread ( void ){
 	// Done!
 	//
 
-	// #bugbug
-	// Na máquina gigabyte/intel o sistema as vezes falha logo após essa mensagem.
-
-	// #debug
-	//printf ("x86mainStartFirstThread: Starting idle TID=%d (debug) \n", Thread->tid );
-	//refresh_screen (); 
-
 
     for ( i=0; i <= PRIORITY_MAX; i++ ){
 
         dispatcherReadyList[i] = (unsigned long) Thread;
     }
 
-
     IncrementDispatcherCount (SELECT_IDLE_COUNT);
 
 
-	//
 	// turn_task_switch_on:
 	//  + Creates a vector for timer irq, IRQ0.
 	//  + Enable taskswitch. 
-	//
 
     turn_task_switch_on ();
 
@@ -264,15 +227,11 @@ void x86mainStartFirstThread ( void ){
 
     unsigned char *buff1 = (unsigned char *) 0x00400000;
     
-    /*
-    unsigned char *buff2 = (unsigned char *) 0x00450000;
-    unsigned char *buff3 = (unsigned char *) 0x004A0000;	
-    */
+
 
 	//init
 
-   // if (n == 1 )
-   // {
+
         if ( buff1[0] != 0x7F ||
              buff1[1] != 'E' ||
              buff1[2] != 'L' ||
@@ -301,70 +260,7 @@ void x86mainStartFirstThread ( void ){
                        " mov %ax, %fs    \n"
                        " mov %ax, %gs    \n"
                        " iret \n" );
-   // };
 
-
-	/*
-    //shell
-    if (n == 2 )
-    {		
-	    if ( buff2[0] != 0x7F ||
-		     buff2[1] != 'E' ||
-		     buff2[2] != 'L' ||
-		     buff2[3] != 'F' )
-	    {
-	        printf ("x86mainStartFirstThread: shell .ELF signature");
-		    die ();
-	    }		
-	
-        printf (">>> IRET\n");
-        refresh_screen ();  
-        
-        asm volatile ( " movl $0x003FFFF0, %esp \n" 
-                       " movl $0x23,       %ds:0x10(%esp)  \n"  // ss.
-                       " movl $0x0049FFF0, %ds:0x0C(%esp)  \n"  // esp 
-                       " movl $0x3200,     %ds:0x08(%esp)  \n"  // eflags.
-                       " movl $0x1B,       %ds:0x04(%esp)  \n"  // cs.
-                       " movl $0x00451000, %ds:0x00(%esp)  \n"  // eip. 
-                       " movl $0x23, %eax  \n"
-                       " mov %ax, %ds    \n"
-                       " mov %ax, %es    \n"
-                       " mov %ax, %fs    \n"
-                       " mov %ax, %gs    \n"
-                       " iret \n" );
-	};
-	*/
-    
-    /*
-    //taskman
-    if (n == 3 )
-    {		
-	    if ( buff3[0] != 0x7F ||
-		     buff3[1] != 'E' ||
-		     buff3[2] != 'L' ||
-		     buff3[3] != 'F' )
-	    {
-	        printf ("x86mainStartFirstThread: taskman .ELF signature");
-		    die ();
-	    }
-
-        printf (">>> IRET\n");
-        refresh_screen ();         
-    
-        asm volatile ( " movl $0x003FFFF0, %esp \n" 
-                       " movl $0x23,       %ds:0x10(%esp)  \n"  // ss.
-                       " movl $0x004FFFF0, %ds:0x0C(%esp)  \n"  // esp 
-                       " movl $0x3200,     %ds:0x08(%esp)  \n"  // eflags.
-                       " movl $0x1B,       %ds:0x04(%esp)  \n"  // cs.
-                       " movl $0x004A1000, %ds:0x00(%esp)  \n"  // eip. 
-                       " movl $0x23, %eax  \n"
-                       " mov %ax, %ds    \n"
-                       " mov %ax, %es    \n"
-                       " mov %ax, %fs    \n"
-                       " mov %ax, %gs    \n"
-                       " iret \n" );
-	};
-    */
 
 	// Paranoia
     panic ("x86mainStartFirstThread: FAIL");
@@ -372,9 +268,9 @@ void x86mainStartFirstThread ( void ){
 
 
 //inicializa s'o o init em /init
-void x86StartInit (void)
-{
-//
+void x86StartInit (void){
+    
+    //
 	// ## INIT ##
 	//
 
@@ -1010,31 +906,7 @@ done:
    
 		x86mainStartFirstThread ();        
 
- /*       
-// Isso só executa o INIT se ele foi criado.        
-#ifdef ENTRY_INITIALIZE_INIT
-		printf("x86main: Initializing INIT ..\n");
-		x86mainStartFirstThread (1);
-		//startStartIdle() ;
-		goto fail;
-#endif		
-		
-// Isso só executa o SHELL se ele foi criado.
-#ifdef ENTRY_INITIALIZE_SHELL 
-        printf("x86main: Initializing SHELL ..\n");
-		x86mainStartFirstThread (2);
-	    goto fail;
-#endif
-
-// Isso só executa o TASKMAN se ele foi criado.
-#ifdef ENTRY_INITIALIZE_TASKMAN
-    printf("x86main: Initializing TASKMAN ..\n");
-	x86mainStartFirstThread (3);	
-	goto fail;
-#endif
-*/
-
-        printf("x86main: No idle thread selected.\n");
+        printf ("x86main: No idle thread selected\n");
         goto fail;
     };
 
