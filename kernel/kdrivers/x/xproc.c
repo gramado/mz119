@@ -580,26 +580,25 @@ system_procedure ( struct window_d *window,
 
 					printf("F5:\n"); 
 					
+					//process info
+					show_process_information ();					
+					
 					//testando driver ahci
 					//ahciSATAInitialize (1);
 					//refresh_screen();
 					
 					//mostra informações sobre as portas ide.
 					//vamos ver os valores obtidos nas BARs.
-					show_ide_info ();
+					//show_ide_info ();
 					refresh_screen();
 					
 					//mostra as estruturas de pagina usadas para paginação no pagedpool.
 					//número de entradas.
 					//showFreepagedMemory (32);
 					//showFreepagedMemory (64);
-					//process info
-					//show_process_information ();
 					
-					//Hz
-					//testando ajuste de precisão.
+					//Hz - testando ajuste de precisão.
 					//timerInit8253 ( (unsigned long) 100 );
-					//timerInit8253 ( (unsigned long) 50 );
 						
 					//shell gws
 					//xxxtestSHELLServer();

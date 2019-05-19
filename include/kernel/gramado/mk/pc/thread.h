@@ -622,6 +622,10 @@ struct thread_list_d
 //DispatcherList[2].Threads[4].tid
 
 
+//clona uma thread e retorna o ponteira da clone.
+struct thread_d *threadCopyThread ( struct thread_d *thread );
+
+
 /* 
  * create_thread: 
  */ 

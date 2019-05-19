@@ -457,7 +457,10 @@ struct process_d
 	//ponteiro para a estrutura do diretório de páginas do processo.
 	struct page_directory_d *page_directory;  
 
-
+	//
+	// Image support.	
+	//
+	
 	// #IMPORTANTE
 	// Com base na origem da imagem e no seu tamanho podemos
 	// determinar a quantidade de páginas que o programa principal do processo
@@ -467,15 +470,17 @@ struct process_d
 	// #obs: A lista é grande. Então devemos fazer apenas um ponteiro para 
 	// ela, ou colocarmos um ponteiro de estrutura head de uma lista encadeada.
 	// #importante: esssa estrutura tem que ser simples. Com poucos elementos.
+	// Poderemos usar essas informações para clonar o processo.
 
-	//Image support.
 
-	unsigned long Image;          //Base da imagem do processo.
-	unsigned long ImageSize;      //Tamanho da imagem do processo.
+	// Base da imagem do processo.
+	// Tamanho da imagem do processo.
+	// Quantas páginas foram usadas por essa imagem. ImageSize/PageSize
 	
-	//quantas páginas foram usadas por essa imagem.
-	//ImageSize/PageSize
+	unsigned long Image;          
+	unsigned long ImageSize;      
 	unsigned long PagesPerImage; 
+
 	
 	//#todo: estrutura com informações sobre a imagem do processo.
 	//see: pc/image.h
@@ -866,7 +871,10 @@ void show_currentprocess_info (void);
 void show_process_information (void);
 
 
- 
+// Copia a imagem do processo que está carregada na memória.
+int processCopyMemory ( struct process_d *process, struct process_d *clone );
+
+// copia os recursos do processo.
 int processCopyProcess ( pid_t p1, pid_t p2 );
 
 

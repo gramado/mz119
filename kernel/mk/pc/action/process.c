@@ -205,6 +205,11 @@ do_clone:
 			printf ("do_fork_process: processCopyProcess fail\n");
 		    goto fail;	
 		}
+		
+		
+		//copia a memória usada pela imagem do processo.
+		processCopyMemory ( Current, Clone );
+		
 		    
 		// Ok, retornando o número do processo clonado.
 		
@@ -356,6 +361,64 @@ int processSendSignal (struct process_d *p, unsigned long signal){
 }
 
 
+
+int processCopyMemory ( struct process_d *process, struct process_d *clone ){
+
+	if ( (void *) process == NULL )
+		return -1;
+	
+	if ( (void *) clone == NULL )
+		return -1;
+	
+	unsigned long new_base;
+	
+	// 200 KB.
+	
+	//new_base = (unsigned long) malloc ( 1024 * 200 );  //>> #bugbug: ring 0, precisa ser ring 3.
+	new_base = (unsigned long) allocPages ( (1024*200)/4096 ); //>>  ring 3 ??.
+	//new_base = (unsigned long) allocPages ( 4 ); //>>  ring 3 ??.	
+	
+	if ( new_base == 0 )
+	{
+		printf ("processCopyMemory: fail\n");
+		return -1;
+	}
+	
+	printf ("copying memory ...\n");
+	
+	//copia 200 KB
+	memcpy ( (void *) new_base, (const void *) process->Image, ( 1024 * 200 ) );
+	
+	//printf ("1 ...\n");
+	
+	// transformando o endereço virtual em físico.
+	unsigned long new_base_PA = (unsigned long) virtual_to_physical ( new_base, gKernelPageDirectoryAddress ); 
+	
+	printf ("new_base_PA=%x DirectoryPA=%x ...\n",new_base_PA, clone->DirectoryPA);
+	
+	// Load here.
+	// Altera uma pagetable do diretório de páginas de um processo.
+	// IN: endereço físico do diretório de páginas do processo, indice da entrada
+	// que vamos alterar, endereço físico da região de 4MB que vamos mapear.
+	// ENTRY_USERMODE_PAGES referece ao indice para o endereço virtual 0x400000
+	
+	// #bugbug
+	// Essa função está falhando. #PF.
+	
+	CreatePageTable ( clone->DirectoryVA, ENTRY_USERMODE_PAGES, new_base_PA );
+	
+	printf ("3 ...\n");
+	
+	// O processo está num novo endereço segundo o diretório de páginas do kernel.
+	clone->Image = (unsigned long) new_base;
+	
+	printf ("processCopyMemory: ok\n");
+	
+	refresh_screen();
+    return 0;
+}
+
+
 /*
  ****************************************
  * processCopyProcess
@@ -462,6 +525,24 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 	
 	Process2->base_priority = Process1->base_priority;
 	Process2->priority = Process1->priority;	
+	
+	
+	//
+	// #todo: Precisamos copiar todas as threads
+	// vamos começar pela thread de controle.
+	// teoriacamente elas precisam ter o mesmo endereço virtual ...
+	// mas estão em endereços físicos diferentes.
+	// #bugbug precisamos clonar a thread.
+	
+	// ############### #IMPORTANTE #################
+	// #bugbug
+	// precisamos salvar o contexto antes de chamarmos o serviço fork()
+	// Pois se não iremos retomar a thread clone em um ponto antes de chamarmos o fork,
+	// que é onde está o último ponto de salvamento.
+	
+	// clonando a thread de controle.
+	
+	Process2->control = (struct thread_d *) threadCopyThread ( Process1->control );
 	
 	//?? herda a lista de threads ??
 	Process2->threadListHead = Process1->threadListHead;
@@ -1845,7 +1926,7 @@ int xxxloadHere4MB ( struct process_d *process, unsigned long region4MB_PA )
     // Cria uma pagetable em um dado diretório de páginas.
     // Uma região de 4MB da memória física é mapeanda nessa pt.
     
-    CreatePageTable ( process->DirectoryPA, ENTRY_USERMODE_PAGES, region4MB_PA );
+    CreatePageTable ( process->DirectoryVA, ENTRY_USERMODE_PAGES, region4MB_PA );
     
     return 0;
 }

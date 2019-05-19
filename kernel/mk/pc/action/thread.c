@@ -26,6 +26,210 @@
 #include <kernel.h>
 
 
+
+struct thread_d *threadCopyThread ( struct thread_d *thread )
+{
+    struct thread_d *clone;
+
+	
+	clone = (struct thread_d *) sys_create_thread ( 
+	                        NULL,             // w. station 
+							NULL,             // desktop
+							NULL,             // w.
+							0,             // init eip
+							0,             // init stack
+							current_process,  // pid (determinado)(provisório).
+							"clone-thread" );    // name
+	
+	
+	
+      // Caracteristicas.
+
+	    clone->type = thread->type; 
+	    clone->state = thread->state;  
+		//Apenas Initialized, pois a função SelectForExecution
+		//seleciona uma thread para a execução colocando ela no
+		//state Standby.	
+		
+		//@TODO: ISSO DEVERIA VIR POR ARGUMENTO
+        clone->plane = thread->plane;	
+		
+		// A prioridade básica da thread é igual a prioridade básica do processo.
+		// Process->base_priority;
+		// priority; A prioridade dinâmica da thread foi passada por argumento.
+		clone->base_priority = thread->base_priority; 
+		clone->priority = thread->priority; 			
+		
+		//IOPL.
+		//Se ela vai rodar em kernel mode ou user mode.
+		//@todo: herdar o mesmo do processo.
+		clone->iopl = thread->iopl;             // Process->iopl;  		
+		clone->saved = thread->saved;                // Saved flag.	
+		clone->preempted = thread->preempted;  // Se pode ou não sofrer preempção.
+		
+		//Heap and Stack.
+	    //Thread->Heap;
+	    //Thread->HeapSize;
+	    //Thread->Stack;
+	    //Thread->StackSize;
+
+        // Temporizadores. 
+        // step - Quantas vezes ela usou o processador no total.  		
+	    // quantum_limit - (9*2);  O boost não deve ultrapassar o limite. 
+		clone->step = thread->step;                           
+        clone->quantum = thread->quantum;    
+        clone->quantum_limit = thread->quantum_limit; 			
+		
+		
+		// runningCount - Tempo rodando antes de parar.
+		// readyCount - Tempo de espera para retomar a execução.
+		// blockedCount - Tempo bloqueada.
+        clone->standbyCount = thread->standbyCount;
+	    
+		clone->runningCount = thread->runningCount;   
+		
+		clone->initial_time_ms = thread->initial_time_ms;
+		clone->total_time_ms = thread->total_time_ms;
+		
+		
+	    //quantidade de tempo rodadndo dado em ms.
+	    clone->runningCount_ms = thread->runningCount_ms;
+		
+	    clone->readyCount = thread->readyCount;      
+	    clone->ready_limit = thread->ready_limit;
+	    clone->waitingCount = thread->waitingCount;
+	    clone->waiting_limit = thread->waiting_limit;
+	    clone->blockedCount = thread->blockedCount;    		
+	    clone->blocked_limit = thread->blocked_limit;
+		
+	    // Not used now. But it works fine.
+		clone->ticks_remaining = thread->ticks_remaining;    	
+
+	    // Signal
+	    // Sinais para threads.
+	    clone->signal = thread->signal;
+        clone->signalMask = thread->signalMask;	
+
+
+		// @todo: 
+		// Essa parte é dependente da arquitetura i386.
+		// Poderá ir pra outro arquivo.
+		
+		// init_stack:
+		// O endereço de início da pilha é passado via argumento.
+		// Então quem chama precisa alocar memória para a pilha.
+		// @todo: Podemos checar a validade dessa pilha ou é problema 
+		// na certa.
+		
+		// init_eip:
+		// O endereço início da sessão de código da thread é 
+		// passado via argumento. Então quem chama essa rotina 
+		// deve providendiar um endereço válido.
+		// Obs: init_eip Aceita endereços inválidos pois a thread 
+		// fecha nesses casos por PG fault. Mas o sistema pode travar 
+		// se for a única thread e um único processo. 
+		
+		//if( init_stack == 0 ){ ... }
+		//if( init_eip == 0 ){ ... }
+		
+		// Contexto x86 usado pela thread.
+		
+		//Context.
+		// ss (0x20 | 3)
+		// cs (0x18 | 3)
+	    clone->ss = thread->ss;    //RING 3.
+	    clone->esp = thread->esp; 
+	    clone->eflags = thread->eflags;
+	    clone->cs = thread->cs;                                
+	    clone->eip = thread->eip; 
+		
+		//O endereço incial, para controle.
+		clone->initial_eip = thread->initial_eip; 
+		
+		// (0x20 | 3)
+	    clone->ds = thread->ds; 
+	    clone->es = thread->es; 
+	    clone->fs = thread->fs; 
+	    clone->gs = thread->gs; 
+	    clone->eax = thread->eax;
+	    clone->ebx = thread->ebx;
+	    clone->ecx = thread->ecx;
+	    clone->edx = thread->edx;
+	    clone->esi = thread->esi;
+	    clone->edi = thread->edi;
+	    clone->ebp = thread->ebp;	
+		
+		//TSS
+		clone->tss = thread->tss;
+		
+		//cpu.
+		//Thread->cpuID = 0;
+		//Thread->confined = 0;
+		//Thread->CurrentProcessor = 0;
+		//Thread->NextProcessor = 0;
+		
+		// @todo: 
+        // O processo dono da thread precisa ter um diretório 
+		// de páginas válido.
+		
+		// #bugbug
+		// Page Directory. (#CR3).
+		// Estamos usando o page directory do processo.
+		// Page directory do processo ao qual a thread pertence.
+		
+		clone->DirectoryPA = thread->DirectoryPA; 
+
+
+        //ServiceTable ..
+        //Ticks ...
+        //DeadLine ... 
+
+		
+		//Thread->PreviousMode  //ring???
+		
+		//Thread->idealprocessornumber
+		
+		//Thread->event
+		
+	    // ORDEM: 
+		// O que segue é referenciado com pouca frequência.
+
+	    clone->waitingCount = thread->waitingCount;    //Tempo esperando algo.
+	    clone->blockedCount = thread->blockedCount;    //Tempo bloqueada.	
+	
+        //À qual processo pertence a thread.  
+		clone->process = thread->process; 	 	                      
+        
+		//Thread->window_station
+		//Thread->desktop
+         
+		
+		//Thread->control_menu_procedure
+		
+		//Thread->wait4pid =
+
+	    int w;
+		//razões para esperar.
+		for ( w=0; w<8; w++ )
+		{
+			clone->wait_reason[w] = thread->wait_reason[w];
+		}
+		
+		//...
+        //@todo:
+        //herdar o quantum do processo.
+        //herdar a afinidade do processo.(cpu affinity) 
+
+        clone->exit_code = thread->exit_code;	
+	
+	
+    	 
+	
+	
+	return (struct thread_d *) clone;
+}
+
+
 /*
  * Obs:
  * Uma forma de proteger a estrutura de thread é deixa-la aqui 
