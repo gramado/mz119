@@ -163,7 +163,7 @@ sixth..     ide5, usually PCI, probed
 //Se as três flags estiverem acionadas, 
 //o kernel criará todos os três processos mas inicializará o init.
 
-#define ENTRY_INITIALIZE_INIT   
+//#define ENTRY_INITIALIZE_INIT   
 //#define ENTRY_INITIALIZE_SHELL   
 //#define ENTRY_INITIALIZE_TASKMAN 
 

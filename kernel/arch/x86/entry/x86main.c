@@ -85,11 +85,18 @@ static inline void mainSetCr3 (unsigned long value){
  * an external interrupt, or a software-generated interrupt.  
  */
 
-void x86mainStartFirstThread ( int n ){
+void x86mainStartFirstThread ( void ){
 
     int i;
     struct thread_d *Thread;
 
+    //
+    // Select the idle thread.
+    //
+    
+    Thread = IdleThread; 
+    
+    /*
     if (n < 0)
     {
         printf ("x86mainStartFirstThread: thread number fail");
@@ -114,6 +121,8 @@ void x86mainStartFirstThread ( int n ){
             panic ("x86mainStartFirstThread.default: thread number fail");
             break;
     };
+    */
+
 
 	// #importante
 	// Sempre checar a validade da estrutura.
@@ -254,14 +263,16 @@ void x86mainStartFirstThread ( int n ){
 	//base dos arquivos.
 
     unsigned char *buff1 = (unsigned char *) 0x00400000;
+    
+    /*
     unsigned char *buff2 = (unsigned char *) 0x00450000;
     unsigned char *buff3 = (unsigned char *) 0x004A0000;	
-
+    */
 
 	//init
 
-    if (n == 1 )
-    {
+   // if (n == 1 )
+   // {
         if ( buff1[0] != 0x7F ||
              buff1[1] != 'E' ||
              buff1[2] != 'L' ||
@@ -290,10 +301,11 @@ void x86mainStartFirstThread ( int n ){
                        " mov %ax, %fs    \n"
                        " mov %ax, %gs    \n"
                        " iret \n" );
-    };
+   // };
 
 
-	//shell
+	/*
+    //shell
     if (n == 2 )
     {		
 	    if ( buff2[0] != 0x7F ||
@@ -321,7 +333,9 @@ void x86mainStartFirstThread ( int n ){
                        " mov %ax, %gs    \n"
                        " iret \n" );
 	};
-	
+	*/
+    
+    /*
     //taskman
     if (n == 3 )
     {		
@@ -350,6 +364,7 @@ void x86mainStartFirstThread ( int n ){
                        " mov %ax, %gs    \n"
                        " iret \n" );
 	};
+    */
 
 	// Paranoia
     panic ("x86mainStartFirstThread: FAIL");
@@ -983,11 +998,19 @@ done:
     if ( KernelStatus == KERNEL_INITIALIZED )
     {
 
+        //
+        // Starting idle thread.
+        //
+        
+		printf("x86main: Initializing INIT ..\n");
+        
 #ifdef KERNEL_VERBOSE
     refresh_screen();
-#endif
+#endif        
+   
+		x86mainStartFirstThread ();        
 
-
+ /*       
 // Isso só executa o INIT se ele foi criado.        
 #ifdef ENTRY_INITIALIZE_INIT
 		printf("x86main: Initializing INIT ..\n");
@@ -1009,6 +1032,7 @@ done:
 	x86mainStartFirstThread (3);	
 	goto fail;
 #endif
+*/
 
         printf("x86main: No idle thread selected.\n");
         goto fail;
