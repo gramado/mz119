@@ -356,120 +356,92 @@ void x86mainStartFirstThread ( int n ){
 }
 
 
-
+//inicializa s'o o init em /init
+void x86StartInit (void)
+{
 //
-//  ## MAIN ##
-//
-
-
-/*
- *************************************************
- * x86main: 
- *     The entry point for a C part of the Kernel.
- *
- * Function history:
- *     2015 - Created by Fred Nora.
- *     2016~2019 - Revision.
- */
-
-void x86main (void){
-
-    int Status = 0;
-
-
-    debug_print ("[x86] x86main:\n");
-
-
-#ifdef ENTRY_VERBOSE
-    debug_print ("[x86] x86main: Starting x86 kernel ..\n");
-	//printf("x86main: Starting kernel..\n");
-	//refresh_screen(); 
-#endif
-
-
-//initializeSystem:
-
-	//
-	// ## system ##
+	// ## INIT ##
 	//
 
-	//#importante
-	//#obs: É durante essa rotina que começamos a ter mensagens.	
+	// Creating init process.
 	
-	//#importante
-	//Daqui pra frente tem coisa que é dependente da arquitetura x86 e coisa
-	//que não é ... talvez possamos mandar coisas
-	//que não são dependentes para main.c
+	// > Cria um diretório que é clone do diretório do kernel base 
+	// Retornaremos o endereço virtual, para que a função create_process possa usar 
+	// tanto o endereço virtual quanto o físico.
 	
-	//system.c
+	// > UPROCESS_IMAGE_BASE;
 
-    systemSystem ();
+    InitProcess = (void *) create_process ( NULL, NULL, NULL, 
+                                           (unsigned long) 0x00400000, 
+                                           PRIORITY_HIGH, 
+                                           (int) KernelProcess->pid, 
+                                           "INIT-PROCESS", 
+                                           RING3, 
+                                           (unsigned long ) CreatePageDirectory() );
 
-    Status = (int) systemInit ();
-
-    if ( Status != 0 )
+    if ( (void *) InitProcess == NULL )
     {
-        debug_print ("x86main: systemInit fail\n");
-        printf ("x86main: systemInit fail\n");
-		
-        KernelStatus = KERNEL_ABORTED;
-
-        goto fail;
-    }
-	
-
-	//
-	//    #### GDT ####
-	//
-	
-	// #obs
-	// Vamos criar uma TSS e configurarmos a GDT,
-	// assim poderemos usar a current_tss quando criarmos as threads
-	// Essa função faz as duas coisas, cria a tss e configura a gdt.
-	
-	init_gdt ();
-
-
-	debug_print ("[x86] x86main: processes and threads\n");
-
-	//
-	//  ## Processes ##
-    //
-	
-    //=================================================
-    // processes and threads initialization.
-    // Creating processes and threads.
-    // The processes are: Kernel, Idle, Shell, Taskman.
-    // ps: The images are loaded in the memory.
-
-//createProcesses:	
-    
-	// #debug
-    // printf ("creating kernel process ...\n");
-
-    // Creating Kernel process. PID=0.
-	
-    KernelProcess = (void *) create_process ( NULL, // Window station.
-                                              NULL, // Desktop.
-                                              NULL, // Window.
-                                              (unsigned long) 0xC0000000,  // base address. 
-                                              PRIORITY_HIGH,               // Priority.
-                                              (int) 0,                     // ppid.
-                                              "KERNEL-PROCESS",            // Name.
-                                              RING0,                       // iopl. 
-                                              (unsigned long ) gKernelPageDirectoryAddress ); // Page directory.
-    if( (void *) KernelProcess == NULL )
-    {
-        panic ("x86main: KernelProcess\n");
+        panic ("x86main: InitProcess\n");
 
     }else{
 
-        fs_initialize_process_pwd ( KernelProcess->pid, "no-directory" ); 
+        fs_initialize_process_pwd ( InitProcess->pid, "no-directory" );
 
-        //...
+		//processor->IdleProcess = (void*) IdleProcess;	
     };
 
+
+	//====================================================
+	//Create Idle Thread. tid=0. ppid=0.
 	
+    IdleThread = (void *) KiCreateIdle ();
+
+    if ( (void *) IdleThread == NULL )
+    {
+        panic ("x86main: IdleThread\n");
+
+    }else{
+
+        //IdleThread->ownerPID = (int) InitProcess->pid;
+
+		//#importante
+		//Thread.
+		
+        processor->CurrentThread = (void *) IdleThread;
+        processor->NextThread    = (void *) IdleThread;
+        processor->IdleThread    = (void *) IdleThread;
+
+
+        IdleThread->tss = current_tss;
+
+
+		//...
+
+		// ## importante ## 
+		// Temos aqui alguma configuração. 
+
+        current_thread = IdleThread->tid;
+        next_thread = IdleThread->tid;
+        idle = IdleThread->tid; 
+
+    };
+
+    InitProcess->Heap = (unsigned long) g_gramadocore_init_heap_va;
+
+    InitProcess->control = IdleThread;
+
+	//registra um dos servidores do gramado core.
+	//server_index, process, thread
+
+    ipccore_register ( (int) 0, (struct process_d *) InitProcess, (struct thread_d *) IdleThread );
+}
+
+
+
+//inicializa 3 processos do gxs
+void x86StartGramadoXServer (void)
+{
+
 	//
 	// ## INIT ##
 	//
@@ -681,6 +653,152 @@ void x86main (void){
     };
 	
 #endif		
+
+}
+
+
+//
+//  ## MAIN ##
+//
+
+
+/*
+ *************************************************
+ * x86main: 
+ *     The entry point for a C part of the Kernel.
+ *
+ * Function history:
+ *     2015 - Created by Fred Nora.
+ *     2016~2019 - Revision.
+ */
+
+void x86main (void){
+
+    int Status = 0;
+	
+	// se usaremos todos os processos do x server
+	int gramado_x_server = 0;	
+
+
+    debug_print ("[x86] x86main:\n");
+
+
+#ifdef ENTRY_VERBOSE
+    debug_print ("[x86] x86main: Starting x86 kernel ..\n");
+	//printf("x86main: Starting kernel..\n");
+	//refresh_screen(); 
+#endif
+
+
+//initializeSystem:
+
+	//
+	// ## system ##
+	//
+
+	//#importante
+	//#obs: É durante essa rotina que começamos a ter mensagens.	
+	
+	//#importante
+	//Daqui pra frente tem coisa que é dependente da arquitetura x86 e coisa
+	//que não é ... talvez possamos mandar coisas
+	//que não são dependentes para main.c
+	
+	//system.c
+
+    systemSystem ();
+
+    Status = (int) systemInit ();
+
+    if ( Status != 0 )
+    {
+        debug_print ("x86main: systemInit fail\n");
+        printf ("x86main: systemInit fail\n");
+		
+        KernelStatus = KERNEL_ABORTED;
+
+        goto fail;
+    }
+	
+
+	//
+	//    #### GDT ####
+	//
+	
+	// #obs
+	// Vamos criar uma TSS e configurarmos a GDT,
+	// assim poderemos usar a current_tss quando criarmos as threads
+	// Essa função faz as duas coisas, cria a tss e configura a gdt.
+	
+	init_gdt ();
+
+
+	debug_print ("[x86] x86main: processes and threads\n");
+	
+	
+ 
+	
+	
+
+	//
+	//  ## Processes ##
+    //
+	
+    //=================================================
+    // processes and threads initialization.
+    // Creating processes and threads.
+    // The processes are: Kernel, Idle, Shell, Taskman.
+    // ps: The images are loaded in the memory.
+
+//createProcesses:	
+    
+	// #debug
+    // printf ("creating kernel process ...\n");
+
+    // Creating Kernel process. PID=0.
+	
+    KernelProcess = (void *) create_process ( NULL, // Window station.
+                                              NULL, // Desktop.
+                                              NULL, // Window.
+                                              (unsigned long) 0xC0000000,  // base address. 
+                                              PRIORITY_HIGH,               // Priority.
+                                              (int) 0,                     // ppid.
+                                              "KERNEL-PROCESS",            // Name.
+                                              RING0,                       // iopl. 
+                                              (unsigned long ) gKernelPageDirectoryAddress ); // Page directory.
+    if( (void *) KernelProcess == NULL )
+    {
+        panic ("x86main: KernelProcess\n");
+
+    }else{
+
+        fs_initialize_process_pwd ( KernelProcess->pid, "no-directory" ); 
+
+        //...
+    };
+	
+	
+	
+#ifdef ENTRY_GRAMADO_X_SERVER	
+	gramado_x_server = 1;
+#endif	
+	
+	
+	if ( gramado_x_server == 1 )
+	{
+		printf ("Starting gramado x server\n");
+	    //varios processos.
+		x86StartGramadoXServer ();
+	}else{
+         
+		printf ("Starting only init\n");
+		//apenas o init.
+		x86StartInit ();	
+    };
+	
+	
+	
+	 
 	
     //
 	//===============================================

@@ -140,6 +140,10 @@ sixth..     ide5, usually PCI, probed
 //    ######## Creation flags ########
 //
 
+//Se usaremos os processos do x server ou apenas o init.
+#define ENTRY_GRAMADO_X_SERVER  
+
+
 //Cria o processo shell e sua thread de controle.
 #define ENTRY_CREATE_SHELL   
 
