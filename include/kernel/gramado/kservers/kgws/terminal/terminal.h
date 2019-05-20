@@ -139,6 +139,14 @@ struct terminal_d
 	
 	struct window_d *window;
 	
+	
+	//
+	// tty support
+	//
+	
+	// ID da tty usada.
+	int tty_id;
+	
 	//@todo: Instance.
 	
     int	LinMax;

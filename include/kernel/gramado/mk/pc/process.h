@@ -318,6 +318,14 @@ struct process_d
 	
 	int terminal_id;
 	
+	
+	//
+	// tty support
+	//
+	
+	// ID da tty usada.
+	int tty_id;
+	
 	//Importante:
 	//isso substituirá a flag 'terminal'
 	//APPMODE_TERMINAL = O kernel cria uma estrutura de terminal 

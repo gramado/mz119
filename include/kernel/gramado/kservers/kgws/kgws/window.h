@@ -953,6 +953,14 @@ struct window_d
 	
 //unsigned long scancodeList[32];	
 	
+	
+	//
+	// tty support
+	//
+	
+	// ID da tty usada.
+	int tty_id;
+	
 	//
 	// TERMINAL SUPPORT
 	//

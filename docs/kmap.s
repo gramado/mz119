@@ -128,6 +128,7 @@ _desktop_rootConductor
 _extra              0x4               main.o
 _cwArg11            0x4               gde_serv.o
 _fsbFrames          0x1000            main.o
+_CurrentTTY         0x4               main.o
 _g_user_space_framepool_index
                     0x4               main.o
 _Initialization     0x18              main.o
@@ -886,7 +887,7 @@ _current_workingdiretory_string
 _gShellPageDirectoryAddress
                     0x4               main.o
 _volumeList         0x1000            main.o
-_TERMINAL           0x240             main.o
+_TERMINAL           0x260             main.o
 _g_nova_mensagem    0x4               main.o
 _current_menu       0x4               main.o
 _pmiCurrent         0x4               main.o
@@ -2840,7 +2841,7 @@ Linker script and memory map
 .bss            0x00000000c004f000    0x4e000
                 0x00000000c004f000                _bss_begin = .
  *(COMMON)
- COMMON         0x00000000c004f000    0x3c49c main.o
+ COMMON         0x00000000c004f000    0x3c4bc main.o
                 0x00000000c004f000                _framepoolBackBuffer3
                 0x00000000c004f004                _guiMenu
                 0x00000000c004f020                _usessionList
@@ -2929,10 +2930,11 @@ Linker script and memory map
                 0x00000000c0051b20                _desktop_rootConductor
                 0x00000000c0051b24                _extra
                 0x00000000c0051b40                _fsbFrames
-                0x00000000c0052b40                _g_user_space_framepool_index
-                0x00000000c0052b44                _Initialization
-                0x00000000c0052b5c                _Console
-                0x00000000c0052b60                _next_thread
+                0x00000000c0052b40                _CurrentTTY
+                0x00000000c0052b44                _g_user_space_framepool_index
+                0x00000000c0052b48                _Initialization
+                0x00000000c0052b60                _Console
+                0x00000000c0052b64                _next_thread
                 0x00000000c0052b80                _GUI_CONFIG
                 0x00000000c0052bbc                _systemzoneSize
                 0x00000000c0052bc0                _zorderCounter
@@ -3471,266 +3473,266 @@ Linker script and memory map
                 0x00000000c008a220                _gShellPageDirectoryAddress
                 0x00000000c008a240                _volumeList
                 0x00000000c008b240                _TERMINAL
-                0x00000000c008b480                _g_nova_mensagem
-                0x00000000c008b484                _current_menu
-                0x00000000c008b488                _pmiCurrent
-                0x00000000c008b48c                _Pci
-                0x00000000c008b490                _g_cursor_x
-                0x00000000c008b494                _mouse_buttom_2
-                0x00000000c008b498                _CurrentUser
- COMMON         0x00000000c008b49c       0x34 gde_serv.o
-                0x00000000c008b49c                _cwArg1
-                0x00000000c008b4a0                _cwArg2
-                0x00000000c008b4a4                _cwArg11
-                0x00000000c008b4a8                _cwArg8
-                0x00000000c008b4ac                _cwArg3
-                0x00000000c008b4b0                _cwArg9
-                0x00000000c008b4b4                _cwArg10
-                0x00000000c008b4b8                _cwFlag
-                0x00000000c008b4bc                _cwArg12
-                0x00000000c008b4c0                _cwArg5
-                0x00000000c008b4c4                _cwArg7
-                0x00000000c008b4c8                _cwArg4
-                0x00000000c008b4cc                _cwArg6
- COMMON         0x00000000c008b4d0       0x10 debug.o
-                0x00000000c008b4d0                _Mind
- COMMON         0x00000000c008b4e0        0x4 install.o
-                0x00000000c008b4e0                _xxxx_nothingxxxx
- COMMON         0x00000000c008b4e4        0x4 modules.o
-                0x00000000c008b4e4                _modulesStatus
- COMMON         0x00000000c008b4e8        0x4 signal.o
-                0x00000000c008b4e8                _Signal
- COMMON         0x00000000c008b4ec        0x4 ahci.o
-                0x00000000c008b4ec                _SATAFlag
- COMMON         0x00000000c008b4f0        0xc ata.o
-                0x00000000c008b4f0                _dma_addr
-                0x00000000c008b4f4                _current_dev
-                0x00000000c008b4f8                _ready_queue_dev
- COMMON         0x00000000c008b4fc        0x8 hdd.o
-                0x00000000c008b4fc                _hddError
-                0x00000000c008b500                _hddStatus
- COMMON         0x00000000c008b504        0x4 network.o
-                0x00000000c008b504                _network_status
- COMMON         0x00000000c008b508        0x5 nicintel.o
-                0x00000000c008b508                _nic_idt_entry_new_address
-                0x00000000c008b50c                _nic_idt_entry_new_number
- *fill*         0x00000000c008b50d        0x3 
- COMMON         0x00000000c008b510        0x8 pci.o
-                0x00000000c008b510                _pciListOffset
-                0x00000000c008b514                _pci_supported
- COMMON         0x00000000c008b518        0x8 video.o
-                0x00000000c008b518                _videoError
-                0x00000000c008b51c                _videoStatus
- COMMON         0x00000000c008b520        0x8 screen.o
-                0x00000000c008b520                _screen_height
-                0x00000000c008b524                _screen_width
- COMMON         0x00000000c008b528        0x4 ps2mouse.o
-                0x00000000c008b528                _flagRefreshMouseOver
- COMMON         0x00000000c008b52c        0x8 pic.o
-                0x00000000c008b52c                _picError
-                0x00000000c008b530                _picStatus
- COMMON         0x00000000c008b534        0xc rtc.o
-                0x00000000c008b534                _rtcError
-                0x00000000c008b538                _rtcTicks
-                0x00000000c008b53c                _rtcStatus
- COMMON         0x00000000c008b540       0x20 timer.o
-                0x00000000c008b540                _timerShowTextCursor
-                0x00000000c008b544                _timerColor
-                0x00000000c008b548                _timerTextCursorStatus
-                0x00000000c008b54c                _timerStatus
-                0x00000000c008b550                _timerIdleState
-                0x00000000c008b554                _timerError
-                0x00000000c008b558                _timerLock
-                0x00000000c008b55c                _timerLine
- COMMON         0x00000000c008b560    0x10000 write.o
-                0x00000000c008b560                _list
- COMMON         0x00000000c009b560       0x18 window.o
-                0x00000000c009b560                _save_client_rect_top
-                0x00000000c009b564                _fsStatus
-                0x00000000c009b568                _xxxxsavemessage
-                0x00000000c009b56c                _save_client_rect_left
-                0x00000000c009b570                _save_client_rect_height
-                0x00000000c009b574                _save_client_rect_width
- COMMON         0x00000000c009b578        0x4 input.o
-                0x00000000c009b578                _xxxinini
- COMMON         0x00000000c009b57c        0xc kgws.o
-                0x00000000c009b57c                _gws_status
-                0x00000000c009b580                _gws_wm_PID
-                0x00000000c009b584                _gws_wm_status
- COMMON         0x00000000c009b588       0x40 x86cont.o
-                0x00000000c009b588                _contextESP
-                0x00000000c009b58c                _contextEDX
-                0x00000000c009b590                _contextFS
-                0x00000000c009b594                _contextDS
-                0x00000000c009b598                _contextESI
-                0x00000000c009b59c                _contextEIP
-                0x00000000c009b5a0                _contextGS
-                0x00000000c009b5a4                _contextEFLAGS
-                0x00000000c009b5a8                _contextECX
-                0x00000000c009b5ac                _contextEBP
-                0x00000000c009b5b0                _contextCS
-                0x00000000c009b5b4                _contextEAX
-                0x00000000c009b5b8                _contextEBX
-                0x00000000c009b5bc                _contextEDI
-                0x00000000c009b5c0                _contextES
-                0x00000000c009b5c4                _contextSS
- COMMON         0x00000000c009b5c8        0xc x86fault.o
-                0x00000000c009b5c8                _thread_failed_flag
-                0x00000000c009b5cc                _demand_paging_flag
-                0x00000000c009b5d0                _fatal_error_flag
- COMMON         0x00000000c009b5d4        0x8 process.o
-                0x00000000c009b5d4                _processNewPID
-                0x00000000c009b5d8                _caller_process_id
- COMMON         0x00000000c009b5dc        0x4 ts.o
-                0x00000000c009b5dc                _lock_taskswitch
- COMMON         0x00000000c009b5e0      0x110 ipccore.o
-                0x00000000c009b5e0                _GRAMADOCORE
- COMMON         0x00000000c009b6f0        0xc memory.o
-                0x00000000c009b6f0                _mm_prev_pointer
-                0x00000000c009b6f4                _last_size
-                0x00000000c009b6f8                _last_valid
+                0x00000000c008b4a0                _g_nova_mensagem
+                0x00000000c008b4a4                _current_menu
+                0x00000000c008b4a8                _pmiCurrent
+                0x00000000c008b4ac                _Pci
+                0x00000000c008b4b0                _g_cursor_x
+                0x00000000c008b4b4                _mouse_buttom_2
+                0x00000000c008b4b8                _CurrentUser
+ COMMON         0x00000000c008b4bc       0x34 gde_serv.o
+                0x00000000c008b4bc                _cwArg1
+                0x00000000c008b4c0                _cwArg2
+                0x00000000c008b4c4                _cwArg11
+                0x00000000c008b4c8                _cwArg8
+                0x00000000c008b4cc                _cwArg3
+                0x00000000c008b4d0                _cwArg9
+                0x00000000c008b4d4                _cwArg10
+                0x00000000c008b4d8                _cwFlag
+                0x00000000c008b4dc                _cwArg12
+                0x00000000c008b4e0                _cwArg5
+                0x00000000c008b4e4                _cwArg7
+                0x00000000c008b4e8                _cwArg4
+                0x00000000c008b4ec                _cwArg6
+ COMMON         0x00000000c008b4f0       0x10 debug.o
+                0x00000000c008b4f0                _Mind
+ COMMON         0x00000000c008b500        0x4 install.o
+                0x00000000c008b500                _xxxx_nothingxxxx
+ COMMON         0x00000000c008b504        0x4 modules.o
+                0x00000000c008b504                _modulesStatus
+ COMMON         0x00000000c008b508        0x4 signal.o
+                0x00000000c008b508                _Signal
+ COMMON         0x00000000c008b50c        0x4 ahci.o
+                0x00000000c008b50c                _SATAFlag
+ COMMON         0x00000000c008b510        0xc ata.o
+                0x00000000c008b510                _dma_addr
+                0x00000000c008b514                _current_dev
+                0x00000000c008b518                _ready_queue_dev
+ COMMON         0x00000000c008b51c        0x8 hdd.o
+                0x00000000c008b51c                _hddError
+                0x00000000c008b520                _hddStatus
+ COMMON         0x00000000c008b524        0x4 network.o
+                0x00000000c008b524                _network_status
+ COMMON         0x00000000c008b528        0x5 nicintel.o
+                0x00000000c008b528                _nic_idt_entry_new_address
+                0x00000000c008b52c                _nic_idt_entry_new_number
+ *fill*         0x00000000c008b52d        0x3 
+ COMMON         0x00000000c008b530        0x8 pci.o
+                0x00000000c008b530                _pciListOffset
+                0x00000000c008b534                _pci_supported
+ COMMON         0x00000000c008b538        0x8 video.o
+                0x00000000c008b538                _videoError
+                0x00000000c008b53c                _videoStatus
+ COMMON         0x00000000c008b540        0x8 screen.o
+                0x00000000c008b540                _screen_height
+                0x00000000c008b544                _screen_width
+ COMMON         0x00000000c008b548        0x4 ps2mouse.o
+                0x00000000c008b548                _flagRefreshMouseOver
+ COMMON         0x00000000c008b54c        0x8 pic.o
+                0x00000000c008b54c                _picError
+                0x00000000c008b550                _picStatus
+ COMMON         0x00000000c008b554        0xc rtc.o
+                0x00000000c008b554                _rtcError
+                0x00000000c008b558                _rtcTicks
+                0x00000000c008b55c                _rtcStatus
+ COMMON         0x00000000c008b560       0x20 timer.o
+                0x00000000c008b560                _timerShowTextCursor
+                0x00000000c008b564                _timerColor
+                0x00000000c008b568                _timerTextCursorStatus
+                0x00000000c008b56c                _timerStatus
+                0x00000000c008b570                _timerIdleState
+                0x00000000c008b574                _timerError
+                0x00000000c008b578                _timerLock
+                0x00000000c008b57c                _timerLine
+ COMMON         0x00000000c008b580    0x10000 write.o
+                0x00000000c008b580                _list
+ COMMON         0x00000000c009b580       0x18 window.o
+                0x00000000c009b580                _save_client_rect_top
+                0x00000000c009b584                _fsStatus
+                0x00000000c009b588                _xxxxsavemessage
+                0x00000000c009b58c                _save_client_rect_left
+                0x00000000c009b590                _save_client_rect_height
+                0x00000000c009b594                _save_client_rect_width
+ COMMON         0x00000000c009b598        0x4 input.o
+                0x00000000c009b598                _xxxinini
+ COMMON         0x00000000c009b59c        0xc kgws.o
+                0x00000000c009b59c                _gws_status
+                0x00000000c009b5a0                _gws_wm_PID
+                0x00000000c009b5a4                _gws_wm_status
+ COMMON         0x00000000c009b5a8       0x40 x86cont.o
+                0x00000000c009b5a8                _contextESP
+                0x00000000c009b5ac                _contextEDX
+                0x00000000c009b5b0                _contextFS
+                0x00000000c009b5b4                _contextDS
+                0x00000000c009b5b8                _contextESI
+                0x00000000c009b5bc                _contextEIP
+                0x00000000c009b5c0                _contextGS
+                0x00000000c009b5c4                _contextEFLAGS
+                0x00000000c009b5c8                _contextECX
+                0x00000000c009b5cc                _contextEBP
+                0x00000000c009b5d0                _contextCS
+                0x00000000c009b5d4                _contextEAX
+                0x00000000c009b5d8                _contextEBX
+                0x00000000c009b5dc                _contextEDI
+                0x00000000c009b5e0                _contextES
+                0x00000000c009b5e4                _contextSS
+ COMMON         0x00000000c009b5e8        0xc x86fault.o
+                0x00000000c009b5e8                _thread_failed_flag
+                0x00000000c009b5ec                _demand_paging_flag
+                0x00000000c009b5f0                _fatal_error_flag
+ COMMON         0x00000000c009b5f4        0x8 process.o
+                0x00000000c009b5f4                _processNewPID
+                0x00000000c009b5f8                _caller_process_id
+ COMMON         0x00000000c009b5fc        0x4 ts.o
+                0x00000000c009b5fc                _lock_taskswitch
+ COMMON         0x00000000c009b600      0x110 ipccore.o
+                0x00000000c009b600                _GRAMADOCORE
+ COMMON         0x00000000c009b710        0xc memory.o
+                0x00000000c009b710                _mm_prev_pointer
+                0x00000000c009b714                _last_size
+                0x00000000c009b718                _last_valid
  *(.bss)
- .bss           0x00000000c009b6fc        0x0 head.o
-                0x00000000c009b6fc                _bss_start
- .bss           0x00000000c009b6fc       0x28 main.o
- .bss           0x00000000c009b724       0x28 x86main.o
- .bss           0x00000000c009b74c       0x28 pipe.o
- .bss           0x00000000c009b774       0x28 socket.o
- .bss           0x00000000c009b79c       0x29 cedge.o
- *fill*         0x00000000c009b7c5        0x3 
- .bss           0x00000000c009b7c8       0x28 ctype.o
- .bss           0x00000000c009b7f0       0x28 stdio.o
- .bss           0x00000000c009b818       0x28 stdlib.o
- .bss           0x00000000c009b840       0x2c string.o
- .bss           0x00000000c009b86c       0x28 unistd.o
- .bss           0x00000000c009b894       0x28 devmgr.o
- .bss           0x00000000c009b8bc       0x28 gde_serv.o
- .bss           0x00000000c009b8e4       0x28 debug.o
- .bss           0x00000000c009b90c       0x28 diskvol.o
- .bss           0x00000000c009b934        0x0 install.o
- .bss           0x00000000c009b934       0x28 object.o
- .bss           0x00000000c009b95c       0x28 runtime.o
- .bss           0x00000000c009b984       0x28 abort.o
- .bss           0x00000000c009b9ac       0x28 info.o
- .bss           0x00000000c009b9d4       0x28 io.o
- .bss           0x00000000c009b9fc       0x28 modules.o
- .bss           0x00000000c009ba24       0x28 signal.o
- .bss           0x00000000c009ba4c       0x28 sm.o
- .bss           0x00000000c009ba74       0x28 init.o
- .bss           0x00000000c009ba9c       0x28 system.o
- .bss           0x00000000c009bac4       0x28 execve.o
- .bss           0x00000000c009baec       0x28 cpuamd.o
- .bss           0x00000000c009bb14       0x28 portsx86.o
- .bss           0x00000000c009bb3c       0x28 syscall.o
- *fill*         0x00000000c009bb64       0x1c 
- .bss           0x00000000c009bb80       0x64 x86.o
- .bss           0x00000000c009bbe4       0x28 detect.o
- .bss           0x00000000c009bc0c       0x28 hal.o
- .bss           0x00000000c009bc34       0x28 ahci.o
- .bss           0x00000000c009bc5c       0x2c ata.o
-                0x00000000c009bc5c                _dev_next_pid
- .bss           0x00000000c009bc88       0x28 atadma.o
- .bss           0x00000000c009bcb0       0x28 atainit.o
- .bss           0x00000000c009bcd8       0x2c atairq.o
- .bss           0x00000000c009bd04       0x28 atapci.o
- .bss           0x00000000c009bd2c       0x28 hdd.o
- .bss           0x00000000c009bd54       0x28 channel.o
- .bss           0x00000000c009bd7c       0x28 network.o
- .bss           0x00000000c009bda4       0x28 nicintel.o
- .bss           0x00000000c009bdcc       0x28 nsocket.o
- .bss           0x00000000c009bdf4       0x28 pci.o
- .bss           0x00000000c009be1c       0x28 pciinfo.o
- .bss           0x00000000c009be44       0x28 pciscan.o
- .bss           0x00000000c009be6c       0x28 tty.o
- .bss           0x00000000c009be94        0x0 usb.o
- .bss           0x00000000c009be94       0x28 video.o
- .bss           0x00000000c009bebc       0x28 vsync.o
- .bss           0x00000000c009bee4       0x28 screen.o
- .bss           0x00000000c009bf0c       0x28 xproc.o
- .bss           0x00000000c009bf34       0x28 i8042.o
- .bss           0x00000000c009bf5c       0x28 keyboard.o
- .bss           0x00000000c009bf84       0x28 mouse.o
- .bss           0x00000000c009bfac       0x28 ps2kbd.o
- .bss           0x00000000c009bfd4       0x3b ps2mouse.o
-                0x00000000c009bfd4                _mouse_x
-                0x00000000c009bfd8                _mouse_y
-                0x00000000c009bfdc                _mouse_packet_data
-                0x00000000c009bfdd                _mouse_packet_x
-                0x00000000c009bfde                _mouse_packet_y
-                0x00000000c009bfdf                _mouse_packet_scroll
- *fill*         0x00000000c009c00f        0x1 
- .bss           0x00000000c009c010       0x28 ldisc.o
- .bss           0x00000000c009c038       0x28 apic.o
- .bss           0x00000000c009c060       0x28 pic.o
- .bss           0x00000000c009c088       0x28 rtc.o
- .bss           0x00000000c009c0b0       0x28 serial.o
- .bss           0x00000000c009c0d8       0x28 timer.o
- .bss           0x00000000c009c100       0x28 cf.o
- .bss           0x00000000c009c128       0x28 format.o
- .bss           0x00000000c009c150       0x28 fs.o
- .bss           0x00000000c009c178       0x28 read.o
- .bss           0x00000000c009c1a0       0x28 search.o
- .bss           0x00000000c009c1c8       0x28 write.o
- .bss           0x00000000c009c1f0       0x28 bg.o
- .bss           0x00000000c009c218       0x2c bmp.o
- .bss           0x00000000c009c244       0x28 button.o
- .bss           0x00000000c009c26c       0x28 char.o
- .bss           0x00000000c009c294       0x28 createw.o
- .bss           0x00000000c009c2bc       0x28 dtext.o
- .bss           0x00000000c009c2e4       0x28 font.o
- .bss           0x00000000c009c30c       0x28 grid.o
- .bss           0x00000000c009c334       0x28 line.o
- .bss           0x00000000c009c35c       0x28 menu.o
- .bss           0x00000000c009c384       0x28 menubar.o
- .bss           0x00000000c009c3ac       0x28 pixel.o
- .bss           0x00000000c009c3d4       0x28 rect.o
- .bss           0x00000000c009c3fc       0x28 sbar.o
- .bss           0x00000000c009c424       0x28 toolbar.o
- .bss           0x00000000c009c44c       0x28 window.o
- .bss           0x00000000c009c474       0x28 logoff.o
- .bss           0x00000000c009c49c       0x28 logon.o
- .bss           0x00000000c009c4c4       0x28 input.o
- .bss           0x00000000c009c4ec       0x28 output.o
- .bss           0x00000000c009c514       0x28 terminal.o
- .bss           0x00000000c009c53c       0x28 desktop.o
- .bss           0x00000000c009c564       0x28 room.o
- .bss           0x00000000c009c58c       0x28 userenv.o
- .bss           0x00000000c009c5b4       0x28 usession.o
- .bss           0x00000000c009c5dc       0x28 kgws.o
- .bss           0x00000000c009c604       0x28 vfs.o
- .bss           0x00000000c009c62c       0x28 x86cont.o
- .bss           0x00000000c009c654       0x28 x86fault.o
- .bss           0x00000000c009c67c       0x28 x86start.o
- .bss           0x00000000c009c6a4       0x28 dispatch.o
- .bss           0x00000000c009c6cc       0x28 pheap.o
- .bss           0x00000000c009c6f4       0x28 process.o
- .bss           0x00000000c009c71c       0x28 queue.o
- .bss           0x00000000c009c744       0x28 spawn.o
- .bss           0x00000000c009c76c       0x28 tasks.o
- .bss           0x00000000c009c794       0x28 theap.o
- .bss           0x00000000c009c7bc       0x28 thread.o
- .bss           0x00000000c009c7e4       0x28 threadi.o
- .bss           0x00000000c009c80c       0x28 ts.o
- .bss           0x00000000c009c834       0x28 tstack.o
- .bss           0x00000000c009c85c       0x28 callout.o
- .bss           0x00000000c009c884        0x0 callfar.o
- .bss           0x00000000c009c884       0x28 ipc.o
- .bss           0x00000000c009c8ac       0x28 ipccore.o
- .bss           0x00000000c009c8d4       0x28 sem.o
- .bss           0x00000000c009c8fc       0x28 memory.o
- .bss           0x00000000c009c924       0x28 mminfo.o
- .bss           0x00000000c009c94c       0x28 mmpool.o
- .bss           0x00000000c009c974       0x28 pages.o
- .bss           0x00000000c009c99c       0x28 preempt.o
- .bss           0x00000000c009c9c4       0x28 priority.o
- .bss           0x00000000c009c9ec       0x28 sched.o
- .bss           0x00000000c009ca14       0x28 schedi.o
- .bss           0x00000000c009ca3c       0x28 create.o
- .bss           0x00000000c009ca64       0x28 mk.o
- .bss           0x00000000c009ca8c       0x28 request.o
-                0x00000000c009cab4                _bss_end = .
+ .bss           0x00000000c009b71c        0x0 head.o
+                0x00000000c009b71c                _bss_start
+ .bss           0x00000000c009b71c       0x28 main.o
+ .bss           0x00000000c009b744       0x28 x86main.o
+ .bss           0x00000000c009b76c       0x28 pipe.o
+ .bss           0x00000000c009b794       0x28 socket.o
+ .bss           0x00000000c009b7bc       0x29 cedge.o
+ *fill*         0x00000000c009b7e5        0x3 
+ .bss           0x00000000c009b7e8       0x28 ctype.o
+ .bss           0x00000000c009b810       0x28 stdio.o
+ .bss           0x00000000c009b838       0x28 stdlib.o
+ .bss           0x00000000c009b860       0x2c string.o
+ .bss           0x00000000c009b88c       0x28 unistd.o
+ .bss           0x00000000c009b8b4       0x28 devmgr.o
+ .bss           0x00000000c009b8dc       0x28 gde_serv.o
+ .bss           0x00000000c009b904       0x28 debug.o
+ .bss           0x00000000c009b92c       0x28 diskvol.o
+ .bss           0x00000000c009b954        0x0 install.o
+ .bss           0x00000000c009b954       0x28 object.o
+ .bss           0x00000000c009b97c       0x28 runtime.o
+ .bss           0x00000000c009b9a4       0x28 abort.o
+ .bss           0x00000000c009b9cc       0x28 info.o
+ .bss           0x00000000c009b9f4       0x28 io.o
+ .bss           0x00000000c009ba1c       0x28 modules.o
+ .bss           0x00000000c009ba44       0x28 signal.o
+ .bss           0x00000000c009ba6c       0x28 sm.o
+ .bss           0x00000000c009ba94       0x28 init.o
+ .bss           0x00000000c009babc       0x28 system.o
+ .bss           0x00000000c009bae4       0x28 execve.o
+ .bss           0x00000000c009bb0c       0x28 cpuamd.o
+ .bss           0x00000000c009bb34       0x28 portsx86.o
+ .bss           0x00000000c009bb5c       0x28 syscall.o
+ *fill*         0x00000000c009bb84       0x1c 
+ .bss           0x00000000c009bba0       0x64 x86.o
+ .bss           0x00000000c009bc04       0x28 detect.o
+ .bss           0x00000000c009bc2c       0x28 hal.o
+ .bss           0x00000000c009bc54       0x28 ahci.o
+ .bss           0x00000000c009bc7c       0x2c ata.o
+                0x00000000c009bc7c                _dev_next_pid
+ .bss           0x00000000c009bca8       0x28 atadma.o
+ .bss           0x00000000c009bcd0       0x28 atainit.o
+ .bss           0x00000000c009bcf8       0x2c atairq.o
+ .bss           0x00000000c009bd24       0x28 atapci.o
+ .bss           0x00000000c009bd4c       0x28 hdd.o
+ .bss           0x00000000c009bd74       0x28 channel.o
+ .bss           0x00000000c009bd9c       0x28 network.o
+ .bss           0x00000000c009bdc4       0x28 nicintel.o
+ .bss           0x00000000c009bdec       0x28 nsocket.o
+ .bss           0x00000000c009be14       0x28 pci.o
+ .bss           0x00000000c009be3c       0x28 pciinfo.o
+ .bss           0x00000000c009be64       0x28 pciscan.o
+ .bss           0x00000000c009be8c       0x28 tty.o
+ .bss           0x00000000c009beb4        0x0 usb.o
+ .bss           0x00000000c009beb4       0x28 video.o
+ .bss           0x00000000c009bedc       0x28 vsync.o
+ .bss           0x00000000c009bf04       0x28 screen.o
+ .bss           0x00000000c009bf2c       0x28 xproc.o
+ .bss           0x00000000c009bf54       0x28 i8042.o
+ .bss           0x00000000c009bf7c       0x28 keyboard.o
+ .bss           0x00000000c009bfa4       0x28 mouse.o
+ .bss           0x00000000c009bfcc       0x28 ps2kbd.o
+ .bss           0x00000000c009bff4       0x3b ps2mouse.o
+                0x00000000c009bff4                _mouse_x
+                0x00000000c009bff8                _mouse_y
+                0x00000000c009bffc                _mouse_packet_data
+                0x00000000c009bffd                _mouse_packet_x
+                0x00000000c009bffe                _mouse_packet_y
+                0x00000000c009bfff                _mouse_packet_scroll
+ *fill*         0x00000000c009c02f        0x1 
+ .bss           0x00000000c009c030       0x28 ldisc.o
+ .bss           0x00000000c009c058       0x28 apic.o
+ .bss           0x00000000c009c080       0x28 pic.o
+ .bss           0x00000000c009c0a8       0x28 rtc.o
+ .bss           0x00000000c009c0d0       0x28 serial.o
+ .bss           0x00000000c009c0f8       0x28 timer.o
+ .bss           0x00000000c009c120       0x28 cf.o
+ .bss           0x00000000c009c148       0x28 format.o
+ .bss           0x00000000c009c170       0x28 fs.o
+ .bss           0x00000000c009c198       0x28 read.o
+ .bss           0x00000000c009c1c0       0x28 search.o
+ .bss           0x00000000c009c1e8       0x28 write.o
+ .bss           0x00000000c009c210       0x28 bg.o
+ .bss           0x00000000c009c238       0x2c bmp.o
+ .bss           0x00000000c009c264       0x28 button.o
+ .bss           0x00000000c009c28c       0x28 char.o
+ .bss           0x00000000c009c2b4       0x28 createw.o
+ .bss           0x00000000c009c2dc       0x28 dtext.o
+ .bss           0x00000000c009c304       0x28 font.o
+ .bss           0x00000000c009c32c       0x28 grid.o
+ .bss           0x00000000c009c354       0x28 line.o
+ .bss           0x00000000c009c37c       0x28 menu.o
+ .bss           0x00000000c009c3a4       0x28 menubar.o
+ .bss           0x00000000c009c3cc       0x28 pixel.o
+ .bss           0x00000000c009c3f4       0x28 rect.o
+ .bss           0x00000000c009c41c       0x28 sbar.o
+ .bss           0x00000000c009c444       0x28 toolbar.o
+ .bss           0x00000000c009c46c       0x28 window.o
+ .bss           0x00000000c009c494       0x28 logoff.o
+ .bss           0x00000000c009c4bc       0x28 logon.o
+ .bss           0x00000000c009c4e4       0x28 input.o
+ .bss           0x00000000c009c50c       0x28 output.o
+ .bss           0x00000000c009c534       0x28 terminal.o
+ .bss           0x00000000c009c55c       0x28 desktop.o
+ .bss           0x00000000c009c584       0x28 room.o
+ .bss           0x00000000c009c5ac       0x28 userenv.o
+ .bss           0x00000000c009c5d4       0x28 usession.o
+ .bss           0x00000000c009c5fc       0x28 kgws.o
+ .bss           0x00000000c009c624       0x28 vfs.o
+ .bss           0x00000000c009c64c       0x28 x86cont.o
+ .bss           0x00000000c009c674       0x28 x86fault.o
+ .bss           0x00000000c009c69c       0x28 x86start.o
+ .bss           0x00000000c009c6c4       0x28 dispatch.o
+ .bss           0x00000000c009c6ec       0x28 pheap.o
+ .bss           0x00000000c009c714       0x28 process.o
+ .bss           0x00000000c009c73c       0x28 queue.o
+ .bss           0x00000000c009c764       0x28 spawn.o
+ .bss           0x00000000c009c78c       0x28 tasks.o
+ .bss           0x00000000c009c7b4       0x28 theap.o
+ .bss           0x00000000c009c7dc       0x28 thread.o
+ .bss           0x00000000c009c804       0x28 threadi.o
+ .bss           0x00000000c009c82c       0x28 ts.o
+ .bss           0x00000000c009c854       0x28 tstack.o
+ .bss           0x00000000c009c87c       0x28 callout.o
+ .bss           0x00000000c009c8a4        0x0 callfar.o
+ .bss           0x00000000c009c8a4       0x28 ipc.o
+ .bss           0x00000000c009c8cc       0x28 ipccore.o
+ .bss           0x00000000c009c8f4       0x28 sem.o
+ .bss           0x00000000c009c91c       0x28 memory.o
+ .bss           0x00000000c009c944       0x28 mminfo.o
+ .bss           0x00000000c009c96c       0x28 mmpool.o
+ .bss           0x00000000c009c994       0x28 pages.o
+ .bss           0x00000000c009c9bc       0x28 preempt.o
+ .bss           0x00000000c009c9e4       0x28 priority.o
+ .bss           0x00000000c009ca0c       0x28 sched.o
+ .bss           0x00000000c009ca34       0x28 schedi.o
+ .bss           0x00000000c009ca5c       0x28 create.o
+ .bss           0x00000000c009ca84       0x28 mk.o
+ .bss           0x00000000c009caac       0x28 request.o
+                0x00000000c009cad4                _bss_end = .
                 0x00000000c009d000                . = ALIGN (0x1000)
- *fill*         0x00000000c009cab4      0x54c 
+ *fill*         0x00000000c009cad4      0x52c 
                 0x00000000c009d000                _kernel_end = .
 LOAD head.o
 LOAD main.o

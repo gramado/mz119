@@ -469,6 +469,14 @@ struct thread_d
 	//@todo: Uma thread pode estar esperando varias outras por motivos diferenes.
 	//struct wait_d WaitBlock;
 	
+	
+	//
+	// tty support
+	//
+	
+	// ID da tty usada.
+	int tty_id;
+	
 
     //process.
 	//À qual processo pertence a thread.

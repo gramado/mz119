@@ -501,7 +501,7 @@ Linker script and memory map
                 0x000000000045b66e                apiCreateTimer
                 0x000000000045b68b                apiGetSysTimeInfo
                 0x000000000045b6a9                apiShowWindow
- .text          0x000000000045b6c5      0x16f builtins.o
+ .text          0x000000000045b6c5      0x195 builtins.o
                 0x000000000045b6c5                cd_buitins
                 0x000000000045b6de                cls_builtins
                 0x000000000045b6ec                copy_builtins
@@ -516,61 +516,61 @@ Linker script and memory map
                 0x000000000045b7b9                getuid_builtins
                 0x000000000045b7cb                getgid_builtins
                 0x000000000045b7dd                help_builtins
-                0x000000000045b818                pwd_builtins
- .text          0x000000000045b834       0x9c desktop.o
-                0x000000000045b834                desktopInitialize
-                0x000000000045b87d                desktopProcedure
-                0x000000000045b8a9                shellStartDesktopMode
- .text          0x000000000045b8d0       0x10 login.o
-                0x000000000045b8d0                loginCheckPassword
- .text          0x000000000045b8e0      0x15a tests.o
-                0x000000000045b8e0                testsTimerUpdateObject
-                0x000000000045b9b8                testsInitTimer
- .text          0x000000000045ba3a       0x1b pixel.o
-                0x000000000045ba3a                gws_backbuffer_putpixel
- .text          0x000000000045ba55       0x2b line.o
-                0x000000000045ba55                my_buffer_horizontal_line
- .text          0x000000000045ba80       0x86 rect.o
-                0x000000000045ba80                drawDataRectangle
- .text          0x000000000045bb06      0x1c7 char.o
-                0x000000000045bb06                my_buffer_char_blt
-                0x000000000045bb23                set_char_width
-                0x000000000045bb31                set_char_height
-                0x000000000045bb3f                get_char_width
-                0x000000000045bb49                get_char_height
-                0x000000000045bb53                gws_drawchar_transparent
-                0x000000000045bc0d                gws_draw_char
- .text          0x000000000045bccd      0x1f3 gws.o
-                0x000000000045bccd                gws_init
-                0x000000000045bcff                serverInit
-                0x000000000045bd1c                serverDialog
- .text          0x000000000045bec0      0x472 terminal.o
-                0x000000000045bec0                shellInsertNextChar
-                0x000000000045bf64                shellInsertNullTerminator
-                0x000000000045bf7a                shellInsertLF
-                0x000000000045bf90                shellInsertCR
-                0x000000000045bfa6                testScrollChar
-                0x000000000045bfdb                shellGetCharXY
-                0x000000000045c00e                shellInsertCharXY
-                0x000000000045c10d                shellRefreshCurrentChar
-                0x000000000045c145                shellRefreshChar
-                0x000000000045c1a1                shellRefreshLine
-                0x000000000045c217                shellRefreshScreen
-                0x000000000045c2b9                shellClearScreen
- .text          0x000000000045c332      0x877 termui.o
-                0x000000000045c332                termui_fntos
-                0x000000000045c44c                terminalTopbarProcedure
-                0x000000000045c5a5                terminalCreateEditBox
-                0x000000000045c613                terminalCreateMainWindow
-                0x000000000045c6cf                terminalCreateWindow
-                0x000000000045c761                terminalDisplayBMP
-                0x000000000045c7d5                terminalDisplayBMPEx
-                0x000000000045c861                terminalTestDisplayBMP
-                0x000000000045c8c3                bmpDisplayBMP
-                0x000000000045c8e0                terminalCreateTaskBar
-                0x000000000045ca1b                terminalTestButtons
+                0x000000000045b83e                pwd_builtins
+ .text          0x000000000045b85a       0x9c desktop.o
+                0x000000000045b85a                desktopInitialize
+                0x000000000045b8a3                desktopProcedure
+                0x000000000045b8cf                shellStartDesktopMode
+ .text          0x000000000045b8f6       0x10 login.o
+                0x000000000045b8f6                loginCheckPassword
+ .text          0x000000000045b906      0x15a tests.o
+                0x000000000045b906                testsTimerUpdateObject
+                0x000000000045b9de                testsInitTimer
+ .text          0x000000000045ba60       0x1b pixel.o
+                0x000000000045ba60                gws_backbuffer_putpixel
+ .text          0x000000000045ba7b       0x2b line.o
+                0x000000000045ba7b                my_buffer_horizontal_line
+ .text          0x000000000045baa6       0x86 rect.o
+                0x000000000045baa6                drawDataRectangle
+ .text          0x000000000045bb2c      0x1c7 char.o
+                0x000000000045bb2c                my_buffer_char_blt
+                0x000000000045bb49                set_char_width
+                0x000000000045bb57                set_char_height
+                0x000000000045bb65                get_char_width
+                0x000000000045bb6f                get_char_height
+                0x000000000045bb79                gws_drawchar_transparent
+                0x000000000045bc33                gws_draw_char
+ .text          0x000000000045bcf3      0x1f3 gws.o
+                0x000000000045bcf3                gws_init
+                0x000000000045bd25                serverInit
+                0x000000000045bd42                serverDialog
+ .text          0x000000000045bee6      0x472 terminal.o
+                0x000000000045bee6                shellInsertNextChar
+                0x000000000045bf8a                shellInsertNullTerminator
+                0x000000000045bfa0                shellInsertLF
+                0x000000000045bfb6                shellInsertCR
+                0x000000000045bfcc                testScrollChar
+                0x000000000045c001                shellGetCharXY
+                0x000000000045c034                shellInsertCharXY
+                0x000000000045c133                shellRefreshCurrentChar
+                0x000000000045c16b                shellRefreshChar
+                0x000000000045c1c7                shellRefreshLine
+                0x000000000045c23d                shellRefreshScreen
+                0x000000000045c2df                shellClearScreen
+ .text          0x000000000045c358      0x877 termui.o
+                0x000000000045c358                termui_fntos
+                0x000000000045c472                terminalTopbarProcedure
+                0x000000000045c5cb                terminalCreateEditBox
+                0x000000000045c639                terminalCreateMainWindow
+                0x000000000045c6f5                terminalCreateWindow
+                0x000000000045c787                terminalDisplayBMP
+                0x000000000045c7fb                terminalDisplayBMPEx
+                0x000000000045c887                terminalTestDisplayBMP
+                0x000000000045c8e9                bmpDisplayBMP
+                0x000000000045c906                terminalCreateTaskBar
+                0x000000000045ca41                terminalTestButtons
                 0x000000000045d000                . = ALIGN (0x1000)
- *fill*         0x000000000045cba9      0x457 
+ *fill*         0x000000000045cbcf      0x431 
 
 .iplt           0x000000000045d000        0x0
  .iplt          0x000000000045d000        0x0 crt0.o
