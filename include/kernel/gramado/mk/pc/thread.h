@@ -64,14 +64,15 @@
 	// 0 - esperando por mensagem.(presa num loop)
 	// 1 - esperando outra thread finalizar. wait4tid
 	// 2 - esperando um processo finalizar. wait4pid
-	// 3 - esperando um objeto. (espera genérica)
+	// 3 - esperando um objeto. (BLOCKED)(espera genérica)
 	// ...
 	
 typedef enum {
 	WAIT_REASON_LOOP,           
 	WAIT_REASON_WAIT4TID,      
 	WAIT_REASON_WAIT4PID,
-	WAIT_REASON_EXIT       
+	WAIT_REASON_EXIT,
+	WAIT_REASON_BLOCKED
 	
 	//continua... @todo
 }thread_wait_reason_t;
@@ -715,6 +716,10 @@ void kill_all_threads (void);
 
 int thread_getchar (void);
 
+
+// se a flag estiver habilitada, então devemos acorar a
+// thread do dead thread collector.
+void check_for_dead_thread_collector (void);
 
 //
 // End.

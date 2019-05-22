@@ -291,6 +291,19 @@ void task_switch (void){
 			}
 			
 			//
+			// Dead thread collector
+			// Avalia se é necessário acordar a thread do dead thread collector.
+			// É uma thread em ring 0.
+			//
+			
+			// So' chamamos se ele ja estiver inicializado e rodando.
+			if (dead_thread_collector_status == 1)
+			{
+				check_for_dead_thread_collector ();
+			}
+			
+			
+			//
 			// ======== ## Spawn ? ## =========
 			//
 			

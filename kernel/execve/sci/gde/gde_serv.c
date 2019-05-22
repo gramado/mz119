@@ -678,7 +678,7 @@ void *gde_services ( unsigned long number,
         //		
 			
 		// 70 - Exit. 
-		// Criaremos um request que será atendido somente quando ouver uma 
+		// Criaremos um request que será atendido somente quando houver uma 
 		// interrupção de timer. Enquanto isso a thread deve esperar em um loop.	
 		case SYS_EXIT:
 			sys_create_request ( (unsigned long) 12, //number 

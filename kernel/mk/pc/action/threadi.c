@@ -44,6 +44,16 @@ void xxxRing0Idle (void);
 
 void xxxRing0Idle (void){
 	
+	//
+	// Initializing ...
+	//
+	
+	// #importante:
+	// Quando a thread inicializa ela muda o status do dead thread collector,
+	// liberando rotinas que dependam dele estar funcionando.
+	
+	dead_thread_collector_status = 1;
+	
 Loop:
 	
 	asm ("cli");
@@ -60,6 +70,12 @@ Loop:
 	// Mas o ideia é chamarmos ela apenas quando o
 	// sistema estiver ocioso, para que não fiquemos um quantum inteiro
 	// inativo.
+	
+	// Avisa que o dead thread collector pode dormir.
+	// Não chamaremos a função agora porque estamos usando ele.
+	// Vamos apenas sinalizar que queremos que ele durma.
+	
+	dead_thread_collector_flag = 0;
 	
 	asm ("hlt");
     goto Loop;
@@ -920,8 +936,12 @@ void exit_thread (int tid){
 fail:
 //Nothing.		
 done:
+	
+	// Isso avisa o sistema que ele pode acordar o dead thread collector.
+	dead_thread_collector_flag = 1;
+	
 	return;
-};
+}
 
 
 /*
@@ -989,11 +1009,12 @@ void kill_thread (int tid){
 	
 fail:	
 	
-//Done.
+    // Done.
+	
 done:
     current_thread = idle;
 	return;
-};
+}
 
 
 /*
@@ -1072,6 +1093,35 @@ void kill_all_threads (void){
 		kill_thread (i);	
 }
 
+
+// se a flag estiver habilitada, então devemos acorar a
+// thread do dead thread collector.
+void check_for_dead_thread_collector (void){
+	
+	// #importante
+	// Essa flag é acionada quando uma thread entra em estado zombie.
+	
+	switch (dead_thread_collector_flag)
+	{
+		// waik up	
+		case 1:
+			
+			// Liberamos a thread.
+			// O próprio dead thread collector vai sinalizar que quer dormir,
+			// dai o case default faz isso.
+			
+		    release ( RING0IDLEThread->tid );
+			break;
+			
+		// sleep	
+		default:
+			block_for_a_reason ( RING0IDLEThread->tid, WAIT_REASON_BLOCKED );
+			dead_thread_collector_flag = 0;
+			break;
+	}
+	
+	
+}
 
 //
 // End.

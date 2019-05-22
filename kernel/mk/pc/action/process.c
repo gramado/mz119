@@ -404,6 +404,7 @@ int processCopyMemory ( struct process_d *process, struct process_d *clone ){
 	
 	// #bugbug
 	// Essa função está falhando. #PF.
+	// >> Essa parte est'a falhando na m'aquina real, mas não na VirtualBox.
 	
 	CreatePageTable ( clone->DirectoryVA, ENTRY_USERMODE_PAGES, new_base_PA );
 	

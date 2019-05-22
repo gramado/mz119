@@ -474,6 +474,12 @@ int current_dead_thread;
 //...
 
 
+//se ele est'a inicializado ou nao
+int dead_thread_collector_status;
+
+// se 'e para usalo ou nao
+int dead_thread_collector_flag;
+
 //cr3. current page directoory address.
 unsigned long current_process_pagedirectory_address;
 

@@ -560,6 +560,13 @@ void x86StartGramadoXServer (void)
 		
 		RING0IDLEThread->tss = current_tss;
         
+		
+		// #importante
+		// Sinalizando que ainda não podemos usar as rotinas que dependam
+		// de que o dead thread collector esteja funcionando.
+		// Esse status só muda quando a thread rodar.
+		
+		dead_thread_collector_status = 0;
 		//...
     };
 	
