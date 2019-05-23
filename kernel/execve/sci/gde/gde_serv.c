@@ -236,7 +236,7 @@ void *gde_services ( unsigned long number,
 	WindowClientAreaColor = CurrentColorScheme->elements[csiWindow]; 	
 	
 	 
-	desktopID = (int) get_current_desktop_id();		
+	desktopID = (int) get_current_desktop_id ();		
 	
 	
 	// #bug
@@ -1243,8 +1243,8 @@ void *gde_services ( unsigned long number,
             break;		
 
         //test. menu.
+        //essa é uma rotina de teste, qua chama várias funções.			
 		case 149:
-            //essa é uma rotina de teste, qua chama várias funções.
 			sys_MainMenu ( (struct window_d *) arg2 );		
             break;		
 			
