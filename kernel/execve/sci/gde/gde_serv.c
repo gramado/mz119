@@ -309,9 +309,6 @@ void *gde_services ( unsigned long number,
 	}
 
 
-
-	
-	
 	
 	//
 	// test
@@ -389,6 +386,7 @@ void *gde_services ( unsigned long number,
 		
 		// 5 Vertical Sync. 
 		// Usada pelos servidores.	
+		// #todo: chamar kgws_vsync ()
         case SYS_VSYNC:
 		    sys_vsync ();       		
 			break;
@@ -397,7 +395,8 @@ void *gde_services ( unsigned long number,
 		// 6 - Put pixel. 
         // Coloca um pixel no backbuffer.
         // Isso pode ser usado por um servidor. 
-        // cor, x, y, 0.		
+        // cor, x, y, 0.	
+		// todo: chamar kgws_backbuffer_putpixel
         case SYS_BUFFER_PUTPIXEL:		
             sys_backbuffer_putpixel ( (unsigned long) a2, 
 			    (unsigned long) a3, (unsigned long) a4, 0 );   		
@@ -568,12 +567,12 @@ void *gde_services ( unsigned long number,
 		
 		//55 Get foreground window.
 		case SYS_BUFFER_GETFOREGROUNDWINDOW:
-		    return (void *) sys_windowGetForegroundWindow();
+		    return (void *) sys_windowGetForegroundWindow ();
 		    break;
 		
 		//56 set foreground window.
 		case SYS_BUFFER_SETFOREGROUNDWINDOW:
-		    return (void *) sys_windowSetForegroundWindow((struct window_d*) arg2);
+		    return (void *) sys_windowSetForegroundWindow ( (struct window_d *) arg2 );
 		    break;
 		
 		
@@ -595,7 +594,7 @@ void *gde_services ( unsigned long number,
         //61
 		//Id. (int).	
 		case SYS_GETACTIVEWINDOW:
-            return (void *) sys_get_active_window();    		
+            return (void *) sys_get_active_window ();    		
 			break;
 
         //62
@@ -641,8 +640,23 @@ void *gde_services ( unsigned long number,
 
 		//queremos usar rotina dentro do servidor de terminal, em kserver/output.c
 			
-		case SYS_PUTCHAR: 
-			sys_terminalPutChar ( (int) arg2 );
+		// Essa rotina foi chamada por putchar em ring3 e está pintando na tela
+		// que pertence a um terminal. Mas isso é trabalho do terminal em si.
+		
+		// #importante	
+		// Lembrando que o terminal virtual que está em user mode usa rotinas
+		// do X server para imprimir os caracteres e não as rotinas
+		// da libc. Ele usa as rotinas da libc apenas para colocar os
+		// caracteres dentro do arquivo de sa[ida.
+			
+		// #importante
+		// Não devemos usar rotinas da libc para imprimir caracteres na tela
+		// e sim rotina do x server ou kgws. As rotinas da libc apenas lidam com arquivos
+		// do fluxo padrão. Então nesse serviço vamos chamar alguma rotina do kgws para
+		// imprimir no terminal e isso deve ficar explícito.
+			
+		case SYS_KGWS_PUTCHAR:
+			kgws_terminal_putchar ( (int) arg2 );
 			break;
 
 		//66 - reservado pra input de usuário.
@@ -751,7 +765,7 @@ void *gde_services ( unsigned long number,
 		// TID é a thread atual.
 		// PID veio via argumento.			
         case SYS_WAIT4PID: 
-			return (void *) sys_do_wait ((int *) arg2 );
+			return (void *) sys_do_wait ( (int *) arg2 );
 			//block_for_a_reason ( (int) current_thread, (int) arg2 ); //suspenso
 			break;
 			
@@ -760,7 +774,7 @@ void *gde_services ( unsigned long number,
 		// Isso está retornando o ID do processo pai do processo atual.
 		// O que queremos é o ID do processo pai do processo que está chamando.
 		case SYS_GETPID: 
-		    return (void *) sys_getpid();
+		    return (void *) sys_getpid ();
 			break;
 		
 		//86
@@ -1012,7 +1026,7 @@ void *gde_services ( unsigned long number,
 		//Envia uma mensagem de teste para o servidor taskman	
 		case 116:
 	        gui->taskmanWindow->msg_window = NULL;
-		    gui->taskmanWindow->msg = (int) arg2;             //123; //123=temos uma mensagem. 
+		    gui->taskmanWindow->msg = (int) arg2;                //123=temos uma mensagem. 
 		    gui->taskmanWindow->long1 = (unsigned long) arg3;    //0;
 		    gui->taskmanWindow->long2 = (unsigned long) arg4;    //0;
             gui->taskmanWindow->newmessageFlag = 1;				
@@ -1071,7 +1085,7 @@ void *gde_services ( unsigned long number,
 		// essa mesma.
 		//
 		case SYS_DRIVERINITIALIZED: 
-		    return (void *) sys_systemLinkDriver(arg2,arg3,arg4); 
+		    return (void *) sys_systemLinkDriver (arg2,arg3,arg4); 
 			break;
 			
 			
@@ -1080,6 +1094,7 @@ void *gde_services ( unsigned long number,
 		// #todo: Se não for expecificado a janela, então é pra pintar na janela principal. gui->main.
 		// Repensar se qualquer um pode pintar na janela principal.	
 		// args: window, x, y, color, string.
+			
 		case SYS_DRAWTEXT:
 			//argString = (unsigned char *) arg4; //??
 		    sys_draw_text ( (struct window_d *) message_address[0], 
@@ -1135,7 +1150,7 @@ void *gde_services ( unsigned long number,
 			
 
 		// 135
-		// Coloca caracteres na estrutura de terminal, para aplciativos pegarem
+		// Coloca caracteres na estrutura de terminal, para aplicativos pegarem
         case SYS_FEEDTERMINAL:
             //@todo:
 			// Colocar o caractere enviado no argumento para 
@@ -1166,7 +1181,7 @@ void *gde_services ( unsigned long number,
 		//atual e não mais na janela com foco de entrada.			
         case SYS_GETCH:  
 			
-			return (void *) sys_thread_getchar();
+			return (void *) sys_thread_getchar ();
 			
 			//#todo: podemos tentar pegar do stdin do processo atual.
 			//return (void *) fgetc ( (FILE *) arg2 );
@@ -1181,7 +1196,7 @@ void *gde_services ( unsigned long number,
 			
 		//139
         case SYS_GETSCANCODE:
-		    return (void *) sys_get_scancode();
+		    return (void *) sys_get_scancode ();
             break;		
 
         //140
@@ -1201,7 +1216,7 @@ void *gde_services ( unsigned long number,
 			
 		//143	
 		case SYS_GET_CURRENT_MOUSE_RESPONDER:
-		    return (void *) sys_get_current_mouse_responder();
+		    return (void *) sys_get_current_mouse_responder ();
 			break;
 
 			
@@ -1209,7 +1224,7 @@ void *gde_services ( unsigned long number,
 		//Pega o ponteiro da client area.	
 		case SYS_GETCLIENTAREARECT:	
 		    //#bugbug: pegamos o ponteiro mas não temos permissão para acessar a estrutura.
-			return (void *) sys_getClientAreaRect();	
+			return (void *) sys_getClientAreaRect ();	
 			break;
 		
 		//145
@@ -1332,7 +1347,8 @@ void *gde_services ( unsigned long number,
         // retorno 0=ok 1=fail		
         // Gramado API socket support. (not libc)	
 		case 163:
-            return (void *) sys_update_socket ( (struct socket_d *) arg2, (unsigned long) arg3, (unsigned short) arg4 );
+            return (void *) sys_update_socket ( (struct socket_d *) arg2, 
+								(unsigned long) arg3, (unsigned short) arg4 );
 			break;		
 
 		//#todo: a chamada está no shell em net.c
@@ -1410,9 +1426,9 @@ void *gde_services ( unsigned long number,
 		    sys_fsList ( (const char *) arg2 );		
             break;
 
+		 //#test
+		 //implementando esse serviço.			
         case 178:
-		    //#test
-			//implementando esse serviço.
 		    taskswitch_lock();
 	        scheduler_lock();	
 			//name , address.
@@ -1517,7 +1533,7 @@ void *gde_services ( unsigned long number,
 		// retorna o ID.
 		// O ID fica em terminal_window.
 		case SYS_GETTERMINALWINDOW: 
-			return (void *) sys_systemGetTerminalWindow(); 
+			return (void *) sys_systemGetTerminalWindow (); 
 			break;
 
 		// 216

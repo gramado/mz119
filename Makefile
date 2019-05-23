@@ -14,7 +14,7 @@
 VERSION = 1
 PATCHLEVEL = 6
 SUBLEVEL = 0
-EXTRAVERSION = -rc3
+EXTRAVERSION = -rc4
 NAME = 
 
 
@@ -111,7 +111,7 @@ ifeq ($(ARCH),x86)
 	#deveria ser headx86.o
 	ENTRY_OBJECTS := head.o main.o x86main.o 
 	
-	EXECVE_OBJECTS := pipe.o socket.o cedge.o ctype.o  stdio.o stdlib.o string.o unistd.o \
+	EXECVE_OBJECTS := pipe.o socket.o ctype.o  stdio.o stdlib.o string.o unistd.o \
 	devmgr.o \
 	gde_serv.o \
 	debug.o diskvol.o install.o object.o runtime.o \
@@ -133,7 +133,7 @@ ifeq ($(ARCH),x86)
 	apic.o pic.o rtc.o serial.o timer.o  
 	
 	KSERVERS_OBJECTS := cf.o format.o fs.o read.o search.o write.o \
-	bg.o bmp.o button.o char.o createw.o dtext.o font.o grid.o \
+	cedge.o bg.o bmp.o button.o char.o createw.o dtext.o font.o grid.o \
 	line.o menu.o menubar.o pixel.o rect.o sbar.o toolbar.o window.o \
 	logoff.o \
 	logon.o \
@@ -257,9 +257,8 @@ compile-kernel:
 	
 	#klibc/socket
 	gcc -c kernel/execve/crts/klibc/socket/socket.c   -I include/ $(CFLAGS) -o socket.o		
-	
+
 	# klibc
-	gcc -c kernel/execve/crts/klibc/cedge.c   -I include/ $(CFLAGS) -o cedge.o
 	gcc -c kernel/execve/crts/klibc/ctype.c   -I include/ $(CFLAGS) -o ctype.o
 	gcc -c kernel/execve/crts/klibc/stdlib.c  -I include/ $(CFLAGS) -o stdlib.o
 	gcc -c kernel/execve/crts/klibc/stdio.c   -I include/ $(CFLAGS) -o stdio.o
@@ -359,6 +358,7 @@ compile-kernel:
 	gcc -c kernel/kservers/kgws/kgws/comp/bg.c       -I include/ $(CFLAGS) -o bg.o
 	gcc -c kernel/kservers/kgws/kgws/comp/bmp.c      -I include/ $(CFLAGS) -o bmp.o
 	gcc -c kernel/kservers/kgws/kgws/comp/button.c   -I include/ $(CFLAGS) -o button.o	
+	gcc -c kernel/kservers/kgws/kgws/comp/cedge.c    -I include/ $(CFLAGS) -o cedge.o
 	gcc -c kernel/kservers/kgws/kgws/comp/char.c     -I include/ $(CFLAGS) -o char.o
 	gcc -c kernel/kservers/kgws/kgws/comp/createw.c  -I include/ $(CFLAGS) -o createw.o
 	gcc -c kernel/kservers/kgws/kgws/comp/dtext.c    -I include/ $(CFLAGS) -o dtext.o

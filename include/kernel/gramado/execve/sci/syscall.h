@@ -155,6 +155,11 @@
 
 //O driver do dispositivo envirá a mensagem pra cá para ser
 //enviada para o destino certo.
+
+
+#define	SYS_KGWS_PUTCHAR 65
+
+
 #define	SYS_PUTCHAR 65
 #define	SYS_66 66  
 #define	SYS_67 67

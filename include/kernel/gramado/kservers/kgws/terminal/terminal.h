@@ -186,7 +186,13 @@ struct terminal_d
 // Terminais são usados por administradores e desenvolvedores.
 // Não precisamos de muitos.
 
+
 void terminalPutChar ( int c );
+
+void kgws_terminal_putchar ( int c );
+
+void kgws_outbyte ( int c );
+
 
 unsigned long 
 terminal_dialog ( struct window_d *window, 
