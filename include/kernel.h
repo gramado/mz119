@@ -468,6 +468,7 @@ int current_disk;
 int current_volume;
 int current_directory;
 int current_file;
+int current_tty;
 int current_terminal;
 int current_dead_process;
 int current_dead_thread;

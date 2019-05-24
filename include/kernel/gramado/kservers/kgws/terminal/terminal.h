@@ -105,13 +105,14 @@ configurável.
 */
 
 
-
-
-
 /*
  * terminal_d:
  *     Terminal struct.
  */
+
+// Estrutura usada apenas para enumerar terminais
+// do sistema, limitando à 8.
+// #na estrutura de tty ficará tudo o que o terminal precisa.
 
 struct terminal_d
 {
@@ -123,61 +124,13 @@ struct terminal_d
     
 	int used;
     int magic;
-	
-	
-    // Owner.
-    struct process_d *process;
-	
-	// Thread de input.
-	// Não necessariamente precisa ser a thread de controle ?? 
-	
-	struct thread_d *InputThread;
-	
-	
-	// Window
-	// Uma janela associada ao terminal.
-	
-	struct window_d *window;
-	
-	
-	//
-	// tty support
-	//
-	
-	// ID da tty usada.
-	int tty_id;
-	
-	//@todo: Instance.
-	
-    int	LinMax;
-	int	ColMax;
-	int FullScreen;    //flag.
-	
-	
-	// *IMPORTANTE: 
-	// Os caracteres serão pintados nesse retângulo.
-	// @todo: Uma função deve oferecer a oportunidade de configurar esse
-	// até o limite da área de cliente da janela de instãncia do terminal.
 
-	//informações básicas sobre o retângulo
-    unsigned long left; 
-	unsigned long top;
-	unsigned long width;
-	unsigned long height;
-	
-    // #importante
-	// Nas estruturas de stream tem elementos
-	// para manipular os bytes.
-	
-	// #importante
-	// Isso serve para gerenciar estruturas em ring0.
-              
-    FILE *stdin;	
-	FILE *stdout;
-	FILE *stderr;
-	
+	// #na estrutura de tty ficará tudo o que o terminal precisa.
+    struct tty_d *tty;    
 	
 }TERMINAL[TERMINAL_COUNT_MAX];
+
+
 
 // #bugbug
 // estamos usando um número limitado de terminais.
@@ -199,6 +152,20 @@ terminal_dialog ( struct window_d *window,
                   int msg, 
                   unsigned long long1, 
                   unsigned long long2 ); 
+
+void systemSetTerminalWindow ( struct window_d *window );
+int systemGetTerminalWindow (void); 
+
+//configuramos o retângulo do terminal virtual corrente.. 
+void 
+systemSetTerminalRectangle ( unsigned long left,
+                             unsigned long top,
+							 unsigned long width,
+							 unsigned long height );
+
+
+// initialize terminal support.
+int terminalInit (void);
 
 //
 // End.

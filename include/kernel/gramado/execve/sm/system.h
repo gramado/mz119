@@ -412,19 +412,10 @@ struct system_d *System;
 
 
 
-int systemGetTerminalWindow (void); 
+
+ 
  
 
-//configuramos a janela do terminal virtual corrente.. 
-//@todo: isso deve ser uma opção de system call. 
-void systemSetTerminalWindow( struct window_d *window );
-
-
-//configuramos o retângulo do terminal virtual corrente.. 
-void systemSetTerminalRectangle( unsigned long left,
-                                 unsigned long top,
-								 unsigned long width,
-								 unsigned long height );
 			   
 												
 												  

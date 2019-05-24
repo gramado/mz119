@@ -38,6 +38,9 @@ struct tty_d
 	
 	// Quantas objetos associados a essa tty?
 	int count;
+	
+	// id do terminal associado a essa tty.
+	int terminal_id;
 
 	//Janela.
 	struct window_d *window;
@@ -45,6 +48,8 @@ struct tty_d
 	
    //#todo: buffer?
 	
+    // Owner.
+    struct process_d *process;
 	
 	// Thread de input.
 	struct thread_d *thread;
@@ -52,6 +57,34 @@ struct tty_d
 	FILE *stdin;
 	FILE *stdout;
 	FILE *stderr;
+	
+	
+    int	LinMax;
+	int	ColMax;
+	int FullScreen;    //flag.
+	
+	
+	
+	
+	//informações básicas sobre o retângulo
+    unsigned long left; 
+	unsigned long top;
+	unsigned long width;
+	unsigned long height;
+		
+ 
+    //cursor support.
+    unsigned long cursor_x;
+    unsigned long cursor_y;
+    unsigned long cursor_width;    //??
+    unsigned long cursor_height;   //??
+    unsigned long cursor_color;
+    unsigned long cursor_left;     // margem esquerda dada em linhas
+    unsigned long cursor_top;      // margem superior dada em linhas
+    unsigned long cursor_right;    // margem direita dada em linhas
+    unsigned long cursor_bottom; // margem inferior dada em linhas
+	
+	
 	
     //in support
 	//unsigned long IN[320];

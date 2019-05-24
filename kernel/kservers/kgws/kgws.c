@@ -110,9 +110,10 @@ int gwsRegisterWindowManager ( int pid ){
 	
 fail:
     printf("gwsRegisterWindowManager: fail\n");	
+	
 done:
-    return (int) 0;		
-};
+    return 0;		
+}
  
 	
 /* 
@@ -127,6 +128,13 @@ done:
  */
  
 void create_gui (void){
+	
+	
+	//
+	// Select terminal
+	//
+	
+	terminalInit ();
 	
 	// Set minimal gui set up!.
 	//g_guiMinimal = 1;
@@ -1331,8 +1339,8 @@ int init_gui (void){
 	
 	// ??
 	// Habilita taskswitch e scheduler.
-	set_task_status(UNLOCKED);
-    scheduler_unlock();	 	
+	set_task_status (UNLOCKED);
+    scheduler_unlock ();	 	
 		
 	//SetProcedure( (unsigned long) &system_procedure);	
 	
@@ -1345,7 +1353,7 @@ int init_gui (void){
 //done:
 
     //?? erro fatal ??
-    if( (void*) gui == NULL )
+    if ( (void*) gui == NULL )
 	{
 		printf("init_gui:\n"); 
 		//gui->initialised = 0;
@@ -1355,10 +1363,9 @@ int init_gui (void){
 
     gui->initialised = 1;	
     guiStatus = 1;	
-	return (int) 0;
-};
-
-
+	
+	return 0;
+}
 
 
 unsigned long
