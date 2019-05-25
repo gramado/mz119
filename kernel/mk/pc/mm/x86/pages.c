@@ -298,7 +298,11 @@ void *CreatePageTable ( unsigned long directory_address_va,
 	// Precisamos do endereço virtual do diretório para editá-lo.
 
 	if ( directory_address_va == 0 )
-		return NULL;
+	{
+		kprintf ("CreatePageTable: directory_address_va\n");
+		return NULL;	
+	}
+
 
     unsigned long *PD = (unsigned long *) directory_address_va; 
 
@@ -318,8 +322,9 @@ void *CreatePageTable ( unsigned long directory_address_va,
 
     unsigned long ptVA = (unsigned long) malloc (4096);
 	
-	if ( ptVA == 0 ){
-		
+	if ( ptVA == 0 )
+	{	
+		kprintf ("CreatePageTable: ptVA\n");
 		return NULL;
 	}	
 	
@@ -334,8 +339,9 @@ void *CreatePageTable ( unsigned long directory_address_va,
 
 
 	//Limits.
-	if( offset < 0 )
+	if ( offset < 0 )
 	{
+		kprintf ("CreatePageTable: offset\n");
 		return NULL;
 	}
 
@@ -345,8 +351,9 @@ void *CreatePageTable ( unsigned long directory_address_va,
 	//
 
 	//Limits.
-	if( region_address == 0 )
+	if ( region_address == 0 )
 	{
+		kprintf ("CreatePageTable: region_address\n");
 		return NULL;
 	}
 

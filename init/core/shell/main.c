@@ -3311,10 +3311,10 @@ do_compare:
 		printf("Clone PID={%d}\n", pidFORK );
 		
 		//mostra o id do processo atual.
-		shellShowPID ();
+		//shellShowPID ();
 		
-		printf("fork: done\n");
-        
+		printf("fork: done *breakpoint\n");
+        while(1){}
 		goto exit_cmp;
 	};		
 	

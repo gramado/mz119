@@ -129,9 +129,9 @@ pid_t do_fork_process (void){
 	
 	}else{
 		
-		if ( Current->used != 1 || Current->magic != 1234 ){
-		    
-			printf("do_fork_process: current, validation \n");
+		if ( Current->used != 1 || Current->magic != 1234 )
+		{    
+			printf ("do_fork_process: current, validation \n");
 			goto fail;		
 		}
 		
@@ -150,11 +150,11 @@ do_clone:
 	
 	//Cria uma estrutura do tipo processo, mas não inicializada.
 	
-	Clone = (struct process_d *) processObject();
+	Clone = (struct process_d *) processObject ();
 	
 	if ( (void *) Clone == NULL )
 	{
-		printf("do_fork_process: Clone struct fail \n");
+		printf ("do_fork_process: Clone struct fail \n");
 		
 		goto fail;
 	
@@ -203,7 +203,8 @@ do_clone:
 		if ( Ret != 0 )
 		{
 			printf ("do_fork_process: processCopyProcess fail\n");
-		    goto fail;	
+		    die ();
+			//goto fail;	
 		}
 		
 		
@@ -373,6 +374,7 @@ int processCopyMemory ( struct process_d *process, struct process_d *clone ){
 	unsigned long new_base;
 	
 	// 200 KB.
+	// alocando memória para a imagem do processo.
 	
 	//new_base = (unsigned long) malloc ( 1024 * 200 );  //>> #bugbug: ring 0, precisa ser ring 3.
 	new_base = (unsigned long) allocPages ( (1024*200)/4096 ); //>>  ring 3 ??.
@@ -394,7 +396,14 @@ int processCopyMemory ( struct process_d *process, struct process_d *clone ){
 	// transformando o endereço virtual em físico.
 	unsigned long new_base_PA = (unsigned long) virtual_to_physical ( new_base, gKernelPageDirectoryAddress ); 
 	
-	printf ("new_base_PA=%x DirectoryPA=%x ...\n",new_base_PA, clone->DirectoryPA);
+	printf ("base da imagem new_base_PA=%x  \n", new_base_PA );
+	
+	
+	//
+	// directory
+	//
+	
+	printf ("DirectoryPA=%x \n",clone->DirectoryPA);
 	
 	// Load here.
 	// Altera uma pagetable do diretório de páginas de um processo.
@@ -406,7 +415,18 @@ int processCopyMemory ( struct process_d *process, struct process_d *clone ){
 	// Essa função está falhando. #PF.
 	// >> Essa parte est'a falhando na m'aquina real, mas não na VirtualBox.
 	
-	CreatePageTable ( clone->DirectoryVA, ENTRY_USERMODE_PAGES, new_base_PA );
+	//status: 0 = fail; address = ok
+	void *buff;  
+	
+	buff = (void *) CreatePageTable ( (unsigned long) clone->DirectoryVA, ENTRY_USERMODE_PAGES, new_base_PA );
+	
+	//#importante
+	// Se falhar a criação da pagetable.
+	if ( (void *) buff == NULL )
+	{
+		kprintf ("processCopyMemory: CreatePageTable fail\n");
+		die ();
+	}
 	
 	printf ("3 ...\n");
 	
@@ -436,6 +456,7 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 	
 	if ( p1 == p2 )
 	{
+		printf ("processCopyProcess: pid igual\n");
 		goto fail;
 	}
 	
@@ -504,7 +525,32 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 	// * page directory address
 	//
 	
-	Process2->DirectoryPA = Process1->DirectoryPA;
+	// #bugbug
+    // Precisamos clonar o diretório de páginas
+	// senão alguma alteração feita na pagetable da imagem pode
+	// corromper o processo que está sendo clonado.
+	
+    // #importante:
+    // Deve retornar o endereço do diretório de páginas criado,
+    // que é um clone do diretório de páginas do kernel.
+    // Retornaremos o endereço virtual, para que a função create_process possa usar 
+    // tanto o endereço virtual quanto o físico.
+	
+	//#bugbug
+	//na verdade precisamos clonar o diretório do processo e não o diretório do kernel.
+	
+    Process2->DirectoryVA = (unsigned long) CreatePageDirectory();
+	Process2->DirectoryPA = (unsigned long) virtual_to_physical ( Process2->DirectoryVA, gKernelPageDirectoryAddress ); 
+		
+	//Process2->DirectoryPA = Process1->DirectoryPA;
+	//Process2->DirectoryVA = Process1->DirectoryVA;
+	
+	//#importante
+	//Um diretório de páginas para a thread de controle.
+    
+	Process2->control->DirectoryPA = Process2->DirectoryPA; 
+	
+	
 	
 	Process2->Image = Process1->Image;
 	
@@ -568,11 +614,11 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 	
 fail:
 	Status = 1;
-    printf("processCopyProcess: fail:\n");
+    printf ("processCopyProcess: fail:\n");
 	
 done:
     return (int) Status;	
-};
+}
 
 
 /*

@@ -43,10 +43,26 @@ struct thread_d *threadCopyThread ( struct thread_d *thread )
 	
 	
 	
-      // Caracteristicas.
+	if ( (void *) clone == NULL )
+	{
+		printf ("threadCopyThread: sys_create_thread fail\n");
+	    die ();
+	}
+	
+	
+       // Caracteristicas.
 
 	    clone->type = thread->type; 
-	    clone->state = thread->state;  
+	
+	    // #importante
+	    // Esse momento é critico.
+	    // dependendo do estado da thread ele pode não rodar.
+	    // ou ela pode rodar e falhar por não esta pronta,
+	    // vamos testar opções.
+	
+	    //clone->state = thread->state;  
+	    clone->state = READY;  	
+	
 		//Apenas Initialized, pois a função SelectForExecution
 		//seleciona uma thread para a execução colocando ela no
 		//state Standby.	
@@ -177,8 +193,8 @@ struct thread_d *threadCopyThread ( struct thread_d *thread )
 		// Estamos usando o page directory do processo.
 		// Page directory do processo ao qual a thread pertence.
 		
-		clone->DirectoryPA = thread->DirectoryPA; 
-
+		//clone->DirectoryPA = thread->DirectoryPA; 
+        //clone->DirectoryVA = thread->DirectoryVA;
 
         //ServiceTable ..
         //Ticks ...
