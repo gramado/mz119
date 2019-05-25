@@ -12,9 +12,9 @@
 # We will have a new name just when the release changes.
 
 VERSION = 1
-PATCHLEVEL = 6
+PATCHLEVEL = 7
 SUBLEVEL = 0
-EXTRAVERSION = 0
+EXTRAVERSION = -rc0
 NAME = Sweet
 
 
