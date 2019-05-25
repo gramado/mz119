@@ -1,12 +1,6 @@
 /*
- * \o/
- * Gramado Operating System - The main file for the shell.
- * (c) Copyright 2015~2018 - Fred Nora.
- *
- * File: apps\shell\crt0.c
- *
- * Environment: Gramado Core.
- * Usado para inicializar a rt na libc99
+ * File: crt0.c
+ *     Inicializa runtime.
  */
 
 
@@ -34,21 +28,15 @@ static char *envp[] = {
 extern int main ( int argc, char *argv[] );	
 
 
-//
-// Main function in C part.
-// The entry point is in head.s
-//
-
 
 // #todo
-// Nessa versão do shell talvez precisemos pegar os agumentos que foram passados via linha de comando.
+// Nessa versão do shell talvez precisemos pegar os agumentos que foram 
+// passados via linha de comando.
 // ?? avaliando nisso ??
 
 void crt0 (){
 	
 	int Response;
-	
-	//char **empty_string_pool;
 	
 
     // Inicializando o suporte a alocação dinâmica de memória.
@@ -56,17 +44,14 @@ void crt0 (){
     // Call main().	
 	
 	libcInitRT ();
+	
 	stdioInitialize ();	
-
 
 	Response = (int) main ( 3, argv ); 
 								
-									
-	//
 	// Chama kill ou exit de acordo com o problema ocorrido em main.
 	// O erro pode vir no retorno ou implementa-se uma forma de pegar a execessão 
 	// ocorrida durante a execussão de main.
-	//
 	
 	switch (Response)
 	{
@@ -82,18 +67,18 @@ void crt0 (){
 	};
 	
 	//
-	// ## ERROR ##
+	// Error.
 	//
 	
-hang:	
-    printf("crt0: EXIT ERROR! \n");
-    printf("crt0: *Hang!\n");
-	while(1)
-	{
-		asm("pause");
-		asm("pause");
-		asm("pause");
-		asm("pause");
-	};
-};
+//hang:
+	
+    printf ("[SHELL.BIN] crt0: *Hang\n");
+	
+	while (1) { asm ("pause"); };
+}
+
+//
+// End.
+//
+
 
