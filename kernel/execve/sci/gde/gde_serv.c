@@ -667,23 +667,13 @@ void *gde_services ( unsigned long number,
 		//case 67:
 		//	break;
 
-		//68- reservado pra input de mouse.	
+		//68- Reservado pra input de mouse.	
 		//case 68:		
 		//	break;
 
-		
-		// 69
-		// ??	
+		// 69 - Reservado pra input de teclado.
 		case 69:
 			printf ("service 69: #todo\n");
-			
-			//printf("%c", arg3);
-			//sys_system_procedure ( NULL, (int) arg2, 
-			//	(unsigned long) arg3, (unsigned long) arg4 );
-			//sys_windowSendMessage( (unsigned long) NULL,
-			//    (unsigned long) arg2,
-			//	(unsigned long) arg3,
-			//	(unsigned long) arg4 );
 			break;
 			
 			
@@ -1632,7 +1622,13 @@ void *gde_services ( unsigned long number,
 			return (void *) sys_fputs ( (const char *) arg2, (FILE *) arg3 );
 			break;
 			
-		//...
+		// tty ... 236 237 238 239.	
+			
+		//236 - get tty id
+		case 236:	
+			return (void *) current_tty;
+			break;	
+		
 			
 		//240
 		case SYS_GETCURSORX:

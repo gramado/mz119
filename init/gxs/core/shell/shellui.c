@@ -1,10 +1,8 @@
 /*
- * File termui.c 
+ * File shellui.c 
  *
- * Terminal User Interface.
- *
- *     Suporte às rotinas gráficas do aplicativo terminal.
- *
+ * Shell User Interface.
+ *     Suporte às rotinas gráficas do aplicativo shell.
  *     #importante: A intenção é usar esse módulo do aplicativo shell 
  *                  para construir e testar os recursos gráicos do sistema.
  *                  Aqui é um campo de testes. 
@@ -12,7 +10,7 @@
  */
  
  
-#include "shell.h" 
+#include "sh.h"
 
 
 extern int ShellFlag;
@@ -27,7 +25,7 @@ extern int ShellFlag;
 //...
 
 
-void termui_fntos (char *name){
+void shellui_fntos (char *name){
 	
     int  i, ns = 0;
     char ext[4];
@@ -65,20 +63,20 @@ void termui_fntos (char *name){
         *name++ = ext[i];
 
     *name = '\0';
-}
+};
 	
 
 /*
  ***********************************************
- * terminalTopbarProcedure:
+ * shellTopbarProcedure:
  *     Procedimento de janela.
  *     LOCAL
  */
-
-void *terminalTopbarProcedure ( struct window_d *window, 
-                             int msg, 
-				             unsigned long long1, 
-				             unsigned long long2 )
+unsigned long 
+shellTopbarProcedure ( struct window_d *window, 
+                       int msg, 
+				       unsigned long long1, 
+				       unsigned long long2 )
 {
     unsigned long input_ret;
     unsigned long compare_return;	
@@ -103,7 +101,7 @@ void *terminalTopbarProcedure ( struct window_d *window,
             {
 				// Null key.
 				case 0:
-				    return (void *) 0;
+				    return (unsigned long) 0;
 				    break;
 				
 				// Enter.
@@ -218,7 +216,7 @@ void *terminalTopbarProcedure ( struct window_d *window,
 					   //@todo: abre o interpretador de comandos.
 					//}
 					//#debug
-					printf ("Topbar ** BN_CLICKED  **\n");
+					printf("  Topbar ** BN_CLICKED  **  \n");
 				break;
 				//...
 				
@@ -464,17 +462,27 @@ void *terminalTopbarProcedure ( struct window_d *window,
 
     // Nothing for now !
 
+//printf("Shell procedure\n");
 done:
-    return NULL;	
-}
+    //@todo: variavel que indica que estamos em modo gráfico.
+	//if(VideoBlock.useGui == 1)
+	//{
+	    //Debug.
+		//refresh_screen(); 
+		//Obs: #bugbug perceba que o procedimento de janela do 
+		//sistema também tem um refresh screen.
+	//};	
+	
+	//return (unsigned long) apiDefDialog(window,msg,long1,long2);
+    return (unsigned long) 0;	
+};
 
 
 
 // Criando edit box
 // o tipo dois funciona.
 // testando colocar o ponteiro no edit box. setar foco.
-
-void terminalCreateEditBox (){
+void shellCreateEditBox (){
     
 	editboxWindow = (void *) APICreateWindow ( WT_EDITBOX, 1, 1, "shell-editbox1",     
                                 10, 600-100, 300, 24,    
@@ -483,7 +491,7 @@ void terminalCreateEditBox (){
 									   
 	if ( (void *) editboxWindow == NULL)
 	{	
-		printf ("terminalCreateEditBox: fail");
+		printf("shellCreateEditBox: fail");
 		
 		refresh_screen();
 		while(1){}
@@ -494,37 +502,68 @@ void terminalCreateEditBox (){
     APIRegisterWindow (editboxWindow);
 
 	//shellSetCursor ( 8, 8 );								   
-}
-
+};
 
 
 /*
  ******************** 
- * Create main window;
+ * shellCreateTaskBar:
+ *
+ *     CRIANDO A TOP BAR.
+ *     Obs: Essa é uma janela filha.
+ *     @todo: ?? e o procedimento de janela ?? e as mensagens ??
+ *     Obs: É uma janela simples e limpa, feita para dispositivos IOT 
+ * com resolução 800x600.
+ *
  */
  
-struct window_d *terminalCreateMainWindow ( int status ){
+struct window_d *shellCreateMainWindow( int status ){
+	
+	// #todo:
+	// Precisamos registrar no kernel que essa janela corresponde 
+	// a área de taskbar e que a área de trabalho agora é menor.
+	
+	// # ??
+	// Pegando a janela principal para usarmos como janela mãe.
+	
+	/*
+	
+	struct window_d *pW;
 
+	pW = (struct window_d *) apiGetWSScreenWindow ();
+	
+	if ( (void *) pW == NULL )
+	{
+	    printf("Screen Window fail\n ");
+	    
+		while (1){
+			asm ("pause");
+			//exit (1);
+		}
+	}
+	*/
+	
+	
 	unsigned long left;
 	unsigned long top;
 	unsigned long width;
 	unsigned long height;
+	
+	//left = 0;
+	//top = (600 - (600/16));
+	//width = 800;
+	//height = (600/8); 	
+	
+	//left = wpWindowLeft;
+	//top = wpWindowTop;
+	//width = wsWindowWidth;
+	//height = wsWindowHeight;
 
-	
-	// Tamanho da tela.	
-	//unsigned long ScreenWidth = apiGetSystemMetrics(1);
-    //unsigned long ScreenHeight = apiGetSystemMetrics(2); 
-	
-	//printf ("Creating taskbar ... %d %d\n", ScreenWidth, ScreenHeight);	
-	
-	
-    // #imporante
-	// Essas sao as dimensões da janela principal.
-	
-	wpWindowLeft = 40;     //0;
-	wpWindowTop =  40;     //0;
-	wsWindowWidth = 640;   //1024;
-	wsWindowHeight = 480;  //600; //768;
+	wpWindowLeft = 0;
+	wpWindowTop = 0;
+	wsWindowWidth = 800;
+	wsWindowHeight = 600;
+
 	
 	left = wpWindowLeft;
 	top = wpWindowTop;
@@ -533,57 +572,50 @@ struct window_d *terminalCreateMainWindow ( int status ){
 
 	
 	struct window_d *w;
-	
-	//apiBeginPaint ();
-	
-	//char colors:
-	//fg=COLOR_TERMINALTEXT, bg=COLOR_TERMINAL2 
-	
-	w = (void *) APICreateWindow ( WT_OVERLAPPED, 1, VIEW_NORMAL, "Terminal - Gramado X Server Shell",     
-                     left, top, width, height,    
-                     0, 0, COLOR_TERMINALTEXT, COLOR_TERMINAL2  );
-	
+
+	w = (void *) APICreateWindow ( 1, 1, 1, "shell-main",     
+                                left, top, width, height,    
+                                0, 0, xCOLOR_GRAY1, xCOLOR_GRAY1 );
+								
 	if ( (void *) w == NULL )
 	{	
-		printf ("terminalCreateMainWindow: Window fail");
+		printf("shellCreateTaskBar: taskbar Window fail");
+		refresh_screen();
 		
-		while (1){ asm ("pause"); }
-		
-		//exit (0);
-	}
+		while (1){
+			asm("pause");
+		}
+		//exit(0);
+	};
 	
-	//Registrar e mostrar.
-	
+	//Registrar.
     APIRegisterWindow (w);
-	apiShowWindow (w);
 	
-	//apiEndPaint();
+	apiShowWindow (w);
 	
 	return w;
 };
 
 
 
-void terminalCreateWindow (){
+void testCreateWindow (){
+
 	
 	struct window_d *hWindow;
 	
-	//#debug
-	printf("terminalCreateWindow:\n");
 	
-	//apiBeginPaint ();
+	apiBeginPaint ();
 	
-	hWindow = (void *) APICreateWindow ( WT_OVERLAPPED, 1, VIEW_NORMAL, "XXX",     
-                                40, 40, 400, 400,
-                                0, 0, xCOLOR_GRAY1, xCOLOR_GRAY1 );
-	
+	hWindow = (void *) APICreateWindow ( WT_OVERLAPPED, 1, 1, "XXX",     
+                                10, 10, 200, 200,
+                                0, 0, COLOR_RED, COLOR_YELLOW ); //xCOLOR_GRAY1, xCOLOR_GRAY1 );
 	
 	if ( (void *) hWindow == NULL )
 	{
-		printf ("terminalCreateWindow: FAIL");
+		printf ("FAIL!");
 		while(1){}
 		
-		die ("terminalCreateWindow: hWindow fail");
+		die ("shell.bin: hWindow fail");
 	}
 	
 	//Registrar.
@@ -591,10 +623,10 @@ void terminalCreateWindow (){
 	
 	apiShowWindow (hWindow);	
 
-    //apiEndPaint();
+    apiEndPaint();
 	
-    printf ("ok\n");
-}
+    printf("ok\n");
+};
 
 
 /*
@@ -602,8 +634,7 @@ void terminalCreateWindow (){
  * shellDisplayBMP:
  *     Carrega um arquivo .bmp na memória e decodifica, mostrando na tela.
  */
-
-int terminalDisplayBMP (char *file_name){	
+int shellDisplayBMP (char *file_name){	
 	
 	// #bugbug @todo: Aumenta o tamanho do heap do processo.
 	// Esse heap é gerenciando nas bibliotecas ou na API.
@@ -614,7 +645,7 @@ int terminalDisplayBMP (char *file_name){
     
 	if ( (void *) b == NULL )
 	{
-		printf ("terminalDisplayBMP: allocation fail\n");
+		printf("shellTestDisplayBMP: allocation fail\n");
 		//while(1){}
 		return -1;
 	}
@@ -622,7 +653,7 @@ int terminalDisplayBMP (char *file_name){
 	//Carregando o arquivo.
 loadFile:
 
-    termui_fntos ( (char *) file_name );
+    shellui_fntos ( (char *) file_name );
 
     //@todo: Usar alguma rotina da API específica para carregar arquivo.
 	// na verdade tem que fazer essas rotinas na API.
@@ -664,17 +695,16 @@ loadFile:
 	//printf("data area address %x \n",&bmp[base]);
 	
 	return 0;
-}
+};
 
 
 /*
  *************************************
- * terminalDisplayBMPEx:
+ * shellDisplayBMP:
  *     Carrega um arquivo .bmp na memória e decodifica, mostrando na tela.
  *  tamanho dado em kb
  */
-
-int terminalDisplayBMPEx (char *file_name, int size ){	
+int shellDisplayBMPEx (char *file_name, int size ){	
 	
 	
     //naõ pode ser igual a zero, nem menor que zero, nem maior que 3mb.	
@@ -696,7 +726,7 @@ int terminalDisplayBMPEx (char *file_name, int size ){
 	//Carregando o arquivo.
 loadFile:
 
-    termui_fntos ( (char *) file_name );
+    shellui_fntos ( (char *) file_name );
 
     //@todo: Usar alguma rotina da API específica para carregar arquivo.
 	// na verdade tem que fazer essas rotinas na API.
@@ -738,16 +768,16 @@ loadFile:
 	//printf("data area address %x \n",&bmp[base]);
 	
 	return 0;
-}
+};
+
 
 
 /*
- * terminalTestDisplayBMP:
+ * shellTestDisplayBMP:
  *     Carrega um arquivo .bmp na memória e decodifica, mostrando na tela.
  *     Devemos usar a função oferecida pela api.
  */
-
-void terminalTestDisplayBMP (){
+void shellTestDisplayBMP (){
 	
 	
 	// #bugbug @todo: Aumenta o tamanho do heap do processo.
@@ -758,7 +788,7 @@ void terminalTestDisplayBMP (){
     
 	if ( (void *) b == NULL )
 	{
-		printf ("terminalTestDisplayBMP: allocation fail\n");
+		printf("shellTestDisplayBMP: allocation fail\n");
 		//while(1){}
 	}
 	
@@ -810,14 +840,13 @@ loadFile:
  *     Mostra na tela uma imagem .bmp carregada na memória.
  *     #todo: No kernel ou na api tem rotina mais aprimorada que essa.
  */
-
-void 
-bmpDisplayBMP ( void *address, 
-                unsigned long x, 
-				unsigned long y, 
-				int width, 
-				int height )
+void bmpDisplayBMP ( void *address, 
+                     unsigned long x, 
+					 unsigned long y, 
+					 int width, 
+					 int height )
 {
+
     apiDisplayBMP ( (char *) address, x, y ); 
     
 	/*
@@ -884,71 +913,17 @@ bmpDisplayBMP ( void *address,
 	};
 	
 	*/
-	
 	return;
-}
-
-
-/*
- **********************************************
- * terminalCreateTaskBar:
- *
- */
-
-int terminalCreateTaskBar (){
-	
-	// Tamanho da tela.	
-	unsigned long ScreenWidth = apiGetSystemMetrics(1);
-    unsigned long ScreenHeight = apiGetSystemMetrics(2); 
-	
-	
-	printf ("Creating taskbar ... %d %d\n", ScreenWidth, ScreenHeight);
-	
-	enterCriticalSection (); 
-	
-    //em shell.h está o ponteiro.	
-	taskbar_window = (void *) APICreateWindow ( WT_SIMPLE, 1, 1, "Taskbar",     
-                                0, ScreenHeight-24, ScreenWidth, 24,    
-                                0, 0, xCOLOR_GRAY1, xCOLOR_GRAY1 );	
-	
-	if ( (void *) taskbar_window == NULL )
-	{
-		printf ("Couldn't create taskbar window\n");
-		return 1;
-	}
-	
-	 APIRegisterWindow (taskbar_window);
-	 apiShowWindow (taskbar_window);
-	
-    //em shell.h está o ponteiro.	
-	taskbar_button1 = (void *) APICreateWindow ( WT_BUTTON, 1, 1, " Menu ",     
-                                4, ScreenHeight-24, 80, 24,    
-                                0, 0, xCOLOR_GRAY3, xCOLOR_GRAY3 );
-	
-	if ( (void *) taskbar_button1 == NULL )
-	{
-		printf ("Couldn't create taskbar button\n");
-		return 1;
-	}
-								
-    APIRegisterWindow (taskbar_button1);
-	apiShowWindow (taskbar_button1);
-	
-	exitCriticalSection ();	
-	
-	//refresh_screen();
-	return 0;
-}
-
-
+};
 
 
 //testando botão.
 //quando clicamos no menu da barra de tarefas.
 //todo mudar o nome da função.
-
-int terminalTestButtons (){
-		
+int shellTestButtons (){
+	
+	
+	
 	// Tamanho da tela.	
 	unsigned long ScreenWidth = apiGetSystemMetrics(1);
     unsigned long ScreenHeight = apiGetSystemMetrics(2); 	
@@ -965,12 +940,13 @@ int terminalTestButtons (){
 	unsigned long app4Top = app1Top;
 	
 	
+    
 	//
 	// botão de reboot
 	//
 	
     //em shell.h está o ponteiro.	
-	app1_button = (void *) APICreateWindow ( WT_BUTTON, 1, 1, "1",     
+	app1_button = (void *) APICreateWindow ( WT_BUTTON, 1, 1, "(CIMA)",     
                                 app1Left, app1Top, 80, 24,    
                                 0, 0, xCOLOR_GRAY1, xCOLOR_GRAY1 );
 								
@@ -982,7 +958,7 @@ int terminalTestButtons (){
 	//
 	
     //em shell.h está o ponteiro.	
-	app2_button = (void *) APICreateWindow ( WT_BUTTON, 1, 1, "2",     
+	app2_button = (void *) APICreateWindow ( WT_BUTTON, 1, 1, "(BAIXO)",     
                                 app2Left, app2Top, 80, 24,    
                                 0, 0, xCOLOR_GRAY1, xCOLOR_GRAY1 );
 								
@@ -995,11 +971,13 @@ int terminalTestButtons (){
 	//
 	
     //em shell.h está o ponteiro.	
-	app3_button = (void *) APICreateWindow ( WT_BUTTON, 1, 1, "3",     
+	app3_button = (void *) APICreateWindow ( WT_BUTTON, 1, 1, " APP3 ",     
                                 app3Left, app3Top, 80, 24,    
                                 0, 0, xCOLOR_GRAY1, xCOLOR_GRAY1 );
 								
     APIRegisterWindow (app3_button);
+
+
 
 
 	//
@@ -1008,19 +986,13 @@ int terminalTestButtons (){
 	
 	
     //em shell.h está o ponteiro.	
-	app4_button = (void *) APICreateWindow ( WT_BUTTON, 1, 1, "4",     
+	app4_button = (void *) APICreateWindow ( WT_BUTTON, 1, 1, " APP4 ",     
                                 app4Left, app4Top, 80, 24,    
                                 0, 0, xCOLOR_GRAY1, xCOLOR_GRAY1 );
 								
     APIRegisterWindow (app4_button);	
-    	
+    
+
+	
     return 0;	
-}
-
-
-//
-// End.
-//
-
-
-
+};

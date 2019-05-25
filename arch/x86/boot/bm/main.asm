@@ -88,12 +88,10 @@
 ;     Para HD IDE.
 ;     Tamanho = 32KB.
 ;
- 
-;
 ; Video modes:
 ; ============
 ; VirtualBox:
-; Oracle VirtualBox: 0x????   640x480x24bpp
+; Oracle VirtualBox: 0x0112   640x480x24bpp
 ; Oracle VirtualBox: 0x0115   800x600x24BPP
 ; Oracle VirtualBox: 0x0118  1024x768x24BPP
 ;
@@ -209,7 +207,12 @@
 ; Nvidia GeForce:  
 ; GeForce 8400 GS: 0x0115   800x600x32BPP
 
-G_VIDEO_MODE EQU 0x0115
+
+;G_VIDEO_MODE EQU 0x0112
+;G_VIDEO_MODE EQU 0x0115  ;800x600
+G_VIDEO_MODE EQU 0x0118
+;..
+
 
 ;;
 ;; GUI FLAG.

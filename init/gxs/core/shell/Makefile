@@ -1,22 +1,22 @@
+# shell para o gde
 
-# Compiling Gramado Core Shell.
-# Shell/GWS
-# 
-# history:
-#     2019 - Created by Fred Nora and Luciano Gonçalez.
+#history:
+#2019 - Created by Fred Nora and Luciano Gonçalez.
 
+#todo:
+#fazer um makefile pra compilar o shell
+#obs: #bugbug tem que arrumas as coisas aqui.
 
-# todo:
-# Os aplicativos em /init/core ainda usam PE, assim como o base kernel.
-# É desejável que isso mude.
 
 
 VERSION = 0
-PATCHLEVEL = 1
+PATCHLEVEL = 0
 SUBLEVEL = 0
-EXTRAVERSION = -rc0
-#NAME = Gramado Core Shell
+EXTRAVERSION =
+#NAME = shell  
 
+#todo:
+#We need to simplify these flags
 
 CFLAGS = -m32 \
 	--std=gnu89 \
@@ -32,6 +32,15 @@ CFLAGS = -m32 \
 	-fno-stack-protector \
 	-s
 
+#	-fleading-underscore \
+#	-fno-stack-protector \
+#	-s
+
+
+#LIBC    = ../../lib/gdelibs/libc02/include/
+#LIBCOBJ = ../../lib/gdelibs/libc02/obj
+#API01   = ../../lib/gdelibs/api01/include/
+#APIOBJ  = ../../lib/gdelibs/api01/obj
 
 LIBC    = ../../../../lib/gramlibs/libc02/include/
 LIBCOBJ = ../../../../lib/gramlibs/libc02/obj
@@ -39,23 +48,25 @@ API01   = ../../../../lib/gramlibs/api02/include/
 APIOBJ  = ../../../../lib/gramlibs/api02/obj
 
 
-GWS    = gws/include/   
-#GWSOBJ = gws/obj cancelado
-
-TERMINAL    = terminal/include/   
 
 	##
 	## Objects
 	##
-	
-	
-myObjects = crt0.o main.o \
-stubs.o \
-ctype.o stdio.o stdlib.o string.o conio.o socket.o signal.o unistd.o \
+
+myObjects = crt0.o \
+main.o \
+shellui.o \
 api.o \
-builtins.o desktop.o login.o tests.o \
-pixel.o line.o rect.o char.o gws.o \
-terminal.o termui.o   
+ctype.o \
+stdio.o \
+stdlib.o \
+string.o \
+conio.o \
+builtins.o \
+desktop.o \
+unistd.o \
+stubs.o    
+
 
 
 
@@ -64,67 +75,39 @@ terminal.o termui.o
 all: crt0.o main.o all-c shell-link finalize clean
 	@echo "Ok?"
 
-head.o:
+#head.o:
 #	nasm  head.s  -felf -o head.o
 
 crt0.o:
-	gcc  -c  crt0.c -I $(LIBC) -I $(API01) -I $(TERMINAL) -I $(GWS) -I . $(CFLAGS) -o crt0.o
+	gcc  -c  crt0.c  $(CFLAGS) -I $(LIBC) -I $(API01) -o crt0.o
 
 main.o:
-	gcc  -c  main.c -I $(LIBC) -I $(API01) -I $(TERMINAL) -I $(GWS) -I . $(CFLAGS) -o main.o
+	gcc  -c  main.c  $(CFLAGS) -I $(LIBC) -I $(API01) -o main.o
 
 all-c:
-
-	gcc  -c  builtins.c  -I $(LIBC) -I $(API01) -I $(TERMINAL) -I $(GWS) -I . $(CFLAGS) -o builtins.o
-	gcc  -c  login.c     -I $(LIBC) -I $(API01) -I $(TERMINAL) -I $(GWS) -I . $(CFLAGS) -o login.o
-	gcc  -c  tests.c     -I $(LIBC) -I $(API01) -I $(TERMINAL) -I $(GWS) -I . $(CFLAGS) -o tests.o
-
+	gcc  -c  shellui.c   -I $(LIBC) -I $(API01)  $(CFLAGS) -o shellui.o
+	gcc  -c  builtins.c  -I $(LIBC) -I $(API01)  $(CFLAGS) -o builtins.o
+	gcc  -c  desktop.c   -I $(LIBC) -I $(API01)  $(CFLAGS) -o desktop.o
 	
-#gws
-	gcc  -c  gws/src/gws/char.c     -I $(LIBC) -I $(API01) -I $(TERMINAL) -I $(GWS) -I . $(CFLAGS) -o char.o
-	gcc  -c  gws/src/gws/line.c     -I $(LIBC) -I $(API01) -I $(TERMINAL) -I $(GWS) -I . $(CFLAGS) -o line.o
-	gcc  -c  gws/src/gws/pixel.c    -I $(LIBC) -I $(API01) -I $(TERMINAL) -I $(GWS) -I . $(CFLAGS) -o pixel.o
-	gcc  -c  gws/src/gws/rect.c     -I $(LIBC) -I $(API01) -I $(TERMINAL) -I $(GWS) -I . $(CFLAGS) -o rect.o
-	gcc  -c  gws/src/gws.c          -I $(LIBC) -I $(API01) -I $(TERMINAL) -I $(GWS) -I . $(CFLAGS) -o gws.o
-# ...	
+#	gcc  -c  parser.c    -I ../../../lib/libc01/include/ -I ../../../lib/api01/include/ $(CFLAGS) -o parser.o
+#	gcc  -c  lexer.c     -I ../../../lib/libc01/include/ -I ../../../lib/api01/include/ $(CFLAGS) -o lexer.o
+#	gcc  -c  net.c       -I ../../../lib/libc01/include/ -I ../../../lib/api01/include/ $(CFLAGS) -o net.o
+#	gcc  -c  terminal.c  -I ../../../lib/libc01/include/ -I ../../../lib/api01/include/ $(CFLAGS) -o terminal.o
 
-#terminal
-	gcc  -c  terminal/src/terminal.c  -I $(LIBC) -I $(API01) -I $(TERMINAL) -I $(GWS) -I . $(CFLAGS) -o terminal.o
-	gcc  -c  terminal/src/termui.c    -I $(LIBC) -I $(API01) -I $(TERMINAL) -I $(GWS) -I . $(CFLAGS) -o termui.o
-	gcc  -c  terminal/src/desktop.c   -I $(LIBC) -I $(API01) -I $(TERMINAL) -I $(GWS) -I . $(CFLAGS) -o desktop.o	
+	cp $(APIOBJ)/api.o      .
 	
-	
-#	gcc  -c  parser.c    -I ../../../include/libc/ $(CFLAGS) -o parser.o
-#	gcc  -c  lexer.c     -I ../../../include/libc/ $(CFLAGS) -o lexer.o
-#	gcc  -c  net.c       -I ../../../include/libc/ $(CFLAGS) -o net.o
-
-
-
-	cp $(APIOBJ)/api.o .
-	
-	cp $(LIBCOBJ)/ctype.o .
+	cp $(LIBCOBJ)/ctype.o   .
 	cp $(LIBCOBJ)/stdio.o .
 	cp $(LIBCOBJ)/stdlib.o .
 	cp $(LIBCOBJ)/string.o .
 	cp $(LIBCOBJ)/conio.o .
-#	cp ../../../lib/wait.o .
-
+	cp $(LIBCOBJ)/wait.o .
 	cp $(LIBCOBJ)/unistd.o .
-	
-	cp $(LIBCOBJ)/stubs.o .
-	
-	cp $(LIBCOBJ)/socket.o .
-
-	cp $(LIBCOBJ)/signal.o .
-	
-	
-	#gws cancelado
-#	cp $(GWSOBJ)/pixel.o   .
+	cp $(LIBCOBJ)/stubs.o .	
 	
 
 shell-link:
 	ld -m elf_i386 -T link.ld -o SHELL.BIN $(myObjects) -Map shell_map.s
-
 
 finalize:
 	cp SHELL.BIN ../../../../bin/boot/

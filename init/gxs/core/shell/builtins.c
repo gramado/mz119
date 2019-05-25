@@ -7,35 +7,38 @@
  */
 
  
-#include "shell.h" 
+#include "sh.h"
 
 
 void cd_buitins (){
 	
 	printf("cd_buitins:\n");
-}
+};
 
 
 //cls
 void cls_builtins (){
 	
-    shellClearScreen ();
-}
+    shellClearScreen();
+};
 
 
 void copy_builtins()
-{	
-}
+{
+	
+};
 
 
 void date_builtins()
-{	
-}
+{
+	
+};
 
 
 void del_builtins()
-{	
-}
+{
+	
+};
 
 
 void dir_builtins (){
@@ -48,9 +51,9 @@ void dir_builtins (){
         
 	//#test 
 	//173 Lista arquivos de um diretório, dado o número do disco,
-    //o número do volume e o número do diretório,
+    //o número do volume e o número do diretório,	
 	
-    system_call ( 173, 0, 0, 0 );		
+    system_call (173,0,0,0);		
 		
 	printf ("~done\n");	
 }
@@ -59,23 +62,22 @@ void dir_builtins (){
 //echo command.
 //imprimir a lista de comandos de uma linha de comandos.
 
-void echo_builtins (char *list[]){
-	
-    shell_print_tokenList ( list, " ");
+void echo_builtins (char *list[])
+{	
+    shell_print_tokenList( list, " ");
 	//shell_print_tokenList( list, "/");
 }
 
 
 void exec_builtins (){
 	
-    printf ("@todo: ~exec\n");	
+    printf("@todo: ~exec\n");	
 }
 
 
 void exit_builtins (){
 	
-    //printf("~exit\n");
-	printf ("Exiting shell process..\n");
+	printf ("Exiting shell ...\n");
 	exit (0);	
 }
 
@@ -83,15 +85,13 @@ void exit_builtins (){
 int getpid_builtins (){
 	
     shellShowPID ();	
-	
 	return 0; 
 }
 
 
 int getppid_builtins (){
 	
-	shellShowPPID ();
-	
+	shellShowPPID ();	
 	return 0;
 }
 
@@ -99,55 +99,39 @@ int getppid_builtins (){
 int getuid_builtins (){
 	
 	shellShowUID ();
-	
 	return 0;
 }
 
 
 int getgid_builtins (){
 	
-	shellShowGID ();
-	
+	shellShowGID ();	
 	return 0;
 }
 
 
-/*
- **************************
- * help_builtins:
- *     Esse comando deve oferecer uma experiência ao usuário. Mostrando
- * os comandos disponíveis para uso.
- *     --tests é a flag que mostra os testes das novas implemetações.
- */
-
 void help_builtins (int arg){
 	
-	//desabilita o cursor
-	system_call ( 245, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);		
+	printf ("gdeshell:\n");
 	
 	switch (arg)
 	{
-		//shell experience menu.
+		//all
 		case 1:
-		    printf ("Show all help topics\n");
-			shellShowExperienceMenu ();
+		    printf("Show all help topics\n");
+			shellHelp();
 		    break;
-			
-		//shell tests menu.
+		//min
 		case 2:
-			shellShowTestsMenu ();
-		    //printf("cls, help, exit..\n");
+		    printf("cls, help, exit..\n");
 			break;
 		
 		default:
-			shellShowExperienceMenu ();
+			shellHelp ();
 			break;
 			
 	};
-	
-	//reabilita o cursor
-	system_call ( 244, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);		
-}
+};
 
 
 void pwd_builtins (){
@@ -156,5 +140,8 @@ void pwd_builtins (){
     system_call ( 170, 0, 0, 0 );		
 }
 
+//
+// End.
+//
 
 

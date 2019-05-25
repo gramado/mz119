@@ -1,4 +1,3 @@
-/*OUTPUT_FORMAT("pe-i386")*/
 OUTPUT_FORMAT("elf32-i386")
 ENTRY(__user_app__)
 SECTIONS
