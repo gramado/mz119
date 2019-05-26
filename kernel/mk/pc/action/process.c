@@ -788,18 +788,28 @@ get_next:
 		// Lista de streams...
 		// #todo: 
 		// Temos que zerar essa lista e criarmos 3 streams para o processo.
+
+        for ( i=0; i< NUMBER_OF_FILES; i++ )
+        {
+            Process->Streams[i] = 0;
+        }
 		
-		for ( i=0; i< NUMBER_OF_FILES; i++ )
-		{
-		    Process->Streams[i] = 0;
-	    }
+		// #bugbug
+		// #test
+		// Temos que criar esses arquivos.
+		// Mas vamos improvisar e usar os ponteiros do kernel.
+		
+		Process->Streams[0] = (unsigned long) stdin;
+		Process->Streams[1] = (unsigned long) stdout;
+		Process->Streams[2] = (unsigned long) stderr;
+
 		
 		//Process->terminal =
-		
+
 		//
-	    //    ****  Banco de dados ****
+		//    ****  Banco de dados ****
 		//
-		
+
 		//bancos de dados e contas do processo.
 		//Process->kdb =
 		//Process->gdbListHead =

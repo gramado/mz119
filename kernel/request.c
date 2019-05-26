@@ -74,6 +74,12 @@
 #include <kernel.h>
 
 
+//
+// Internas,
+//
+
+void do_request_12 ( int tid );
+
 /*
  *********************************************************
  * KiRequest: 
@@ -261,7 +267,8 @@ int request (void){
 			
 		//exit thread.	
 		case 12:
-			exit_thread ( (int) REQUEST.target_tid );
+			do_request_12 ( (int) REQUEST.target_tid );
+			//exit_thread ( (int) REQUEST.target_tid );
 			break;
 			
 		//make target porcess current
@@ -364,6 +371,79 @@ void clear_request (void){
 	REQUEST.long5 = 0;
 	REQUEST.long6 = 0;
 }
+
+
+void do_request_12 ( int tid )
+{
+	
+	struct process_d *p;	
+	struct thread_d *t;
+	
+	//#debug
+	//printf ("do_request_12: code=%d \n", REQUEST.long1);
+	
+	//exit code.
+	switch (REQUEST.long1)
+	{
+		//sem erros.	
+		case 0:
+			goto do_exit;
+			break;
+			
+		//com erro 1.
+		//vamos imprimir a mensagem de erro que estiver no
+		//arquivo stderr.
+		//#todo talvez precise de fflush se a mensagem estiver
+		//no buffer em user mode.	
+		case 1:
+			goto do_printf_error_message;
+			break;
+			
+		//...
+		default:
+			goto do_exit;
+			break;
+	}
+	
+//#test	
+do_printf_error_message:
+	
+
+    //#importante
+	// Isso está certo. O que importa é exibir
+	// a stream stderr do processo.
+
+	t = (struct thread_d *) threadList[REQUEST.target_tid];
+	p = (struct process_d *) processList[t->ownerPID];
+	
+	stderr = (FILE *) p->Streams[2]; //stderr
+	
+	// #importante
+	// Testando a concatenação.
+	
+	fprintf (stderr, "Exiting the thread %d ", REQUEST.target_tid );			
+	fprintf (stderr, " *OK ");	
+
+	kprintf ("%s \n", stdout->_base );    	
+	kprintf ("%s \n", stderr->_base );
+
+	
+do_exit:	
+    exit_thread ( (int) REQUEST.target_tid );
+	
+		
+	// Done.
+	
+	// #bugbug:
+	// Isso é realmente necessário ?
+	// Queremos apenas exibir a mensagem no terminal.
+	kprintf ("done\n");
+	refresh_screen ();
+	
+	// Clear request structure.
+	clear_request ();
+}
+
 
 
 //

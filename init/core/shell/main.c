@@ -3959,6 +3959,18 @@ do_compare:
 		goto exit_cmp;
 	}
 	
+	// t15
+	// exit(1) test
+	// imprimir o output para exit(1). stderr
+	if ( strncmp( prompt, "t15", 3 ) == 0 )
+	{
+		fprintf ( stderr, "This is the stderr file!\n" );
+		fflush (stderr);
+		
+		exit (1);
+		goto exit_cmp;
+	}	
+	
 	//flush stdout
 	if ( strncmp( prompt, "flush-stdout", 12 ) == 0 )
 	{

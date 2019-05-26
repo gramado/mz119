@@ -683,17 +683,18 @@ void *gde_services ( unsigned long number,
 			
 		// 70 - Exit. 
 		// Criaremos um request que será atendido somente quando houver uma 
-		// interrupção de timer. Enquanto isso a thread deve esperar em um loop.	
+		// interrupção de timer. Enquanto isso a thread deve esperar em um loop.
+			
 		case SYS_EXIT:
-			sys_create_request ( (unsigned long) 12, //number 
-                 (int) 1,               //status 
-                 (int) 0,               //timeout. 0=imediatamente.
-				 (int) current_process, //target_pid
-				 (int) current_thread,  //target_tid
-                 NULL,                  //window 
-                 (int) 0,               //msg  
-                 (unsigned long) 0,     //long1  
-                 (unsigned long) 0 );   //long2
+			sys_create_request ( (unsigned long) 12,  // number 
+                 (int) 1,                             // status 
+                 (int) 0,                             // timeout. 0=imediatamente.
+				 (int) current_process,               // target_pid
+				 (int) current_thread,                // target_tid
+                 NULL,                                // window 
+                 (int) 0,                             // msg  
+                 (unsigned long) arg2,                // long1  
+                 (unsigned long) arg3 );              // long2
 			break;
 		
         // 71
@@ -1618,12 +1619,14 @@ void *gde_services ( unsigned long number,
 			return (void *) sys_fclose ( (FILE *) arg2);
 			break;
 			
-		//233
+		// 233
+		// fflush.	
 		case 233:
 			return (void *) sys_fflush ( (FILE *) arg2);
 			break;
 			
-		//234
+		// 234
+		// fprintf.	
 		case 234:
 			return (void *) sys_fprintf ( (FILE *) arg2, (const char *) arg3 );
 			break;

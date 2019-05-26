@@ -220,14 +220,29 @@ size_t fwrite (const void *ptr, size_t size, size_t n, FILE *fp)
 
 
 /* 
+ *********************************************
  * fflush: 
- * Salva o buffer no arquivo associado a ele.
- * e limpa o buffer. 
- * Se for NULL então faz isso para todas stream abertas.
- * retorna 0 se funcionar e retorna EOF se falhar.
+ *     ?? Salva o buffer no arquivo associado a ele e limpa o buffer. 
+ *     ?? Exibe o conteúdo do arquivo na tela do terminal.
+ *     Se for NULL então faz isso para todas as stream abertas.
+ *     Retorna 0 se funcionar e retorna EOF se falhar.
  */
 
+// The fflush() function is used because standard output is usually buffered 
+// and the prompt may not immediately be printed on the output or terminal.
+
+// https://linux.die.net/man/3/fflush
+// http://man7.org/linux/man-pages/man3/fflush.3.html
+
 int fflush ( FILE *stream ){
+	
+	// vamos pegar o conteudo dessa stream
+	// e copiarmos na stream do processo.
+	// se for null temos que copiar todos os stream.
+	
+	
+	struct process_d *p;	
+	struct thread_d *t;	
 	
 	register int i = 0;
 	
@@ -240,16 +255,21 @@ int fflush ( FILE *stream ){
 		
 	// Limits.
     // Se o buffer tiver vazio ou for maior que o limite.	
+	
 	if ( stream->_bufsiz == 0 || stream->_bufsiz > BUFSIZ )
 	{
 		
-		printf("fflush: buffer size limits\n");
-		return (int) (-1);
+		printf ("fflush: buffer size limits\n");
+		stream->_bufsiz = BUFSIZ;
+		//return (int) (-1);
 	}
     
-    //
-	// Clear.
-    //
+	
+	t = (struct thread_d *) threadList[current_thread];
+	p = (struct process_d *) processList[t->ownerPID];
+	
+	
+	stdout = (FILE *) p->Streams[1]; //stdout
 	
     // #bugbug: 
 	// Se essa base aponta para um lugar inválido poderemos 
@@ -257,13 +277,13 @@ int fflush ( FILE *stream ){
 	
     for ( i=0; i < stream->_bufsiz; i++ )
 	{
-	    //limpa
-		stream->_base[i] = (char) '\0';	
+			
+		stdout->_ptr[i] = stream->_base[i];
 	}
     
-	stream->_ptr = stream->_base;     //walk	
-    stream->_bufsiz = BUFSIZ; 		  //tamanho
-	stream->_cnt = stream->_bufsiz;   //quanto falta é igual ao tamanho.
+	//stream->_ptr = stream->_base;     //walk	
+    //stream->_bufsiz = BUFSIZ; 		  //tamanho
+	//stream->_cnt = stream->_bufsiz;   //quanto falta é igual ao tamanho.
 	
 	
 	return 0;
@@ -785,18 +805,39 @@ int sprintf ( char *str, const char *format, ... ){
 int fprintf ( FILE *stream, const char *format, ... ){
 	
     register int *varg = (int *) (&format);
-	
-	if ( (void*) stream != NULL )
-	{
-		//??
-		//@todo Error. O erro deveria retornar 1.
-        return 0;   		
-	};		
 
+	// Srteam inv'alida.
+    if ( (void *) stream == NULL )
+        return -1;
+
+	// Colocamos no ponteiro e n~ao na base.
 	char *str = (char *) stream->_ptr;
 	
-	return (int) print (&str, varg);	
+	//#todo
+	//tem que atualizar o ponteiro com uma strlen
+	size_t len = 0;
+	
+	len = (size_t) strlen ( (const char *) format);
+	//len++;
+	len--;
+	
+	//#debug
+	//printf (format);	
+	//printf ("2:%s",format);	
+	//printf (" len=%d", len);
+	//refresh_screen();
+	//while(1){}
+	
+	int status = -1;
+	
+	status = (int) print (&str, varg);
+
+	//depois de ter imprimido então atualizamos o ponteiro de entrada no arquivo.
+	stream->_ptr = stream->_ptr + len;	
+	
+	return (int) status;	
 }
+
 
 /*
  #opçao
@@ -894,8 +935,8 @@ int ungetc ( int c, FILE *stream ){
 }
 
 
-long ftell (FILE *stream)
-{
+long ftell (FILE *stream){
+	
 	if ( (void *) stream == NULL )
 	{
 		return (long) 0; //-1
@@ -1463,8 +1504,7 @@ input_more:
 	
 input_done:	
     return VK_RETURN;	
-};
-
+}
 
 
 /*
@@ -1649,14 +1689,12 @@ int stdioInitialize (void){
 	g_cursor_color = COLOR_TERMINALTEXT;
 	
 	
-	//
 	// #importante:
 	// Preenche os arquivos do fluxo padrão do kernel base
 	// com 'zeros'.
-	//
 
-	for ( i=0; i<PROMPT_MAX_DEFAULT; i++ ){
-		
+	for ( i=0; i<PROMPT_MAX_DEFAULT; i++ )
+	{	
 		prompt[i] = (char) '\0';
 		prompt_out[i] = (char) '\0';
 		prompt_err[i] = (char) '\0';
