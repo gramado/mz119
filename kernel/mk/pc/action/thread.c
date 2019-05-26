@@ -50,6 +50,8 @@ struct thread_d *threadCopyThread ( struct thread_d *thread )
 	}
 	
 	
+	   ClonedThread = clone;
+	
        // Caracteristicas.
 
 	    clone->type = thread->type; 
@@ -61,8 +63,9 @@ struct thread_d *threadCopyThread ( struct thread_d *thread )
 	    // vamos testar opções.
 	
 	    //clone->state = thread->state;  
-	    clone->state = READY;  	
-	
+	    //clone->state = READY;  	
+	    clone->state = BLOCKED;
+			
 		//Apenas Initialized, pois a função SelectForExecution
 		//seleciona uma thread para a execução colocando ela no
 		//state Standby.	
@@ -240,7 +243,14 @@ struct thread_d *threadCopyThread ( struct thread_d *thread )
 	
 	
     	 
+	//#debug
+	//mostra_slot (thread->tid);
+	//mostra_reg (thread->tid);	
+	//mostra_slot (clone->tid);
+	//mostra_reg (clone->tid);
+	//refresh_screen();
 	
+	//while(1){}
 	
 	return (struct thread_d *) clone;
 }

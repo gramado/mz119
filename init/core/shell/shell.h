@@ -1152,6 +1152,10 @@ int shell_gramado_core_init_execve( const char *arg1,
                                     const char *arg2, 
                                     const char *arg3 );
 
+int shell_gramado_core_init_execve2( const char *arg1, 
+                                    const char *arg2, 
+                                    const char *arg3 );
+
 //
 // shelui.c
 //

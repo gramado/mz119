@@ -696,7 +696,12 @@ void *gde_services ( unsigned long number,
                  (unsigned long) 0 );   //long2
 			break;
 		
-        //71 		
+        // 71
+		// #bugbug	
+		// #importante: A questão é que precisamos do contexto salvo ;;;
+		// Essa função precisa de uma interrupção que salve o contexto do mesmo modo
+		// que o timer faz.
+		// podemos retornar com o clone bloqueado.	
 		case SYS_FORK: 
 		    return (void *) sys_do_fork_process ();
 			break;	
@@ -1428,14 +1433,20 @@ void *gde_services ( unsigned long number,
 			return (void *) Ret;		    
             break;		
 			
-		// # test #	
-		// #bugbug: suspenso.
-		// passando vetor de ponteiros.
-		// executando um novo programa no processo init.
-		//case 179:
-		// contador, endereço.
-		//    return (void*) execve_execute_on_init( (int) arg2, (const char *) arg3 );
-        //    break;		
+			
+		//179
+		//#bugbug: isso é um teste
+		//isso faz o programa rodar na thread clone ClonedThread e não n a IdleThread,
+		// 0 = idle ; 216 = cloned.	
+		case 179:
+			//serviço, name, (arg)(endereço da linha de comando), env
+
+            return (void *) sys_executive_gramado_core_init_execve ( 216, 
+                                (const char *) arg2, 
+                                (const char *) arg3, 
+                                (const char *) arg4 ); 			
+			break;
+			
 
 		//184
 		//pega o endereço do heap do processo dado seu id.	

@@ -545,13 +545,6 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 	//Process2->DirectoryPA = Process1->DirectoryPA;
 	//Process2->DirectoryVA = Process1->DirectoryVA;
 	
-	//#importante
-	//Um diretório de páginas para a thread de controle.
-    
-	Process2->control->DirectoryPA = Process2->DirectoryPA; 
-	
-	
-	
 	Process2->Image = Process1->Image;
 	
     //heap
@@ -590,6 +583,15 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 	// clonando a thread de controle.
 	
 	Process2->control = (struct thread_d *) threadCopyThread ( Process1->control );
+	
+	
+	//#importante
+	//Um diretório de páginas para a thread de controle.
+    
+	Process2->control->DirectoryPA = Process2->DirectoryPA; 
+	
+	Process2->control->ownerPID = Process2->pid;	
+	
 	
 	//?? herda a lista de threads ??
 	Process2->threadListHead = Process1->threadListHead;

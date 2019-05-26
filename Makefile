@@ -14,8 +14,8 @@
 VERSION = 1
 PATCHLEVEL = 7
 SUBLEVEL = 0
-EXTRAVERSION = -rc1
-NAME = Sweet
+EXTRAVERSION = -rc2
+NAME = 
 
 
 ARCH ?= x86
@@ -531,6 +531,7 @@ vhd-copy-files:
 	sudo cp bin/boot/INIT.BIN     /mnt/gramadovhd/BOOT
 	sudo cp bin/boot/SHELL.BIN    /mnt/gramadovhd/BOOT
 	sudo cp bin/boot/TASKMAN.BIN  /mnt/gramadovhd/BOOT
+
 
 #colocaremos drivers e servidores na pasta boot/
 #	sudo cp bin/drivers/??.BIN       /mnt/gramadovhd/BOOT	

@@ -177,8 +177,13 @@ executive_gramado_core_init_execve ( int i,
 	// Ou carregarmos em um endereço físico e mapearmos no
 	// diretório de páginas do processo na posição 0x400000.
 	
-    Status = (int) fsLoadFile ( VOLUME1_FAT_ADDRESS, VOLUME1_ROOTDIR_ADDRESS, 
+	
+
+	
+      Status = (int) fsLoadFile ( VOLUME1_FAT_ADDRESS, VOLUME1_ROOTDIR_ADDRESS, 
 	                   (unsigned char *) arg1, (unsigned long) 0x00400000 );
+	
+	
 	
 	if ( Status == 1 )
 	{		
@@ -192,8 +197,11 @@ executive_gramado_core_init_execve ( int i,
 	
 	// OK. O comando existe e o arquivo foi carregado, mas 
 	// precisamos saber se a assinatura de ELF é válida.
-					
-	Status = (int) fsCheckELFFile ( (unsigned long) 0x00400000 );
+		
+
+	    Status = (int) fsCheckELFFile ( (unsigned long) 0x00400000 );		
+
+
 	
 	if ( Status == 0 ){
 		goto format_ok;	
@@ -304,7 +312,15 @@ format_ok:
 	// #bugbug
 	// Esse ponteiro ode dar problemas.
 	
-	Thread = (struct thread_d *) IdleThread; 			
+	if ( i == 216 )
+	{
+		printf ("execve: ClonedThread \n");
+	    Thread = (struct thread_d *) ClonedThread; 				
+	}else{
+		printf ("execve: IdleThread \n");
+	    Thread = (struct thread_d *) IdleThread; 					
+	}
+
 	
 	if ( (void *) Thread == NULL )
 	{
@@ -352,6 +368,7 @@ format_ok:
 		// Plano. bg/fg.
 
         Thread->plane = Plane;
+		
 
 		//
 		// Context.
