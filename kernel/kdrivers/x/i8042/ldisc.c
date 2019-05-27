@@ -90,8 +90,8 @@ LINE_DISCIPLINE ( struct window_d *window,
 		
 		if ( t->used != 1 || t->magic != 1234 )
 		{
-			printf("LINE_DISCIPLINE: t validation");
-			die();
+			printf ("LINE_DISCIPLINE: t validation \n");
+			die ();
 		}        
 			
 		//#importante:
@@ -580,6 +580,8 @@ done:
 	//}
 	
 	
+check_WindowWithFocus:	
+	
 	// #importante
 	// Mas como o wm já está presente aqui no kernel, então
 	// já podemos enviar para o window manager. Ou melhor
@@ -602,21 +604,35 @@ done:
 		}		
 		
 		// #importante:
+		// Aqui significa que temos uma janela com o foco de entrada válida.
+		
+		// #importante:
 		// Pegamos a THREAD de input associada com a janela que tem o 
 		// foco de entrada.
+		
+		// #bugbug
+		// Quando um shell executa outro programa, esse novo
+		// programa, então a thread de controle desse novo programa
+		// não está associada a nenhuma janela com foco de entrada.
+		// Então essa nova thread de controle não recebe mensagens
+		// pois precisamos de uma janela com foco de entrada.
+		
+		// talvez seja trabalho da libc inicialziar p input
+		// talvez utilizando a janela do terminal
+		// sem terminal, sem input.
 		
 		t = (void *) w->control;
 		
 		if ( (void *) t == NULL )
 		{
-		    printf ("KEYBOARD_LINE_DISCIPLINE: t");
+		    printf ("KEYBOARD_LINE_DISCIPLINE: t \n");
 		    die ();			
 		}
 		
 		if ( t->used != 1 || t->magic != 1234 )
 		{
-			printf ("KEYBOARD_LINE_DISCIPLINE: t validation");
-			die ();
+			printf ("KEYBOARD_LINE_DISCIPLINE: t validation \n");
+			die ();			
 		}        
 
 		//

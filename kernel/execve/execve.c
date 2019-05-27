@@ -369,6 +369,35 @@ format_ok:
 
         Thread->plane = Plane;
 		
+		//#test
+		// Vamos associar ao primeiro tty, mesmo que seja um aplicatibo GUI.
+		// Se ele for um aplicativo GUI ele irá atualizar o foco.
+		// Se for um aplicativo de terminal então terá uma janela 
+		// para rodar. Pois o ldisc manda mensagens para a thread de controle 
+		// da janela com foco de entrada. Vamos fazer isso manualmente.
+		
+		if ( (void *) CurrentTTY != NULL )
+		{
+			if ( CurrentTTY->used == 1 && CurrentTTY->magic == 1234 )
+			{
+				current_tty = CurrentTTY->index;
+				
+			    Thread->tty_id = current_tty;
+				
+				// #terminal window.
+				window_with_focus = CurrentTTY->window->id;
+                terminal_window = CurrentTTY->window->id;
+				
+				//#importante
+				//a thread de controle da janela, para qual
+				//serão enviadas as mensagens pelo ldisc
+				CurrentTTY->window->control = Thread;
+			}
+			
+		}else{
+		    //Thread->tty_id = 0; //-1
+		}
+		
 
 		//
 		// Context.
@@ -811,6 +840,39 @@ format_ok:
 		// Plano. bg/fg.
 
         Thread->plane = Plane;
+		
+		
+		//#test
+		// Vamos associar ao primeiro tty, mesmo que seja um aplicatibo GUI.
+		// Se ele for um aplicativo GUI ele irá atualizar o foco.
+		// Se for um aplicativo de terminal então terá uma janela 
+		// para rodar. Pois o ldisc manda mensagens para a thread de controle 
+		// da janela com foco de entrada. Vamos fazer isso manualmente.
+		
+		if ( (void *) CurrentTTY != NULL )
+		{
+			if ( CurrentTTY->used == 1 && CurrentTTY->magic == 1234 )
+			{
+				current_tty = CurrentTTY->index;
+				
+			    Thread->tty_id = current_tty;
+				
+				// #terminal window.
+				window_with_focus = CurrentTTY->window->id;
+                terminal_window = CurrentTTY->window->id;
+				
+				//#importante
+				//a thread de controle da janela, para qual
+				//serão enviadas as mensagens pelo ldisc
+				CurrentTTY->window->control = Thread;
+			}
+			
+		}else{
+		    //Thread->tty_id = 0; //-1
+		}		
+		
+		
+		
 		
 
 		//
