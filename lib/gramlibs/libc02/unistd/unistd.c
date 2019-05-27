@@ -83,25 +83,170 @@ void *unistd_system_call ( unsigned long ax,
 */
 
 
-/*
- ********************************************************
- * execve:
- * Executes a new process.
- * PS: Does not return on success, and the text, data, bss, 
- * and stack of the calling process are overwritten by 
- * that of the program loaded. 
- */
  
+ 
+
+ 
+
+ 								 
+
+//#deletar.
+//int 
+//shell_gramado_core_init_execve ( const char *arg1,     // nome
+//                                 const char *arg2,     // arg (endereço da linha de comando)
+//                                 const char *arg3 )    // env
+								 
+//padrão libc.
+//int execve ( const char *path, char *const argv[], char *const envp[] );  
+
 int 
-execve ( const char *filename, 
-         const char *argv[], 
-         const char *envp[] )
+gexecve ( const char *filename, 
+         char *argv[], 
+         char *envp[] )	
 {
+	//erro.
+    int Status = 1;
+
+	//unsigned long arg_address = (unsigned long) &argv[0];
+
+	// suprimindo dot-slash
+	// The dot is the current directory and the 
+	// slash is a path delimiter.
+	//if( filename[0] == '.' && filename[1] == '/' )
+	//{ 
+	//    filename++;
+	//    filename++; 
+	//    goto translate;	
+	//};
+
+
+	//suprimindo a barra.
+	//if( *arg1 == '/' || 
+	//    *arg1 == '\\' )
+	//{ 
+	//    arg1++; 
+	//};
+
+
+translate:
+
+	//
+	// ## BUG BUG
+	//
+	// Talvez nesse momento, ao transformar a string ele 
+	// corrompa o espaço reservado para o argumento seguinte.
+	// vamos fazer um teste no quan a rotina não precise 
+	// acrescentar zeros.
+	//
 	
-	//@todo: Ainda não implementada.
+	//
+	// correto é isso mesmo,
+	// para não corromper o espaço dos argumentos no vetor,
+	// teremos que transformar somente lá no kernel, pouco antes 
+	// de carregarmos o arquivo.
+	//
 	
-	return (int) -1;
+	//Isso faz uma conversão de 'test.bin' em 'TEST    BIN'.
+	//Ok funcionou.
+	//shell_fntos( (char *) arg1);
+	
+	//const char* isso não foi testado.
+	//shell_fntos(filename);
+
+
+	// #importante:
+	// Isso deve chamar gramado_core_init_execve() na api.
+								
+	
+	// #obs:
+	// isso chamará uma rotina especial de execve, somente  
+	// usada no ambiente gramado core. 
+	// Essa é uma rotina alternativa que roda um processo usando os recursos 
+	// do processo init.
+	
+execve:
+
+	// Obs: 
+	// Se retornar o número do processo então podemos esperar por ele 
+	// chamando wait (ret);
+
+ 
+
+    Status = (int) gramado_system_call ( 167, 
+                       (unsigned long) filename,    // Nome
+                       (unsigned long) argv,        // arg (endereço da linha de comando)
+                       (unsigned long) envp );      // env
+
+    if ( Status == 0 )
+    {
+		//Não houve erro. O aplicativo irá executar.
+
+		// Nesse momento devemos usar um novo procedimento de janela.
+		// Que vai enviar as mensagens de caractere para um terminal 
+		// específico, para que aplicativos que user aquele terminal 
+		// possam pegar essas mensgens de caractere.
+
+
+//#ifdef SHELL_VERBOSE
+        //printf ("execve: Aplicativo inicializado\n");
+//#endif
+
+		//
+		// ## teste ##
+		//
+		// saindo do shell.
+		//
+		
+		// getpid...
+		// waitforpid(?);
+		
+		//die("Exiting shell.bin\n");
+		
+		//Saindo sem erro.
+		//exit(0);
+		
+		//Saída elegante, retornando para o crt0.
+		//ShellFlag = SHELLFLAG_EXIT;
+		//ShellFlag = SHELLFLAG_FEEDTERMINAL;
+		
+		goto done;
+	}else{
+		
+		// Se estamos aqui é porque ouve erro 
+		// ainda não sabemos o tipo de erro. 
+		// Status indica o tipo de erro.
+		// Se falhou significa que o aplicativo não vai executar,
+		// então não mais o que fazer.
+		
+		//#importante: Error message.
+		printf ("gexecve: O aplicativo nao foi inicializado\n");
+		
+		//ShellFlag = SHELLFLAG_COMMANDLINE;
+		goto fail;
+	};
+
+	//fail.
+	
+	// Retornaremos. 
+	// Quem chamou essa rotina que tome a decisão 
+	// se entra em wait ou não.
+
+fail:
+
+    Status = -1;
+    
+	//#importante: Error message.
+	
+    printf ("gexecve: fail \n");
+	
+done:
+
+    return (int) Status;
 }
+
+
+
+
 
 
 /*

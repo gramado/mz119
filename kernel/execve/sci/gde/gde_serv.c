@@ -1270,6 +1270,10 @@ void *gde_services ( unsigned long number,
 			break;
 			
 		// 167 - SYS_GRAMADOCORE_INIT_EXECVE
+		// >>>> do_gexeve.
+		// serviço de suporte a chamada gexecve(), que executa
+		// no processo init.
+		//	
         // Executa um novo programa dentro do processo INIT 
 		// do ambiente Gramado Core.	
         // #importante:
@@ -1280,12 +1284,18 @@ void *gde_services ( unsigned long number,
 
 		// 167:
 		// Executa elf .BIN com entrypoint em 0x401000.
-		// executive_gramado_core_init_execve (execve.c)	
-        case SYS_GRAMADOCORE_INIT_EXECVE_BIN:
+		// executive_gramado_core_init_execve (execve.c)
+		case 167:	
+        //case SYS_GRAMADOCORE_INIT_EXECVE_BIN:
 
 			//serviço, name, (arg)(endereço da linha de comando), env
 
-            return (void *) sys_executive_gramado_core_init_execve ( 0, 
+            //return (void *) sys_executive_gramado_core_init_execve ( 0, 
+            //                    (const char *) arg2, 
+            //                    (const char *) arg3, 
+            //                    (const char *) arg4 ); 
+			
+            return (void *) do_gexecve ( 0, 
                                 (const char *) arg2, 
                                 (const char *) arg3, 
                                 (const char *) arg4 ); 
@@ -1442,7 +1452,12 @@ void *gde_services ( unsigned long number,
 		case 179:
 			//serviço, name, (arg)(endereço da linha de comando), env
 
-            return (void *) sys_executive_gramado_core_init_execve ( 216, 
+            //return (void *) sys_executive_gramado_core_init_execve ( 216, 
+            //                    (const char *) arg2, 
+            //                    (const char *) arg3, 
+            //                    (const char *) arg4 ); 	
+			
+           return (void *) do_gexecve ( 216, 
                                 (const char *) arg2, 
                                 (const char *) arg3, 
                                 (const char *) arg4 ); 			
@@ -1684,9 +1699,18 @@ void *gde_services ( unsigned long number,
 			return (void *) sys_pipe ( (int *) arg2 ); 
 			break;
 			
-		//reservado	
+			
+			
+		// execve	
+		// executa um programa usando o processo atual
+		// tá usando a thread atual e transformando ela em thread de controle.
 		case 248:
-			return NULL;
+			//serviço, name, (arg)(endereço da linha de comando), env
+
+            return (void *) do_execve ( 0, 
+                                (const char *) arg2, 
+                                (const char *) arg3, 
+                                (const char *) arg4 ); 	
 			break;
 			
 		//reservado	

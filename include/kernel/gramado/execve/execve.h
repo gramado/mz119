@@ -14,17 +14,19 @@ int init_executive (void);
 
 //void executive_fntos(char *name);
 
-int executive_gramado_core_init_execve( int i,
-                                        const char *arg1, 
-                                        const char *arg2, 
-                                        const char *arg3 );
-										
-										
-int executive_gramado_core_init_execve_exe( int i,
-                                        const char *arg1, 
-                                        const char *arg2, 
-                                        const char *arg3 );
-										
+int 
+do_gexecve ( int i,
+             const char *arg1, 
+             const char *arg2, 
+             const char *arg3 );	
+
+// efetua o serviço execve, rodando um novo programa
+// no processo atual;
+int do_execve ( int i,
+                const char *arg1, 
+                const char *arg2, 
+                const char *arg3 );						
+
 
 //#bugbug: suspenso										
 //int 

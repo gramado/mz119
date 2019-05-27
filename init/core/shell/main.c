@@ -1778,9 +1778,9 @@ end:
 	
 	
 	
-#ifdef SHELL_VERBOSE		
-    printf("SHELL.BIN: exiting code '0' ...\n");
-#endif 
+//#ifdef SHELL_VERBOSE		
+    printf ("SHELL.BIN: exiting code '0' ...\n");
+//#endif 
 	
 	//
 	// ## Exit ##
@@ -3971,6 +3971,20 @@ do_compare:
 		goto exit_cmp;
 	}	
 	
+	// t16
+	// Testando execve da libc
+	// isso funcionou usando o processo (init).
+	if ( strncmp( prompt, "t16", 3 ) == 0 )
+	{
+		printf ("Testando gexecve da gramlibs libc02. *hang\n" );
+		
+		gexecve ("gramcode.bin", NULL, NULL );
+		while (1){}
+		//exit (1);
+		goto exit_cmp;
+	}		
+	
+	
 	//flush stdout
 	if ( strncmp( prompt, "flush-stdout", 12 ) == 0 )
 	{
@@ -4206,28 +4220,36 @@ doexec_first_command:
 	int z;
 	
 	// Colocamos todos os ponteiros no array.
-	for ( z=0; z<token_count; z++ ){
+	
+	for ( z=0; z<token_count; z++ )
+	{
 	    buffer[z] = (unsigned long) tokenList[z];	
 	}						 
 
 	// ## ISSO DEU CERTO ## 	
     // Passamos anteriormente a linha de comandos via memória compartilhada,
     // agora então precisamos passar somente o nome do arquivo.	
-    Execve_Ret = (int) shell_gramado_core_init_execve ( 
-	                       (const char *) tokenList[0], //nome
-	                       (const char *) 0,            //NULL
-						   (const char *) 0);           //NULL
-						 
 	
-	
+    //Execve_Ret = (int) shell_gramado_core_init_execve ( 
+	//                       (const char *) tokenList[0], //nome
+	//                       (const char *) 0,            //NULL
+	//					   (const char *) 0);           //NULL
+						 	
     //Execve_Ret = (int) shell_gramado_core_init_execve( 
 	//                       (const char*) tokenList[0], //nome
 	//                       (const char*) tokenList[1], 
 	//					   (const char*) tokenList[2]); //env ...deve ser null
 	
+	
+	//gramlibs libc02.
+    Execve_Ret = (int) gexecve ( (const char *) tokenList[0], //nome
+	                       (const char *) 0, (const char *) 0 );           
+
+	
+	
 	// Ok, funcionou e o arquivo foi carregado,
 	// mas demora para receber tempo de processamento.
-	if( Execve_Ret == 0 )
+	if ( Execve_Ret == 0 )
 	{
 		//
 		// ## WAIT ??
@@ -4239,11 +4261,17 @@ doexec_first_command:
 		// Se o aplicativo funcionou corretamente mas está em segundo 
 		// plano então decemos continuar. 
 		// Por enquanto estamos continuando e rodando concomitantemente.
-		//
 		
 		//
 		// # Stop running #
 		//
+		
+		printf ("shell: gexecve ok\n");
+		
+		//#provisório
+		//exit (0);
+		
+		ShellFlag = SHELLFLAG_EXIT;
 		
 		//Isso sai do loop de mensagens e 
 		//sai do shell elegantemente.
@@ -4252,9 +4280,14 @@ doexec_first_command:
 		
 	    goto exit_cmp;	
 	}else{
+		
 		// falhou. Significa que o serviço naõ conseguir encontrar 
 		// o arquivo ou falhou o carregamento.
-		printf("shell: execve fail\n");
+		
+		printf ("shell: gexecve fail\n");
+		
+		ShellFlag = SHELLFLAG_COMMANDLINE;
+		
 		goto fail;
 	};
 	

@@ -142,10 +142,10 @@ LOAD somain.o
  *(.eh_frame)
  *(.note.GNU-stack)
 
-.comment        0x0000000000000000       0x1a
+.comment        0x0000000000000000       0x11
  *(.comment)
- .comment       0x0000000000000000       0x1a socrt0.o
-                                         0x1b (size before relaxing)
- .comment       0x000000000000001a       0x1b somain.o
+ .comment       0x0000000000000000       0x11 socrt0.o
+                                         0x12 (size before relaxing)
+ .comment       0x0000000000000011       0x12 somain.o
 LOAD ./LIBC02.A
 OUTPUT(LIBC02.SO elf32-i386)

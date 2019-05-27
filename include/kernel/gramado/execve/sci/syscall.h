@@ -459,11 +459,15 @@
 #define	SYS_ALLOCATEVIRTUALMEMORY 191  //ALOCA MEMÓRIA VIRTUAL PARA UM PROCESSO.
 #define	SYS_192 192
 
+
+
 //libc suppport
 #define	SYS_193 193   //feof
 #define	SYS_194 194   //ferror
 #define	SYS_195 195   //fseek
 #define	SYS_196 196   //fputc
+
+
 
 //reservados para scroll de janelas.
 #define	SYS_197 197  //scroll de área de cliente de uma janela;
