@@ -80,21 +80,21 @@ int networkGetStatus (void){
  * adaptadores de rede.
  *
  * #todo:
- *     Quanto aos adaptadores, poderíamos iniciá-los formorme forem encontrados 
- * sondando a interface pci.
+ *     Quanto aos adaptadores, poderíamos iniciá-los comforme forem 
+ * encontrados, sondando a interface PCI.
  */ 
 
 int networkInit (void){
-	
+
 	// Status
-	
+
 	//zera status.
 	networkSetstatus (0);
-	
-	
+
+
 	// Host info struct
 	// host.h
-	
+
 	HostInfo = (struct host_info_d *) malloc ( sizeof( struct host_info_d ) ); 
 
 	if ( (void *) HostInfo == NULL )
@@ -124,6 +124,7 @@ int networkInit (void){
 	//criando socket para local host porta 80
 	
 	// Localhost (127.0.0.1):80 
+	
 	LocalHostHTTPSocket = (struct socket_d *) create_socket ( 0, 0 );  
 	
 	CurrentSocket = (struct socket_d *) LocalHostHTTPSocket;
@@ -164,9 +165,9 @@ void show_network_info (void){
 	}else{
 
 	    //#todo: 
-	    printf("Host name %s\n ", HostInfo->hostName );
-	    printf("IP %s \n ", HostInfo->hostIP );
-	    printf("MAC %s \n ", HostInfo->hostMAC );	
+	    printf ("Host name %s\n ", HostInfo->hostName );
+	    printf ("IP %s \n ", HostInfo->hostIP );
+	    printf ("MAC %s \n ", HostInfo->hostMAC );	
 	    //...
 	};
 	
@@ -177,12 +178,13 @@ void show_network_info (void){
 
 void show_current_nic_info (void){
 	
-	printf("show_current_nic_info:\n");
+	printf ("show_current_nic_info:\n");
 
 	if ( (void *) currentNIC ==  NULL )
 	{
-		printf("show_current_nic_info: struct fail\n");
-	    return;	
+		printf ("show_current_nic_info: struct fail\n");
+	    return;
+		
 	}else{
 		
 		if ( currentNIC->used != 1 || currentNIC->magic != 1234 )
@@ -193,23 +195,23 @@ void show_current_nic_info (void){
 		
 		if ( (void *) currentNIC->pci == NULL )
 		{
-		    printf("show_current_nic_info: pci struct fail\n");
+		    printf ("show_current_nic_info: pci struct fail\n");
 	        return;				
 		}
 
         //messages  		
-		printf("NIC device info:\n");
-		printf("Vendor %x Device %x \n", 
+		printf ("NIC device info:\n");
+		printf ("Vendor %x Device %x \n", 
 		    currentNIC->pci->Vendor, currentNIC->pci->Device );
 			
 			
 		//bars	
-		printf("BAR0 %x\n",currentNIC->pci->BAR0);
-		printf("BAR1 %x\n",currentNIC->pci->BAR1);
-		printf("BAR2 %x\n",currentNIC->pci->BAR2);
-		printf("BAR3 %x\n",currentNIC->pci->BAR3);
-		printf("BAR4 %x\n",currentNIC->pci->BAR4);
-		printf("BAR5 %x\n \n",currentNIC->pci->BAR5);
+		printf ("BAR0 %x\n", currentNIC->pci->BAR0 );
+		printf ("BAR1 %x\n", currentNIC->pci->BAR1 );
+		printf ("BAR2 %x\n", currentNIC->pci->BAR2 );
+		printf ("BAR3 %x\n", currentNIC->pci->BAR3 );
+		printf ("BAR4 %x\n", currentNIC->pci->BAR4 );
+		printf ("BAR5 %x\n \n", currentNIC->pci->BAR5 );
 		
 		//
 		// ## Device status ##
@@ -224,18 +226,18 @@ void show_current_nic_info (void){
 		
  
 		
-		printf("Device status %x \n", currentNIC->DeviceStatus );
+		printf ("Device status %x \n", currentNIC->DeviceStatus );
 		
 		// Full duplex.0=half,1=full 
 		if (currentNIC->DeviceStatus & 1)
 		{
-			printf("Full duplex \n");
+			printf ("Full duplex \n");
 		}
 
         // Link up.0=no,1=link  		
 		if (currentNIC->DeviceStatus & 2)
 		{
-			printf("link up \n");
+			printf ("link up \n");
 		}
 		
 		// transmission paused
@@ -281,7 +283,7 @@ void show_current_nic_info (void){
             currentNIC->ip_address[3] );
 			
 			
-        printf("int_line={%d} int_pin={%d}\n",
+        printf ("int_line={%d} int_pin={%d}\n",
 		    currentNIC->pci->irq_line,     //irq
 			currentNIC->pci->irq_pin );    //shared INTA#			
 			
@@ -289,13 +291,16 @@ void show_current_nic_info (void){
 		
 	};	    
 
-	//refresh_screen();
+	//refresh_screen ();
 }
 
 
+// Manipular o pacote ipv6 recebido pelo handle do e1000.
 
-//manipular o pacote ipv6 recebido pelo handle do e1000.
-int handle_ipv6 ( struct intel_nic_info_d *nic, struct ipv6_header_d *header ){
+int 
+handle_ipv6 ( struct intel_nic_info_d *nic, 
+              struct ipv6_header_d *header )
+{
 
     //printf("\n");
     //printf("handle_ipv6: Initializing ...\n");
@@ -305,7 +310,7 @@ int handle_ipv6 ( struct intel_nic_info_d *nic, struct ipv6_header_d *header ){
 		printf("handle_ipv6: nic fail\n");
 		return -1;
 	}
-	
+
     if ( (void *) header == NULL )
 	{
 		printf("handle_ipv6: header fail\n");
@@ -342,19 +347,18 @@ int handle_ipv6 ( struct intel_nic_info_d *nic, struct ipv6_header_d *header ){
 
 
 
-//#IMPORTANTE
-//chamada por F6 no procedimento de janela do sistema.
+// #IMPORTANTE
+// Chamada por F6 no procedimento de janela do sistema.
 
 void testNIC (void){
 	
 	//printf("\n\ntestNIC:\n\n"); 
-	
-	printf("testNIC: Setup flag \n");
-	printf("testNIC: Sending arp request \n");
+	printf ("testNIC: Setup flag \n");
+	printf ("testNIC: Sending arp request \n");
 	printf ("\n\n #debug: e1000_irq_count=%d \n\n", e1000_irq_count );
 	
 		
-	//testando apens o send 
+	// Testando apenas o send 
 	
 	e1000_interrupt_flag = 1;	
 	
@@ -407,17 +411,23 @@ void testNIC (void){
 	//printf("\n\n");
 	//pciInfo ();
 	
-	printf("testNIC: Done\n");
+	printf ("testNIC: Done\n");
+	
 	refresh_screen();
 }
 
 
-void SendIPV4 ( uint8_t source_ip[4], uint8_t target_ip[4], uint8_t target_mac[6], uint8_t data[32] ){
-		
+void 
+SendIPV4 ( uint8_t source_ip[4], 
+           uint8_t target_ip[4], 
+           uint8_t target_mac[6], 
+           uint8_t data[32] )
+{
+	
 	int i=0;
 	
 	struct ether_header *eh;
-	struct  ether_arp *h;
+	struct ether_arp *h;
 	struct ipv4_header_d *ipv4;
 	struct udp_header_d *udp;
 	
@@ -443,8 +453,8 @@ void SendIPV4 ( uint8_t source_ip[4], uint8_t target_ip[4], uint8_t target_mac[6
 	
 	if ( (void*) eh == NULL)
 	{
-		printf("struct eh fail");
-		die();
+		printf ("struct eh fail");
+		die ();
 	}
 	
 	for( i=0; i<6; i++)
@@ -453,8 +463,7 @@ void SendIPV4 ( uint8_t source_ip[4], uint8_t target_ip[4], uint8_t target_mac[6
 		eh->dst[i] = target_mac[i];                 //dest. (broadcast)	
 	}	
 	
-	eh->type = (uint16_t) ToNetByteOrder16(ETH_TYPE_ARP);
-	
+	eh->type = (uint16_t) ToNetByteOrder16 (ETH_TYPE_ARP);
 	
 	
     //==============================================
@@ -465,8 +474,9 @@ void SendIPV4 ( uint8_t source_ip[4], uint8_t target_ip[4], uint8_t target_mac[6
 	
 	if ( (void *) ipv4 == NULL)
 	{
-		printf(": ipv4 fail");
-		die();
+		printf ("ipv4 fail");
+		die ();
+		
 	}else{
 
         // IPv4 common header
@@ -480,10 +490,12 @@ void SendIPV4 ( uint8_t source_ip[4], uint8_t target_ip[4], uint8_t target_mac[6
  	    //#define IPV4_PROT_UDP 0x11
 		ipv4->Protocol = 0x11; //IPV4_PROT_UDP;
  	    
-		memcpy ( (void*) &ipv4->SourceIPAddress[0],      (const void *) &source_ip[0], 4);
-	    memcpy ( (void*) &ipv4->DestinationIPAddress[0], (const void *) &target_ip[0], 4);    	
+		memcpy ( (void*) &ipv4->SourceIPAddress[0], 
+		    (const void *) &source_ip[0], 4 );
+		
+	    memcpy ( (void*) &ipv4->DestinationIPAddress[0], 
+		    (const void *) &target_ip[0], 4 );
 	};
-
 
 	//==============================================
 	// ## udp ##
@@ -493,8 +505,9 @@ void SendIPV4 ( uint8_t source_ip[4], uint8_t target_ip[4], uint8_t target_mac[6
 	
 	if( (void *) udp == NULL)
 	{
-		printf(": udp fail");
-		die();
+		printf ("udp fail");
+		die ();
+		
 	}else{
     
 	    udp->SourcePort = 0;   
@@ -503,9 +516,7 @@ void SendIPV4 ( uint8_t source_ip[4], uint8_t target_ip[4], uint8_t target_mac[6
         udp->Checksum = 0; 		
     }
 	
-	
-	
-	
+		
 	// ## quem ? ##
 	uint16_t old = currentNIC->tx_cur;
 	
@@ -519,33 +530,31 @@ void SendIPV4 ( uint8_t source_ip[4], uint8_t target_ip[4], uint8_t target_mac[6
 	unsigned char *src_ipv4 = (unsigned char *) ipv4; 
 	unsigned char *src_udp = (unsigned char *) udp; 
 	
-	
 	int j=0;
 	
-        //copia o header ethernet
-		for ( j=0; j<ETHERNET_HEADER_LENGHT; j++ )
-		{
-			buffer[j] = src_ethernet[j];
-		}
+	//copia o header ethernet
+	for ( j=0; j<ETHERNET_HEADER_LENGHT; j++ )
+	{
+		buffer[j] = src_ethernet[j];
+	}
 		
-		//copia o ipv4
-		for ( j=0; j<IPV4_HEADER_LENGHT; j++ )
-		{
-			buffer[j + ETHERNET_HEADER_LENGHT] = src_ipv4[j];
-		}
+	//copia o ipv4
+	for ( j=0; j<IPV4_HEADER_LENGHT; j++ )
+	{
+		buffer[j + ETHERNET_HEADER_LENGHT] = src_ipv4[j];
+	}
 
-		//copia o udp
-		for ( j=0; j<UDP_HEADER_LENGHT; j++ )
-		{
-			buffer[j + ETHERNET_HEADER_LENGHT +IPV4_HEADER_LENGHT] = src_udp[j];
-		}
+	//copia o udp
+	for ( j=0; j<UDP_HEADER_LENGHT; j++ )
+	{
+		buffer[j + ETHERNET_HEADER_LENGHT +IPV4_HEADER_LENGHT] = src_udp[j];
+	}
 		
-		//copia o xxxdata
-		for ( j=0; j<32; j++ )
-		{
-			buffer[j + ETHERNET_HEADER_LENGHT +IPV4_HEADER_LENGHT + UDP_HEADER_LENGHT] = data[j];
-		}		
-	
+	//copia o xxxdata
+	for ( j=0; j<32; j++ )
+	{
+		buffer[j + ETHERNET_HEADER_LENGHT +IPV4_HEADER_LENGHT + UDP_HEADER_LENGHT] = data[j];
+	}		
 	
 	
 	//len;
@@ -557,31 +566,34 @@ void SendIPV4 ( uint8_t source_ip[4], uint8_t target_ip[4], uint8_t target_mac[6
 	
 	currentNIC->tx_cur = ( currentNIC->tx_cur + 1 ) % 8;
 	
-	
 	*( (volatile unsigned int *)(currentNIC->mem_base + 0x3818)) = currentNIC->tx_cur;	
 	
 	
-	//#debug
-	printf("sending ipv4 (while)\n");
-	refresh_screen();	
+	// #debug
+	printf ("sending ipv4 (while)\n");
+	refresh_screen ();	
 	
 	//checamos o status do old pra ver se ele foi enviado.
 	//fica travado aqui até que seja envidao.
 	//poderia ter um timemout??.
+	
 	while ( !(currentNIC->legacy_tx_descs[old].status & 0xFF) )
 	{
 		//nothing
 	}
-	
 }
 	
 	
-void SendARP ( uint8_t source_ip[4], uint8_t target_ip[4], uint8_t target_mac[6] ){
+void 
+SendARP ( uint8_t source_ip[4], 
+          uint8_t target_ip[4], 
+          uint8_t target_mac[6] )
+{
 	
 	int i=0;
+	
 	struct ether_header *eh;
 	struct  ether_arp *h;
-	
 	
 	if ( currentNIC == NULL )
 	{
@@ -603,10 +615,10 @@ void SendARP ( uint8_t source_ip[4], uint8_t target_ip[4], uint8_t target_mac[6]
 	
 	eh = (void *) malloc ( sizeof(struct ether_header ) );
 	
-	if ( (void*) eh == NULL)
+	if ( (void *) eh == NULL)
 	{
-		printf("struct eh fail");
-		die();
+		printf ("struct eh fail");
+		die ();
 	}
 	
 	for( i=0; i<6; i++)
@@ -650,26 +662,24 @@ void SendARP ( uint8_t source_ip[4], uint8_t target_ip[4], uint8_t target_mac[6]
 
 	h = (void *) malloc ( sizeof(struct  ether_arp) );
 	
-	if ( (void*) h == NULL)
+	if ( (void *) h == NULL)
 	{
-		printf("struct h fail");
-		die();
+		printf ("struct h fail");
+		die ();
 	}
 	
-    //Hardware type (HTYPE)
-	h->type = 0x0100; // (00 01)
+    // Hardware type (HTYPE) // (00 01)
+	// Protocol type (PTYPE) //(08 00)	
+	// Hardware address length (MAC)	
+	// Protocol address length (IP)
 	
-	//Protocol type (PTYPE)
-	h->proto = 0x0008;  //(08 00)    
-	
-	//Hardware address length (MAC)
+	h->type = 0x0100; 
+	h->proto = 0x0008;      
 	h->hlen = 6;
-	
-	////Protocol address length (IP)
 	h->plen = 4;
-	
-	
+		
 	//Operation (OPER) (dois bytes invertidos)
+	
 	//h->op = ToNetByteOrder16(ARP_OPC_REPLY);  	
     h->op = ToNetByteOrder16(ARP_OPC_REQUEST);
 	
@@ -716,13 +726,6 @@ void SendARP ( uint8_t source_ip[4], uint8_t target_ip[4], uint8_t target_mac[6]
 	//==================================
 	
 	
-	//#debug
-	//printf("\n debug *hang");
-	//refresh_screen();
-	//while(1){}	
-	
-  	
-
 	// ## quem ? ##
 	uint16_t old = currentNIC->tx_cur;
 	
@@ -738,11 +741,13 @@ void SendARP ( uint8_t source_ip[4], uint8_t target_ip[4], uint8_t target_mac[6]
 	//copiando o header ethernet
 	//copiando o arp logo após do header ethernet
 	
-	for(i=0; i<14;i++){
+	for (i=0; i<14;i++)
+	{
 		buffer[i] = src_ethernet[i];
 	}
 
-	for(i=0; i<28;i++){
+	for (i=0; i<28;i++)
+	{
 		buffer[i + 14] = src_arp[i];
 	}
 	
@@ -799,11 +804,12 @@ void SendARP ( uint8_t source_ip[4], uint8_t target_ip[4], uint8_t target_mac[6]
 	//TDH	= 0x3810,	/* Tx Descriptor Head */
 	//*( (volatile unsigned int *)(currentNIC->mem_base + 0x3810)) = 0;
 	//TDT	= 0x3818,	/* Tx Descriptor Tail */
+	
 	*( (volatile unsigned int *)(currentNIC->mem_base + 0x3818)) = currentNIC->tx_cur;	
 
 	//#debug
-	printf("sending broadcast arp(while)\n");
-	refresh_screen();	
+	printf ("Sending broadcast arp. (while)\n");
+	refresh_screen ();	
 	
 	//checamos o status do old pra ver se ele foi enviado.
 	//fica travado aqui até que seja envidao.

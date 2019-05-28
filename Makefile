@@ -494,6 +494,7 @@ vhd-copy-files:
 	-sudo cp ../gde/bin/GRAMC.BIN     /mnt/gramadovhd 
 	-sudo cp ../gde/bin/LISP.BIN      /mnt/gramadovhd 
 	-sudo cp ../gde/bin/NORATERM.BIN  /mnt/gramadovhd
+	-sudo cp ../gde/bin/REBOOT.BIN  /mnt/gramadovhd
 #...
 	
 	
