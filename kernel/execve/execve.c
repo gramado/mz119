@@ -625,31 +625,36 @@ do_execve ( int i,
 	//
 	// Load file.
 	//
-	
+
 	// #importante:
 	// Carregaremos o programa no endereço lógico 0x400000, usando o
 	// diretório de páginas do processo kernel.
-	
+
 	// #todo:
 	// Nas rotinas de execução, temos que usar o diretorio de páginas
 	// do processo que está solicitando o carregamento e execução.
 	// Ou carregarmos em um endereço físico e mapearmos no
 	// diretório de páginas do processo na posição 0x400000.
-	
-	
 
-	
-      Status = (int) fsLoadFile ( VOLUME1_FAT_ADDRESS, VOLUME1_ROOTDIR_ADDRESS, 
-	                   (unsigned char *) arg1, (unsigned long) 0x00400000 );
-	
-	
-	
+	// #bugbug
+	// Esse carregamento é feito usando o diretório de páginas do kernel,
+	// mas o certo é usarmos o diretório de páginas do processo atual.
+	// A questão é que sempre carregaremos em endereços físicos diferentes,
+	// mas todo diretório de páginas terá o mesmo endereço lógico.
+	// Essa rotina de carregamento tem que usar o endereço lógico
+	// referente ao endereço físico desejado e esse endereço lógico
+	// deve pertencer ao diretório de páginas do kernel.
+
+
+    Status = (int) fsLoadFile ( VOLUME1_FAT_ADDRESS, VOLUME1_ROOTDIR_ADDRESS, 
+                       (unsigned char *) arg1, (unsigned long) 0x00400000 );
+
 	if ( Status == 1 )
-	{		
+	{
 		printf ("do_execve: Couldn't load file\n");
 		goto fail;
 	}
-	
+
 	    // Check ELF signature.
 	    // OK. O comando existe e o arquivo foi carregado, mas 
 	    // precisamos saber se a assinatura de ELF é válida.
@@ -788,7 +793,7 @@ format_ok:
 	// #bugbug: Perderemos a pilha salva na chamada.
 	// #bugbug: Se retornarmos teremos problema pois a thread foi alterada.
 	// Só nos resta reinicializarmos a thread atual e rodarmos ela.
-	
+		
 	Thread = (struct thread_d *) threadList[current_thread];	
 	
 	if ( (void *) Thread == NULL )

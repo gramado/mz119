@@ -11,6 +11,9 @@
  */
  
 
+struct thread_d *xxxClonedThread;
+
+
 //#define FIRST_THREAD theadList[0]
 //#define LAST_THREAD  threadList[THREAD_COUNT_MAX-1] 
  

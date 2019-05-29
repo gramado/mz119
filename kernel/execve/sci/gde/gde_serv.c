@@ -704,7 +704,8 @@ void *gde_services ( unsigned long number,
 		// que o timer faz.
 		// podemos retornar com o clone bloqueado.	
 		case SYS_FORK: 
-		    return (void *) sys_do_fork_process ();
+		    //return (void *) sys_do_fork_process ();
+		    return (void *) do_fork_process ();
 			break;	
 
 		// 72 - Create thread.

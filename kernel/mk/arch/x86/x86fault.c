@@ -155,7 +155,9 @@ void faults ( unsigned long number ){
 	    
 	    default:			
 			printf("Default number\n");
-            mostra_reg(current_thread);			
+            mostra_reg (current_thread);
+	        //mostra_slots ();	
+			mostra_slot (current_thread);
 			break;
 	};
 

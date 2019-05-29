@@ -36,6 +36,8 @@
  */
 
 
+struct process_d *xxxClonedProcess;
+
 //#bugbug
 //talvez aqui nao seja o melhor lugar pra definir isso.
 #define gramado_pid_t pid_t

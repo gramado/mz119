@@ -206,8 +206,7 @@ do_clone:
 		    die ();
 			//goto fail;	
 		}
-		
-		
+				
 		//copia a memória usada pela imagem do processo.
 		processCopyMemory ( Current, Clone );
 		
@@ -216,7 +215,52 @@ do_clone:
 		
 		printf ("do_fork_process: done\n");
 		
-		return (pid_t) PID;	
+		
+		
+		//
+		// Current thread.
+		//
+		
+		// #importante
+		// Nesse momento decidiremos retornar para thread de controle do
+		// processo clone e não mais para a thread do processo pai.
+		
+		// #test
+		// Com isso esperamos que retorne para essa nova current thread.
+
+		//current_thread = Current->control->tid;	
+		//current_process = Current->pid;		
+		
+		current_thread = Clone->control->tid;	
+		current_process = Clone->pid;
+		
+		//#hackhack
+
+		//Current->control->state = WAITING;		
+		Current->control->state = READY;
+		Current->control->quantum = 100;
+		
+		//#bugbug
+		//deixaremos isso bloqueado por enquando
+		//porque não funcina direito.
+		//até roda, mas trava na hora de retomar no próximo
+		//round.
+		
+		//#debug: 
+		// vamos rodar essa thread e analizar
+		// qual seu problema.
+		
+		//Clone->control->state = WAITING;
+		Clone->control->state = READY;
+		Clone->control->quantum = 200;
+		
+		// registrando.
+		//xxxClonedProcess = Clone;
+		//xxxClonedThread = Clone->control;		
+		
+		// Retorna 0 quando rodarmos o filho.		
+		//return (pid_t) PID;	
+		return (pid_t) 0;	
 	};
 
     // Fail.	
@@ -545,6 +589,10 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 	//Process2->DirectoryPA = Process1->DirectoryPA;
 	//Process2->DirectoryVA = Process1->DirectoryVA;
 	
+	
+	// #bugbug
+	// Se o endereço for virtual, tdubom fazer isso. 
+	
 	Process2->Image = Process1->Image;
 	
     //heap
@@ -560,7 +608,6 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 	
 	
 	Process2->iopl = Process1->iopl;
-	
 	
 	
 	Process2->base_priority = Process1->base_priority;
@@ -580,13 +627,15 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 	// Pois se não iremos retomar a thread clone em um ponto antes de chamarmos o fork,
 	// que é onde está o último ponto de salvamento.
 	
-	// clonando a thread de controle.
+	// Clonando a thread de controle.
 	
 	Process2->control = (struct thread_d *) threadCopyThread ( Process1->control );
 	
 	
-	//#importante
-	//Um diretório de páginas para a thread de controle.
+	// #importante
+	// Um diretório de páginas para a thread de controle.
+	// O diretório de páginas da thread de controle será o mesmo
+	// do processo.
     
 	Process2->control->DirectoryPA = Process2->DirectoryPA; 
 	
