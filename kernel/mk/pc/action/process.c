@@ -545,21 +545,24 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 
 	Process2->objectType = Process1->objectType;
 	Process2->objectClass = Process1->objectClass;	
-	
-	//Identificadores.
-	Process2->pid  = (int) p2;       //PID.
-    Process2->ppid = Process1->ppid; //PPID. 
-	Process2->uid  = Process1->uid;  //UID. 
-    Process2->gid  = Process1->gid;  //GID. 
 		
+	//Identificadores.
+	Process2->pid  = (int) p2;       // PID.
+    Process2->ppid = Process1->ppid; // PPID. 
+	Process2->uid  = Process1->uid;  // UID. 
+    Process2->gid  = Process1->gid;  // GID. 
+	
+	Process2->used = Process1->used;
+	Process2->magic = Process1->magic;				
+	
+	
 	//State of process
 	Process2->state = Process1->state;  
 	
 	//Plano de execução.
     Process2->plane = Process1->plane;		
 		
-	Process2->used = Process1->used;
-	Process2->magic = Process1->magic;			
+
 		
 	//Process->name_address = NULL;
 	
@@ -583,13 +586,25 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 	//#bugbug
 	//na verdade precisamos clonar o diretório do processo e não o diretório do kernel.
 	
-    Process2->DirectoryVA = (unsigned long) CreatePageDirectory();
-	Process2->DirectoryPA = (unsigned long) virtual_to_physical ( Process2->DirectoryVA, gKernelPageDirectoryAddress ); 
-		
-	//Process2->DirectoryPA = Process1->DirectoryPA;
-	//Process2->DirectoryVA = Process1->DirectoryVA;
+	// #importante
+	// Isso clona o diretório de páginas do kernel. Isso facilita as coisas.
+	// Retorna o endereço virtual do novo diretório de páginas.
 	
+    Process2->DirectoryVA = (unsigned long) CreatePageDirectory ();
 	
+	if ( (void *) Process2->DirectoryVA == NULL )
+	{
+		//fail
+	}
+	
+	// #importante:
+	// Vamos converter porque precisamos de endereço físico para colocarmos no cr3.
+	// Mas o taskswitch faz isso pegando o endereço que estiver na thread, então
+	// esse endereço precisa ir pra thread.
+	
+	Process2->DirectoryPA = (unsigned long) virtual_to_physical ( Process2->DirectoryVA, 
+											    gKernelPageDirectoryAddress ); 
+			
 	// #bugbug
 	// Se o endereço for virtual, tdubom fazer isso. 
 	
@@ -636,6 +651,8 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 	// Um diretório de páginas para a thread de controle.
 	// O diretório de páginas da thread de controle será o mesmo
 	// do processo.
+	// É importante deixarmos esse endereço na estrutura da thread, pois
+	// é aí que o taskswitch espera encontra-lo.
     
 	Process2->control->DirectoryPA = Process2->DirectoryPA; 
 	
@@ -647,7 +664,6 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 	
 	Process2->zombieChildListHead = Process1->zombieChildListHead;
 		
-	Process2->exit_code = Process1->exit_code;
 	
 	Process2->dialog_address = Process1->dialog_address;
 	
@@ -656,6 +672,9 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 	Process2->msg    = Process1->msg;     //arg2.
 	Process2->long1  = Process1->long1;   //arg3.
 	Process2->long2  = Process1->long2;   //arg4.		
+
+	
+	Process2->exit_code = Process1->exit_code;
 	
 	Process2->prev = Process1->prev; 		
 	Process2->next = Process1->next; 

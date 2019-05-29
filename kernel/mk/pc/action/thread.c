@@ -27,34 +27,46 @@
 
 
 
-struct thread_d *threadCopyThread ( struct thread_d *thread )
-{
+struct thread_d *threadCopyThread ( struct thread_d *thread ){
+	
     struct thread_d *clone;
+	
+	
+	// A que vai ser copiada.
+	
+	if ( (void *) thread == NULL )
+	{
+		printf ("threadCopyThread: thread\n");
+	    die ();
+	}	
+	
 
 	
-	clone = (struct thread_d *) sys_create_thread ( 
-	                        NULL,             // w. station 
-							NULL,             // desktop
-							NULL,             // w.
-							0,             // init eip
-							0,             // init stack
-							current_process,  // pid (determinado)(provisório).
-							"clone-thread" );    // name
+	clone = (struct thread_d *) sys_create_thread ( NULL,  // w. station 
+							        NULL,              // desktop
+							        NULL,              // w.
+							        0,                 // init eip
+							        0,                 // init stack
+							        current_process,   // pid.
+							        "clone-thread" );  // name
 	
-	
+	// A cópia.
 	
 	if ( (void *) clone == NULL )
 	{
-		printf ("threadCopyThread: sys_create_thread fail\n");
+		printf ("threadCopyThread: clone\n");
 	    die ();
 	}
 	
+    // salvando.
 	
-	   ClonedThread = clone;
+	ClonedThread = clone;
 	
-       // Caracteristicas.
-
-	    clone->type = thread->type; 
+	//
+    // Caracteristicas.
+    //
+	
+    clone->type = thread->type; 
 	
 	    // #importante
 	    // Esse momento é critico.
@@ -62,29 +74,32 @@ struct thread_d *threadCopyThread ( struct thread_d *thread )
 	    // ou ela pode rodar e falhar por não esta pronta,
 	    // vamos testar opções.
 	
-	    //clone->state = thread->state;  
-	    //clone->state = READY;  	
-	    clone->state = BLOCKED;
+    //clone->state = thread->state;  
+    //clone->state = READY;  	
+    clone->state = BLOCKED;  //isso funcionou.
 			
 		//Apenas Initialized, pois a função SelectForExecution
 		//seleciona uma thread para a execução colocando ela no
 		//state Standby.	
 		
 		//@TODO: ISSO DEVERIA VIR POR ARGUMENTO
-        clone->plane = thread->plane;	
+    clone->plane = thread->plane;	
 		
 		// A prioridade básica da thread é igual a prioridade básica do processo.
 		// Process->base_priority;
 		// priority; A prioridade dinâmica da thread foi passada por argumento.
-		clone->base_priority = thread->base_priority; 
-		clone->priority = thread->priority; 			
+	
+    clone->base_priority = thread->base_priority; 
+	
+    clone->priority = thread->priority; 			
 		
 		//IOPL.
 		//Se ela vai rodar em kernel mode ou user mode.
 		//@todo: herdar o mesmo do processo.
-		clone->iopl = thread->iopl;             // Process->iopl;  		
-		clone->saved = thread->saved;                // Saved flag.	
-		clone->preempted = thread->preempted;  // Se pode ou não sofrer preempção.
+	
+    clone->iopl = thread->iopl;            // Process->iopl;  		
+    clone->saved = thread->saved;          // Saved flag.	
+    clone->preempted = thread->preempted;  // Se pode ou não sofrer preempção.
 		
 		//Heap and Stack.
 	    //Thread->Heap;
@@ -95,39 +110,42 @@ struct thread_d *threadCopyThread ( struct thread_d *thread )
         // Temporizadores. 
         // step - Quantas vezes ela usou o processador no total.  		
 	    // quantum_limit - (9*2);  O boost não deve ultrapassar o limite. 
-		clone->step = thread->step;                           
-        clone->quantum = thread->quantum;    
-        clone->quantum_limit = thread->quantum_limit; 			
+	
+    clone->step = thread->step;                           
+    clone->quantum = thread->quantum;    
+    clone->quantum_limit = thread->quantum_limit; 			
 		
 		
 		// runningCount - Tempo rodando antes de parar.
 		// readyCount - Tempo de espera para retomar a execução.
 		// blockedCount - Tempo bloqueada.
-        clone->standbyCount = thread->standbyCount;
+	
+    clone->standbyCount = thread->standbyCount;
 	    
-		clone->runningCount = thread->runningCount;   
+    clone->runningCount = thread->runningCount;   
 		
-		clone->initial_time_ms = thread->initial_time_ms;
-		clone->total_time_ms = thread->total_time_ms;
-		
-		
+    clone->initial_time_ms = thread->initial_time_ms;
+    clone->total_time_ms = thread->total_time_ms;
+			
 	    //quantidade de tempo rodadndo dado em ms.
-	    clone->runningCount_ms = thread->runningCount_ms;
+    clone->runningCount_ms = thread->runningCount_ms;
 		
-	    clone->readyCount = thread->readyCount;      
-	    clone->ready_limit = thread->ready_limit;
-	    clone->waitingCount = thread->waitingCount;
-	    clone->waiting_limit = thread->waiting_limit;
-	    clone->blockedCount = thread->blockedCount;    		
-	    clone->blocked_limit = thread->blocked_limit;
+    clone->readyCount = thread->readyCount;      
+    clone->ready_limit = thread->ready_limit;
+    clone->waitingCount = thread->waitingCount;
+    clone->waiting_limit = thread->waiting_limit;
+    clone->blockedCount = thread->blockedCount;    		
+    clone->blocked_limit = thread->blocked_limit;
 		
 	    // Not used now. But it works fine.
-		clone->ticks_remaining = thread->ticks_remaining;    	
+	
+    clone->ticks_remaining = thread->ticks_remaining;    	
 
 	    // Signal
 	    // Sinais para threads.
-	    clone->signal = thread->signal;
-        clone->signalMask = thread->signalMask;	
+	
+    clone->signal = thread->signal;
+    clone->signalMask = thread->signalMask;	
 
 
 		// @todo: 
@@ -156,30 +174,36 @@ struct thread_d *threadCopyThread ( struct thread_d *thread )
 		//Context.
 		// ss (0x20 | 3)
 		// cs (0x18 | 3)
-	    clone->ss = thread->ss;    //RING 3.
-	    clone->esp = thread->esp; 
-	    clone->eflags = thread->eflags;
-	    clone->cs = thread->cs;                                
-	    clone->eip = thread->eip; 
+	
+	//Stack frame.
+	
+    clone->ss     = thread->ss;    //RING 3.
+    clone->esp    = thread->esp; 
+    clone->eflags = thread->eflags;
+    clone->cs     = thread->cs;                                
+    clone->eip    = thread->eip; 
 		
-		//O endereço incial, para controle.
-		clone->initial_eip = thread->initial_eip; 
+	//O endereço incial, para controle.
+	
+    clone->initial_eip = thread->initial_eip; 
 		
 		// (0x20 | 3)
-	    clone->ds = thread->ds; 
-	    clone->es = thread->es; 
-	    clone->fs = thread->fs; 
-	    clone->gs = thread->gs; 
-	    clone->eax = thread->eax;
-	    clone->ebx = thread->ebx;
-	    clone->ecx = thread->ecx;
-	    clone->edx = thread->edx;
-	    clone->esi = thread->esi;
-	    clone->edi = thread->edi;
-	    clone->ebp = thread->ebp;	
+    clone->ds = thread->ds; 
+    clone->es = thread->es; 
+    clone->fs = thread->fs; 
+    clone->gs = thread->gs; 
+	
+    clone->eax = thread->eax;
+    clone->ebx = thread->ebx;
+    clone->ecx = thread->ecx;
+    clone->edx = thread->edx;
+    clone->esi = thread->esi;
+    clone->edi = thread->edi;
+    clone->ebp = thread->ebp;	
 		
-		//TSS
-		clone->tss = thread->tss;
+	//TSS
+    
+    clone->tss = thread->tss;
 		
 		//cpu.
 		//Thread->cpuID = 0;
