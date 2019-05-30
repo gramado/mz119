@@ -215,52 +215,33 @@ do_clone:
 		
 		printf ("do_fork_process: done\n");
 		
-		
+		// #importante
+		// Aqui temos quase tudo pronto no child.
+        // Vamos fazer um spawn do child, deixando ele pronto para
+		// ser selecionado pelo scheduler e retornaremos para o pai.		
 		
 		//
 		// Current thread.
 		//
 		
-		// #importante
-		// Nesse momento decidiremos retornar para thread de controle do
-		// processo clone e não mais para a thread do processo pai.
-		
-		// #test
-		// Com isso esperamos que retorne para essa nova current thread.
-
-		//current_thread = Current->control->tid;	
-		//current_process = Current->pid;		
-		
-		current_thread = Clone->control->tid;	
-		current_process = Clone->pid;
 		
 		//#hackhack
 
-		//Current->control->state = WAITING;		
+		//pai
 		Current->control->state = READY;
 		Current->control->quantum = 100;
-		
-		//#bugbug
-		//deixaremos isso bloqueado por enquando
-		//porque não funcina direito.
-		//até roda, mas trava na hora de retomar no próximo
-		//round.
-		
-		//#debug: 
-		// vamos rodar essa thread e analizar
-		// qual seu problema.
-		
+			
+		//filho
+		//Clone->control->state = STANDBY;
 		//Clone->control->state = WAITING;
-		Clone->control->state = READY;
+		//Clone->control->state = READY;
+		block_for_a_reason ( Clone->control->tid, WAIT_REASON_BLOCKED );		
 		Clone->control->quantum = 200;
 		
-		// registrando.
-		//xxxClonedProcess = Clone;
-		//xxxClonedThread = Clone->control;		
-		
-		// Retorna 0 quando rodarmos o filho.		
-		//return (pid_t) PID;	
-		return (pid_t) 0;	
+        // Retornamos para o pai o pid do filho.		
+		current_thread = Current->control->tid;	
+		current_process = Current->pid;		
+		return (pid_t) Clone->pid;
 	};
 
     // Fail.	

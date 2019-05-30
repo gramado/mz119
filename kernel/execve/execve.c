@@ -644,10 +644,19 @@ do_execve ( int i,
 	// Essa rotina de carregamento tem que usar o endereço lógico
 	// referente ao endereço físico desejado e esse endereço lógico
 	// deve pertencer ao diretório de páginas do kernel.
+	
+	
+	unsigned long base;
+	
+	struct process_d *process;
+	process = (struct process_d *) processList[current_process];
 
 
+    //Status = (int) fsLoadFile ( VOLUME1_FAT_ADDRESS, VOLUME1_ROOTDIR_ADDRESS, 
+    //                   (unsigned char *) arg1, (unsigned long) 0x00400000 );
+	
     Status = (int) fsLoadFile ( VOLUME1_FAT_ADDRESS, VOLUME1_ROOTDIR_ADDRESS, 
-                       (unsigned char *) arg1, (unsigned long) 0x00400000 );
+                       (unsigned char *) arg1, (unsigned long) process->Image );
 
 	if ( Status == 1 )
 	{
@@ -659,7 +668,8 @@ do_execve ( int i,
 	    // OK. O comando existe e o arquivo foi carregado, mas 
 	    // precisamos saber se a assinatura de ELF é válida.
 		
-	    Status = (int) fsCheckELFFile ( (unsigned long) 0x00400000 );		
+	 //Status = (int) fsCheckELFFile ( (unsigned long) 0x00400000 );	
+	 Status = (int) fsCheckELFFile ( (unsigned long) process->Image );		
 
 	if ( Status == 0 )
 	{
@@ -891,11 +901,12 @@ format_ok:
 		// #obs: Isso pertence a Idle thread.
 
         Thread->ss = 0x23; 
-        Thread->esp = (unsigned long) 0x0044FFF0; 
+        //Thread->esp = (unsigned long) 0x0044FFF0; 
+        Thread->esp = (unsigned long) process->Image + 0x4FFF0; 		
         Thread->eflags = 0x3200; 
         Thread->cs = 0x1B; 
-        Thread->eip = (unsigned long) 0x00401000; 
-
+        //Thread->eip = (unsigned long) 0x00401000; 
+        Thread->eip = (unsigned long) process->Image + 0x1000;
 		// Registradores de segmento.
 
         Thread->ds = 0x23; 
