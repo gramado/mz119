@@ -103,14 +103,14 @@ int processNewPID;
  */
  
 pid_t do_fork_process (void){
-	
-	int PID;
-	
+
+	int PID;	
+	int Ret = -1;	
+
+	struct process_d *Current;	
 	struct process_d *Clone;
-	struct process_d *Current;
 	
-	int Ret = -1;
-	
+    //#debug message.	
 	printf ("do_fork_process: Cloning the current process..\n");
 	
 	
@@ -192,11 +192,32 @@ do_clone:
 		// ## clone  ##
 		//
 		
+		//copia a memória usada pela imagem do processo.
+		processCopyMemory ( Current );	
+		
+		
+	kprintf ("creating CreatePageTable\n");
+	
+	void *buff;  
+	
+	buff = (void *) CreatePageTable ( (unsigned long) Current->DirectoryVA, ENTRY_USERMODE_PAGES, Current->childImage_PA );	
+	
+	//#importante
+	// Se falhar a criação da pagetable.
+	if ( (void *) buff == NULL )
+	{
+		kprintf (" CreatePageTable fail\n");
+		die ();
+	}			
+		
+		
 		// Clona efetivamente. 
 		
 		// #bugbug:
 		// Essa rotina tem que ter um retorno, para falharmos 
 		// caso ela falhe.
+		
+		// isso cria um diretório de páginas para o processo clone;
 		
 		Ret = processCopyProcess ( Current->pid, Clone->pid );
 		
@@ -206,14 +227,22 @@ do_clone:
 		    die ();
 			//goto fail;	
 		}
-				
-		//copia a memória usada pela imagem do processo.
-		processCopyMemory ( Current, Clone );
 		
+		
+		//#test
+		// recuperamos a informação que o pai perdeu quando 
+		// sobrescrevemos uma pagedir.
+		//Current->Image = va da imagem do processo pai
+		//unsigned long old_image_pa;
+		//old_image_pa = (unsigned long) virtual_to_physical ( Current->Image, gKernelPageDirectoryAddress ); 
+		//CreatePageTable ( (unsigned long) Current->DirectoryVA, ENTRY_USERMODE_PAGES, old_image_pa );	
+				
 		    
 		// Ok, retornando o número do processo clonado.
 		
 		printf ("do_fork_process: done\n");
+		
+				
 		
 		// #importante
 		// Aqui temos quase tudo pronto no child.
@@ -228,20 +257,43 @@ do_clone:
 		//#hackhack
 
 		//pai
-		Current->control->state = READY;
+		//Current->control->state = READY;
+		block_for_a_reason ( Current->control->tid, WAIT_REASON_BLOCKED );	
 		Current->control->quantum = 100;
 			
 		//filho
+		//vamos tentar liberar, pois agora o contexto foi salvo com fask fork.
 		//Clone->control->state = STANDBY;
 		//Clone->control->state = WAITING;
-		//Clone->control->state = READY;
-		block_for_a_reason ( Clone->control->tid, WAIT_REASON_BLOCKED );		
+		Clone->control->state = READY;
+		//block_for_a_reason ( Clone->control->tid, WAIT_REASON_BLOCKED );		
 		Clone->control->quantum = 200;
-		
+					
         // Retornamos para o pai o pid do filho.		
-		current_thread = Current->control->tid;	
-		current_process = Current->pid;		
-		return (pid_t) Clone->pid;
+		//current_thread = Current->control->tid;	
+		//current_process = Current->pid;		
+		//return (pid_t) Clone->pid;
+		
+		current_thread = Clone->control->tid;	
+		current_process = Clone->pid;
+		return (pid_t) 0;
+		
+		// agenda. (request)
+        //do_execve ( 0, "GRAMCODE", (const char *) 0, (const char *) 0 ); 	
+		
+		//#importante
+		//#DEBUG #DEBUG #DEBUG #DEBUG #DEBUG
+		//MOSTRAR AS INFORMAÇÕES DO PROCESSO CLONE.
+		//show_currentprocess_info ();
+		//show_process_information ();
+		//mostra_slot (current_thread);
+		//mostra_reg (current_thread);
+		
+		//printf ("*breakpoint\n\n");
+		//refresh_screen();
+		//while(1){}
+		
+		//return (pid_t) 0;
 	};
 
     // Fail.	
@@ -388,13 +440,13 @@ int processSendSignal (struct process_d *p, unsigned long signal){
 
 
 
-int processCopyMemory ( struct process_d *process, struct process_d *clone ){
+int processCopyMemory ( struct process_d *process ){
 
 	if ( (void *) process == NULL )
 		return -1;
 	
-	if ( (void *) clone == NULL )
-		return -1;
+	//if ( (void *) clone == NULL )
+	//	return -1;
 	
 	unsigned long new_base;
 	
@@ -428,7 +480,8 @@ int processCopyMemory ( struct process_d *process, struct process_d *clone ){
 	// directory
 	//
 	
-	printf ("DirectoryPA=%x \n",clone->DirectoryPA);
+	//printf ("DirectoryPA=%x \n",process->DirectoryPA);
+	//printf ("DirectoryPA=%x \n",clone->DirectoryPA);
 	
 	// Load here.
 	// Altera uma pagetable do diretório de páginas de um processo.
@@ -441,9 +494,14 @@ int processCopyMemory ( struct process_d *process, struct process_d *clone ){
 	// >> Essa parte est'a falhando na m'aquina real, mas não na VirtualBox.
 	
 	//status: 0 = fail; address = ok
+	
+	/*
+	kprintf ("processCopyMemory: creating CreatePageTable\n");
+	
 	void *buff;  
 	
-	buff = (void *) CreatePageTable ( (unsigned long) clone->DirectoryVA, ENTRY_USERMODE_PAGES, new_base_PA );
+	//buff = (void *) CreatePageTable ( (unsigned long) clone->DirectoryVA, ENTRY_USERMODE_PAGES, new_base_PA );
+	buff = (void *) CreatePageTable ( (unsigned long) process->DirectoryVA, ENTRY_USERMODE_PAGES, new_base_PA );	
 	
 	//#importante
 	// Se falhar a criação da pagetable.
@@ -452,11 +510,15 @@ int processCopyMemory ( struct process_d *process, struct process_d *clone ){
 		kprintf ("processCopyMemory: CreatePageTable fail\n");
 		die ();
 	}
+	*/
+	
 	
 	printf ("3 ...\n");
 	
 	// O processo está num novo endereço segundo o diretório de páginas do kernel.
-	clone->Image = (unsigned long) new_base;
+	//process->Image = (unsigned long) new_base;
+	process->childImage = (unsigned long) new_base;
+	process->childImage_PA = (unsigned long) new_base_PA;	
 	
 	printf ("processCopyMemory: ok\n");
 	
@@ -468,8 +530,11 @@ int processCopyMemory ( struct process_d *process, struct process_d *clone ){
 /*
  ****************************************
  * processCopyProcess
- *     copiar um processo.
- *     isso será usado por fork.
+ *     + Copia os elementos da estrutura de processo.
+ *     + Cria um diretório de páginas e salva os endereços 
+ *       virtual e físico dele na estrutura de processo.
+ *
+ *     Isso é chamado por do_fork_process.
  */
  
 int processCopyProcess ( pid_t p1, pid_t p2 ){
@@ -585,9 +650,16 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 	
 	Process2->DirectoryPA = (unsigned long) virtual_to_physical ( Process2->DirectoryVA, 
 											    gKernelPageDirectoryAddress ); 
-			
+		
+	// ??
 	// #bugbug
-	// Se o endereço for virtual, tdubom fazer isso. 
+	// Se o endereço for virtual, ok fazer isso. 
+	// Usaremos o mesmo endereço virtual da imagem.
+	// #importante: se bem que esse endereço virtual de imagem
+	// pode ser diferente para o kernel. Pois no momento
+	// que ele alocar memória para a imagem ele terá o
+	// endereço lógico retornado pelo alocador.
+	
 	
 	Process2->Image = Process1->Image;
 	
@@ -605,12 +677,21 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 	
 	Process2->iopl = Process1->iopl;
 	
-	
 	Process2->base_priority = Process1->base_priority;
 	Process2->priority = Process1->priority;	
 	
 	
 	//
+	// ========================
+	// Thread de controle
+	//
+	
+	// Vamos clonar a thread de controle do processo pai.
+	
+	// obs:
+	// Me parece que a função que clona apenas a thread de controle 
+	// chama-se fork1. #todo
+	
 	// #todo: Precisamos copiar todas as threads
 	// vamos começar pela thread de controle.
 	// teoriacamente elas precisam ter o mesmo endereço virtual ...
@@ -619,7 +700,9 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 	
 	// ############### #IMPORTANTE #################
 	// #bugbug
-	// precisamos salvar o contexto antes de chamarmos o serviço fork()
+	// Ainda não temos um salvamento de contexto apropriado para essa system call.
+	// Só o timer tem esse tipo de salvamento.
+	// Precisamos salvar o contexto antes de chamarmos o serviço fork()
 	// Pois se não iremos retomar a thread clone em um ponto antes de chamarmos o fork,
 	// que é onde está o último ponto de salvamento.
 	

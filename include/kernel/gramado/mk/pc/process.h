@@ -491,6 +491,9 @@ struct process_d
 	unsigned long ImageSize;      
 	unsigned long PagesPerImage; 
 
+	//usado no fork()
+    unsigned long childImage;  	
+    unsigned long childImage_PA;  
 	
 	//#todo: estrutura com informações sobre a imagem do processo.
 	//see: pc/image.h
@@ -882,7 +885,7 @@ void show_process_information (void);
 
 
 // Copia a imagem do processo que está carregada na memória.
-int processCopyMemory ( struct process_d *process, struct process_d *clone );
+int processCopyMemory ( struct process_d *process );
 
 // copia os recursos do processo.
 int processCopyProcess ( pid_t p1, pid_t p2 );

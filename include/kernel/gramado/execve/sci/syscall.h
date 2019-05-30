@@ -656,13 +656,17 @@ systemcall_t *CurrentSystemCall;
  * gde_services:
  *    Atende as chamadas das interrupções do sistema. 
  */
+
 void *gde_services ( unsigned long number, 
                  unsigned long arg2, 
 			 	 unsigned long arg3, 
 				 unsigned long arg4 );
 
 
-
+void *gde_fork ( unsigned long number, 
+                 unsigned long arg2, 
+			 	 unsigned long arg3, 
+				 unsigned long arg4 );
 
 
 

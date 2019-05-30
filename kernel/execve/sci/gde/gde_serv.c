@@ -212,6 +212,20 @@ void *gde_services ( unsigned long number,
 	int desktopID;
 	
 	
+	//
+	// ================================
+	// save context.
+	//
+	
+    //save_current_context ();
+    //Current->saved = 1; 	//#todo
+
+	//
+	// ================================
+	// Color scheme.
+	//	
+	
+	
 	// *Importante: 
 	// Checando se o esquema de cores está funcionando.
 	
@@ -2102,6 +2116,44 @@ void services_send_message_to_process ( unsigned long msg_buffer, int pid ){
 	};
 }
 
+
+
+void *gde_fork ( unsigned long number, 
+                 unsigned long arg2, 
+			 	 unsigned long arg3, 
+				 unsigned long arg4 )
+{
+	
+	// #todo:
+	// Tendo o fork uma chamada s'o pra ele
+	// podemos usar um conjunto de argumentos de forma confort'avel.
+	
+    void *ret;
+	
+	//salva
+	save_current_context ();
+	
+	ret = (void *) do_fork_process ();
+		
+	//restaura
+	//restaura os registradores e o cr3.
+	restore_current_context ();
+	
+	
+		//#importante
+		//#DEBUG #DEBUG #DEBUG #DEBUG #DEBUG
+		//MOSTRAR AS INFORMAÇÕES DO PROCESSO CLONE.
+		//show_currentprocess_info ();
+		//show_process_information ();
+		//mostra_slot (current_thread);
+		//mostra_reg (current_thread);
+		
+		//printf ("*breakpoint\n\n");
+		//refresh_screen();
+		//while(1){}	
+		
+    return (void *) ret; 
+}
 
 //
 // End.

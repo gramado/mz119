@@ -458,6 +458,12 @@ setup_vectors:
 	call _setup_system_interrupt  
 
 
+    ;;test
+	;;fork
+	mov eax, dword _int133_fork
+	mov ebx, dword 133
+	call _setup_system_interrupt  
+
     ;213
 	;Executa nova tarefa.
 	mov eax, dword _int213

@@ -83,6 +83,134 @@ _int100:
 
 	
  
+
+;;int 133
+;; fork
+
+extern _gde_fork
+
+global _int133_fork
+_int133_fork:  
+
+
+    cli 
+	
+	;
+	;stack
+	pop dword [_contextEIP]         ; eip (DOUBLE).
+	pop dword [_contextCS]          ; cs  (DOUBLE).
+	pop dword [_contextEFLAGS]      ; eflags (DOUBLE).
+	pop dword [_contextESP] 	    ; esp - user mode (DOUBLE).
+	pop dword [_contextSS]          ; ss  - user mode (DOUBLE).
+	
+	;
+	;registers 
+	mov dword [_contextEDX], edx    ; edx.		
+	mov dword [_contextECX], ecx    ; ecx.	 
+	mov dword [_contextEBX], ebx    ; ebx.	 
+	mov dword [_contextEAX], eax    ; eax.
+	
+	;
+	;registers 
+	mov dword [_contextEBP], ebp    ; ebp.
+	mov dword [_contextEDI], edi    ; edi.
+	mov dword [_contextESI], esi    ; esi.	
+	
+	;
+	;segments
+	xor eax, eax
+    mov ax, gs
+	mov word [_contextGS], ax	
+    mov ax, fs
+	mov word [_contextFS], ax	
+    mov ax, es
+	mov word [_contextES], ax	
+    mov ax, ds
+	mov word [_contextDS], ax	
+	
+	xor eax, eax
+	mov ax, word 0x10
+	mov ds, ax
+	mov es, ax
+	mov fs, ax  ;*   
+	mov gs, ax  ;* 
+	
+	mov ss, ax
+	mov eax, 0x003FFFF0 
+	mov esp, eax 
+	
+	;;call
+	
+    ;Argumentos.	
+    push dword [_contextEDX] ;edx    ;arg4.
+    push dword [_contextECX] ;ecx    ;arg3. 
+    push dword [_contextEBX] ;ebx    ;arg2. 
+    push dword [_contextEAX] ;eax    ;arg1 = {Número do serviço}.
+	
+	;;O handler padrão é gde_services, que é um wrapper para os outros diálogos.
+	call _gde_fork
+	mov dword [__int133Ret], eax    
+	
+	pop eax
+	pop eax
+	pop eax
+	pop eax
+	
+    ;;
+	;; Flush TLB.
+	;;
+	
+    ;Flush TLB.
+    jmp dummy_flush2
+dummy_flush2:	
+	;TLB.
+	mov EAX, CR3  
+    nop
+	nop
+	nop
+	nop
+	nop
+	mov CR3, EAX  
+	
+	;
+	;segments
+	xor eax, eax
+	mov ax, word [_contextDS]
+	mov ds, ax
+	mov ax, word [_contextES]
+	mov es, ax
+	mov ax, word [_contextFS]
+	mov fs, ax
+	mov ax, word [_contextGS]
+	mov gs, ax
+	
+	;
+	;registers 
+	mov esi, dword [_contextESI]    ;esi.
+	mov edi, dword [_contextEDI]    ;edi.
+	mov ebp, dword [_contextEBP]    ;ebp.
+	;
+	mov eax, dword [_contextEAX]    ;eax.
+	mov ebx, dword [_contextEBX]    ;ebx.
+	mov ecx, dword [_contextECX]    ;ecx.
+	mov edx, dword [_contextEDX]    ;edx.
+
+
+	push dword [_contextSS]        ;ss  - user mode.
+	push dword [_contextESP]       ;esp - user mode.
+	push dword [_contextEFLAGS]    ;eflags.
+	push dword [_contextCS]        ;cs.
+	push dword [_contextEIP]       ;eip.
+	
+	;mov eax, dword [_contextEAX]    ;eax. (Acumulador).	
+	mov eax, dword [__int133Ret] 
+	
+	sti	
+    iretd
+__int133Ret: dd 0
+
+
+
 ;======================================
 ; _int128:  0x80
 ;    Interrupção de SISTEMA. (padrão).
@@ -101,6 +229,7 @@ _int100:
 
 extern _gde_services
 
+;;
 global _int128
 _int128:  
 
