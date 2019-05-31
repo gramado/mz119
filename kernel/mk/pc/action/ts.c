@@ -138,8 +138,15 @@ void task_switch (void){
 	struct thread_d *Current;
 
 	Max = PRIORITY_MAX;
-
-
+	
+	// #importante
+	// Checar no tty atual se tem que atualizar a tela,
+	// a linha ou o char.
+	
+	check_CurrentTTY ();
+	
+		
+	
 	// Current thread. 
 	
 	Current = (void *) threadList[current_thread]; 
@@ -147,8 +154,6 @@ void task_switch (void){
 	if ( (void *) Current == NULL )
 	{
 		panic ("ts-task_switch: struct Current");
-		//printf ("ts-task_switch: struct Current %x", (void *) Current );
-		//die ();
 	}
 
 	// Current process. 
@@ -158,8 +163,6 @@ void task_switch (void){
 	if ( (void *) P == NULL )
 	{
         panic ("ts-task_switch: struct C");
-		//printf ("ts-task_switch: struct C %x", (void *) P );
-		//die ();
 	}
 	
 	if ( (void *) P != NULL )

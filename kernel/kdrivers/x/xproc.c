@@ -684,8 +684,12 @@ system_procedure ( struct window_d *window,
 					
 					break;
 				
-                //Testing Message Box.				
+                //Testing				
 				case VK_F7:
+					fprintf (stdout, "Testando stdout !!!\n");
+					CurrentTTY->stdout_status = 1;
+                    //CurrentTTY->stdout_update_what = 3; //mostra tudo
+					CurrentTTY->stdout_update_what = 1; //mostra char
 					break;
 					
 				// Cls. 

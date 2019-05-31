@@ -33,7 +33,7 @@ struct tty_d
 	
 	int used;
 	int magic;
-	
+		
 	char name[64];
 	
 	// Quantas objetos associados a essa tty?
@@ -54,6 +54,11 @@ struct tty_d
 	// Thread de input.
 	struct thread_d *thread;
 	
+	// 0 = não repinte stdout no tty atual
+	// 1 = repinte stdout no tty atual
+	int stdout_status;
+	int stdout_update_what; //char, linha, coluna.
+	
 	FILE *stdin;
 	FILE *stdout;
 	FILE *stderr;
@@ -63,8 +68,7 @@ struct tty_d
 	int	ColMax;
 	int FullScreen;    //flag.
 	
-	
-	
+
 	
 	//informações básicas sobre o retângulo
     unsigned long left; 
@@ -106,14 +110,14 @@ struct tty_d
 struct tty_d *CurrentTTY;
 
     //usar esse
-    //unsigned long ttyList[?];
+    unsigned long ttyList[8];
 
-    //Não usar ese.
-    //struct tty_d TTYS[8];
 
 
 /* tty magic number */
 //#define TTY_MAGIC	0x0771
+
+void check_CurrentTTY (void);
 
 //void *createTTYLine (void); 
 
