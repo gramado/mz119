@@ -241,59 +241,54 @@ do_clone:
 		// Ok, retornando o número do processo clonado.
 		
 		printf ("do_fork_process: done\n");
-		
 				
-		
-		// #importante
-		// Aqui temos quase tudo pronto no child.
-        // Vamos fazer um spawn do child, deixando ele pronto para
-		// ser selecionado pelo scheduler e retornaremos para o pai.		
-		
 		//
 		// Current thread.
 		//
+		
+        //#test
+		// Vamos associar ao primeiro tty, mesmo que seja um aplicatibo GUI.
+		// Se ele for um aplicativo GUI ele irá atualizar o foco.
+		// Se for um aplicativo de terminal então terá uma janela 
+		// para rodar. Pois o ldisc manda mensagens para a thread de controle 
+		// da janela com foco de entrada. Vamos fazer isso manualmente.
+		
+		if ( (void *) CurrentTTY != NULL )
+		{
+			if ( CurrentTTY->used == 1 && CurrentTTY->magic == 1234 )
+			{
+				current_tty = CurrentTTY->index;
+				
+				Clone->control->tty_id = current_tty;
+				
+				// #terminal window.
+				window_with_focus = CurrentTTY->window->id;
+                terminal_window = CurrentTTY->window->id;
+				
+				//#importante
+				//a thread de controle da janela, para qual
+				//serão enviadas as mensagens pelo ldisc
+				CurrentTTY->window->control = Clone->control;
+			}
+			
+		}else{
+		    //Thread->tty_id = 0; //-1
+        } 		
 		
 		
 		//#hackhack
 
 		//pai
-		//Current->control->state = READY;
 		block_for_a_reason ( Current->control->tid, WAIT_REASON_BLOCKED );	
 		Current->control->quantum = 100;
 			
 		//filho
-		//vamos tentar liberar, pois agora o contexto foi salvo com fask fork.
-		//Clone->control->state = STANDBY;
-		//Clone->control->state = WAITING;
 		Clone->control->state = READY;
-		//block_for_a_reason ( Clone->control->tid, WAIT_REASON_BLOCKED );		
 		Clone->control->quantum = 200;
-					
-        // Retornamos para o pai o pid do filho.		
-		//current_thread = Current->control->tid;	
-		//current_process = Current->pid;		
-		//return (pid_t) Clone->pid;
 		
 		current_thread = Clone->control->tid;	
 		current_process = Clone->pid;
 		return (pid_t) 0;
-		
-		// agenda. (request)
-        //do_execve ( 0, "GRAMCODE", (const char *) 0, (const char *) 0 ); 	
-		
-		//#importante
-		//#DEBUG #DEBUG #DEBUG #DEBUG #DEBUG
-		//MOSTRAR AS INFORMAÇÕES DO PROCESSO CLONE.
-		//show_currentprocess_info ();
-		//show_process_information ();
-		//mostra_slot (current_thread);
-		//mostra_reg (current_thread);
-		
-		//printf ("*breakpoint\n\n");
-		//refresh_screen();
-		//while(1){}
-		
-		//return (pid_t) 0;
 	};
 
     // Fail.	
