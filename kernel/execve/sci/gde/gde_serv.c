@@ -280,48 +280,65 @@ void *gde_services ( unsigned long number,
 	
 	
 
-	// get x server PID
-	if ( number == 512 )
+	// 512 - get x server PID
+	if ( number == SYS_GET_X_SERVER )
 	{
 	    return (void *) g_xserver_pid;
 	}
 	
-	// set x server PID
-	if ( number == 513 )
+	// 513 - set x server PID
+	if ( number == SYS_SET_X_SERVER )
 	{		
 		g_xserver_pid = (int) arg2;
 		return NULL;
 	}
 	
-	// get wm PID
-	if ( number == 514 )
+	// 514 - get wm PID
+	if ( number == SYS_GET_WM_PID )
 	{
 	    return (void *) g_wm_pid;
 	}
 	
-	// set wm PID
-	if ( number == 515 )
+	// 515 - set wm PID
+	if ( number == SYS_SET_WM_PID )
 	{
 	    g_wm_pid = (int) arg2;
 		return NULL;
 	}	
 	
-    // show x server info	
-	if ( number == 516 )
+    // 516 - show x server info	
+	if ( number == SYS_SHOW_X_SERVER_INFO )
 	{
 		kprintf ("x server info: PID=%d \n", g_xserver_pid);
 	    refresh_screen ();	
 		return NULL;
 	}
 
-    // show wm info		
-	if ( number == 517 )
+    // 517 - show wm info		
+	if ( number == SYS_SHOW_WM_INFO )
 	{
 		kprintf ("window manager info: PID=%d \n", g_wm_pid);
 	    refresh_screen ();	
 		return NULL;		
 	}
 
+	// 600 - dup
+	if ( number == 600 )
+	{
+	    return (void *) sys_dup ( (int) arg2 );
+	}
+
+	// 601 - dup2
+	if ( number == 601 )
+	{
+	    return (void *) sys_dup2 ( (int) arg2, (int) arg3 );	
+	}
+
+	// 602 - dup3
+	if ( number == 602 )
+	{
+	    return (void *) sys_dup3 ( (int) arg2, (int) arg3, (int) arg4 );	
+	}
 
 	
 	//
@@ -1466,11 +1483,6 @@ void *gde_services ( unsigned long number,
 		// 0 = idle ; 216 = cloned.	
 		case 179:
 			//serviço, name, (arg)(endereço da linha de comando), env
-
-            //return (void *) sys_executive_gramado_core_init_execve ( 216, 
-            //                    (const char *) arg2, 
-            //                    (const char *) arg3, 
-            //                    (const char *) arg4 ); 	
 			
            return (void *) do_gexecve ( 216, 
                                 (const char *) arg2, 
@@ -1604,7 +1616,8 @@ void *gde_services ( unsigned long number,
 		// 222 - create timer.
 		//args: window e ms e tipo
         case 222:
-		    return (void *) sys_create_timer ( (struct window_d *) arg2, (unsigned long) arg3, (int) arg4 );
+		    return (void *) sys_create_timer ( (struct window_d *) arg2, 
+							    (unsigned long) arg3, (int) arg4 );
 		    break;
 
 		
@@ -1628,40 +1641,38 @@ void *gde_services ( unsigned long number,
 		//Obs: @todo: poderia ser uma chamada para configurar o posicionamento 
         //e outra para configurar as dimensões.		
 			
-		//226 get
+		//226 - get
         case SYS_GET_KERNELSEMAPHORE:
             return (void *) __spinlock_ipc;
             break;
         
-        //227 close critical section	
+        //227 - close critical section	
 		case SYS_CLOSE_KERNELSEMAPHORE:
 			__spinlock_ipc = 0;
 			break;
 			
-		//228 open critical section
+		//228 - open critical section
 		case SYS_OPEN_KERNELSEMAPHORE:
 		    __spinlock_ipc = 1;
             break;
 			
 			
-		//232
+		//232 - fclose
 		case 232:
 			return (void *) sys_fclose ( (FILE *) arg2);
 			break;
 			
-		// 233
-		// fflush.	
+		// 233 - fflush.
 		case 233:
 			return (void *) sys_fflush ( (FILE *) arg2);
 			break;
 			
-		// 234
-		// fprintf.	
+		// 234 - fprintf.	
 		case 234:
 			return (void *) sys_fprintf ( (FILE *) arg2, (const char *) arg3 );
 			break;
 			
-		//235
+		//235 - fputs
 		case 235:
 			return (void *) sys_fputs ( (const char *) arg2, (FILE *) arg3 );
 			break;
@@ -1706,11 +1717,9 @@ void *gde_services ( unsigned long number,
 			//filename, mode.
 			return (void *) sys_fopen ( (const char *) arg2, (const char *) arg3 );
 			break;
-			
-		//reservado	
-		//>>>pipe	
+				
+		// pipe	
 		case 247:
-			//#todo: rotina provisória
 			return (void *) sys_pipe ( (int *) arg2 ); 
 			break;
 			
@@ -1728,9 +1737,9 @@ void *gde_services ( unsigned long number,
                                 (const char *) arg4 ); 	
 			break;
 			
-		//reservado	
+		// 249 - ?
 		case 249:
-			return NULL;
+            return NULL;
 			break;
 			
 			

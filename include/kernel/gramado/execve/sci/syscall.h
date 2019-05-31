@@ -435,8 +435,7 @@
 //bufbug: isso gasta memória carregando o diretório raiz.
 #define	SYS_178 178
 
-// # test #
-//#bugbug: suspenso	
+
 // passando vetor de ponteiros,
 // executando um novo programa no processo init.
 #define	SYS_179 179
@@ -486,7 +485,6 @@
 #define	SYS_GENERICWAIT 205    
 
 
-// ?? rever
 // Agora temos rotinas de systime.
 #define	SYS_TIMERGETTICKCOUNT  206
 #define	SYS_TIMERGETTIMEOUT    207
@@ -600,8 +598,8 @@
 
 #define	SYS_246 246   // fopen
 #define	SYS_247 247   // pipe
-#define	SYS_248 248   // 
-#define	SYS_249 249   // 
+#define	SYS_248 248   // execve	
+#define	SYS_249 249   // ?? 
 
 
 //
@@ -614,6 +612,35 @@
 #define	SYS_MEMORYINFO        253
 #define	SYS_SHOWPCIINFO       254
 #define	SYS_SHOWKERNELINFO    255
+
+
+//
+// Outros ...
+//
+
+
+#define	SYS_GET_X_SERVER  512  // get x server PID
+#define	SYS_SET_X_SERVER  513  // set x server PID
+
+#define	SYS_GET_WM_PID  514  // get wm PID
+#define	SYS_SET_WM_PID  515  // set wm PID
+
+#define	SYS_SHOW_X_SERVER_INFO  516  // show x server info	
+#define	SYS_SHOW_WM_INFO        517  // show wm info	
+
+
+
+//
+// libc support.
+//
+
+// 600 - dup
+// 601 - dup2
+// 602 - dup3
+//...
+
+
+
 
 
 // 

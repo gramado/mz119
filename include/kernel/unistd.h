@@ -37,6 +37,10 @@ typedef int pid_t;
 //posix
 int close ( int fd );
 
+int sys_dup ( int oldfd );
+int sys_dup2 (int oldfd, int newfd);
+int sys_dup3 (int oldfd, int newfd, int flags);
+
 //POSIX.1-2001, POSIX.1-2008.
 int sys_pipe ( int *pipefd );
 

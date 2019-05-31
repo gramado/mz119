@@ -11,6 +11,240 @@
 #include <kernel.h>
 
 
+int sys_dup ( int oldfd ){
+
+	FILE *stream_old;
+	FILE *stream_new;
+	
+	struct process_d *Process;
+
+	Process = (void *) processList[current_process];
+	
+	if ( (void *) Process == NULL )
+	{
+		return -1;
+	}else{
+	
+	     if ( Process->used != 1 || Process->magic != 1234 )
+		 {
+		     return -1;
+		 }
+		
+		 //ok
+	};
+
+	
+    int i;
+    int slot = -1;	
+	
+	
+	for ( i=3; i< NUMBER_OF_FILES; i++ )
+	{
+	    if ( Process->Streams[i] == 0 )
+		{
+			//reserva.
+			Process->Streams[i] = 216;
+			
+		    slot = i;
+			break;
+		}
+	}	
+	
+	
+	if ( slot == -1 ) 
+	{
+		Process->Streams[i] = (unsigned long) 0;
+	    return -1;
+	}	
+	
+	//#todo: filtrar oldfd
+	
+	stream_old = (FILE *) Process->Streams[oldfd];
+	
+	if ( (void *) stream_old == NULL )
+	{
+		Process->Streams[i] = (unsigned long) 0;
+	    return -1;		
+	}else{
+        
+		stream_new = (void *) malloc ( sizeof(FILE) );
+		
+		if ( (void *) stream_new == NULL )
+		{
+		    Process->Streams[i] = (unsigned long) 0;
+	        return -1;			
+		}
+		
+		stream_new->_base = stream_old->_base;	
+		stream_new->_ptr = stream_old->_ptr;
+		
+		stream_new->_tmpfname = stream_old->_tmpfname;
+		
+		stream_new->_bufsiz = stream_old->_bufsiz; 
+		
+		//quanto falta é igual ao tamanho.
+		stream_new->_cnt = stream_old->_cnt; 
+		
+		Process->Streams[slot] = (unsigned long) stream_new;
+		
+		return (int) slot;
+	}
+
+	// On success, these system calls return the new file descriptor.  
+	// On error, -1 is returned, and errno is set appropriately.	
+	
+fail:
+	//errno = ?;
+	return -1;
+ }
+
+
+int sys_dup2 (int oldfd, int newfd){
+
+	FILE *stream_old;
+	FILE *stream_new;
+	
+	struct process_d *Process;
+
+	Process = (void *) processList[current_process];
+	
+	if ( (void *) Process == NULL )
+	{
+		return -1;
+	}else{
+	
+	     if ( Process->used != 1 || Process->magic != 1234 )
+		 {
+		     return -1;
+		 }
+		
+		 //ok
+	};
+
+	
+    int slot = newfd;	
+	
+	if ( slot == -1 ) 
+	{
+		Process->Streams[slot] = (unsigned long) 0;
+	    return -1;
+	}	
+	
+	//#todo: filtrar oldfd
+	
+	stream_old = (FILE *) Process->Streams[oldfd];
+	
+	if ( (void *) stream_old == NULL )
+	{
+		Process->Streams[slot] = (unsigned long) 0;
+	    return -1;		
+	}else{
+        
+				
+		stream_new = (FILE *) Process->Streams[slot];
+		
+		if ( (void *) stream_new == NULL )
+		{
+		    Process->Streams[slot] = (unsigned long) 0;
+	        return -1;			
+		}
+				
+		stream_new->_base = stream_old->_base;	
+		stream_new->_ptr = stream_old->_ptr;
+		
+		stream_new->_tmpfname = stream_old->_tmpfname;
+		
+		stream_new->_bufsiz = stream_old->_bufsiz; 
+		
+		//quanto falta é igual ao tamanho.
+		stream_new->_cnt = stream_old->_cnt; 
+				
+		return (int) slot;
+	}
+
+	// On success, these system calls return the new file descriptor.  
+	// On error, -1 is returned, and errno is set appropriately.	
+	
+fail:
+	//errno = ?;
+	return -1;
+ }
+
+int sys_dup3 (int oldfd, int newfd, int flags){
+	
+	//#todo: flags.
+
+	FILE *stream_old;
+	FILE *stream_new;
+	
+	struct process_d *Process;
+
+	Process = (void *) processList[current_process];
+	
+	if ( (void *) Process == NULL )
+	{
+		return -1;
+	}else{
+	
+	     if ( Process->used != 1 || Process->magic != 1234 )
+		 {
+		     return -1;
+		 }
+		
+		 //ok
+	};
+
+	
+    int slot = newfd;	
+	
+	if ( slot == -1 ) 
+	{
+		Process->Streams[slot] = (unsigned long) 0;
+	    return -1;
+	}	
+	
+	//#todo: filtrar oldfd
+	
+	stream_old = (FILE *) Process->Streams[oldfd];
+	
+	if ( (void *) stream_old == NULL )
+	{
+		Process->Streams[slot] = (unsigned long) 0;
+	    return -1;		
+	}else{
+        
+				
+		stream_new = (FILE *) Process->Streams[slot];
+		
+		if ( (void *) stream_new == NULL )
+		{
+		    Process->Streams[slot] = (unsigned long) 0;
+	        return -1;			
+		}
+				
+		stream_new->_base = stream_old->_base;	
+		stream_new->_ptr = stream_old->_ptr;
+		
+		stream_new->_tmpfname = stream_old->_tmpfname;
+		
+		stream_new->_bufsiz = stream_old->_bufsiz; 
+		
+		//quanto falta é igual ao tamanho.
+		stream_new->_cnt = stream_old->_cnt; 
+				
+		return (int) slot;
+	}
+
+	// On success, these system calls return the new file descriptor.  
+	// On error, -1 is returned, and errno is set appropriately.	
+	
+fail:
+	//errno = ?;
+	return -1;
+ }
+
+
+
 // criar duas estruturas de stream que apontam para o mesmo buffer.
 // retorna os descritores de arquivo que estão na estrutura do processo atual.
 
