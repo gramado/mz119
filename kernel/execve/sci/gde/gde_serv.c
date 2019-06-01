@@ -341,6 +341,18 @@ void *gde_services ( unsigned long number,
 	}
 
 	
+	// 700 - atualiza o fluxo padrão do processo atual
+    if ( number == 700 )
+	{
+		//stdio.c
+	    return (void *) update_standard_stream ( (int) current_process, 
+						    (FILE *) arg2, 
+							(FILE *) arg3, 
+							(FILE *) arg4 );
+	}
+	
+	
+	
 	//
 	// test
 	//

@@ -21,31 +21,62 @@ void check_CurrentTTY (void){
 
 	int refresh = 0;
 	
+	int i;
+	int len = 0;
+	
+	//se devemos pintar alguma coisa ou não.
 	if ( CurrentTTY->stdout_status == 1 )
 	{
+		// stdout
+		// Não há o que pintar para stdout
+		if (CurrentTTY->stdout_last_ptr == stdout->_ptr )
+		{
+			//printf ("check_CurrentTTY: ptr error nada pra pintar\n");
+			//refresh_screen ();			
+		    goto done;
+		}
+		
+		//#debug
+		//printf ("last = %x ", CurrentTTY->stdout_last_ptr);
+		//printf ("ptr = %x  \n", stdout->_ptr);
+		
+		//pintar de que jeito?
 	    switch (CurrentTTY->stdout_update_what)
 		{
 			// update char	
-			case 1:			
-				printf ("%c", stdout->_ptr);
+			//case 1:	
+			//	printf ("%c", *CurrentTTY->stdout_last_ptr);
+			//	CurrentTTY->stdout_last_ptr++;
+			//	CurrentTTY->stdout_last_ptr = stdout->_ptr;
+				//printf ("%c", stdout->_ptr);
 				//refresh_rectangle ( g_cursor_x, g_cursor_y, 20, 20 ); 
-				refresh = 1;
-				break;
+			//	refresh = 1;
+			//	break;
 				
 			// update line	
-			case 2:	
-				break;
+			//case 2:	
+			//	break;
 				
 			// update window. file	
-			case 3:
-				//#todo: fazer um loop e pegar todos os chars.
-				printf ("%s", stdout->_base);
+			default:
+			//case 3:
+				//calcula quantos chars devemos pintar.
+				len = (stdout->_ptr - CurrentTTY->stdout_last_ptr);
+				//pintamos todos os chars.
+				for (i=0; i<len; i++)
+				{
+				    printf ("%c", *CurrentTTY->stdout_last_ptr);
+				    CurrentTTY->stdout_last_ptr++;					
+				}
+				CurrentTTY->stdout_last_ptr = stdout->_ptr;
+				CurrentTTY->print_pending = 0; //não temos mais print pendente
+				
 				refresh = 1;
 				break;
 				
 			// nothing
-			default:
-			    break;	
+			//default:
+			    //break;	
 		}
 		
 		int status = 0;

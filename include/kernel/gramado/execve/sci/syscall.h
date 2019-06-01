@@ -640,6 +640,12 @@
 //...
 
 
+//
+// fluxo padrão.
+//
+
+// 700 - atualiza o fluxo padrão do processo atual
+//  
 
 
 

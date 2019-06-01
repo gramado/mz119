@@ -404,7 +404,8 @@ unsigned long *gStreams;
 #define  _IONBF  0   
 
     
-#define  BUFSIZ  512 
+//#define  BUFSIZ  512 
+#define  BUFSIZ  1024 
 
 /* It moves file pointer position to the beginning of the file. */
 #ifndef SEEK_SET
@@ -666,7 +667,12 @@ void panic( const char *format, ... );
 
 size_t fread (void *ptr, size_t size, size_t n, FILE *fp);
 size_t fwrite (const void *ptr, size_t size, size_t n, FILE *fp);
+
 int fflush ( FILE *stream );
+
+//atualiza o fluxo padrão para determinado processo
+int update_standard_stream ( int PID, FILE *stream1, FILE *stream2, FILE *stream3 );
+
 int fputs ( const char *str, FILE *stream );
 int ungetc ( int c, FILE *stream );
 long ftell (FILE *stream);

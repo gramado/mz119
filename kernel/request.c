@@ -268,7 +268,6 @@ int request (void){
 		//exit thread.	
 		case 12:
 			do_request_12 ( (int) REQUEST.target_tid );
-			//exit_thread ( (int) REQUEST.target_tid );
 			break;
 			
 		//make target porcess current
@@ -408,7 +407,12 @@ void do_request_12 ( int tid )
 //#test	
 do_printf_error_message:
 	
-
+    printf ("do_request_12: do_printf_error_message\n");
+	
+do_exit:
+	
+    printf ("do_request_12: no error\n");	
+	
     //#importante
 	// Isso está certo. O que importa é exibir
 	// a stream stderr do processo.
@@ -416,6 +420,8 @@ do_printf_error_message:
 	t = (struct thread_d *) threadList[REQUEST.target_tid];
 	p = (struct process_d *) processList[t->ownerPID];
 	
+	
+	//stdout = (FILE *) p->Streams[1]; //stdout
 	stderr = (FILE *) p->Streams[2]; //stderr
 	
 	// #importante
@@ -424,20 +430,20 @@ do_printf_error_message:
 	fprintf (stderr, "Exiting the thread %d ", REQUEST.target_tid );			
 	fprintf (stderr, " *OK ");	
 
-	kprintf ("%s \n", stdout->_base );    	
-	kprintf ("%s \n", stderr->_base );
-
 	
-do_exit:	
+
     exit_thread ( (int) REQUEST.target_tid );
 	
 		
+	//kprintf ("%s \n", stdout->_base );    	
+	kprintf ("%s \n", stderr->_base );
+	
 	// Done.
 	
 	// #bugbug:
 	// Isso é realmente necessário ?
 	// Queremos apenas exibir a mensagem no terminal.
-	kprintf ("done\n");
+	kprintf ("done :) \n");
 	refresh_screen ();
 	
 	// Clear request structure.

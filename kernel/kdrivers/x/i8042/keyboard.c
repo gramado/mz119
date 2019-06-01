@@ -85,10 +85,16 @@
 
 // PUT SCANCODE
 
-void abnt2_keyboard_handler (void)
-{	
+void abnt2_keyboard_handler (void){
+	
     unsigned char scancode = inportb (0x60);	
-		
+	
+	
+	if ( (void *) current_stdin == NULL )
+	{
+	    panic ("i8042-abnt2_keyboard_handler: current_stdin \n");
+	}
+	
 	current_stdin->_base[keybuffer_tail++] = (char) scancode;
 	
 	if ( keybuffer_tail >= current_stdin->_cnt )
@@ -146,11 +152,12 @@ void KiKeyboard (void){
     if (abnt2 == 1)
 	{
 	    abnt2_keyboard_handler ();
+		return;
 	};
 
     if (abnt2 != 1)
 	{
-	    panic ("KiKeyboard: not abnt2\n");
+	    panic ("i8042-KiKeyboard: not abnt2\n");
 	};
 }
 

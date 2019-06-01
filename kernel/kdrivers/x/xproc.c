@@ -686,10 +686,20 @@ system_procedure ( struct window_d *window,
 				
                 //Testing				
 				case VK_F7:
+					
+					//indicamos de onde a rotina de pintura deve começar.
+					//CurrentTTY->stdout_last_ptr = stdout->_ptr;
+					//CurrentTTY->stdout_status = 1;
+					
 					fprintf (stdout, "Testando stdout !!!\n");
-					CurrentTTY->stdout_status = 1;
-                    //CurrentTTY->stdout_update_what = 3; //mostra tudo
-					CurrentTTY->stdout_update_what = 1; //mostra char
+					fprintf (stdout, "C ");
+					fprintf (stdout, "String 2\n");
+					fflush (stdout);
+					
+					//CurrentTTY->stdout_status = 1;
+					//CurrentTTY->stdout_update_what = 1; //mostra char
+                    //CurrentTTY->stdout_update_what = 3;   //mostra tudo (string)
+					
 					break;
 					
 				// Cls. 

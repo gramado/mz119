@@ -221,7 +221,7 @@ size_t fwrite (const void *ptr, size_t size, size_t n, FILE *fp)
 
 /* 
  *********************************************
- * fflush: 
+ * fflush: (ring 0)
  *     ?? Salva o buffer no arquivo associado a ele e limpa o buffer. 
  *     ?? Exibe o conteúdo do arquivo na tela do terminal.
  *     Se for NULL então faz isso para todas as stream abertas.
@@ -236,55 +236,266 @@ size_t fwrite (const void *ptr, size_t size, size_t n, FILE *fp)
 
 int fflush ( FILE *stream ){
 	
+	//printf ("fflush: suspenso \n");
+	//refresh_screen ();	
+	//return -1;
+	
 	// vamos pegar o conteudo dessa stream
 	// e copiarmos na stream do processo.
 	// se for null temos que copiar todos os stream.
 	
 	
+	// #importante
+	// o argumento pode ter passado uma stream de ring3,
+	// então devemos copiar essa stream para o fluxo padrão
+	// em ring0 usando as stream do fluxo padrão na estrutura
+	// do processo.
+	
+	//ponteiros para as streams da estrutura do processo.
+	
+	//FILE *p_stdin;
+	//FILE *p_stdout;
+	//FILE *p_stderr;
+	
+	FILE *p_stream;	
+	
 	struct process_d *p;	
-	struct thread_d *t;	
+	//struct thread_d *t;	
 	
 	register int i = 0;
 	
 	if ( (void *) stream == NULL )
 	{
-		//#todo: 
-		//limpa todas as streams abertas.
-		return (int) (-1);
+		panic ("fflush: stream is NULL \n");
+		
+		//refresh_screen ();
+		//return -1;
 	}
 		
 	// Limits.
     // Se o buffer tiver vazio ou for maior que o limite.	
 	
+	/*
 	if ( stream->_bufsiz == 0 || stream->_bufsiz > BUFSIZ )
-	{
-		
-		printf ("fflush: buffer size limits\n");
+	{	
+		printf ("fflush: buffer size limits %d \n", stream->_bufsiz);
 		stream->_bufsiz = BUFSIZ;
-		//return (int) (-1);
+		refresh_screen ();
+		return (int) (-1);
 	}
-    
+	*/
 	
-	t = (struct thread_d *) threadList[current_thread];
-	p = (struct process_d *) processList[t->ownerPID];
+	//
+	//  process
+	//
 	
 	
-	stdout = (FILE *) p->Streams[1]; //stdout
+	p = (struct process_d *) processList[current_process];	
+		
 	
-    // #bugbug: 
-	// Se essa base aponta para um lugar inválido poderemos 
-	// ter uma page fault.
-	
-    for ( i=0; i < stream->_bufsiz; i++ )
+	if ( (void *) p == NULL )
 	{
-			
-		stdout->_ptr[i] = stream->_base[i];
-	}
-    
-	//stream->_ptr = stream->_base;     //walk	
-    //stream->_bufsiz = BUFSIZ; 		  //tamanho
-	//stream->_cnt = stream->_bufsiz;   //quanto falta é igual ao tamanho.
+		panic ("fflush: p\n");
+		//refresh_screen ();
+		//return (int) (-1);	
+	}else{
 	
+	    //p_stdin = (FILE *) p->Streams[0];  
+	    //p_stdout = (FILE *) p->Streams[1]; 
+	    //p_stderr = (FILE *) p->Streams[2]; 
+		
+		
+		for ( i=0; i<32; i++ )
+		{
+			p_stream = (FILE *) p->Streams[i];
+			
+			//found
+		    if ( stream == p_stream )
+			{
+			    goto found;   
+			}
+		}
+		
+		goto not_found;
+	};
+	
+	
+	int j;
+	
+found:
+    switch (i)
+	{
+		case 0:
+			//printf ("fflush: The index is 0\n");
+			//stdin = stream;
+			goto done;
+			break;
+			
+		case 1:
+			//printf ("fflush: The index is 1\n");
+			//fprintf (stdout, stream->_base );
+			//for ( j=0; j < stdout->_bufsiz; j++ )
+			//{
+			//	stdout->_ptr[j] = stream->_base[j];	
+			//}
+			//stdout = stream;
+			goto print_stdout;
+			break;
+			
+		case 2:
+			//printf ("fflush: The index is 2\n");
+			//fprintf (stderr, stream->_base );
+			//for ( j=0; j < stderr->_bufsiz; j++ )
+			//{
+			//	stderr->_ptr[j] = stream->_base[j];	
+			//}			
+			//stderr = stream;
+			goto done;
+			break;
+			
+		default:
+			printf ("fflush: default index\n");
+			refresh_screen ();
+	        goto done;		
+			break;
+	}
+	
+	
+print_stdout:
+	goto done;
+	
+	
+	
+not_found:	
+	printf ("fflush: not found\n");
+	refresh_screen ();
+    //goto done;	
+	
+	
+	
+	/*
+	if ( (void *) p_stdin == NULL )
+	{
+		printf ("fflush: p_stdin is NULL\n");
+		refresh_screen ();
+		return (int) (-1);			
+	}
+	*/
+	
+	/*
+	if ( (void *) p_stdout == NULL )
+	{
+		printf ("fflush: p_stdout is NULL\n");
+		refresh_screen ();
+		return (int) (-1);			
+	}
+    */
+	
+	/*
+	if ( (void *) p_stderr == NULL )
+	{
+		printf ("fflush: p_stderr is NULL\n");
+		refresh_screen ();
+		return (int) (-1);			
+	}
+    */
+	
+	//
+	// Copiar.
+	//
+	
+	/*
+	//stdout
+	//considerar o tamanho do arquivo de destino
+	
+	if ( (void *) stream == p_stdout )
+	{
+        for ( i=0; i < stdout->_bufsiz; i++ )
+	    {
+		    stdout->_ptr[i] = stream->_base[i];		
+	    }		    		
+	}
+	*/
+
+	/*
+	//stdout
+	//considerar o tamanho do arquivo de destino
+	
+	if ( (void *) stream == p_stderr )
+	{
+        for ( i=0; i < stderr->_bufsiz; i++ )
+	    {
+		    stderr->_ptr[i] = stream->_base[i];		
+	    }		    		
+	}
+	*/
+	
+done:
+	//printf ("fflush: done \n");
+	//refresh_screen ();
+	
+	return 0;
+}
+
+//atualiza o fluxo padrão para determinado processo
+
+int update_standard_stream ( int PID, FILE *stream1, FILE *stream2, FILE *stream3 ){
+
+	struct process_d *p;
+	
+	
+	printf ("update_standard_stream: PID %d \n", PID);
+	
+	//#todo limits
+	if ( PID < 0 )
+		return -1;
+	
+	p = (struct process_d *) processList[PID];	
+		
+	if ( (void *) p == NULL )
+	{
+		panic ("update_standard_stream: p fail\n");
+		//refresh_screen ();
+		//return -1;
+	};
+	
+	
+	if ( (void *) stream1 == NULL || 
+		 (void *) stream2 == NULL || 
+		 (void *) stream3 == NULL )
+	{
+		panic ("update_standard_stream: args fail\n");
+		//refresh_screen ();
+		//return -1;		
+	}
+	
+	//p->Streams[0] = (unsigned long) stream1;  
+	p->Streams[1] = (unsigned long) stream2; 
+	p->Streams[2] = (unsigned long) stream3;
+	
+	//stdin = stream1;
+	stdout = stream2;
+	stderr = stream3;
+	
+	//
+	// Current tty
+	//
+	
+    if ( (void *) CurrentTTY == NULL )
+	{	
+		printf ("update_standard_stream: CurrentTTY");
+		die();
+		//return -1;
+	}else{
+	    
+		//CurrentTTY->stdin = stdin;
+	    CurrentTTY->stdout = stdout;
+	    CurrentTTY->stderr = stderr;	
+	}
+	
+	
+	printf ("update_standard_stream: done\n");
+	refresh_screen ();	
 	
 	return 0;
 }
@@ -809,6 +1020,38 @@ int fprintf ( FILE *stream, const char *format, ... ){
 	// Srteam inv'alida.
     if ( (void *) stream == NULL )
         return -1;
+	
+    //
+	// print 
+	//
+
+	// #obs:
+	// Isso deve ser feito antes e alterarmos o ponteiro _ptr de stdout.
+	
+//print:
+	
+	
+	// Se a stream for a stdout então vamos ter alertar para pintar.
+	if (stream == stdout)
+	{
+		//Indicamos que deve pintar.
+		//isso será ativado pelo fflush
+		CurrentTTY->stdout_status = 1;
+		
+		//se temos um print pendente não precisamos mudar o last.
+		//se não temos um print pendente então precisamos mudar o last.
+		if ( CurrentTTY->print_pending == 0 )
+		{
+			CurrentTTY->print_pending = 1;
+			
+	        // Indicamos de onde a rotina de pintura deve começar.
+		    CurrentTTY->stdout_last_ptr = stdout->_ptr;
+		}
+	}	
+	
+	//
+	// Colocando os chars dentro do arquivo.
+	//
 
 	// Colocamos no ponteiro e n~ao na base.
 	char *str = (char *) stream->_ptr;
@@ -820,21 +1063,14 @@ int fprintf ( FILE *stream, const char *format, ... ){
 	len = (size_t) strlen ( (const char *) format);
 	//len++;
 	len--;
-	
-	//#debug
-	//printf (format);	
-	//printf ("2:%s",format);	
-	//printf (" len=%d", len);
-	//refresh_screen();
-	//while(1){}
-	
+		
 	int status = -1;
 	
 	status = (int) print (&str, varg);
 
 	//depois de ter imprimido então atualizamos o ponteiro de entrada no arquivo.
 	stream->_ptr = stream->_ptr + len;	
-	
+		
 	return (int) status;	
 }
 

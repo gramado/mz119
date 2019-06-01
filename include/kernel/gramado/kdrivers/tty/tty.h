@@ -53,15 +53,31 @@ struct tty_d
 	
 	// Thread de input.
 	struct thread_d *thread;
-	
-	// 0 = não repinte stdout no tty atual
-	// 1 = repinte stdout no tty atual
-	int stdout_status;
-	int stdout_update_what; //char, linha, coluna.
+   
+	//
+	// FILE
+	//
 	
 	FILE *stdin;
 	FILE *stdout;
 	FILE *stderr;
+	
+	//
+	// Print support
+	//
+	
+	// De onde começar a pintar
+	// depois da libc ter colocado caracteres no arquivo. 
+	char *stdout_last_ptr;
+	char *stderr_last_ptr;
+	
+	// status
+	// 0 = não repinte stdout no tty atual
+	// 1 = repinte stdout no tty atual
+	int stdout_status;
+	int stdout_update_what; //char, linha, coluna.
+
+	int print_pending;
 	
 	
     int	LinMax;
