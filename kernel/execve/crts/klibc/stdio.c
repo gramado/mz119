@@ -234,6 +234,21 @@ size_t fwrite (const void *ptr, size_t size, size_t n, FILE *fp)
 // https://linux.die.net/man/3/fflush
 // http://man7.org/linux/man-pages/man3/fflush.3.html
 
+/*
+ #importante:
+ Now, stdout is, by default, line buffered. This means, 
+ the output sent to stdout is not sent to the screen for display 
+ (or to the redirected files/streams) until it gets a newline character in it. 
+ So, if you want to override the default buffering behaviour, 
+ then you can use fflush to clear the buffer (and in the process, 
+ send everything to the screen/file/stream).
+ 
+ Então fflush envia pra tela aquilo que está somente no arquivo
+ pois ainda não tem um '\n' '\r' no arquivo.
+ Isso significa que fprintf não pode ativar a rotina de pintura
+ enquanto não encontrar um '\n'
+*/
+
 int fflush ( FILE *stream ){
 	
 	//printf ("fflush: suspenso \n");
@@ -339,6 +354,7 @@ found:
 			//	stdout->_ptr[j] = stream->_base[j];	
 			//}
 			//stdout = stream;
+			//stdio_file_write ( FILE *stream, char *string, int len );
 			goto print_stdout;
 			break;
 			
@@ -350,6 +366,7 @@ found:
 			//	stderr->_ptr[j] = stream->_base[j];	
 			//}			
 			//stderr = stream;
+			//stdio_file_write ( FILE *stream, char *string, int len );
 			goto done;
 			break;
 			
@@ -365,75 +382,17 @@ print_stdout:
 	goto done;
 	
 	
-	
 not_found:	
 	printf ("fflush: not found\n");
 	refresh_screen ();
     //goto done;	
 	
 	
-	
-	/*
-	if ( (void *) p_stdin == NULL )
-	{
-		printf ("fflush: p_stdin is NULL\n");
-		refresh_screen ();
-		return (int) (-1);			
-	}
-	*/
-	
-	/*
-	if ( (void *) p_stdout == NULL )
-	{
-		printf ("fflush: p_stdout is NULL\n");
-		refresh_screen ();
-		return (int) (-1);			
-	}
-    */
-	
-	/*
-	if ( (void *) p_stderr == NULL )
-	{
-		printf ("fflush: p_stderr is NULL\n");
-		refresh_screen ();
-		return (int) (-1);			
-	}
-    */
-	
-	//
-	// Copiar.
-	//
-	
-	/*
-	//stdout
-	//considerar o tamanho do arquivo de destino
-	
-	if ( (void *) stream == p_stdout )
-	{
-        for ( i=0; i < stdout->_bufsiz; i++ )
-	    {
-		    stdout->_ptr[i] = stream->_base[i];		
-	    }		    		
-	}
-	*/
-
-	/*
-	//stdout
-	//considerar o tamanho do arquivo de destino
-	
-	if ( (void *) stream == p_stderr )
-	{
-        for ( i=0; i < stderr->_bufsiz; i++ )
-	    {
-		    stderr->_ptr[i] = stream->_base[i];		
-	    }		    		
-	}
-	*/
-	
 done:
-	//printf ("fflush: done \n");
-	//refresh_screen ();
 	
+	//vamos pintar mesmo que não tenhamos encontrado um '\n'
+	CurrentTTY->print_pending = 1;
+
 	return 0;
 }
 
@@ -841,15 +800,15 @@ printi ( char **out,
 	// #obs: retorna pc + o retorno da função.
 	
 	return (int) pc + prints(out, s, width, pad);
-};
+}
 
 
 /*
  ****************************************
  * print:
  *     Rotina de suporta a printf.
- *
  */
+
 static int print ( char **out, int *varg ){
 	
 	register int width, pad;
@@ -1013,6 +972,13 @@ int sprintf ( char *str, const char *format, ... ){
  *     @field 2
  */
 
+
+// fflush é line buffered,
+// Então fflush envia pra tela aquilo que está somente no arquivo
+// pois ainda não tem um '\n' '\r' no arquivo.
+// Isso significa que fprintf não pode ativar a rotina de pintura
+// enquanto não encontrar um '\n'
+
 int fprintf ( FILE *stream, const char *format, ... ){
 	
     register int *varg = (int *) (&format);
@@ -1042,7 +1008,20 @@ int fprintf ( FILE *stream, const char *format, ... ){
 		//se não temos um print pendente então precisamos mudar o last.
 		if ( CurrentTTY->print_pending == 0 )
 		{
-			CurrentTTY->print_pending = 1;
+			//#bugbug: Na verdade só podemos ativar essa
+			//pendência quando encontrarmos um '\n' '\r'
+			//então então o terminal pode mostrar na tela o conteúdo
+			//de uma linha, normalmente a última do terminal,
+			//mudando de linha efetua-se o scroll.
+			//>> Se ainda não temos um '\n' só um fflush mostraria
+			//o conteúdo na tela.
+			
+			
+			//#importante
+			//Mudamos isso para printchar
+			//então somente depois de encontrar o \n ativaremos essa flag.
+			//Isso na teoria.Porque na prática tá imprimindo pra todos os casos. haha
+			//CurrentTTY->print_pending = 1;
 			
 	        // Indicamos de onde a rotina de pintura deve começar.
 		    CurrentTTY->stdout_last_ptr = stdout->_ptr;
@@ -1061,8 +1040,6 @@ int fprintf ( FILE *stream, const char *format, ... ){
 	size_t len = 0;
 	
 	len = (size_t) strlen ( (const char *) format);
-	//len++;
-	len--;
 		
 	int status = -1;
 	
@@ -1074,40 +1051,25 @@ int fprintf ( FILE *stream, const char *format, ... ){
 	return (int) status;	
 }
 
+ 
+// Escreve no arquivo uma certa quantidade de caracteres de uma dada string 
+int stdio_file_write ( FILE *stream, char *string, int len ){
 
-/*
- #opçao
-int fprintf ( FILE *stream, const char *format, ... ){
+	int i;
+	char *p;
 	
-	int size;
+	p = string;
 	
-	if ( (void *) stream == NULL )
+	//#todo filtrar len.
+	
+	for (i=0; i<len; i++)
 	{
-		return (int) (-1);
-		
-	} else {
-		
-		size = (int) stdio_strlen (format);
-		
-		if ( size > stream->_cnt )
-		{
-			return (int) (-1);
-		}
-		
-		stream->_cnt = (int) (stream->_cnt - size);
-		
-		sprintf ( stream->_ptr, format );
-		
-		stream->_ptr = stream->_ptr + size;
-        
-		return (int) 0;		
+	    fputc ( ( int ) *p, stream );
+	    p++;
 	};
 	
-	return (int) (-1);
-}; 
-
-*/
-
+    return 0;
+}
 
 
 /*
@@ -1427,8 +1389,21 @@ void rewind ( FILE * stream ){
 
 static void printchar (char **str, int c)
 {
+	// #importante
+	// Se a string existe colocamos nela,
+	// caso contrário imprimimos no backbuffer.
+	// Vamos aproveitar esse momento para ativarmos a
+	// pintura no caso dos caraters enviados para uma 
+	// stream de output, como stdout.
+	
 	if (str)
-	{	
+	{
+		//ativaremos a rotina de mostrar na tela só no momento em que encontramos um fim de linha.
+		if ( c == '\n' ) 
+		{
+			CurrentTTY->print_pending = 1;
+		}
+		
 		**str = c;
 		
 		++(*str);
@@ -1448,7 +1423,7 @@ static void printchar (char **str, int c)
 
 int putchar (int ch){ 
    
-    //Em cedge.c
+    //Em kgws/comp/cedge.c
     outbyte (ch);
     
 	return (int) ch;    

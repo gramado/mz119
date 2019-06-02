@@ -691,9 +691,9 @@ system_procedure ( struct window_d *window,
 					//CurrentTTY->stdout_last_ptr = stdout->_ptr;
 					//CurrentTTY->stdout_status = 1;
 					
-					fprintf (stdout, "Testando stdout !!!\n");
-					fprintf (stdout, "C ");
-					fprintf (stdout, "String 2\n");
+					fprintf (stdout, "Testando stdout 1234...\n");
+					//fprintf (stdout, "C");
+					//fprintf (stdout, "String 2\n");
 					fflush (stdout);
 					
 					//CurrentTTY->stdout_status = 1;

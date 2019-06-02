@@ -673,6 +673,9 @@ int fflush ( FILE *stream );
 //atualiza o fluxo padrão para determinado processo
 int update_standard_stream ( int PID, FILE *stream1, FILE *stream2, FILE *stream3 );
 
+// Escreve no arquivo uma certa quantidade de caracteres de uma dada string 
+int stdio_file_write ( FILE *stream, char *string, int len );
+
 int fputs ( const char *str, FILE *stream );
 int ungetc ( int c, FILE *stream );
 long ftell (FILE *stream);
