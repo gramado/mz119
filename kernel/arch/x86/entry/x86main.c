@@ -349,9 +349,10 @@ void x86StartInit (void){
 
 
 
-//inicializa 3 processos do gxs
-void x86StartGramadoXServer (void)
-{
+// inicializa 3 processos do gramado/init/core
+// mais a thread em ring 0.
+
+void x86StartGramadoCore (void){
 
 	//
 	// ## INIT ##
@@ -595,7 +596,7 @@ void x86main (void){
     int Status = 0;
 	
 	// se usaremos todos os processos do x server
-	int gramado_x_server = 0;	
+	int gramado_core = 0;	
 
 
     debug_print ("[x86] x86main:\n");
@@ -696,20 +697,23 @@ void x86main (void){
     };
 	
 	
-	
-#ifdef ENTRY_GRAMADO_X_SERVER	
-	gramado_x_server = 1;
+
+#ifdef ENTRY_GRAMADO_CORE		
+	gramado_core = 1;
 #endif	
 	
 	
-	if ( gramado_x_server == 1 )
+	if ( gramado_core == 1 )
 	{
-		printf ("Starting gramado x server\n");
-	    //varios processos.
-		x86StartGramadoXServer ();
+		printf ("Starting all processes\n");
+	    
+		//varios processos.
+		x86StartGramadoCore ();
+		
 	}else{
          
 		printf ("Starting only init\n");
+		
 		//apenas o init.
 		x86StartInit ();	
     };

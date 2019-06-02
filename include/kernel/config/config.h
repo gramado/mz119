@@ -140,10 +140,6 @@ sixth..     ide5, usually PCI, probed
 //    ######## Creation flags ########
 //
 
-//Se usaremos os processos do x server ou apenas o init.
-#define ENTRY_GRAMADO_X_SERVER  
-
-
 //Cria o processo shell e sua thread de controle.
 #define ENTRY_CREATE_SHELL   
 
@@ -153,6 +149,15 @@ sixth..     ide5, usually PCI, probed
 
 //Cria uma thread para o processo kernel, que irá rodar em ring0.
 #define ENTRY_CREATE_KERNELTHREAD_RING0
+
+
+//==========================================
+// modes
+
+//Se usaremos os processos do x server ou apenas o init.
+#define ENTRY_GRAMADO_CORE  
+
+
 
 
 

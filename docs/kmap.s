@@ -1042,7 +1042,7 @@ Linker script and memory map
  .text          0x00000000c0007320      0x95c x86main.o
                 0x00000000c000732c                _x86mainStartFirstThread
                 0x00000000c0007552                _x86StartInit
-                0x00000000c0007690                _x86StartGramadoXServer
+                0x00000000c0007690                _x86StartGramadoCore
                 0x00000000c00079c4                _x86main
  .text          0x00000000c0007c7c      0x5c5 pipe.o
                 0x00000000c0007c7c                _sys_dup
