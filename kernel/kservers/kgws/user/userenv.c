@@ -323,6 +323,7 @@ void UpdateUserInfo ( struct user_info_d *user,
 
 
 /*
+ *******************************
  * init_user_info:
  *     Configurar informações sobre o usuário default.
  *
@@ -364,6 +365,8 @@ void init_user_info (void){
 	int Id = 0;
     int Index = 0;	
 	
+	debug_print ("init_user_info:\n");
+	
 	//Initialize list.
     
 	while (Index < USER_COUNT_MAX)
@@ -380,10 +383,18 @@ void init_user_info (void){
 	
 	if ( (void *) DefaultUser == NULL )
 	{
-	    printf ("init_user_info:");
-	    die ();
+	    panic ("init_user_info:");
 		
 	} else {
+		
+		
+		if ( (void *) CurrentTTY == NULL )
+		{
+			panic ("init_user_info: CurrentTTY");
+		}
+		
+		CurrentTTY->user_info = DefaultUser;
+		
 		
 		//Coloca no início da lista.
 		//userList[0] = (unsigned long) SystemUser;    //System.

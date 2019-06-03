@@ -23,6 +23,24 @@ int ttyCurrentY;
 
 
 
+
+struct tty_line_d
+{
+	//int index;
+	
+    char CHARS[80];
+    char ATTRIBUTES[80];  //Isso poderia ser unsigned long.	
+	
+	// Início e fim da string dentro da linha. O resto é espaço.
+	int left;
+	int right;
+	
+	//Posição do cursor dentro da linha.
+	int pos;
+};
+
+
+
 //estrutura para tty
 //uma estrutura de tty deve estar associado a
 //uma janela de terminal virtual.
@@ -36,6 +54,19 @@ struct tty_d
 		
 	char name[64];
 	
+	
+	//
+	// user, user session, room, desktop;
+	//
+	
+	struct user_info_d *user_info;
+	
+	struct usession_d *user_session;
+	
+	struct room_d *room;
+	
+	struct desktop_d *desktop;
+		
 	// Quantas objetos associados a essa tty?
 	int count;
 	
@@ -105,6 +136,12 @@ struct tty_d
     unsigned long cursor_bottom; // margem inferior dada em linhas
 	
 	
+	//linha atual da lista abaixo.
+	int current_line;
+	
+	// Organizando as linhas dentro do TTY.	
+	//Lista de ponteiros de estrutura de linha (tty_line_d)
+	unsigned long lines[32];
 	
     //in support
 	//unsigned long IN[320];
@@ -137,7 +174,7 @@ void check_CurrentTTY (void);
 
 //void *createTTYLine (void); 
 
-int ttyInit (void);
+int ttyInit (int tty_id);
 
 //
 // End.

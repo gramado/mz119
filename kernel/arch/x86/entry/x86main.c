@@ -625,7 +625,8 @@ void x86main (void){
 	
 	//system.c
 
-    systemSystem ();
+	//Construtor.
+    systemSystem (); //status.
 
     Status = (int) systemInit ();
 

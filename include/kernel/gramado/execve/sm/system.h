@@ -289,8 +289,8 @@ int gSystemStatus; //?? Usado pelo construtor.
 //O endereço e a rotina são de 32bit.
 unsigned long shutdown_address;
 
-static char *default_user_name = "default-[USER]";
-static char *systemDefaultUserName = "default-[USER]";
+static char *default_user_name = "root";
+//static char *default_user_name = "default-[USER]";
 //...
 
 

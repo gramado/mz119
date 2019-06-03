@@ -732,10 +732,16 @@ void _outbyte(int c);
  * Outros protótipos. 
  *     Para rotinas do kernel que estão fora do padrão C.
  */
+
 void scroll( void );
 int kclear(int color);
 int kclearClientArea(int color);
-int kprint(char *message, unsigned int line, int color);
+
+//#todo:
+//insert_char
+
+
+int insert_line ( char *string, int line );
 
 
 //int getchar();

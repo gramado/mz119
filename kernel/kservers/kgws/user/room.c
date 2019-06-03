@@ -159,18 +159,22 @@ void init_room_list (void){
 
 
 /*
- * init_window_station:
- *     Inicializa o gerenciamento de window stations.
+ ********************************
+ * init_room_manager:
+ *     Inicializa o gerenciamento de room. (window stations).
  */
 
 void init_room_manager (void){
+	
+	
+	debug_print ("init_room_manager:\n");	
 	
     //printf("init_window_station: Initializing ...\n");
 	
 	windowstations_count = 0;
 	
 	//List.
-	init_room_list();
+	init_room_list ();
 	
 	// Struct 'room0' 
     
@@ -178,10 +182,15 @@ void init_room_manager (void){
 	
 	if ( (void *) room0 == NULL )
 	{
-	    printf ("init_window_station fail: room0 Struct");
-		die ();
+	    panic ("init_window_station: room0 Struct");
+		//die ();
 	};
 	
+	if ( (void *) CurrentTTY == NULL )
+	{
+		panic ("init_room_manager: CurrentTTY");
+	}	
+	CurrentTTY->room = room0;
 	
 	/*
     UpdateUserInfo( 0, 

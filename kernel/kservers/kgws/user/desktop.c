@@ -412,6 +412,8 @@ void set_current_menuVScroll ( struct desktop_d *desktop,
 
 void init_desktop (void){
 	
+	debug_print ("init_desktop:\n");		
+	
     //printf("init_desktop: Initializing..\n");
 	
 	desktops_count = 0;
@@ -425,12 +427,16 @@ void init_desktop (void){
 	
 	if ( (void *) desktop0 == NULL )
 	{
-	    printf("init_desktop error: desktop0");
-		die ();
-		
-		//refresh_screen();
-		//while(1){}	
+	    panic ("init_desktop error: desktop0");
+		//die ();	
 	};
+	
+	
+	if ( (void *) CurrentTTY == NULL )
+	{
+		panic ("init_room_manager: CurrentTTY");
+	}	
+	CurrentTTY->desktop = desktop0;
 	
 	//
 	// Configura o desktop atual.

@@ -1268,10 +1268,7 @@ void Removing_from_the_end (struct linkedlist_d *list){
 	new_tail = old_tail->blink;
 	
 	list->tail = new_tail; 
-	
-//done:
-	//return;
-};
+}
 
 
 /*
@@ -1390,24 +1387,11 @@ int systemStartUp (void){
 	}; //--else
     
     
-    
- 	//#debug :  
-    // esperamos alcaçarmos esse alvo.
-    //isso funcionou gigabyte/intel
-    //vamos avançar
-	
-	//printf ("++++++++++++++++++++++++++++++++++++++++++++++++ systemStartUp: after init ++++++\n");
-    //refresh_screen(); 
-    //while(1){}		
-
-
-    
-    
-	
+  	
 	
 	// System Version:
 	//     Configurando a versão do sistema.
-	systemSetupVersion();
+	systemSetupVersion ();
 	
 	//
 	// Inicializa a edição do sistema.
@@ -1443,14 +1427,19 @@ int systemStartUp (void){
 //     Completas as 3 fases de inicialização do sistema.
 //     @todo: Na verdade serão mais fases..
 //           as fases estão em init().
-done:	
+	
+done:
+	
     //printf("systemStartUp: Done!\n");	
 	//refresh_screen();	
-	if(KeInitPhase != 3){ 
+	
+	if (KeInitPhase != 3)
+	{ 
 	    Status = (int) 1; 
 	};
+	
     return (int) Status;
-};
+}
 
 
 /*
@@ -1463,10 +1452,11 @@ int systemInit (void){
 	
 	int Status;
 	
-	debug_print("systemInit:\n");
+	debug_print ("systemInit:\n");
 	
 	//Colocando na variável global, a opção selecionada manualmente pelo 
 	//desenvolvedor.
+	
     gSystemEdition = SYSTEM_EDITION;
     //...
 	
@@ -1477,14 +1467,14 @@ int systemInit (void){
 	
 	
 #ifdef BREAKPOINT_TARGET_AFTER_SYSTEM
-    //#debug 
+    
+	//#debug 
 	//a primeira mensagem só aparece após a inicialização da runtime.
 	//por isso não deu pra limpar a tela antes.
-	printf(">>>debug hang: after init");
+	
+	printf (">>>debug hang: after init");
 	refresh_screen(); 
-	while (1){
-		asm ("hlt");
-	}
+	while (1){ asm ("hlt"); }
 #endif	
 	
 	

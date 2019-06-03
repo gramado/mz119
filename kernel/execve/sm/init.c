@@ -273,7 +273,36 @@ int init_architecture_independent (void){
 	    panic ("init-init_architecture_independent: init_gramado\n"); 
 	}
 	
+	
+	
+	
+	
+	/*
+	//
+	// TTY
+	//
+	
+	
+	// tty support.
+	// As mensagens do kernel precisam usar esses par^ametros.
+	// o kernel usa a tty0.
+	
+	//#importante
+	//Logo antes user session, room e desktop.
+	//Assim essas informaç~oes ficar~ao na estrutura de tty.
+	//assim saberemos qual usu'ario est'a usando a tty0
+	// deve ser o 'root'.
+	
+	//iniciar a tty 0.
+	
+	ttyInit (0);	
+	*/
 
+	
+	
+	
+	
+	/*
 	// User Info:
 	// =========
 	//
@@ -289,12 +318,16 @@ int init_architecture_independent (void){
 #endif
 	
 	//initialize user info structure.
-    init_user_info ();       	
+    init_user_info ();  
+	*/
     
 	// User Session, Window Station and Desktop.
 	// @todo: Essas informações são independentes da arquitetura,
 	//      Essa rotina pode ir pra outro lugar.
 	
+	
+	
+	/*
 //UserSession:
 	
 #ifdef EXECVE_VERBOSE	
@@ -302,9 +335,12 @@ int init_architecture_independent (void){
 #endif
 	
 	//initialize user session.
-	init_user_session();   	 
+	init_user_session ();   	 
+	*/
 	
 	
+	
+	/*
 	// (ROOM)
 	
 //WindowStation:
@@ -313,8 +349,11 @@ int init_architecture_independent (void){
     printf ("init-init_architecture_independent: init_room_manager\n");   
 #endif  
 	
-	init_room_manager();
-
+	init_room_manager ();
+    */
+	
+	
+	/*
 	// DESKTOP
 	
 //Desktop:
@@ -324,6 +363,7 @@ int init_architecture_independent (void){
 #endif    
 	
 	init_desktop (); 
+	*/
  
 	
 	//
@@ -364,7 +404,9 @@ int init_architecture_independent (void){
 	
 	
 	// tty support.
-	ttyInit();
+	// As mensagens do kernel precisam usar esses par^ametros.
+	// o kernel usa a tty0.
+	//ttyInit ();
 
 	
 	
@@ -545,13 +587,13 @@ int init (void){
 	
     int Status = 0;
 	
-	debug_print("init:\n");
+	debug_print ("init:\n");
 	
 	//Check kernel phase.
 	
 	if ( KeInitPhase != 0 )
 	{
-		debug_print("init: KeInitPhase fail\n");
+		debug_print ("init: KeInitPhase fail\n");
 		panic ("sm-init-init: KeInitPhase\n");		
 	}
 	
@@ -577,7 +619,7 @@ int init (void){
 	
     //Object manager.	
 #ifdef EXECVE_VERBOSE	
-	printf("sm-init-init: init_object_manager\n");
+	printf ("sm-init-init: init_object_manager\n");
 #endif	
 	
 	init_object_manager();
@@ -587,7 +629,7 @@ int init (void){
 	printf("sm-init-init: ioInit\n");	
 #endif	
 	
-	ioInit();	
+	ioInit ();	
 	
 	
     //
@@ -616,29 +658,29 @@ int init (void){
 	printf("sm-init-init: disk_init\n");
 #endif  
 	
-	disk_init();
+	disk_init ();
 	
 #ifdef EXECVE_VERBOSE	
 	printf("sm-init-init: volume_init\n");
 #endif
 	
-	volume_init();
+	volume_init ();
 	
 	
 	
 #ifdef EXECVE_VERBOSE	
-	printf("fsInit: VFS..\n");
+	printf ("fsInit: VFS..\n");
 #endif
 	
-	vfsInit();
+	vfsInit ();
 	
 	
 //deletar	
 #ifdef EXECVE_VERBOSE	
-	printf("sm-init-init: fsInit\n");
+	printf ("sm-init-init: fsInit\n");
 #endif   
 	
-	fsInit();
+	fsInit ();
 	    
 
 #ifdef EXECVE_VERBOSE	
@@ -726,7 +768,7 @@ int init (void){
 
 	
 	//Fase 1: Inicia a parte independente da arquitetura.
-	Status = (int) init_architecture_independent();
+	Status = (int) init_architecture_independent ();
 	if(Status != 0){
 	   //Nothing for now.
 	};
@@ -734,7 +776,7 @@ int init (void){
     
 	//Fase 2: Inicia a parte de arquitetura especifica da máquina atual.
 	//        Ou seja, considera a marca do processador.
-    Status = (int) init_architecture_dependent();	 
+    Status = (int) init_architecture_dependent ();	 
     if(Status != 0){
 	    //Nothing for now.
 	};	

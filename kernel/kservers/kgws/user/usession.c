@@ -156,6 +156,7 @@ void close_user_session (void){
 
 
 /*
+ *****************************
  * init_user_session:
  *     Inicializa user session. 
  */
@@ -164,6 +165,8 @@ void init_user_session (void){
 	
     int i = 0;
 	int CurrentUser = 0;
+	
+	debug_print ("init_user_session:\n");
  	
 	
 	//Init list	
@@ -178,7 +181,7 @@ void init_user_session (void){
 	// User.
 	//
 	
-	CurrentUser = (int) GetCurrentUserId();
+	CurrentUser = (int) GetCurrentUserId ();
 	
 	if ( CurrentUser < 0 || CurrentUser >= USER_COUNT_MAX )
 	{
@@ -202,6 +205,13 @@ void init_user_session (void){
 	{
 	    panic ("init_user_session: DefaultUserSession");
 	}
+	
+	
+	if ( (void *) CurrentTTY == NULL )
+	{
+		panic ("init_user_session: CurrentTTY");
+	}	
+	CurrentTTY->user_session = DefaultUserSession;
 	
 	CurrentUserSession = (void *) DefaultUserSession;
 	

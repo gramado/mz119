@@ -170,8 +170,14 @@ void *createTTYLine (void){
  *     Inicialização do módulo.
  */
 
-int ttyInit (void){
+int ttyInit (int tty_id){
 		
+	debug_print ("ttyInit:\n");
+	
+	if ( tty_id < 0 || tty_id > 7 )
+	{
+	    panic ("ttyInit: tty_id");
+	}
 	
 	CurrentTTY = (struct tty_d *) malloc ( sizeof(struct tty_d) );
 	
@@ -183,13 +189,20 @@ int ttyInit (void){
 		//return -1;
 	}
 	
-	CurrentTTY->index = 0;
+	CurrentTTY->index = tty_id;
 	
 	CurrentTTY->used = 1;
 	CurrentTTY->magic = 1234;
 	
+	
+	//#bugbug
+	// Precisamos criar o ambiente de janelas antes de configurarmos isso pela
+	// rimeira vez.
+	
 	// Configurando uma janela básica, pra não ficar null.
-	CurrentTTY->window = gui->main;
+	//CurrentTTY->window = gui->main;
+	CurrentTTY->window = NULL;
+	
 	
 	CurrentTTY->stdin = stdin;
 	CurrentTTY->stdout = stdout;
@@ -205,15 +218,14 @@ int ttyInit (void){
 	//CurrentTTY->height = 0;
 
 	
+	int i;
+	for (i=0; i<8; i++)
+	{
+		ttyList[i] = 0;
+	}
 	
-	ttyList[0] = (unsigned long) CurrentTTY;
-	ttyList[1] = 0;
-	ttyList[2] = 0;
-	ttyList[3] = 0;
-	ttyList[4] = 0;
-	ttyList[5] = 0;
-	ttyList[6] = 0;
-	ttyList[7] = 0;
+	ttyList[tty_id] = (unsigned long) CurrentTTY;
+
 	
 	
 /*	

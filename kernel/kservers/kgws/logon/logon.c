@@ -102,7 +102,7 @@ void create_logon (void){
 	// essa era o buffer delas.
 	// char str_tmp[120];	 
 	
-	debug_print("create_logon\n");
+	debug_print ("create_logon\n");
 	
 	//g_guiMinimal = 1;
 	
@@ -123,6 +123,46 @@ void create_logon (void){
 	    panic ("gws-create_logon: gui struct");
 		
 	}else{
+		
+		
+	    //
+	    // TTY
+	    //
+	
+	
+	    // tty support.
+	    // As mensagens do kernel precisam usar esses par^ametros.
+	    // o kernel usa a tty0.
+	
+	    //#importante
+	    //Logo antes user session, room e desktop.
+	    //Assim essas informaç~oes ficar~ao na estrutura de tty.
+	    //assim saberemos qual usu'ario est'a usando a tty0
+	    // deve ser o 'root'.
+	
+	    //iniciar a tty 0.
+	
+	    ttyInit (0);	
+		
+		
+		
+	// =========
+	//
+	// @todo: Usuário e sessão devem ser independentes do modo de vídeo. 
+	//        Text ou Graphics.
+	// @todo: Essas informações são independentes da arquitetura,
+	//      Essa rotina pode ir pra outro lugar.
+	
+//UserInfo:
+	
+//#ifdef EXECVE_VERBOSE	  
+    //printf ("init_user_info\n");
+//#endif
+	
+	    //initialize user info structure.
+        init_user_info ();   
+		
+		
 	    
         //Set session, room (Window Station), desktop, window and menu.
 	    
@@ -136,19 +176,19 @@ void create_logon (void){
 		// Initialize Session, WindowStation, Desktop, Windows and Menus.
 		  
 		//user section.		
-		init_user_session();
+		init_user_session ();
 #ifdef KERNEL_VERBOSE		
 		printf ("gws-create_logon: user ession ok\n");
 #endif		
 		
 		//initialize window station default.	
-		init_room_manager();	
+		init_room_manager ();	
 #ifdef KERNEL_VERBOSE			    
 		printf ("gws-create_logon: room manage ok\n");   
 #endif	    		
 	
 	    //initialize desktop default.
-		init_desktop(); 	    
+		init_desktop (); 	    
 #ifdef KERNEL_VERBOSE			    
 		printf ("gws-create_logon: init desktop ok\n");   
 #endif	    		
@@ -157,7 +197,7 @@ void create_logon (void){
 	    //Inicia estrutura.	
 		//window.c
 		
-		init_windows(); 
+		init_windows (); 
 #ifdef KERNEL_VERBOSE			    
 		printf ("gws-create_logon: init windows ok\n");   
 #endif	    		
@@ -611,8 +651,8 @@ void logon_create_mainwindow (void){
 	// pois ela server de referência.
 	
 	hWindow = (void *) CreateWindow ( 1, 0, VIEW_MINIMIZED, "logon desktop window", 
-	                                Left, Top, Width, Height,           
-							        gui->screen, 0, 0, COLOR_WINDOW  );
+	                       Left, Top, Width, Height,           
+						   gui->screen, 0, 0, COLOR_WINDOW  );
 	
 	if ( (void *) hWindow == NULL)
 	{
@@ -625,6 +665,15 @@ void logon_create_mainwindow (void){
 		
 	    windowLock (hWindow); 
 		set_active_window (hWindow); 
+		
+		// TTY window,
+		
+	    if ( (void *) CurrentTTY == NULL )
+	    {
+		    panic ("logon_create_mainwindow: CurrentTTY");
+	    }	
+	    CurrentTTY->window = hWindow;		
+		
 		
 	    //a janela pertence ao desktop 0
 	    //hWindow->desktop = (void*) desktop0;
@@ -1022,21 +1071,21 @@ done:
  *     Obs: Aceita argumentos.
  * Argumentos:
  * -l ou /l; ...
- *
  */
+
 int init_logon (int argc, char *argv[]){
 	
 	int LogonFlag = 0;
 	char *s;    //String
-	
-	
-	debug_print("init_logon\n");
+		
+	debug_print ("init_logon\n");
 	
 	//
 	// Se não há argumentos.
 	//
 	
-	if(argc < 1){
+	if (argc < 1)
+	{
 		goto done;
     };
 	
@@ -1044,14 +1093,15 @@ int init_logon (int argc, char *argv[]){
 	// Dependendo do argumento encontrado muda-se a flag.
 	//
 	
-    while(--argc) 
+    while (--argc) 
     {
         s = *++argv;
+		
         if (*s == '-' || *s == '/') 
 		{
-            while(*++s) 
+            while (*++s) 
 			{
-                switch(*s) 
+                switch (*s) 
 				{
                     case 'l':
                         LogonFlag = 0;
@@ -1074,34 +1124,33 @@ int init_logon (int argc, char *argv[]){
 						break;
                 };
             };
-        }
-        else 
-		{
+			
+        }else{
             //usage();
         }
     };
 	
 	//
-	// Aqui deve-se habilitar as opções de acordo
-	// com a flag.
+	// Aqui deve-se habilitar as opções de acordo com a flag.
 	//
 	
 	//
 	// Keyboard support.
 	//
 	
-	ldisc_init_modifier_keys();
-	ldisc_init_lock_keys();
+	ldisc_init_modifier_keys ();
+	ldisc_init_lock_keys ();
 	
 	//...
 	
 done:
 	//printf("init_logon: Initializing..\n");
-    SetProcedure( (unsigned long) &LogonProcedure);	
+    SetProcedure ( (unsigned long) &LogonProcedure);	
     logonStatus = 1;	
 	//g_logged = (int) 0;
-	return (int) 0;
-};
+	
+	return 0;
+}
 
 
 /*

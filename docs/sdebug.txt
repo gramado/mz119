@@ -21,6 +21,11 @@ pci_setup_devices: done
 init_executive: diskATADialog
 init_architecture_dependent
 create_logon
+ttyInit:
+init_user_info:
+init_user_session:
+init_room_manager:
+init_desktop:
 init_logon
 [x86] x86main: processes and threads
 [x86] x86main: ps2
@@ -33,4 +38,3 @@ fsLoadFile:
 fsLoadFile:
 x86main: done
 fsLoadFile:
- state 

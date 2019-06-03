@@ -396,10 +396,15 @@ done:
 	return 0;
 }
 
-//atualiza o fluxo padrão para determinado processo
 
-int update_standard_stream ( int PID, FILE *stream1, FILE *stream2, FILE *stream3 ){
+// Atualiza o fluxo padrão para determinado processo
 
+int 
+update_standard_stream ( int PID, 
+						 FILE *stream1, 
+						 FILE *stream2, 
+						 FILE *stream3 )
+{
 	struct process_d *p;
 	
 	
@@ -463,14 +468,12 @@ int update_standard_stream ( int PID, FILE *stream1, FILE *stream2, FILE *stream
 //scroll test
 //função interna de suporta ao scroll()
 
-void 
-scroll_screen_rect (void)
-{
+void scroll_screen_rect (void){
+	
     //unsigned long x = 0; 
     //unsigned long y = 0; 
     //unsigned long width = 0;  //800
     //unsigned long height = 0;  //600
-	
 
 	//#TEST
 	register unsigned int i;
@@ -478,8 +481,8 @@ scroll_screen_rect (void)
 
 	unsigned int line_size, lines;
 	unsigned int offset;
-	unsigned long Width = (unsigned long) screenGetWidth();
-	unsigned long Height = (unsigned long) screenGetHeight();
+	unsigned long Width = (unsigned long) screenGetWidth ();
+	unsigned long Height = (unsigned long) screenGetHeight ();
 
 	//line_size = (unsigned int) width; 
 	//lines = (unsigned int) height;
@@ -672,11 +675,57 @@ int kclearClientArea (int color){
 }
 
 
-/*
- * kprint:
- * #bugbug: Nao temos mais suporte a modo texto. */
+//#todo:
+//insert_char
 
-int kprint ( char *message, unsigned int line, int color ){	
+
+/*
+ * insert_line:
+ * 
+ */
+
+// Incluir uma linha no buffer de linhas da estrutura do tty atual.
+// vamos copiar esse esquema do edito de textos em ring3.
+
+int insert_line ( char *string, int line ){
+	
+	/*
+	
+	int l;
+	struct tty_line_d *Line;
+	
+	//if ( (void *) string == NULL )
+	//	return -1;
+	
+    if ( (void *) CurrentTTY != NULL )
+	{
+        if ( CurrentTTY->used == 1 && CurrentTTY->magic == 1234 )
+		{
+			//Linha atual para se escrever no stdout do current tty
+		    l = CurrentTTY->current_line;
+			
+			//Pega o ponteiro para estrutura de linha da linha atual.
+			Line = (struct tty_line_d *) CurrentTTY->lines[l];
+			
+			if ( (void *) Line == NULL )
+				return -1;
+			
+			//Buffer pra colocar chars.
+		    //Line->CHARS[0]  
+			//Line->ATTRIBUTES[0] 
+				
+			//inicio do texto dentro da linha atual
+		    //CurrentTTY->left
+			
+			//fim do texto dentro da linha atual
+			//CurrentTTY->right
+			
+			//posição do ponteiro dentro da linha atual.
+			//CurrentTTY->pos
+		
+		}
+	};
+	*/
     return (int) -1; 
 }
 
