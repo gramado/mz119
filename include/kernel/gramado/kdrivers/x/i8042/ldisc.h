@@ -169,32 +169,6 @@ unsigned long input(unsigned long ch);
 //
 
 
-// #importante:
-// Essa é a rotina genérica do line discipline
-// Qualquer input pode chama-la e enviar mensagem para 
-// a thread de input da janela com foco de entrada.
-
-int 
-LINE_DISCIPLINE ( struct window_d *window, 
-                  int msg, 
-				  unsigned long long1, 
-				  unsigned long long2 );
-
-
-
-// Keyboard.				  
-// Usada para receber input do dispositivo teclado,
-// a único argumento aceito é o 'Scan Code'.
-				  
-int KEYBOARD_LINE_DISCIPLINE ( unsigned char SC );
-
-
-
-// Mouse 
-// A entrada é um ponteiro para um buffer que contenha os 
-// 3 chars usados pelo mouse.
-
-int MOUSE_LINE_DISCIPLINE ( void *buffer );
 
 
 // #todo

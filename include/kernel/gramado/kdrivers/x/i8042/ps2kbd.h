@@ -215,6 +215,15 @@ unsigned long scrolllock_status;
 unsigned long keyboard_handler_address;
 
 
+
+
+// Send message.				  
+// Pega um scancode, transforma em caractere e envia na forma de mensagem
+// para a thread de controle associada com a janela que tem o foco de entrada.
+
+int KEYBOARD_SEND_MESSAGE ( unsigned char SC );
+
+
 void  ps2_keyboard_initialize (void);
 
 void ldisc_init_modifier_keys (void);

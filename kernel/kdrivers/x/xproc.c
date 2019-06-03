@@ -76,6 +76,107 @@ void procTestF6 (void);
 
 
 
+
+/*
+ * XPROC_SEND_MESSAGE
+ *     Envia uma mensagem para a thread de controle da janela 
+ * com o foco de entrada.
+ */
+
+int 
+XPROC_SEND_MESSAGE ( struct window_d *window, 
+                     int msg, 
+                     unsigned long long1, 
+                     unsigned long long2 )
+{
+
+    struct thread_d *t; 
+    struct window_d *w; 
+
+	//
+	// ## window ##
+	//
+
+	// #importante
+	// +Pegamos a janela com o foco de entrada, pois ela 
+	// será um elemento da mensagem.
+	// Mas enviaremos a mensagem para a fila da thread atual.
+
+	//#todo mensagem de erro.
+	
+	if (window_with_focus < 0)
+		return -1;
+	
+	w = (void *) windowList[window_with_focus];
+	
+	if ( (void *) w == NULL )
+	{
+		printf ("LINE_DISCIPLINE: w");
+		die();
+		
+	}else{
+		
+		if ( w->used != 1 || w->magic != 1234 )
+		{
+			printf("LINE_DISCIPLINE: w validation");
+			die();
+		}		
+
+		//
+		// ## thread ##
+		//
+		
+		//#importante:
+		//Pegamos a thRead de input associada com a janela 
+		//que tem o foco de entrada.
+		
+		t = (void *) w->control;
+		
+		if ( (void *) t == NULL )
+		{
+		    printf("LINE_DISCIPLINE: t");
+		    die();			
+		}
+		
+		if ( t->used != 1 || t->magic != 1234 )
+		{
+			printf ("LINE_DISCIPLINE: t validation \n");
+			die ();
+		}        
+			
+		//#importante:
+		//??
+		
+		//a janela com o foco de entrada deve receber input de teclado.
+		//então a mensagem vai para a thread associada com a janela com o foco de 
+		//entrada.
+		//#importante: a rotina que seta o foco deverá fazer essa associação,
+		//o aplicativo chama a rotina de setar o foco em uma janela, 
+		//o foco será setado nessa janela e a thread atual será associada 
+		//a essa janela que está recebendo o foco.
+		
+		//??
+		//ja o input de mouse deve ir para a thread de qualquer janela.
+		
+		t->window = window;
+		t->msg = (int) msg;
+		t->long1 = long1;
+		t->long2 = long2;
+		
+		t->newmessageFlag = 1;
+		
+	};	
+ 	
+    return 0;	
+}
+
+
+
+
+
+
+
+
 void xxxtestSHELLServer (void){
 
    //#atenção:

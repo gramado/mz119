@@ -933,7 +933,7 @@ void *windowGetMessage(struct window_d *window)
 	
     //isso coloca a mensagem na fila da thread atual.
 	
-	KEYBOARD_LINE_DISCIPLINE ( SC );	
+	KEYBOARD_SEND_MESSAGE ( SC );	
 	
 
 	
@@ -1069,7 +1069,7 @@ int window_getch (void){
  
     //isso coloca a mensagem na fila da thread atual.
 	
-	KEYBOARD_LINE_DISCIPLINE ( SC );	
+	KEYBOARD_SEND_MESSAGE ( SC );	
 
 	
 	// Agora vamos pegar a somente a parte da mensagem 

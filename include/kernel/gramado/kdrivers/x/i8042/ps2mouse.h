@@ -105,6 +105,14 @@ unsigned long g_mousepointer_width;
 unsigned long g_mousepointer_height;
 
 
+
+// #test
+// pegamos os tres char do inout de mouse e transformamos em
+// uma mensagem que será enviada para uma thread.
+
+int MOUSE_SEND_MESSAGE ( void *buffer );
+
+
 void mouse_handler (void);
 
 

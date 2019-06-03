@@ -20,6 +20,40 @@ extern unsigned long SavedY;
 int MOUSE_BAT_TEST (void);
 
 
+
+/*
+ * MOUSE_SEND_MESSAGE:
+ *     Envia uma mensagem de mouse.
+ */
+
+// #test
+// pegamos os tres char do inout de mouse e transformamos em
+// uma mensagem que será enviada para uma thread.
+
+int MOUSE_SEND_MESSAGE ( void *buffer ) {
+	
+	if ( (void *) buffer == NULL )
+	    return (int) -1;
+    
+	unsigned char *chars = (unsigned char *) buffer;
+
+	char char0 = (char) chars[0];
+	char char1 = (char) chars[1];
+	char char2 = (char) chars[2];
+	char char3 = (char) chars[3];
+	//...
+	
+	//
+	// #todo
+	// Colocar esses dados em uma mesnagem e enviar para thread.
+	//
+	
+    return (int) -1;   
+}
+
+
+
+
 /*
  * mouse_write:
  *     Envia um byte para a porta 0x60.

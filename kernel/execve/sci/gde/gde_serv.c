@@ -956,7 +956,7 @@ void *gde_services ( unsigned long number,
 						goto sc_again;
 					}
 					
-	                KEYBOARD_LINE_DISCIPLINE ( SC );						
+	                KEYBOARD_SEND_MESSAGE (SC);						
 				}
 	
 				//pegando a mensagem.
