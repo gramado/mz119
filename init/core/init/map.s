@@ -284,49 +284,49 @@ Linker script and memory map
                 0x0000000000406f94                cputs
                 0x0000000000406fc9                getch
                 0x0000000000406fe1                getche
- .text          0x0000000000406ff9      0x1b3 unistd.o
-                0x0000000000406ff9                execve
-                0x0000000000407003                exit
-                0x0000000000407023                fork
-                0x000000000040703b                setuid
-                0x0000000000407045                getpid
-                0x000000000040705d                getppid
-                0x0000000000407075                getgid
-                0x000000000040707f                dup
-                0x0000000000407089                dup2
-                0x0000000000407093                dup3
-                0x000000000040709d                fcntl
-                0x00000000004070a7                nice
-                0x00000000004070b1                pause
-                0x00000000004070bb                mkdir
-                0x00000000004070cf                rmdir
-                0x00000000004070d9                link
-                0x00000000004070e3                mlock
-                0x00000000004070ed                munlock
-                0x00000000004070f7                mlockall
-                0x0000000000407101                munlockall
-                0x000000000040710b                sysconf
-                0x0000000000407115                fsync
-                0x000000000040711f                fdatasync
-                0x0000000000407129                fpathconf
-                0x0000000000407133                pathconf
-                0x000000000040713d                ioctl
-                0x0000000000407147                open
-                0x000000000040716d                close
-                0x000000000040718b                pipe
- .text          0x00000000004071ac       0x28 stubs.o
-                0x00000000004071ac                gramado_system_call
+ .text          0x0000000000406ff9      0x208 unistd.o
+                0x0000000000406ff9                gexecve
+                0x0000000000407058                exit
+                0x0000000000407078                fork
+                0x0000000000407090                setuid
+                0x000000000040709a                getpid
+                0x00000000004070b2                getppid
+                0x00000000004070ca                getgid
+                0x00000000004070d4                dup
+                0x00000000004070de                dup2
+                0x00000000004070e8                dup3
+                0x00000000004070f2                fcntl
+                0x00000000004070fc                nice
+                0x0000000000407106                pause
+                0x0000000000407110                mkdir
+                0x0000000000407124                rmdir
+                0x000000000040712e                link
+                0x0000000000407138                mlock
+                0x0000000000407142                munlock
+                0x000000000040714c                mlockall
+                0x0000000000407156                munlockall
+                0x0000000000407160                sysconf
+                0x000000000040716a                fsync
+                0x0000000000407174                fdatasync
+                0x000000000040717e                fpathconf
+                0x0000000000407188                pathconf
+                0x0000000000407192                ioctl
+                0x000000000040719c                open
+                0x00000000004071c2                close
+                0x00000000004071e0                pipe
+ .text          0x0000000000407201       0x28 stubs.o
+                0x0000000000407201                gramado_system_call
                 0x0000000000408000                . = ALIGN (0x1000)
- *fill*         0x00000000004071d4      0xe2c 
+ *fill*         0x0000000000407229      0xdd7 
 
 .iplt           0x0000000000408000        0x0
  .iplt          0x0000000000408000        0x0 crt0.o
 
-.rodata         0x0000000000408000      0xd8e
+.rodata         0x0000000000408000      0xdcc
  .rodata        0x0000000000408000       0x28 crt0.o
- .rodata        0x0000000000408028       0xb8 main.o
- .rodata        0x00000000004080e0      0x3ab api.o
- *fill*         0x000000000040848b       0x15 
+ .rodata        0x0000000000408028       0xb4 main.o
+ .rodata        0x00000000004080dc      0x3ab api.o
+ *fill*         0x0000000000408487       0x19 
  .rodata        0x00000000004084a0      0x100 ctype.o
                 0x00000000004084a0                _ctype
  .rodata        0x00000000004085a0      0x2d4 stdio.o
@@ -334,50 +334,52 @@ Linker script and memory map
  *fill*         0x0000000000408874        0x4 
  .rodata        0x0000000000408878      0x510 stdlib.o
  .rodata        0x0000000000408d88        0x6 conio.o
+ *fill*         0x0000000000408d8e        0x2 
+ .rodata        0x0000000000408d90       0x3c unistd.o
 
-.eh_frame       0x0000000000408d90     0x202c
- .eh_frame      0x0000000000408d90       0x34 crt0.o
- .eh_frame      0x0000000000408dc4      0x11c main.o
+.eh_frame       0x0000000000408dcc     0x202c
+ .eh_frame      0x0000000000408dcc       0x34 crt0.o
+ .eh_frame      0x0000000000408e00      0x11c main.o
                                         0x134 (size before relaxing)
- .eh_frame      0x0000000000408ee0      0xc6c api.o
+ .eh_frame      0x0000000000408f1c      0xc6c api.o
                                         0xc84 (size before relaxing)
- .eh_frame      0x0000000000409b4c      0x6f0 stdio.o
+ .eh_frame      0x0000000000409b88      0x6f0 stdio.o
                                         0x708 (size before relaxing)
- .eh_frame      0x000000000040a23c      0x400 stdlib.o
+ .eh_frame      0x000000000040a278      0x400 stdlib.o
                                         0x418 (size before relaxing)
- .eh_frame      0x000000000040a63c      0x320 string.o
+ .eh_frame      0x000000000040a678      0x320 string.o
                                         0x338 (size before relaxing)
- .eh_frame      0x000000000040a95c       0xa0 conio.o
+ .eh_frame      0x000000000040a998       0xa0 conio.o
                                          0xb8 (size before relaxing)
- .eh_frame      0x000000000040a9fc      0x39c unistd.o
+ .eh_frame      0x000000000040aa38      0x39c unistd.o
                                         0x3b4 (size before relaxing)
- .eh_frame      0x000000000040ad98       0x24 stubs.o
+ .eh_frame      0x000000000040add4       0x24 stubs.o
                                          0x3c (size before relaxing)
 
-.rel.dyn        0x000000000040adbc        0x0
- .rel.got       0x000000000040adbc        0x0 crt0.o
- .rel.iplt      0x000000000040adbc        0x0 crt0.o
- .rel.text      0x000000000040adbc        0x0 crt0.o
+.rel.dyn        0x000000000040adf8        0x0
+ .rel.got       0x000000000040adf8        0x0 crt0.o
+ .rel.iplt      0x000000000040adf8        0x0 crt0.o
+ .rel.text      0x000000000040adf8        0x0 crt0.o
 
-.data           0x000000000040adc0     0x1240
-                0x000000000040adc0                data = .
-                0x000000000040adc0                _data = .
-                0x000000000040adc0                __data = .
+.data           0x000000000040ae00     0x1200
+                0x000000000040ae00                data = .
+                0x000000000040ae00                _data = .
+                0x000000000040ae00                __data = .
  *(.data)
- .data          0x000000000040adc0      0x448 crt0.o
- *fill*         0x000000000040b208       0x18 
- .data          0x000000000040b220      0x440 main.o
- .data          0x000000000040b660      0x440 api.o
- .data          0x000000000040baa0        0x0 ctype.o
- .data          0x000000000040baa0        0x0 stdio.o
- .data          0x000000000040baa0        0x8 stdlib.o
-                0x000000000040baa0                _infinity
- .data          0x000000000040baa8        0x0 string.o
- .data          0x000000000040baa8        0x0 conio.o
- .data          0x000000000040baa8        0x0 unistd.o
- .data          0x000000000040baa8        0x0 stubs.o
+ .data          0x000000000040ae00      0x448 crt0.o
+ *fill*         0x000000000040b248       0x18 
+ .data          0x000000000040b260      0x440 main.o
+ .data          0x000000000040b6a0      0x440 api.o
+ .data          0x000000000040bae0        0x0 ctype.o
+ .data          0x000000000040bae0        0x0 stdio.o
+ .data          0x000000000040bae0        0x8 stdlib.o
+                0x000000000040bae0                _infinity
+ .data          0x000000000040bae8        0x0 string.o
+ .data          0x000000000040bae8        0x0 conio.o
+ .data          0x000000000040bae8        0x0 unistd.o
+ .data          0x000000000040bae8        0x0 stubs.o
                 0x000000000040c000                . = ALIGN (0x1000)
- *fill*         0x000000000040baa8      0x558 
+ *fill*         0x000000000040bae8      0x518 
 
 .got            0x000000000040c000        0x0
  .got           0x000000000040c000        0x0 crt0.o
@@ -477,19 +479,18 @@ LOAD unistd.o
 LOAD stubs.o
 OUTPUT(INIT.BIN elf32-i386)
 
-.comment        0x0000000000000000       0x2b
+.comment        0x0000000000000000       0x11
  .comment       0x0000000000000000       0x11 crt0.o
                                          0x12 (size before relaxing)
  .comment       0x0000000000000011       0x12 main.o
  .comment       0x0000000000000011       0x12 api.o
- .comment       0x0000000000000011       0x1a ctype.o
-                                         0x1b (size before relaxing)
- .comment       0x000000000000002b       0x1b stdio.o
- .comment       0x000000000000002b       0x1b stdlib.o
- .comment       0x000000000000002b       0x1b string.o
- .comment       0x000000000000002b       0x1b conio.o
- .comment       0x000000000000002b       0x1b unistd.o
- .comment       0x000000000000002b       0x1b stubs.o
+ .comment       0x0000000000000011       0x12 ctype.o
+ .comment       0x0000000000000011       0x12 stdio.o
+ .comment       0x0000000000000011       0x12 stdlib.o
+ .comment       0x0000000000000011       0x12 string.o
+ .comment       0x0000000000000011       0x12 conio.o
+ .comment       0x0000000000000011       0x12 unistd.o
+ .comment       0x0000000000000011       0x12 stubs.o
 
 .note.GNU-stack
                 0x0000000000000000        0x0

@@ -1215,21 +1215,18 @@ void *gde_services ( unsigned long number,
 			return (void *) sys_fgetc ( (FILE *) arg2 );
 			break;
 			
-		//137
+			
+		// 137
 		// Isso é usado pela biblioteca stdio em user mode
 		// na função 'getchar()'
-		// #bugbug: Está pegando caracteres extras às vezes.
-		//#test
-		//#bugbug: a partir de agora isso deve pegar mensagem na thread 
-		//atual e não mais na janela com foco de entrada.			
+        // Pega caractere no stdin do teclado.
+		// Isso funciona.
+			
         case SYS_GETCH:  
-			
 			return (void *) sys_thread_getchar ();
-			
-			//#todo: podemos tentar pegar do stdin do processo atual.
-			//return (void *) fgetc ( (FILE *) arg2 );
             break;
 
+			
 		//138 - get key state.	
 		//#importante: 
 		//#todo: isso precisa ir para a API.

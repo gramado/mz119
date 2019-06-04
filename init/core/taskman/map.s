@@ -331,10 +331,10 @@ Linker script and memory map
 .rodata         0x00000000004a8000      0xeae
  .rodata        0x00000000004a8000        0x6 crt0.o
  *fill*         0x00000000004a8006        0x2 
- .rodata        0x00000000004a8008      0x201 main.o
- *fill*         0x00000000004a8209        0x3 
- .rodata        0x00000000004a820c      0x3ab api.o
- *fill*         0x00000000004a85b7        0x9 
+ .rodata        0x00000000004a8008      0x1fd main.o
+ *fill*         0x00000000004a8205        0x3 
+ .rodata        0x00000000004a8208      0x3ab api.o
+ *fill*         0x00000000004a85b3        0xd 
  .rodata        0x00000000004a85c0      0x100 ctype.o
                 0x00000000004a85c0                _ctype
  .rodata        0x00000000004a86c0      0x2d4 stdio.o

@@ -501,7 +501,7 @@ int main ( int argc, char *argv[] ){
 #endif	
 	
 	//window, x, y, color, string.
-    apiDrawText ( NULL, 0, 16, COLOR_RED, "Gramado X Server Taskman is alive!" );
+    apiDrawText ( NULL, 0, 16, COLOR_RED, "Gramado Core Taskman is alive!" );
 	refresh_screen ();
 	
 //loop:

@@ -936,6 +936,7 @@ int init_threads (void){
  * thread_getchar:
  *     Esse é o serviço 137.
  *     Isso é usado pela biblioteca stdio em user mode na função getchar().
+ *     Isso funciona.
  */
 
 int thread_getchar (void){
@@ -943,9 +944,11 @@ int thread_getchar (void){
 	unsigned char SC;
 	int save;
 	
-	//pode ser que esse aplicativo não tenha janela,
-	//mas esteja rodando na janela do shell.
-	//struct window_d *wFocus;
+	// #bugbug
+	// Pode ser que esse aplicativo não tenha janela,
+	// mas esteja rodando na janela do shell.
+
+	struct window_d *w;
 	
 	struct thread_d *t;
 	
@@ -956,14 +959,47 @@ int thread_getchar (void){
 	
 	//window_getch_lock = 1;
  
+	//pega o char em current_stdin.
+	//isso está em kdrivers/x/i8042/keyboard.c
+	
 	SC = (unsigned char) get_scancode ();
-		
-    //isso coloca a mensagem na fila da thread atual.
+	
+	// Isso coloca a mensagem na thread de controle da janela com o foco de entrada.
 	
 	KEYBOARD_SEND_MESSAGE ( SC );	
 	
 	
-    t = (void *) threadList[current_thread];
+	// #importante
+	// Deve ser a thread da janela com o foco de entrada.
+	
+	
+	
+	w = (void *) windowList[window_with_focus];
+	
+	if ( (void *) w == NULL )
+	{
+	    //fail
+		panic ("thread_getchar: w");
+		
+	}else{
+	
+	    if ( w->used != 1 || w->magic != 1234 )
+	    {
+	        //fail
+	        panic ("thread_getchar: w validation");
+		}
+		
+		
+		//
+		// Thread,
+		//
+		
+		t = (void *) w->control;
+	};
+	
+	//
+	// Check thread,
+	//
 			    
 	if ( (void *) t == NULL )
 	{
@@ -980,104 +1016,37 @@ int thread_getchar (void){
 	    goto fail;	
 	}	
 	
-	//if ( t->long1 == 0 )
-	//{
-	//	goto fail;
-	//}
-	
 	//salva só o char.
 	save = (int) t->long1;
 		
-	//limpa
+	// #importante:
+	// >Limpa.
+	// >Sinaliza que a mensagem foi consumida, e que não 
+	// temos nova mensagem.
+	
 	t->window = 0;
 	t->msg = 0;
 	t->long1 = 0;
 	t->long2 = 0;
-					
-	//sinaliza que a mensagem foi consumida, 
-	//e que não temos nova mensagem.
 	t->newmessageFlag = 0;
+	
+	//===============
+	// Retorna o char.
+	//===============
 	
 	return (int) save;	
 	
-
-	/*
-	// Agora vamos pegar a somente a parte da mensagem 
-	// que nos interessa, que é o caractere armazenado em long1.
-	// Obs: Somente queremos o KEYDOWN. Vamos ignorar as outras digitações.
-	
-	//fast way 
-	//@todo: melhorar isso
-	wFocus = (void *) windowList[window_with_focus];
-	
-	if ( (void *) wFocus == NULL )
-	{
-		//fail 
-		//free(wFocus);
-		goto fail;
-		
-	} else {
-		
-		if ( wFocus->used != 1 || wFocus->magic != 1234 )
-		{
-			goto fail;
-		}
-		
-		//#importante
-		//Essa é a thread de input da janela com o foco de entrada.
-		//ou seja, somente o aplicativo que tiver o foco de entrada vai pegar 
-		//mensagens aqui.
-		
-		t = (void *) wFocus->InputThread;
-		
-		if ( (void *) t == NULL  )
-		{
-		    goto fail;	
-		}
-		
-		
-		if ( t->used != 1 || t->magic != 1234 )
-		{
-			goto fail;
-		}
-		
-		
-		//Aqui temos uma thread válida e uma janela válida.
-		
-		// A mensagem precisa ser MSG_KEYDOWN, ou seja, é válida 
-        // apenas para teclas pressionadas.
-		
-		if ( t->msg != MSG_KEYDOWN )
-		{
-		    goto fail;	
-		}		
-		
-		save = (int) t->long1;
-		
-		//limpa
-		
-		t->window = 0;
-		t->msg = 0;
-		t->long1 = 0;
-		t->long2 = 0;
-					
-	    //sinaliza que a mensagem foi consumida, 
-		//e que não temos nova mensagem.
-	    
-		t->newmessageFlag = 0;
-	
-	    //window_getch_lock = 0;
-		return (int) save;
-	};
-    */
-	
 fail:
 done:
+	
    // window_getch_lock = 0;
+	
+	// =============
+	// Retorna erro
+	// =============
+	
 	return (int) -1; //erro	
-};
-
-
+}
 
 
 /*

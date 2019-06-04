@@ -252,7 +252,7 @@ int main ( int argc, char *argv[] ){
 	//printf ("INIT.BIN is alive!");
 
 	//window, x, y, color, string.
-    apiDrawText ( NULL, 0, 0, COLOR_RED, "Gramado X Server Init is alive! Calling int 129" );
+    apiDrawText ( NULL, 0, 0, COLOR_RED, "Gramado Core Init is alive! Calling int 129" );
 	refresh_screen ();
 	
 	
