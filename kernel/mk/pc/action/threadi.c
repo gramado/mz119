@@ -557,25 +557,25 @@ void mostra_slots(){
 	//
 	// Testando o for para threads.
 	//
-	printf("\n # Thread info #\n");
-	
-//Scan:	
 
-	for( i=0; i<THREAD_COUNT_MAX; i++)
+    printf ("\n # Thread info #\n");
+
+//Scan:
+
+    for ( i=0; i<THREAD_COUNT_MAX; i++ )
     {
-	    t = (void *) threadList[i];
-	    
+        t = (void *) threadList[i];
+
 		//Mostra as tarefas válidas, mesmo que estejam com problemas.
-		if ( (void *)t != NULL && 
-		          t->used == 1 && 
-				 t->magic == 1234 )
-	    {
-			
-			
-			mostra_slot (t->tid);
-		};
+
+        if ( (void *) t != NULL && 
+             t->used == 1 && 
+             t->magic == 1234 )
+        {
+            mostra_slot (t->tid);
+        };
     };
-};
+}
 
 
 /*

@@ -752,8 +752,8 @@ void *gde_services ( unsigned long number,
 			break;	
 
 		// 72 - Create thread.
-		// #todo: enviar os argumentos via buffer.	
-        case SYS_CREATETHREAD:			
+		// #todo: enviar os argumentos via buffer.		
+		case SYS_CREATETHREAD:			
 			return (void *) sys_create_thread ( 
 			                NULL,             // w. station 
 							NULL,             // desktop
@@ -764,6 +764,7 @@ void *gde_services ( unsigned long number,
 							(char *) a4 );    // name
 			break; 
 
+			
 		// 73 - Create process.
 		// #todo: enviar os argumentos via buffer.		
         // #todo: Ok, nesse momento, precisamos saber qual é o processo pai do processo 
@@ -771,12 +772,14 @@ void *gde_services ( unsigned long number,
 		// PPID = 0. Nesse momento todo processo criado será filho do processo número 0.
 		// mas não é verdade. @tpdp: Precisamos que o aplicativo em user mode 
 		// nos passe o número do processo pai, ou o proprio kernel identifica qual é o 
-		// processo atual e determina que ele será o processo pai.        
+		// processo atual e determina que ele será o processo pai. 
+
 		case SYS_CREATEPROCESS:
-            return (void *) sys_create_process ( NULL, NULL, NULL, 
+			return (void *) sys_create_process ( NULL, NULL, NULL, 
 			                    arg2, arg3, 0, (char *) a4, 
-								RING3, (unsigned long ) CreatePageDirectory() ); 		
-            break;
+								RING3, (unsigned long ) CreatePageDirectory() ); 
+			break;
+			
 			
 		//80 Show current process info.
 		//#todo: Mostrar em uma janela própria.
