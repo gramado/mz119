@@ -12,10 +12,10 @@
 # We will have a new name just when the release changes.
 
 VERSION = 1
-PATCHLEVEL = 8
+PATCHLEVEL = 9
 SUBLEVEL = 0
-EXTRAVERSION = 
-NAME = TTY
+EXTRAVERSION = -rc0
+NAME = 
 
 
 ARCH ?= x86

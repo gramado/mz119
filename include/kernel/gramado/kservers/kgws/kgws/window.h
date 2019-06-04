@@ -173,9 +173,20 @@ int window_getch (void);
 
 
 //UM TIMER SE ESGOTOU,
-//#todo>: incluir isso na api.
 #define MSG_TIMER 53   
 //...
+
+
+//
+//  terminal commands
+//
+
+#define MSG_TERMINALCOMMAND      100
+#define TERMINALCOMMAND_PRINTCHAR 1000
+//#define TERMINALCOMMAND_PRINT??? 1001
+//...
+
+
 
  
 // # Window Type #

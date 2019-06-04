@@ -75,6 +75,31 @@ void xxxtestlibc (void);
 void procTestF6 (void);
 
 
+//#importante:
+//isso funcionou,
+//mandou mensagem para o processo terminal.
+
+//precisamos pegar o PID do terminal atual e
+//enviarmos o conteúdo do stdin do terminal,
+//que deve ser o mesmo que o stdout da libc.
+
+void test_sendmessagetoterminal (void)
+{
+	//TEST.
+	int PID = 101;
+	
+	unsigned long message_address[8];
+	
+	message_address[0] = NULL;  //window
+	message_address[1] = 100;   //msg MSG_TERMINALCOMMAND 
+	message_address[2] = 1000;  //TERMINALCOMMAND_PRINTCHAR
+	message_address[3] = 1000;  //TERMINALCOMMAND_PRINTCHAR
+		
+	
+    printf ("101: PID=%d\n", PID );
+	services_send_message_to_process ( (unsigned long) &message_address[0], (int) PID );
+	printf ("101: done\n");
+}
 
 
 /*
@@ -787,15 +812,15 @@ system_procedure ( struct window_d *window,
 				
                 //Testing				
 				case VK_F7:
-					
+					test_sendmessagetoterminal ();
 					//indicamos de onde a rotina de pintura deve começar.
 					//CurrentTTY->stdout_last_ptr = stdout->_ptr;
 					//CurrentTTY->stdout_status = 1;
 					
-					fprintf (stdout, "Testando stdout 1234...\n");
+					//fprintf (stdout, "Testando stdout 1234...\n");
 					//fprintf (stdout, "C");
 					//fprintf (stdout, "String 2\n");
-					fflush (stdout);
+					//fflush (stdout);
 					
 					//CurrentTTY->stdout_status = 1;
 					//CurrentTTY->stdout_update_what = 1; //mostra char

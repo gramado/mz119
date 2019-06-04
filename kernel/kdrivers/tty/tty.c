@@ -65,8 +65,9 @@ void check_CurrentTTY (void){
 				//pintamos todos os chars.
 				for (i=0; i<len; i++)
 				{
+					//Isso funciona.
 				    printf ("%c", *CurrentTTY->stdout_last_ptr);
-				    CurrentTTY->stdout_last_ptr++;					
+				    CurrentTTY->stdout_last_ptr++;				
 				}
 				CurrentTTY->stdout_last_ptr = stdout->_ptr;
 				CurrentTTY->print_pending = 0; //não temos mais print pendente
