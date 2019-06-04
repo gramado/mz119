@@ -67,7 +67,7 @@
 //...
 
 //spinlocks
-#include <kernel/gramado/mk/pc/spinlock.h>
+#include <kernel/gramado/mk/ps/spinlock.h>
 
 
 //layers
@@ -150,7 +150,7 @@ extern void do_executa_new_task (void);
 
 #include <kernel/gramado/kdrivers/intel.h>
 
-#include <kernel/gramado/mk/pc/mm/memory2.h>
+#include <kernel/gramado/mk/ps/mm/memory2.h>
 
 #include <kernel/gramado/kdrivers/cpuid.h>
 
@@ -183,7 +183,7 @@ extern void do_executa_new_task (void);
 
 // Global first.
 //Memory Map - address.
-#include <kernel/gramado/mk/pc/mm/x86/memmap.h>            
+#include <kernel/gramado/mk/ps/mm/x86/memmap.h> 
 
 
 
@@ -290,24 +290,21 @@ extern void do_executa_new_task (void);
 
 //++
 //mk
-#include <kernel/gramado/mk/arch/x86/x86cont.h>
-#include <kernel/gramado/mk/pc/ts.h>
-#include <kernel/gramado/mk/pc/tasks.h>
-#include <kernel/gramado/mk/pc/image.h>
-#include <kernel/gramado/mk/pc/process.h>
-#include <kernel/gramado/mk/pc/thread.h>
-#include <kernel/gramado/mk/pc/sched/sched.h>
-#include <kernel/gramado/mk/pc/ipc/ipc.h>
-
-//test
-#include <kernel/gramado/mk/pc/ipc/ipccore.h>
-
-#include <kernel/gramado/mk/pc/ipc/sem.h>
-#include <kernel/gramado/mk/pc/queue.h>
-#include <kernel/gramado/mk/pc/realtime.h>
-#include <kernel/gramado/mk/pc/dispatch.h>
-#include <kernel/gramado/mk/pc/event.h>
-#include <kernel/gramado/mk/pc/pc.h>
+#include <kernel/gramado/mk/ps/arch/x86/x86cont.h>
+#include <kernel/gramado/mk/ps/ts.h>
+#include <kernel/gramado/mk/ps/tasks.h>
+#include <kernel/gramado/mk/ps/image.h>
+#include <kernel/gramado/mk/ps/process.h>
+#include <kernel/gramado/mk/ps/thread.h>
+#include <kernel/gramado/mk/ps/sched/sched.h>
+#include <kernel/gramado/mk/ps/ipc/ipc.h>
+#include <kernel/gramado/mk/ps/ipc/ipccore.h>
+#include <kernel/gramado/mk/ps/ipc/sem.h>
+#include <kernel/gramado/mk/ps/queue.h>
+#include <kernel/gramado/mk/ps/realtime.h>
+#include <kernel/gramado/mk/ps/dispatch.h>
+#include <kernel/gramado/mk/ps/event.h>
+#include <kernel/gramado/mk/ps/ps.h>
 #include <kernel/gramado/mk/mk.h>
 //--
 
@@ -340,7 +337,7 @@ extern void do_executa_new_task (void);
 
 
 #include <kernel/gramado/kdrivers/tty/tty.h>
-
+#include <kernel/gramado/kdrivers/tty/pty.h>
 
 #include <kernel/gramado/kdrivers/x/i8042/i8042.h>
 #include <kernel/gramado/kdrivers/x/i8042/ps2mouse.h>
@@ -382,12 +379,12 @@ extern void do_executa_new_task (void);
 //
 
 //mm
-#include <kernel/gramado/mk/pc/mm/x86/mmglobal.h>
-#include <kernel/gramado/mk/pc/mm/x86/heap.h>          //Heap pointer support.
-#include <kernel/gramado/mk/pc/mm/x86/aspace.h>        //Address Space, (data base account).
-#include <kernel/gramado/mk/pc/mm/x86/dspace.h>        //Disk Space, (data base account).
-#include <kernel/gramado/mk/pc/mm/x86/bank.h>          //Bank. database
-#include <kernel/gramado/mk/pc/mm/x86/mm.h>            //mm, memory manager support.
+#include <kernel/gramado/mk/ps/mm/x86/mmglobal.h>
+#include <kernel/gramado/mk/ps/mm/x86/heap.h>          //Heap pointer support.
+#include <kernel/gramado/mk/ps/mm/x86/aspace.h>        //Address Space, (data base account).
+#include <kernel/gramado/mk/ps/mm/x86/dspace.h>        //Disk Space, (data base account).
+#include <kernel/gramado/mk/ps/mm/x86/bank.h>          //Bank. database
+#include <kernel/gramado/mk/ps/mm/x86/mm.h>            //mm, memory manager support.
 
 
 //

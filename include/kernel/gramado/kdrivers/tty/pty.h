@@ -28,4 +28,15 @@ The role of the terminal emulator process is:
 */
 
 
+ 
+void pty_send_message_to_process ( unsigned long msg_buffer, int pid );
+void pty_send_message_to_thread ( unsigned long msg_buffer, int tid );
 
+void pty_test_sendmessagetoterminal (void);
+
+
+
+
+
+
+ 

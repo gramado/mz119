@@ -14,8 +14,8 @@
 VERSION = 1
 PATCHLEVEL = 9
 SUBLEVEL = 0
-EXTRAVERSION = -rc1
-NAME = 
+EXTRAVERSION = 
+NAME = Process Structure 
 
 
 ARCH ?= x86
@@ -126,7 +126,7 @@ ifeq ($(ARCH),x86)
 	ata.o atadma.o atainit.o atairq.o atapci.o hdd.o \
 	channel.o network.o nicintel.o nsocket.o \
 	pci.o pciinfo.o pciscan.o \
-	tty.o \
+	tty.o pty.o\
 	usb.o \
 	video.o vsync.o screen.o xproc.o \
 	i8042.o keyboard.o mouse.o ps2kbd.o ps2mouse.o ldisc.o \
@@ -201,51 +201,53 @@ compile-kernel:
 	# /mk
 	gcc -c  kernel/mk/mk.c -I include/  $(CFLAGS) -o mk.o
 
-	# /cpu
-	gcc -c  kernel/mk/arch/x86/x86cont.c   -I include/  $(CFLAGS) -o x86cont.o
-	gcc -c  kernel/mk/arch/x86/x86start.c  -I include/  $(CFLAGS) -o x86start.o
+	# /ps/arch
+	gcc -c  kernel/mk/ps/arch/x86/x86cont.c   -I include/  $(CFLAGS) -o x86cont.o
+	gcc -c  kernel/mk/ps/arch/x86/x86fault.c  -I include/  $(CFLAGS) -o x86fault.o
+	gcc -c  kernel/mk/ps/arch/x86/x86start.c  -I include/  $(CFLAGS) -o x86start.o
 
-	# /pc
-	gcc -c  kernel/mk/pc/action/ts.c        -I include/  $(CFLAGS) -o ts.o
-	gcc -c  kernel/mk/pc/action/dispatch.c  -I include/  $(CFLAGS) -o dispatch.o
-	gcc -c  kernel/mk/pc/action/queue.c     -I include/  $(CFLAGS) -o queue.o
-	gcc -c  kernel/mk/pc/action/process.c   -I include/  $(CFLAGS) -o process.o
-	gcc -c  kernel/mk/pc/action/pheap.c     -I include/  $(CFLAGS) -o pheap.o
-	gcc -c  kernel/mk/pc/action/thread.c    -I include/  $(CFLAGS) -o thread.o
-	gcc -c  kernel/mk/pc/action/threadi.c   -I include/  $(CFLAGS) -o threadi.o
-	gcc -c  kernel/mk/pc/action/theap.c     -I include/  $(CFLAGS) -o theap.o
-	gcc -c  kernel/mk/pc/action/tstack.c    -I include/  $(CFLAGS) -o tstack.o
-	gcc -c  kernel/mk/pc/action/tasks.c     -I include/  $(CFLAGS) -o tasks.o	
-	gcc -c  kernel/mk/pc/action/spawn.c     -I include/  $(CFLAGS) -o spawn.o
+	# /ps/action
+	gcc -c  kernel/mk/ps/action/dispatch.c  -I include/  $(CFLAGS) -o dispatch.o
+	gcc -c  kernel/mk/ps/action/pheap.c     -I include/  $(CFLAGS) -o pheap.o
+	gcc -c  kernel/mk/ps/action/process.c   -I include/  $(CFLAGS) -o process.o
+	gcc -c  kernel/mk/ps/action/queue.c     -I include/  $(CFLAGS) -o queue.o
+	gcc -c  kernel/mk/ps/action/spawn.c     -I include/  $(CFLAGS) -o spawn.o
+	gcc -c  kernel/mk/ps/action/tasks.c     -I include/  $(CFLAGS) -o tasks.o
+	gcc -c  kernel/mk/ps/action/theap.c     -I include/  $(CFLAGS) -o theap.o
+	gcc -c  kernel/mk/ps/action/thread.c    -I include/  $(CFLAGS) -o thread.o
+	gcc -c  kernel/mk/ps/action/threadi.c   -I include/  $(CFLAGS) -o threadi.o
+	gcc -c  kernel/mk/ps/action/ts.c        -I include/  $(CFLAGS) -o ts.o
+	gcc -c  kernel/mk/ps/action/tstack.c    -I include/  $(CFLAGS) -o tstack.o
 
-	# mk/pc/ipc
-	gcc -c  kernel/mk/pc/ipc/callout.c  -I include/  $(CFLAGS) -o callout.o
-	gcc -c  kernel/mk/pc/ipc/callfar.c  -I include/  $(CFLAGS) -o callfar.o
-	gcc -c  kernel/mk/pc/ipc/ipc.c      -I include/  $(CFLAGS) -o ipc.o
-	gcc -c  kernel/mk/pc/ipc/ipccore.c  -I include/  $(CFLAGS) -o ipccore.o
-	gcc -c  kernel/mk/pc/ipc/sem.c      -I include/  $(CFLAGS) -o sem.o
+	# /ps/ipc
+	gcc -c  kernel/mk/ps/ipc/callfar.c  -I include/  $(CFLAGS) -o callfar.o
+	gcc -c  kernel/mk/ps/ipc/callout.c  -I include/  $(CFLAGS) -o callout.o
+	gcc -c  kernel/mk/ps/ipc/ipc.c      -I include/  $(CFLAGS) -o ipc.o
+	gcc -c  kernel/mk/ps/ipc/ipccore.c  -I include/  $(CFLAGS) -o ipccore.o
+	gcc -c  kernel/mk/ps/ipc/sem.c      -I include/  $(CFLAGS) -o sem.o
 
-	# mk/pc/sched
-	gcc -c  kernel/mk/pc/sched/sched.c     -I include/ $(CFLAGS) -o sched.o
-	gcc -c  kernel/mk/pc/sched/schedi.c    -I include/ $(CFLAGS) -o schedi.o
-	gcc -c  kernel/mk/pc/sched/preempt.c   -I include/ $(CFLAGS) -o preempt.o	
-	gcc -c  kernel/mk/pc/sched/priority.c  -I include/ $(CFLAGS) -o priority.o
-	
-	
-	# /mk/pc/mm (memory manager)
-	
+
+	# /ps/mm (memory manager)
+
 	#x86
-	gcc -c  kernel/mk/pc/mm/x86/memory.c  -I include/ $(CFLAGS) -o memory.o
-	gcc -c  kernel/mk/pc/mm/x86/pages.c   -I include/ $(CFLAGS) -o pages.o
-	gcc -c  kernel/mk/pc/mm/x86/mmpool.c  -I include/ $(CFLAGS) -o mmpool.o	
-	gcc -c  kernel/mk/pc/mm/x86/mminfo.c  -I include/ $(CFLAGS) -o mminfo.o		
-	
+	gcc -c  kernel/mk/ps/mm/x86/memory.c  -I include/ $(CFLAGS) -o memory.o
+	gcc -c  kernel/mk/ps/mm/x86/mminfo.c  -I include/ $(CFLAGS) -o mminfo.o
+	gcc -c  kernel/mk/ps/mm/x86/mmpool.c  -I include/ $(CFLAGS) -o mmpool.o
+	gcc -c  kernel/mk/ps/mm/x86/pages.c   -I include/ $(CFLAGS) -o pages.o
+
 	#arm
-	
-    #kernel/request
+
+	# /ps/sched
+	gcc -c  kernel/mk/ps/sched/preempt.c   -I include/ $(CFLAGS) -o preempt.o
+	gcc -c  kernel/mk/ps/sched/priority.c  -I include/ $(CFLAGS) -o priority.o
+	gcc -c  kernel/mk/ps/sched/sched.c     -I include/ $(CFLAGS) -o sched.o
+	gcc -c  kernel/mk/ps/sched/schedi.c    -I include/ $(CFLAGS) -o schedi.o
+
+
+
+	#kernel/request
 	gcc -c  kernel/request.c  -I include/ $(CFLAGS) -o request.o
-	
-	gcc -c  kernel/mk/arch/x86/x86fault.c  -I include/ $(CFLAGS) -o x86fault.o
+
 
 	# /execve
 	gcc -c kernel/execve/execve.c  -I include/ $(CFLAGS) -o execve.o
@@ -253,10 +255,10 @@ compile-kernel:
 	# crts
 	
 	#klibc/pipe
-	gcc -c kernel/execve/crts/klibc/pipe/pipe.c  -I include/ $(CFLAGS) -o pipe.o	
+	gcc -c kernel/execve/crts/klibc/pipe/pipe.c  -I include/ $(CFLAGS) -o pipe.o
 	
 	#klibc/socket
-	gcc -c kernel/execve/crts/klibc/socket/socket.c   -I include/ $(CFLAGS) -o socket.o		
+	gcc -c kernel/execve/crts/klibc/socket/socket.c   -I include/ $(CFLAGS) -o socket.o
 
 	# klibc
 	gcc -c kernel/execve/crts/klibc/ctype.c   -I include/ $(CFLAGS) -o ctype.o
@@ -290,7 +292,7 @@ compile-kernel:
 	gcc -c kernel/kdrivers/network/channel.c   -I include/ $(CFLAGS) -o channel.o
 	gcc -c kernel/kdrivers/network/nicintel.c  -I include/ $(CFLAGS) -o nicintel.o
 	gcc -c kernel/kdrivers/network/network.c   -I include/ $(CFLAGS) -o network.o
-	gcc -c kernel/kdrivers/network/nsocket.c   -I include/ $(CFLAGS) -o nsocket.o	
+	gcc -c kernel/kdrivers/network/nsocket.c   -I include/ $(CFLAGS) -o nsocket.o
 
 	# kdrivers/pci
 	gcc -c kernel/kdrivers/pci/pci.c      -I include/ $(CFLAGS) -o pci.o
@@ -299,7 +301,8 @@ compile-kernel:
 
 	# kdrivers/tty
 	gcc -c kernel/kdrivers/tty/tty.c  -I include/ $(CFLAGS) -o tty.o
-
+	gcc -c kernel/kdrivers/tty/pty.c  -I include/ $(CFLAGS) -o pty.o
+	
 	# kdrivers/usb
 	gcc -c kernel/kdrivers/usb/usb.c  -I include/ $(CFLAGS) -o usb.o
 	
@@ -342,7 +345,7 @@ compile-kernel:
 	gcc -c kernel/execve/sm/system.c  -I include/ $(CFLAGS) -o system.o
 	gcc -c kernel/execve/sm/debug/debug.c      -I include/ $(CFLAGS) -o debug.o
 	gcc -c kernel/execve/sm/disk/diskvol.c     -I include/ $(CFLAGS) -o diskvol.o
-	gcc -c kernel/execve/sm/install/install.c  -I include/ $(CFLAGS) -o install.o	
+	gcc -c kernel/execve/sm/install/install.c  -I include/ $(CFLAGS) -o install.o
 	gcc -c kernel/execve/sm/ob/object.c        -I include/ $(CFLAGS) -o object.o
 	gcc -c kernel/execve/sm/rt/runtime.c       -I include/ $(CFLAGS) -o runtime.o
 	gcc -c kernel/execve/sm/sys/abort.c    -I include/ $(CFLAGS) -o abort.o	
@@ -357,7 +360,7 @@ compile-kernel:
 
 	gcc -c kernel/kservers/kgws/kgws/comp/bg.c       -I include/ $(CFLAGS) -o bg.o
 	gcc -c kernel/kservers/kgws/kgws/comp/bmp.c      -I include/ $(CFLAGS) -o bmp.o
-	gcc -c kernel/kservers/kgws/kgws/comp/button.c   -I include/ $(CFLAGS) -o button.o	
+	gcc -c kernel/kservers/kgws/kgws/comp/button.c   -I include/ $(CFLAGS) -o button.o
 	gcc -c kernel/kservers/kgws/kgws/comp/cedge.c    -I include/ $(CFLAGS) -o cedge.o
 	gcc -c kernel/kservers/kgws/kgws/comp/char.c     -I include/ $(CFLAGS) -o char.o
 	gcc -c kernel/kservers/kgws/kgws/comp/createw.c  -I include/ $(CFLAGS) -o createw.o
