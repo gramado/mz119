@@ -294,6 +294,10 @@ do_clone:
 		// para rodar. Pois o ldisc manda mensagens para a thread de controle 
 		// da janela com foco de entrada. Vamos fazer isso manualmente.
 		
+		/*
+		 ## bugbug: 
+		 Essa rotina faz o input não funcionar quando retornamos para o pai.
+		
 		if ( (void *) CurrentTTY != NULL )
 		{
 			if ( CurrentTTY->used == 1 && CurrentTTY->magic == 1234 )
@@ -314,7 +318,8 @@ do_clone:
 			
 		}else{
 		    //Thread->tty_id = 0; //-1
-        } 		
+        } 
+		*/
 		
 		/*
 #bug: Quando o kernel salta 
