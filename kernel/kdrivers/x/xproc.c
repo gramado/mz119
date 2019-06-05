@@ -788,7 +788,13 @@ system_procedure ( struct window_d *window,
 				
                 //Testing				
 				case VK_F7:
-					pty_test_sendmessagetoterminal ();
+					
+					//mostrando a entrada 1 de todos os processos.
+					mmShowPDEForAllProcesses (1);
+					
+					//enviando uma mensagem para o terminal virtual
+					//pty_test_sendmessagetoterminal ();
+					
 					//indicamos de onde a rotina de pintura deve começar.
 					//CurrentTTY->stdout_last_ptr = stdout->_ptr;
 					//CurrentTTY->stdout_status = 1;

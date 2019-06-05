@@ -10,6 +10,65 @@
 #include <kernel.h>
 
 
+ 
+
+
+void mmShowPDE (int index, unsigned long pd_va){
+
+	//#todo: filtros.
+	
+	if (pd_va == 0)
+		return;
+	
+	unsigned long *dir = (unsigned long *) pd_va;
+	
+	//#todo: filtros.
+	
+	if (index < 0)
+		return;
+
+	unsigned long value = dir[index];
+	
+	printf (" DirVA = %x ", (unsigned long) pd_va );
+	printf (" DirEntry %d = %x ", index, (unsigned long) value );
+	
+	unsigned long pt_address = (unsigned long) (value & 0xFFFFFF00);
+	
+	unsigned long *pt = (unsigned long *) pt_address;	
+	
+	//primeira entrada da pt.
+	value = pt[0];
+	printf (" PT_Entry_0 = %x \n", (unsigned long) value );	
+}
+
+
+void mmShowPDEForAllProcesses (int entry_number){
+
+    struct process_d *p;
+	
+	int i;
+	
+	printf ("mmShowPDEForAllProcesses:\n");
+	
+	for ( i=0; i<111; i++)
+	{
+		p = (struct process_d *) processList[i];
+		
+		if ( (void *) p != NULL )
+		{
+		    if ( p->DirectoryVA != 0 )
+		    {
+			    // Mostra a entrada 1, que se refere ao endereço lógico 0x400000
+		        printf ("Process %d: ", i);
+			    mmShowPDE ( entry_number, (unsigned long) p->DirectoryVA );	
+		    }		
+		}
+	}
+	
+	refresh_screen ();
+}
+
+
 /*
  ************************************
  * memoryShowMemoryInfo:

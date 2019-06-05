@@ -102,6 +102,9 @@ int processNewPID;
  *     Retorna o PID do clone.
  */
  
+// #bugbug
+// As entradas do processo pai ficam erradas. Vimos isso no debug.
+
 pid_t do_fork_process (void){
 
 	int PID;	
@@ -109,6 +112,13 @@ pid_t do_fork_process (void){
 
 	struct process_d *Current;	
 	struct process_d *Clone;
+	
+	
+	unsigned long *dir;
+	unsigned long old_dir_entry1; 
+	
+ 
+	//unsigned long old_image_pa; //usado para salvamento.
 	
     //#debug message.	
 	printf ("do_fork_process: Cloning the current process..\n");
@@ -134,6 +144,13 @@ pid_t do_fork_process (void){
 			printf ("do_fork_process: current, validation \n");
 			goto fail;		
 		}
+		
+		//#test
+        dir = (unsigned long *) Current->DirectoryVA;	
+		old_dir_entry1 = dir[1]; //salvando
+		
+		//salvando o endereço físico da imagem que existe no processo.
+		//old_image_pa = (unsigned long) virtual_to_physical ( Current->Image, gKernelPageDirectoryAddress ); 		
 		
 	    //#debug
 	    //printf(">>> check current process: %d %d \n", current_process, Current->pid );		
@@ -199,6 +216,9 @@ do_clone:
 	kprintf ("creating CreatePageTable\n");
 	
 	void *buff;  
+		
+		//#bugbug:
+		//
 	
 	buff = (void *) CreatePageTable ( (unsigned long) Current->DirectoryVA, ENTRY_USERMODE_PAGES, Current->childImage_PA );	
 	
@@ -235,9 +255,12 @@ do_clone:
 		//Current->Image = va da imagem do processo pai
 		//unsigned long old_image_pa;
 		//old_image_pa = (unsigned long) virtual_to_physical ( Current->Image, gKernelPageDirectoryAddress ); 
-		//CreatePageTable ( (unsigned long) Current->DirectoryVA, ENTRY_USERMODE_PAGES, old_image_pa );	
-				
+		
+		//usando valores salvos anteriormente. é do pai.
+		//CreatePageTable ( (unsigned long) Current->DirectoryVA, ENTRY_USERMODE_PAGES, old_image_pa );			
 		    
+		dir[1] = old_dir_entry1;
+		
 		// Ok, retornando o número do processo clonado.
 		
 		printf ("do_fork_process: done\n");
@@ -280,6 +303,7 @@ do_clone:
 
 		//pai
 		block_for_a_reason ( Current->control->tid, WAIT_REASON_BLOCKED );	
+		//Current->control->state = READY;
 		Current->control->quantum = 100;
 			
 		//filho

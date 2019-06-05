@@ -1,4 +1,8 @@
-process control
+
+ ps - Process Structure
+
+
+  (process control)
 
 /action
    
@@ -9,6 +13,8 @@ process control
        dispatch  etc ...
      spawn poderia estar aqui também.
 
+
+/arch
 
 /ipc
 

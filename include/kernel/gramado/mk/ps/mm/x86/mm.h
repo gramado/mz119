@@ -1155,6 +1155,12 @@ unsigned long memorysizeAvailableVirtualMemory;
 // Protótipos.
 //
 
+
+//Mostra o inteiro que está na entrada especificada pelo argumento,
+//dado um determinado diretório (va)
+void mmShowPDE (int index, unsigned long pd_va);
+void mmShowPDEForAllProcesses (int entry_number);
+
 void memoryShowMemoryInfo (void);
 
 //
