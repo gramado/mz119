@@ -1155,6 +1155,10 @@ unsigned long memorysizeAvailableVirtualMemory;
 // Protótipos.
 //
 
+//#bugbug
+//isso é um improviso,rever ...PERIGO
+unsigned long get_table_pointer(void);
+
 
 //Mostra o inteiro que está na entrada especificada pelo argumento,
 //dado um determinado diretório (va)
@@ -1200,7 +1204,7 @@ void *CreatePageDirectory (void);
 // Uma região de 4MB da memória física é mapeanda nessa pt.
 
 void *CreatePageTable ( unsigned long directory_address_va, 
-                        int offset, 
+                        int dir_index, 
                         unsigned long region_address );
 
 

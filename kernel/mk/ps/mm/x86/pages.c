@@ -155,6 +155,19 @@ void *clone_kernel_page_directory (void){
 */
 
 
+//#bugbug
+//isso é um improviso, precisamos de outro endereço.
+unsigned long table_pointer_heap_base = 0x1000;
+
+unsigned long get_table_pointer(void){
+	
+    table_pointer_heap_base =  table_pointer_heap_base + 0x1000;
+	
+	return table_pointer_heap_base;	
+}
+
+
+
 /*
  **************************************************
  * CreatePageDirectory:
@@ -172,6 +185,8 @@ void *clone_kernel_page_directory (void){
  */
 
 // Clonando o diretório do kernel.
+// Isso aparentemente está funcionando bem,
+// mas poderia se chamar CloneKernelPageDirectory.
 
 void *CreatePageDirectory (void){
 	
@@ -182,7 +197,14 @@ void *CreatePageDirectory (void){
 	// virtual address.
 	// Alocaremos uma página apenas, pois tem 4KB.	
 
-	destAddressVA = (unsigned long) newPage (); 
+	// #BUGBUG
+	// #PERIGO.
+	// Isso deu certo.
+	// >>> O endereço precisa ter 12 bitz zerados para flags,
+	// então essa alocação é de 4KB em 4KB.
+	
+	//destAddressVA = (unsigned long) newPage (); 
+	destAddressVA = (unsigned long) get_table_pointer();  //ok
 	
 	if ( destAddressVA == 0 )
 	{
@@ -289,12 +311,18 @@ void *CreatePageDirectory (void){
 // Cria uma pagetable em um dado diretório de páginas.
 // Uma região de 4MB da memória física é mapeanda nessa pt.
 
+// #bugbug:
+// Isso aparentemente está com problema. #testando ...
+
 void *CreatePageTable ( unsigned long directory_address_va, 
-                        int offset, 
+                        int dir_index, 
                         unsigned long region_address )
 {
-    int i;
-
+    
+	int i;
+    unsigned long *PD = (unsigned long *) directory_address_va;
+	
+	
 	//
 	// =======================
 	// ### pd  ###
@@ -306,14 +334,13 @@ void *CreatePageTable ( unsigned long directory_address_va,
 
 	if ( directory_address_va == 0 )
 	{
-		// #debug
-		kprintf ("CreatePageTable: directory_address_va\n");
-		die ();
-		//return NULL;	
+		panic ("CreatePageTable: directory_address_va\n");	
 	}
 
-    unsigned long *PD = (unsigned long *) directory_address_va; 
-
+    
+	
+	
+	
 
 	
 	//
@@ -322,43 +349,62 @@ void *CreatePageTable ( unsigned long directory_address_va,
 	//	
 	
 	// #importante:
-	// Endereço virtual da tabela de páginas.
-	// Precisamos de um endereço virtual para manipularmos a tabela.
-	// pois o kernel trabalha com os endereços virtuais ...
-	// só depois converteremos e salvaremos na entrada do diretório 
-	// o ponteiro que é um endereço físico.
+	// Endereço virtual da tabela de páginas que vamos criar.
+	// Precisamos de um endereço virtual para manipularmos a tabela,
+	// pois o kernel trabalha com os endereços virtuais,
+	// só depois converteremos para físico e salvaremos na 
+	// entrada do diretório o ponteiro que é um endereço físico.
 
-
-    unsigned long ptVA = (unsigned long) malloc (4096);
+    //unsigned long ptVA = (unsigned long) malloc (4096);
+    //unsigned long ptVA = (unsigned long) allocPages (1);
 	
+	//#bugbug
+	//Temos que criar um alocador de memória para os ponteiros
+	//das tabelas, esses ponteiros precisam de 12 bits zerados.
+	//então tem que alocar de 4kb em 4kb.
+	//precisamos encontrar alguma área dentro do kernel para isso.
+	
+	//unsigned long ptVA = (unsigned long) newPage ();    //bug (pf)
+	//unsigned long ptVA = (unsigned long) malloc(4096);  //bug (precisa 12bits zerados)
+	//unsigned long ptVA = (unsigned long) 0x1000;               //ok
+	unsigned long ptVA = (unsigned long) get_table_pointer();  //ok
+	
+		
 	if ( ptVA == 0 )
 	{
-		//#debug
 		kprintf ("CreatePageTable: ptVA\n");
-		die ();
-		//return NULL;
 	}	
 	
 	// O endereço virtual permite manipularmos a pagetable daqui do kernel.
 	unsigned long *newPT = (unsigned long *) ptVA;
 
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	//
 	// ===================================
-	// ### Offset  ###
+	// ### dir_index  ###
 	//
 
-
 	//Limits.
-	if ( offset < 0 )
+	if ( dir_index < 0 || dir_index >= 1024 )
 	{
-		//#debug
-		kprintf ("CreatePageTable: offset\n");
-		die ();
-		//return NULL;
+		panic ("CreatePageTable: offset\n");
 	}
 
 
+	
+	
+	
+	
+	
 	//
 	// ===============================
 	// ### region  ###
@@ -367,14 +413,16 @@ void *CreatePageTable ( unsigned long directory_address_va,
 	//Limits.
 	if ( region_address == 0 )
 	{
-		//#debug
-		kprintf ("CreatePageTable: region_address\n");
-		die ();
-		//return NULL;
+		panic ("CreatePageTable: region_address\n");
 	}
 
 
 
+	
+	
+	
+	
+	
 	//
 	// ===================================
 	// ### pt  ###
@@ -383,13 +431,17 @@ void *CreatePageTable ( unsigned long directory_address_va,
 	// #importante:
 	// Agora vamos mapear a região de memória física na nova pagetable.
 
-	// Criando uma pagetable.
-	// 4MB de memória física.
-	// user mode pages
-	// Será usado pelo processo em user mode. 
-	// Note as flags.(7).
+	// #obs:
+	// + Já criamos uma pagetable e temos seu endereço lógico.
+	// + Vamos mapear 4MB de memória física.
+	// + Serão páginas em user mode.
+	// + A pagetable será usado por um processo em user mode. 
+	// + Note as flags.(7). 7 decimal é igual a 111 binário.
+	// ...
 	
-	//7 decimal é igual a 111 binário.
+	//#debug
+	printf (">> region_address = %x \n",region_address);
+	
 	
 	for ( i=0; i < 1024; i++ )
     {
@@ -398,35 +450,51 @@ void *CreatePageTable ( unsigned long directory_address_va,
     };
 	
 	
+	//#debug
+	printf (">> newPT[0] = %x \n", newPT[0]);
+	
+	
+	
+	
 	//
 	// ==================================
     // ### pd  ###
     //		
 	
 	// #importante:
-	// Agora vamos colocar o endereço físico da nova pagetable
-	// em uma das entradas do diretório de páginas que foi passado
-	// via argumento.
-
+	// Agora vamos colocar o endereço físico da nova pagetable em 
+	// uma das entradas do diretório de páginas. 
+	// O número da entrada é o índice passado via argumento. dir_index.
+    // Antes precisamos converter o endereço lógico da tabela de páginas
+	// em um endereço físico.
+	
 	// obs:
-	// Aqui devemos incluir as flags também.
-	// Configurando os atributos.
-    // Precisamos colocar um endereço físico na entrada do diretório.
-	// Para chamarmos essa rotina temos que ter o diretório do kernel configurado.
-	// #todo: poderíamos passar as flags via argumento.
+    // + Precisamos colocar o endereço físico da tabela em uma entrada 
+	// do diretório.	
+	// + Aqui devemos incluir as flags também.
+    // ...
+
+	// #importante:
+	// Para chamarmos essa rotina, temos que ter o diretório do kernel 
+	// corretamente configurado.
+	
+	// #obs: 
+	// Poderíamos passar as flags via argumento.
+	// O endereço do diretório de paginas do kernel precisa ser um endereço virtual.
 	
     unsigned long ptPA = (unsigned long) virtual_to_physical ( ptVA, 
-                                             gKernelPageDirectoryAddress ); 	
+                                             gKernelPageDirectoryAddress ); 
+	
+	printf (">> ptVA = %x \n",ptVA);
+	printf (">> ptPA = %x \n",ptPA);	
 
 	if ( ptPA == 0 )
 	{
-		//#debug
-		kprintf ("CreatePageTable: ptPA\n");
-		die ();	 
+		panic ("CreatePageTable: ptPA\n");
 	}
 	
-	PD[offset] = (unsigned long) ptPA;
-    PD[offset] = (unsigned long) PD[offset] | 7;      
+	PD[dir_index] = (unsigned long) ptPA;
+    PD[dir_index] = (unsigned long) PD[dir_index] | 7;      
 
     //
 	// Done.

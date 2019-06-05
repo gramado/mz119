@@ -36,6 +36,11 @@
  */
 
 
+//#todo;
+//#define Get_PDE_Index(va) (((unsigned long)(va)) >> 22)
+//#define Get_PTE_Index(va) ((((unsigned long)(va)) << 10) >> 22)
+
+
 struct process_d *xxxClonedProcess;
 
 //#bugbug
@@ -461,9 +466,11 @@ struct process_d
 	//     As threads usam o diretório do processo ao qual pertencem.
 	//     O endereço do diretório é carregado no CR3.
  
+	 
 	unsigned long DirectoryVA;                  
 	unsigned long DirectoryPA;
 
+	
 	//ponteiro para a estrutura do diretório de páginas do processo.
 	struct page_directory_d *page_directory;  
 
@@ -486,14 +493,17 @@ struct process_d
 	// Base da imagem do processo.
 	// Tamanho da imagem do processo.
 	// Quantas páginas foram usadas por essa imagem. ImageSize/PageSize
+	 
+	unsigned long Image; 
+	unsigned long ImagePA; 
 	
-	unsigned long Image;          
 	unsigned long ImageSize;      
 	unsigned long PagesPerImage; 
 
 	//usado no fork()
     unsigned long childImage;  	
     unsigned long childImage_PA;  
+    //unsigned long childImage2; 		
 	
 	//#todo: estrutura com informações sobre a imagem do processo.
 	//see: pc/image.h

@@ -32,13 +32,15 @@ void mmShowPDE (int index, unsigned long pd_va){
 	printf (" DirVA = %x ", (unsigned long) pd_va );
 	printf (" DirEntry %d = %x ", index, (unsigned long) value );
 	
-	unsigned long pt_address = (unsigned long) (value & 0xFFFFFF00);
 	
+	//12 bit de flags     1000 0000 0000
+	unsigned long pt_address = (unsigned long) (value & 0xFFFFF800);
 	unsigned long *pt = (unsigned long *) pt_address;	
 	
+	printf (" PT_Address = %x ", (unsigned long) pt_address );		
+	
 	//primeira entrada da pt.
-	value = pt[0];
-	printf (" PT_Entry_0 = %x \n", (unsigned long) value );	
+	printf (" PT_Entry_0 = %x \n", (unsigned long) pt[0] );	
 }
 
 

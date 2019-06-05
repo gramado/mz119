@@ -301,15 +301,24 @@ struct thread_d
 	 * Contexto. @todo: usars uma estrutura.
 	 @todo: isso deve virar um ponteiro de estrutura.
 	 */
+	
+	//stack frame;
 	unsigned short ss;
     unsigned long esp;
     unsigned long eflags;
     unsigned short cs;
-    unsigned long eip;	
+    unsigned long eip;	//usado com o pd do processo
+	
+	// para o kernel saltar para o novo processo.
+    unsigned long ring0_eip;  //usado com o pd do kernel		
+    unsigned long eipPA;	
+	
+	
     unsigned short ds;
     unsigned short es;
     unsigned short fs;
     unsigned short gs;
+	
     unsigned long eax;	
     unsigned long ebx;
     unsigned long ecx;

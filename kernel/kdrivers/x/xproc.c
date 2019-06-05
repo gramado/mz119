@@ -789,8 +789,12 @@ system_procedure ( struct window_d *window,
                 //Testing				
 				case VK_F7:
 					
+					mostra_reg (0);
+					mostra_reg (101);					
 					//mostrando a entrada 1 de todos os processos.
 					mmShowPDEForAllProcesses (1);
+					
+
 					
 					//enviando uma mensagem para o terminal virtual
 					//pty_test_sendmessagetoterminal ();
