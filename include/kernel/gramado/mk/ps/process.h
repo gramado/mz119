@@ -618,7 +618,11 @@ struct process_d
 	//Usada para input de mensagens e sinais.
 
 	struct thread_d *control;		
-
+	
+	//isso pode funcionar em parceria com control, quando criarmos novos processos ou clonarmos.	
+	struct thread_d *extra;  
+	
+	
 	// Tipo 
 	// 0 = cpu-bound
 	// 1 = i/o bound.
@@ -833,6 +837,8 @@ struct process_info_d
 // Protótipos de função.
 //
 
+//clona e executa o filho dado o nome do filho.
+pid_t do_clone_execute_process (char *filename);
 
 /*
  ***************************************

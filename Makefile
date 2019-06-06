@@ -12,10 +12,10 @@
 # We will have a new name just when the release changes.
 
 VERSION = 1
-PATCHLEVEL = 10
+PATCHLEVEL = 11
 SUBLEVEL = 0
 EXTRAVERSION = 
-NAME = Processos
+NAME = Clone and Execute
 
 
 ARCH ?= x86

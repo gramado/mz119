@@ -789,10 +789,13 @@ system_procedure ( struct window_d *window,
                 //Testing				
 				case VK_F7:
 					
-					mostra_reg (0);
-					mostra_reg (101);					
+					//clonar o pai e executar o filho dado o nome do filho.
+					do_clone_execute_process ("noraterm.bin");
+					
+					//mostra_reg (0);
+					//mostra_reg (101);					
 					//mostrando a entrada 1 de todos os processos.
-					mmShowPDEForAllProcesses (1);
+					//mmShowPDEForAllProcesses (1);
 					
 
 					

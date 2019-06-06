@@ -39,8 +39,7 @@ struct thread_d *threadCopyThread ( struct thread_d *thread ){
 		printf ("threadCopyThread: thread\n");
 	    die ();
 	}	
-	
-
+		
 	
 	clone = (struct thread_d *) sys_create_thread ( NULL,  // w. station 
 							        NULL,              // desktop

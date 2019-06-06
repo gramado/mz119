@@ -354,6 +354,17 @@ void *gde_services ( unsigned long number,
 	
 	
 	//
+	//
+	//
+	
+	  if ( number == 900 )
+	  {
+	      //do_clone_execute_process ("noraterm.bin");
+		  return (void *) do_clone_execute_process ( (char *) arg2 );
+	  }
+	
+	
+	//
 	// test
 	//
 	
