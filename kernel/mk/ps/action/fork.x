@@ -62,10 +62,13 @@ int	nprocs = 1;		/* process 0 */
  ****************************************
  * fork1
  */
-int fork1( register struct process_d *p1, 
-           int isvfork, 
-		   register_t *retval )
+
+int 
+fork1 ( register struct process_d *p1, 
+        int isvfork, 
+		register_t *retval )
 {
+	
 	register struct proc *p2;
 	register uid_t uid;
 	struct proc *newproc;
