@@ -360,8 +360,8 @@ os processo anteriores deram certo pois os endereçamentos eram iguais, todos clo
 		printf ("Clone.ImagePA = %x \n",Clone->ImagePA);
 		//#bugbug: Esse é o endereço l[ogico em que deve estar a imagem do clone
 		//na visão do diretório do clone.
-		Clone->Image = 0x400000;
-		Clone->ImagePA = (unsigned long) virtual_to_physical ( Clone->Image  , Clone->DirectoryVA ); 
+		//Clone->Image = 0x400000;
+		//Clone->ImagePA = (unsigned long) virtual_to_physical ( Clone->Image  , Clone->DirectoryVA ); 
 		//agora visto com o diretório do processo clone.
 		printf ("Clone.Image = %x \n",Clone->Image);
 		printf ("***Clone.ImagePA = %x \n",Clone->ImagePA);
@@ -374,6 +374,29 @@ os processo anteriores deram certo pois os endereçamentos eram iguais, todos clo
 		//printf ("\ndo fork process: *breakpoint");
 		refresh_screen();
 		//while(1){}
+		
+		
+		
+		//#importante: Isso pode ter funcionado.
+		//voltando par ao pai e executando essa thread tambem..
+		//o input ficou bagunçado, mas tentaremos corrigir isso depois.
+		//=================================
+		struct thread_d *xxxTTT;
+            fsLoadFile ( VOLUME1_FAT_ADDRESS, VOLUME1_ROOTDIR_ADDRESS, 
+	                     "GRAMTEXTBIN", (unsigned long) Clone->Image );		
+			xxxTTT = (struct thread_d *) sys_create_thread ( 
+			                NULL,             // w. station 
+							NULL,             // desktop
+							NULL,             // w.
+							0x400000 + 0x1000,      // init eip
+							0x400000 + (1024 *63),  // init stack
+							Clone->pid,            // pid (determinado)(provisório).
+							"thread-NAME" );        // name
+		xxxTTT->tss = current_tss;
+		SelectForExecution (xxxTTT); 
+		//=================================
+		
+		
 		
 		//#hackhack
 
