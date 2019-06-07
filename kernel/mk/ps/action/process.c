@@ -661,78 +661,98 @@ os processo anteriores deram certo pois os endereçamentos eram iguais, todos clo
 	    // Carregando a image do processo filho.
 		
 		
-        fsLoadFile ( VOLUME1_FAT_ADDRESS, VOLUME1_ROOTDIR_ADDRESS, 
-	        "GDESHELL BIN", (unsigned long) Clone->Image );		
+        //fsLoadFile ( VOLUME1_FAT_ADDRESS, VOLUME1_ROOTDIR_ADDRESS, 
+	     //   "GDESHELL BIN", (unsigned long) Clone->Image );		
 		
 		
-		
-		//====
-		Clone->control->eip = 0x400000 + 0x1000;
-		Clone->control->esp = 0x400000 + (1024 *63);
-		//Clone->control->eip = Current->control->eip; //#bug fail
-		//Clone->control->esp = Current->control->esp; //#bug fail
-		//====
+		//
+		// ## TEST ##
+		//
 		
 		
 		//#test - Clonando manualmente a thread de controle.
+		//só a imagem ... falta a pilha.
+		memcpy ( (void *) Clone->Image, (const void *) Current->Image, ( 0x50000 ) ); 
 		//====
-		//Clone->control->type  = Current->control->type; 
-		//Clone->control->plane = Current->control->plane;
-		//Clone->control->base_priority = Current->control->
-		//Clone->control->priority = Current->control->
-		//Clone->control->iopl = Current->control->
-		//Clone->control->preempted = Current->control->
-		//Clone->control->step = Current->control->
-		//Clone->control->quantum = Current->control->
-		//Clone->control->quantum_limit = Current->control->
-		//Clone->control->standbyCount = Current->control->
-		//Clone->control->runningCount = Current->control->
-		//Clone->control->initial_time_ms = Current->control->
-		//Clone->control->total_time_ms = Current->control->
-		//Clone->control->runningCount_ms = Current->control->
-		//Clone->control->readyCount = Current->control->
-		//Clone->control->ready_limit = Current->control->
-		//Clone->control->waitingCount = Current->control->
-		//Clone->control->waiting_limit = Current->control->
-		//Clone->control->blockedCount = Current->control->
-		//Clone->control->blocked_limit = Current->control->
-		//Clone->control->ticks_remaining = Current->control->
-		//Clone->control->signal = Current->control->
-		//Clone->control->signalMask = Current->control->
-		//Clone->control->ss = Current->control->
-		//Clone->control->esp = Current->control->
-		//Clone->control->eflags = Current->control->
-		//Clone->control->cs = Current->control->
-		//Clone->control->eip = Current->control->
-		//Clone->control->initial_eip = Current->control->
-		//Clone->control->ds = Current->control->
-		//Clone->control->es = Current->control->
-		//Clone->control->fs = Current->control->
-		//Clone->control->gs = Current->control->
-		//Clone->control->eax = Current->control->
-		//Clone->control->ebx = Current->control->
-		//Clone->control->ecx = Current->control->
-		//Clone->control->edx = Current->control->
-		//Clone->control->esi = Current->control->
-		//Clone->control->edi = Current->control->
-		//Clone->control->ebp = Current->control->
-		//Clone->control->tss = Current->control->
+		Clone->control->type  = Current->control->type; 
+		Clone->control->plane = Current->control->plane;
+		Clone->control->base_priority = Current->control->base_priority;
+		Clone->control->priority = Current->control->priority;
+		Clone->control->iopl = Current->control->iopl;
+		Clone->control->preempted = Current->control->preempted;
+		Clone->control->step = Current->control->step;
+		Clone->control->quantum = Current->control->quantum;
+		Clone->control->quantum_limit = Current->control->quantum_limit;
+		Clone->control->standbyCount = Current->control->standbyCount;
+		Clone->control->runningCount = Current->control->runningCount;
+		Clone->control->initial_time_ms = Current->control->initial_time_ms;
+		Clone->control->total_time_ms = Current->control->total_time_ms;
+		Clone->control->runningCount_ms = Current->control->runningCount_ms;
+		Clone->control->readyCount = Current->control->readyCount;
+		Clone->control->ready_limit = Current->control->ready_limit;
+		Clone->control->waitingCount = Current->control->waitingCount;
+		Clone->control->waiting_limit = Current->control->waiting_limit;
+		Clone->control->blockedCount = Current->control->blockedCount;
+		Clone->control->blocked_limit = Current->control->blocked_limit;
+		Clone->control->ticks_remaining = Current->control->ticks_remaining;
+		Clone->control->signal = Current->control->signal;
+		Clone->control->signalMask = Current->control->signalMask;
+		Clone->control->ss = Current->control->ss;
+		Clone->control->esp = Current->control->esp;   //>>>
+		Clone->control->eflags = Current->control->eflags;
+		Clone->control->cs = Current->control->cs;
+		Clone->control->eip = Current->control->eip; // >>>
+		Clone->control->initial_eip = Current->control->initial_eip;
+		Clone->control->ds = Current->control->ds;
+		Clone->control->es = Current->control->es;
+		Clone->control->fs = Current->control->fs;
+		Clone->control->gs = Current->control->gs;
+		Clone->control->eax = 0; //Current->control->  >>>
+		Clone->control->ebx = Current->control->ebx;
+		Clone->control->ecx = Current->control->ecx;
+		Clone->control->edx = Current->control->edx;
+		Clone->control->esi = Current->control->esi;
+		Clone->control->edi = Current->control->edi;
+		Clone->control->ebp = Current->control->ebp;
+		Clone->control->tss = Current->control->tss;
 		//process	
 		// for wait_reason[w]
 		//exit_code	
 		//====
 		
+		//#bugbug ATENÇÃO ATENÇÃO
+		//Funciona que iniciamos o filho no seu entrypoint,
+		//mas não funciona quando iniciamos no mesmo eip do pai.
+		//A diferença entre os dois casos é só o eip.
+		
+			//====
+		Clone->control->eip = 0x400000 + 0x1000;
+		Clone->control->esp = 0x450000 - 0x1000;
+		//Clone->control->eip = Current->control->eip; //#bug fail
+		//Clone->control->esp = Current->control->esp; //#bug fail
+		//====
+
+
+		//ok
+		//printf ("Current: %s\n", Current->Image + 0x1000);
+		//printf ("Clone: %s\n", Clone->Image + 0x1000);
+
+        //mostra_reg (Clone->control->tid);		
+		//refresh_screen();
+		//while(1){}
 		
 		//#hackhack
 
 		// [pai]
 		Current->control->quantum = 100;		
+		//Current->control->saved = 0;
 		Current->control->state = READY;
-
+        //SelectForExecution (Current->control);
 			
 		// [filho]
 		Clone->control->quantum = 200;		
 		Clone->control->saved = 0;
+		Clone->control->state = READY;
 		SelectForExecution (Clone->control);
 
         //
@@ -746,6 +766,13 @@ os processo anteriores deram certo pois os endereçamentos eram iguais, todos clo
 		current_thread = Current->control->tid;	
 		current_process = Current->pid;
         return (pid_t) Clone->pid;
+		
+		//filho
+		//current_thread = Clone->control->tid;	
+		//current_process = Clone->pid;
+        //return (pid_t) 0;
+
+		
 	};
 
     // Fail.	

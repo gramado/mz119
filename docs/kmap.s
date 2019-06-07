@@ -914,7 +914,7 @@ Name             Origin             Length             Attributes
 Linker script and memory map
 
 
-.text           0x00000000c0001000    0x2c000
+.text           0x00000000c0001000    0x2d000
                 0x00000000c0001000                _code_begin = .
  *(.head_x86)
  .head_x86      0x00000000c0001000      0x1b0 head.o
@@ -1908,1873 +1908,1873 @@ Linker script and memory map
                 0x00000000c0024454                _init_dispatcher
                 0x00000000c00244fd                _IncrementDispatcherCount
  .text          0x00000000c00245b1        0x0 pheap.o
- .text          0x00000000c00245b1     0x147e process.o
+ .text          0x00000000c00245b1     0x190b process.o
                 0x00000000c00245b1                _do_clone_execute_process
                 0x00000000c00247eb                _do_fork_process
-                0x00000000c0024a19                _processObject
-                0x00000000c0024a52                _getNewPID
-                0x00000000c0024a8d                _processTesting
-                0x00000000c0024ad3                _processSendSignal
-                0x00000000c0024b03                _processCopyMemory
-                0x00000000c0024bd7                _processCopyProcess
-                0x00000000c0024f85                _create_process
-                0x00000000c0025394                _CloseAllProcesses
-                0x00000000c0025400                _KeSaveCurrentContext
-                0x00000000c0025406                _KeRestoreCurrentContext
-                0x00000000c002540c                _KeCpuFaults
-                0x00000000c0025423                _KeSpawnTask
-                0x00000000c002543a                _KeSelectNextThread
-                0x00000000c0025450                _KeCheckTaskContext
-                0x00000000c0025466                _KeExecProcess
-                0x00000000c0025470                _KeDispatchProcess
-                0x00000000c0025476                _KeDoProcessReady
-                0x00000000c002547c                _KeDoProcessRunning
-                0x00000000c0025482                _KeDoProcessSleeping
-                0x00000000c0025488                _KeDoProcessZombie
-                0x00000000c002548e                _KeDoProcessDead
-                0x00000000c0025494                _KeStartProcess
-                0x00000000c002549a                _KeWakeupProcess
-                0x00000000c00254a0                _KeProcessExit
-                0x00000000c00254a6                _KeKillProcess
-                0x00000000c00254ac                _KeNewProcessScheduler
-                0x00000000c00254b2                _KeSetPriority
-                0x00000000c00254bc                _KeIncreasePriority
-                0x00000000c00254c6                _KeSaveContextOfNewTask
-                0x00000000c00254cc                _KeSetQuantum
-                0x00000000c00254d2                _KeGetQuantum
-                0x00000000c00254dc                _KeSetCurrentQuantum
-                0x00000000c00254e2                _KeGetCurrentQuantum
-                0x00000000c00254ec                _KeSetNextQuantum
-                0x00000000c00254f2                _KeGetNextQuantum
-                0x00000000c00254fc                _KeSetFocus
-                0x00000000c0025502                _KeGetFocus
-                0x00000000c002550c                _KeShowTasksParameters
-                0x00000000c0025512                _KeShowPreemptedTask
-                0x00000000c0025518                _show_currentprocess_info
-                0x00000000c002564f                _show_process_information
-                0x00000000c002575f                _SetProcessDirectory
-                0x00000000c0025777                _GetProcessDirectory
-                0x00000000c0025792                _GetPageDirValue
-                0x00000000c002579f                _init_task
-                0x00000000c00257a9                _init_tasks
-                0x00000000c00257b7                _init_processes
-                0x00000000c0025802                _exit_process
-                0x00000000c0025947                _get_caller_process_id
-                0x00000000c0025951                _set_caller_process_id
-                0x00000000c002595f                _init_process_manager
-                0x00000000c002597d                _GetProcessHeapStart
-                0x00000000c00259d6                _GetProcessPageDirectoryAddress
- .text          0x00000000c0025a2f     0x105e queue.o
-                0x00000000c0025a2f                _init_queue
-                0x00000000c0025e84                _queue_insert_data
-                0x00000000c002631c                _queue_insert_head
-                0x00000000c00264bc                _queue_get_data
-                0x00000000c002678f                _show_queue_information
-                0x00000000c0026823                _ScanReadyQueue
-                0x00000000c00268dc                _feed_ready_queue
- .text          0x00000000c0026a8d      0x202 spawn.o
-                0x00000000c0026a99                _KiSpawnTask
-                0x00000000c0026ade                _spawn_thread
- .text          0x00000000c0026c8f        0xc tasks.o
-                0x00000000c0026c8f                _task0
-                0x00000000c0026c95                _task1
- .text          0x00000000c0026c9b       0x1b theap.o
-                0x00000000c0026c9b                _GetThreadHeapStart
- .text          0x00000000c0026cb6      0xac3 thread.o
-                0x00000000c0026cb6                _threadCopyThread
-                0x00000000c0027047                _create_thread
-                0x00000000c0027453                _GetCurrentThreadId
-                0x00000000c002745d                _GetCurrentThread
-                0x00000000c00274a0                _FindReadyThread
-                0x00000000c00274fe                _SelectForExecution
-                0x00000000c0027530                _GetThreadState
-                0x00000000c0027548                _GetThreadType
-                0x00000000c0027560                _show_thread_information
-                0x00000000c00275fd                _init_threads
-                0x00000000c002767e                _thread_getchar
- .text          0x00000000c0027779      0xa6c threadi.o
-                0x00000000c0027779                _xxxRing0Idle
-                0x00000000c002779d                _KiCreateRing0Idle
-                0x00000000c0027b40                _fork
-                0x00000000c0027b4a                _KiFork
-                0x00000000c0027b54                _KiShowPreemptedTask
-                0x00000000c0027b5a                _KiSetTaskStatus
-                0x00000000c0027b71                _KiGetTaskStatus
-                0x00000000c0027b7e                _KiSaveContextOfNewTask
-                0x00000000c0027b84                _KiSetQuantum
-                0x00000000c0027b8a                _KiGetQuantum
-                0x00000000c0027b94                _KiSetCurrentQuantum
-                0x00000000c0027b9a                _KiGetCurrentQuantum
-                0x00000000c0027ba4                _KiSetNextQuantum
-                0x00000000c0027baa                _KiGetNextQuantum
-                0x00000000c0027bb4                _KiSetFocus
-                0x00000000c0027bba                _KiGetFocus
-                0x00000000c0027bc4                _KiDebugBreakpoint
-                0x00000000c0027bca                _KiShowTasksParameters
-                0x00000000c0027bd0                _KiMostraSlots
-                0x00000000c0027bde                _KiMostraSlot
-                0x00000000c0027bf5                _KiMostraReg
-                0x00000000c0027bfb                _KiShowThreadList
-                0x00000000c0027c09                _mostra_slots
-                0x00000000c0027c75                _mostra_slot
-                0x00000000c0027d7f                _mostra_reg
-                0x00000000c0027e8d                _set_thread_priority
-                0x00000000c0027ee4                _SetThreadDirectory
-                0x00000000c0027efb                _GetThreadDirectory
-                0x00000000c0027f13                _show_preempted_task
-                0x00000000c0027f19                _show_tasks_parameters
-                0x00000000c0027f1f                _release
-                0x00000000c0027f69                _exit_thread
-                0x00000000c0027fe1                _kill_thread
-                0x00000000c00280a0                _dead_thread_collector
-                0x00000000c002816e                _kill_all_threads
-                0x00000000c002819e                _check_for_dead_thread_collector
- .text          0x00000000c00281e5      0x65a ts.o
-                0x00000000c00281e5                _KiTaskSwitch
-                0x00000000c0028253                _task_switch
-                0x00000000c00286c4                _taskswitchRR
-                0x00000000c0028807                _set_task_status
-                0x00000000c0028815                _get_task_status
-                0x00000000c002881f                _taskswitch_lock
-                0x00000000c002882f                _taskswitch_unlock
- .text          0x00000000c002883f       0x1b tstack.o
-                0x00000000c002883f                _GetThreadStackStart
- .text          0x00000000c002885a        0x0 callout.o
- .text          0x00000000c002885a        0x0 callfar.o
- .text          0x00000000c002885a       0x24 ipc.o
-                0x00000000c002885a                _ipcProcedure
-                0x00000000c0028864                _ipcProcedureEx
-                0x00000000c002886e                _ipc_dispatch_message
-                0x00000000c0028878                _init_ipc
- .text          0x00000000c002887e      0x364 ipccore.o
-                0x00000000c002887e                _ipcore_services
-                0x00000000c00288f4                _ipccore_open
-                0x00000000c00289e3                _ipccore_close
-                0x00000000c0028b24                _ipccore_register
- .text          0x00000000c0028be2       0xe0 sem.o
-                0x00000000c0028be2                _init_semaphore
-                0x00000000c0028c02                _Down
-                0x00000000c0028c4a                _Up
-                0x00000000c0028c84                _semaphore_down
-                0x00000000c0028c95                _semaphore_up
-                0x00000000c0028ca6                _create_semaphore
-                0x00000000c0028cb0                _delete_semaphore
-                0x00000000c0028cb6                _open_semaphore
-                0x00000000c0028cbc                _close_semaphore
- .text          0x00000000c0028cc2      0x851 memory.o
-                0x00000000c0028cc2                _get_process_heap_pointer
-                0x00000000c0028d64                _SetKernelHeap
-                0x00000000c0028dfe                _heapAllocateMemory
-                0x00000000c0028fd9                _FreeHeap
-                0x00000000c0029099                _init_heap
-                0x00000000c00291e0                _init_stack
-                0x00000000c002924a                _init_mm
-                0x00000000c002936f                _gcGRAMADO
-                0x00000000c0029379                _gcEXECUTIVE
-                0x00000000c002949e                _gcMICROKERNEL
-                0x00000000c00294a8                _gcHAL
-                0x00000000c00294b2                _gc
- .text          0x00000000c0029513      0x55a mminfo.o
-                0x00000000c0029513                _mmShowPDE
-                0x00000000c00295ae                _mmShowPDEForAllProcesses
-                0x00000000c002962a                _memoryShowMemoryInfo
-                0x00000000c0029840                _show_memory_structs
-                0x00000000c00298c9                _testingPageAlloc
-                0x00000000c00299f7                _showFreepagedMemory
- .text          0x00000000c0029a6d      0x199 mmpool.o
-                0x00000000c0029a6d                _page
-                0x00000000c0029b15                _newPage
- .text          0x00000000c0029c06     0x1161 pages.o
-                0x00000000c0029c06                _get_table_pointer
-                0x00000000c0029c1f                _CreatePageDirectory
-                0x00000000c0029c93                _CreatePageTable
-                0x00000000c0029dfc                _SetCR3
-                0x00000000c0029e15                _mapping_ahci1_device_address
-                0x00000000c0029e8a                _mapping_nic1_device_address
-                0x00000000c0029eff                _SetUpPaging
-                0x00000000c002a987                _initializeFramesAlloc
-                0x00000000c002aa14                _allocPages
-                0x00000000c002ac1b                _pEmpty
-                0x00000000c002ac2a                _freePage
-                0x00000000c002ac5a                _notfreePage
-                0x00000000c002ac8a                _firstSlotForAList
-                0x00000000c002acf1                _virtual_to_physical
- .text          0x00000000c002ad67       0xbe preempt.o
-                0x00000000c002ad67                _preempt
- .text          0x00000000c002ae25      0x15a priority.o
-                0x00000000c002ae25                _set_priority
-                0x00000000c002ae5e                _KiSetPriority
-                0x00000000c002ae6b                _KiIncreasePriority
-                0x00000000c002ae75                _find_higher_priority
-                0x00000000c002af75                _KiFindHigherPriority
- .text          0x00000000c002af7f      0x244 sched.o
-                0x00000000c002af7f                _pick_next_thread
-                0x00000000c002b0a8                _scheduler
-                0x00000000c002b172                _scheduler_start
-                0x00000000c002b18d                _scheduler_lock
-                0x00000000c002b19d                _scheduler_unlock
-                0x00000000c002b1ad                _scheduler_get_status
-                0x00000000c002b1b7                _new_task_scheduler
-                0x00000000c002b1bd                _init_scheduler
- .text          0x00000000c002b1c3      0x758 schedi.o
-                0x00000000c002b1c3                _do_wait
-                0x00000000c002b251                _block_for_a_reason
-                0x00000000c002b2c7                _wakeup_thread_reason
-                0x00000000c002b3ef                _wakeup_scan_thread_reason
-                0x00000000c002b45c                _KiScheduler
-                0x00000000c002b494                _KiSelectNextThread
-                0x00000000c002b4b8                _KiDoThreadReady
-                0x00000000c002b4cf                _KiDoThreadRunning
-                0x00000000c002b4e6                _KiDoThreadSleeping
-                0x00000000c002b4fd                _KiDoThreadZombie
-                0x00000000c002b514                _KiDoThreadDead
-                0x00000000c002b52b                _KiNewTaskScheduler
-                0x00000000c002b531                _KiDispatchTask
-                0x00000000c002b537                _KiSetCurrent
-                0x00000000c002b54e                _KiGetCurrent
-                0x00000000c002b55b                _KiGetCurrentTask
-                0x00000000c002b568                _get_current
-                0x00000000c002b572                _get_current_task
-                0x00000000c002b57c                _set_current
-                0x00000000c002b5a8                _do_thread_initialized
-                0x00000000c002b5df                _do_thread_ready
-                0x00000000c002b616                _do_thread_running
-                0x00000000c002b665                _do_thread_sleeping
-                0x00000000c002b69c                _do_thread_zombie
-                0x00000000c002b6dc                _do_thread_dead
-                0x00000000c002b713                _wakeup_thread
-                0x00000000c002b76c                _SelectNextThread
-                0x00000000c002b822                _check_for_standby
-                0x00000000c002b8ac                _check_quantum
- .text          0x00000000c002b91b      0xb6b create.o
-                0x00000000c002b91b                _KiCreateIdle
-                0x00000000c002bd4e                _KiCreateShell
-                0x00000000c002c0ea                _KiCreateTaskManager
- .text          0x00000000c002c486      0x41c mk.o
-                0x00000000c002c486                _jobcontrol
-                0x00000000c002c58e                _jobcheck
-                0x00000000c002c65e                _microkernelTestLimit
-                0x00000000c002c664                _sys_dead_thread_collector
-                0x00000000c002c672                _sys_exit_process
-                0x00000000c002c68c                _sys_exit_thread
-                0x00000000c002c6a3                _sys_create_process
-                0x00000000c002c6d1                _sys_create_thread
-                0x00000000c002c6f9                _sys_fork
-                0x00000000c002c706                _sys_getpid
-                0x00000000c002c710                _sys_getppid
-                0x00000000c002c775                _init_microkernel
- .text          0x00000000c002c8a2      0x41e request.o
-                0x00000000c002c8a2                _KiRequest
-                0x00000000c002c8d6                _request
-                0x00000000c002cab3                _create_request
-                0x00000000c002cb5a                _clear_request
-                0x00000000c002cbe2                _do_request_12
-                0x00000000c002ccc0                _code_end = .
-                0x00000000c002d000                . = ALIGN (0x1000)
- *fill*         0x00000000c002ccc0      0x340 
+                0x00000000c0024ea6                _processObject
+                0x00000000c0024edf                _getNewPID
+                0x00000000c0024f1a                _processTesting
+                0x00000000c0024f60                _processSendSignal
+                0x00000000c0024f90                _processCopyMemory
+                0x00000000c0025064                _processCopyProcess
+                0x00000000c0025412                _create_process
+                0x00000000c0025821                _CloseAllProcesses
+                0x00000000c002588d                _KeSaveCurrentContext
+                0x00000000c0025893                _KeRestoreCurrentContext
+                0x00000000c0025899                _KeCpuFaults
+                0x00000000c00258b0                _KeSpawnTask
+                0x00000000c00258c7                _KeSelectNextThread
+                0x00000000c00258dd                _KeCheckTaskContext
+                0x00000000c00258f3                _KeExecProcess
+                0x00000000c00258fd                _KeDispatchProcess
+                0x00000000c0025903                _KeDoProcessReady
+                0x00000000c0025909                _KeDoProcessRunning
+                0x00000000c002590f                _KeDoProcessSleeping
+                0x00000000c0025915                _KeDoProcessZombie
+                0x00000000c002591b                _KeDoProcessDead
+                0x00000000c0025921                _KeStartProcess
+                0x00000000c0025927                _KeWakeupProcess
+                0x00000000c002592d                _KeProcessExit
+                0x00000000c0025933                _KeKillProcess
+                0x00000000c0025939                _KeNewProcessScheduler
+                0x00000000c002593f                _KeSetPriority
+                0x00000000c0025949                _KeIncreasePriority
+                0x00000000c0025953                _KeSaveContextOfNewTask
+                0x00000000c0025959                _KeSetQuantum
+                0x00000000c002595f                _KeGetQuantum
+                0x00000000c0025969                _KeSetCurrentQuantum
+                0x00000000c002596f                _KeGetCurrentQuantum
+                0x00000000c0025979                _KeSetNextQuantum
+                0x00000000c002597f                _KeGetNextQuantum
+                0x00000000c0025989                _KeSetFocus
+                0x00000000c002598f                _KeGetFocus
+                0x00000000c0025999                _KeShowTasksParameters
+                0x00000000c002599f                _KeShowPreemptedTask
+                0x00000000c00259a5                _show_currentprocess_info
+                0x00000000c0025adc                _show_process_information
+                0x00000000c0025bec                _SetProcessDirectory
+                0x00000000c0025c04                _GetProcessDirectory
+                0x00000000c0025c1f                _GetPageDirValue
+                0x00000000c0025c2c                _init_task
+                0x00000000c0025c36                _init_tasks
+                0x00000000c0025c44                _init_processes
+                0x00000000c0025c8f                _exit_process
+                0x00000000c0025dd4                _get_caller_process_id
+                0x00000000c0025dde                _set_caller_process_id
+                0x00000000c0025dec                _init_process_manager
+                0x00000000c0025e0a                _GetProcessHeapStart
+                0x00000000c0025e63                _GetProcessPageDirectoryAddress
+ .text          0x00000000c0025ebc     0x105e queue.o
+                0x00000000c0025ebc                _init_queue
+                0x00000000c0026311                _queue_insert_data
+                0x00000000c00267a9                _queue_insert_head
+                0x00000000c0026949                _queue_get_data
+                0x00000000c0026c1c                _show_queue_information
+                0x00000000c0026cb0                _ScanReadyQueue
+                0x00000000c0026d69                _feed_ready_queue
+ .text          0x00000000c0026f1a      0x202 spawn.o
+                0x00000000c0026f26                _KiSpawnTask
+                0x00000000c0026f6b                _spawn_thread
+ .text          0x00000000c002711c        0xc tasks.o
+                0x00000000c002711c                _task0
+                0x00000000c0027122                _task1
+ .text          0x00000000c0027128       0x1b theap.o
+                0x00000000c0027128                _GetThreadHeapStart
+ .text          0x00000000c0027143      0xac3 thread.o
+                0x00000000c0027143                _threadCopyThread
+                0x00000000c00274d4                _create_thread
+                0x00000000c00278e0                _GetCurrentThreadId
+                0x00000000c00278ea                _GetCurrentThread
+                0x00000000c002792d                _FindReadyThread
+                0x00000000c002798b                _SelectForExecution
+                0x00000000c00279bd                _GetThreadState
+                0x00000000c00279d5                _GetThreadType
+                0x00000000c00279ed                _show_thread_information
+                0x00000000c0027a8a                _init_threads
+                0x00000000c0027b0b                _thread_getchar
+ .text          0x00000000c0027c06      0xa6c threadi.o
+                0x00000000c0027c06                _xxxRing0Idle
+                0x00000000c0027c2a                _KiCreateRing0Idle
+                0x00000000c0027fcd                _fork
+                0x00000000c0027fd7                _KiFork
+                0x00000000c0027fe1                _KiShowPreemptedTask
+                0x00000000c0027fe7                _KiSetTaskStatus
+                0x00000000c0027ffe                _KiGetTaskStatus
+                0x00000000c002800b                _KiSaveContextOfNewTask
+                0x00000000c0028011                _KiSetQuantum
+                0x00000000c0028017                _KiGetQuantum
+                0x00000000c0028021                _KiSetCurrentQuantum
+                0x00000000c0028027                _KiGetCurrentQuantum
+                0x00000000c0028031                _KiSetNextQuantum
+                0x00000000c0028037                _KiGetNextQuantum
+                0x00000000c0028041                _KiSetFocus
+                0x00000000c0028047                _KiGetFocus
+                0x00000000c0028051                _KiDebugBreakpoint
+                0x00000000c0028057                _KiShowTasksParameters
+                0x00000000c002805d                _KiMostraSlots
+                0x00000000c002806b                _KiMostraSlot
+                0x00000000c0028082                _KiMostraReg
+                0x00000000c0028088                _KiShowThreadList
+                0x00000000c0028096                _mostra_slots
+                0x00000000c0028102                _mostra_slot
+                0x00000000c002820c                _mostra_reg
+                0x00000000c002831a                _set_thread_priority
+                0x00000000c0028371                _SetThreadDirectory
+                0x00000000c0028388                _GetThreadDirectory
+                0x00000000c00283a0                _show_preempted_task
+                0x00000000c00283a6                _show_tasks_parameters
+                0x00000000c00283ac                _release
+                0x00000000c00283f6                _exit_thread
+                0x00000000c002846e                _kill_thread
+                0x00000000c002852d                _dead_thread_collector
+                0x00000000c00285fb                _kill_all_threads
+                0x00000000c002862b                _check_for_dead_thread_collector
+ .text          0x00000000c0028672      0x65a ts.o
+                0x00000000c0028672                _KiTaskSwitch
+                0x00000000c00286e0                _task_switch
+                0x00000000c0028b51                _taskswitchRR
+                0x00000000c0028c94                _set_task_status
+                0x00000000c0028ca2                _get_task_status
+                0x00000000c0028cac                _taskswitch_lock
+                0x00000000c0028cbc                _taskswitch_unlock
+ .text          0x00000000c0028ccc       0x1b tstack.o
+                0x00000000c0028ccc                _GetThreadStackStart
+ .text          0x00000000c0028ce7        0x0 callout.o
+ .text          0x00000000c0028ce7        0x0 callfar.o
+ .text          0x00000000c0028ce7       0x24 ipc.o
+                0x00000000c0028ce7                _ipcProcedure
+                0x00000000c0028cf1                _ipcProcedureEx
+                0x00000000c0028cfb                _ipc_dispatch_message
+                0x00000000c0028d05                _init_ipc
+ .text          0x00000000c0028d0b      0x364 ipccore.o
+                0x00000000c0028d0b                _ipcore_services
+                0x00000000c0028d81                _ipccore_open
+                0x00000000c0028e70                _ipccore_close
+                0x00000000c0028fb1                _ipccore_register
+ .text          0x00000000c002906f       0xe0 sem.o
+                0x00000000c002906f                _init_semaphore
+                0x00000000c002908f                _Down
+                0x00000000c00290d7                _Up
+                0x00000000c0029111                _semaphore_down
+                0x00000000c0029122                _semaphore_up
+                0x00000000c0029133                _create_semaphore
+                0x00000000c002913d                _delete_semaphore
+                0x00000000c0029143                _open_semaphore
+                0x00000000c0029149                _close_semaphore
+ .text          0x00000000c002914f      0x851 memory.o
+                0x00000000c002914f                _get_process_heap_pointer
+                0x00000000c00291f1                _SetKernelHeap
+                0x00000000c002928b                _heapAllocateMemory
+                0x00000000c0029466                _FreeHeap
+                0x00000000c0029526                _init_heap
+                0x00000000c002966d                _init_stack
+                0x00000000c00296d7                _init_mm
+                0x00000000c00297fc                _gcGRAMADO
+                0x00000000c0029806                _gcEXECUTIVE
+                0x00000000c002992b                _gcMICROKERNEL
+                0x00000000c0029935                _gcHAL
+                0x00000000c002993f                _gc
+ .text          0x00000000c00299a0      0x55a mminfo.o
+                0x00000000c00299a0                _mmShowPDE
+                0x00000000c0029a3b                _mmShowPDEForAllProcesses
+                0x00000000c0029ab7                _memoryShowMemoryInfo
+                0x00000000c0029ccd                _show_memory_structs
+                0x00000000c0029d56                _testingPageAlloc
+                0x00000000c0029e84                _showFreepagedMemory
+ .text          0x00000000c0029efa      0x199 mmpool.o
+                0x00000000c0029efa                _page
+                0x00000000c0029fa2                _newPage
+ .text          0x00000000c002a093     0x1161 pages.o
+                0x00000000c002a093                _get_table_pointer
+                0x00000000c002a0ac                _CreatePageDirectory
+                0x00000000c002a120                _CreatePageTable
+                0x00000000c002a289                _SetCR3
+                0x00000000c002a2a2                _mapping_ahci1_device_address
+                0x00000000c002a317                _mapping_nic1_device_address
+                0x00000000c002a38c                _SetUpPaging
+                0x00000000c002ae14                _initializeFramesAlloc
+                0x00000000c002aea1                _allocPages
+                0x00000000c002b0a8                _pEmpty
+                0x00000000c002b0b7                _freePage
+                0x00000000c002b0e7                _notfreePage
+                0x00000000c002b117                _firstSlotForAList
+                0x00000000c002b17e                _virtual_to_physical
+ .text          0x00000000c002b1f4       0xbe preempt.o
+                0x00000000c002b1f4                _preempt
+ .text          0x00000000c002b2b2      0x15a priority.o
+                0x00000000c002b2b2                _set_priority
+                0x00000000c002b2eb                _KiSetPriority
+                0x00000000c002b2f8                _KiIncreasePriority
+                0x00000000c002b302                _find_higher_priority
+                0x00000000c002b402                _KiFindHigherPriority
+ .text          0x00000000c002b40c      0x244 sched.o
+                0x00000000c002b40c                _pick_next_thread
+                0x00000000c002b535                _scheduler
+                0x00000000c002b5ff                _scheduler_start
+                0x00000000c002b61a                _scheduler_lock
+                0x00000000c002b62a                _scheduler_unlock
+                0x00000000c002b63a                _scheduler_get_status
+                0x00000000c002b644                _new_task_scheduler
+                0x00000000c002b64a                _init_scheduler
+ .text          0x00000000c002b650      0x758 schedi.o
+                0x00000000c002b650                _do_wait
+                0x00000000c002b6de                _block_for_a_reason
+                0x00000000c002b754                _wakeup_thread_reason
+                0x00000000c002b87c                _wakeup_scan_thread_reason
+                0x00000000c002b8e9                _KiScheduler
+                0x00000000c002b921                _KiSelectNextThread
+                0x00000000c002b945                _KiDoThreadReady
+                0x00000000c002b95c                _KiDoThreadRunning
+                0x00000000c002b973                _KiDoThreadSleeping
+                0x00000000c002b98a                _KiDoThreadZombie
+                0x00000000c002b9a1                _KiDoThreadDead
+                0x00000000c002b9b8                _KiNewTaskScheduler
+                0x00000000c002b9be                _KiDispatchTask
+                0x00000000c002b9c4                _KiSetCurrent
+                0x00000000c002b9db                _KiGetCurrent
+                0x00000000c002b9e8                _KiGetCurrentTask
+                0x00000000c002b9f5                _get_current
+                0x00000000c002b9ff                _get_current_task
+                0x00000000c002ba09                _set_current
+                0x00000000c002ba35                _do_thread_initialized
+                0x00000000c002ba6c                _do_thread_ready
+                0x00000000c002baa3                _do_thread_running
+                0x00000000c002baf2                _do_thread_sleeping
+                0x00000000c002bb29                _do_thread_zombie
+                0x00000000c002bb69                _do_thread_dead
+                0x00000000c002bba0                _wakeup_thread
+                0x00000000c002bbf9                _SelectNextThread
+                0x00000000c002bcaf                _check_for_standby
+                0x00000000c002bd39                _check_quantum
+ .text          0x00000000c002bda8      0xb6b create.o
+                0x00000000c002bda8                _KiCreateIdle
+                0x00000000c002c1db                _KiCreateShell
+                0x00000000c002c577                _KiCreateTaskManager
+ .text          0x00000000c002c913      0x41c mk.o
+                0x00000000c002c913                _jobcontrol
+                0x00000000c002ca1b                _jobcheck
+                0x00000000c002caeb                _microkernelTestLimit
+                0x00000000c002caf1                _sys_dead_thread_collector
+                0x00000000c002caff                _sys_exit_process
+                0x00000000c002cb19                _sys_exit_thread
+                0x00000000c002cb30                _sys_create_process
+                0x00000000c002cb5e                _sys_create_thread
+                0x00000000c002cb86                _sys_fork
+                0x00000000c002cb93                _sys_getpid
+                0x00000000c002cb9d                _sys_getppid
+                0x00000000c002cc02                _init_microkernel
+ .text          0x00000000c002cd2f      0x41e request.o
+                0x00000000c002cd2f                _KiRequest
+                0x00000000c002cd63                _request
+                0x00000000c002cf40                _create_request
+                0x00000000c002cfe7                _clear_request
+                0x00000000c002d06f                _do_request_12
+                0x00000000c002d14d                _code_end = .
+                0x00000000c002e000                . = ALIGN (0x1000)
+ *fill*         0x00000000c002d14d      0xeb3 
 
-.iplt           0x00000000c002d000        0x0
- .iplt          0x00000000c002d000        0x0 head.o
+.iplt           0x00000000c002e000        0x0
+ .iplt          0x00000000c002e000        0x0 head.o
 
-.rodata         0x00000000c002d000     0xa000
-                0x00000000c002d000                _rodata_begin = .
+.rodata         0x00000000c002e000     0xa000
+                0x00000000c002e000                _rodata_begin = .
  *(.rdata)
  *(.rodata)
- .rodata        0x00000000c002d000       0xae main.o
- *fill*         0x00000000c002d0ae        0x2 
- .rodata        0x00000000c002d0b0      0x399 x86main.o
- .rodata        0x00000000c002d449        0x5 pipe.o
- *fill*         0x00000000c002d44e        0x2 
- .rodata        0x00000000c002d450       0x65 socket.o
- *fill*         0x00000000c002d4b5        0xb 
- .rodata        0x00000000c002d4c0      0x120 ctype.o
-                0x00000000c002d4e0                __ctype
- .rodata        0x00000000c002d5e0      0x2bc stdio.o
- .rodata        0x00000000c002d89c        0x5 stdlib.o
- .rodata        0x00000000c002d8a1        0x5 string.o
- .rodata        0x00000000c002d8a6       0x1e unistd.o
- .rodata        0x00000000c002d8c4        0x5 devmgr.o
- *fill*         0x00000000c002d8c9        0x3 
- .rodata        0x00000000c002d8cc      0x504 gde_serv.o
- .rodata        0x00000000c002ddd0      0x127 debug.o
- *fill*         0x00000000c002def7        0x1 
- .rodata        0x00000000c002def8      0x452 diskvol.o
- .rodata        0x00000000c002e34a        0x5 object.o
- .rodata        0x00000000c002e34f       0x14 runtime.o
- *fill*         0x00000000c002e363        0x1 
- .rodata        0x00000000c002e364       0x8d abort.o
- *fill*         0x00000000c002e3f1        0x3 
- .rodata        0x00000000c002e3f4      0x1c6 info.o
- .rodata        0x00000000c002e5ba        0x5 io.o
- .rodata        0x00000000c002e5bf        0x5 modules.o
- .rodata        0x00000000c002e5c4        0x5 signal.o
- .rodata        0x00000000c002e5c9        0x5 sm.o
- *fill*         0x00000000c002e5ce        0x2 
- .rodata        0x00000000c002e5d0      0x506 init.o
- *fill*         0x00000000c002ead6        0x2 
- .rodata        0x00000000c002ead8      0x406 system.o
- *fill*         0x00000000c002eede        0x2 
- .rodata        0x00000000c002eee0      0x27b execve.o
- .rodata        0x00000000c002f15b        0x5 cpuamd.o
- .rodata        0x00000000c002f160        0x5 portsx86.o
- .rodata        0x00000000c002f165        0x5 syscall.o
- *fill*         0x00000000c002f16a        0x2 
- .rodata        0x00000000c002f16c      0x254 x86.o
- .rodata        0x00000000c002f3c0       0x53 detect.o
- *fill*         0x00000000c002f413        0x1 
- .rodata        0x00000000c002f414       0xc7 hal.o
- *fill*         0x00000000c002f4db        0x1 
- .rodata        0x00000000c002f4dc      0x1d1 ahci.o
- *fill*         0x00000000c002f6ad        0x3 
- .rodata        0x00000000c002f6b0      0x263 ata.o
- .rodata        0x00000000c002f913        0x5 atadma.o
- .rodata        0x00000000c002f918       0x1a atainit.o
- .rodata        0x00000000c002f932        0x5 atairq.o
- *fill*         0x00000000c002f937        0x1 
- .rodata        0x00000000c002f938      0x325 atapci.o
- .rodata        0x00000000c002fc5d       0x38 hdd.o
- .rodata        0x00000000c002fc95        0x5 channel.o
- *fill*         0x00000000c002fc9a        0x2 
- .rodata        0x00000000c002fc9c      0x34c network.o
- .rodata        0x00000000c002ffe8      0x29a nicintel.o
- *fill*         0x00000000c0030282        0x2 
- .rodata        0x00000000c0030284       0x29 nsocket.o
- *fill*         0x00000000c00302ad        0x3 
- .rodata        0x00000000c00302b0     0x1690 pci.o
- .rodata        0x00000000c0031940      0x233 pciinfo.o
- .rodata        0x00000000c0031b73       0x32 pciscan.o
- *fill*         0x00000000c0031ba5        0x3 
- .rodata        0x00000000c0031ba8       0x51 tty.o
- *fill*         0x00000000c0031bf9        0x3 
- .rodata        0x00000000c0031bfc      0x205 pty.o
- *fill*         0x00000000c0031e01        0x3 
- .rodata        0x00000000c0031e04       0x2a video.o
- .rodata        0x00000000c0031e2e        0x5 vsync.o
- .rodata        0x00000000c0031e33       0x11 screen.o
- .rodata        0x00000000c0031e44      0x3ce xproc.o
- .rodata        0x00000000c0032212       0x25 i8042.o
- *fill*         0x00000000c0032237        0x1 
- .rodata        0x00000000c0032238       0x53 keyboard.o
- .rodata        0x00000000c003228b        0x5 mouse.o
- .rodata        0x00000000c0032290      0x367 ps2kbd.o
- *fill*         0x00000000c00325f7        0x1 
- .rodata        0x00000000c00325f8      0x13a ps2mouse.o
- *fill*         0x00000000c0032732        0x2 
- .rodata        0x00000000c0032734       0x39 ldisc.o
- .rodata        0x00000000c003276d        0x5 apic.o
- .rodata        0x00000000c0032772        0x5 pic.o
- .rodata        0x00000000c0032777       0x5f rtc.o
- .rodata        0x00000000c00327d6        0x5 serial.o
- *fill*         0x00000000c00327db        0x1 
- .rodata        0x00000000c00327dc      0x104 timer.o
- .rodata        0x00000000c00328e0      0x11e cf.o
- .rodata        0x00000000c00329fe        0x5 format.o
- *fill*         0x00000000c0032a03        0x1 
- .rodata        0x00000000c0032a04      0x5d1 fs.o
- *fill*         0x00000000c0032fd5        0x3 
- .rodata        0x00000000c0032fd8      0x195 read.o
- *fill*         0x00000000c003316d        0x3 
- .rodata        0x00000000c0033170       0x58 search.o
- .rodata        0x00000000c00331c8      0x166 write.o
- .rodata        0x00000000c003332e       0x4a cedge.o
- .rodata        0x00000000c0033378        0x5 bg.o
- .rodata        0x00000000c003337d       0x3b bmp.o
- .rodata        0x00000000c00333b8       0x24 button.o
- .rodata        0x00000000c00333dc       0x45 char.o
- *fill*         0x00000000c0033421        0x3 
- .rodata        0x00000000c0033424      0x110 createw.o
- .rodata        0x00000000c0033534       0x27 dtext.o
- .rodata        0x00000000c003355b       0x3b font.o
- .rodata        0x00000000c0033596       0xb0 grid.o
- .rodata        0x00000000c0033646        0x5 line.o
- *fill*         0x00000000c003364b        0x1 
- .rodata        0x00000000c003364c      0x228 menu.o
- .rodata        0x00000000c0033874      0x111 menubar.o
- .rodata        0x00000000c0033985        0x5 pixel.o
- *fill*         0x00000000c003398a        0x2 
- .rodata        0x00000000c003398c       0x68 rect.o
- .rodata        0x00000000c00339f4       0xa4 sbar.o
- .rodata        0x00000000c0033a98       0xa4 toolbar.o
- .rodata        0x00000000c0033b3c      0x5e7 window.o
- .rodata        0x00000000c0034123       0x21 logoff.o
- .rodata        0x00000000c0034144      0x240 logon.o
- .rodata        0x00000000c0034384        0x5 input.o
- .rodata        0x00000000c0034389       0x16 output.o
- .rodata        0x00000000c003439f        0x5 terminal.o
- .rodata        0x00000000c00343a4       0x5e desktop.o
- *fill*         0x00000000c0034402        0x2 
- .rodata        0x00000000c0034404       0x78 room.o
- .rodata        0x00000000c003447c       0xc4 userenv.o
- .rodata        0x00000000c0034540       0xd0 usession.o
- .rodata        0x00000000c0034610      0x252 kgws.o
- *fill*         0x00000000c0034862        0x2 
- .rodata        0x00000000c0034864      0x108 vfs.o
- .rodata        0x00000000c003496c      0x11a x86cont.o
- *fill*         0x00000000c0034a86        0x2 
- .rodata        0x00000000c0034a88      0x141 x86fault.o
- *fill*         0x00000000c0034bc9        0x3 
- .rodata        0x00000000c0034bcc       0xa1 x86start.o
- *fill*         0x00000000c0034c6d        0x3 
- .rodata        0x00000000c0034c70      0x170 dispatch.o
- .rodata        0x00000000c0034de0        0x5 pheap.o
- *fill*         0x00000000c0034de5        0x3 
- .rodata        0x00000000c0034de8      0x5dd process.o
- *fill*         0x00000000c00353c5        0x3 
- .rodata        0x00000000c00353c8      0x175 queue.o
- *fill*         0x00000000c003553d        0x3 
- .rodata        0x00000000c0035540       0xbd spawn.o
- .rodata        0x00000000c00355fd        0x5 tasks.o
- .rodata        0x00000000c0035602        0x5 theap.o
- *fill*         0x00000000c0035607        0x1 
- .rodata        0x00000000c0035608      0x135 thread.o
- *fill*         0x00000000c003573d        0x3 
- .rodata        0x00000000c0035740      0x287 threadi.o
- *fill*         0x00000000c00359c7        0x1 
- .rodata        0x00000000c00359c8      0x22b ts.o
- .rodata        0x00000000c0035bf3        0x5 tstack.o
- .rodata        0x00000000c0035bf8        0x5 callout.o
- .rodata        0x00000000c0035bfd        0x5 ipc.o
- .rodata        0x00000000c0035c02       0x47 ipccore.o
- .rodata        0x00000000c0035c49        0x5 sem.o
- *fill*         0x00000000c0035c4e        0x2 
- .rodata        0x00000000c0035c50      0x2a3 memory.o
- *fill*         0x00000000c0035ef3        0x1 
- .rodata        0x00000000c0035ef4      0x37e mminfo.o
- .rodata        0x00000000c0036272       0x26 mmpool.o
- .rodata        0x00000000c0036298      0x220 pages.o
- .rodata        0x00000000c00364b8        0x5 preempt.o
- .rodata        0x00000000c00364bd        0x5 priority.o
- *fill*         0x00000000c00364c2        0x2 
- .rodata        0x00000000c00364c4       0x53 sched.o
- *fill*         0x00000000c0036517        0x1 
- .rodata        0x00000000c0036518       0x28 schedi.o
- .rodata        0x00000000c0036540      0x199 create.o
- *fill*         0x00000000c00366d9        0x3 
- .rodata        0x00000000c00366dc       0x58 mk.o
- .rodata        0x00000000c0036734      0x131 request.o
-                0x00000000c0036865                _rodata_end = .
-                0x00000000c0037000                . = ALIGN (0x1000)
- *fill*         0x00000000c0036865      0x79b 
+ .rodata        0x00000000c002e000       0xae main.o
+ *fill*         0x00000000c002e0ae        0x2 
+ .rodata        0x00000000c002e0b0      0x399 x86main.o
+ .rodata        0x00000000c002e449        0x5 pipe.o
+ *fill*         0x00000000c002e44e        0x2 
+ .rodata        0x00000000c002e450       0x65 socket.o
+ *fill*         0x00000000c002e4b5        0xb 
+ .rodata        0x00000000c002e4c0      0x120 ctype.o
+                0x00000000c002e4e0                __ctype
+ .rodata        0x00000000c002e5e0      0x2bc stdio.o
+ .rodata        0x00000000c002e89c        0x5 stdlib.o
+ .rodata        0x00000000c002e8a1        0x5 string.o
+ .rodata        0x00000000c002e8a6       0x1e unistd.o
+ .rodata        0x00000000c002e8c4        0x5 devmgr.o
+ *fill*         0x00000000c002e8c9        0x3 
+ .rodata        0x00000000c002e8cc      0x504 gde_serv.o
+ .rodata        0x00000000c002edd0      0x127 debug.o
+ *fill*         0x00000000c002eef7        0x1 
+ .rodata        0x00000000c002eef8      0x452 diskvol.o
+ .rodata        0x00000000c002f34a        0x5 object.o
+ .rodata        0x00000000c002f34f       0x14 runtime.o
+ *fill*         0x00000000c002f363        0x1 
+ .rodata        0x00000000c002f364       0x8d abort.o
+ *fill*         0x00000000c002f3f1        0x3 
+ .rodata        0x00000000c002f3f4      0x1c6 info.o
+ .rodata        0x00000000c002f5ba        0x5 io.o
+ .rodata        0x00000000c002f5bf        0x5 modules.o
+ .rodata        0x00000000c002f5c4        0x5 signal.o
+ .rodata        0x00000000c002f5c9        0x5 sm.o
+ *fill*         0x00000000c002f5ce        0x2 
+ .rodata        0x00000000c002f5d0      0x506 init.o
+ *fill*         0x00000000c002fad6        0x2 
+ .rodata        0x00000000c002fad8      0x406 system.o
+ *fill*         0x00000000c002fede        0x2 
+ .rodata        0x00000000c002fee0      0x27b execve.o
+ .rodata        0x00000000c003015b        0x5 cpuamd.o
+ .rodata        0x00000000c0030160        0x5 portsx86.o
+ .rodata        0x00000000c0030165        0x5 syscall.o
+ *fill*         0x00000000c003016a        0x2 
+ .rodata        0x00000000c003016c      0x254 x86.o
+ .rodata        0x00000000c00303c0       0x53 detect.o
+ *fill*         0x00000000c0030413        0x1 
+ .rodata        0x00000000c0030414       0xc7 hal.o
+ *fill*         0x00000000c00304db        0x1 
+ .rodata        0x00000000c00304dc      0x1d1 ahci.o
+ *fill*         0x00000000c00306ad        0x3 
+ .rodata        0x00000000c00306b0      0x263 ata.o
+ .rodata        0x00000000c0030913        0x5 atadma.o
+ .rodata        0x00000000c0030918       0x1a atainit.o
+ .rodata        0x00000000c0030932        0x5 atairq.o
+ *fill*         0x00000000c0030937        0x1 
+ .rodata        0x00000000c0030938      0x325 atapci.o
+ .rodata        0x00000000c0030c5d       0x38 hdd.o
+ .rodata        0x00000000c0030c95        0x5 channel.o
+ *fill*         0x00000000c0030c9a        0x2 
+ .rodata        0x00000000c0030c9c      0x34c network.o
+ .rodata        0x00000000c0030fe8      0x29a nicintel.o
+ *fill*         0x00000000c0031282        0x2 
+ .rodata        0x00000000c0031284       0x29 nsocket.o
+ *fill*         0x00000000c00312ad        0x3 
+ .rodata        0x00000000c00312b0     0x1690 pci.o
+ .rodata        0x00000000c0032940      0x233 pciinfo.o
+ .rodata        0x00000000c0032b73       0x32 pciscan.o
+ *fill*         0x00000000c0032ba5        0x3 
+ .rodata        0x00000000c0032ba8       0x51 tty.o
+ *fill*         0x00000000c0032bf9        0x3 
+ .rodata        0x00000000c0032bfc      0x205 pty.o
+ *fill*         0x00000000c0032e01        0x3 
+ .rodata        0x00000000c0032e04       0x2a video.o
+ .rodata        0x00000000c0032e2e        0x5 vsync.o
+ .rodata        0x00000000c0032e33       0x11 screen.o
+ .rodata        0x00000000c0032e44      0x3ce xproc.o
+ .rodata        0x00000000c0033212       0x25 i8042.o
+ *fill*         0x00000000c0033237        0x1 
+ .rodata        0x00000000c0033238       0x53 keyboard.o
+ .rodata        0x00000000c003328b        0x5 mouse.o
+ .rodata        0x00000000c0033290      0x367 ps2kbd.o
+ *fill*         0x00000000c00335f7        0x1 
+ .rodata        0x00000000c00335f8      0x13a ps2mouse.o
+ *fill*         0x00000000c0033732        0x2 
+ .rodata        0x00000000c0033734       0x39 ldisc.o
+ .rodata        0x00000000c003376d        0x5 apic.o
+ .rodata        0x00000000c0033772        0x5 pic.o
+ .rodata        0x00000000c0033777       0x5f rtc.o
+ .rodata        0x00000000c00337d6        0x5 serial.o
+ *fill*         0x00000000c00337db        0x1 
+ .rodata        0x00000000c00337dc      0x104 timer.o
+ .rodata        0x00000000c00338e0      0x11e cf.o
+ .rodata        0x00000000c00339fe        0x5 format.o
+ *fill*         0x00000000c0033a03        0x1 
+ .rodata        0x00000000c0033a04      0x5d1 fs.o
+ *fill*         0x00000000c0033fd5        0x3 
+ .rodata        0x00000000c0033fd8      0x195 read.o
+ *fill*         0x00000000c003416d        0x3 
+ .rodata        0x00000000c0034170       0x58 search.o
+ .rodata        0x00000000c00341c8      0x166 write.o
+ .rodata        0x00000000c003432e       0x4a cedge.o
+ .rodata        0x00000000c0034378        0x5 bg.o
+ .rodata        0x00000000c003437d       0x3b bmp.o
+ .rodata        0x00000000c00343b8       0x24 button.o
+ .rodata        0x00000000c00343dc       0x45 char.o
+ *fill*         0x00000000c0034421        0x3 
+ .rodata        0x00000000c0034424      0x110 createw.o
+ .rodata        0x00000000c0034534       0x27 dtext.o
+ .rodata        0x00000000c003455b       0x3b font.o
+ .rodata        0x00000000c0034596       0xb0 grid.o
+ .rodata        0x00000000c0034646        0x5 line.o
+ *fill*         0x00000000c003464b        0x1 
+ .rodata        0x00000000c003464c      0x228 menu.o
+ .rodata        0x00000000c0034874      0x111 menubar.o
+ .rodata        0x00000000c0034985        0x5 pixel.o
+ *fill*         0x00000000c003498a        0x2 
+ .rodata        0x00000000c003498c       0x68 rect.o
+ .rodata        0x00000000c00349f4       0xa4 sbar.o
+ .rodata        0x00000000c0034a98       0xa4 toolbar.o
+ .rodata        0x00000000c0034b3c      0x5e7 window.o
+ .rodata        0x00000000c0035123       0x21 logoff.o
+ .rodata        0x00000000c0035144      0x240 logon.o
+ .rodata        0x00000000c0035384        0x5 input.o
+ .rodata        0x00000000c0035389       0x16 output.o
+ .rodata        0x00000000c003539f        0x5 terminal.o
+ .rodata        0x00000000c00353a4       0x5e desktop.o
+ *fill*         0x00000000c0035402        0x2 
+ .rodata        0x00000000c0035404       0x78 room.o
+ .rodata        0x00000000c003547c       0xc4 userenv.o
+ .rodata        0x00000000c0035540       0xd0 usession.o
+ .rodata        0x00000000c0035610      0x252 kgws.o
+ *fill*         0x00000000c0035862        0x2 
+ .rodata        0x00000000c0035864      0x108 vfs.o
+ .rodata        0x00000000c003596c      0x11a x86cont.o
+ *fill*         0x00000000c0035a86        0x2 
+ .rodata        0x00000000c0035a88      0x141 x86fault.o
+ *fill*         0x00000000c0035bc9        0x3 
+ .rodata        0x00000000c0035bcc       0xa1 x86start.o
+ *fill*         0x00000000c0035c6d        0x3 
+ .rodata        0x00000000c0035c70      0x170 dispatch.o
+ .rodata        0x00000000c0035de0        0x5 pheap.o
+ *fill*         0x00000000c0035de5        0x3 
+ .rodata        0x00000000c0035de8      0x5d1 process.o
+ *fill*         0x00000000c00363b9        0x3 
+ .rodata        0x00000000c00363bc      0x175 queue.o
+ *fill*         0x00000000c0036531        0x3 
+ .rodata        0x00000000c0036534       0xbd spawn.o
+ .rodata        0x00000000c00365f1        0x5 tasks.o
+ .rodata        0x00000000c00365f6        0x5 theap.o
+ *fill*         0x00000000c00365fb        0x1 
+ .rodata        0x00000000c00365fc      0x135 thread.o
+ *fill*         0x00000000c0036731        0x3 
+ .rodata        0x00000000c0036734      0x287 threadi.o
+ *fill*         0x00000000c00369bb        0x1 
+ .rodata        0x00000000c00369bc      0x22b ts.o
+ .rodata        0x00000000c0036be7        0x5 tstack.o
+ .rodata        0x00000000c0036bec        0x5 callout.o
+ .rodata        0x00000000c0036bf1        0x5 ipc.o
+ .rodata        0x00000000c0036bf6       0x47 ipccore.o
+ .rodata        0x00000000c0036c3d        0x5 sem.o
+ *fill*         0x00000000c0036c42        0x2 
+ .rodata        0x00000000c0036c44      0x2a3 memory.o
+ *fill*         0x00000000c0036ee7        0x1 
+ .rodata        0x00000000c0036ee8      0x37e mminfo.o
+ .rodata        0x00000000c0037266       0x26 mmpool.o
+ .rodata        0x00000000c003728c      0x220 pages.o
+ .rodata        0x00000000c00374ac        0x5 preempt.o
+ .rodata        0x00000000c00374b1        0x5 priority.o
+ *fill*         0x00000000c00374b6        0x2 
+ .rodata        0x00000000c00374b8       0x53 sched.o
+ *fill*         0x00000000c003750b        0x1 
+ .rodata        0x00000000c003750c       0x28 schedi.o
+ .rodata        0x00000000c0037534      0x199 create.o
+ *fill*         0x00000000c00376cd        0x3 
+ .rodata        0x00000000c00376d0       0x58 mk.o
+ .rodata        0x00000000c0037728      0x131 request.o
+                0x00000000c0037859                _rodata_end = .
+                0x00000000c0038000                . = ALIGN (0x1000)
+ *fill*         0x00000000c0037859      0x7a7 
 
-.eh_frame       0x00000000c0037000     0x81a4
- .eh_frame      0x00000000c0037000       0x38 main.o
- .eh_frame      0x00000000c0037038       0xa4 x86main.o
+.eh_frame       0x00000000c0038000     0x81a4
+ .eh_frame      0x00000000c0038000       0x38 main.o
+ .eh_frame      0x00000000c0038038       0xa4 x86main.o
                                          0xbc (size before relaxing)
- .eh_frame      0x00000000c00370dc       0xc0 pipe.o
+ .eh_frame      0x00000000c00380dc       0xc0 pipe.o
                                          0xd8 (size before relaxing)
- .eh_frame      0x00000000c003719c       0x40 socket.o
+ .eh_frame      0x00000000c003819c       0x40 socket.o
                                          0x58 (size before relaxing)
- .eh_frame      0x00000000c00371dc      0x4c8 stdio.o
+ .eh_frame      0x00000000c00381dc      0x4c8 stdio.o
                                         0x4e0 (size before relaxing)
- .eh_frame      0x00000000c00376a4       0x60 stdlib.o
+ .eh_frame      0x00000000c00386a4       0x60 stdlib.o
                                          0x78 (size before relaxing)
- .eh_frame      0x00000000c0037704      0x1e0 string.o
+ .eh_frame      0x00000000c0038704      0x1e0 string.o
                                         0x1f8 (size before relaxing)
- .eh_frame      0x00000000c00378e4       0x40 unistd.o
+ .eh_frame      0x00000000c00388e4       0x40 unistd.o
                                          0x58 (size before relaxing)
- .eh_frame      0x00000000c0037924       0x20 devmgr.o
+ .eh_frame      0x00000000c0038924       0x20 devmgr.o
                                          0x38 (size before relaxing)
- .eh_frame      0x00000000c0037944       0x8c gde_serv.o
+ .eh_frame      0x00000000c0038944       0x8c gde_serv.o
                                          0xa4 (size before relaxing)
- .eh_frame      0x00000000c00379d0       0xc0 debug.o
+ .eh_frame      0x00000000c00389d0       0xc0 debug.o
                                          0xd8 (size before relaxing)
- .eh_frame      0x00000000c0037a90      0x1a4 diskvol.o
+ .eh_frame      0x00000000c0038a90      0x1a4 diskvol.o
                                         0x1bc (size before relaxing)
- .eh_frame      0x00000000c0037c34       0x20 object.o
+ .eh_frame      0x00000000c0038c34       0x20 object.o
                                          0x38 (size before relaxing)
- .eh_frame      0x00000000c0037c54       0x40 runtime.o
+ .eh_frame      0x00000000c0038c54       0x40 runtime.o
                                          0x58 (size before relaxing)
- .eh_frame      0x00000000c0037c94       0x5c abort.o
+ .eh_frame      0x00000000c0038c94       0x5c abort.o
                                          0x74 (size before relaxing)
- .eh_frame      0x00000000c0037cf0       0x50 info.o
+ .eh_frame      0x00000000c0038cf0       0x50 info.o
                                          0x68 (size before relaxing)
- .eh_frame      0x00000000c0037d40       0x40 io.o
+ .eh_frame      0x00000000c0038d40       0x40 io.o
                                          0x58 (size before relaxing)
- .eh_frame      0x00000000c0037d80       0x40 signal.o
+ .eh_frame      0x00000000c0038d80       0x40 signal.o
                                          0x58 (size before relaxing)
- .eh_frame      0x00000000c0037dc0       0x20 sm.o
+ .eh_frame      0x00000000c0038dc0       0x20 sm.o
                                          0x38 (size before relaxing)
- .eh_frame      0x00000000c0037de0       0xa0 init.o
+ .eh_frame      0x00000000c0038de0       0xa0 init.o
                                          0xb8 (size before relaxing)
- .eh_frame      0x00000000c0037e80      0x37c system.o
+ .eh_frame      0x00000000c0038e80      0x37c system.o
                                         0x394 (size before relaxing)
- .eh_frame      0x00000000c00381fc       0xc0 execve.o
+ .eh_frame      0x00000000c00391fc       0xc0 execve.o
                                          0xd8 (size before relaxing)
- .eh_frame      0x00000000c00382bc       0x40 cpuamd.o
+ .eh_frame      0x00000000c00392bc       0x40 cpuamd.o
                                          0x58 (size before relaxing)
- .eh_frame      0x00000000c00382fc      0x340 portsx86.o
+ .eh_frame      0x00000000c00392fc      0x340 portsx86.o
                                         0x358 (size before relaxing)
- .eh_frame      0x00000000c003863c       0x44 syscall.o
+ .eh_frame      0x00000000c003963c       0x44 syscall.o
                                          0x5c (size before relaxing)
- .eh_frame      0x00000000c0038680      0x350 x86.o
+ .eh_frame      0x00000000c0039680      0x350 x86.o
                                         0x368 (size before relaxing)
- .eh_frame      0x00000000c00389d0       0xac detect.o
+ .eh_frame      0x00000000c00399d0       0xac detect.o
                                          0xc4 (size before relaxing)
- .eh_frame      0x00000000c0038a7c      0x2ec hal.o
+ .eh_frame      0x00000000c0039a7c      0x2ec hal.o
                                         0x304 (size before relaxing)
- .eh_frame      0x00000000c0038d68       0x80 ahci.o
+ .eh_frame      0x00000000c0039d68       0x80 ahci.o
                                          0x98 (size before relaxing)
- .eh_frame      0x00000000c0038de8      0x298 ata.o
+ .eh_frame      0x00000000c0039de8      0x298 ata.o
                                         0x2b0 (size before relaxing)
- .eh_frame      0x00000000c0039080       0x80 atadma.o
+ .eh_frame      0x00000000c003a080       0x80 atadma.o
                                          0x98 (size before relaxing)
- .eh_frame      0x00000000c0039100       0x20 atainit.o
+ .eh_frame      0x00000000c003a100       0x20 atainit.o
                                          0x38 (size before relaxing)
- .eh_frame      0x00000000c0039120       0xc0 atairq.o
+ .eh_frame      0x00000000c003a120       0xc0 atairq.o
                                          0xd8 (size before relaxing)
- .eh_frame      0x00000000c00391e0       0x84 atapci.o
+ .eh_frame      0x00000000c003a1e0       0x84 atapci.o
                                          0x9c (size before relaxing)
- .eh_frame      0x00000000c0039264      0x148 hdd.o
+ .eh_frame      0x00000000c003a264      0x148 hdd.o
                                         0x160 (size before relaxing)
- .eh_frame      0x00000000c00393ac       0x80 channel.o
+ .eh_frame      0x00000000c003a3ac       0x80 channel.o
                                          0x98 (size before relaxing)
- .eh_frame      0x00000000c003942c      0x130 network.o
+ .eh_frame      0x00000000c003a42c      0x130 network.o
                                         0x148 (size before relaxing)
- .eh_frame      0x00000000c003955c      0x188 nicintel.o
+ .eh_frame      0x00000000c003a55c      0x188 nicintel.o
                                         0x1a0 (size before relaxing)
- .eh_frame      0x00000000c00396e4       0x80 nsocket.o
+ .eh_frame      0x00000000c003a6e4       0x80 nsocket.o
                                          0x98 (size before relaxing)
- .eh_frame      0x00000000c0039764      0x22c pci.o
+ .eh_frame      0x00000000c003a764      0x22c pci.o
                                         0x244 (size before relaxing)
- .eh_frame      0x00000000c0039990       0x50 pciinfo.o
+ .eh_frame      0x00000000c003a990       0x50 pciinfo.o
                                          0x68 (size before relaxing)
- .eh_frame      0x00000000c00399e0       0x60 pciscan.o
+ .eh_frame      0x00000000c003a9e0       0x60 pciscan.o
                                          0x78 (size before relaxing)
- .eh_frame      0x00000000c0039a40       0x40 tty.o
+ .eh_frame      0x00000000c003aa40       0x40 tty.o
                                          0x58 (size before relaxing)
- .eh_frame      0x00000000c0039a80       0x60 pty.o
+ .eh_frame      0x00000000c003aa80       0x60 pty.o
                                          0x78 (size before relaxing)
- .eh_frame      0x00000000c0039ae0       0x20 usb.o
+ .eh_frame      0x00000000c003aae0       0x20 usb.o
                                          0x38 (size before relaxing)
- .eh_frame      0x00000000c0039b00       0xa0 video.o
+ .eh_frame      0x00000000c003ab00       0xa0 video.o
                                          0xb8 (size before relaxing)
- .eh_frame      0x00000000c0039ba0       0x40 vsync.o
+ .eh_frame      0x00000000c003aba0       0x40 vsync.o
                                          0x58 (size before relaxing)
- .eh_frame      0x00000000c0039be0       0xc4 screen.o
+ .eh_frame      0x00000000c003abe0       0xc4 screen.o
                                          0xdc (size before relaxing)
- .eh_frame      0x00000000c0039ca4      0x1cc xproc.o
+ .eh_frame      0x00000000c003aca4      0x1cc xproc.o
                                         0x1e4 (size before relaxing)
- .eh_frame      0x00000000c0039e70       0x20 i8042.o
+ .eh_frame      0x00000000c003ae70       0x20 i8042.o
                                          0x38 (size before relaxing)
- .eh_frame      0x00000000c0039e90       0x60 keyboard.o
+ .eh_frame      0x00000000c003ae90       0x60 keyboard.o
                                          0x78 (size before relaxing)
- .eh_frame      0x00000000c0039ef0       0x20 mouse.o
+ .eh_frame      0x00000000c003aef0       0x20 mouse.o
                                          0x38 (size before relaxing)
- .eh_frame      0x00000000c0039f10      0x2c0 ps2kbd.o
+ .eh_frame      0x00000000c003af10      0x2c0 ps2kbd.o
                                         0x2d8 (size before relaxing)
- .eh_frame      0x00000000c003a1d0      0x1d0 ps2mouse.o
+ .eh_frame      0x00000000c003b1d0      0x1d0 ps2mouse.o
                                         0x1e8 (size before relaxing)
- .eh_frame      0x00000000c003a3a0       0x40 ldisc.o
+ .eh_frame      0x00000000c003b3a0       0x40 ldisc.o
                                          0x58 (size before relaxing)
- .eh_frame      0x00000000c003a3e0      0x124 rtc.o
+ .eh_frame      0x00000000c003b3e0      0x124 rtc.o
                                         0x13c (size before relaxing)
- .eh_frame      0x00000000c003a504       0x40 serial.o
+ .eh_frame      0x00000000c003b504       0x40 serial.o
                                          0x58 (size before relaxing)
- .eh_frame      0x00000000c003a544      0x2e0 timer.o
+ .eh_frame      0x00000000c003b544      0x2e0 timer.o
                                         0x2f8 (size before relaxing)
- .eh_frame      0x00000000c003a824       0x80 cf.o
+ .eh_frame      0x00000000c003b824       0x80 cf.o
                                          0x98 (size before relaxing)
- .eh_frame      0x00000000c003a8a4       0x40 format.o
+ .eh_frame      0x00000000c003b8a4       0x40 format.o
                                          0x58 (size before relaxing)
- .eh_frame      0x00000000c003a8e4      0x508 fs.o
+ .eh_frame      0x00000000c003b8e4      0x508 fs.o
                                         0x520 (size before relaxing)
- .eh_frame      0x00000000c003adec      0x160 read.o
+ .eh_frame      0x00000000c003bdec      0x160 read.o
                                         0x178 (size before relaxing)
- .eh_frame      0x00000000c003af4c       0xc0 search.o
+ .eh_frame      0x00000000c003bf4c       0xc0 search.o
                                          0xd8 (size before relaxing)
- .eh_frame      0x00000000c003b00c       0xe0 write.o
+ .eh_frame      0x00000000c003c00c       0xe0 write.o
                                          0xf8 (size before relaxing)
- .eh_frame      0x00000000c003b0ec       0x48 cedge.o
+ .eh_frame      0x00000000c003c0ec       0x48 cedge.o
                                          0x60 (size before relaxing)
- .eh_frame      0x00000000c003b134       0xa0 bg.o
+ .eh_frame      0x00000000c003c134       0xa0 bg.o
                                          0xb8 (size before relaxing)
- .eh_frame      0x00000000c003b1d4       0x80 bmp.o
+ .eh_frame      0x00000000c003c1d4       0x80 bmp.o
                                          0x98 (size before relaxing)
- .eh_frame      0x00000000c003b254       0x70 button.o
+ .eh_frame      0x00000000c003c254       0x70 button.o
                                          0x88 (size before relaxing)
- .eh_frame      0x00000000c003b2c4       0xe0 char.o
+ .eh_frame      0x00000000c003c2c4       0xe0 char.o
                                          0xf8 (size before relaxing)
- .eh_frame      0x00000000c003b3a4       0x2c createw.o
+ .eh_frame      0x00000000c003c3a4       0x2c createw.o
                                          0x44 (size before relaxing)
- .eh_frame      0x00000000c003b3d0       0x40 dtext.o
+ .eh_frame      0x00000000c003c3d0       0x40 dtext.o
                                          0x58 (size before relaxing)
- .eh_frame      0x00000000c003b410       0x60 font.o
+ .eh_frame      0x00000000c003c410       0x60 font.o
                                          0x78 (size before relaxing)
- .eh_frame      0x00000000c003b470       0x60 grid.o
+ .eh_frame      0x00000000c003c470       0x60 grid.o
                                          0x78 (size before relaxing)
- .eh_frame      0x00000000c003b4d0       0x40 line.o
+ .eh_frame      0x00000000c003c4d0       0x40 line.o
                                          0x58 (size before relaxing)
- .eh_frame      0x00000000c003b510      0x140 menu.o
+ .eh_frame      0x00000000c003c510      0x140 menu.o
                                         0x158 (size before relaxing)
- .eh_frame      0x00000000c003b650      0x114 menubar.o
+ .eh_frame      0x00000000c003c650      0x114 menubar.o
                                         0x12c (size before relaxing)
- .eh_frame      0x00000000c003b764       0xc0 pixel.o
+ .eh_frame      0x00000000c003c764       0xc0 pixel.o
                                          0xd8 (size before relaxing)
- .eh_frame      0x00000000c003b824      0x128 rect.o
+ .eh_frame      0x00000000c003c824      0x128 rect.o
                                         0x140 (size before relaxing)
- .eh_frame      0x00000000c003b94c       0x20 sbar.o
+ .eh_frame      0x00000000c003c94c       0x20 sbar.o
                                          0x38 (size before relaxing)
- .eh_frame      0x00000000c003b96c       0x20 toolbar.o
+ .eh_frame      0x00000000c003c96c       0x20 toolbar.o
                                          0x38 (size before relaxing)
- .eh_frame      0x00000000c003b98c      0x800 window.o
+ .eh_frame      0x00000000c003c98c      0x800 window.o
                                         0x818 (size before relaxing)
- .eh_frame      0x00000000c003c18c       0x40 logoff.o
+ .eh_frame      0x00000000c003d18c       0x40 logoff.o
                                          0x58 (size before relaxing)
- .eh_frame      0x00000000c003c1cc      0x220 logon.o
+ .eh_frame      0x00000000c003d1cc      0x220 logon.o
                                         0x238 (size before relaxing)
- .eh_frame      0x00000000c003c3ec       0x68 output.o
+ .eh_frame      0x00000000c003d3ec       0x68 output.o
                                          0x80 (size before relaxing)
- .eh_frame      0x00000000c003c454       0xa0 terminal.o
+ .eh_frame      0x00000000c003d454       0xa0 terminal.o
                                          0xb8 (size before relaxing)
- .eh_frame      0x00000000c003c4f4      0x220 desktop.o
+ .eh_frame      0x00000000c003d4f4      0x220 desktop.o
                                         0x238 (size before relaxing)
- .eh_frame      0x00000000c003c714       0xc0 room.o
+ .eh_frame      0x00000000c003d714       0xc0 room.o
                                          0xd8 (size before relaxing)
- .eh_frame      0x00000000c003c7d4      0x160 userenv.o
+ .eh_frame      0x00000000c003d7d4      0x160 userenv.o
                                         0x178 (size before relaxing)
- .eh_frame      0x00000000c003c934       0xa0 usession.o
+ .eh_frame      0x00000000c003d934       0xa0 usession.o
                                          0xb8 (size before relaxing)
- .eh_frame      0x00000000c003c9d4      0x510 kgws.o
+ .eh_frame      0x00000000c003d9d4      0x510 kgws.o
                                         0x528 (size before relaxing)
- .eh_frame      0x00000000c003cee4       0x84 vfs.o
+ .eh_frame      0x00000000c003dee4       0x84 vfs.o
                                          0x9c (size before relaxing)
- .eh_frame      0x00000000c003cf68      0x120 x86cont.o
+ .eh_frame      0x00000000c003df68      0x120 x86cont.o
                                         0x138 (size before relaxing)
- .eh_frame      0x00000000c003d088       0x60 x86fault.o
+ .eh_frame      0x00000000c003e088       0x60 x86fault.o
                                          0x78 (size before relaxing)
- .eh_frame      0x00000000c003d0e8       0xe0 x86start.o
+ .eh_frame      0x00000000c003e0e8       0xe0 x86start.o
                                          0xf8 (size before relaxing)
- .eh_frame      0x00000000c003d1c8      0x200 dispatch.o
+ .eh_frame      0x00000000c003e1c8      0x200 dispatch.o
                                         0x218 (size before relaxing)
- .eh_frame      0x00000000c003d3c8      0x6f4 process.o
+ .eh_frame      0x00000000c003e3c8      0x6f4 process.o
                                         0x70c (size before relaxing)
- .eh_frame      0x00000000c003dabc       0xe0 queue.o
+ .eh_frame      0x00000000c003eabc       0xe0 queue.o
                                          0xf8 (size before relaxing)
- .eh_frame      0x00000000c003db9c       0x60 spawn.o
+ .eh_frame      0x00000000c003eb9c       0x60 spawn.o
                                          0x78 (size before relaxing)
- .eh_frame      0x00000000c003dbfc       0x38 tasks.o
+ .eh_frame      0x00000000c003ebfc       0x38 tasks.o
                                          0x50 (size before relaxing)
- .eh_frame      0x00000000c003dc34       0x20 theap.o
+ .eh_frame      0x00000000c003ec34       0x20 theap.o
                                          0x38 (size before relaxing)
- .eh_frame      0x00000000c003dc54      0x160 thread.o
+ .eh_frame      0x00000000c003ec54      0x160 thread.o
                                         0x178 (size before relaxing)
- .eh_frame      0x00000000c003ddb4      0x494 threadi.o
+ .eh_frame      0x00000000c003edb4      0x494 threadi.o
                                         0x4ac (size before relaxing)
- .eh_frame      0x00000000c003e248       0xe4 ts.o
+ .eh_frame      0x00000000c003f248       0xe4 ts.o
                                          0xfc (size before relaxing)
- .eh_frame      0x00000000c003e32c       0x20 tstack.o
+ .eh_frame      0x00000000c003f32c       0x20 tstack.o
                                          0x38 (size before relaxing)
- .eh_frame      0x00000000c003e34c       0x80 ipc.o
+ .eh_frame      0x00000000c003f34c       0x80 ipc.o
                                          0x98 (size before relaxing)
- .eh_frame      0x00000000c003e3cc       0x80 ipccore.o
+ .eh_frame      0x00000000c003f3cc       0x80 ipccore.o
                                          0x98 (size before relaxing)
- .eh_frame      0x00000000c003e44c      0x120 sem.o
+ .eh_frame      0x00000000c003f44c      0x120 sem.o
                                         0x138 (size before relaxing)
- .eh_frame      0x00000000c003e56c      0x180 memory.o
+ .eh_frame      0x00000000c003f56c      0x180 memory.o
                                         0x198 (size before relaxing)
- .eh_frame      0x00000000c003e6ec       0xd4 mminfo.o
+ .eh_frame      0x00000000c003f6ec       0xd4 mminfo.o
                                          0xec (size before relaxing)
- .eh_frame      0x00000000c003e7c0       0x40 mmpool.o
+ .eh_frame      0x00000000c003f7c0       0x40 mmpool.o
                                          0x58 (size before relaxing)
- .eh_frame      0x00000000c003e800      0x1c0 pages.o
+ .eh_frame      0x00000000c003f800      0x1c0 pages.o
                                         0x1d8 (size before relaxing)
- .eh_frame      0x00000000c003e9c0       0x20 preempt.o
+ .eh_frame      0x00000000c003f9c0       0x20 preempt.o
                                          0x38 (size before relaxing)
- .eh_frame      0x00000000c003e9e0       0xa0 priority.o
+ .eh_frame      0x00000000c003f9e0       0xa0 priority.o
                                          0xb8 (size before relaxing)
- .eh_frame      0x00000000c003ea80      0x100 sched.o
+ .eh_frame      0x00000000c003fa80      0x100 sched.o
                                         0x118 (size before relaxing)
- .eh_frame      0x00000000c003eb80      0x3a0 schedi.o
+ .eh_frame      0x00000000c003fb80      0x3a0 schedi.o
                                         0x3b8 (size before relaxing)
- .eh_frame      0x00000000c003ef20       0x64 create.o
+ .eh_frame      0x00000000c003ff20       0x64 create.o
                                          0x7c (size before relaxing)
- .eh_frame      0x00000000c003ef84      0x180 mk.o
+ .eh_frame      0x00000000c003ff84      0x180 mk.o
                                         0x198 (size before relaxing)
- .eh_frame      0x00000000c003f104       0xa0 request.o
+ .eh_frame      0x00000000c0040104       0xa0 request.o
                                          0xb8 (size before relaxing)
 
-.rel.dyn        0x00000000c003f1a4        0x0
- .rel.got       0x00000000c003f1a4        0x0 head.o
- .rel.iplt      0x00000000c003f1a4        0x0 head.o
- .rel.head_x86  0x00000000c003f1a4        0x0 head.o
- .rel.text      0x00000000c003f1a4        0x0 head.o
+.rel.dyn        0x00000000c00401a4        0x0
+ .rel.got       0x00000000c00401a4        0x0 head.o
+ .rel.iplt      0x00000000c00401a4        0x0 head.o
+ .rel.head_x86  0x00000000c00401a4        0x0 head.o
+ .rel.text      0x00000000c00401a4        0x0 head.o
 
-.data           0x00000000c003f1c0    0x10e40
-                0x00000000c003f1c0                _data_begin = .
+.data           0x00000000c00401c0    0x10e40
+                0x00000000c00401c0                _data_begin = .
  *(.data)
- .data          0x00000000c003f1c0        0x2 head.o
-                0x00000000c003f1c0                _data_start
- *fill*         0x00000000c003f1c2       0x1e 
- .data          0x00000000c003f1e0      0x1ec main.o
- *fill*         0x00000000c003f3cc       0x14 
- .data          0x00000000c003f3e0      0x1ec x86main.o
- *fill*         0x00000000c003f5cc       0x14 
- .data          0x00000000c003f5e0      0x1ec pipe.o
- *fill*         0x00000000c003f7cc       0x14 
- .data          0x00000000c003f7e0      0x1ec socket.o
- *fill*         0x00000000c003f9cc       0x14 
- .data          0x00000000c003f9e0      0x1ec ctype.o
- *fill*         0x00000000c003fbcc       0x14 
- .data          0x00000000c003fbe0      0x1ec stdio.o
- *fill*         0x00000000c003fdcc       0x14 
- .data          0x00000000c003fde0      0x1f0 stdlib.o
- *fill*         0x00000000c003ffd0       0x10 
- .data          0x00000000c003ffe0      0x1ec string.o
- *fill*         0x00000000c00401cc       0x14 
- .data          0x00000000c00401e0      0x1ec unistd.o
+ .data          0x00000000c00401c0        0x2 head.o
+                0x00000000c00401c0                _data_start
+ *fill*         0x00000000c00401c2       0x1e 
+ .data          0x00000000c00401e0      0x1ec main.o
  *fill*         0x00000000c00403cc       0x14 
- .data          0x00000000c00403e0      0x1ec devmgr.o
+ .data          0x00000000c00403e0      0x1ec x86main.o
  *fill*         0x00000000c00405cc       0x14 
- .data          0x00000000c00405e0      0x1ec gde_serv.o
+ .data          0x00000000c00405e0      0x1ec pipe.o
  *fill*         0x00000000c00407cc       0x14 
- .data          0x00000000c00407e0      0x1ec debug.o
+ .data          0x00000000c00407e0      0x1ec socket.o
  *fill*         0x00000000c00409cc       0x14 
- .data          0x00000000c00409e0      0x1ec diskvol.o
- .data          0x00000000c0040bcc        0x0 install.o
+ .data          0x00000000c00409e0      0x1ec ctype.o
  *fill*         0x00000000c0040bcc       0x14 
- .data          0x00000000c0040be0      0x1ec object.o
+ .data          0x00000000c0040be0      0x1ec stdio.o
  *fill*         0x00000000c0040dcc       0x14 
- .data          0x00000000c0040de0      0x1ec runtime.o
- *fill*         0x00000000c0040fcc       0x14 
- .data          0x00000000c0040fe0      0x1ec abort.o
+ .data          0x00000000c0040de0      0x1f0 stdlib.o
+ *fill*         0x00000000c0040fd0       0x10 
+ .data          0x00000000c0040fe0      0x1ec string.o
  *fill*         0x00000000c00411cc       0x14 
- .data          0x00000000c00411e0      0x1ec info.o
+ .data          0x00000000c00411e0      0x1ec unistd.o
  *fill*         0x00000000c00413cc       0x14 
- .data          0x00000000c00413e0      0x1ec io.o
+ .data          0x00000000c00413e0      0x1ec devmgr.o
  *fill*         0x00000000c00415cc       0x14 
- .data          0x00000000c00415e0      0x1ec modules.o
+ .data          0x00000000c00415e0      0x1ec gde_serv.o
  *fill*         0x00000000c00417cc       0x14 
- .data          0x00000000c00417e0      0x1ec signal.o
+ .data          0x00000000c00417e0      0x1ec debug.o
  *fill*         0x00000000c00419cc       0x14 
- .data          0x00000000c00419e0      0x1ec sm.o
+ .data          0x00000000c00419e0      0x1ec diskvol.o
+ .data          0x00000000c0041bcc        0x0 install.o
  *fill*         0x00000000c0041bcc       0x14 
- .data          0x00000000c0041be0      0x1ec init.o
+ .data          0x00000000c0041be0      0x1ec object.o
  *fill*         0x00000000c0041dcc       0x14 
- .data          0x00000000c0041de0      0x244 system.o
- *fill*         0x00000000c0042024       0x1c 
- .data          0x00000000c0042040      0x1ec execve.o
- *fill*         0x00000000c004222c       0x14 
- .data          0x00000000c0042240      0x1ec cpuamd.o
- *fill*         0x00000000c004242c       0x14 
- .data          0x00000000c0042440      0x1ec portsx86.o
- *fill*         0x00000000c004262c       0x14 
- .data          0x00000000c0042640      0x1ec syscall.o
- *fill*         0x00000000c004282c       0x14 
- .data          0x00000000c0042840      0x1ec x86.o
- *fill*         0x00000000c0042a2c       0x14 
- .data          0x00000000c0042a40      0x1ec detect.o
- *fill*         0x00000000c0042c2c       0x14 
- .data          0x00000000c0042c40      0x1ec hal.o
- *fill*         0x00000000c0042e2c       0x14 
- .data          0x00000000c0042e40      0x1ec ahci.o
- *fill*         0x00000000c004302c       0x14 
- .data          0x00000000c0043040      0x1ec ata.o
+ .data          0x00000000c0041de0      0x1ec runtime.o
+ *fill*         0x00000000c0041fcc       0x14 
+ .data          0x00000000c0041fe0      0x1ec abort.o
+ *fill*         0x00000000c00421cc       0x14 
+ .data          0x00000000c00421e0      0x1ec info.o
+ *fill*         0x00000000c00423cc       0x14 
+ .data          0x00000000c00423e0      0x1ec io.o
+ *fill*         0x00000000c00425cc       0x14 
+ .data          0x00000000c00425e0      0x1ec modules.o
+ *fill*         0x00000000c00427cc       0x14 
+ .data          0x00000000c00427e0      0x1ec signal.o
+ *fill*         0x00000000c00429cc       0x14 
+ .data          0x00000000c00429e0      0x1ec sm.o
+ *fill*         0x00000000c0042bcc       0x14 
+ .data          0x00000000c0042be0      0x1ec init.o
+ *fill*         0x00000000c0042dcc       0x14 
+ .data          0x00000000c0042de0      0x244 system.o
+ *fill*         0x00000000c0043024       0x1c 
+ .data          0x00000000c0043040      0x1ec execve.o
  *fill*         0x00000000c004322c       0x14 
- .data          0x00000000c0043240      0x1ec atadma.o
+ .data          0x00000000c0043240      0x1ec cpuamd.o
  *fill*         0x00000000c004342c       0x14 
- .data          0x00000000c0043440      0x1ec atainit.o
+ .data          0x00000000c0043440      0x1ec portsx86.o
  *fill*         0x00000000c004362c       0x14 
- .data          0x00000000c0043640      0x1ec atairq.o
+ .data          0x00000000c0043640      0x1ec syscall.o
  *fill*         0x00000000c004382c       0x14 
- .data          0x00000000c0043840      0x600 atapci.o
-                0x00000000c0043a40                _pci_classes
- .data          0x00000000c0043e40      0x1ec hdd.o
+ .data          0x00000000c0043840      0x1ec x86.o
+ *fill*         0x00000000c0043a2c       0x14 
+ .data          0x00000000c0043a40      0x1ec detect.o
+ *fill*         0x00000000c0043c2c       0x14 
+ .data          0x00000000c0043c40      0x1ec hal.o
+ *fill*         0x00000000c0043e2c       0x14 
+ .data          0x00000000c0043e40      0x1ec ahci.o
  *fill*         0x00000000c004402c       0x14 
- .data          0x00000000c0044040      0x1ec channel.o
+ .data          0x00000000c0044040      0x1ec ata.o
  *fill*         0x00000000c004422c       0x14 
- .data          0x00000000c0044240      0x1ec network.o
+ .data          0x00000000c0044240      0x1ec atadma.o
  *fill*         0x00000000c004442c       0x14 
- .data          0x00000000c0044440      0x1ec nicintel.o
+ .data          0x00000000c0044440      0x1ec atainit.o
  *fill*         0x00000000c004462c       0x14 
- .data          0x00000000c0044640      0x1ec nsocket.o
+ .data          0x00000000c0044640      0x1ec atairq.o
  *fill*         0x00000000c004482c       0x14 
- .data          0x00000000c0044840      0xe64 pci.o
-                0x00000000c0044a40                _pci_classes2
-                0x00000000c0044e40                _pci_classnames
- *fill*         0x00000000c00456a4       0x1c 
- .data          0x00000000c00456c0      0x24c pciinfo.o
- *fill*         0x00000000c004590c       0x14 
- .data          0x00000000c0045920      0x1ec pciscan.o
- *fill*         0x00000000c0045b0c       0x14 
- .data          0x00000000c0045b20      0x1ec tty.o
- *fill*         0x00000000c0045d0c       0x14 
- .data          0x00000000c0045d20      0x1ec pty.o
- .data          0x00000000c0045f0c        0x0 usb.o
- *fill*         0x00000000c0045f0c       0x14 
- .data          0x00000000c0045f20      0x1ec video.o
- *fill*         0x00000000c004610c       0x14 
- .data          0x00000000c0046120      0x1ec vsync.o
- *fill*         0x00000000c004630c       0x14 
- .data          0x00000000c0046320      0x1ec screen.o
- *fill*         0x00000000c004650c       0x14 
- .data          0x00000000c0046520      0x1ec xproc.o
- *fill*         0x00000000c004670c       0x14 
- .data          0x00000000c0046720      0x1ec i8042.o
+ .data          0x00000000c0044840      0x600 atapci.o
+                0x00000000c0044a40                _pci_classes
+ .data          0x00000000c0044e40      0x1ec hdd.o
+ *fill*         0x00000000c004502c       0x14 
+ .data          0x00000000c0045040      0x1ec channel.o
+ *fill*         0x00000000c004522c       0x14 
+ .data          0x00000000c0045240      0x1ec network.o
+ *fill*         0x00000000c004542c       0x14 
+ .data          0x00000000c0045440      0x1ec nicintel.o
+ *fill*         0x00000000c004562c       0x14 
+ .data          0x00000000c0045640      0x1ec nsocket.o
+ *fill*         0x00000000c004582c       0x14 
+ .data          0x00000000c0045840      0xe64 pci.o
+                0x00000000c0045a40                _pci_classes2
+                0x00000000c0045e40                _pci_classnames
+ *fill*         0x00000000c00466a4       0x1c 
+ .data          0x00000000c00466c0      0x24c pciinfo.o
  *fill*         0x00000000c004690c       0x14 
- .data          0x00000000c0046920      0x1ec keyboard.o
+ .data          0x00000000c0046920      0x1ec pciscan.o
  *fill*         0x00000000c0046b0c       0x14 
- .data          0x00000000c0046b20      0x1ec mouse.o
+ .data          0x00000000c0046b20      0x1ec tty.o
  *fill*         0x00000000c0046d0c       0x14 
- .data          0x00000000c0046d20      0x1ec ps2kbd.o
+ .data          0x00000000c0046d20      0x1ec pty.o
+ .data          0x00000000c0046f0c        0x0 usb.o
  *fill*         0x00000000c0046f0c       0x14 
- .data          0x00000000c0046f20      0x1ec ps2mouse.o
+ .data          0x00000000c0046f20      0x1ec video.o
  *fill*         0x00000000c004710c       0x14 
- .data          0x00000000c0047120      0x1ec ldisc.o
+ .data          0x00000000c0047120      0x1ec vsync.o
  *fill*         0x00000000c004730c       0x14 
- .data          0x00000000c0047320      0x1ec apic.o
+ .data          0x00000000c0047320      0x1ec screen.o
  *fill*         0x00000000c004750c       0x14 
- .data          0x00000000c0047520      0x1ec pic.o
+ .data          0x00000000c0047520      0x1ec xproc.o
  *fill*         0x00000000c004770c       0x14 
- .data          0x00000000c0047720      0x1ec rtc.o
+ .data          0x00000000c0047720      0x1ec i8042.o
  *fill*         0x00000000c004790c       0x14 
- .data          0x00000000c0047920      0x1ec serial.o
+ .data          0x00000000c0047920      0x1ec keyboard.o
  *fill*         0x00000000c0047b0c       0x14 
- .data          0x00000000c0047b20      0x1ec timer.o
+ .data          0x00000000c0047b20      0x1ec mouse.o
  *fill*         0x00000000c0047d0c       0x14 
- .data          0x00000000c0047d20      0x1ec cf.o
+ .data          0x00000000c0047d20      0x1ec ps2kbd.o
  *fill*         0x00000000c0047f0c       0x14 
- .data          0x00000000c0047f20      0x1ec format.o
+ .data          0x00000000c0047f20      0x1ec ps2mouse.o
  *fill*         0x00000000c004810c       0x14 
- .data          0x00000000c0048120      0x1ec fs.o
+ .data          0x00000000c0048120      0x1ec ldisc.o
  *fill*         0x00000000c004830c       0x14 
- .data          0x00000000c0048320      0x1ec read.o
+ .data          0x00000000c0048320      0x1ec apic.o
  *fill*         0x00000000c004850c       0x14 
- .data          0x00000000c0048520      0x1ec search.o
+ .data          0x00000000c0048520      0x1ec pic.o
  *fill*         0x00000000c004870c       0x14 
- .data          0x00000000c0048720      0x1ec write.o
+ .data          0x00000000c0048720      0x1ec rtc.o
  *fill*         0x00000000c004890c       0x14 
- .data          0x00000000c0048920      0x1ec cedge.o
+ .data          0x00000000c0048920      0x1ec serial.o
  *fill*         0x00000000c0048b0c       0x14 
- .data          0x00000000c0048b20      0x1ec bg.o
+ .data          0x00000000c0048b20      0x1ec timer.o
  *fill*         0x00000000c0048d0c       0x14 
- .data          0x00000000c0048d20      0x1ec bmp.o
+ .data          0x00000000c0048d20      0x1ec cf.o
  *fill*         0x00000000c0048f0c       0x14 
- .data          0x00000000c0048f20      0x1ec button.o
+ .data          0x00000000c0048f20      0x1ec format.o
  *fill*         0x00000000c004910c       0x14 
- .data          0x00000000c0049120      0x1ec char.o
+ .data          0x00000000c0049120      0x1ec fs.o
  *fill*         0x00000000c004930c       0x14 
- .data          0x00000000c0049320      0x1ec createw.o
+ .data          0x00000000c0049320      0x1ec read.o
  *fill*         0x00000000c004950c       0x14 
- .data          0x00000000c0049520      0x1ec dtext.o
+ .data          0x00000000c0049520      0x1ec search.o
  *fill*         0x00000000c004970c       0x14 
- .data          0x00000000c0049720      0x1ec font.o
+ .data          0x00000000c0049720      0x1ec write.o
  *fill*         0x00000000c004990c       0x14 
- .data          0x00000000c0049920      0x1ec grid.o
+ .data          0x00000000c0049920      0x1ec cedge.o
  *fill*         0x00000000c0049b0c       0x14 
- .data          0x00000000c0049b20      0x1ec line.o
+ .data          0x00000000c0049b20      0x1ec bg.o
  *fill*         0x00000000c0049d0c       0x14 
- .data          0x00000000c0049d20      0x1ec menu.o
+ .data          0x00000000c0049d20      0x1ec bmp.o
  *fill*         0x00000000c0049f0c       0x14 
- .data          0x00000000c0049f20      0x1ec menubar.o
+ .data          0x00000000c0049f20      0x1ec button.o
  *fill*         0x00000000c004a10c       0x14 
- .data          0x00000000c004a120      0x1ec pixel.o
+ .data          0x00000000c004a120      0x1ec char.o
  *fill*         0x00000000c004a30c       0x14 
- .data          0x00000000c004a320      0x1ec rect.o
+ .data          0x00000000c004a320      0x1ec createw.o
  *fill*         0x00000000c004a50c       0x14 
- .data          0x00000000c004a520      0x1ec sbar.o
+ .data          0x00000000c004a520      0x1ec dtext.o
  *fill*         0x00000000c004a70c       0x14 
- .data          0x00000000c004a720      0x1ec toolbar.o
+ .data          0x00000000c004a720      0x1ec font.o
  *fill*         0x00000000c004a90c       0x14 
- .data          0x00000000c004a920      0x1ec window.o
+ .data          0x00000000c004a920      0x1ec grid.o
  *fill*         0x00000000c004ab0c       0x14 
- .data          0x00000000c004ab20      0x1ec logoff.o
+ .data          0x00000000c004ab20      0x1ec line.o
  *fill*         0x00000000c004ad0c       0x14 
- .data          0x00000000c004ad20      0x1ec logon.o
+ .data          0x00000000c004ad20      0x1ec menu.o
  *fill*         0x00000000c004af0c       0x14 
- .data          0x00000000c004af20      0x1ec input.o
+ .data          0x00000000c004af20      0x1ec menubar.o
  *fill*         0x00000000c004b10c       0x14 
- .data          0x00000000c004b120      0x1ec output.o
+ .data          0x00000000c004b120      0x1ec pixel.o
  *fill*         0x00000000c004b30c       0x14 
- .data          0x00000000c004b320      0x1ec terminal.o
+ .data          0x00000000c004b320      0x1ec rect.o
  *fill*         0x00000000c004b50c       0x14 
- .data          0x00000000c004b520      0x1ec desktop.o
+ .data          0x00000000c004b520      0x1ec sbar.o
  *fill*         0x00000000c004b70c       0x14 
- .data          0x00000000c004b720      0x1ec room.o
+ .data          0x00000000c004b720      0x1ec toolbar.o
  *fill*         0x00000000c004b90c       0x14 
- .data          0x00000000c004b920      0x1ec userenv.o
+ .data          0x00000000c004b920      0x1ec window.o
  *fill*         0x00000000c004bb0c       0x14 
- .data          0x00000000c004bb20      0x1ec usession.o
+ .data          0x00000000c004bb20      0x1ec logoff.o
  *fill*         0x00000000c004bd0c       0x14 
- .data          0x00000000c004bd20      0x1ec kgws.o
+ .data          0x00000000c004bd20      0x1ec logon.o
  *fill*         0x00000000c004bf0c       0x14 
- .data          0x00000000c004bf20      0x1ec vfs.o
+ .data          0x00000000c004bf20      0x1ec input.o
  *fill*         0x00000000c004c10c       0x14 
- .data          0x00000000c004c120      0x1ec x86cont.o
+ .data          0x00000000c004c120      0x1ec output.o
  *fill*         0x00000000c004c30c       0x14 
- .data          0x00000000c004c320      0x1ec x86fault.o
+ .data          0x00000000c004c320      0x1ec terminal.o
  *fill*         0x00000000c004c50c       0x14 
- .data          0x00000000c004c520      0x1ec x86start.o
+ .data          0x00000000c004c520      0x1ec desktop.o
  *fill*         0x00000000c004c70c       0x14 
- .data          0x00000000c004c720      0x1ec dispatch.o
+ .data          0x00000000c004c720      0x1ec room.o
  *fill*         0x00000000c004c90c       0x14 
- .data          0x00000000c004c920      0x1ec pheap.o
+ .data          0x00000000c004c920      0x1ec userenv.o
  *fill*         0x00000000c004cb0c       0x14 
- .data          0x00000000c004cb20      0x1ec process.o
+ .data          0x00000000c004cb20      0x1ec usession.o
  *fill*         0x00000000c004cd0c       0x14 
- .data          0x00000000c004cd20      0x1ec queue.o
+ .data          0x00000000c004cd20      0x1ec kgws.o
  *fill*         0x00000000c004cf0c       0x14 
- .data          0x00000000c004cf20      0x1ec spawn.o
+ .data          0x00000000c004cf20      0x1ec vfs.o
  *fill*         0x00000000c004d10c       0x14 
- .data          0x00000000c004d120      0x1ec tasks.o
+ .data          0x00000000c004d120      0x1ec x86cont.o
  *fill*         0x00000000c004d30c       0x14 
- .data          0x00000000c004d320      0x1ec theap.o
+ .data          0x00000000c004d320      0x1ec x86fault.o
  *fill*         0x00000000c004d50c       0x14 
- .data          0x00000000c004d520      0x1ec thread.o
+ .data          0x00000000c004d520      0x1ec x86start.o
  *fill*         0x00000000c004d70c       0x14 
- .data          0x00000000c004d720      0x1ec threadi.o
+ .data          0x00000000c004d720      0x1ec dispatch.o
  *fill*         0x00000000c004d90c       0x14 
- .data          0x00000000c004d920      0x1ec ts.o
+ .data          0x00000000c004d920      0x1ec pheap.o
  *fill*         0x00000000c004db0c       0x14 
- .data          0x00000000c004db20      0x1ec tstack.o
+ .data          0x00000000c004db20      0x1ec process.o
  *fill*         0x00000000c004dd0c       0x14 
- .data          0x00000000c004dd20      0x1ec callout.o
- .data          0x00000000c004df0c        0x0 callfar.o
+ .data          0x00000000c004dd20      0x1ec queue.o
  *fill*         0x00000000c004df0c       0x14 
- .data          0x00000000c004df20      0x1ec ipc.o
+ .data          0x00000000c004df20      0x1ec spawn.o
  *fill*         0x00000000c004e10c       0x14 
- .data          0x00000000c004e120      0x1ec ipccore.o
+ .data          0x00000000c004e120      0x1ec tasks.o
  *fill*         0x00000000c004e30c       0x14 
- .data          0x00000000c004e320      0x1ec sem.o
+ .data          0x00000000c004e320      0x1ec theap.o
  *fill*         0x00000000c004e50c       0x14 
- .data          0x00000000c004e520      0x1ec memory.o
+ .data          0x00000000c004e520      0x1ec thread.o
  *fill*         0x00000000c004e70c       0x14 
- .data          0x00000000c004e720      0x1ec mminfo.o
+ .data          0x00000000c004e720      0x1ec threadi.o
  *fill*         0x00000000c004e90c       0x14 
- .data          0x00000000c004e920      0x1ec mmpool.o
+ .data          0x00000000c004e920      0x1ec ts.o
  *fill*         0x00000000c004eb0c       0x14 
- .data          0x00000000c004eb20      0x1f0 pages.o
-                0x00000000c004ed0c                _table_pointer_heap_base
- *fill*         0x00000000c004ed10       0x10 
- .data          0x00000000c004ed20      0x1ec preempt.o
+ .data          0x00000000c004eb20      0x1ec tstack.o
+ *fill*         0x00000000c004ed0c       0x14 
+ .data          0x00000000c004ed20      0x1ec callout.o
+ .data          0x00000000c004ef0c        0x0 callfar.o
  *fill*         0x00000000c004ef0c       0x14 
- .data          0x00000000c004ef20      0x1ec priority.o
+ .data          0x00000000c004ef20      0x1ec ipc.o
  *fill*         0x00000000c004f10c       0x14 
- .data          0x00000000c004f120      0x1ec sched.o
+ .data          0x00000000c004f120      0x1ec ipccore.o
  *fill*         0x00000000c004f30c       0x14 
- .data          0x00000000c004f320      0x1ec schedi.o
+ .data          0x00000000c004f320      0x1ec sem.o
  *fill*         0x00000000c004f50c       0x14 
- .data          0x00000000c004f520      0x1ec create.o
+ .data          0x00000000c004f520      0x1ec memory.o
  *fill*         0x00000000c004f70c       0x14 
- .data          0x00000000c004f720      0x1ec mk.o
+ .data          0x00000000c004f720      0x1ec mminfo.o
  *fill*         0x00000000c004f90c       0x14 
- .data          0x00000000c004f920      0x1ec request.o
-                0x00000000c004fb0c                _data_end = .
-                0x00000000c0050000                . = ALIGN (0x1000)
- *fill*         0x00000000c004fb0c      0x4f4 
+ .data          0x00000000c004f920      0x1ec mmpool.o
+ *fill*         0x00000000c004fb0c       0x14 
+ .data          0x00000000c004fb20      0x1f0 pages.o
+                0x00000000c004fd0c                _table_pointer_heap_base
+ *fill*         0x00000000c004fd10       0x10 
+ .data          0x00000000c004fd20      0x1ec preempt.o
+ *fill*         0x00000000c004ff0c       0x14 
+ .data          0x00000000c004ff20      0x1ec priority.o
+ *fill*         0x00000000c005010c       0x14 
+ .data          0x00000000c0050120      0x1ec sched.o
+ *fill*         0x00000000c005030c       0x14 
+ .data          0x00000000c0050320      0x1ec schedi.o
+ *fill*         0x00000000c005050c       0x14 
+ .data          0x00000000c0050520      0x1ec create.o
+ *fill*         0x00000000c005070c       0x14 
+ .data          0x00000000c0050720      0x1ec mk.o
+ *fill*         0x00000000c005090c       0x14 
+ .data          0x00000000c0050920      0x1ec request.o
+                0x00000000c0050b0c                _data_end = .
+                0x00000000c0051000                . = ALIGN (0x1000)
+ *fill*         0x00000000c0050b0c      0x4f4 
 
-.got            0x00000000c0050000        0x0
- .got           0x00000000c0050000        0x0 head.o
+.got            0x00000000c0051000        0x0
+ .got           0x00000000c0051000        0x0 head.o
 
-.got.plt        0x00000000c0050000        0x0
- .got.plt       0x00000000c0050000        0x0 head.o
+.got.plt        0x00000000c0051000        0x0
+ .got.plt       0x00000000c0051000        0x0 head.o
 
-.igot.plt       0x00000000c0050000        0x0
- .igot.plt      0x00000000c0050000        0x0 head.o
+.igot.plt       0x00000000c0051000        0x0
+ .igot.plt      0x00000000c0051000        0x0 head.o
 
-.bss            0x00000000c0050000    0x4e000
-                0x00000000c0050000                _bss_begin = .
+.bss            0x00000000c0051000    0x4e000
+                0x00000000c0051000                _bss_begin = .
  *(COMMON)
- COMMON         0x00000000c0050000    0x3c37c main.o
-                0x00000000c0050000                _framepoolBackBuffer3
-                0x00000000c0050004                _guiMenu
-                0x00000000c0050020                _usessionList
-                0x00000000c0050060                _terminalOffsetMax
-                0x00000000c0050064                _g_backbuffer_va
-                0x00000000c0050068                _g_module_volume_initialized
-                0x00000000c005006c                _server_stdio
-                0x00000000c0050080                _menuList
-                0x00000000c0050480                _Graphics
-                0x00000000c00504a0                _framepoolList
-                0x00000000c00514a0                _dispatcherType
-                0x00000000c00514a4                _pci_handler_address
-                0x00000000c00514a8                _mainButton3
-                0x00000000c00514ac                _zicaaaaadasf
-                0x00000000c00514b0                _IdleThread
-                0x00000000c00514b4                _Irq9
-                0x00000000c00514b8                _g_frontbuffer_va
-                0x00000000c00514bc                _clientCW
-                0x00000000c00514c0                _userconfig_Status
-                0x00000000c00514e0                _prompt
-                0x00000000c00515e0                _MenuBar
-                0x00000000c00515e4                _semaforo_color
-                0x00000000c00515e8                _g_module_debug_initialized
-                0x00000000c0051600                _threadList
-                0x00000000c0052600                _pci_device
-                0x00000000c0052604                _g_module_disk_initialized
-                0x00000000c0052608                _terminalOffset
-                0x00000000c005260c                _kernel_heap_end
-                0x00000000c0052610                _scrolllock_status
-                0x00000000c0052620                _screenGrid
-                0x00000000c0052820                _wait_queue
-                0x00000000c0052824                _windowzoneStart
-                0x00000000c0052828                _partition
-                0x00000000c005282c                _fatbits
-                0x00000000c0052830                _g9x14fontAddress
-                0x00000000c0052834                _framepoolBackBuffer2
-                0x00000000c0052838                _CurrentChannel
-                0x00000000c005283c                _task_switch_status
-                0x00000000c0052840                _ata_record_dev
-                0x00000000c0052844                _systemzoneEnd
-                0x00000000c0052848                _CurrentConsole
-                0x00000000c005284c                _lineOffsetMax
-                0x00000000c0052850                _delta_x
-                0x00000000c0052854                _serverSP
-                0x00000000c0052858                _LocalHostHTTPSocket
-                0x00000000c005285c                _ioControl_mouse
-                0x00000000c0052860                _GRID
-                0x00000000c0052864                _cursorIconBuffer
-                0x00000000c0052868                _preempted_task
-                0x00000000c005286c                _ActiveWindow
-                0x00000000c0052870                _mouse_buttom_3
-                0x00000000c0052874                _capslock_status
-                0x00000000c0052878                _KernelArgs
-                0x00000000c0052888                _Irq5
-                0x00000000c005288c                _Irq13
-                0x00000000c0052890                _Irq2
-                0x00000000c00528a0                _pcideviceList
-                0x00000000c0052920                _memorysizeAvailablePhysicalMemory
-                0x00000000c0052924                _IpcProcedure
-                0x00000000c0052928                _fullscreen_window
-                0x00000000c0052940                _xxx_gdt
-                0x00000000c0052a40                _g_navigationbar_height
-                0x00000000c0052a44                _keyboard_message_head
-                0x00000000c0052a48                _windowstations_count
-                0x00000000c0052a4c                _textcursorStatus
-                0x00000000c0052a50                _pmiMemoryInfo
-                0x00000000c0052a54                _mm_used_heappool
-                0x00000000c0052a58                _current_stdin
-                0x00000000c0052a5c                _SavedRect
-                0x00000000c0052a60                _TaskManThread
-                0x00000000c0052a64                _current_volume_string
-                0x00000000c0052a68                _mouse_button_action
-                0x00000000c0052a6c                _Irq15
-                0x00000000c0052a70                _g_module_fs_initialized
-                0x00000000c0052a74                _bmp_change_color_flag
-                0x00000000c0052a78                _framepoolBackBuffer4
-                0x00000000c0052a80                _idleprocessorList
-                0x00000000c0052b00                _g_driver_hdd_initialized
-                0x00000000c0052b04                _g9x16fontAddress
-                0x00000000c0052b08                _storage
-                0x00000000c0052b0c                _systemzoneStart
-                0x00000000c0052b10                _waiting_procs
-                0x00000000c0052b14                _running_tasks
-                0x00000000c0052b18                _desktop_Conductor2
-                0x00000000c0052b1c                _g_device_screen_width
-                0x00000000c0052b20                _desktop_rootConductor
-                0x00000000c0052b24                _extra
-                0x00000000c0052b40                _fsbFrames
-                0x00000000c0053b40                _CurrentTTY
-                0x00000000c0053b44                _g_user_space_framepool_index
-                0x00000000c0053b48                _Initialization
-                0x00000000c0053b60                _Console
-                0x00000000c0053b64                _next_thread
-                0x00000000c0053b80                _GUI_CONFIG
-                0x00000000c0053bbc                _systemzoneSize
-                0x00000000c0053bc0                _zorderCounter
-                0x00000000c0053bc4                _mmFramesSuperBlockTotalUsed
-                0x00000000c0053bc8                _quantum
-                0x00000000c0053bcc                _stderr
-                0x00000000c0053bd0                _g_mainwindow_width
-                0x00000000c0053bd4                _cur_process
-                0x00000000c0053bd8                _waiting_list_head
-                0x00000000c0053bdc                _FileAccess
-                0x00000000c0053be0                _g_logged
-                0x00000000c0053be4                _file_TaskMan
-                0x00000000c0053be8                _RGBA
-                0x00000000c0053bec                _desktop0
-                0x00000000c0053bf0                _blocked_list_head
-                0x00000000c0053c00                _nicList
-                0x00000000c0053c20                _gui
-                0x00000000c0053c24                _CurrentUserSession
-                0x00000000c0053c28                _g_device_screen_height
-                0x00000000c0053c2c                _g_mousepointer_height
-                0x00000000c0053c30                _g_module_uem_initialized
-                0x00000000c0053c34                _processor
-                0x00000000c0053c40                _userList
-                0x00000000c0053c80                _prompt_pos
-                0x00000000c0053c84                _saved_mouse_x
-                0x00000000c0053c88                _Irq10
-                0x00000000c0053c8c                _Conductor
-                0x00000000c0053c90                _ide_handler_address
-                0x00000000c0053c94                _Process
-                0x00000000c0053c98                _mbr
-                0x00000000c0053c9c                _current_mmblock
-                0x00000000c0053ca0                _deviceList
-                0x00000000c00540a0                ___spinlock_ipc
-                0x00000000c00540a4                _ASpace
-                0x00000000c00540c0                _objects_um
-                0x00000000c0060180                _mmFramesSuperBlockSize
-                0x00000000c0060184                _kernel_stack_start
-                0x00000000c0060188                _Rtc
-                0x00000000c006018c                _start_new_task_address
-                0x00000000c0060190                _g_module_gui_initialized
-                0x00000000c0060194                _file_Init
-                0x00000000c0060198                _KeInitPhase
-                0x00000000c006019c                _windows_count
-                0x00000000c00601a0                _pagetableList
-                0x00000000c00611a0                _combobox_window
-                0x00000000c00611a4                _framepoolBackBuffer1
-                0x00000000c00611a8                _g_driver_video_initialized
-                0x00000000c00611ac                _active_window
-                0x00000000c00611b0                _mm_used_gramadocore_taskman_heap
-                0x00000000c00611c0                _objects_km
-                0x00000000c006d280                _vfs
-                0x00000000c006d284                _current_pci_device
-                0x00000000c006d288                _file_InitTXT
-                0x00000000c006d28c                _g_show_text_cursor
-                0x00000000c006d290                _Hardware
-                0x00000000c006d294                _DefaultUserSession
-                0x00000000c006d298                _current_process
-                0x00000000c006d29c                _mmglobalInitialingVAR
-                0x00000000c006d2a0                _appIconBuffer
-                0x00000000c006d2a4                _current_desktop
-                0x00000000c006d2a8                _Cursor
-                0x00000000c006d2ac                _numlock_status
-                0x00000000c006d2b0                _usession0
-                0x00000000c006d2b4                _g_gramadocore_shell_heap_size
-                0x00000000c006d2b8                _CurrentSocket
-                0x00000000c006d2bc                _TaskBar
-                0x00000000c006d2c0                _g_module_logoff_initialized
-                0x00000000c006d2c4                _pagetableCurrent
-                0x00000000c006d2c8                _usession_Conductor
-                0x00000000c006d2cc                _g8x14fontAddress
-                0x00000000c006d2d0                _Irq12
-                0x00000000c006d2d4                _mainButton1
-                0x00000000c006d2d8                _mm_used_gramadocore_shell_heap
-                0x00000000c006d2dc                _scStatus
-                0x00000000c006d2e0                _stdin
-                0x00000000c006d2e4                _g_frontbuffer_pa
-                0x00000000c006d2e8                _old_mouse_buttom_1
-                0x00000000c006d2ec                _xxxClonedThread
-                0x00000000c006d2f0                _gStreams
-                0x00000000c006d2f4                _mmFramesSuperBlockTotalFree
-                0x00000000c006d2f8                _gcharWidth
-                0x00000000c006d2fc                _logonMenu
-                0x00000000c006d300                _gTaskmanPageDirectoryAddress
-                0x00000000c006d304                _savedmouseoverwindowY
-                0x00000000c006d308                _file_BootLoader
-                0x00000000c006d320                _socketList
-                0x00000000c006d3a0                _g_module_logon_initialized
-                0x00000000c006d3a4                _client_stderr
-                0x00000000c006d3a8                _next_address
-                0x00000000c006d3ac                _destroy_window
-                0x00000000c006d3b0                _dispatcherQueueIndex
-                0x00000000c006d3b4                _fileIconBuffer
-                0x00000000c006d3b8                _room0
-                0x00000000c006d3bc                _kernel_heap_start
-                0x00000000c006d3c0                _g8x16fontAddress
-                0x00000000c006d3c4                _g_current_object
-                0x00000000c006d3c8                _PrideColorScheme
-                0x00000000c006d3cc                _current_room
-                0x00000000c006d3d0                _mac_address
-                0x00000000c006d3d4                _queue
-                0x00000000c006d3d8                _system_disk
-                0x00000000c006d3dc                _DispatchCountBlock
-                0x00000000c006d3e0                _current_dead_process
-                0x00000000c006d3e4                _shift_status
-                0x00000000c006d400                _ide_dma_prdt
-                0x00000000c006d420                _current_directory
-                0x00000000c006d424                _xxxClonedProcess
-                0x00000000c006d428                _g_wm_pid
-                0x00000000c006d440                _vfs_handle_list
-                0x00000000c006dc40                _sys_time_ms
-                0x00000000c006dc44                _kernel_stack_start_pa
-                0x00000000c006dc48                _rect
-                0x00000000c006dc4c                _partition_chars
-                0x00000000c006dc50                _logonStatus
-                0x00000000c006dc54                _framepoolFrontBuffer3
-                0x00000000c006dc58                _current_window
-                0x00000000c006dc5c                _terminalIconBuffer
-                0x00000000c006dc60                _g_available_heap
-                0x00000000c006dc64                _start_new_task_id
-                0x00000000c006dc68                _process_Conductor2
-                0x00000000c006dc6c                _g_heap_count
-                0x00000000c006dc70                _alt_status
-                0x00000000c006dc74                _schedulerType
-                0x00000000c006dc78                _g_cursor_width
-                0x00000000c006dc7c                _current_disk
-                0x00000000c006dc80                _volume1_rootdir
-                0x00000000c006dc84                _g_new_message
-                0x00000000c006dc88                _pwd_initialized
-                0x00000000c006dc8c                _Firmware
-                0x00000000c006dc90                _volume_bootpartition
-                0x00000000c006dc94                _file_BootManager
-                0x00000000c006dc98                _current_dead_thread
-                0x00000000c006dc9c                _current_keyboard_responder
-                0x00000000c006dca0                _system_message_write
-                0x00000000c006dca4                _semaforo_priority
-                0x00000000c006dca8                _mm_used_gramadocore_init_heap
-                0x00000000c006dcac                _mouseover_window
-                0x00000000c006dcb0                _kbMsgStatus
-                0x00000000c006dcb4                _g_module_objectmanager_initialized
-                0x00000000c006dcb8                _ata_record_channel
-                0x00000000c006dcbc                _zorderTopWindow
-                0x00000000c006dcc0                _gKernelPageDirectoryAddress
-                0x00000000c006dcc4                _g_current_framepool
-                0x00000000c006dcc8                _current_taskman_server
-                0x00000000c006dccc                _DefaultUser
-                0x00000000c006dcd0                _task_color
-                0x00000000c006dcd4                _framepoolFrontBuffer1
-                0x00000000c006dcd8                _heapCount
-                0x00000000c006dcdc                _windowzoneEnd
-                0x00000000c006dce0                _current_filesystem
-                0x00000000c006dce4                _Thread
-                0x00000000c006dce8                _g_pagedpool_va
-                0x00000000c006dcec                _current_stderr
-                0x00000000c006dd00                _ProcessorBlock
-                0x00000000c006dd30                _current_mouse_responder
-                0x00000000c006dd34                _pagedirectoryIdleProcess
-                0x00000000c006dd38                _client_stdio
-                0x00000000c006dd3c                _volume_vfs
-                0x00000000c006dd40                _g_mousepointer_x
-                0x00000000c006dd44                _terminal_count
-                0x00000000c006dd48                _usersession_start
-                0x00000000c006dd4c                _g_cursor_top
-                0x00000000c006dd50                _processors_count
-                0x00000000c006dd54                _CurrentProcedure
-                0x00000000c006dd58                _mmFramesSuperBlockTotal
-                0x00000000c006dd5c                _periodic_procs
-                0x00000000c006dd60                _g_inputmode
-                0x00000000c006dd64                _UserHeap
-                0x00000000c006dd68                _keyboard_handler_address
-                0x00000000c006dd6c                _kernel_stack_end
-                0x00000000c006dd70                _file_Kernel
-                0x00000000c006dd74                _current_tss
-                0x00000000c006dd78                _g_object_manager_status
-                0x00000000c006dd7c                _g_cursor_right
-                0x00000000c006dd80                _desktop_Conductor
-                0x00000000c006dd84                _InitProcess
-                0x00000000c006dd88                _system_volume
-                0x00000000c006dd8c                _microkernelStatus
-                0x00000000c006dd90                _zones
-                0x00000000c006dd94                _lineBuffer
-                0x00000000c006dd98                _miMemoryInfo
-                0x00000000c006dd9c                _desktopDefault
-                0x00000000c006dda0                _g_module_runtime_initialized
-                0x00000000c006dda4                _ioControl_keyboard
-                0x00000000c006dda8                _file_LA
-                0x00000000c006ddac                _VersionInfo
-                0x00000000c006ddc0                _inode_list
-                0x00000000c006e5c0                _file_CFE
-                0x00000000c006e5c4                _system_procs
-                0x00000000c006e5c8                _window_with_focus
-                0x00000000c006e5cc                _g_proc_status
-                0x00000000c006e5d0                _framepoolCurrent
-                0x00000000c006e5e0                _desktopList
-                0x00000000c006e620                _gNextKeyboardMessage
-                0x00000000c006e624                _pagedirectoryShared
-                0x00000000c006e628                _g_heappool_va
-                0x00000000c006e62c                _g_current_ide_channel
-                0x00000000c006e630                _idle
-                0x00000000c006e634                _g_spc
-                0x00000000c006e638                _KernelHeap
-                0x00000000c006e63c                _xxxxcrazy_stuff
-                0x00000000c006e640                _pagedirectoryCurrent
-                0x00000000c006e644                _gLogonPID
-                0x00000000c006e660                _VECTORS
-                0x00000000c006ea60                _CurrentWindow
-                0x00000000c006ea64                _g_product_type
-                0x00000000c006ea68                _vbr
-                0x00000000c006ea6c                _Irq14
-                0x00000000c006ea70                _g_nstream
-                0x00000000c006ea74                _g_heap_pointer
-                0x00000000c006ea78                _LineShell
-                0x00000000c006ea7c                _mouse_pos_x
-                0x00000000c006ea80                _ipcStatus
-                0x00000000c006ea84                _WindowWithFocus
-                0x00000000c006ea88                _task_count
-                0x00000000c006ea8c                _Screen
-                0x00000000c006ea90                _pipe_gramadocore_init_execve
-                0x00000000c006eaa0                _channelList
-                0x00000000c006eb20                _g_kernel_nonpaged_memory
-                0x00000000c006eb24                _timer_handler_address
-                0x00000000c006eb28                _kernel_switch
-                0x00000000c006eb2c                _old_mouse_buttom_3
-                0x00000000c006eb30                _guiStatus
-                0x00000000c006eb34                _window_rootConductor
-                0x00000000c006eb38                _terminalLineMax
-                0x00000000c006eb40                _heapList
-                0x00000000c006eb60                _ttyCurrentX
-                0x00000000c006eb64                _volume2_rootdir
-                0x00000000c006eb68                _CurrentDesktop
-                0x00000000c006eb6c                _DriveContext
-                0x00000000c006eb80                _prompt_err
-                0x00000000c006ec80                _abnt2
-                0x00000000c006ec84                _gFocusBlocked
-                0x00000000c006ec88                _current_socket
-                0x00000000c006ec8c                _sata_handler_address
-                0x00000000c006ec90                _desktops_count
-                0x00000000c006ec94                _KernelPages
-                0x00000000c006eca0                _directory_entry_list
-                0x00000000c006f4a0                _g_driver_apic_initialized
-                0x00000000c006f4a4                __lockfocus
-                0x00000000c006f4a8                _file_download
-                0x00000000c006f4ac                _saved_mouse_y
-                0x00000000c006f4b0                _current_usersession
-                0x00000000c006f4b4                _g_video_mode
-                0x00000000c006f4b8                _fat
-                0x00000000c006f4bc                _ttyCurrentY
-                0x00000000c006f4c0                _mm_used_pagedpool
-                0x00000000c006f4c4                _stdio_verbosemode_flag
-                0x00000000c006f4c8                _file_bin
-                0x00000000c006f4cc                _mmFramesSuperBlockEnd
-                0x00000000c006f4e0                _processList
-                0x00000000c00704e0                _memorysizeAvailableVirtualMemory
-                0x00000000c00704e4                _memorysizeExtendedMemory
-                0x00000000c00704e8                _Irq8
-                0x00000000c00704ec                _lineLine
-                0x00000000c00704f0                _gPagedPollStart
-                0x00000000c0070500                _roomList
-                0x00000000c0070540                _g_backbuffer_pa
-                0x00000000c0070544                _systemzone
-                0x00000000c0070548                _keyboard_message_tail
-                0x00000000c007054c                _dead_thread_collector_status
-                0x00000000c0070550                _ata_pci
-                0x00000000c0070554                _ATAFlag
-                0x00000000c0070558                _sys_time_hz
-                0x00000000c007055c                _gLogoffPID
-                0x00000000c0070560                _gfontSize
-                0x00000000c0070564                _start_new_task_status
-                0x00000000c0070568                _CurrentProcess
-                0x00000000c007056c                _framepoolFrontBuffer4
-                0x00000000c0070570                _current_semaphore
-                0x00000000c0070580                _realtimeprocessorList
-                0x00000000c0070600                _timer_cursor_used
-                0x00000000c0070604                _g_gramadocore_init_heap_size
-                0x00000000c0070608                _clientCP
-                0x00000000c007060c                _g_gramadocore_init_heap_va
-                0x00000000c0070610                _g_total_physical_memory
-                0x00000000c0070614                _ready_list_head
-                0x00000000c0070618                _g_mousepointer_width
-                0x00000000c0070620                _HANDLERS
-                0x00000000c0070a40                _usession_rootConductor
-                0x00000000c0070a44                _current_terminal
-                0x00000000c0070a48                _line_stderr
-                0x00000000c0070a4c                _lineOffset
-                0x00000000c0070a50                _window_Conductor2
-                0x00000000c0070a54                _g_machine_type
-                0x00000000c0070a58                _current_tty
-                0x00000000c0070a5c                _client_stdout
-                0x00000000c0070a60                _eventStatus
-                0x00000000c0070a64                _Irq11
-                0x00000000c0070a68                _current_stdout
-                0x00000000c0070a6c                _ipcBuffer
-                0x00000000c0070a70                _newtask_EIP
-                0x00000000c0070a74                _memorysizeTotalVirtualMemory
-                0x00000000c0070a78                _top_window
-                0x00000000c0070a7c                _menuitemDefault
-                0x00000000c0070a80                _g_scheduler_status
-                0x00000000c0070a84                _FULLSCREEN_TABWINDOW
-                0x00000000c0070a88                _quit_message
-                0x00000000c0070a8c                _g_xserver_pid
-                0x00000000c0070a90                _TaskManProcess
-                0x00000000c0070a94                _LineHead
-                0x00000000c0070aa0                _ide_ports
-                0x00000000c0070b00                _SystemUser
-                0x00000000c0070b04                _mm_used_backbuffer
-                0x00000000c0070b08                _current_quantum
-                0x00000000c0070b0c                _stdout
-                0x00000000c0070b10                _dead_thread_collector_flag
-                0x00000000c0070b20                _activeprocessorList
-                0x00000000c0070ba0                _windowzoneSize
-                0x00000000c0070ba4                _g_driver_rtc_initialized
-                0x00000000c0070ba8                _SystemClasses
-                0x00000000c0070bc0                _objects_gui
-                0x00000000c007cc80                _g_navigationbar_width
-                0x00000000c007cc84                _gws_currentfont_address
-                0x00000000c007cca0                _windowList
-                0x00000000c007dca0                _gPagedPollEnd
-                0x00000000c007dca4                _windowzone
-                0x00000000c007dca8                _ShellThread
-                0x00000000c007dcc0                _ttyList
-                0x00000000c007dce0                _file_CS
-                0x00000000c007dce4                _memorysizeFree
-                0x00000000c007dd00                _Streams
-                0x00000000c007dd80                _Irq6
-                0x00000000c007dd84                _gInitPageDirectoryAddress
-                0x00000000c007dd88                _IDE
-                0x00000000c007dd9c                _g_cursor_left
-                0x00000000c007dda0                _g_system_color
-                0x00000000c007dda4                _g_cursor_bottom
-                0x00000000c007dda8                _Irq3
-                0x00000000c007ddac                _realtimeStatus
-                0x00000000c007ddb0                _editbox_window
-                0x00000000c007ddb4                _kernel_request
-                0x00000000c007ddb8                _idle_thread
-                0x00000000c007ddbc                _g_pageable_framepool_index_max
-                0x00000000c007ddc0                _current_thread
-                0x00000000c007dde0                _Pipes
-                0x00000000c007de00                _processorsList
-                0x00000000c007de80                _Bank
-                0x00000000c007de84                _fileBuffer
-                0x00000000c007de88                _timer_cursor_status
-                0x00000000c007de8c                _g_current_vm
-                0x00000000c007de90                _rectClientArea
-                0x00000000c007de94                _file_Shell
-                0x00000000c007dea0                _current_target_dir
-                0x00000000c007decc                _mm_used_kernel_area
-                0x00000000c007ded0                _schedulerQueue
-                0x00000000c007dee0                _systemSize
-                0x00000000c007dee4                _object
-                0x00000000c007dee8                _gDeveloperOptions
-                0x00000000c007df00                _keybuffer
-                0x00000000c007df80                _zorder
-                0x00000000c007dfa0                _keyboard_queue
-                0x00000000c007e0c0                _forkid
-                0x00000000c007e0c4                _menus_count
-                0x00000000c007e0c8                _current_volume
-                0x00000000c007e0cc                _shutdown_address
-                0x00000000c007e0e0                _ioControl
-                0x00000000c007e160                _devices
-                0x00000000c007e164                _terminalLine
-                0x00000000c007e168                _serialportError
-                0x00000000c007e16c                _desktop1
-                0x00000000c007e170                _gcharHeight
-                0x00000000c007e174                _g_use_default_user
-                0x00000000c007e178                _mouse_buttom_1
-                0x00000000c007e17c                _RING0IDLEThread
-                0x00000000c007e180                _mouse_status
-                0x00000000c007e184                _framepoolFrontBuffer2
-                0x00000000c007e188                _pipe_execve
-                0x00000000c007e18c                _g_gramadocore_taskman_heap_va
-                0x00000000c007e1a0                _diskList
-                0x00000000c007f1a0                _server_stderr
-                0x00000000c007f1a4                _Conductor2
-                0x00000000c007f1a8                _KernelClasses
-                0x00000000c007f1c0                _fsbFreeFrames
-                0x00000000c00801c0                _old_mouse_buttom_2
-                0x00000000c00801c4                _screenBuffers
-                0x00000000c00801c8                _current_process_pagedirectory_address
-                0x00000000c00801cc                _rr_procs
-                0x00000000c00801d0                _KernelProcess
-                0x00000000c00801d4                _delta_y
-                0x00000000c00801d8                _framepoolPageableSpace
-                0x00000000c00801dc                _lineLineMax
-                0x00000000c00801e0                _KernelHeapSize
-                0x00000000c00801e4                _xxx_gdt_ptr
-                0x00000000c00801ec                _HostDeviceInfo
-                0x00000000c0080200                _prompt_out
-                0x00000000c0080300                _bmp_selected_color
-                0x00000000c0080304                _g_driver_pci_initialized
-                0x00000000c0080320                _file_cluster_list
-                0x00000000c0080b20                _escape_status
-                0x00000000c0080b24                _memorysizeOtherMemory
-                0x00000000c0080b28                _IpcProcedureEx
-                0x00000000c0080b40                _mmblockList
-                0x00000000c0088b40                _g_driver_timer_initialized
-                0x00000000c0088b44                _ClonedThread
-                0x00000000c0088b48                _HostInfo
-                0x00000000c0088b4c                _ata_identify_dev_buf
-                0x00000000c0088b50                _Irq0
-                0x00000000c0088b54                _file_dd
-                0x00000000c0088b58                _DSpace
-                0x00000000c0088b5c                _g_next_app
-                0x00000000c0088b60                _g_gramadocore_taskman_heap_size
-                0x00000000c0088b80                _timerList
-                0x00000000c0088c00                _file_libs
-                0x00000000c0088c04                _idle_proc
-                0x00000000c0088c08                _clientCR
-                0x00000000c0088c0c                _g_useGUI
-                0x00000000c0088c10                _g_filesystem_type
-                0x00000000c0088c14                _Irq4
-                0x00000000c0088c18                _dirCount
-                0x00000000c0088c1c                _ShellProcess
-                0x00000000c0088c20                _keybuffer_head
-                0x00000000c0088c24                _CurrentBuffer
-                0x00000000c0088c28                _CurrentColorScheme
-                0x00000000c0088c2c                _next_quantum
-                0x00000000c0088c30                _process_rootConductor
-                0x00000000c0088c40                _dev_nport
-                0x00000000c0088c60                _stdio_terminalmode_flag
-                0x00000000c0088c64                _menuDefault
-                0x00000000c0088c68                _framepoolSmallSystemUserSpace
-                0x00000000c0088c6c                _memorysizeTotalPhysicalMemory
-                0x00000000c0088c70                _ata
-                0x00000000c0088c88                _rootConductor
-                0x00000000c0088c8c                _mouse_pos_y
-                0x00000000c0088c90                _gSystemStatus
-                0x00000000c0088c94                _DeveloperWindowCursor
-                0x00000000c0088c98                _tab_status
-                0x00000000c0088c9c                _Version
-                0x00000000c0088ca0                _file_pwd
-                0x00000000c0088cc0                _REQUEST
-                0x00000000c0088cf4                _userenvironmentStatus
-                0x00000000c0088cf8                _g_guiMinimal
-                0x00000000c0088cfc                _time_out
-                0x00000000c0088d00                _current_file
-                0x00000000c0088d04                _pagedirectoryKernelProcess
-                0x00000000c0088d08                _g_mainwindow_height
-                0x00000000c0088d0c                _VideoBlock
-                0x00000000c0088d28                _System
-                0x00000000c0088d2c                _KernelSize
-                0x00000000c0088d30                _Line
-                0x00000000c0088d40                _dispatcherReadyList
-                0x00000000c0088d68                _ScreenInfo
-                0x00000000c0088d6c                _CurrentCursor
-                0x00000000c0088d70                _g8x8fontAddress
-                0x00000000c0088d74                _KernelStackSize
-                0x00000000c0088d78                _zica
-                0x00000000c0088d7c                _memorysizeInstalledPhysicalMemory
-                0x00000000c0088d80                _keybuffer_index
-                0x00000000c0088d84                _g_cursor_color
-                0x00000000c0088d88                _memorysizeTotal
-                0x00000000c0088da0                _pageAllocList
-                0x00000000c0089da0                _g_system_mode
-                0x00000000c0089da4                _Irq1
-                0x00000000c0089da8                _g_current_video_mode
-                0x00000000c0089dac                _g_heap_count_max
-                0x00000000c0089db0                _ESCAPE_E0
-                0x00000000c0089db4                _cur_thread
-                0x00000000c0089db8                _current_group
-                0x00000000c0089dbc                _process_Conductor
-                0x00000000c0089dc0                _BackBufferInfo
-                0x00000000c0089dc4                _file_users
-                0x00000000c0089dc8                _conductorIndex
-                0x00000000c0089dcc                _g_mousepointer_y
-                0x00000000c0089dd0                _g_framepool_max
-                0x00000000c0089dd4                _task_waiting
-                0x00000000c0089dd8                _keybuffer_tail
-                0x00000000c0089ddc                _g_cursor_y
-                0x00000000c0089de0                _mm_used_user_area
-                0x00000000c0089de4                _QUEUES
-                0x00000000c0089df0                _volume_systempartition
-                0x00000000c0089df4                _Irq7
-                0x00000000c0089df8                _banksCount
-                0x00000000c0089dfc                _Pic
-                0x00000000c0089e00                _Platform
-                0x00000000c0089e04                _system_message_read
-                0x00000000c0089e08                _errno
-                0x00000000c0089e0c                _old
-                0x00000000c0089e10                _g_heap_size
-                0x00000000c0089e20                _zorderList
-                0x00000000c008a020                _gSystemEdition
-                0x00000000c008a040                _pagedirectoryList
-                0x00000000c008b040                _framepoolMediumSystemUserSpace
-                0x00000000c008b044                _mm_used_lfb
-                0x00000000c008b048                _menubarDefault
-                0x00000000c008b04c                _filesystem
-                0x00000000c008b050                _logoffStatus
-                0x00000000c008b054                _current_user
-                0x00000000c008b058                _WindowProcedure
-                0x00000000c008b05c                _framepoolKernelSpace
-                0x00000000c008b060                _memorysizeBaseMemory
-                0x00000000c008b064                _g_current_ide_device
-                0x00000000c008b068                _key_status
-                0x00000000c008b06c                _server_stdout
-                0x00000000c008b070                _g_file_system_type
-                0x00000000c008b074                _currentNIC
-                0x00000000c008b078                _g_gramadocore_shell_heap_va
-                0x00000000c008b07c                _mmblockCount
-                0x00000000c008b080                _prompt_status
-                0x00000000c008b084                _pagedirectoryTaskmanProcess
-                0x00000000c008b088                _ambiente
-                0x00000000c008b08c                _framepoolLargeSystemUserSpace
-                0x00000000c008b090                _g_platform_type
-                0x00000000c008b094                _folderIconBuffer
-                0x00000000c008b098                _line_stdin
-                0x00000000c008b09c                _g_kernel_paged_memory
-                0x00000000c008b0a0                _mmFramesSuperBlockStart
-                0x00000000c008b0a4                _mouseBMPBuffer
-                0x00000000c008b0a8                _g_driver_keyboard_initialized
-                0x00000000c008b0ac                _rtc
-                0x00000000c008b0b0                _bmp_substitute_color
-                0x00000000c008b0b4                _window_Conductor
-                0x00000000c008b0b8                _lastBank
-                0x00000000c008b0bc                _e1000_interrupt_flag
-                0x00000000c008b0c0                _g_mm_system_type
-                0x00000000c008b0c4                _g_kernel_lfb
-                0x00000000c008b0c8                _PciDrivers
-                0x00000000c008b0e0                _system_message_queue
-                0x00000000c008b160                _usession_Conductor2
-                0x00000000c008b164                _terminal_window
-                0x00000000c008b168                _mainButton2
-                0x00000000c008b16c                _CurrentScreen
-                0x00000000c008b170                _sys_time_ticks_total
-                0x00000000c008b174                _ttyLineCounter
-                0x00000000c008b178                _g_char_attrib
-                0x00000000c008b17c                _HumilityColorScheme
-                0x00000000c008b180                _memorysizeUsed
-                0x00000000c008b184                _window_mouse_over
-                0x00000000c008b188                _file_tmp
-                0x00000000c008b18c                _ctrl_status
-                0x00000000c008b190                _e1000_irq_count
-                0x00000000c008b194                _g_module_shell_initialized
-                0x00000000c008b198                _g_next_proc
-                0x00000000c008b1a0                _semaphoreList
-                0x00000000c008b224                _file_CWE
-                0x00000000c008b228                _winkey_status
-                0x00000000c008b22c                _FrontBufferInfo
-                0x00000000c008b230                _g_current_list
-                0x00000000c008b234                _savedmouseoverwindowX
-                0x00000000c008b238                _line_stdout
-                0x00000000c008b23c                _g_module_mm_initialized
-                0x00000000c008b240                _g_cursor_height
-                0x00000000c008b260                _current_workingdiretory_string
-                0x00000000c008b280                _gShellPageDirectoryAddress
-                0x00000000c008b2a0                _volumeList
-                0x00000000c008c2a0                _TERMINAL
-                0x00000000c008c360                _g_nova_mensagem
-                0x00000000c008c364                _current_menu
-                0x00000000c008c368                _pmiCurrent
-                0x00000000c008c36c                _Pci
-                0x00000000c008c370                _g_cursor_x
-                0x00000000c008c374                _mouse_buttom_2
-                0x00000000c008c378                _CurrentUser
- COMMON         0x00000000c008c37c       0x34 gde_serv.o
-                0x00000000c008c37c                _cwArg1
-                0x00000000c008c380                _cwArg2
-                0x00000000c008c384                _cwArg11
-                0x00000000c008c388                _cwArg8
-                0x00000000c008c38c                _cwArg3
-                0x00000000c008c390                _cwArg9
-                0x00000000c008c394                _cwArg10
-                0x00000000c008c398                _cwFlag
-                0x00000000c008c39c                _cwArg12
-                0x00000000c008c3a0                _cwArg5
-                0x00000000c008c3a4                _cwArg7
-                0x00000000c008c3a8                _cwArg4
-                0x00000000c008c3ac                _cwArg6
- COMMON         0x00000000c008c3b0       0x10 debug.o
-                0x00000000c008c3b0                _Mind
- COMMON         0x00000000c008c3c0        0x4 install.o
-                0x00000000c008c3c0                _xxxx_nothingxxxx
- COMMON         0x00000000c008c3c4        0x4 modules.o
-                0x00000000c008c3c4                _modulesStatus
- COMMON         0x00000000c008c3c8        0x4 signal.o
-                0x00000000c008c3c8                _Signal
- COMMON         0x00000000c008c3cc        0x4 ahci.o
-                0x00000000c008c3cc                _SATAFlag
- COMMON         0x00000000c008c3d0        0xc ata.o
-                0x00000000c008c3d0                _dma_addr
-                0x00000000c008c3d4                _current_dev
-                0x00000000c008c3d8                _ready_queue_dev
- COMMON         0x00000000c008c3dc        0x8 hdd.o
-                0x00000000c008c3dc                _hddError
-                0x00000000c008c3e0                _hddStatus
- COMMON         0x00000000c008c3e4        0x4 network.o
-                0x00000000c008c3e4                _network_status
- COMMON         0x00000000c008c3e8        0x5 nicintel.o
-                0x00000000c008c3e8                _nic_idt_entry_new_address
-                0x00000000c008c3ec                _nic_idt_entry_new_number
- *fill*         0x00000000c008c3ed        0x3 
- COMMON         0x00000000c008c3f0        0x8 pci.o
-                0x00000000c008c3f0                _pciListOffset
-                0x00000000c008c3f4                _pci_supported
- COMMON         0x00000000c008c3f8        0x8 video.o
-                0x00000000c008c3f8                _videoError
-                0x00000000c008c3fc                _videoStatus
- COMMON         0x00000000c008c400        0x8 screen.o
-                0x00000000c008c400                _screen_height
-                0x00000000c008c404                _screen_width
- COMMON         0x00000000c008c408        0x4 ps2mouse.o
-                0x00000000c008c408                _flagRefreshMouseOver
- COMMON         0x00000000c008c40c        0x8 pic.o
-                0x00000000c008c40c                _picError
-                0x00000000c008c410                _picStatus
- COMMON         0x00000000c008c414        0xc rtc.o
-                0x00000000c008c414                _rtcError
-                0x00000000c008c418                _rtcTicks
-                0x00000000c008c41c                _rtcStatus
- COMMON         0x00000000c008c420       0x20 timer.o
-                0x00000000c008c420                _timerShowTextCursor
-                0x00000000c008c424                _timerColor
-                0x00000000c008c428                _timerTextCursorStatus
-                0x00000000c008c42c                _timerStatus
-                0x00000000c008c430                _timerIdleState
-                0x00000000c008c434                _timerError
-                0x00000000c008c438                _timerLock
-                0x00000000c008c43c                _timerLine
- COMMON         0x00000000c008c440    0x10000 write.o
-                0x00000000c008c440                _list
- COMMON         0x00000000c009c440       0x18 window.o
-                0x00000000c009c440                _save_client_rect_top
-                0x00000000c009c444                _fsStatus
-                0x00000000c009c448                _xxxxsavemessage
-                0x00000000c009c44c                _save_client_rect_left
-                0x00000000c009c450                _save_client_rect_height
-                0x00000000c009c454                _save_client_rect_width
- COMMON         0x00000000c009c458        0x4 input.o
-                0x00000000c009c458                _xxxinini
- COMMON         0x00000000c009c45c        0xc kgws.o
-                0x00000000c009c45c                _gws_status
-                0x00000000c009c460                _gws_wm_PID
-                0x00000000c009c464                _gws_wm_status
- COMMON         0x00000000c009c468       0x40 x86cont.o
-                0x00000000c009c468                _contextESP
-                0x00000000c009c46c                _contextEDX
-                0x00000000c009c470                _contextFS
-                0x00000000c009c474                _contextDS
-                0x00000000c009c478                _contextESI
-                0x00000000c009c47c                _contextEIP
-                0x00000000c009c480                _contextGS
-                0x00000000c009c484                _contextEFLAGS
-                0x00000000c009c488                _contextECX
-                0x00000000c009c48c                _contextEBP
-                0x00000000c009c490                _contextCS
-                0x00000000c009c494                _contextEAX
-                0x00000000c009c498                _contextEBX
-                0x00000000c009c49c                _contextEDI
-                0x00000000c009c4a0                _contextES
-                0x00000000c009c4a4                _contextSS
- COMMON         0x00000000c009c4a8        0xc x86fault.o
-                0x00000000c009c4a8                _thread_failed_flag
-                0x00000000c009c4ac                _demand_paging_flag
-                0x00000000c009c4b0                _fatal_error_flag
- COMMON         0x00000000c009c4b4        0x8 process.o
-                0x00000000c009c4b4                _processNewPID
-                0x00000000c009c4b8                _caller_process_id
- COMMON         0x00000000c009c4bc        0x4 ts.o
-                0x00000000c009c4bc                _lock_taskswitch
- COMMON         0x00000000c009c4c0      0x110 ipccore.o
-                0x00000000c009c4c0                _GRAMADOCORE
- COMMON         0x00000000c009c5d0        0xc memory.o
-                0x00000000c009c5d0                _mm_prev_pointer
-                0x00000000c009c5d4                _last_size
-                0x00000000c009c5d8                _last_valid
+ COMMON         0x00000000c0051000    0x3c37c main.o
+                0x00000000c0051000                _framepoolBackBuffer3
+                0x00000000c0051004                _guiMenu
+                0x00000000c0051020                _usessionList
+                0x00000000c0051060                _terminalOffsetMax
+                0x00000000c0051064                _g_backbuffer_va
+                0x00000000c0051068                _g_module_volume_initialized
+                0x00000000c005106c                _server_stdio
+                0x00000000c0051080                _menuList
+                0x00000000c0051480                _Graphics
+                0x00000000c00514a0                _framepoolList
+                0x00000000c00524a0                _dispatcherType
+                0x00000000c00524a4                _pci_handler_address
+                0x00000000c00524a8                _mainButton3
+                0x00000000c00524ac                _zicaaaaadasf
+                0x00000000c00524b0                _IdleThread
+                0x00000000c00524b4                _Irq9
+                0x00000000c00524b8                _g_frontbuffer_va
+                0x00000000c00524bc                _clientCW
+                0x00000000c00524c0                _userconfig_Status
+                0x00000000c00524e0                _prompt
+                0x00000000c00525e0                _MenuBar
+                0x00000000c00525e4                _semaforo_color
+                0x00000000c00525e8                _g_module_debug_initialized
+                0x00000000c0052600                _threadList
+                0x00000000c0053600                _pci_device
+                0x00000000c0053604                _g_module_disk_initialized
+                0x00000000c0053608                _terminalOffset
+                0x00000000c005360c                _kernel_heap_end
+                0x00000000c0053610                _scrolllock_status
+                0x00000000c0053620                _screenGrid
+                0x00000000c0053820                _wait_queue
+                0x00000000c0053824                _windowzoneStart
+                0x00000000c0053828                _partition
+                0x00000000c005382c                _fatbits
+                0x00000000c0053830                _g9x14fontAddress
+                0x00000000c0053834                _framepoolBackBuffer2
+                0x00000000c0053838                _CurrentChannel
+                0x00000000c005383c                _task_switch_status
+                0x00000000c0053840                _ata_record_dev
+                0x00000000c0053844                _systemzoneEnd
+                0x00000000c0053848                _CurrentConsole
+                0x00000000c005384c                _lineOffsetMax
+                0x00000000c0053850                _delta_x
+                0x00000000c0053854                _serverSP
+                0x00000000c0053858                _LocalHostHTTPSocket
+                0x00000000c005385c                _ioControl_mouse
+                0x00000000c0053860                _GRID
+                0x00000000c0053864                _cursorIconBuffer
+                0x00000000c0053868                _preempted_task
+                0x00000000c005386c                _ActiveWindow
+                0x00000000c0053870                _mouse_buttom_3
+                0x00000000c0053874                _capslock_status
+                0x00000000c0053878                _KernelArgs
+                0x00000000c0053888                _Irq5
+                0x00000000c005388c                _Irq13
+                0x00000000c0053890                _Irq2
+                0x00000000c00538a0                _pcideviceList
+                0x00000000c0053920                _memorysizeAvailablePhysicalMemory
+                0x00000000c0053924                _IpcProcedure
+                0x00000000c0053928                _fullscreen_window
+                0x00000000c0053940                _xxx_gdt
+                0x00000000c0053a40                _g_navigationbar_height
+                0x00000000c0053a44                _keyboard_message_head
+                0x00000000c0053a48                _windowstations_count
+                0x00000000c0053a4c                _textcursorStatus
+                0x00000000c0053a50                _pmiMemoryInfo
+                0x00000000c0053a54                _mm_used_heappool
+                0x00000000c0053a58                _current_stdin
+                0x00000000c0053a5c                _SavedRect
+                0x00000000c0053a60                _TaskManThread
+                0x00000000c0053a64                _current_volume_string
+                0x00000000c0053a68                _mouse_button_action
+                0x00000000c0053a6c                _Irq15
+                0x00000000c0053a70                _g_module_fs_initialized
+                0x00000000c0053a74                _bmp_change_color_flag
+                0x00000000c0053a78                _framepoolBackBuffer4
+                0x00000000c0053a80                _idleprocessorList
+                0x00000000c0053b00                _g_driver_hdd_initialized
+                0x00000000c0053b04                _g9x16fontAddress
+                0x00000000c0053b08                _storage
+                0x00000000c0053b0c                _systemzoneStart
+                0x00000000c0053b10                _waiting_procs
+                0x00000000c0053b14                _running_tasks
+                0x00000000c0053b18                _desktop_Conductor2
+                0x00000000c0053b1c                _g_device_screen_width
+                0x00000000c0053b20                _desktop_rootConductor
+                0x00000000c0053b24                _extra
+                0x00000000c0053b40                _fsbFrames
+                0x00000000c0054b40                _CurrentTTY
+                0x00000000c0054b44                _g_user_space_framepool_index
+                0x00000000c0054b48                _Initialization
+                0x00000000c0054b60                _Console
+                0x00000000c0054b64                _next_thread
+                0x00000000c0054b80                _GUI_CONFIG
+                0x00000000c0054bbc                _systemzoneSize
+                0x00000000c0054bc0                _zorderCounter
+                0x00000000c0054bc4                _mmFramesSuperBlockTotalUsed
+                0x00000000c0054bc8                _quantum
+                0x00000000c0054bcc                _stderr
+                0x00000000c0054bd0                _g_mainwindow_width
+                0x00000000c0054bd4                _cur_process
+                0x00000000c0054bd8                _waiting_list_head
+                0x00000000c0054bdc                _FileAccess
+                0x00000000c0054be0                _g_logged
+                0x00000000c0054be4                _file_TaskMan
+                0x00000000c0054be8                _RGBA
+                0x00000000c0054bec                _desktop0
+                0x00000000c0054bf0                _blocked_list_head
+                0x00000000c0054c00                _nicList
+                0x00000000c0054c20                _gui
+                0x00000000c0054c24                _CurrentUserSession
+                0x00000000c0054c28                _g_device_screen_height
+                0x00000000c0054c2c                _g_mousepointer_height
+                0x00000000c0054c30                _g_module_uem_initialized
+                0x00000000c0054c34                _processor
+                0x00000000c0054c40                _userList
+                0x00000000c0054c80                _prompt_pos
+                0x00000000c0054c84                _saved_mouse_x
+                0x00000000c0054c88                _Irq10
+                0x00000000c0054c8c                _Conductor
+                0x00000000c0054c90                _ide_handler_address
+                0x00000000c0054c94                _Process
+                0x00000000c0054c98                _mbr
+                0x00000000c0054c9c                _current_mmblock
+                0x00000000c0054ca0                _deviceList
+                0x00000000c00550a0                ___spinlock_ipc
+                0x00000000c00550a4                _ASpace
+                0x00000000c00550c0                _objects_um
+                0x00000000c0061180                _mmFramesSuperBlockSize
+                0x00000000c0061184                _kernel_stack_start
+                0x00000000c0061188                _Rtc
+                0x00000000c006118c                _start_new_task_address
+                0x00000000c0061190                _g_module_gui_initialized
+                0x00000000c0061194                _file_Init
+                0x00000000c0061198                _KeInitPhase
+                0x00000000c006119c                _windows_count
+                0x00000000c00611a0                _pagetableList
+                0x00000000c00621a0                _combobox_window
+                0x00000000c00621a4                _framepoolBackBuffer1
+                0x00000000c00621a8                _g_driver_video_initialized
+                0x00000000c00621ac                _active_window
+                0x00000000c00621b0                _mm_used_gramadocore_taskman_heap
+                0x00000000c00621c0                _objects_km
+                0x00000000c006e280                _vfs
+                0x00000000c006e284                _current_pci_device
+                0x00000000c006e288                _file_InitTXT
+                0x00000000c006e28c                _g_show_text_cursor
+                0x00000000c006e290                _Hardware
+                0x00000000c006e294                _DefaultUserSession
+                0x00000000c006e298                _current_process
+                0x00000000c006e29c                _mmglobalInitialingVAR
+                0x00000000c006e2a0                _appIconBuffer
+                0x00000000c006e2a4                _current_desktop
+                0x00000000c006e2a8                _Cursor
+                0x00000000c006e2ac                _numlock_status
+                0x00000000c006e2b0                _usession0
+                0x00000000c006e2b4                _g_gramadocore_shell_heap_size
+                0x00000000c006e2b8                _CurrentSocket
+                0x00000000c006e2bc                _TaskBar
+                0x00000000c006e2c0                _g_module_logoff_initialized
+                0x00000000c006e2c4                _pagetableCurrent
+                0x00000000c006e2c8                _usession_Conductor
+                0x00000000c006e2cc                _g8x14fontAddress
+                0x00000000c006e2d0                _Irq12
+                0x00000000c006e2d4                _mainButton1
+                0x00000000c006e2d8                _mm_used_gramadocore_shell_heap
+                0x00000000c006e2dc                _scStatus
+                0x00000000c006e2e0                _stdin
+                0x00000000c006e2e4                _g_frontbuffer_pa
+                0x00000000c006e2e8                _old_mouse_buttom_1
+                0x00000000c006e2ec                _xxxClonedThread
+                0x00000000c006e2f0                _gStreams
+                0x00000000c006e2f4                _mmFramesSuperBlockTotalFree
+                0x00000000c006e2f8                _gcharWidth
+                0x00000000c006e2fc                _logonMenu
+                0x00000000c006e300                _gTaskmanPageDirectoryAddress
+                0x00000000c006e304                _savedmouseoverwindowY
+                0x00000000c006e308                _file_BootLoader
+                0x00000000c006e320                _socketList
+                0x00000000c006e3a0                _g_module_logon_initialized
+                0x00000000c006e3a4                _client_stderr
+                0x00000000c006e3a8                _next_address
+                0x00000000c006e3ac                _destroy_window
+                0x00000000c006e3b0                _dispatcherQueueIndex
+                0x00000000c006e3b4                _fileIconBuffer
+                0x00000000c006e3b8                _room0
+                0x00000000c006e3bc                _kernel_heap_start
+                0x00000000c006e3c0                _g8x16fontAddress
+                0x00000000c006e3c4                _g_current_object
+                0x00000000c006e3c8                _PrideColorScheme
+                0x00000000c006e3cc                _current_room
+                0x00000000c006e3d0                _mac_address
+                0x00000000c006e3d4                _queue
+                0x00000000c006e3d8                _system_disk
+                0x00000000c006e3dc                _DispatchCountBlock
+                0x00000000c006e3e0                _current_dead_process
+                0x00000000c006e3e4                _shift_status
+                0x00000000c006e400                _ide_dma_prdt
+                0x00000000c006e420                _current_directory
+                0x00000000c006e424                _xxxClonedProcess
+                0x00000000c006e428                _g_wm_pid
+                0x00000000c006e440                _vfs_handle_list
+                0x00000000c006ec40                _sys_time_ms
+                0x00000000c006ec44                _kernel_stack_start_pa
+                0x00000000c006ec48                _rect
+                0x00000000c006ec4c                _partition_chars
+                0x00000000c006ec50                _logonStatus
+                0x00000000c006ec54                _framepoolFrontBuffer3
+                0x00000000c006ec58                _current_window
+                0x00000000c006ec5c                _terminalIconBuffer
+                0x00000000c006ec60                _g_available_heap
+                0x00000000c006ec64                _start_new_task_id
+                0x00000000c006ec68                _process_Conductor2
+                0x00000000c006ec6c                _g_heap_count
+                0x00000000c006ec70                _alt_status
+                0x00000000c006ec74                _schedulerType
+                0x00000000c006ec78                _g_cursor_width
+                0x00000000c006ec7c                _current_disk
+                0x00000000c006ec80                _volume1_rootdir
+                0x00000000c006ec84                _g_new_message
+                0x00000000c006ec88                _pwd_initialized
+                0x00000000c006ec8c                _Firmware
+                0x00000000c006ec90                _volume_bootpartition
+                0x00000000c006ec94                _file_BootManager
+                0x00000000c006ec98                _current_dead_thread
+                0x00000000c006ec9c                _current_keyboard_responder
+                0x00000000c006eca0                _system_message_write
+                0x00000000c006eca4                _semaforo_priority
+                0x00000000c006eca8                _mm_used_gramadocore_init_heap
+                0x00000000c006ecac                _mouseover_window
+                0x00000000c006ecb0                _kbMsgStatus
+                0x00000000c006ecb4                _g_module_objectmanager_initialized
+                0x00000000c006ecb8                _ata_record_channel
+                0x00000000c006ecbc                _zorderTopWindow
+                0x00000000c006ecc0                _gKernelPageDirectoryAddress
+                0x00000000c006ecc4                _g_current_framepool
+                0x00000000c006ecc8                _current_taskman_server
+                0x00000000c006eccc                _DefaultUser
+                0x00000000c006ecd0                _task_color
+                0x00000000c006ecd4                _framepoolFrontBuffer1
+                0x00000000c006ecd8                _heapCount
+                0x00000000c006ecdc                _windowzoneEnd
+                0x00000000c006ece0                _current_filesystem
+                0x00000000c006ece4                _Thread
+                0x00000000c006ece8                _g_pagedpool_va
+                0x00000000c006ecec                _current_stderr
+                0x00000000c006ed00                _ProcessorBlock
+                0x00000000c006ed30                _current_mouse_responder
+                0x00000000c006ed34                _pagedirectoryIdleProcess
+                0x00000000c006ed38                _client_stdio
+                0x00000000c006ed3c                _volume_vfs
+                0x00000000c006ed40                _g_mousepointer_x
+                0x00000000c006ed44                _terminal_count
+                0x00000000c006ed48                _usersession_start
+                0x00000000c006ed4c                _g_cursor_top
+                0x00000000c006ed50                _processors_count
+                0x00000000c006ed54                _CurrentProcedure
+                0x00000000c006ed58                _mmFramesSuperBlockTotal
+                0x00000000c006ed5c                _periodic_procs
+                0x00000000c006ed60                _g_inputmode
+                0x00000000c006ed64                _UserHeap
+                0x00000000c006ed68                _keyboard_handler_address
+                0x00000000c006ed6c                _kernel_stack_end
+                0x00000000c006ed70                _file_Kernel
+                0x00000000c006ed74                _current_tss
+                0x00000000c006ed78                _g_object_manager_status
+                0x00000000c006ed7c                _g_cursor_right
+                0x00000000c006ed80                _desktop_Conductor
+                0x00000000c006ed84                _InitProcess
+                0x00000000c006ed88                _system_volume
+                0x00000000c006ed8c                _microkernelStatus
+                0x00000000c006ed90                _zones
+                0x00000000c006ed94                _lineBuffer
+                0x00000000c006ed98                _miMemoryInfo
+                0x00000000c006ed9c                _desktopDefault
+                0x00000000c006eda0                _g_module_runtime_initialized
+                0x00000000c006eda4                _ioControl_keyboard
+                0x00000000c006eda8                _file_LA
+                0x00000000c006edac                _VersionInfo
+                0x00000000c006edc0                _inode_list
+                0x00000000c006f5c0                _file_CFE
+                0x00000000c006f5c4                _system_procs
+                0x00000000c006f5c8                _window_with_focus
+                0x00000000c006f5cc                _g_proc_status
+                0x00000000c006f5d0                _framepoolCurrent
+                0x00000000c006f5e0                _desktopList
+                0x00000000c006f620                _gNextKeyboardMessage
+                0x00000000c006f624                _pagedirectoryShared
+                0x00000000c006f628                _g_heappool_va
+                0x00000000c006f62c                _g_current_ide_channel
+                0x00000000c006f630                _idle
+                0x00000000c006f634                _g_spc
+                0x00000000c006f638                _KernelHeap
+                0x00000000c006f63c                _xxxxcrazy_stuff
+                0x00000000c006f640                _pagedirectoryCurrent
+                0x00000000c006f644                _gLogonPID
+                0x00000000c006f660                _VECTORS
+                0x00000000c006fa60                _CurrentWindow
+                0x00000000c006fa64                _g_product_type
+                0x00000000c006fa68                _vbr
+                0x00000000c006fa6c                _Irq14
+                0x00000000c006fa70                _g_nstream
+                0x00000000c006fa74                _g_heap_pointer
+                0x00000000c006fa78                _LineShell
+                0x00000000c006fa7c                _mouse_pos_x
+                0x00000000c006fa80                _ipcStatus
+                0x00000000c006fa84                _WindowWithFocus
+                0x00000000c006fa88                _task_count
+                0x00000000c006fa8c                _Screen
+                0x00000000c006fa90                _pipe_gramadocore_init_execve
+                0x00000000c006faa0                _channelList
+                0x00000000c006fb20                _g_kernel_nonpaged_memory
+                0x00000000c006fb24                _timer_handler_address
+                0x00000000c006fb28                _kernel_switch
+                0x00000000c006fb2c                _old_mouse_buttom_3
+                0x00000000c006fb30                _guiStatus
+                0x00000000c006fb34                _window_rootConductor
+                0x00000000c006fb38                _terminalLineMax
+                0x00000000c006fb40                _heapList
+                0x00000000c006fb60                _ttyCurrentX
+                0x00000000c006fb64                _volume2_rootdir
+                0x00000000c006fb68                _CurrentDesktop
+                0x00000000c006fb6c                _DriveContext
+                0x00000000c006fb80                _prompt_err
+                0x00000000c006fc80                _abnt2
+                0x00000000c006fc84                _gFocusBlocked
+                0x00000000c006fc88                _current_socket
+                0x00000000c006fc8c                _sata_handler_address
+                0x00000000c006fc90                _desktops_count
+                0x00000000c006fc94                _KernelPages
+                0x00000000c006fca0                _directory_entry_list
+                0x00000000c00704a0                _g_driver_apic_initialized
+                0x00000000c00704a4                __lockfocus
+                0x00000000c00704a8                _file_download
+                0x00000000c00704ac                _saved_mouse_y
+                0x00000000c00704b0                _current_usersession
+                0x00000000c00704b4                _g_video_mode
+                0x00000000c00704b8                _fat
+                0x00000000c00704bc                _ttyCurrentY
+                0x00000000c00704c0                _mm_used_pagedpool
+                0x00000000c00704c4                _stdio_verbosemode_flag
+                0x00000000c00704c8                _file_bin
+                0x00000000c00704cc                _mmFramesSuperBlockEnd
+                0x00000000c00704e0                _processList
+                0x00000000c00714e0                _memorysizeAvailableVirtualMemory
+                0x00000000c00714e4                _memorysizeExtendedMemory
+                0x00000000c00714e8                _Irq8
+                0x00000000c00714ec                _lineLine
+                0x00000000c00714f0                _gPagedPollStart
+                0x00000000c0071500                _roomList
+                0x00000000c0071540                _g_backbuffer_pa
+                0x00000000c0071544                _systemzone
+                0x00000000c0071548                _keyboard_message_tail
+                0x00000000c007154c                _dead_thread_collector_status
+                0x00000000c0071550                _ata_pci
+                0x00000000c0071554                _ATAFlag
+                0x00000000c0071558                _sys_time_hz
+                0x00000000c007155c                _gLogoffPID
+                0x00000000c0071560                _gfontSize
+                0x00000000c0071564                _start_new_task_status
+                0x00000000c0071568                _CurrentProcess
+                0x00000000c007156c                _framepoolFrontBuffer4
+                0x00000000c0071570                _current_semaphore
+                0x00000000c0071580                _realtimeprocessorList
+                0x00000000c0071600                _timer_cursor_used
+                0x00000000c0071604                _g_gramadocore_init_heap_size
+                0x00000000c0071608                _clientCP
+                0x00000000c007160c                _g_gramadocore_init_heap_va
+                0x00000000c0071610                _g_total_physical_memory
+                0x00000000c0071614                _ready_list_head
+                0x00000000c0071618                _g_mousepointer_width
+                0x00000000c0071620                _HANDLERS
+                0x00000000c0071a40                _usession_rootConductor
+                0x00000000c0071a44                _current_terminal
+                0x00000000c0071a48                _line_stderr
+                0x00000000c0071a4c                _lineOffset
+                0x00000000c0071a50                _window_Conductor2
+                0x00000000c0071a54                _g_machine_type
+                0x00000000c0071a58                _current_tty
+                0x00000000c0071a5c                _client_stdout
+                0x00000000c0071a60                _eventStatus
+                0x00000000c0071a64                _Irq11
+                0x00000000c0071a68                _current_stdout
+                0x00000000c0071a6c                _ipcBuffer
+                0x00000000c0071a70                _newtask_EIP
+                0x00000000c0071a74                _memorysizeTotalVirtualMemory
+                0x00000000c0071a78                _top_window
+                0x00000000c0071a7c                _menuitemDefault
+                0x00000000c0071a80                _g_scheduler_status
+                0x00000000c0071a84                _FULLSCREEN_TABWINDOW
+                0x00000000c0071a88                _quit_message
+                0x00000000c0071a8c                _g_xserver_pid
+                0x00000000c0071a90                _TaskManProcess
+                0x00000000c0071a94                _LineHead
+                0x00000000c0071aa0                _ide_ports
+                0x00000000c0071b00                _SystemUser
+                0x00000000c0071b04                _mm_used_backbuffer
+                0x00000000c0071b08                _current_quantum
+                0x00000000c0071b0c                _stdout
+                0x00000000c0071b10                _dead_thread_collector_flag
+                0x00000000c0071b20                _activeprocessorList
+                0x00000000c0071ba0                _windowzoneSize
+                0x00000000c0071ba4                _g_driver_rtc_initialized
+                0x00000000c0071ba8                _SystemClasses
+                0x00000000c0071bc0                _objects_gui
+                0x00000000c007dc80                _g_navigationbar_width
+                0x00000000c007dc84                _gws_currentfont_address
+                0x00000000c007dca0                _windowList
+                0x00000000c007eca0                _gPagedPollEnd
+                0x00000000c007eca4                _windowzone
+                0x00000000c007eca8                _ShellThread
+                0x00000000c007ecc0                _ttyList
+                0x00000000c007ece0                _file_CS
+                0x00000000c007ece4                _memorysizeFree
+                0x00000000c007ed00                _Streams
+                0x00000000c007ed80                _Irq6
+                0x00000000c007ed84                _gInitPageDirectoryAddress
+                0x00000000c007ed88                _IDE
+                0x00000000c007ed9c                _g_cursor_left
+                0x00000000c007eda0                _g_system_color
+                0x00000000c007eda4                _g_cursor_bottom
+                0x00000000c007eda8                _Irq3
+                0x00000000c007edac                _realtimeStatus
+                0x00000000c007edb0                _editbox_window
+                0x00000000c007edb4                _kernel_request
+                0x00000000c007edb8                _idle_thread
+                0x00000000c007edbc                _g_pageable_framepool_index_max
+                0x00000000c007edc0                _current_thread
+                0x00000000c007ede0                _Pipes
+                0x00000000c007ee00                _processorsList
+                0x00000000c007ee80                _Bank
+                0x00000000c007ee84                _fileBuffer
+                0x00000000c007ee88                _timer_cursor_status
+                0x00000000c007ee8c                _g_current_vm
+                0x00000000c007ee90                _rectClientArea
+                0x00000000c007ee94                _file_Shell
+                0x00000000c007eea0                _current_target_dir
+                0x00000000c007eecc                _mm_used_kernel_area
+                0x00000000c007eed0                _schedulerQueue
+                0x00000000c007eee0                _systemSize
+                0x00000000c007eee4                _object
+                0x00000000c007eee8                _gDeveloperOptions
+                0x00000000c007ef00                _keybuffer
+                0x00000000c007ef80                _zorder
+                0x00000000c007efa0                _keyboard_queue
+                0x00000000c007f0c0                _forkid
+                0x00000000c007f0c4                _menus_count
+                0x00000000c007f0c8                _current_volume
+                0x00000000c007f0cc                _shutdown_address
+                0x00000000c007f0e0                _ioControl
+                0x00000000c007f160                _devices
+                0x00000000c007f164                _terminalLine
+                0x00000000c007f168                _serialportError
+                0x00000000c007f16c                _desktop1
+                0x00000000c007f170                _gcharHeight
+                0x00000000c007f174                _g_use_default_user
+                0x00000000c007f178                _mouse_buttom_1
+                0x00000000c007f17c                _RING0IDLEThread
+                0x00000000c007f180                _mouse_status
+                0x00000000c007f184                _framepoolFrontBuffer2
+                0x00000000c007f188                _pipe_execve
+                0x00000000c007f18c                _g_gramadocore_taskman_heap_va
+                0x00000000c007f1a0                _diskList
+                0x00000000c00801a0                _server_stderr
+                0x00000000c00801a4                _Conductor2
+                0x00000000c00801a8                _KernelClasses
+                0x00000000c00801c0                _fsbFreeFrames
+                0x00000000c00811c0                _old_mouse_buttom_2
+                0x00000000c00811c4                _screenBuffers
+                0x00000000c00811c8                _current_process_pagedirectory_address
+                0x00000000c00811cc                _rr_procs
+                0x00000000c00811d0                _KernelProcess
+                0x00000000c00811d4                _delta_y
+                0x00000000c00811d8                _framepoolPageableSpace
+                0x00000000c00811dc                _lineLineMax
+                0x00000000c00811e0                _KernelHeapSize
+                0x00000000c00811e4                _xxx_gdt_ptr
+                0x00000000c00811ec                _HostDeviceInfo
+                0x00000000c0081200                _prompt_out
+                0x00000000c0081300                _bmp_selected_color
+                0x00000000c0081304                _g_driver_pci_initialized
+                0x00000000c0081320                _file_cluster_list
+                0x00000000c0081b20                _escape_status
+                0x00000000c0081b24                _memorysizeOtherMemory
+                0x00000000c0081b28                _IpcProcedureEx
+                0x00000000c0081b40                _mmblockList
+                0x00000000c0089b40                _g_driver_timer_initialized
+                0x00000000c0089b44                _ClonedThread
+                0x00000000c0089b48                _HostInfo
+                0x00000000c0089b4c                _ata_identify_dev_buf
+                0x00000000c0089b50                _Irq0
+                0x00000000c0089b54                _file_dd
+                0x00000000c0089b58                _DSpace
+                0x00000000c0089b5c                _g_next_app
+                0x00000000c0089b60                _g_gramadocore_taskman_heap_size
+                0x00000000c0089b80                _timerList
+                0x00000000c0089c00                _file_libs
+                0x00000000c0089c04                _idle_proc
+                0x00000000c0089c08                _clientCR
+                0x00000000c0089c0c                _g_useGUI
+                0x00000000c0089c10                _g_filesystem_type
+                0x00000000c0089c14                _Irq4
+                0x00000000c0089c18                _dirCount
+                0x00000000c0089c1c                _ShellProcess
+                0x00000000c0089c20                _keybuffer_head
+                0x00000000c0089c24                _CurrentBuffer
+                0x00000000c0089c28                _CurrentColorScheme
+                0x00000000c0089c2c                _next_quantum
+                0x00000000c0089c30                _process_rootConductor
+                0x00000000c0089c40                _dev_nport
+                0x00000000c0089c60                _stdio_terminalmode_flag
+                0x00000000c0089c64                _menuDefault
+                0x00000000c0089c68                _framepoolSmallSystemUserSpace
+                0x00000000c0089c6c                _memorysizeTotalPhysicalMemory
+                0x00000000c0089c70                _ata
+                0x00000000c0089c88                _rootConductor
+                0x00000000c0089c8c                _mouse_pos_y
+                0x00000000c0089c90                _gSystemStatus
+                0x00000000c0089c94                _DeveloperWindowCursor
+                0x00000000c0089c98                _tab_status
+                0x00000000c0089c9c                _Version
+                0x00000000c0089ca0                _file_pwd
+                0x00000000c0089cc0                _REQUEST
+                0x00000000c0089cf4                _userenvironmentStatus
+                0x00000000c0089cf8                _g_guiMinimal
+                0x00000000c0089cfc                _time_out
+                0x00000000c0089d00                _current_file
+                0x00000000c0089d04                _pagedirectoryKernelProcess
+                0x00000000c0089d08                _g_mainwindow_height
+                0x00000000c0089d0c                _VideoBlock
+                0x00000000c0089d28                _System
+                0x00000000c0089d2c                _KernelSize
+                0x00000000c0089d30                _Line
+                0x00000000c0089d40                _dispatcherReadyList
+                0x00000000c0089d68                _ScreenInfo
+                0x00000000c0089d6c                _CurrentCursor
+                0x00000000c0089d70                _g8x8fontAddress
+                0x00000000c0089d74                _KernelStackSize
+                0x00000000c0089d78                _zica
+                0x00000000c0089d7c                _memorysizeInstalledPhysicalMemory
+                0x00000000c0089d80                _keybuffer_index
+                0x00000000c0089d84                _g_cursor_color
+                0x00000000c0089d88                _memorysizeTotal
+                0x00000000c0089da0                _pageAllocList
+                0x00000000c008ada0                _g_system_mode
+                0x00000000c008ada4                _Irq1
+                0x00000000c008ada8                _g_current_video_mode
+                0x00000000c008adac                _g_heap_count_max
+                0x00000000c008adb0                _ESCAPE_E0
+                0x00000000c008adb4                _cur_thread
+                0x00000000c008adb8                _current_group
+                0x00000000c008adbc                _process_Conductor
+                0x00000000c008adc0                _BackBufferInfo
+                0x00000000c008adc4                _file_users
+                0x00000000c008adc8                _conductorIndex
+                0x00000000c008adcc                _g_mousepointer_y
+                0x00000000c008add0                _g_framepool_max
+                0x00000000c008add4                _task_waiting
+                0x00000000c008add8                _keybuffer_tail
+                0x00000000c008addc                _g_cursor_y
+                0x00000000c008ade0                _mm_used_user_area
+                0x00000000c008ade4                _QUEUES
+                0x00000000c008adf0                _volume_systempartition
+                0x00000000c008adf4                _Irq7
+                0x00000000c008adf8                _banksCount
+                0x00000000c008adfc                _Pic
+                0x00000000c008ae00                _Platform
+                0x00000000c008ae04                _system_message_read
+                0x00000000c008ae08                _errno
+                0x00000000c008ae0c                _old
+                0x00000000c008ae10                _g_heap_size
+                0x00000000c008ae20                _zorderList
+                0x00000000c008b020                _gSystemEdition
+                0x00000000c008b040                _pagedirectoryList
+                0x00000000c008c040                _framepoolMediumSystemUserSpace
+                0x00000000c008c044                _mm_used_lfb
+                0x00000000c008c048                _menubarDefault
+                0x00000000c008c04c                _filesystem
+                0x00000000c008c050                _logoffStatus
+                0x00000000c008c054                _current_user
+                0x00000000c008c058                _WindowProcedure
+                0x00000000c008c05c                _framepoolKernelSpace
+                0x00000000c008c060                _memorysizeBaseMemory
+                0x00000000c008c064                _g_current_ide_device
+                0x00000000c008c068                _key_status
+                0x00000000c008c06c                _server_stdout
+                0x00000000c008c070                _g_file_system_type
+                0x00000000c008c074                _currentNIC
+                0x00000000c008c078                _g_gramadocore_shell_heap_va
+                0x00000000c008c07c                _mmblockCount
+                0x00000000c008c080                _prompt_status
+                0x00000000c008c084                _pagedirectoryTaskmanProcess
+                0x00000000c008c088                _ambiente
+                0x00000000c008c08c                _framepoolLargeSystemUserSpace
+                0x00000000c008c090                _g_platform_type
+                0x00000000c008c094                _folderIconBuffer
+                0x00000000c008c098                _line_stdin
+                0x00000000c008c09c                _g_kernel_paged_memory
+                0x00000000c008c0a0                _mmFramesSuperBlockStart
+                0x00000000c008c0a4                _mouseBMPBuffer
+                0x00000000c008c0a8                _g_driver_keyboard_initialized
+                0x00000000c008c0ac                _rtc
+                0x00000000c008c0b0                _bmp_substitute_color
+                0x00000000c008c0b4                _window_Conductor
+                0x00000000c008c0b8                _lastBank
+                0x00000000c008c0bc                _e1000_interrupt_flag
+                0x00000000c008c0c0                _g_mm_system_type
+                0x00000000c008c0c4                _g_kernel_lfb
+                0x00000000c008c0c8                _PciDrivers
+                0x00000000c008c0e0                _system_message_queue
+                0x00000000c008c160                _usession_Conductor2
+                0x00000000c008c164                _terminal_window
+                0x00000000c008c168                _mainButton2
+                0x00000000c008c16c                _CurrentScreen
+                0x00000000c008c170                _sys_time_ticks_total
+                0x00000000c008c174                _ttyLineCounter
+                0x00000000c008c178                _g_char_attrib
+                0x00000000c008c17c                _HumilityColorScheme
+                0x00000000c008c180                _memorysizeUsed
+                0x00000000c008c184                _window_mouse_over
+                0x00000000c008c188                _file_tmp
+                0x00000000c008c18c                _ctrl_status
+                0x00000000c008c190                _e1000_irq_count
+                0x00000000c008c194                _g_module_shell_initialized
+                0x00000000c008c198                _g_next_proc
+                0x00000000c008c1a0                _semaphoreList
+                0x00000000c008c224                _file_CWE
+                0x00000000c008c228                _winkey_status
+                0x00000000c008c22c                _FrontBufferInfo
+                0x00000000c008c230                _g_current_list
+                0x00000000c008c234                _savedmouseoverwindowX
+                0x00000000c008c238                _line_stdout
+                0x00000000c008c23c                _g_module_mm_initialized
+                0x00000000c008c240                _g_cursor_height
+                0x00000000c008c260                _current_workingdiretory_string
+                0x00000000c008c280                _gShellPageDirectoryAddress
+                0x00000000c008c2a0                _volumeList
+                0x00000000c008d2a0                _TERMINAL
+                0x00000000c008d360                _g_nova_mensagem
+                0x00000000c008d364                _current_menu
+                0x00000000c008d368                _pmiCurrent
+                0x00000000c008d36c                _Pci
+                0x00000000c008d370                _g_cursor_x
+                0x00000000c008d374                _mouse_buttom_2
+                0x00000000c008d378                _CurrentUser
+ COMMON         0x00000000c008d37c       0x34 gde_serv.o
+                0x00000000c008d37c                _cwArg1
+                0x00000000c008d380                _cwArg2
+                0x00000000c008d384                _cwArg11
+                0x00000000c008d388                _cwArg8
+                0x00000000c008d38c                _cwArg3
+                0x00000000c008d390                _cwArg9
+                0x00000000c008d394                _cwArg10
+                0x00000000c008d398                _cwFlag
+                0x00000000c008d39c                _cwArg12
+                0x00000000c008d3a0                _cwArg5
+                0x00000000c008d3a4                _cwArg7
+                0x00000000c008d3a8                _cwArg4
+                0x00000000c008d3ac                _cwArg6
+ COMMON         0x00000000c008d3b0       0x10 debug.o
+                0x00000000c008d3b0                _Mind
+ COMMON         0x00000000c008d3c0        0x4 install.o
+                0x00000000c008d3c0                _xxxx_nothingxxxx
+ COMMON         0x00000000c008d3c4        0x4 modules.o
+                0x00000000c008d3c4                _modulesStatus
+ COMMON         0x00000000c008d3c8        0x4 signal.o
+                0x00000000c008d3c8                _Signal
+ COMMON         0x00000000c008d3cc        0x4 ahci.o
+                0x00000000c008d3cc                _SATAFlag
+ COMMON         0x00000000c008d3d0        0xc ata.o
+                0x00000000c008d3d0                _dma_addr
+                0x00000000c008d3d4                _current_dev
+                0x00000000c008d3d8                _ready_queue_dev
+ COMMON         0x00000000c008d3dc        0x8 hdd.o
+                0x00000000c008d3dc                _hddError
+                0x00000000c008d3e0                _hddStatus
+ COMMON         0x00000000c008d3e4        0x4 network.o
+                0x00000000c008d3e4                _network_status
+ COMMON         0x00000000c008d3e8        0x5 nicintel.o
+                0x00000000c008d3e8                _nic_idt_entry_new_address
+                0x00000000c008d3ec                _nic_idt_entry_new_number
+ *fill*         0x00000000c008d3ed        0x3 
+ COMMON         0x00000000c008d3f0        0x8 pci.o
+                0x00000000c008d3f0                _pciListOffset
+                0x00000000c008d3f4                _pci_supported
+ COMMON         0x00000000c008d3f8        0x8 video.o
+                0x00000000c008d3f8                _videoError
+                0x00000000c008d3fc                _videoStatus
+ COMMON         0x00000000c008d400        0x8 screen.o
+                0x00000000c008d400                _screen_height
+                0x00000000c008d404                _screen_width
+ COMMON         0x00000000c008d408        0x4 ps2mouse.o
+                0x00000000c008d408                _flagRefreshMouseOver
+ COMMON         0x00000000c008d40c        0x8 pic.o
+                0x00000000c008d40c                _picError
+                0x00000000c008d410                _picStatus
+ COMMON         0x00000000c008d414        0xc rtc.o
+                0x00000000c008d414                _rtcError
+                0x00000000c008d418                _rtcTicks
+                0x00000000c008d41c                _rtcStatus
+ COMMON         0x00000000c008d420       0x20 timer.o
+                0x00000000c008d420                _timerShowTextCursor
+                0x00000000c008d424                _timerColor
+                0x00000000c008d428                _timerTextCursorStatus
+                0x00000000c008d42c                _timerStatus
+                0x00000000c008d430                _timerIdleState
+                0x00000000c008d434                _timerError
+                0x00000000c008d438                _timerLock
+                0x00000000c008d43c                _timerLine
+ COMMON         0x00000000c008d440    0x10000 write.o
+                0x00000000c008d440                _list
+ COMMON         0x00000000c009d440       0x18 window.o
+                0x00000000c009d440                _save_client_rect_top
+                0x00000000c009d444                _fsStatus
+                0x00000000c009d448                _xxxxsavemessage
+                0x00000000c009d44c                _save_client_rect_left
+                0x00000000c009d450                _save_client_rect_height
+                0x00000000c009d454                _save_client_rect_width
+ COMMON         0x00000000c009d458        0x4 input.o
+                0x00000000c009d458                _xxxinini
+ COMMON         0x00000000c009d45c        0xc kgws.o
+                0x00000000c009d45c                _gws_status
+                0x00000000c009d460                _gws_wm_PID
+                0x00000000c009d464                _gws_wm_status
+ COMMON         0x00000000c009d468       0x40 x86cont.o
+                0x00000000c009d468                _contextESP
+                0x00000000c009d46c                _contextEDX
+                0x00000000c009d470                _contextFS
+                0x00000000c009d474                _contextDS
+                0x00000000c009d478                _contextESI
+                0x00000000c009d47c                _contextEIP
+                0x00000000c009d480                _contextGS
+                0x00000000c009d484                _contextEFLAGS
+                0x00000000c009d488                _contextECX
+                0x00000000c009d48c                _contextEBP
+                0x00000000c009d490                _contextCS
+                0x00000000c009d494                _contextEAX
+                0x00000000c009d498                _contextEBX
+                0x00000000c009d49c                _contextEDI
+                0x00000000c009d4a0                _contextES
+                0x00000000c009d4a4                _contextSS
+ COMMON         0x00000000c009d4a8        0xc x86fault.o
+                0x00000000c009d4a8                _thread_failed_flag
+                0x00000000c009d4ac                _demand_paging_flag
+                0x00000000c009d4b0                _fatal_error_flag
+ COMMON         0x00000000c009d4b4        0x8 process.o
+                0x00000000c009d4b4                _processNewPID
+                0x00000000c009d4b8                _caller_process_id
+ COMMON         0x00000000c009d4bc        0x4 ts.o
+                0x00000000c009d4bc                _lock_taskswitch
+ COMMON         0x00000000c009d4c0      0x110 ipccore.o
+                0x00000000c009d4c0                _GRAMADOCORE
+ COMMON         0x00000000c009d5d0        0xc memory.o
+                0x00000000c009d5d0                _mm_prev_pointer
+                0x00000000c009d5d4                _last_size
+                0x00000000c009d5d8                _last_valid
  *(.bss)
- .bss           0x00000000c009c5dc        0x0 head.o
-                0x00000000c009c5dc                _bss_start
- .bss           0x00000000c009c5dc       0x28 main.o
- .bss           0x00000000c009c604       0x28 x86main.o
- .bss           0x00000000c009c62c       0x28 pipe.o
- .bss           0x00000000c009c654       0x28 socket.o
- .bss           0x00000000c009c67c       0x28 ctype.o
- .bss           0x00000000c009c6a4       0x28 stdio.o
- .bss           0x00000000c009c6cc       0x28 stdlib.o
- .bss           0x00000000c009c6f4       0x2c string.o
- .bss           0x00000000c009c720       0x28 unistd.o
- .bss           0x00000000c009c748       0x28 devmgr.o
- .bss           0x00000000c009c770       0x28 gde_serv.o
- .bss           0x00000000c009c798       0x28 debug.o
- .bss           0x00000000c009c7c0       0x28 diskvol.o
- .bss           0x00000000c009c7e8        0x0 install.o
- .bss           0x00000000c009c7e8       0x28 object.o
- .bss           0x00000000c009c810       0x28 runtime.o
- .bss           0x00000000c009c838       0x28 abort.o
- .bss           0x00000000c009c860       0x28 info.o
- .bss           0x00000000c009c888       0x28 io.o
- .bss           0x00000000c009c8b0       0x28 modules.o
- .bss           0x00000000c009c8d8       0x28 signal.o
- .bss           0x00000000c009c900       0x28 sm.o
- .bss           0x00000000c009c928       0x28 init.o
- .bss           0x00000000c009c950       0x28 system.o
- .bss           0x00000000c009c978       0x28 execve.o
- .bss           0x00000000c009c9a0       0x28 cpuamd.o
- .bss           0x00000000c009c9c8       0x28 portsx86.o
- .bss           0x00000000c009c9f0       0x28 syscall.o
- *fill*         0x00000000c009ca18        0x8 
- .bss           0x00000000c009ca20       0x64 x86.o
- .bss           0x00000000c009ca84       0x28 detect.o
- .bss           0x00000000c009caac       0x28 hal.o
- .bss           0x00000000c009cad4       0x28 ahci.o
- .bss           0x00000000c009cafc       0x2c ata.o
-                0x00000000c009cafc                _dev_next_pid
- .bss           0x00000000c009cb28       0x28 atadma.o
- .bss           0x00000000c009cb50       0x28 atainit.o
- .bss           0x00000000c009cb78       0x2c atairq.o
- .bss           0x00000000c009cba4       0x28 atapci.o
- .bss           0x00000000c009cbcc       0x28 hdd.o
- .bss           0x00000000c009cbf4       0x28 channel.o
- .bss           0x00000000c009cc1c       0x28 network.o
- .bss           0x00000000c009cc44       0x28 nicintel.o
- .bss           0x00000000c009cc6c       0x28 nsocket.o
- .bss           0x00000000c009cc94       0x28 pci.o
- .bss           0x00000000c009ccbc       0x28 pciinfo.o
- .bss           0x00000000c009cce4       0x28 pciscan.o
- .bss           0x00000000c009cd0c       0x28 tty.o
- .bss           0x00000000c009cd34       0x28 pty.o
- .bss           0x00000000c009cd5c        0x0 usb.o
- .bss           0x00000000c009cd5c       0x28 video.o
- .bss           0x00000000c009cd84       0x28 vsync.o
- .bss           0x00000000c009cdac       0x28 screen.o
- .bss           0x00000000c009cdd4       0x28 xproc.o
- .bss           0x00000000c009cdfc       0x28 i8042.o
- .bss           0x00000000c009ce24       0x28 keyboard.o
- .bss           0x00000000c009ce4c       0x28 mouse.o
- .bss           0x00000000c009ce74       0x28 ps2kbd.o
- .bss           0x00000000c009ce9c       0x3b ps2mouse.o
-                0x00000000c009ce9c                _mouse_x
-                0x00000000c009cea0                _mouse_y
-                0x00000000c009cea4                _mouse_packet_data
-                0x00000000c009cea5                _mouse_packet_x
-                0x00000000c009cea6                _mouse_packet_y
-                0x00000000c009cea7                _mouse_packet_scroll
- *fill*         0x00000000c009ced7        0x1 
- .bss           0x00000000c009ced8       0x28 ldisc.o
- .bss           0x00000000c009cf00       0x28 apic.o
- .bss           0x00000000c009cf28       0x28 pic.o
- .bss           0x00000000c009cf50       0x28 rtc.o
- .bss           0x00000000c009cf78       0x28 serial.o
- .bss           0x00000000c009cfa0       0x28 timer.o
- .bss           0x00000000c009cfc8       0x28 cf.o
- .bss           0x00000000c009cff0       0x28 format.o
- .bss           0x00000000c009d018       0x28 fs.o
- .bss           0x00000000c009d040       0x28 read.o
- .bss           0x00000000c009d068       0x28 search.o
- .bss           0x00000000c009d090       0x28 write.o
- .bss           0x00000000c009d0b8       0x29 cedge.o
- *fill*         0x00000000c009d0e1        0x3 
- .bss           0x00000000c009d0e4       0x28 bg.o
- .bss           0x00000000c009d10c       0x2c bmp.o
- .bss           0x00000000c009d138       0x28 button.o
- .bss           0x00000000c009d160       0x28 char.o
- .bss           0x00000000c009d188       0x28 createw.o
- .bss           0x00000000c009d1b0       0x28 dtext.o
- .bss           0x00000000c009d1d8       0x28 font.o
- .bss           0x00000000c009d200       0x28 grid.o
- .bss           0x00000000c009d228       0x28 line.o
- .bss           0x00000000c009d250       0x28 menu.o
- .bss           0x00000000c009d278       0x28 menubar.o
- .bss           0x00000000c009d2a0       0x28 pixel.o
- .bss           0x00000000c009d2c8       0x28 rect.o
- .bss           0x00000000c009d2f0       0x28 sbar.o
- .bss           0x00000000c009d318       0x28 toolbar.o
- .bss           0x00000000c009d340       0x28 window.o
- .bss           0x00000000c009d368       0x28 logoff.o
- .bss           0x00000000c009d390       0x28 logon.o
- .bss           0x00000000c009d3b8       0x28 input.o
- .bss           0x00000000c009d3e0       0x28 output.o
- .bss           0x00000000c009d408       0x28 terminal.o
- .bss           0x00000000c009d430       0x28 desktop.o
- .bss           0x00000000c009d458       0x28 room.o
- .bss           0x00000000c009d480       0x28 userenv.o
- .bss           0x00000000c009d4a8       0x28 usession.o
- .bss           0x00000000c009d4d0       0x28 kgws.o
- .bss           0x00000000c009d4f8       0x28 vfs.o
- .bss           0x00000000c009d520       0x28 x86cont.o
- .bss           0x00000000c009d548       0x28 x86fault.o
- .bss           0x00000000c009d570       0x28 x86start.o
- .bss           0x00000000c009d598       0x28 dispatch.o
- .bss           0x00000000c009d5c0       0x28 pheap.o
- .bss           0x00000000c009d5e8       0x28 process.o
- .bss           0x00000000c009d610       0x28 queue.o
- .bss           0x00000000c009d638       0x28 spawn.o
- .bss           0x00000000c009d660       0x28 tasks.o
- .bss           0x00000000c009d688       0x28 theap.o
- .bss           0x00000000c009d6b0       0x28 thread.o
- .bss           0x00000000c009d6d8       0x28 threadi.o
- .bss           0x00000000c009d700       0x28 ts.o
- .bss           0x00000000c009d728       0x28 tstack.o
- .bss           0x00000000c009d750       0x28 callout.o
- .bss           0x00000000c009d778        0x0 callfar.o
- .bss           0x00000000c009d778       0x28 ipc.o
- .bss           0x00000000c009d7a0       0x28 ipccore.o
- .bss           0x00000000c009d7c8       0x28 sem.o
- .bss           0x00000000c009d7f0       0x28 memory.o
- .bss           0x00000000c009d818       0x28 mminfo.o
- .bss           0x00000000c009d840       0x28 mmpool.o
- .bss           0x00000000c009d868       0x28 pages.o
- .bss           0x00000000c009d890       0x28 preempt.o
- .bss           0x00000000c009d8b8       0x28 priority.o
- .bss           0x00000000c009d8e0       0x28 sched.o
- .bss           0x00000000c009d908       0x28 schedi.o
- .bss           0x00000000c009d930       0x28 create.o
- .bss           0x00000000c009d958       0x28 mk.o
- .bss           0x00000000c009d980       0x28 request.o
-                0x00000000c009d9a8                _bss_end = .
-                0x00000000c009e000                . = ALIGN (0x1000)
- *fill*         0x00000000c009d9a8      0x658 
-                0x00000000c009e000                _kernel_end = .
+ .bss           0x00000000c009d5dc        0x0 head.o
+                0x00000000c009d5dc                _bss_start
+ .bss           0x00000000c009d5dc       0x28 main.o
+ .bss           0x00000000c009d604       0x28 x86main.o
+ .bss           0x00000000c009d62c       0x28 pipe.o
+ .bss           0x00000000c009d654       0x28 socket.o
+ .bss           0x00000000c009d67c       0x28 ctype.o
+ .bss           0x00000000c009d6a4       0x28 stdio.o
+ .bss           0x00000000c009d6cc       0x28 stdlib.o
+ .bss           0x00000000c009d6f4       0x2c string.o
+ .bss           0x00000000c009d720       0x28 unistd.o
+ .bss           0x00000000c009d748       0x28 devmgr.o
+ .bss           0x00000000c009d770       0x28 gde_serv.o
+ .bss           0x00000000c009d798       0x28 debug.o
+ .bss           0x00000000c009d7c0       0x28 diskvol.o
+ .bss           0x00000000c009d7e8        0x0 install.o
+ .bss           0x00000000c009d7e8       0x28 object.o
+ .bss           0x00000000c009d810       0x28 runtime.o
+ .bss           0x00000000c009d838       0x28 abort.o
+ .bss           0x00000000c009d860       0x28 info.o
+ .bss           0x00000000c009d888       0x28 io.o
+ .bss           0x00000000c009d8b0       0x28 modules.o
+ .bss           0x00000000c009d8d8       0x28 signal.o
+ .bss           0x00000000c009d900       0x28 sm.o
+ .bss           0x00000000c009d928       0x28 init.o
+ .bss           0x00000000c009d950       0x28 system.o
+ .bss           0x00000000c009d978       0x28 execve.o
+ .bss           0x00000000c009d9a0       0x28 cpuamd.o
+ .bss           0x00000000c009d9c8       0x28 portsx86.o
+ .bss           0x00000000c009d9f0       0x28 syscall.o
+ *fill*         0x00000000c009da18        0x8 
+ .bss           0x00000000c009da20       0x64 x86.o
+ .bss           0x00000000c009da84       0x28 detect.o
+ .bss           0x00000000c009daac       0x28 hal.o
+ .bss           0x00000000c009dad4       0x28 ahci.o
+ .bss           0x00000000c009dafc       0x2c ata.o
+                0x00000000c009dafc                _dev_next_pid
+ .bss           0x00000000c009db28       0x28 atadma.o
+ .bss           0x00000000c009db50       0x28 atainit.o
+ .bss           0x00000000c009db78       0x2c atairq.o
+ .bss           0x00000000c009dba4       0x28 atapci.o
+ .bss           0x00000000c009dbcc       0x28 hdd.o
+ .bss           0x00000000c009dbf4       0x28 channel.o
+ .bss           0x00000000c009dc1c       0x28 network.o
+ .bss           0x00000000c009dc44       0x28 nicintel.o
+ .bss           0x00000000c009dc6c       0x28 nsocket.o
+ .bss           0x00000000c009dc94       0x28 pci.o
+ .bss           0x00000000c009dcbc       0x28 pciinfo.o
+ .bss           0x00000000c009dce4       0x28 pciscan.o
+ .bss           0x00000000c009dd0c       0x28 tty.o
+ .bss           0x00000000c009dd34       0x28 pty.o
+ .bss           0x00000000c009dd5c        0x0 usb.o
+ .bss           0x00000000c009dd5c       0x28 video.o
+ .bss           0x00000000c009dd84       0x28 vsync.o
+ .bss           0x00000000c009ddac       0x28 screen.o
+ .bss           0x00000000c009ddd4       0x28 xproc.o
+ .bss           0x00000000c009ddfc       0x28 i8042.o
+ .bss           0x00000000c009de24       0x28 keyboard.o
+ .bss           0x00000000c009de4c       0x28 mouse.o
+ .bss           0x00000000c009de74       0x28 ps2kbd.o
+ .bss           0x00000000c009de9c       0x3b ps2mouse.o
+                0x00000000c009de9c                _mouse_x
+                0x00000000c009dea0                _mouse_y
+                0x00000000c009dea4                _mouse_packet_data
+                0x00000000c009dea5                _mouse_packet_x
+                0x00000000c009dea6                _mouse_packet_y
+                0x00000000c009dea7                _mouse_packet_scroll
+ *fill*         0x00000000c009ded7        0x1 
+ .bss           0x00000000c009ded8       0x28 ldisc.o
+ .bss           0x00000000c009df00       0x28 apic.o
+ .bss           0x00000000c009df28       0x28 pic.o
+ .bss           0x00000000c009df50       0x28 rtc.o
+ .bss           0x00000000c009df78       0x28 serial.o
+ .bss           0x00000000c009dfa0       0x28 timer.o
+ .bss           0x00000000c009dfc8       0x28 cf.o
+ .bss           0x00000000c009dff0       0x28 format.o
+ .bss           0x00000000c009e018       0x28 fs.o
+ .bss           0x00000000c009e040       0x28 read.o
+ .bss           0x00000000c009e068       0x28 search.o
+ .bss           0x00000000c009e090       0x28 write.o
+ .bss           0x00000000c009e0b8       0x29 cedge.o
+ *fill*         0x00000000c009e0e1        0x3 
+ .bss           0x00000000c009e0e4       0x28 bg.o
+ .bss           0x00000000c009e10c       0x2c bmp.o
+ .bss           0x00000000c009e138       0x28 button.o
+ .bss           0x00000000c009e160       0x28 char.o
+ .bss           0x00000000c009e188       0x28 createw.o
+ .bss           0x00000000c009e1b0       0x28 dtext.o
+ .bss           0x00000000c009e1d8       0x28 font.o
+ .bss           0x00000000c009e200       0x28 grid.o
+ .bss           0x00000000c009e228       0x28 line.o
+ .bss           0x00000000c009e250       0x28 menu.o
+ .bss           0x00000000c009e278       0x28 menubar.o
+ .bss           0x00000000c009e2a0       0x28 pixel.o
+ .bss           0x00000000c009e2c8       0x28 rect.o
+ .bss           0x00000000c009e2f0       0x28 sbar.o
+ .bss           0x00000000c009e318       0x28 toolbar.o
+ .bss           0x00000000c009e340       0x28 window.o
+ .bss           0x00000000c009e368       0x28 logoff.o
+ .bss           0x00000000c009e390       0x28 logon.o
+ .bss           0x00000000c009e3b8       0x28 input.o
+ .bss           0x00000000c009e3e0       0x28 output.o
+ .bss           0x00000000c009e408       0x28 terminal.o
+ .bss           0x00000000c009e430       0x28 desktop.o
+ .bss           0x00000000c009e458       0x28 room.o
+ .bss           0x00000000c009e480       0x28 userenv.o
+ .bss           0x00000000c009e4a8       0x28 usession.o
+ .bss           0x00000000c009e4d0       0x28 kgws.o
+ .bss           0x00000000c009e4f8       0x28 vfs.o
+ .bss           0x00000000c009e520       0x28 x86cont.o
+ .bss           0x00000000c009e548       0x28 x86fault.o
+ .bss           0x00000000c009e570       0x28 x86start.o
+ .bss           0x00000000c009e598       0x28 dispatch.o
+ .bss           0x00000000c009e5c0       0x28 pheap.o
+ .bss           0x00000000c009e5e8       0x28 process.o
+ .bss           0x00000000c009e610       0x28 queue.o
+ .bss           0x00000000c009e638       0x28 spawn.o
+ .bss           0x00000000c009e660       0x28 tasks.o
+ .bss           0x00000000c009e688       0x28 theap.o
+ .bss           0x00000000c009e6b0       0x28 thread.o
+ .bss           0x00000000c009e6d8       0x28 threadi.o
+ .bss           0x00000000c009e700       0x28 ts.o
+ .bss           0x00000000c009e728       0x28 tstack.o
+ .bss           0x00000000c009e750       0x28 callout.o
+ .bss           0x00000000c009e778        0x0 callfar.o
+ .bss           0x00000000c009e778       0x28 ipc.o
+ .bss           0x00000000c009e7a0       0x28 ipccore.o
+ .bss           0x00000000c009e7c8       0x28 sem.o
+ .bss           0x00000000c009e7f0       0x28 memory.o
+ .bss           0x00000000c009e818       0x28 mminfo.o
+ .bss           0x00000000c009e840       0x28 mmpool.o
+ .bss           0x00000000c009e868       0x28 pages.o
+ .bss           0x00000000c009e890       0x28 preempt.o
+ .bss           0x00000000c009e8b8       0x28 priority.o
+ .bss           0x00000000c009e8e0       0x28 sched.o
+ .bss           0x00000000c009e908       0x28 schedi.o
+ .bss           0x00000000c009e930       0x28 create.o
+ .bss           0x00000000c009e958       0x28 mk.o
+ .bss           0x00000000c009e980       0x28 request.o
+                0x00000000c009e9a8                _bss_end = .
+                0x00000000c009f000                . = ALIGN (0x1000)
+ *fill*         0x00000000c009e9a8      0x658 
+                0x00000000c009f000                _kernel_end = .
 LOAD head.o
 LOAD main.o
 LOAD x86main.o
