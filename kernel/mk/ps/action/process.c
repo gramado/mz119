@@ -365,6 +365,17 @@ do_clone:
 		Clone->control->saved = 0;
 		SelectForExecution (Clone->control);
 
+		
+		
+		//#test
+		//Clone->control->stdin  = stdin; //Current->control->stdin;
+		//Clone->control->stdout = stdout; //Current->control->stdout;
+		//Clone->control->stderr = stderr; //Current->control->stderr;
+		//Clone->Streams[0] = (unsigned long) stdin; //Current->control->stdin;
+		//Clone->Streams[1] = (unsigned long) stdout; //Current->control->stdout;
+		//Clone->Streams[2] = (unsigned long) stderr; //Current->control->stderr;
+
+		
 		//
 		// Return.
 		//

@@ -375,6 +375,71 @@ void *gde_services ( unsigned long number,
         return (void *) do_fork_process2 ();
     }
 	
+	//t18
+    //vem o pid no argumento.
+    if ( number == 1000 )
+    {	
+		//#provisório
+        //return (void *) CurrentTTY->stdout;
+		return (void *) stdout;
+    }
+	
+	
+	//
+    if ( number == 1001 )
+	{
+		printf ("service1001: configurando tty stream \n",arg2);
+		
+		CurrentTTY->stdout = (FILE *) arg2;
+		stdout = (FILE *) arg2;
+		
+		//#provisório
+        return (void *) NULL;	
+	}
+	
+	// pega um char na stream, o último que foi pego,
+	// não o último que foi colocado.
+	// #importante: uma no terminal deve chamar isso.
+	// mas o terminal precisa ser alertado de que tem mensagens
+	//para ele o tty, então modemos enviar uma MSG_TTY?? vaisando que
+	//o terminal pode pegar sua mensagem na tty através dessa chamada aqui.
+	int xxx_ch;
+    if ( number == 1002 )	
+	{
+		xxx_ch = (int) *CurrentTTY->stdout_last_ptr;
+		
+	    CurrentTTY->stdout_last_ptr++;	
+		
+		return (void *) xxx_ch;
+    } 
+	
+	//set terminal pid.
+	if ( number == 1003 )
+	{
+		CurrentTTY->terminal_pid = (int) arg2;
+		return NULL;
+	}
+
+	//get terminal pid.
+	if ( number == 1004 )
+	{
+		return (void *) CurrentTTY->terminal_pid;
+	}
+
+	
+	 if ( number == 1005 )
+	 {
+		 CurrentTTY->stdout = stdout;
+		 fprintf (stdout, "dirty\n");
+		 
+		 return NULL;
+	 }
+	
+	 //get sdtout
+	 if ( number == 1006 )
+	 {
+		 return (void *) stdout;
+	 }
 	
 	//
 	// test

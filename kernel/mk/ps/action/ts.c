@@ -143,8 +143,7 @@ void task_switch (void){
 	// Checar no tty atual se tem que atualizar a tela,
 	// a linha ou o char.
 	
-	check_CurrentTTY ();
-	
+	//check_CurrentTTY ();
 		
 	
 	// Current thread. 

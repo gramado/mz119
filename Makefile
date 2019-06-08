@@ -14,7 +14,7 @@
 VERSION = 1
 PATCHLEVEL = 12
 SUBLEVEL = 0
-EXTRAVERSION = -rc2
+EXTRAVERSION = -rc3
 NAME = 
 
 
@@ -493,13 +493,14 @@ vhd-copy-files:
 	-sudo cp ../gde/bin/GDETERM.BIN   /mnt/gramadovhd 
 	-sudo cp ../gde/bin/GDETM.BIN     /mnt/gramadovhd 
 
+	-sudo cp ../gde/bin/HELLO.BIN     /mnt/gramadovhd 
 	-sudo cp ../gde/bin/JACKPOT.BIN   /mnt/gramadovhd 
 	-sudo cp ../gde/bin/CAT.BIN       /mnt/gramadovhd 
 	-sudo cp ../gde/bin/GLIBCT1.BIN   /mnt/gramadovhd 
 	-sudo cp ../gde/bin/GRAMC.BIN     /mnt/gramadovhd 
 	-sudo cp ../gde/bin/LISP.BIN      /mnt/gramadovhd 
 	-sudo cp ../gde/bin/NORATERM.BIN  /mnt/gramadovhd
-	-sudo cp ../gde/bin/REBOOT.BIN  /mnt/gramadovhd
+	-sudo cp ../gde/bin/REBOOT.BIN    /mnt/gramadovhd
 #...
 	
 	

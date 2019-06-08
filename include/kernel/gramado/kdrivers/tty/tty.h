@@ -71,7 +71,8 @@ struct tty_d
 	int count;
 	
 	// id do terminal associado a essa tty.
-	int terminal_id;
+	int terminal_id;  //tdo deletar.
+	int terminal_pid;  //todo: usar esse
 
 	//Janela.
 	struct window_d *window;
