@@ -14,7 +14,7 @@
 VERSION = 1
 PATCHLEVEL = 12
 SUBLEVEL = 0
-EXTRAVERSION = -rc1
+EXTRAVERSION = -rc2
 NAME = 
 
 
@@ -409,11 +409,13 @@ link-x86:
 
 danger-hdd-clone-vhd:
 	sudo dd if=./GRAMADO.VHD of=/dev/sda
-
+#	sudo dd if=./GRAMADO.VHD of=/dev/sdb
+	
 hdd-mount:
 	-sudo umount /mnt/gramadohdd
 	sudo mount -t vfat -o loop,offset=32256 /dev/sda /mnt/gramadohdd/
-
+#	sudo mount -t vfat -o loop,offset=32256 /dev/sdb /mnt/gramadohdd/
+	
 hdd-unmount:
 	-sudo umount /mnt/gramadohdd
 	

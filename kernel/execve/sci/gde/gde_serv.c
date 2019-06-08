@@ -353,15 +353,27 @@ void *gde_services ( unsigned long number,
 	
 	
 	
-	//
-	//
-	//
 	
-	  if ( number == 900 )
-	  {
-	      //do_clone_execute_process ("noraterm.bin");
-		  return (void *) do_clone_execute_process ( (char *) arg2 );
-	  }
+	// t900
+	//clona e executa o filho dado o nome do filho.
+	//do_clone_execute_process ("noraterm.bin");
+	//process.c
+	
+    if ( number == 900 )
+    {   
+		return (void *) do_clone_execute_process ( (char *) arg2 );
+    }
+	
+  
+	// t901
+	//clona um processo, retorna par ao pai e inicializa o processo
+	//filho do seu entrypoint. (#test)
+	//process.c
+	
+    if ( number == 901 )
+    {
+        return (void *) do_fork_process2 ();
+    }
 	
 	
 	//

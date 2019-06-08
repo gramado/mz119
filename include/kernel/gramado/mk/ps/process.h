@@ -837,8 +837,16 @@ struct process_info_d
 // Protótipos de função.
 //
 
+// t900
 //clona e executa o filho dado o nome do filho.
 pid_t do_clone_execute_process (char *filename);
+
+
+// t901
+//clona um processo, retorna par ao pai e inicializa o processo
+//filho do seu entrypoint. (#test)
+pid_t do_fork_process2 (void);
+
 
 /*
  ***************************************

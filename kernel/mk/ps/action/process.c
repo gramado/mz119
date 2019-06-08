@@ -94,7 +94,7 @@ int processNewPID;
 
 /*
  ****************************
- * do_clone_execute_process:
+ * do_clone_execute_process:  (t900)
  *     Clona o processo atual e executa o processo filho.
  *     O processo pai continua rodando.
  *     #obs: Isso funciona.
@@ -387,6 +387,405 @@ fail:
 }
 
 
+
+/*
+ ***************************************
+ * do_fork_process2 (t901)
+ *     (Função em desenvolvimento)
+ *     Isso está clonando o processo atual e executando o processo filho.
+ *     O Processo pai continua rodando.
+ *     #todo: A intenção é modificar essa rotina para ela ser um fork();
+ */
+
+// t901
+//clona um processo, retorna par ao pai e inicializa o processo
+//filho do seu entrypoint. (#test)
+
+pid_t do_fork_process2 (void){
+
+	int PID;	
+	int Ret = -1;	
+
+	struct process_d *Current;	
+	struct process_d *Clone;
+	
+	unsigned long *dir;
+	unsigned long old_dir_entry1; 
+	
+ 
+	//unsigned long old_image_pa; //usado para salvamento.
+	
+    //#debug message.	
+	printf ("do_fork_process2: Cloning the current process..\n");
+	
+	
+	// ## Current ##
+	// Checando a validade do processo atual.
+	
+	//if ( current_process < 0 )
+	//    return 0;
+	
+	Current = (struct process_d *) processList[current_process];
+	
+	if ( (void *) Current == NULL )
+	{
+		printf("do_fork_process2: current, struct \n");
+		goto fail;
+	
+	}else{
+		
+		if ( Current->used != 1 || Current->magic != 1234 )
+		{    
+			printf ("do_fork_process2: current, validation \n");
+			goto fail;		
+		}
+		
+		//#test
+        dir = (unsigned long *) Current->DirectoryVA;	
+		old_dir_entry1 = dir[1]; //salvando
+		
+		//salvando o endereço físico da imagem que existe no processo.
+		//old_image_pa = (unsigned long) virtual_to_physical ( Current->Image, gKernelPageDirectoryAddress ); 		
+		
+	    //#debug
+	    //printf(">>> check current process: %d %d \n", current_process, Current->pid );		
+		goto do_clone;
+		//...
+	};
+	
+	
+	//
+	// ## Clone ##
+	//
+	
+do_clone:
+	
+	//Cria uma estrutura do tipo processo, mas não inicializada.
+	
+	Clone = (struct process_d *) processObject ();
+	
+	if ( (void *) Clone == NULL )
+	{
+		printf ("do_fork_process2: Clone struct fail \n");
+		
+		goto fail;
+	
+	} else {
+		
+		
+		// Obtêm um índice para um slot vazio na lista de processos.
+		
+	    PID = (int) getNewPID ();
+		
+		//if ( PID <= 0 ){
+			
+		if ( PID == -1 || PID == 0 )
+		{	
+			printf ("do_fork_process2: getNewPID fail %d \n", PID );
+			goto fail;
+		}
+		
+		Clone->pid = PID;
+		
+		Clone->used = 1;
+		Clone->magic = 1234;
+		
+		//#obs: Na hora de copiar o processo, a estrutura do clone 
+		//receberá os valores da estrutura do processo atual,
+		//até mesmo o endereço do diretório de páginas.
+		
+		//...
+		
+		//Salvando na lista.
+		
+		processList[PID] = (unsigned long) Clone;
+		
+		//
+		// ## clone  ##
+		//
+		
+		// Copia a memória usada pela imagem do processo.
+		
+		processCopyMemory ( Current );	
+		
+		//
+		// Debug messages.
+		//
+		
+        //unsigned long *xxx = (unsigned long *) Current->DirectoryVA;	
+	    //printf ("DirectoryVA = %x \n",Current->DirectoryVA);
+	    //printf ("Directory Entry 1 = %x \n", xxx[1] );
+	    //printf ("childImage_PA = %x \n",Current->childImage_PA);	
+	
+	    //mmShowPDEForAllProcesses (1);
+	    
+		//printf ("DirectoryVA = %x \n",Current->DirectoryVA);
+	    //printf ("Directory Entry 1 = %x \n", xxx[1] );
+	    
+		//kprintf ("debug *breakpoint");	
+	    //refresh_screen();
+	    //while (1){}	
+		
+		
+		//
+		// Clone process.
+		//
+		
+		// Isso cria um diretório de páginas para o processo clone;
+		
+	    Ret = processCopyProcess ( Current->pid, Clone->pid );
+		
+	    if ( Ret != 0 )
+	    {
+		    panic ("do_fork_process2: processCopyProcess fail\n");
+		    //goto fail;	
+	    }
+		
+        CreatePageTable ( (unsigned long) Clone->DirectoryVA, ENTRY_USERMODE_PAGES, 
+		    Current->childImage_PA );		
+		
+		
+		//#test
+		// recuperamos a informação que o pai perdeu quando 
+		// sobrescrevemos uma pagedir.
+		//Current->Image = va da imagem do processo pai
+		//unsigned long old_image_pa;
+		//old_image_pa = (unsigned long) virtual_to_physical ( Current->Image, gKernelPageDirectoryAddress ); 
+		
+		//usando valores salvos anteriormente. é do pai.
+		//CreatePageTable ( (unsigned long) Current->DirectoryVA, ENTRY_USERMODE_PAGES, old_image_pa );			
+		    
+		//dir[1] = old_dir_entry1;
+		
+		// Ok, retornando o número do processo clonado.
+		
+		//printf ("do_fork_process: done\n");
+				
+		//
+		// Current thread.
+		//
+		
+        //#test
+		// Vamos associar ao primeiro tty, mesmo que seja um aplicatibo GUI.
+		// Se ele for um aplicativo GUI ele irá atualizar o foco.
+		// Se for um aplicativo de terminal então terá uma janela 
+		// para rodar. Pois o ldisc manda mensagens para a thread de controle 
+		// da janela com foco de entrada. Vamos fazer isso manualmente.
+		
+		/*
+		 ## bugbug: 
+		 Essa rotina faz o input não funcionar quando retornamos para o pai.
+		
+		if ( (void *) CurrentTTY != NULL )
+		{
+			if ( CurrentTTY->used == 1 && CurrentTTY->magic == 1234 )
+			{
+				current_tty = CurrentTTY->index;
+				
+				Clone->control->tty_id = current_tty;
+				
+				// #terminal window.
+				window_with_focus = CurrentTTY->window->id;
+                terminal_window = CurrentTTY->window->id;
+				
+				//#importante
+				//a thread de controle da janela, para qual
+				//serão enviadas as mensagens pelo ldisc
+				CurrentTTY->window->control = Clone->control;
+			}
+			
+		}else{
+		    //Thread->tty_id = 0; //-1
+        } 
+		*/
+		
+		/*
+#bug: Quando o kernel salta 
+para eip do novo processo ele está usando o seu próprio endereçamento. Mas o kernel
+deve considerar o endereçamento do novo processo, pois isso aponta para
+um nodo eip fisico.
+os processo anteriores deram certo pois os endereçamentos eram iguais, todos clones do endereçamento do kernel.		
+		*/
+		
+		
+		//
+		// Debug messages.
+		//
+		
+		
+		// mmShowPDEForAllProcesses (1);
+		
+		// show_thread_information (); 
+		
+		// printf ("\n");
+		
+		// [current]
+		// mostra_reg (Current->control->tid);
+		// printf ("Current.DirectoryVA = %x \n",Current->DirectoryVA);
+		// printf ("Current.DirectoryPA = %x \n",Current->DirectoryPA);
+		// printf ("Current.Image = %x \n",Current->Image);
+		// printf ("Current.ImagePA = %x \n",Current->ImagePA);
+		// Current->control->eipPA = (unsigned long) virtual_to_physical ( Current->control->eip, Current->DirectoryVA ); 
+		// printf ("Current.control.eipVA = %x \n",Current->control->eip);
+		// printf ("Current.control.ring0_eipVA = %x \n",Current->control->ring0_eip);
+		// printf ("Current.control.eipPA = %x \n",Current->control->eipPA);
+
+		
+		// [clone]
+		// mostra_reg (Clone->control->tid);
+		// printf ("Clone.DirectoryVA = %x \n",Clone->DirectoryVA);
+		// printf ("Clone.DirectoryPA = %x \n",Clone->DirectoryPA);
+		// printf ("Clone.Image = %x \n",Clone->Image);
+		// printf ("Clone.ImagePA = %x \n",Clone->ImagePA);
+		// #bugbug: Esse é o endereço l[ogico em que deve estar a imagem do clone
+		// na visão do diretório do clone.
+		// Clone->Image = 0x400000;
+		// Clone->ImagePA = (unsigned long) virtual_to_physical ( Clone->Image  , Clone->DirectoryVA ); 
+		// agora visto com o diretório do processo clone.
+		// printf ("Clone.Image = %x \n",Clone->Image);
+		// printf ("***Clone.ImagePA = %x \n",Clone->ImagePA);
+		// Clone->control->eipPA = (unsigned long) virtual_to_physical ( Clone->control->eip  , Clone->DirectoryVA ); 		
+		// printf ("Clone.control.eipVA = %x \n",Clone->control->eip);
+		// printf ("Clone.control.ring0_eipVA = %x \n",Clone->control->ring0_eip);
+		// printf ("Clone.control.eipPA = %x \n",Clone->control->eipPA);
+		
+		
+		// printf ("\ndo fork process: *breakpoint");
+		// refresh_screen();
+		// while(1){}
+		
+		//
+		// Load child image.
+		//
+		
+		// #importante: 
+	    // Carregando a image do processo filho.
+		
+		
+        //fsLoadFile ( VOLUME1_FAT_ADDRESS, VOLUME1_ROOTDIR_ADDRESS, 
+	     //   "GDESHELL BIN", (unsigned long) Clone->Image );		
+		
+		
+		//
+		// ## TEST ##
+		//
+		
+		
+		//#test - Clonando manualmente a thread de controle.
+		//só a imagem ... falta a pilha.
+		memcpy ( (void *) Clone->Image, (const void *) Current->Image, ( 0x50000 ) ); 
+		//====
+		Clone->control->type  = Current->control->type; 
+		Clone->control->plane = Current->control->plane;
+		Clone->control->base_priority = Current->control->base_priority;
+		Clone->control->priority = Current->control->priority;
+		Clone->control->iopl = Current->control->iopl;
+		Clone->control->preempted = Current->control->preempted;
+		Clone->control->step = Current->control->step;
+		Clone->control->quantum = Current->control->quantum;
+		Clone->control->quantum_limit = Current->control->quantum_limit;
+		Clone->control->standbyCount = Current->control->standbyCount;
+		Clone->control->runningCount = Current->control->runningCount;
+		Clone->control->initial_time_ms = Current->control->initial_time_ms;
+		Clone->control->total_time_ms = Current->control->total_time_ms;
+		Clone->control->runningCount_ms = Current->control->runningCount_ms;
+		Clone->control->readyCount = Current->control->readyCount;
+		Clone->control->ready_limit = Current->control->ready_limit;
+		Clone->control->waitingCount = Current->control->waitingCount;
+		Clone->control->waiting_limit = Current->control->waiting_limit;
+		Clone->control->blockedCount = Current->control->blockedCount;
+		Clone->control->blocked_limit = Current->control->blocked_limit;
+		Clone->control->ticks_remaining = Current->control->ticks_remaining;
+		Clone->control->signal = Current->control->signal;
+		Clone->control->signalMask = Current->control->signalMask;
+		Clone->control->ss = Current->control->ss;
+		Clone->control->esp = Current->control->esp;   //>>>
+		Clone->control->eflags = Current->control->eflags;
+		Clone->control->cs = Current->control->cs;
+		Clone->control->eip = Current->control->eip; // >>>
+		Clone->control->initial_eip = Current->control->initial_eip;
+		Clone->control->ds = Current->control->ds;
+		Clone->control->es = Current->control->es;
+		Clone->control->fs = Current->control->fs;
+		Clone->control->gs = Current->control->gs;
+		Clone->control->eax = 0; //Current->control->  >>>
+		Clone->control->ebx = Current->control->ebx;
+		Clone->control->ecx = Current->control->ecx;
+		Clone->control->edx = Current->control->edx;
+		Clone->control->esi = Current->control->esi;
+		Clone->control->edi = Current->control->edi;
+		Clone->control->ebp = Current->control->ebp;
+		Clone->control->tss = Current->control->tss;
+		//process	
+		// for wait_reason[w]
+		//exit_code	
+		//====
+		
+		//#bugbug ATENÇÃO ATENÇÃO
+		//Funciona que iniciamos o filho no seu entrypoint,
+		//mas não funciona quando iniciamos no mesmo eip do pai.
+		//A diferença entre os dois casos é só o eip.
+		
+			//====
+		Clone->control->eip = 0x400000 + 0x1000;
+		Clone->control->esp = 0x450000 - 0x1000;
+		//Clone->control->eip = Current->control->eip; //#bug fail
+		//Clone->control->esp = Current->control->esp; //#bug fail
+		//====
+
+
+		//ok
+		//printf ("Current: %s\n", Current->Image + 0x1000);
+		//printf ("Clone: %s\n", Clone->Image + 0x1000);
+
+        //mostra_reg (Clone->control->tid);		
+		//refresh_screen();
+		//while(1){}
+		
+		//#hackhack
+
+		// [pai]
+		Current->control->quantum = 100;		
+		//Current->control->saved = 0;
+		Current->control->state = READY;
+        //SelectForExecution (Current->control);
+			
+		// [filho]
+		Clone->control->quantum = 200;		
+		Clone->control->saved = 0;
+		Clone->control->state = READY;
+		SelectForExecution (Clone->control);
+
+        //
+		// return
+		//
+		
+		// #importante:
+		// Retornamos para o processo pai o PID do filho.
+		
+		//pai
+		current_thread = Current->control->tid;	
+		current_process = Current->pid;
+        return (pid_t) Clone->pid;
+		
+		//filho
+		//current_thread = Clone->control->tid;	
+		//current_process = Clone->pid;
+        //return (pid_t) 0;
+
+		
+	};
+
+    // Fail.	
+    	
+fail:
+	
+    return (pid_t) -1;	
+}
+
+
+
+
 /*
  ***************************************
  * do_fork_process
@@ -397,7 +796,7 @@ fail:
  */
  
 // #todo
-// Criar um fork() usnado essa rotina.
+// Criar um fork() usando essa rotina.
 // Falta pouco.
 
 pid_t do_fork_process (void){
