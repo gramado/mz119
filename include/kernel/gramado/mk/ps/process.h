@@ -323,15 +323,19 @@ struct process_d
 	//Em qual terminal o processo vai atual.
 	//a estrutura está em terminal.h
 	
-	int terminal_id;
+	int terminal_id;   //deletar esse.
+	int terminal_tid;  //usar esse.
 	
-	
+		
 	//
 	// tty support
 	//
 	
 	// ID da tty usada.
 	int tty_id;
+	
+	
+	int personality;	
 	
 	//Importante:
 	//isso substituirá a flag 'terminal'
