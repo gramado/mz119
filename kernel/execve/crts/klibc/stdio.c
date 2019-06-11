@@ -56,13 +56,16 @@ int fclose (FILE *stream){
 		
 	}else{
 		
-		stream->_ptr = NULL;
+		stream->used = 1;
+		stream->magic = 1234;
+			
+		stream->_p = NULL;
 		stream->_cnt = 0;
 		stream->_base = NULL;
-		stream->_flag = 0;
+		stream->_flags = 0;
 		stream->_file = 0;
 		stream->_charbuf = 0;
-		stream->_bufsiz = 0;
+		stream->_lbfsize = 0;
 		stream->_tmpfname = NULL;
 		
 		stream = NULL;
@@ -157,9 +160,11 @@ FILE *fopen ( const char *filename, const char *mode ){
 		die();
 	}	
 	  
-
+    stream->used = 1;
+	stream->magic = 1234;
+		
 	stream->_base = file_buffer;
-	stream->_ptr = stream->_base;
+	stream->_p = stream->_base;
 	
 	stream->_file = 0;
 	stream->_tmpfname = (char *) filename;	
@@ -763,8 +768,9 @@ static int prints ( char **out, const char *string, int width, int pad ){
 	
 	if( !(pad & PAD_RIGHT) ) 
 	{
-		for ( ; width > 0; --width){
-		    printchar(out,padchar);
+		for ( ; width > 0; --width)
+		{
+		    printchar (out,padchar);
 			++pc;
 		};
 	};
@@ -781,9 +787,8 @@ static int prints ( char **out, const char *string, int width, int pad ){
 		++pc;
 	};
 
-//done:	
 	return (int) pc;
-};
+}
 
 
 /*
@@ -810,6 +815,7 @@ printi ( char **out,
 	{
 		print_buf[0] = '0';
 		print_buf[1] = '\0';
+		
 		return prints (out, print_buf, width, pad);
 	};
 	
@@ -1038,6 +1044,10 @@ int fprintf ( FILE *stream, const char *format, ... ){
 	// Validation.
 	//
 	
+	
+	kprintf ("klibc-stdio-fprintf: stream=%x \n",stream);
+	kprintf ("klibc-stdio-fprintf: stdout=%x \n",stdout);
+	
     if ( (void *) stream == NULL )
 	{
 	     kprintf ("klibc-stdio-fprintf: stream\n");
@@ -1068,6 +1078,9 @@ int fprintf ( FILE *stream, const char *format, ... ){
 	
 	
 	// Se a stream for a stdout então vamos ter alertar para pintar.
+	//#obs: esquema antigo, não usaremos mais isso por enquanto.
+	
+	/*
 	if (stream == stdout)
 	{
 		//Indicamos que deve pintar.
@@ -1094,16 +1107,17 @@ int fprintf ( FILE *stream, const char *format, ... ){
 			//CurrentTTY->print_pending = 1;
 			
 	        // Indicamos de onde a rotina de pintura deve começar.
-		    CurrentTTY->stdout_last_ptr = stdout->_ptr;
+		    CurrentTTY->stdout_last_ptr = stdout->_p;
 		}
 	}	
+	*/
 	
 	//
 	// Colocando os chars dentro do arquivo.
 	//
 
-	// Colocamos no ponteiro e n~ao na base.
-	char *str = (char *) stream->_ptr;
+	// Colocamos no ponteiro e nao na base.
+	char *str = (char *) stream->_p;
 	
 	//#todo
 	//tem que atualizar o ponteiro com uma strlen
@@ -1116,7 +1130,7 @@ int fprintf ( FILE *stream, const char *format, ... ){
 	status = (int) print (&str, varg);
 
 	//depois de ter imprimido então atualizamos o ponteiro de entrada no arquivo.
-	stream->_ptr = stream->_ptr + len;	
+	stream->_p = stream->_p + len;	
 		
 	return (int) status;	
 }
@@ -1166,9 +1180,9 @@ int fputs ( const char *str, FILE *stream ){
 		
 		stream->_cnt = (int) (stream->_cnt - size);
 		
-		sprintf ( stream->_ptr, str );
+		sprintf ( stream->_p, str );
 		
-		stream->_ptr = stream->_ptr + size;
+		stream->_p = stream->_p + size;
 		
         return 0;		
 	};
@@ -1195,9 +1209,9 @@ int ungetc ( int c, FILE *stream ){
 	//@todo: flag oef.
 	//stream->flags = (stream->flags & ~_IOEOF);
 	
-	stream->_ptr--;
+	stream->_p--;
 	
-	stream->_ptr[0] = (char) c;
+	stream->_p[0] = (char) c;
 	
     return (int) c;	
 }
@@ -1210,7 +1224,7 @@ long ftell (FILE *stream){
 		return (long) 0; //-1
 	}	
 	
-    return (long) (stream->_ptr - stream->_base);	
+    return (long) (stream->_p - stream->_base);	
 }
 
 
@@ -1252,7 +1266,7 @@ int fgetc ( FILE *stream ){
 		
 		if ( stream->_cnt <= 0 )
 		{
-			stream->_flag = (stream->_flag | _IOEOF); 
+			stream->_flags = (stream->_flags | _IOEOF); 
 			stream->_cnt = 0;
 			
 		    //printf ("#debug: fgetc: $\n");
@@ -1266,7 +1280,7 @@ int fgetc ( FILE *stream ){
 		
 		//#debug
 		//n~ao podemos acessar um ponteiro nulo... no caso endereço.
-		if ( stream->_ptr == 0 )
+		if ( stream->_p == 0 )
 		{
 			printf ("#debug: fgetc: stream struct fail\n");
 		    refresh_screen();
@@ -1275,9 +1289,9 @@ int fgetc ( FILE *stream ){
 		}else{
 			
 		    //pega o char
-		    ch = (int) *stream->_ptr; 	
+		    ch = (int) *stream->_p; 	
 				
-			stream->_ptr++;
+			stream->_p++;
 		    stream->_cnt--;
 			
 		    return (int) ch;				
@@ -1341,7 +1355,7 @@ int ferror ( FILE *stream ){
 		return (int) (-1);
 	}
 	
-    return (int) ( ( stream->_flag & _IOERR ) );
+    return (int) ( ( stream->_flags & _IOERR ) );
 }
 
 
@@ -1365,17 +1379,17 @@ int fseek ( FILE *stream, long offset, int whence ){
 	switch (whence){
 		
 		case SEEK_SET:    
-		    stream->_ptr = (stream->_base + offset); 
+		    stream->_p = (stream->_base + offset); 
 			goto done;
 			break;
 			
 		case SEEK_CUR:
-		    stream->_ptr = (stream->_ptr + offset);
+		    stream->_p = (stream->_p + offset);
 		    goto done;
 			break;
 
 		case SEEK_END:
-		    stream->_ptr = ((stream->_base + stream->_bufsiz) + offset); 
+		    stream->_p = ((stream->_base + stream->_lbfsize) + offset); 
 		    goto done;
 			break;
 
@@ -1405,9 +1419,9 @@ int fputc ( int ch, FILE *stream ){
 		
 	}else{
 		
-        sprintf ( stream->_ptr, "%c", ch);
+        sprintf ( stream->_p, "%c", ch);
 	
-	    stream->_ptr++;
+	    stream->_p++;
 	    stream->_cnt--;		
 	};
 
@@ -1442,9 +1456,9 @@ void rewind ( FILE * stream ){
 	//#bugbug: isso vai sobrescrever
 	//as coisas que ainda estão no arquivo;
 	
-	stdin->_ptr = stdin->_base;
-    stdin->_bufsiz = BUFSIZ; 		
-	stdin->_cnt = stdin->_bufsiz;		
+	stdin->_p = stdin->_base;
+    stdin->_lbfsize = BUFSIZ; 		
+	stdin->_cnt = stdin->_lbfsize;		
 }
 
 
@@ -1881,7 +1895,7 @@ int stdioInitialize (void){
 	stdin->used = 1;
 	stdin->magic = 1234;
 	stdin->_base = &prompt[0];
-	stdin->_ptr =  &prompt[0];
+	stdin->_p =  &prompt[0];
 	stdin->_cnt = PROMPT_MAX_DEFAULT;
 	stdin->_file = 0;
 	stdin->_tmpfname = "k-stdin";
@@ -1891,7 +1905,7 @@ int stdioInitialize (void){
 	stdout->used = 1;
 	stdout->magic = 1234;	
 	stdout->_base = &prompt_out[0];
-	stdout->_ptr = &prompt_out[0];
+	stdout->_p = &prompt_out[0];
 	stdout->_cnt = PROMPT_MAX_DEFAULT;
 	stdout->_file = 1;
 	stdout->_tmpfname = "k-stdout";
@@ -1901,7 +1915,7 @@ int stdioInitialize (void){
 	stderr->used = 1;
 	stderr->magic = 1234;	
 	stderr->_base = &prompt_err[0];
-	stderr->_ptr =  &prompt_err[0];
+	stderr->_p =  &prompt_err[0];
 	stderr->_cnt = PROMPT_MAX_DEFAULT;
 	stderr->_file = 2;
 	stderr->_tmpfname = "k-stderr";	
@@ -2021,17 +2035,17 @@ int stdioInitialize (void){
 	unsigned char *current_stdin_struct_buffer;
 	unsigned char *current_stdin_data_buffer;
 	
-	current_stdin_struct_buffer = (unsigned char *) newPage();
-	current_stdin_data_buffer = (unsigned char *) newPage();	
+	current_stdin_struct_buffer = (unsigned char *) newPage ();
+	current_stdin_data_buffer = (unsigned char *) newPage ();	
 	
 	current_stdin = (FILE *) &current_stdin_struct_buffer[0];
 	
 	current_stdin->used = 1;
 	current_stdin->magic = 1234;	
-	current_stdin->_base = (char *) &current_stdin_data_buffer[0];
-	current_stdin->_ptr  = (char *) &current_stdin_data_buffer[0];
+	current_stdin->_base = (unsigned char *) &current_stdin_data_buffer[0];
+	current_stdin->_p = (unsigned char *) &current_stdin_data_buffer[0];
 	current_stdin->_cnt = 128;  //Limitando. na verdade e' 4KB.
-	current_stdin->_bufsiz = 128;
+	current_stdin->_lbfsize = 128;
 	
 	//
 	// ## stdout
@@ -2040,17 +2054,17 @@ int stdioInitialize (void){
 	unsigned char *current_stdout_struct_buffer;
 	unsigned char *current_stdout_data_buffer;
 	
-	current_stdout_struct_buffer = (unsigned char *) newPage();
-	current_stdout_data_buffer = (unsigned char *) newPage();	
+	current_stdout_struct_buffer = (unsigned char *) newPage ();
+	current_stdout_data_buffer = (unsigned char *) newPage ();	
 	
 	current_stdout = (FILE *) &current_stdout_struct_buffer[0];
 	
 	current_stdout->used = 1;
 	current_stdout->magic = 1234;		
-	current_stdout->_base = (char *) &current_stdout_data_buffer[0];
-	current_stdout->_ptr  = (char *) &current_stdout_data_buffer[0];
+	current_stdout->_base = (unsigned char *) &current_stdout_data_buffer[0];
+	current_stdout->_p  = (unsigned char *) &current_stdout_data_buffer[0];
 	current_stdout->_cnt = 128;  //Limitando. na verdade e' 4KB.
-	current_stdout->_bufsiz = 128;
+	current_stdout->_lbfsize = 128;
 	
 	//
 	// ## stderr
@@ -2066,10 +2080,10 @@ int stdioInitialize (void){
 	
 	current_stderr->used = 1;
 	current_stderr->magic = 1234;		
-	current_stderr->_base = (char *) &current_stderr_data_buffer[0];
-	current_stderr->_ptr  = (char *) &current_stderr_data_buffer[0];
+	current_stderr->_base = (unsigned char *) &current_stderr_data_buffer[0];
+	current_stderr->_p  = (unsigned char *) &current_stderr_data_buffer[0];
 	current_stderr->_cnt = 128;  //Limitando. na verdade e' 4KB.
-	current_stderr->_bufsiz = 128;
+	current_stderr->_lbfsize = 128;
 
 	// Done !
 

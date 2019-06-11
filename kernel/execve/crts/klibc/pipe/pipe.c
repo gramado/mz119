@@ -75,12 +75,15 @@ int sys_dup ( int oldfd ){
 	        return -1;			
 		}
 		
+        stream_new->used = 1;
+		stream_new->magic = 1234;	
+		
 		stream_new->_base = stream_old->_base;	
-		stream_new->_ptr = stream_old->_ptr;
+		stream_new->_p = stream_old->_p;
 		
 		stream_new->_tmpfname = stream_old->_tmpfname;
 		
-		stream_new->_bufsiz = stream_old->_bufsiz; 
+		stream_new->_lbfsize = stream_old->_lbfsize; 
 		
 		//quanto falta é igual ao tamanho.
 		stream_new->_cnt = stream_old->_cnt; 
@@ -148,13 +151,16 @@ int sys_dup2 (int oldfd, int newfd){
 		    Process->Streams[slot] = (unsigned long) 0;
 	        return -1;			
 		}
+		
+        stream_new->used = 1;
+		stream_new->magic = 1234;			
 				
 		stream_new->_base = stream_old->_base;	
-		stream_new->_ptr = stream_old->_ptr;
+		stream_new->_p = stream_old->_p;
 		
 		stream_new->_tmpfname = stream_old->_tmpfname;
 		
-		stream_new->_bufsiz = stream_old->_bufsiz; 
+		stream_new->_lbfsize = stream_old->_lbfsize; 
 		
 		//quanto falta é igual ao tamanho.
 		stream_new->_cnt = stream_old->_cnt; 
@@ -221,13 +227,16 @@ int sys_dup3 (int oldfd, int newfd, int flags){
 		    Process->Streams[slot] = (unsigned long) 0;
 	        return -1;			
 		}
+		
+        stream_new->used = 1;
+		stream_new->magic = 1234;		
 				
 		stream_new->_base = stream_old->_base;	
-		stream_new->_ptr = stream_old->_ptr;
+		stream_new->_p = stream_old->_p;
 		
 		stream_new->_tmpfname = stream_old->_tmpfname;
 		
-		stream_new->_bufsiz = stream_old->_bufsiz; 
+		stream_new->_lbfsize = stream_old->_lbfsize; 
 		
 		//quanto falta é igual ao tamanho.
 		stream_new->_cnt = stream_old->_cnt; 
@@ -347,20 +356,25 @@ int sys_pipe ( int *pipefd ){
 	
 		// As duas estruturas compartilham o mesmo buffer.
 		
-        stream1->_base = buff;	
+        stream1->used = 1;
+		stream1->magic = 1234;
+		stream2->used = 1;
+		stream2->magic = 1234;
+			
+		stream1->_base = buff;	
 	    stream2->_base = buff;
-		stream1->_ptr = buff;
-		stream2->_ptr = buff;
+		stream1->_p = buff;
+		stream2->_p = buff;
 		
 		stream1->_tmpfname = NULL;
 		stream2->_tmpfname = NULL;
 		
-		stream1->_bufsiz = BUFSIZ; 
-		stream2->_bufsiz = BUFSIZ; 
+		stream1->_lbfsize = BUFSIZ; 
+		stream2->_lbfsize = BUFSIZ; 
 		
 		//quanto falta é igual ao tamanho.
-		stream1->_cnt = stream1->_bufsiz;   
-		stream2->_cnt = stream2->_bufsiz; 
+		stream1->_cnt = stream1->_lbfsize;   
+		stream2->_cnt = stream2->_lbfsize; 
 		
 		
 		Process->Streams[i] = (unsigned long) stream1;

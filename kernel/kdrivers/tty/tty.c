@@ -29,7 +29,7 @@ void check_CurrentTTY (void){
 	{
 		// stdout
 		// Não há o que pintar para stdout
-		if (CurrentTTY->stdout_last_ptr == stdout->_ptr )
+		if (CurrentTTY->stdout_last_ptr == stdout->_p )
 		{
 			//printf ("check_CurrentTTY: ptr error nada pra pintar\n");
 			//refresh_screen ();			
@@ -61,7 +61,7 @@ void check_CurrentTTY (void){
 			default:
 			//case 3:
 				//calcula quantos chars devemos pintar.
-				len = (stdout->_ptr - CurrentTTY->stdout_last_ptr);
+				len = (stdout->_p - CurrentTTY->stdout_last_ptr);
 				//pintamos todos os chars.
 				for (i=0; i<len; i++)
 				{
@@ -69,7 +69,7 @@ void check_CurrentTTY (void){
 				    printf ("%c", *CurrentTTY->stdout_last_ptr);
 				    CurrentTTY->stdout_last_ptr++;				
 				}
-				CurrentTTY->stdout_last_ptr = stdout->_ptr;
+				CurrentTTY->stdout_last_ptr = stdout->_p;
 				CurrentTTY->print_pending = 0; //não temos mais print pendente
 				
 				refresh = 1;
@@ -217,7 +217,86 @@ int ttyInit (int tty_id){
 	CurrentTTY->top = 0;
 	//CurrentTTY->width = 0;
 	//CurrentTTY->height = 0;
+	
+	
+	//
+	// #test: arquivo gerenciado pelo kernel para comunicação entre processos
+	//
+	
+	
+	CurrentTTY->ring0_stdin = (FILE *) malloc ( sizeof(FILE) );
+	if ( (void *) CurrentTTY->ring0_stdin  == NULL )
+	{
+		panic ("ttyInit: ring0_stdin");
+	}
+	
+	CurrentTTY->ring0_stdout = (FILE *) malloc ( sizeof(FILE) );
+	if ( (void *) CurrentTTY->ring0_stdout  == NULL )
+	{
+		panic ("ttyInit: ring0_stdout");		
+	}
+	
+	CurrentTTY->ring0_stderr = (FILE *) malloc ( sizeof(FILE) );
+	if ( (void *) CurrentTTY->ring0_stderr  == NULL )
+	{
+		panic ("ttyInit: ring0_stderr");		
+	}	
+	
+	
+	//buffers
+	void *b1;
+	void *b2;
+	void *b3;
+	
+	b1 = (void *) malloc (4096);
+	if ( (void *) b1  == NULL )
+	{
+		panic ("ttyInit: b1");		
+	}	
 
+
+	b2 = (void *) malloc (4096);
+	if ( (void *) b1  == NULL )
+	{
+		panic ("ttyInit: b1");		
+	}	
+
+	
+	b3 = (void *) malloc (4096);	
+	if ( (void *) b1  == NULL )
+	{
+		panic ("ttyInit: b1");		
+	}	
+
+	
+	CurrentTTY->ring0_stdin->used = 1;
+	CurrentTTY->ring0_stdin->magic = 1234;	
+	CurrentTTY->ring0_stdin->_base = (unsigned char *) b1;
+	CurrentTTY->ring0_stdin->_p = CurrentTTY->ring0_stdin->_base;
+	//CurrentTTY->ring0_stdin->
+	
+	CurrentTTY->ring0_stdout->used = 1;
+	CurrentTTY->ring0_stdout->magic = 1234;	
+	CurrentTTY->ring0_stdout->_base = (unsigned char *) b2;
+	CurrentTTY->ring0_stdout->_p = CurrentTTY->ring0_stdout->_base;
+	//CurrentTTY->ring0_stdout->
+		
+	CurrentTTY->ring0_stderr->used = 1;
+	CurrentTTY->ring0_stderr->magic = 1234;	
+	CurrentTTY->ring0_stderr->_base = (unsigned char *) b3;
+	CurrentTTY->ring0_stderr->_p = CurrentTTY->ring0_stderr->_base;
+	//CurrentTTY->ring0_stderr->
+	
+	
+	//base
+	CurrentTTY->ring0_stdout_last_ptr = CurrentTTY->ring0_stdout->_p;
+	
+	//limite
+	CurrentTTY->ring0_stdout_limit = (CurrentTTY->ring0_stdout_last_ptr + 4096);
+		
+	//fazer o mesmo para os outros dois.
+	//...
+	
 	
 	int i;
 	for (i=0; i<8; i++)

@@ -94,14 +94,31 @@ struct tty_d
 	FILE *stdout;
 	FILE *stderr;
 	
+	
+	// #importante
+	// A comunicação entre processos precisa ser feita
+	// por arquivo gerenciado pelo kernel
+	// Vamos deixar algum arquivo em área compartilhada.
+
+	FILE *ring0_stdin;	
+	FILE *ring0_stdout;  //*** testando esse,
+	FILE *ring0_stderr;	
+	
 	//
 	// Print support
 	//
 	
 	// De onde começar a pintar
 	// depois da libc ter colocado caracteres no arquivo. 
-	char *stdout_last_ptr;
-	char *stderr_last_ptr;
+	unsigned char *stdout_last_ptr;
+	unsigned char *stderr_last_ptr;
+	
+	
+	unsigned char *ring0_stdout_last_ptr;
+	unsigned char *ring0_stderr_last_ptr;	
+	
+	unsigned char *ring0_stdout_limit;
+	unsigned char *ring0_stderr_limit;		
 	
 	// status
 	// 0 = não repinte stdout no tty atual

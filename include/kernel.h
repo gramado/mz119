@@ -128,9 +128,12 @@ extern void do_executa_new_task (void);
 //  ## klibc ##
 //
 
+#include <kernel/sys/cdefs.h>
+
 //++
 #include <kernel/stddef.h>
 #include <kernel/types.h>
+#include <kernel/sys/types.h>
 #include <kernel/limits.h>
 #include <kernel/stdio.h>
 #include <kernel/stdlib.h>
@@ -140,7 +143,6 @@ extern void do_executa_new_task (void);
 #include <kernel/signal.h>
 #include <kernel/unistd.h>
 #include <kernel/fcntl.h>
-#include <kernel/sys/types.h>
 #include <kernel/socket.h>
 //...
 //--

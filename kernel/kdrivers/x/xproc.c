@@ -281,11 +281,10 @@ void xxxtestlibc (void){
 		    //na base esperada.
 		    //printf("Show f1->_base: %s\n",f1->_base);
 		
-		    printf("stream info:\n");
-		    printf("f1->_base: %x\n",f1->_base);
-		    printf("f1->_ptr: %x\n",f1->_ptr);
-		    printf("f1->_cnt: %d\n",f1->_cnt);			
-			
+		    printf ("stream info:\n");
+		    printf ("f1->_base: %x\n",f1->_base);
+		    printf ("f1->_p: %x\n",f1->_p);
+		    printf ("f1->_cnt: %d\n",f1->_cnt);			
 		}
 		
 
@@ -293,7 +292,7 @@ void xxxtestlibc (void){
 		//
 		// #bugbug ... o fgetc não lê na estrutura esperada.
 		//
-		printf("Testing fgetc ... \n\n");
+		printf ("Testing fgetc ... \n\n");
 		while(1)
 		{
 			//#bugbug: page fault quando chamamos fgetc.
@@ -1390,25 +1389,25 @@ void procedureMakeTests (void)
 	printf("sm-sys-procedureMakeTests:\n");
 	
 	//Fluxo padrão. (file structure)
-	stdout = (void *) malloc( sizeof(FILE) );
+	stdout = (void *) malloc ( sizeof(FILE) );
 	
 	if ( (void *) stdout != NULL )
 	{
 		//File size.
 		//@todo: Fazer assim.
-		//stdout->_ptr = (char *) malloc( 4096 );
-		stdout->_ptr = (char *) malloc( sizeof(4096) );
+
+		stdout->_p = (unsigned char *) malloc ( sizeof(4096) );
 		
-		if(stdout->_ptr == 0)
+		if(stdout->_p == 0)
 		{
 			printf("erro 1\n");
 			goto done;
 		}
 				
 		fsLoadFile ( VOLUME1_FAT_ADDRESS, VOLUME1_ROOTDIR_ADDRESS, 
-		    "INIT    TXT", (unsigned long) stdout->_ptr );
+		    "INIT    TXT", (unsigned long) stdout->_p );
 			
-		printf("%s\n", (const char*) stdout->_ptr);		
+		printf ("%s\n", (const char*) stdout->_p);		
 		
 		//printf("~~%s \n",stdout->_ptr);
 		//free(stdout->_ptr);

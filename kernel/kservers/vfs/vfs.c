@@ -76,8 +76,8 @@ void vfsInit (void){
 	    //#todo:
 	    //Checar antes a validade dessa estrutura.
 	
-	    vfs->_base = (char *) storage->vfs->rootdir_address;
-	    vfs->_ptr = stdin->_base;
+	    vfs->_base = (unsigned char *) storage->vfs->rootdir_address;
+	    vfs->_p = stdin->_base;
 	    vfs->_cnt = ( VFS_ROOTDIR_NUMBER_OF_ENTRIES * VFS_ROOTDIR_ENTRY_SIZE );
 	    vfs->_file = 0; //?
 	    vfs->_tmpfname = "vfs-stream";

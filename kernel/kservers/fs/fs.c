@@ -830,8 +830,8 @@ int fsInit (void){
 
 	} else {
 
-	    volume1_rootdir->_base = (char *) VOLUME1_ROOTDIR_ADDRESS;
-	    volume1_rootdir->_ptr = (char *) VOLUME1_ROOTDIR_ADDRESS;
+	    volume1_rootdir->_base = (unsigned char *) VOLUME1_ROOTDIR_ADDRESS;
+	    volume1_rootdir->_p = (unsigned char *) VOLUME1_ROOTDIR_ADDRESS;
 	    volume1_rootdir->_cnt = (32 * 512) ;
 	    volume1_rootdir->_file = 0; //?
 	    volume1_rootdir->_tmpfname = "volume1-stream";
@@ -858,8 +858,8 @@ int fsInit (void){
 	    die ();
 	} else {
 		
-	    volume2_rootdir->_base = (char *) VOLUME2_ROOTDIR_ADDRESS;
-	    volume2_rootdir->_ptr = (char *) VOLUME2_ROOTDIR_ADDRESS;
+	    volume2_rootdir->_base = (unsigned char *) VOLUME2_ROOTDIR_ADDRESS;
+	    volume2_rootdir->_p = (unsigned char *) VOLUME2_ROOTDIR_ADDRESS;
 	    volume2_rootdir->_cnt = (32 * 512) ;
 	    volume2_rootdir->_file = 0; //?
 	    volume2_rootdir->_tmpfname = "volume2-stream";
@@ -886,7 +886,7 @@ int fsInit (void){
 		
 	
 	    //aloca memória para o buffer.
-	    unsigned long pipe0base = (unsigned long) malloc(512);
+	    unsigned long pipe0base = (unsigned long) malloc (512);
 	    
 		if ( (void *) pipe0base == NULL )
 	    {
@@ -894,8 +894,8 @@ int fsInit (void){
 		    die ();
 	    }
 	
-	    pipe_gramadocore_init_execve->_base = (char *) pipe0base;
-	    pipe_gramadocore_init_execve->_ptr  = (char *) pipe0base;
+	    pipe_gramadocore_init_execve->_base = (unsigned char *) pipe0base;
+	    pipe_gramadocore_init_execve->_p = (unsigned char *) pipe0base;
 	    pipe_gramadocore_init_execve->_cnt  = 512;
 	    pipe_gramadocore_init_execve->_file = 0; //??
 	    pipe_gramadocore_init_execve->_tmpfname = "pipe0";
@@ -1407,16 +1407,16 @@ FILE *sys_read_file2 ( unsigned long name, unsigned long address ){
 	
 	
 		stream->_base = (char *) new_address;
-		stream->_ptr  = (char *) new_address;	
+		stream->_p  = (char *) new_address;	
 	    stream->_cnt = s;
 	
 	    stream->_file = 0;
 	    stream->_tmpfname = (char *) name;		
 	
 		
-	     printf("sys_read_file2: struct ok \n");
-		 printf("base=%x \n",stream->_base);
-		 printf("ptr=%x  \n",stream->_ptr);
+	     printf ("sys_read_file2: struct ok \n");
+		 printf ("base=%x \n",stream->_base);
+		 printf ("ptr=%x  \n",stream->_p);
 	
 		
     taskswitch_lock();

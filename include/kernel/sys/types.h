@@ -46,7 +46,7 @@ typedef	unsigned long	u_long;
 /* Sys V compatibility */
 typedef	unsigned short	ushort;		
 
-
+typedef int __off_t;
 
 typedef	char *	caddr_t;		/* core address */
 typedef	long	daddr_t;		/* disk address */

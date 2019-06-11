@@ -380,8 +380,8 @@ void *gde_services ( unsigned long number,
     if ( number == 1000 )
     {	
 		//#provisório
-        //return (void *) CurrentTTY->stdout;
-		return (void *) stdout;
+        return (void *) CurrentTTY->ring0_stdout;
+		//return (void *) stdout;
     }
 	
 	
@@ -406,12 +406,18 @@ void *gde_services ( unsigned long number,
 	int xxx_ch;
     if ( number == 1002 )	
 	{
-		xxx_ch = (int) *CurrentTTY->stdout_last_ptr;
+		xxx_ch = (int) *CurrentTTY->ring0_stdout_last_ptr;
 		
-	    CurrentTTY->stdout_last_ptr++;	
+	    CurrentTTY->ring0_stdout_last_ptr++;	
+		
+		if ( CurrentTTY->ring0_stdout_last_ptr >= CurrentTTY->ring0_stdout_limit )
+		{
+			CurrentTTY->ring0_stdout_last_ptr = CurrentTTY->ring0_stdout->_base;
+		}
 		
 		return (void *) xxx_ch;
     } 
+	
 	
 	//set terminal pid.
 	if ( number == 1003 )
