@@ -14,7 +14,7 @@
 VERSION = 1
 PATCHLEVEL = 12
 SUBLEVEL = 0
-EXTRAVERSION = -rc3
+EXTRAVERSION = -rc4
 NAME = 
 
 
@@ -501,6 +501,7 @@ vhd-copy-files:
 	-sudo cp ../gde/bin/LISP.BIN      /mnt/gramadovhd 
 	-sudo cp ../gde/bin/NORATERM.BIN  /mnt/gramadovhd
 	-sudo cp ../gde/bin/REBOOT.BIN    /mnt/gramadovhd
+	-sudo cp ../gde/bin/TASCII.BIN    /mnt/gramadovhd
 #...
 	
 	

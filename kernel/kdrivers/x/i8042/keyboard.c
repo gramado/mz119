@@ -83,13 +83,21 @@
 	// #obs: 
     // Esse buffer está em gws/user.h 
 
+
+// Low level keyboard writter.
+// Isso poderia usar uma rotina de tty
+
 // PUT SCANCODE
 
 void abnt2_keyboard_handler (void){
 	
+	
+	//não precisamos perguntar para o controlador se
+	//podemos ler, porque foi uma interrupção que nos trouxe aqui.
+	
     unsigned char scancode = inportb (0x60);	
 	
-	
+	//#todo: Aqui podemos retornar.
 	if ( (void *) current_stdin == NULL )
 	{
 	    panic ("i8042-abnt2_keyboard_handler: current_stdin \n");
@@ -97,12 +105,20 @@ void abnt2_keyboard_handler (void){
 	
 	current_stdin->_base[keybuffer_tail++] = (char) scancode;
 	
+	//#bugbug: _cnt é o número de caracteres disponíveis,
+	//precisamos usar o elemento que indique o tamanho do buffer.
+
+	//if ( keybuffer_tail >= current_stdin->_bufsiz )	
 	if ( keybuffer_tail >= current_stdin->_cnt )
 	{
 		keybuffer_tail = 0;
 	}
 }
 
+
+
+// Low level keyboard reader.
+// Isso poderia usar uma rotina de tty
 
 // #importante
 // Isso é usado pelo serviço que pega mensagens de input. (111).
@@ -119,7 +135,12 @@ unsigned long get_scancode (void){
 	
 	keybuffer_head++;
 	
-	if ( keybuffer_head >= current_stdin->_cnt ){ 
+	//#bugbug: _cnt é o número de caracteres disponíveis,
+	//precisamos usar o elemento que indique o tamanho do buffer.
+	
+    //if ( keybuffer_head >= current_stdin->_bufsiz )	
+	if ( keybuffer_head >= current_stdin->_cnt )
+	{ 
 	    keybuffer_head = 0; 
 	};	
 	

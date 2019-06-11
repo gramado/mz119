@@ -452,22 +452,23 @@ void init_globals (void){
 	errno = 0;
 	
 	//alocando memória para as estruturas do fluxo padrão.
-	stdin = (void *) malloc( sizeof(FILE) );
-	stdout = (void *) malloc( sizeof(FILE) );
-	stderr = (void *) malloc( sizeof(FILE) );
+	//#bugbug: vamos deixar que stdioInitialize faça isso.
+	//stdin = (void *) malloc( sizeof(FILE) );
+	//stdout = (void *) malloc( sizeof(FILE) );
+	//stderr = (void *) malloc( sizeof(FILE) );
 	
 	//kstdin  = (void*) malloc( sizeof(FILE) );
 	//kstdout = (void*) malloc( sizeof(FILE) );
 	//kstderr = (void*) malloc( sizeof(FILE) );
 	
     //inicializa as estruturas do fluxo padrão.	
-	stdioInitialize();
+	stdioInitialize ();
 	
 	
 	//#importante
 	//>>> é a partir daqui que temos mensagens!!!
 	
-    screenInit();
+    screenInit ();
 	
 	//
 	// ## FIRST MESSAGE !! ##

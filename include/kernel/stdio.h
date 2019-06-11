@@ -486,6 +486,11 @@ struct _iobuf
 	//object control
 	struct object_d *object;
 	
+	int used;
+	int magic;
+	
+	int iopl;
+	
 	
 	//Current position of file pointer (absolute address).
 	char *_ptr;     

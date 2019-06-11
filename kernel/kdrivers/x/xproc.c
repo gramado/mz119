@@ -644,8 +644,8 @@ system_procedure ( struct window_d *window,
 					
 					
 					//1 = initialize.
-					diskATADialog ( 1, FORCEPIO, FORCEPIO );
-					show_ide_info ();
+					//diskATADialog ( 1, FORCEPIO, FORCEPIO );
+					//show_ide_info ();
                     //rotina provisória de teste de read.
 					//procTestF6();
 					break;
@@ -666,14 +666,14 @@ system_procedure ( struct window_d *window,
 					
 				//Window tests.	
                 case VK_F4:
-					if (AltStatus == 1)
-					{ 
-					    closeActiveWindow(); 
-						alt_status = 0;
-						goto done;
-						break;
-					};
-					windowShowWindowList();  
+					//if (AltStatus == 1)
+					//{ 
+					//    closeActiveWindow(); 
+					//	alt_status = 0;
+					//	goto done;
+					//	break;
+					//};
+					//windowShowWindowList();  
 					break;
 				
                 //#tests
@@ -836,8 +836,8 @@ system_procedure ( struct window_d *window,
 
 				//Task Manager.	
 				case VK_F10:
-				    kill_all_threads();
-					KiInformation();
+				   // kill_all_threads();
+					//KiInformation();
 					//current_idle_thread = 3;
 					//if(AltStatus == 1){ window_with_focus = 10; break;};
 					//if(CtrlStatus == 1){ active_window = 10; break;};
@@ -863,8 +863,8 @@ system_procedure ( struct window_d *window,
 				//Program manager.
                 //@todo: usar F11 para FULL SCREEN.				
 				case VK_F11:
-				    windowSwitchFullScreen();
-					goto done;
+				    //windowSwitchFullScreen();
+					//goto done;
 					break;
 					
 					

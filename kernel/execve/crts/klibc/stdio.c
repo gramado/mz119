@@ -1018,7 +1018,9 @@ int sprintf ( char *str, const char *format, ... ){
 /*
  ************************************************
  * fprintf:
- *     @field 2
+ *     A estrtutura é gerenciada em ring0.
+ *     A libc em ring3 apenas chamará essa rotina.
+ *     serviço 234.
  */
 
 
@@ -1032,9 +1034,28 @@ int fprintf ( FILE *stream, const char *format, ... ){
 	
     register int *varg = (int *) (&format);
 
-	// Srteam inv'alida.
+	//
+	// Validation.
+	//
+	
     if ( (void *) stream == NULL )
-        return -1;
+	{
+	     kprintf ("klibc-stdio-fprintf: stream\n");
+		 die (); 
+		 //refresh_screen();
+		 //return -1;
+	}else{
+	
+		if ( stream->used != 1 || stream->magic != 1234 )
+		{
+	         kprintf ("klibc-stdio-fprintf: stream validation\n");
+		     die (); 
+			 //refresh_screen();
+		     //return -1;		
+		}
+   	
+		//...
+	}
 	
     //
 	// print 
@@ -1799,6 +1820,14 @@ int stdioInitialize (void){
 		panic ("stdioInitialize: Char info");
 	}	
 	
+	
+	// #todo
+	// podemos usar esse alocador ?? Ainda não ??
+	
+	//stdin = (void *) malloc( sizeof(FILE) );
+	//stdout = (void *) malloc( sizeof(FILE) );
+	//stderr = (void *) malloc( sizeof(FILE) );	
+	
 
 	// #bugbug:
 	//  4KB alocados para cada estrutura. Isso é muito.
@@ -1849,6 +1878,8 @@ int stdioInitialize (void){
 	  
 
     // Configurando a estrutura de stdin. 
+	stdin->used = 1;
+	stdin->magic = 1234;
 	stdin->_base = &prompt[0];
 	stdin->_ptr =  &prompt[0];
 	stdin->_cnt = PROMPT_MAX_DEFAULT;
@@ -1857,6 +1888,8 @@ int stdioInitialize (void){
 	//...
 
     // Configurando a estrutura de stdout.
+	stdout->used = 1;
+	stdout->magic = 1234;	
 	stdout->_base = &prompt_out[0];
 	stdout->_ptr = &prompt_out[0];
 	stdout->_cnt = PROMPT_MAX_DEFAULT;
@@ -1865,6 +1898,8 @@ int stdioInitialize (void){
 	//...
 	
     // Configurando a estrutura de stderr.
+	stderr->used = 1;
+	stderr->magic = 1234;	
 	stderr->_base = &prompt_err[0];
 	stderr->_ptr =  &prompt_err[0];
 	stderr->_cnt = PROMPT_MAX_DEFAULT;
@@ -1990,6 +2025,9 @@ int stdioInitialize (void){
 	current_stdin_data_buffer = (unsigned char *) newPage();	
 	
 	current_stdin = (FILE *) &current_stdin_struct_buffer[0];
+	
+	current_stdin->used = 1;
+	current_stdin->magic = 1234;	
 	current_stdin->_base = (char *) &current_stdin_data_buffer[0];
 	current_stdin->_ptr  = (char *) &current_stdin_data_buffer[0];
 	current_stdin->_cnt = 128;  //Limitando. na verdade e' 4KB.
@@ -2006,6 +2044,9 @@ int stdioInitialize (void){
 	current_stdout_data_buffer = (unsigned char *) newPage();	
 	
 	current_stdout = (FILE *) &current_stdout_struct_buffer[0];
+	
+	current_stdout->used = 1;
+	current_stdout->magic = 1234;		
 	current_stdout->_base = (char *) &current_stdout_data_buffer[0];
 	current_stdout->_ptr  = (char *) &current_stdout_data_buffer[0];
 	current_stdout->_cnt = 128;  //Limitando. na verdade e' 4KB.
@@ -2022,6 +2063,9 @@ int stdioInitialize (void){
 	current_stderr_data_buffer = (unsigned char *) newPage();	
 	
 	current_stderr = (FILE *) &current_stderr_struct_buffer[0];
+	
+	current_stderr->used = 1;
+	current_stderr->magic = 1234;		
 	current_stderr->_base = (char *) &current_stderr_data_buffer[0];
 	current_stderr->_ptr  = (char *) &current_stderr_data_buffer[0];
 	current_stderr->_cnt = 128;  //Limitando. na verdade e' 4KB.
