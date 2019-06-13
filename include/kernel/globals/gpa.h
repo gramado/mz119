@@ -8,6 +8,20 @@
 #define LARGESYSTEM_KERNELADDRESS   0
 
 
+// #importante: PERIGO !!!
+// O sistema está usando esse endereço como início de um heap
+// onde pegamos páginas de memória para criarmos diretórios de páginas.
+// Isso porque precisamos de endereços que terminem com pelo menos 
+// 12bits zerados.
+// #todo: Precisamos encontrar outro lugar para esse heap, tendo em vista que
+// o nómero de diretórios criados será grande e o heap invadirá outras áreas.
+// me parece que o pŕoximo endereço usado é o MBR em 0x00020000. 
+// #todo: Possivelmente podemos mudar o MBR de lugar usando o alocador.
+// #OBS: Os endereços físico e virtual são iguais.
+// #define CREATE_DIRECTORY_HEAP_BASE 0x1000
+
+
+
 #define VM_BASE                0x000B8000  //Físico.
 #define KERNEL_TEXT_MODE_BASE  0x000B8000
 #define SMALLSYSTEM_VGA        0x000B8000  //VM_BASE
