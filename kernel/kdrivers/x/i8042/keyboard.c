@@ -86,6 +86,7 @@
 
 // Low level keyboard writter.
 // Isso poderia usar uma rotina de tty
+// O teclado esta lidando no momento com um buffer pequeno, 128 bytes.
 
 // PUT SCANCODE
 
@@ -104,12 +105,8 @@ void abnt2_keyboard_handler (void){
 	}
 	
 	current_stdin->_base[keybuffer_tail++] = (char) scancode;
-	
-	//#bugbug: _cnt é o número de caracteres disponíveis,
-	//precisamos usar o elemento que indique o tamanho do buffer.
 
-	//if ( keybuffer_tail >= current_stdin->_bufsiz )	
-	if ( keybuffer_tail >= current_stdin->_cnt )
+	if ( keybuffer_tail >= current_stdin->_lbfsize )			
 	{
 		keybuffer_tail = 0;
 	}
@@ -124,6 +121,7 @@ void abnt2_keyboard_handler (void){
 // Isso é usado pelo serviço que pega mensagens de input. (111).
 // Pega o scancode.
 // Renova a fila do teclado
+// O teclado esta lidando no momento com um buffer pequeno, 128 bytes.
 
 unsigned long get_scancode (void){
 	
@@ -135,11 +133,7 @@ unsigned long get_scancode (void){
 	
 	keybuffer_head++;
 	
-	//#bugbug: _cnt é o número de caracteres disponíveis,
-	//precisamos usar o elemento que indique o tamanho do buffer.
-	
-    //if ( keybuffer_head >= current_stdin->_bufsiz )	
-	if ( keybuffer_head >= current_stdin->_cnt )
+    if ( keybuffer_head >= current_stdin->_lbfsize )	
 	{ 
 	    keybuffer_head = 0; 
 	};	

@@ -171,6 +171,10 @@ void *createTTYLine (void){
  *     Inicialização do módulo.
  */
 
+// #importante
+// No momento estamos apenas inicializando o primeiro tty
+// e usando o mesmo fluxo padr~ao que o teclado usa.
+
 int ttyInit (int tty_id){
 		
 	debug_print ("ttyInit:\n");
@@ -186,12 +190,13 @@ int ttyInit (int tty_id){
 	{
 		
 		printf ("ttyInit:");
-		die();
+		die ();
 		//return -1;
 	}
 	
-	CurrentTTY->index = tty_id;
 	
+	// Inicializa.
+	CurrentTTY->index = tty_id;
 	CurrentTTY->used = 1;
 	CurrentTTY->magic = 1234;
 	
@@ -204,6 +209,10 @@ int ttyInit (int tty_id){
 	//CurrentTTY->window = gui->main;
 	CurrentTTY->window = NULL;
 	
+	
+	// #bugbug
+	// Ainda não estamos usando esse fluxo padrão do tty.
+	// Estamos usando outro, configurado logo abaixo.
 	
 	CurrentTTY->stdin = stdin;
 	CurrentTTY->stdout = stdout;
@@ -220,81 +229,31 @@ int ttyInit (int tty_id){
 	
 	
 	//
-	// #test: arquivo gerenciado pelo kernel para comunicação entre processos
+	// Fluxo padrão.
 	//
 	
+	 
+	// #importante:
+	// Esse é o mesmo fluxo padrão que pe usado pelo teclado
+	// como buffer de input em kdrivers/x.
+	// Presumindo que esses ponteiros foram inicializados antes. #bugbug
 	
-	CurrentTTY->ring0_stdin = (FILE *) malloc ( sizeof(FILE) );
-	if ( (void *) CurrentTTY->ring0_stdin  == NULL )
-	{
-		panic ("ttyInit: ring0_stdin");
-	}
+	CurrentTTY->ring0_stdin = current_stdin;
+	CurrentTTY->ring0_stdout = current_stdout;
+	CurrentTTY->ring0_stderr = current_stderr;	
 	
-	CurrentTTY->ring0_stdout = (FILE *) malloc ( sizeof(FILE) );
-	if ( (void *) CurrentTTY->ring0_stdout  == NULL )
-	{
-		panic ("ttyInit: ring0_stdout");		
-	}
-	
-	CurrentTTY->ring0_stderr = (FILE *) malloc ( sizeof(FILE) );
-	if ( (void *) CurrentTTY->ring0_stderr  == NULL )
-	{
-		panic ("ttyInit: ring0_stderr");		
-	}	
-	
-	
-	//buffers
-	void *b1;
-	void *b2;
-	void *b3;
-	
-	b1 = (void *) malloc (4096);
-	if ( (void *) b1  == NULL )
-	{
-		panic ("ttyInit: b1");		
-	}	
-
-
-	b2 = (void *) malloc (4096);
-	if ( (void *) b1  == NULL )
-	{
-		panic ("ttyInit: b1");		
-	}	
-
-	
-	b3 = (void *) malloc (4096);	
-	if ( (void *) b1  == NULL )
-	{
-		panic ("ttyInit: b1");		
-	}	
-
-	
-	CurrentTTY->ring0_stdin->used = 1;
-	CurrentTTY->ring0_stdin->magic = 1234;	
-	CurrentTTY->ring0_stdin->_base = (unsigned char *) b1;
-	CurrentTTY->ring0_stdin->_p = CurrentTTY->ring0_stdin->_base;
-	//CurrentTTY->ring0_stdin->
-	
-	CurrentTTY->ring0_stdout->used = 1;
-	CurrentTTY->ring0_stdout->magic = 1234;	
-	CurrentTTY->ring0_stdout->_base = (unsigned char *) b2;
-	CurrentTTY->ring0_stdout->_p = CurrentTTY->ring0_stdout->_base;
-	//CurrentTTY->ring0_stdout->
-		
-	CurrentTTY->ring0_stderr->used = 1;
-	CurrentTTY->ring0_stderr->magic = 1234;	
-	CurrentTTY->ring0_stderr->_base = (unsigned char *) b3;
-	CurrentTTY->ring0_stderr->_p = CurrentTTY->ring0_stderr->_base;
-	//CurrentTTY->ring0_stderr->
+	//
+	// buffer circular.
+	//
 	
 	
 	//base
 	CurrentTTY->ring0_stdout_last_ptr = CurrentTTY->ring0_stdout->_p;
 	
 	//limite
-	CurrentTTY->ring0_stdout_limit = (CurrentTTY->ring0_stdout_last_ptr + 4096);
-		
-	//fazer o mesmo para os outros dois.
+	CurrentTTY->ring0_stdout_limit = (CurrentTTY->ring0_stdout->_p + CurrentTTY->ring0_stdout->_lbfsize);		
+	
+	//fazer o mesmo para os outros dois arquivos.
 	//...
 	
 	
@@ -307,27 +266,17 @@ int ttyInit (int tty_id){
 	ttyList[tty_id] = (unsigned long) CurrentTTY;
 
 	
-	
-/*	
-	int i;
-	
-	for ( i=0; i < TTYLINES_COUNT_MAX; i++ )
-	{
-	    //developer_ttylines[i] = NULL;	
-	}
-	
-	ttyLineCounter = 0;
-	
 	//
-	input_line = (void *) createTTYLine(); 
+	// more ?
+	//
 	
-	//...
-
-	return 0; 
-*/
+	// #bugbug
+	// Devemos retornar '0'.
 	
-    return -1;
+    //return -1;	
+	return 0;
 }
+
 
 //
 // End.

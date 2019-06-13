@@ -375,13 +375,15 @@ void *gde_services ( unsigned long number,
         return (void *) do_fork_process2 ();
     }
 	
-	//t18
-    //vem o pid no argumento.
+	// t18
+    // O arg2 é o PID.
+	// devemos retornar o ponteiro para o stdout do terminal
+	// associado com o aplicativo.
     if ( number == 1000 )
     {	
-		//#provisório
+		// #provisório
+		// Isso é o mesmo que current_stdout usado pelo teclado.
         return (void *) CurrentTTY->ring0_stdout;
-		//return (void *) stdout;
     }
 	
 	
