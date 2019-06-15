@@ -325,7 +325,6 @@ extern void do_executa_new_task (void);
 #include <kernel/gramado/kservers/kgws/kgws/bmp.h>
 #include <kernel/gramado/kservers/kgws/terminal/line.h>
 #include <kernel/gramado/kservers/kgws/terminal/terminal.h>
-#include <kernel/gramado/kservers/kgws/terminal/console.h>
 #include <kernel/gramado/kservers/kgws/kgws/guiconf.h>
 #include <kernel/gramado/kservers/kgws/user/user.h>
 #include <kernel/gramado/kservers/kgws/logon/logon.h>

@@ -45,6 +45,12 @@ The system creates a new terminal when it starts a terminal process,
 */
 
 
+ 
+/* scroll */
+#define SCROLL_UP       (1)
+#define SCROLL_DOWN     (2)
+
+
 //test 
 //#bugbug
 #define DEFAULT_TERMINAL_LEFT 0

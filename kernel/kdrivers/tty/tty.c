@@ -103,66 +103,54 @@ done:
 
 
 /*
-void *createTTYLine (void){
+int set_current_tty (int tty_id);
+int set_current_tty (int tty_id){
 	
-	int i;
-	struct ttyline_d *l;
+	struct tty_d *tty;
 	
-	//Alocando memória para uma estrutura de linha.
-	l = (void *) malloc ( sizeof(struct ttyline_d) );
-
-    if( (void *) l == NULL )
+	if ( tty_id < 0 || tty_id > 7 )
 	{
-		printf("createTTYLine:");
-		die();
-	}
-
-	//@todo:
-	//Inicializar as variáveis dentro da estrutura.
-	
-	//zerando o buffer de caracteres.	
-	for (i = 0; i < TTYCHARS_COUNT_MAX; i++ ){
-		
-	    l->c[i] = 0;  
+	    panic ("set_current_tty: tty_id");
+		//return -1;
 	}
 	
-	l->used = 1;
-	l->magic = 1234;
-	l->empty = 1;
-    //...	
+	tty = (struct tty_d *)  ttyList[tty_id];
 	
-	
-	ttyLineCounter++;
-	
-	if ( ttyLineCounter >= TTYLINES_COUNT_MAX )
+	if ( (void *) tty == NULL )
 	{
-		//#debug
-		printf("createTTYLine: Line limits\n");
-		refresh_screen();
-		//free(l);
-		return NULL;
-		
+		panic ("set_current_tty: tty");
+		//return -1;
 	}else{
-	    //developer_ttylines[ttyLineCounter] = (void*) l;	
+	
+	    if ( tty->used != 1 || tty->magic != 1234 )
+		{
+			panic ("set_current_tty: validation");
+			//return -1;
+		}
 		
-		
-		//
-		// Precisamos de uma estrutura de texto ...
-		// mas essa rotina é somente para tratamento de linhas.
-		//
-		
-		// ?? A qual estrutura de texto essa linha pertence.
-		
+		//OK
+		CurrentTTY = tty;
 	}
 	
-	//...
-	
-//done:
-	
-    return (void *) l;	
-    //return NULL;	
+	return 0;
 }
-*/ 
+*/
+
+
+/*
+void reset_tty ( struct tty_d *tty );
+void reset_tty ( struct tty_d *tty ){
+   //#todo resetar os elementos da estrutura.
+}
+*/
+
+/*
+//procura um slot livre na lista de ttys
+int tty_find_empty_slot ();
+int tty_find_empty_slot (){
+ //#todo
+}
+*/
 
  
 /*

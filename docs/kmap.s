@@ -58,7 +58,6 @@ _task_switch_status
                     0x4               main.o
 _ata_record_dev     0x1               main.o
 _systemzoneEnd      0x4               main.o
-_CurrentConsole     0x4               main.o
 _lineOffsetMax      0x4               main.o
 _delta_x            0x1               main.o
 _serverSP           0x4               main.o
@@ -132,7 +131,6 @@ _CurrentTTY         0x4               main.o
 _g_user_space_framepool_index
                     0x4               main.o
 _Initialization     0x18              main.o
-_Console            0x4               main.o
 _next_thread        0x4               main.o
 _GUI_CONFIG         0x3c              main.o
 _systemzoneSize     0x4               main.o
@@ -2916,22 +2914,21 @@ Linker script and memory map
                 0x00000000c005383c                _task_switch_status
                 0x00000000c0053840                _ata_record_dev
                 0x00000000c0053844                _systemzoneEnd
-                0x00000000c0053848                _CurrentConsole
-                0x00000000c005384c                _lineOffsetMax
-                0x00000000c0053850                _delta_x
-                0x00000000c0053854                _serverSP
-                0x00000000c0053858                _LocalHostHTTPSocket
-                0x00000000c005385c                _ioControl_mouse
-                0x00000000c0053860                _GRID
-                0x00000000c0053864                _cursorIconBuffer
-                0x00000000c0053868                _preempted_task
-                0x00000000c005386c                _ActiveWindow
-                0x00000000c0053870                _mouse_buttom_3
-                0x00000000c0053874                _capslock_status
-                0x00000000c0053878                _KernelArgs
-                0x00000000c0053888                _Irq5
-                0x00000000c005388c                _Irq13
-                0x00000000c0053890                _Irq2
+                0x00000000c0053848                _lineOffsetMax
+                0x00000000c005384c                _delta_x
+                0x00000000c0053850                _serverSP
+                0x00000000c0053854                _LocalHostHTTPSocket
+                0x00000000c0053858                _ioControl_mouse
+                0x00000000c005385c                _GRID
+                0x00000000c0053860                _cursorIconBuffer
+                0x00000000c0053864                _preempted_task
+                0x00000000c0053868                _ActiveWindow
+                0x00000000c005386c                _mouse_buttom_3
+                0x00000000c0053870                _capslock_status
+                0x00000000c0053874                _KernelArgs
+                0x00000000c0053884                _Irq5
+                0x00000000c0053888                _Irq13
+                0x00000000c005388c                _Irq2
                 0x00000000c00538a0                _pcideviceList
                 0x00000000c0053920                _memorysizeAvailablePhysicalMemory
                 0x00000000c0053924                _IpcProcedure
@@ -2967,8 +2964,7 @@ Linker script and memory map
                 0x00000000c0054b40                _CurrentTTY
                 0x00000000c0054b44                _g_user_space_framepool_index
                 0x00000000c0054b48                _Initialization
-                0x00000000c0054b60                _Console
-                0x00000000c0054b64                _next_thread
+                0x00000000c0054b60                _next_thread
                 0x00000000c0054b80                _GUI_CONFIG
                 0x00000000c0054bbc                _systemzoneSize
                 0x00000000c0054bc0                _zorderCounter
