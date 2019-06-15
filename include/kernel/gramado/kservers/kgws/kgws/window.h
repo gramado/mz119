@@ -162,13 +162,17 @@ int window_getch (void);
 #define MSG_INSERT        46
 #define MSG_RUN_PROCESS   47
 #define MSG_RUN_THREAD    48
-//Quando um comando é enviado para o console. ele será atendido pelo
+
+//Quando um comando é enviado para o terminal. ele será atendido pelo
 //módulo /sm no procedimento de janela do sistema.
-//Todas as mensagens de console serão atencidas pelo procedimento de janela 
+//Todas as mensagens de terminal serão atencidas pelo procedimento de janela 
 //nessa mensagem.
-#define MSG_CONSOLE_COMMAND 49
-#define MSG_CONSOLE_SHUTDOWN 50
-#define MSG_CONSOLE_REBOOT   51
+//#bugbug: temos outro grupo de mensagems abordadndo esse tema logo abaixo.
+
+#define MSG_TERMINAL_COMMAND 49
+#define MSG_TERMINAL_SHUTDOWN 50
+#define MSG_TERMINAL_REBOOT   51
+
 #define MSG_DEVELOPER 52
 
 
@@ -1023,12 +1027,10 @@ struct window_d
 	//se uma janela tiver o foco de entrada e for um terminal 
 	//a disciplica de linhas poderá usar essas carcterística do terminal.
 	struct terminal_d *wTerminal; //dd\uitm\terminal.h
-	struct console_d *console;   //dd\uitm\console.h	
 	
-	/*
-     Número da aba do navegador que a janela está.
-     Se for 0, então a janela está no desktop.
-    */
+    // Número da aba do navegador que a janela está.
+    // Se for 0, então a janela está no desktop.
+
 	int tab;
 	
 	
@@ -1255,61 +1257,6 @@ quando um aplicativo chamar serviços do kernel para criar elementos na aba.*/
 //Importante: Estragar essa estrutura pode causar muitos problemas.
 struct window_d *FULLSCREEN_TABWINDOW;   
 
-
-
-/*
- estrutura para tabs do navegador do kernel.
- *@todo; Talvez deletar essa estrutura
- */
- 
-/* 
-struct browser_tab_d
-{
-	object_type_t objectType;
-	object_class_t objectClass;	
-	
-    int used;
-    int magic;
-	
-	int id;   //Identificação da aba.
-	
-	char *name;
-	
-	 
-	//  Importante:
-	//       Tipo de aba. Temos três tipos basicamente:
-	//	   + 1 = Aba de console. para aplicativos de console.
-	//	   + 2 = Aba de janela. para aplicativos de janela.
-	//	   + 3 = Aba de navegador. para páginas da internet.
-		   
-	 
-	int type;
-	
-	// talvez teremos 2 modos, maximizado e full screen
-	int view; 
-	
-	
-	// Qual é a janela que constitui a aba. 
-	// Isso nos dá muitas informações sobre a aba.
-	// Toda a sua métrica ...
-	//
-	struct window_d* window;
-	
-	
-    //  Importante:	
-	//      Dedicated buffer:
-	//	  ??
-	 
-	//void *buffer;
-
-    	
-
-    struct browser_tab_d *next;    	
-};
-*/
-
-//lista de ponteiros para estruturas de tabs.
-//unsigned long browsertabList[TABWINDOW_COUNT_MAX]; 
 
 
 //

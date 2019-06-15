@@ -70,7 +70,7 @@ struct hardware_d
 	//
 	// Video card info. (graphics)
 	//
-	//struct tagConsole
+	//struct tagTerminal
 	//struct tagGraphics
 	//struct d_video
 	//struct screen_d 

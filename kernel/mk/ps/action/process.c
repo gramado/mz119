@@ -48,7 +48,7 @@
 	Every process is initialized with three open file descriptors, 
 	stdin, stdout, and stderr. 
 	stdin is an abstraction for accepting input (from the keyboard or from pipes) and 
-	stdout is an abstraction for giving output (to a file, to a pipe, to a console).
+	stdout is an abstraction for giving output (to a file, to a pipe, to a terminal).
 
     That's a very simplified explanation but true nonetheless. 
 	Those three file descriptors are collectively called 'The Standard Streams'.	

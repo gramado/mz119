@@ -62,7 +62,7 @@ struct desktop_d
 	
 	
 	//prompt de comandos. ??
-	//int ConsoleThreadId; 
+	//int terminal_TID; 
 	
 	
 	//Heap do desktop.

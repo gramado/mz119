@@ -72,9 +72,9 @@
 #define OBJECT_RGBA 25
 #define OBJECT_WINDOW     26    //Window.
 #define OBJECT_WSTATION   27    //Window Station.(DESKTOP POOL)
-#define OBJECT_CONSOLE 28
+#define OBJECT_TERMINAL 28
 #define OBJECT_LINE 29
-#define OBJECT_TERMINAL 30
+#define OBJECT_TERMINAL2 30  //TODO MUDAR
 
 // \microkernel
 #define OBJECT_PROCESS   31

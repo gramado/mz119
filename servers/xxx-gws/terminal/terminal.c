@@ -4,7 +4,7 @@
 
 // gerenciamento de terminal virtual ...
 
-//esse é o suporte dado pelo módulo console aos terminais virtuais 
+//esse é o suporte dado  aos terminais virtuais 
 //usados pelos aplicativos em modo texto.
 
 

@@ -1,12 +1,12 @@
 /*
- * sm - System Management -  Esse é o console do sistema.
+ * sm - System Management - 
  * Seu objetivo principal é receber os comandos de gerenciamento,
  * enviados por usuários atráves de dispositivos de interface humana. 
  *
  * ********** #importante: Essas classes são 'system dialogs' ************
  *
  * Note duas coisas importantes aqui: 
- * o 'console' é a interface de administração do sistema, e é ele é 
+ * É a interface de administração do sistema, e é ele é 
  * acessado através de um emulador de terminais utilizando-se drivers TTY.
  *
  * File: system.c
@@ -172,10 +172,11 @@ static char *systemSwapFilePathName      = "/root/swap";  //'Arquivo' de paginaç
  *     Configura cor padrão para o sistema.
  *     @todo: Isso pode ir para outro lugar.   
  */
+
 void set_up_color ( unsigned long color ){  
  
 	g_system_color = (unsigned long) color;	
-};
+}
 
 
 /* 
@@ -186,10 +187,11 @@ void set_up_color ( unsigned long color ){
  *     are the foreground color.
  *     @todo: Isso pode ir para outro lugar.
  */
+
 void set_up_text_color ( unsigned char forecolor, unsigned char backcolor ){
 	
     g_char_attrib = (backcolor << 4) | (forecolor & 0x0F);	
-};
+}
 
 
 /*
@@ -198,11 +200,12 @@ void set_up_text_color ( unsigned char forecolor, unsigned char backcolor ){
  *     Configura cursor.
  *     @todo: Isso pode ir para outro lugar.
  */
+
 void set_up_cursor ( unsigned long x, unsigned long y ){   
 
 	g_cursor_x = (unsigned long) x;
 	g_cursor_y = (unsigned long) y;	
-};
+}
 
 
 /*
@@ -212,8 +215,8 @@ void set_up_cursor ( unsigned long x, unsigned long y ){
  *     @todo: Isso pode ir para outro lugar.
  */
 
-unsigned long get_cursor_x (void)
-{   	
+unsigned long get_cursor_x (void){
+	
 	return (unsigned long) g_cursor_x;
 }
 
@@ -225,14 +228,14 @@ unsigned long get_cursor_x (void)
  *     @todo: Isso pode ir para outro lugar.
  */
 
-unsigned long get_cursor_y (void)
-{         
+unsigned long get_cursor_y (void){
+	
     return (unsigned long) g_cursor_y; 	
 }
 
 
-void *systemNull (void)
-{	
+void *systemNull (void){
+	
 	return NULL;
 }
 

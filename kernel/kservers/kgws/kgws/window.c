@@ -3431,7 +3431,7 @@ int init_windows (void){
 		
         //... 
 
-        //?? console ??		
+        //?? terminal ??		
 	};		
 
 	

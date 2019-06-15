@@ -153,9 +153,9 @@ typedef enum {
 	ObjectTypeWindow,           //26 window, executive ,uigm.
 	ObjectTypeWindowStation,  //27 desktop pool. window station, executive, uigm.
 	//uitm.
-	ObjectTypeConsole,        //28 console, executive, uitm.
+	ObjectTypeTerminal,        //28 console, executive, uitm.
     ObjectTypeLine,           //29 console line, executive, uitm.
-	ObjectTypeTerminal,       //30 Terminal, executive, uitm.
+	ObjectTypeTerminal2,       //30 Terminal, executive, uitm. //TODO MUDAR
 	
     // **** MICROKERNEL  ****
 	

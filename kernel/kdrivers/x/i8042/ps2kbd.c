@@ -388,8 +388,8 @@ done:
 
 		//Chamando o módulo /sm diretamente.
 		//mas não é o driver de teclado que deve chamar o reboot.
-		//o driver de teclado deve enviar o comando para o console, /sm,
-		//e o console chama a rotina de reboot do teclado.
+		//o driver de teclado deve enviar o comando para o tty, /sm,
+		//e o tty chama a rotina de reboot do teclado.
 		//Uma mensagem de reboot pode ser enviada para o procedimento do sistema.
 		//Pois o teclado envia mensagens e não trata as mensagens.
 	

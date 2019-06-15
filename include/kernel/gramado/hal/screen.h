@@ -1,5 +1,5 @@
 /*
- * Arquivo: screen.h
+ * File: screen.h
  *
  * Descrição:
  *     Informações sobre o monitor de video.
@@ -137,21 +137,21 @@ screen_t *CurrentScreen;
  A screen buffer can be any size, limited only by available memory. 
 screen buffer's window = uma janela dentro do screen buffer.
 
-The console(terminal emulator) window displays a portion of the active screen buffer.  
+The terminal emulator window displays a portion of the active screen buffer.  
 
 terminal screen buffer: (um buffer grande onde se coloca o conteudo)
   uma janela, a janela do emulador de terminal pode mostrar apenas uma parte
   do terminal screen buffer se quiser.
   
- The effects of ScrollConsoleScreenBuffer can be limited by specifying an optional 
- clipping rectangle so that the contents of the console screen buffer 
+ The effects of ScrollTerminalScreenBuffer can be limited by specifying an optional 
+ clipping rectangle so that the contents of the terminal screen buffer 
  outside the clipping rectangle are unchanged. 
  
  scroll: podemos apenas movimentar a janela dentro do terminal screen buffer para
  fazer o scroll, deixando o conteúdo do terminal screen buffer inalterado.
  
- Each console has an input buffer that contains a queue of input event records.
- 
+ Each terminal has an input buffer that contains a queue of input event records.
+
  terminal's input buffer.
  
 */

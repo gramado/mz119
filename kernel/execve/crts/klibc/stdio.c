@@ -3,7 +3,7 @@
  *
  * Descrição:
  *     +Rotinas de input/output padrão.
- *     +Algumas rotinas de console.
+ *     +Algumas rotinas de terminal.
  *
  * Environment:
  *     >>> Ring 0 <<<
