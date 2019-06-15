@@ -2164,15 +2164,15 @@ Linker script and memory map
                 0x00000000c002d4ff                _sys_getpid
                 0x00000000c002d509                _sys_getppid
                 0x00000000c002d56e                _init_microkernel
- .text          0x00000000c002d69b      0x41e request.o
+ .text          0x00000000c002d69b      0x3c7 request.o
                 0x00000000c002d69b                _KiRequest
                 0x00000000c002d6cf                _request
                 0x00000000c002d8ac                _create_request
                 0x00000000c002d953                _clear_request
                 0x00000000c002d9db                _do_request_12
-                0x00000000c002dab9                _code_end = .
+                0x00000000c002da62                _code_end = .
                 0x00000000c002e000                . = ALIGN (0x1000)
- *fill*         0x00000000c002dab9      0x547 
+ *fill*         0x00000000c002da62      0x59e 
 
 .iplt           0x00000000c002e000        0x0
  .iplt          0x00000000c002e000        0x0 head.o
@@ -2352,10 +2352,10 @@ Linker script and memory map
  .rodata        0x00000000c00376e8      0x199 create.o
  *fill*         0x00000000c0037881        0x3 
  .rodata        0x00000000c0037884       0x58 mk.o
- .rodata        0x00000000c00378dc      0x131 request.o
-                0x00000000c0037a0d                _rodata_end = .
+ .rodata        0x00000000c00378dc      0x11c request.o
+                0x00000000c00379f8                _rodata_end = .
                 0x00000000c0038000                . = ALIGN (0x1000)
- *fill*         0x00000000c0037a0d      0x5f3 
+ *fill*         0x00000000c00379f8      0x608 
 
 .eh_frame       0x00000000c0038000     0x81c4
  .eh_frame      0x00000000c0038000       0x38 main.o

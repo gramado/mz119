@@ -411,7 +411,7 @@ do_printf_error_message:
 	
 do_exit:
 	
-    printf ("do_request_12: no error\n");	
+    printf ("do_request_12: Exit thread, no error\n");	
 	
     //#importante
 	// Isso está certo. O que importa é exibir
@@ -421,14 +421,18 @@ do_exit:
 	p = (struct process_d *) processList[t->ownerPID];
 	
 	
+	// #bugbug
+	// Ainda não podemos usar esse tipo de coisa,
+	// estamos nos preparando par usar,
+	
 	//stdout = (FILE *) p->Streams[1]; //stdout
-	stderr = (FILE *) p->Streams[2]; //stderr
+	//stderr = (FILE *) p->Streams[2]; //stderr
 	
 	// #importante
 	// Testando a concatenação.
 	
-	fprintf (stderr, "Exiting the thread %d ", REQUEST.target_tid );			
-	fprintf (stderr, " *OK ");	
+	//fprintf (stderr, "Exiting the thread %d ", REQUEST.target_tid );			
+	//fprintf (stderr, " *OK ");	
 
 	
 
@@ -436,7 +440,7 @@ do_exit:
 	
 		
 	//kprintf ("%s \n", stdout->_base );    	
-	kprintf ("%s \n", stderr->_base );
+	//kprintf ("%s \n", stderr->_base );
 	
 	// Done.
 	
