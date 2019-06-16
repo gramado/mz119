@@ -215,7 +215,8 @@ unsigned long scrolllock_status;
 unsigned long keyboard_handler_address;
 
 
-
+//keyboard extended
+int ke0;
 
 // Send message.				  
 // Pega um scancode, transforma em caractere e envia na forma de mensagem

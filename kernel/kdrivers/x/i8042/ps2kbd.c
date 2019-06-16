@@ -27,6 +27,10 @@ int BAT_TEST (void);
 // Pega um scancode, transforma em caractere e envia na forma de mensagem
 // para a thread de controle associada com a janela que tem o foco de entrada.
 
+// #importante
+// precisa conferir ke0 antes de construir a mensagem,
+// para assim usar o array certo. ke0 indica o teclado estendido.
+
 int KEYBOARD_SEND_MESSAGE ( unsigned char SC ){
 	
 	struct thread_d *t;		

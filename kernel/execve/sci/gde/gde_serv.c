@@ -28,6 +28,10 @@
 #include <kernel.h>
 
 
+
+
+
+
 //
 // Constantes internas.
 //
@@ -1042,20 +1046,27 @@ void *gde_services ( unsigned long number,
 					
 					if ( SC == 0 ){ return NULL; }
 					
-					//#todo
-					// Avisamos que se trata de uma sequência de caracteres.
-					// Uma escape sequence.
-					// Então a disciplina de linhas do teclado vai tratar
-					// o scancode que receber de forma diferente, pegando
-					// char de mapa diferentes.
+                    // teclas do teclado extendido.
+					
 					if ( SC == 0xE0 )
 					{
-						//#todo
-						//ESCAPE_E0 = 1;
+						ke0 = 1;
 						goto sc_again;
 					}
 					
-	                KEYBOARD_SEND_MESSAGE (SC);						
+				    if ( SC == 0xE1 )
+					{
+						ke0 = 2;
+						goto sc_again;
+					}					
+					
+					//#obs:
+					//o scancode é enviado para a rotina,
+					//mas ela precisa conferir ke0 antes de construir a mensagem,
+					//para assim usar o array certo.
+	                KEYBOARD_SEND_MESSAGE (SC);
+					
+					ke0 = 0;
 				}
 	
 				//pegando a mensagem.
