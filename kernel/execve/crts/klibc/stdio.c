@@ -80,7 +80,6 @@ int fclose (FILE *stream){
 /*
  ********************************************************************
  * fopen:
- *     @field 2
  *     Open a file.
  *     
  *     #todo: 
@@ -91,6 +90,11 @@ int fclose (FILE *stream){
 
 //#bugbug
 //ainda nao usamos o argumento mode.
+
+//#bugbug
+//na máquina real falhou no momento de pegar o tamanho do arquivo.
+//debug: vamos colocar verbose nessa rotina e olhar na máquina real
+//se o problema aparece.
 
 FILE *fopen ( const char *filename, const char *mode ){
 	
@@ -110,6 +114,11 @@ FILE *fopen ( const char *filename, const char *mode ){
 	
 	read_fntos ( (char *) filename );
 	
+	
+    //#bugbug
+    //na máquina real falhou no momento de pegar o tamanho do arquivo.
+    //debug: vamos colocar verbose nessa rotina e olhar na máquina real
+    //se o problema aparece.
 	
 	//#test
 	//temos que fazer isso de um jeito melhor

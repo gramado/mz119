@@ -723,6 +723,65 @@ unsigned long Pipes[NUMBER_OF_PIPES];
 
 
 
+/* bsd */
+/*
+ * The __sfoo macros are here so that we can 
+ * define function versions in the C library.
+ */
+/*
+#define	__sgetc(p) (--(p)->_r < 0 ? __srget(p) : (int)(*(p)->_p++))
+#if defined(__GNUC__) && defined(__STDC__)
+static __inline int __sputc(int _c, FILE *_p) {
+	if (--_p->_w >= 0 || (_p->_w >= _p->_lbfsize && (char)_c != '\n'))
+		return *_p->_p++ = (unsigned char)_c;
+	else
+		return __swbuf(_c, _p);
+}
+#else
+//This has been tuned to generate reasonable code on the vax using pcc.
+#define	__sputc(c, p) \
+	(--(p)->_w < 0 ? \
+		(p)->_w >= (p)->_lbfsize ? \
+			(*(p)->_p = (c)), *(p)->_p != '\n' ? \
+				(int)*(p)->_p++ : \
+				__swbuf('\n', p) : \
+			__swbuf((int)(c), p) : \
+		(*(p)->_p = (c), (int)*(p)->_p++))
+#endif
+
+#define	__sfeof(p)	(((p)->_flags & __SEOF) != 0)
+#define	__sferror(p)	(((p)->_flags & __SERR) != 0)
+#define	__sclearerr(p)	((void)((p)->_flags &= ~(__SERR|__SEOF)))
+#define	__sfileno(p)	\
+    ((p)->_file == -1 ? -1 : (int)(unsigned short)(p)->_file)
+*/
+
+
+/*adaptado do bsd*/
+// rotina em ring0 para colocar conteúdo numa stream.
+/*
+static __inline int bsd__sputc (int _c, FILE *_p)
+{
+	if ( --_p->_w >= 0 || 
+		 ( _p->_w >= _p->_lbfsize && (char) _c != '\n' ) )
+	{	
+		return *_p->_p++ = (unsigned char) _c;
+	
+	}else{
+		//return __swbuf(_c, _p);
+	};
+};
+*/
+
+
+//#importante:
+//Podemos usar isso para compatibilidade com as
+//rotinas de baixo nível do bsd.
+//#define __sgetc(p) fgetc(p)
+//#define __sputc(x, p) fputc(x, p)
+
+
+
 /*
  * Diretórios onde a pesquisa deve ser feita.
  * Isso é configurável.
@@ -737,7 +796,7 @@ unsigned long Pipes[NUMBER_OF_PIPES];
 //...Outras listas de arquivos.
 
 /*
- * Protótipos do padão C.
+ * Protótipos do padrão C.
  */
 
 #define kprintf printf

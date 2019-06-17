@@ -29,8 +29,8 @@
  *    +Tamanho do disco
  *    +Tipo de sistema de arquivos. 
  *    +...
- *
  */ 
+
 int KiSearchFile ( unsigned char *file_name, unsigned long address ){
 	
 	int Status = 1;
@@ -51,15 +51,16 @@ int KiSearchFile ( unsigned char *file_name, unsigned long address ){
     //Mas barra poderemos reconsiderar no futuro.
 	//Talvez devamos considerar ./ também.
 	
-	if ( file_name[0] == '/' || file_name[0] == 0 ){
-		
+	if ( file_name[0] == '/' || file_name[0] == 0 )
+	{	
 		goto fail;
 	}
 	
     // Address Limits:
 	// Endereço de memória onde o diretório está.
 	
-	if (address == 0){
+	if (address == 0)
+	{
 	    return (int) 1;
 	}	
 	
@@ -67,16 +68,16 @@ int KiSearchFile ( unsigned char *file_name, unsigned long address ){
     for ( i=0; i < NumberOfEntries; i++ )
 	{
         // FAT_DIRECTORY_ENTRY_FREE
-		if ( dir[j] == (char) 0xE5 ){
-			
+		if ( dir[j] == (char) 0xE5 )
+		{	
 		    j += 0x20;
             continue;			
 		}	
 
 		// diretório atual ou diretório pai.
 		// '.' ou '..'
-		if ( dir[j] == '.' ){
-			
+		if ( dir[j] == '.' )
+		{	
 		    j += 0x20;
             continue;			
 		}
@@ -93,7 +94,9 @@ int KiSearchFile ( unsigned char *file_name, unsigned long address ){
 			NameX[11] = 0;
 			
 		    Status = (int) strncmp ( file_name, NameX, 11 );
-			if (Status == 0){ 
+			
+			if (Status == 0)
+			{ 
 			    goto done; 
 			}
             
@@ -108,10 +111,11 @@ int KiSearchFile ( unsigned char *file_name, unsigned long address ){
 	
 fail:
     Status = (int) 1;
-    printf("fs-search-KiSearchFile: File not found\n");       	
+    printf("fs-search-KiSearchFile: File not found\n");
+
 done:
     return (int) Status;
-};
+}
 
 
 /*
@@ -127,7 +131,9 @@ done:
  *    +Tipo de sistema de arquivos. (nao por enquanto)
  *    +...
  */
+
 //int fsSearchFile( const char *name ) 
+
 int fsSearchFile (unsigned char *file_name){
 	
 	int Status = 1;	
@@ -139,7 +145,8 @@ int fsSearchFile (unsigned char *file_name){
 	char NameX[13];	
 	char *dir = (char *) VOLUME1_ROOTDIR_ADDRESS; //rootDir->address;	
 	 
-	if ( file_name[0] == '/' || file_name[0] == 0 ){
+	if ( file_name[0] == '/' || file_name[0] == 0 )
+	{
 		goto fail;
 	}
 	 
@@ -153,16 +160,16 @@ int fsSearchFile (unsigned char *file_name){
     for ( i=0; i < NumberOfEntries; i++ )
 	{
         // FAT_DIRECTORY_ENTRY_FREE
-		if ( dir[j] == (char) 0xE5 ){
-			
+		if ( dir[j] == (char) 0xE5 )
+		{	
 		    j += 0x20;
             continue;			
 		}	
 
 		// diretório atual ou diretório pai.
 		// '.' ou '..'
-		if ( dir[j] == '.' ){
-			
+		if ( dir[j] == '.' )
+		{	
 		    j += 0x20;
             continue;			
 		}	
@@ -194,10 +201,11 @@ int fsSearchFile (unsigned char *file_name){
 	
 fail:
     Status = (int) 1;
-    printf("fs-search-fsSearchFile: File not found\n");       	  
+    printf("fs-search-fsSearchFile: File not found\n");
+	
 done:
     return (int) Status;
-};
+}
 
 
 /*
@@ -206,15 +214,14 @@ done:
  *     Encontrar uma entrada vazia na fat.
  *     @todo: Isso pe importante:
  */
+
 unsigned short fs_find_empty_entry ( char *fat_address ){
 	
 	//@todo:
 	//encontrar uma entrada vazia na fat.
 	//fornecer o endereço da fat na memória.
 	return (unsigned short) 0;
-};
-
-
+}
 
 
 /*
@@ -225,6 +232,7 @@ unsigned short fs_find_empty_entry ( char *fat_address ){
  * IN:
  *     Endereço do diretório e número máximo de entradas.
  */
+
 int 
 findEmptyDirectoryEntry( unsigned long dir_address, 
                          int number_of_entries )
@@ -257,7 +265,7 @@ findEmptyDirectoryEntry( unsigned long dir_address,
 	
 fail:	
 	return (int) (-1);
-};
+}
 
 
 /*
@@ -270,6 +278,7 @@ fail:
  *  Obs: tem algo parecido na função que salva um arquivo.
  *  O retorno deve ser short, mesmo tipo do cluster.
  */
+
 unsigned short fs_find_n_empty_entries ( int n ){
 	
     int i = 0;
@@ -277,7 +286,8 @@ unsigned short fs_find_n_empty_entries ( int n ){
 	unsigned short empty;
 	
 	// Limits.
-	if ( n < 0 || n > 1024 ){
+	if ( n < 0 || n > 1024 )
+	{
 	    goto fail;
 	}
 	
@@ -302,9 +312,11 @@ unsigned short fs_find_n_empty_entries ( int n ){
 done:
     //Retorna o primeiro da lista.	
 	return (unsigned short) file_cluster_list[0];
+	
 fail:	
     return (unsigned short) 0;
-};
+}
+
 
 
 /*
@@ -313,11 +325,14 @@ fail:
  *     Procurar um nome de arquivo em uma pasta.
  *     No caso é o diretório raiz.
  */
+
 //int fsSearchFileName( const char *name ) 
-int fsSearchFileName (unsigned char *name){
-	
-    return (int) fsSearchFile(name);
-};
+
+int fsSearchFileName (unsigned char *name)
+{	
+    return (int) fsSearchFile (name);
+}
+
 
 
 //

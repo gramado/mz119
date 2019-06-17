@@ -592,9 +592,12 @@ void fs_load_dir ( unsigned long id ){
     //#cancelar.
 }
 
+// #bugbug: Isso dá problemas na máquina real.
+// Essa rotina é chamada pela função fopen, por isso precisamos dela.
+// Pega o tamanho de um arquivo que está no diretório raiz.
+// #todo: 
+// Podemos alterar para pegar de um arquivo que esteja no diretório alvo.
 
-//pega o tamanho de um arquivo que está no diretório raiz.
-//#todo: podemos alterar para pegar de um arquivo que esteja no diretório alvo.
 unsigned long fsGetFileSize ( unsigned char *file_name ){
 	
     int Status;		
@@ -644,13 +647,14 @@ unsigned long fsGetFileSize ( unsigned char *file_name ){
 	
 	//Carrega o diretório raiz na memória.
 	
-#ifdef KERNEL_VERBOSE	
-	printf("fsGetFileSize: Loading root..\n"); 
-#endif	
+//#ifdef KERNEL_VERBOSE	
+	printf ("fsGetFileSize: Loading root..\n"); 
+//#endif	
 	
 	//#bugbug
     //pega o tamanho de um arquivo que está no diretório raiz.
-    //#todo: podemos alterar para pegar de um arquivo que esteja no diretório alvo.	
+    //#todo: 
+    //podemos alterar para pegar de um arquivo que esteja no diretório alvo.	
 	
 	//carregando o diretório raiz.
 	load_directory ( VOLUME1_ROOTDIR_ADDRESS, VOLUME1_ROOTDIR_LBA, 32 );	
@@ -669,7 +673,7 @@ unsigned long fsGetFileSize ( unsigned char *file_name ){
 	
 	if ( (void *) filesystem == NULL )
 	{
-	    printf("fsGetFileSize: filesystem\n");
+	    printf ("fsGetFileSize: filesystem\n");
 		goto fail;
 	
 	}else{
@@ -689,7 +693,7 @@ unsigned long fsGetFileSize ( unsigned char *file_name ){
 		
 	    if (max <= 0)
 		{
-	        printf("fsGetFileSize: max\n");
+	        printf ("fsGetFileSize: max\n");
 			goto fail;
 	    };
 		
@@ -772,13 +776,14 @@ found:
 	
 	//printf ("%d \n" , root[ z+14 ]);
 	//printf ("%d \n" , root[ z+15 ]);
-	//printf ("FileSize=%d \n" , FileSize);
+	//printf ("done: FileSize=%d \n" , FileSize);
 	
 	//#debug
 	//refresh_screen();
-	//while(1){
-	//	asm("hlt");
-	//}
+	//while(1){ asm("hlt"); }
+	
+	printf ("fsGetFileSize: FileSize=%d \n" , FileSize);
+    refresh_screen ();	
 	
 	return (unsigned long) FileSize;
 }

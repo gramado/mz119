@@ -143,9 +143,7 @@ fail:
 done:	
 	refresh_screen();
 	return;
-};
-
-
+}
  
 
 
@@ -183,7 +181,8 @@ int fsIsFAT32()
  **********************
  * fsList
  *     comando 'dir'.
- *     Listando arquivos em um diretório dado o nome. */
+ *     Listando arquivos em um diretório dado o nome. 
+ */
 
 int fsList ( const char *dir_name ){
 	
@@ -222,7 +221,8 @@ int fsList ( const char *dir_name ){
  *
  * IN:
  *     dir_address = Ponteiro para um endereço de memória 
- *                   onde foi carregado o diretório. */
+ *                   onde foi carregado o diretório. 
+ */
  
 void 
 fsFAT16ListFiles ( const char *dir_name, 
@@ -262,7 +262,7 @@ fsFAT16ListFiles ( const char *dir_name,
 		
 		//(32/2) próxima entrada! (16 words) 512 vezes!
         j += 16;    
-        ++i;        
+        i++;        
     }; 
 	
 	//...
@@ -281,10 +281,11 @@ fsFAT16ListFiles ( const char *dir_name,
  * #bugbug a estrutura de canal será usada para troca 
  * de mensagens S|----|S
  */
+
 int 
 KeLoadFile ( struct channel_d *channel, 
-            unsigned char *file_name, 
-			unsigned long file_address )
+             unsigned char *file_name, 
+			 unsigned long file_address )
 {
 	return -1;  //#bugbug ??
 }
@@ -294,7 +295,8 @@ KeLoadFile ( struct channel_d *channel,
  * get_file:
  *     Obtêm o ponteiro da estrutura do arquivo, dado seu id.
  *     Com um índice da lista de arquivos, a função retorna o ponteiro da
- *     estrutura do arquivo. */
+ *     estrutura do arquivo. 
+ */
  
 // void *get_stream (int Index)
 
@@ -313,7 +315,8 @@ void *get_file (int Index){
 /*
  * set_file:
  *     Coloca na lista de arquivos o ponteiro de estrutura,
- * dado seu id. */
+ * dado seu id. 
+ */
  
 //void set_stream ( void *stream, int Index ){ 
 
@@ -419,7 +422,7 @@ fs_set_entry_status ( unsigned long id,
 
 
 /*
- *************
+ ***************************************************
  * fsCheckMbrFile: (Essa rotina pode ser usada pra checar se o volume é fat.)
  *     Checamos um mbr carregado em algum endereço de memória.
  *
@@ -474,12 +477,12 @@ void fsCheckMbrFile ( unsigned char *buffer ){
 	
 	//name
 
-	printf("OS name: [ ");
+	printf ("OS name: [ ");
 	for ( i=0; i<8; i++ )
 	{
-	    printf("%c", mbr[ BS_OEMName + i ] );
+	    printf ("%c", mbr[ BS_OEMName + i ] );
 	};
-	printf(" ]\n");
+	printf (" ]\n");
 	
 	//...
 	
@@ -505,7 +508,8 @@ done:
  *     Vai no endereço onde está armazenado o VBR do volume atual
  *     e confere as informações sobre o volume.
  */
-void fsCheckVbrFile( unsigned char *buffer ){
+
+void fsCheckVbrFile ( unsigned char *buffer ){
 	
 	unsigned char *vbr = (unsigned char *) buffer; 
 
@@ -577,7 +581,8 @@ MountShortFileName ( char *buffer,
 /*
  * set_spc:
  *     Configura spc, 'Sector Per Cluster' em variável global.
- *     ?? #bugbug: De qual disco ?? */
+ *     ?? #bugbug: De qual disco ?? 
+ */
  
 void set_spc (int spc){
 	
@@ -588,7 +593,8 @@ void set_spc (int spc){
 /*
  * get_spc:
  *     Pega spc, Sector Per Cluster.
- *     ?? #bugbug: De qual disco ?? */
+ *     ?? #bugbug: De qual disco ?? 
+ */
 
 int get_spc (void){
 	
@@ -599,7 +605,8 @@ int get_spc (void){
 /*
  * get_filesystem_type:
  *     Pega o tipo de sistema de arquivos.
- *     ?? #bugbug: De qual volume ??  */
+ *     ?? #bugbug: De qual volume ??  
+ */
 
 int get_filesystem_type (void){
 	
@@ -610,7 +617,8 @@ int get_filesystem_type (void){
 /*
  * set_filesystem_type:
  *     Configura o tipo de sistema de arquivo.
- *     ?? #bugbug: De qual volume ?? */
+ *     ?? #bugbug: De qual volume ?? 
+ */
 
 void set_filesystem_type (int type){
 		
@@ -766,7 +774,7 @@ int fsInit (void){
 	// Configura o número de setores por cluster.
 	// Nesse caso, são (512 bytes por setor, um setor por cluster).
 	
-	set_spc(1);
+	set_spc (1);
 	
 
 	// ## initialize currents ##
@@ -795,14 +803,14 @@ int fsInit (void){
 	//printf("fsInit: Structures..\n");
 //#endif
 	
-	fs_init_structures();
+	fs_init_structures ();
 	
 
 //#ifdef EXECVE_VERBOSE
 	//printf("fsInit: FAT..\n");
 //#endif
 	
-	fs_init_fat();
+	fs_init_fat ();
 	
 	//
 	// ==================== ## Streams ## =========================
@@ -1029,7 +1037,8 @@ void fsInitializeWorkingDiretoryString (void){
 /*
  ***************************
  * fsInitTargetDir:
- *     Para inicializarmos o sistema ja' com um alvo, no caso o root dir. */
+ *     Para inicializarmos o sistema ja' com um alvo, no caso o root dir. 
+ */
 
 void fsInitTargetDir (void){
 	
@@ -1041,7 +1050,8 @@ void fsInitTargetDir (void){
 /*
  **************************************
  * fs_initialize_process_pwd:
- *     Cada processo deve inicialiar seus dados aqui. */
+ *     Cada processo deve inicialiar seus dados aqui. 
+ */
 
 int fs_initialize_process_pwd ( int pid, char *string ){
 	
@@ -1051,7 +1061,7 @@ int fs_initialize_process_pwd ( int pid, char *string ){
 	if ( pwd_initialized == 0 )
 	{
 		printf ("fs_initialize_process_pwd: pwd not initialized\n"); 
-		die();
+		die ();
 	} 
 	
 	if (pid<0)
@@ -1091,7 +1101,8 @@ int fs_initialize_process_pwd ( int pid, char *string ){
 /*
  * fs_print_process_pwd
  *     Cada processo tem seu próprio pwd.
- *     Essa rotina mostra o pathname usado pelo processo. */
+ *     Essa rotina mostra o pathname usado pelo processo. 
+ */
 
 int fs_print_process_pwd (int pid){
 	
@@ -1138,7 +1149,8 @@ int fs_print_process_pwd (int pid){
  *****************************************
  * fsUpdateWorkingDiretoryString:
  *     +Atualiza o pathname na estrutura do processo atual.
- *     +Atualiza o pathname na string global. */ 
+ *     +Atualiza o pathname na string global. 
+ */ 
  
 void fsUpdateWorkingDiretoryString ( char *string ){
 	
@@ -1220,7 +1232,8 @@ void fsUpdateWorkingDiretoryString ( char *string ){
  *     Do not leave a blank path.
  *     PATH must contain enough space for MAXPATHLEN characters. 
  *     #obs: O PID costuma ser do processo atual mesmo. 
- *     Credits: bash 1.05 */
+ *     Credits: bash 1.05 
+ */
  
 void fs_pathname_backup ( int pid, int n ){
 	
@@ -1326,7 +1339,8 @@ fail:
 /*
  **************************
  * sys_read_file2
- *     carrega do diretório alvo. */
+ *     carrega do diretório alvo. 
+ */
 
 FILE *sys_read_file2 ( unsigned long name, unsigned long address ){
 	 
@@ -1454,7 +1468,8 @@ FILE *sys_read_file2 ( unsigned long name, unsigned long address ){
  ********************************
  * fsLoadFileFromCurrentTargetDir:
  *     Carrega o diretório que está configurado como target dir 
- * em algum lugar qualquer da memória. */
+ * em algum lugar qualquer da memória. 
+ */
 
 int fsLoadFileFromCurrentTargetDir (void){
 	
@@ -1470,6 +1485,7 @@ int fsLoadFileFromCurrentTargetDir (void){
 	//acho ques estamos falando somente de diret'orio aqui.	
 	
 	new_address = (unsigned long) malloc (4096);
+	
 	if ( new_address == 0 )
 	{
 		return -1;
@@ -1530,7 +1546,7 @@ int fsLoadFileFromCurrentTargetDir (void){
 int
 sys_write_file ( char *file_name, 
                  unsigned long file_size,
-                 unsigned long size_in_bytes,			
+                 unsigned long size_in_bytes,
                  char *file_address,
                  char flag )  
 {
