@@ -599,7 +599,7 @@
 #define	SYS_246 246   // fopen
 #define	SYS_247 247   // pipe
 #define	SYS_248 248   // execve	
-#define	SYS_249 249   // ?? 
+#define	SYS_249 249   // ftell
 
 
 //

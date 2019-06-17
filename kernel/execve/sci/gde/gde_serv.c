@@ -343,6 +343,18 @@ void *gde_services ( unsigned long number,
 	{
 	    return (void *) sys_dup3 ( (int) arg2, (int) arg3, (int) arg4 );	
 	}
+	
+	//fileno
+	if ( number == 605 )
+	{
+		return (void *) fileno ( (FILE *) arg2 );
+	}	
+
+	if ( number == 606 )
+	{
+		return (void *) ungetc ( (int) arg2, (FILE *) arg3 );
+	}		
+	//...
 
 	
 	// 700 - atualiza o fluxo padrão do processo atual
@@ -1865,9 +1877,9 @@ void *gde_services ( unsigned long number,
                                 (const char *) arg4 ); 	
 			break;
 			
-		// 249 - ?
+		// 249 - ftell
 		case 249:
-            return NULL;
+            return (void *) ftell ( (FILE *) arg2 );
 			break;
 			
 			
