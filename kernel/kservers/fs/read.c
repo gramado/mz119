@@ -31,19 +31,26 @@
  *     rotina interna de support.
  *     isso deve ir para bibliotecas depois.
  *     não tem protótipo ainda.
- *     Credits: Luiz Felipe */
+ *     Credits: Luiz Felipe 
+ */
+ 
+ // #bugbug
+ // Isso modifica a string lá em ring3.
+ // prejudicando uma segunda chamada com a mesma string
+ // pois já virá formatada.
  
 void read_fntos ( char *name ){
-	
+
     int  i, ns = 0;
     char ext[4];
 	
 	ext[0] = 0;
 	ext[1] = 0;
 	ext[2] = 0;
-	ext[3] = 0;
+	ext[3] = 0;		
 		
-    //Transforma em maiúscula enquanto não achar um ponto.
+    // Transforma em maiúscula enquanto não achar um ponto.
+    // #bugbug: E se a string já vier maiúscula teremos problemas.
 	
 	while ( *name && *name != '.' )
 	{
@@ -55,7 +62,8 @@ void read_fntos ( char *name ){
     };
 
     // Aqui name[0] é o ponto.
-	// Então constrói a extensão.
+	// Então constrói a extensão colocando
+	// as letras na extensão.
 	
 	for ( i=0; i < 3 && name[i+1]; i++ )
 	{
@@ -69,9 +77,10 @@ void read_fntos ( char *name ){
 	
 	    //#testando
 	    //Se não for letra então não colocamos no buffer de extensão;
-		if (name[i+1] >= 'a' && name[i+1] <= 'z')
+		if ( name[i+1] >= 'a' && name[i+1] <= 'z' )
 		{
 			name[i+1] -= 0x20;
+		    
 		    ext[i] = name[i+1];
 		}
 	};
@@ -91,6 +100,106 @@ void read_fntos ( char *name ){
 
     *name = '\0';
 }
+
+
+	
+/*
+ ************************************************
+ * read_fntos2:
+ *     rotina interna de support.
+ *     isso deve ir para bibliotecas depois.
+ *     não tem protótipo ainda.
+ *     Credits: Luiz Felipe 
+ */
+ 
+ // #bugbug
+ // Isso modifica a string lá em ring3.
+ // prejudicando uma segunda chamada com a mesma string
+ // pois já virá formatada.
+ 
+//vamos retornar o ponteiro para o novo buffer
+//da string formatada.
+ 
+/* 
+char *read_fntos2 ( char *name ); 
+char *read_fntos2 ( char *name ){
+	
+    
+    //buffer temporário para não 
+    //bagunçarmos a string original lá em ring3.
+    char buffer[13];
+    char *__name = (char *) &buffer[0];
+    
+    int  i, ns = 0;
+    char ext[4];
+	
+	ext[0] = 0;
+	ext[1] = 0;
+	ext[2] = 0;
+	ext[3] = 0;
+	
+	//copia.
+	for ( i=0; i<11; i++)
+	    __name[i] = name[i];
+	
+		
+    // Transforma em maiúscula enquanto não achar um ponto.
+    // #bugbug: E se a string já vier maiúscula teremos problemas.
+	
+	while ( *__name && *__name != '.' )
+	{
+        if ( *__name >= 'a' && *__name <= 'z' )
+            *__name -= 0x20;
+
+        __name++;
+        ns++;
+    };
+
+    // Aqui name[0] é o ponto.
+	// Então constrói a extensão colocando
+	// as letras na extensão.
+	
+	for ( i=0; i < 3 && __name[i+1]; i++ )
+	{
+		//Transforma uma letra da extensão em maiúscula.
+        
+		//if (name[i+1] >= 'a' && name[i+1] <= 'z')
+        //    name[i+1] -= 0x20;
+
+        //ext[i] = name[i+1];
+    
+	
+	    //#testando
+	    //Se não for letra então não colocamos no buffer de extensão;
+		if ( __name[i+1] >= 'a' && __name[i+1] <= 'z' )
+		{
+			__name[i+1] -= 0x20;
+		    
+		    ext[i] = __name[i+1];
+		}
+	};
+
+	//Acrescentamos ' ' até completarmos as oito letras do nome.
+	
+    while (ns < 8)
+	{	
+        *__name++ = ' ';
+        ns++;
+    };
+
+	//Acrescentamos a extensão
+	
+    for (i=0; i < 3; i++)
+        *__name++ = ext[i];
+
+    *__name = '\0';
+
+    //return (char *) &__name[0];    
+    return (char *) __name;
+}
+*/
+		
+	
 	
 	
 /*
@@ -136,10 +245,11 @@ fatLoadCluster ( unsigned long sector,
 {
 	unsigned long i;
 	
-	for ( i=0; i < spc; i++ ){
-		
+	for ( i=0; i < spc; i++ )
+	{	
         read_lba ( address, sector + i );
-		address = address +512; 
+        
+		address = address + 512; 
 	}
 }
 
@@ -148,7 +258,8 @@ fatLoadCluster ( unsigned long sector,
  *****************************************************************
  * read_lba:
  *     Carrega um um setor na memória, dado o LBA.
- *     Obs: Talvez essa rotina tenha que ter algum retorno no caso de falhas. */
+ *     Obs: Talvez essa rotina tenha que ter algum retorno no caso de falhas. 
+ */
  
 void read_lba ( unsigned long address, unsigned long lba ){
 	
@@ -215,6 +326,10 @@ void read_lba ( unsigned long address, unsigned long lba ){
  *     Endereço do arquivo.
  */
 
+// #bugbug:
+// Problemas na string do nome.
+// Vamos limitar a 11.
+
 unsigned long 
 fsLoadFile ( unsigned long fat_address,
 			 unsigned long dir_address,
@@ -228,9 +343,15 @@ fsLoadFile ( unsigned long fat_address,
     unsigned long max = 64;    //?? @todo: rever. Número máximo de entradas.
     unsigned long z = 0;       //Deslocamento do rootdir 
     unsigned long n = 0;       //Deslocamento no nome.
-	char NameX[13];	           //??Nome. 
+	
+	
+    // #bugbug:
+    // Problemas na string do nome.
+	// ??Nome.
+	char NameX[13];	            
 
-	unsigned short cluster;    //Cluster inicial
+    //Cluster inicial
+	unsigned short cluster;    
 
 	//?? Primeiro setor do cluster.
 	unsigned long S;  
@@ -255,7 +376,7 @@ fsLoadFile ( unsigned long fat_address,
 	//Carrega o diretório raiz na memória.
 	
 #ifdef KERNEL_VERBOSE	
-	debug_print("fsLoadFile:\n");
+	debug_print ("fsLoadFile:\n");
 #endif	
 	
 	//#importante
@@ -287,7 +408,7 @@ fsLoadFile ( unsigned long fat_address,
 	
 	if ( (void *) filesystem == NULL )
 	{
-	    printf("fs-read-fsLoadFile: filesystem\n");
+	    printf ("fsLoadFile: filesystem\n");
 		goto fail;
 	
 	}else{
@@ -297,7 +418,7 @@ fsLoadFile ( unsigned long fat_address,
 		
 	    if (Spc <= 0)
 		{
-	        printf("fs-read-fsLoadFile: Spc\n");
+	        printf ("fsLoadFile: Spc\n");
 		    goto fail;
 	    };
 	
@@ -307,7 +428,7 @@ fsLoadFile ( unsigned long fat_address,
 		
 	    if (max <= 0)
 		{
-	        printf("fs-read-fsLoadFile: max\n");
+	        printf ("fsLoadFile: max\n");
 			goto fail;
 	    };
 		
@@ -328,8 +449,32 @@ fsLoadFile ( unsigned long fat_address,
 	// Na verdade a variável 'root' é do tipo short.	  
 	 
 	i = 0; 
+	
+	
+    //
+    // file name
+    //
+    
+    //#debug
+    //vamos mostrar a string.
+    
+    printf ("fsLoadFile: file_name={%s}\n", file_name);	
 		
     size_t size = (size_t) strlen (file_name); 
+    
+    
+    // o tamanho da string falhou
+    //vamos ajustar.
+    if ( size > 11 )
+    {
+	     printf ("fsLoadFile: size fail %d\n",size );   
+	     size = 11;	
+	}
+	
+	//
+	// Compare.
+	//    
+    
 	
 	// Procura o arquivo no diretório raiz.	
 	
@@ -339,16 +484,14 @@ fsLoadFile ( unsigned long fat_address,
 		if ( root[z] != 0 )
         {
 			// Copia o nome e termina incluindo o char 0.
-			memcpy( NameX, &root[z], size );
+			memcpy ( NameX, &root[z], size );
 			NameX[size] = 0;
 			
             // Compara 11 caracteres do nome desejado, 
 			// com o nome encontrado na entrada atual.
 			Status = strncmp ( file_name, NameX, size );
 			
-            if ( Status == 0 ){ 
-			    goto found; 
-			}
+            if ( Status == 0 ){ goto found; }
 			// Nothing.
         }; 
 		
@@ -361,12 +504,20 @@ fsLoadFile ( unsigned long fat_address,
 	
     // O arquivo não foi encontrado.	
 //notFound:
-    printf ("fs-read-fsLoadFile: %s not found\n", file_name );  
-	
+
+    //#debug
+    printf ("fsLoadFile: %s not found\n", file_name );  
+	printf ("fsLoadFile: %s not found\n", NameX );  
+	 
 	//#debug
     //printf ("fs-read-fsLoadFile: %s not found\n", NameX );
 	//printf("root: %s ",root);	
     goto fail;
+    
+    //
+    // Found.
+    //
+    
 	
     // O arquivo foi encontrado.	
 found:
@@ -387,19 +538,22 @@ found:
 	// Isso varia de acordo com o tamanho do disco.
 	// O número máximo do cluster nesse caso é (256*64).
 	
-	if ( cluster <= 0 || cluster > 0xfff0 ){
-		
-	    printf("fs-read-fsLoadFile: Cluster limits %x \n", cluster );
+	if ( cluster <= 0 || cluster > 0xFFF0 )
+	{	
+	    printf ("fsLoadFile: Cluster limits %x \n", cluster );
 		goto fail;
 	}	
 	
+	//
+	// FAT
+	//
 	
 //loadFAT:
 	
     //Carrega fat na memória.
 	
 #ifdef KERNEL_VERBOSE		
-	printf("loading FAT..\n");
+	printf ("loading FAT..\n");
 #endif 
 	
 	//=============================
@@ -465,7 +619,9 @@ next_entry:
 	cluster = (unsigned short) next;	
 	
 	//Ver se o cluster carregado era o último cluster do arquivo.
-	if ( cluster == 0xFFFF || cluster == 0xFFF8 ){ 
+	
+	if ( cluster == 0xFFFF || cluster == 0xFFF8 )
+	{ 
 	    goto done; 
 	}
 
@@ -479,7 +635,7 @@ next_entry:
 //Falha ao carregar o arquivo.
 fail:
     
-	printf ("fs-read-fsLoadFile fail: file={%s}\n", file_name );	
+	printf ("fsLoadFile fail: file={%s}\n", file_name );	
     refresh_screen ();
 	
 	return (unsigned long) 1;
@@ -598,18 +754,31 @@ void fs_load_dir ( unsigned long id ){
 // #todo: 
 // Podemos alterar para pegar de um arquivo que esteja no diretório alvo.
 
+// #todo:
+// Antes de carregar um arquivo o sistema de arquivos
+// precisa preencher uma estrutura com informações sobre ele. 
+// se já existir um registro é melhor.
+
+// #bugbug
+// Estamos com problemas na string do nome.
+
 unsigned long fsGetFileSize ( unsigned char *file_name ){
-	
+
+	unsigned long FileSize = 0;
+		
     int Status;		
 	int i;
     unsigned short next;
-	
-	unsigned long FileSize = 0;
-	
+
     unsigned long max = 64;    //?? @todo: rever. Número máximo de entradas.
     unsigned long z = 0;       //Deslocamento do rootdir 
     unsigned long n = 0;       //Deslocamento no nome.
-	char NameX[13];	           //??Nome. 
+    
+    // #bugbug
+    // Estamos com problemas na string do nome.
+    
+    //??Nome. 
+	char NameX[13];	           
 
 	// #importante:
 	// Poderíamos usar malloc ou alocador de páginas ??	
@@ -626,13 +795,15 @@ unsigned long fsGetFileSize ( unsigned char *file_name ){
 	// #importante:
 	// Poderíamos usar malloc ou alocador de páginas ??
 	// #todo: Devemos carregar o diretório atual.
+	
     unsigned short *root = (unsigned short *) VOLUME1_ROOTDIR_ADDRESS;
 
 	// #todo: Devemos carregar o diretório atual.
 	//unsigned long current_dir_address = (unsigned long) Newpage();
     //#todo: devemos checar se o endereço é válido.
 	//unsigned short *current_dir = (unsigned short *) current_dir_address;	
-	// #todo: devemos chamar uma função que carregue um diretório no endereço passado 
+	// #todo: 
+	// devemos chamar uma função que carregue um diretório no endereço passado 
 	//via argumento.
     //...
 	
@@ -641,8 +812,12 @@ unsigned long fsGetFileSize ( unsigned char *file_name ){
 	//taskswitch_lock();
 	//scheduler_lock();	
 		
-	// Root dir.
-
+		
+	//	
+	// ## ROOT ##
+    //
+    
+    
 //loadRoot:
 	
 	//Carrega o diretório raiz na memória.
@@ -683,7 +858,7 @@ unsigned long fsGetFileSize ( unsigned char *file_name ){
 		
 	    if (Spc <= 0)
 		{
-	        printf("fsGetFileSize: Spc\n");
+	        printf ("fsGetFileSize: Spc\n");
 		    goto fail;
 	    };
 	
@@ -701,6 +876,14 @@ unsigned long fsGetFileSize ( unsigned char *file_name ){
 		// ...
 	};
 
+
+    //
+    // file name
+    //
+    
+    //#debug
+    //vamos mostrar a string.
+    printf ("fsGetFileSize: file_name={%s}\n", file_name);
 	
 	//Busca simples pelo arquivo no diretório raiz.
 	//todo: Essa busca pode ser uma rotina mais sofisticada. 
@@ -719,25 +902,40 @@ unsigned long fsGetFileSize ( unsigned char *file_name ){
 	
 //search_file:
 
+    //
+    // file name limit.
+    //
+
     size_t size = (size_t) strlen (file_name); 
+    
+    // o tamanho da string falhou
+    //vamos ajustar.
+    if ( size > 11 )
+    {
+	     printf ("fsGetFileSize: size fail %d\n",size );   
+	     size = 11;	
+	}
 	
-	//Compara.
+	
+	//
+	// Compare.
+	//
+	
+	
 	while ( i < max )
 	{
 		//Se a entrada não for vazia.
 		if ( root[z] != 0 )
         {
 			// Copia o nome e termina incluindo o char 0.
-			memcpy( NameX, &root[z], size );
+			memcpy ( NameX, &root[z], size );
 			NameX[size] = 0;
 			
             // Compara 11 caracteres do nome desejado, 
 			// com o nome encontrado na entrada atual.
 			Status = strncmp ( file_name, NameX, size );
 			
-            if ( Status == 0 ){ 
-			    goto found; 
-			}
+            if ( Status == 0 ){ goto found; }
 			// Nothing.
         }; 
 		
@@ -746,17 +944,24 @@ unsigned long fsGetFileSize ( unsigned char *file_name ){
         i++;        
     }; 
 	
-	// Sai do while. O arquivo não foi encontrado.
-	
-    // O arquivo não foi encontrado.	
+	// Sai do while. 
+	// O arquivo não foi encontrado.
+		
 //notFound:
+
+    //#debug
     printf ("fsGetFileSize: %s not found\n", file_name );  
+	printf ("fsGetFileSize: %s not found\n", NameX );  
 
 //Falha ao carregar o arquivo.
 fail:
     printf ("fsGetFileSize: file={%s}\n", file_name );	
     refresh_screen ();
 	return (unsigned long) 0;
+	
+	//
+	// Found !
+	//
 	
 found:
 

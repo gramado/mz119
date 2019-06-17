@@ -96,23 +96,47 @@ int fclose (FILE *stream){
 //debug: vamos colocar verbose nessa rotina e olhar na máquina real
 //se o problema aparece.
 
+//#bugbug
+//problemas na string de nome.
+
 FILE *fopen ( const char *filename, const char *mode ){
 	
     unsigned long fileret;
 	struct _iobuf *stream;
 	
-	//#bugbug: aqui podemos usar o malloc
+	// #bugbug: 
+	// aqui podemos usar o malloc
 	//Buffer usado cara colocar a estrutura.
+	//mas o problema é o free que ainda não funciona
+	
     unsigned char struct_buffer[1024];
 	
 	//Buffer para armazenar o arquivo que vamos abrir.
 	char *file_buffer;		
 	
+	
+	//
+	//
+	//
+	
+	
 	//buffer da estrutura.
 	stream = (FILE *) &struct_buffer[0];	
 	
 	
+	
+	// #bugbug
+	// Estamos com problemas com a string de nome.
+	// #debug: vamos exibí-la.
+	
+	printf ("before_read_fntos: %s\n", filename );
+	
 	read_fntos ( (char *) filename );
+	
+	printf ("after_read_fntos: %s\n", filename );	
+	
+	// #debug
+	//refresh_screen ();
 	
 	
     //#bugbug
@@ -122,7 +146,15 @@ FILE *fopen ( const char *filename, const char *mode ){
 	
 	//#test
 	//temos que fazer isso de um jeito melhor
+	
 	size_t s = (size_t) fsGetFileSize ( (unsigned char *) filename );
+	
+	
+	// #debug	
+	printf ("after_fsGetFileSize: %s\n", filename );	
+	//refresh_screen ();
+
+
 
 	//#bugbug
 	//Quando pegamos o tamanho do arquivo e for muito grande
@@ -197,12 +229,25 @@ FILE *fopen ( const char *filename, const char *mode ){
 		return (FILE *) 0;
 	}
 	
+	
+	// #bugbug
+	// Ao chamar essa rotina a string do nome se estraga.
+	
 	// Loading file.
+	
+	printf ("before_fsLoadFile: %s\n", filename );
 				
+    //fileret = fsLoadFile ( VOLUME1_FAT_ADDRESS, 
+	//		      current_target_dir.current_dir_address,  
+	//              (unsigned char *) current_target_dir.name, 
+	//              (unsigned long) stream->_base );
+	              
     fileret = fsLoadFile ( VOLUME1_FAT_ADDRESS, 
 			      current_target_dir.current_dir_address,  
-	              (unsigned char *) current_target_dir.name, 
-	              (unsigned long) stream->_base );				
+	              (unsigned char *) filename, 
+	              (unsigned long) stream->_base );	              
+	 
+	printf ("after_fsLoadFile: %s\n", filename );                           				
 	
 	if ( fileret != 0 )
 	{	

@@ -486,12 +486,14 @@ void *gde_services ( unsigned long number,
 		
 		//1 (i/o) Essa rotina pode ser usada por um driver em user mode.
 		case SYS_READ_LBA: 
-			sys_my_read_hd_sector ( (unsigned long) arg2 , (unsigned long) arg3, 0 , 0 ); 
+			sys_my_read_hd_sector ( (unsigned long) arg2, 
+			    (unsigned long) arg3, 0 , 0 ); 
 			break;
 			
 		//2 (i/o) Essa rotina pode ser usada por um driver em user mode.
 		case SYS_WRITE_LBA: 
-			sys_my_write_hd_sector ( (unsigned long) arg2 , (unsigned long) arg3, 0 , 0 ); 
+			sys_my_write_hd_sector ( (unsigned long) arg2, 
+			    (unsigned long) arg3, 0 , 0 ); 
 		    break;
 
 		//3 fopen (i/o)
@@ -507,8 +509,8 @@ void *gde_services ( unsigned long number,
 			
 			//#importante: estamos usando esse.
 			//testando novos recursos,
-			return (void *) sys_read_file2 ( (unsigned long) a2, (unsigned long) arg3 );
-				
+			return (void *) sys_read_file2 ( (unsigned long) a2, 
+			                    (unsigned long) arg3 );
 			break;
 
 
@@ -1833,12 +1835,16 @@ void *gde_services ( unsigned long number,
 			
 		//246 ~ 249 reservado para libc support.	
 			
-		//246	
-		//fopen()	
+			
+			
+		// 246	
+		// fopen()	
 		case 246:
-			//filename, mode.
-			return (void *) sys_fopen ( (const char *) arg2, (const char *) arg3 );
+			// filename, mode.
+			return (void *) sys_fopen ( (const char *) arg2, 
+			                    (const char *) arg3 );
 			break;
+				
 				
 		// pipe	
 		case 247:
