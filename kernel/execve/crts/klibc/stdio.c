@@ -273,22 +273,25 @@ FILE *fopen ( const char *filename, const char *mode ){
 //https://www.tutorialspoint.com/c_standard_library/c_function_fread.htm 
 
 size_t fread (void *ptr, size_t size, size_t n, FILE *fp){
-	
-	int result = -1;
-	
+
 	//tamanho do bloco. char short long ...
 	//if ( size <= 0 )
 	    //return -1;
 	    
-	   //#todo: message 
+	//#todo: message 
 	if ( n <= 0 )
+	{
+		printf ("fread: n \n");
+		refresh_screen();		
 	    return -1;
+	}
 	
 	if ( (void *) fp == NULL )
 	{
 		printf ("fread: fp\n");
 		refresh_screen();
 		return -1;
+		
 	}else{
 	
 	   // if (s->flags & IOSTREAM_READ)
@@ -300,22 +303,33 @@ size_t fread (void *ptr, size_t size, size_t n, FILE *fp){
 		//ai tem algo errado
 		if ( fp->_p < fp->_base )
 		{
-			//msg
+		    printf ("fread: position fail\n");
+		    refresh_screen();
 			return -1;
 		}
-		
-		if ( (fp->_p - n) < fp->_base )
-		{
-			return -1;
-		}
-		
-		memcpy ( (void *) ptr, 
-		         (const void *) (fp->_p - n), 
-		         (unsigned long) n );
-		         
-		 //update.        
-		 //stream->_p = stream->_p + n; 
 
+        // dst = buffer no app.
+        // src = base do buffer da stream + offset de leitura.	
+
+        //#todo: ainda não temos uma base do buffer devidamente inicializada.         	
+		//#hack hack: provisório, deletar depois.
+		
+		fp->_lb._base = fp->_base; //precisamos inicializar quando usamos fopen
+		fp->_r = 0; //precisamos inicializar quando usamos fopen
+        //...
+        
+		//#debug
+		printf ("fread: copiando para o buffer\n");
+		printf ("_r=%d \n",fp->_r);
+		printf ("_lb._base=%x \n",fp->_lb._base);
+		refresh_screen();		
+         
+		memcpy ( (void *) ptr, 
+		         (const void *) (fp->_lb._base + fp->_r ), 
+		         (unsigned long) n );
+		
+		 //update.        
+		 fp->_r = (fp->_r + n);  
     };
 	
     return 0;
@@ -346,26 +360,12 @@ size_t fwrite (const void *ptr, size_t size, size_t n, FILE *fp)
 	   //switch (s->node->type) arquivo, dispositivo, etc ... 
 		
 		
-		//if (stream->offset <= file->size)
-		
-		//ai tem algo errado
-		//if ( fp->_p < fp->_base )
-		//{
-			//msg
-			//return -1;
-		//}
-		
-		//if ( (fp->_p - n) < fp->_base )
-		//{
-			//return -1;
-		//}
-		
-		memcpy ( (void *) fp->_p, 
+		memcpy ( (void *) (fp->_lb._base + fp->_w), 
 		         (const void *) ptr, 
 		         (unsigned long) n );
 		         
 		 //update.        
-		 fp->_p = fp->_p + n; 
+		 fp->_w = fp->_w + n; 
     };
 	
     return 0;
@@ -1407,6 +1407,8 @@ int fgetc ( FILE *stream ){
 		
 	}else{
 		
+		 //(--(p)->_r < 0 ? __srget(p) : (int)(*(p)->_p++))
+		
 		//#fim.
 		//cnt decrementou e chegou a zero.
 		//Não há mais caracteres disponíveis entre 
@@ -1427,7 +1429,8 @@ int fgetc ( FILE *stream ){
 		};
 		
 		//#debug
-		//n~ao podemos acessar um ponteiro nulo... no caso endereço.
+		//nao podemos acessar um ponteiro nulo... no caso endereço.
+		
 		if ( stream->_p == 0 )
 		{
 			printf ("#debug: fgetc: stream struct fail\n");
@@ -1436,7 +1439,11 @@ int fgetc ( FILE *stream ){
 			
 		}else{
 			
-		    //pega o char
+			// #obs: 
+			// Tem que ter a opção de pegarmos usando o posicionamento
+			// no buffer. O terminal gosta dessas coisas.
+			
+		    //Pega o char no posicionamento absoluto do arquivo
 		    ch = (int) *stream->_p; 	
 				
 			stream->_p++;
@@ -1567,10 +1574,38 @@ int fputc ( int ch, FILE *stream ){
 		
 	}else{
 		
-        sprintf ( stream->_p, "%c", ch);
-	
-	    stream->_p++;
-	    stream->_cnt--;		
+		// se tivermos um posicionamento válido de escrita no buffer ou
+		// se a posição de escrita no buffer for maior que o limite
+		// do buffer e o char for diferente de fim de linha
+		// então usaremos ponteiro absoluto para escrever no arquivo.
+		// Isso acontece poque desejamos continuar colocando coisa no arquivo
+		// mesmo depois que o buffer se esgota.
+		
+		// caso contrário escreveremos no buffer.
+			
+			
+		//se ainda não esgotamos o buffer,
+		//ou se esgotamos o buffer mas o caractere não é um caractere 
+		//de fim de linha;		
+		if ( stream->_w-- >= 0 || 
+		     ( stream->_w >= stream->_lbfsize && (char) ch != '\n' ) )
+		{	
+            sprintf ( stream->_p, "%c", ch);
+	        stream->_p++;
+	        
+	        //quanto falta para acabar o arquivo.
+	        stream->_cnt--;	
+	        				
+	    //se o buffer está esgotado.    				
+		}else{
+		     
+		     //?? esgotamos o buffer ??
+		     //o caractere é um fim de linha.
+		     //o posicionamento no buffer passou do limite inferior.
+		     //o posicionamento no buffer passou do limite superior.
+		    
+		    //?? como se comporta quando o caractere é um fim de linha ?? 
+		}
 	};
 
     return 0;		
@@ -1596,17 +1631,13 @@ int vfprintf ( FILE *stream, const char *format, stdio_va_list argptr ){
 
 
 void rewind ( FILE * stream ){
-	
+
+    //fseek (stream, 0L, SEEK_SET);
+    	
 	if ( (void *) stream == NULL )
 		return;
-	
-    //apota par o início do arquivo.
-	//#bugbug: isso vai sobrescrever
-	//as coisas que ainda estão no arquivo;
-	
-	stdin->_p = stdin->_base;
-    stdin->_lbfsize = BUFSIZ; 		
-	stdin->_cnt = stdin->_lbfsize;		
+		
+    stream->_p = stdin->_base;
 }
 
 
@@ -2044,6 +2075,9 @@ int stdioInitialize (void){
 	stdin->magic = 1234;
 	stdin->_base = &prompt[0];
 	stdin->_p =  &prompt[0];
+	stdin->_lb._base = stdin->_base;
+	stdin->_r = 0;
+	stdin->_w = 0;	
 	stdin->_cnt = PROMPT_MAX_DEFAULT;
 	stdin->_file = 0;
 	stdin->_tmpfname = "k-stdin";
@@ -2054,6 +2088,9 @@ int stdioInitialize (void){
 	stdout->magic = 1234;	
 	stdout->_base = &prompt_out[0];
 	stdout->_p = &prompt_out[0];
+	stdout->_lb._base = stdout->_base;
+	stdout->_r = 0;
+	stdout->_w = 0;		
 	stdout->_cnt = PROMPT_MAX_DEFAULT;
 	stdout->_file = 1;
 	stdout->_tmpfname = "k-stdout";
@@ -2064,6 +2101,9 @@ int stdioInitialize (void){
 	stderr->magic = 1234;	
 	stderr->_base = &prompt_err[0];
 	stderr->_p =  &prompt_err[0];
+	stderr->_lb._base = stderr->_base;
+	stderr->_r = 0;
+	stderr->_w = 0;	
 	stderr->_cnt = PROMPT_MAX_DEFAULT;
 	stderr->_file = 2;
 	stderr->_tmpfname = "k-stderr";	

@@ -344,19 +344,19 @@ void *gde_services ( unsigned long number,
 	    return (void *) sys_dup3 ( (int) arg2, (int) arg3, (int) arg4 );	
 	}
 	
-	//fileno
+	// 605 - fileno
 	if ( number == 605 )
 	{
 		return (void *) fileno ( (FILE *) arg2 );
 	}	
 
-    //ungetc
+    // 606 - ungetc
 	if ( number == 606 )
 	{
 		return (void *) ungetc ( (int) arg2, (FILE *) arg3 );
 	}		
 	
-	//fread
+	// 607 - fread
 	if ( number == 607 )
 	{
 		//return (void *) fread ( (void *) ptr, (size_t) 1, (size_t) n, (FILE *) fp );
@@ -364,12 +364,20 @@ void *gde_services ( unsigned long number,
 	}		
 	
 	
-	//fwrite
+	//608 - fwrite
 	if ( number == 608 )
 	{
         //size_t fwrite (const void *ptr, size_t size, size_t n, FILE *fp) 
 		return (void *) fwrite ( (const void *) arg2, (size_t) 1, (size_t) arg3, (FILE *) arg4 );
 	}	
+	
+	//609
+	if ( number == 609 )
+	{
+		rewind ( (FILE *) arg2 );
+		return NULL;
+	}	
+	
 	
 	//...
 
