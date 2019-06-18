@@ -264,17 +264,111 @@ FILE *fopen ( const char *filename, const char *mode ){
 }
 
 
-//#todo
-size_t fread (void *ptr, size_t size, size_t n, FILE *fp)
-{
-    return -1;
+// #importante
+// Ler uma certa quantidade de chars de uma stream e
+// coloca-los no buffer.
+// Isso vai ser usado pelo terminal por exemplo.
+// Assim o terminal pode pegar uma string que esteja no arquivo.
+
+//https://www.tutorialspoint.com/c_standard_library/c_function_fread.htm 
+
+size_t fread (void *ptr, size_t size, size_t n, FILE *fp){
+	
+	int result = -1;
+	
+	//tamanho do bloco. char short long ...
+	//if ( size <= 0 )
+	    //return -1;
+	    
+	   //#todo: message 
+	if ( n <= 0 )
+	    return -1;
+	
+	if ( (void *) fp == NULL )
+	{
+		printf ("fread: fp\n");
+		refresh_screen();
+		return -1;
+	}else{
+	
+	   // if (s->flags & IOSTREAM_READ)
+	   //switch (s->node->type) arquivo, dispositivo, etc ... 
+		
+		
+		//if (stream->offset <= file->size)
+		
+		//ai tem algo errado
+		if ( fp->_p < fp->_base )
+		{
+			//msg
+			return -1;
+		}
+		
+		if ( (fp->_p - n) < fp->_base )
+		{
+			return -1;
+		}
+		
+		memcpy ( (void *) ptr, 
+		         (const void *) (fp->_p - n), 
+		         (unsigned long) n );
+		         
+		 //update.        
+		 //stream->_p = stream->_p + n; 
+
+    };
+	
+    return 0;
 }
 
 
 //#todo
 size_t fwrite (const void *ptr, size_t size, size_t n, FILE *fp)
 {
-	return -1;
+	int result = -1;
+	
+	//tamanho do bloco. char short long ...
+	//if ( size <= 0 )
+	    //return -1;
+	    
+	   //#todo: message 
+	if ( n <= 0 )
+	    return -1;
+	
+	if ( (void *) fp == NULL )
+	{
+		printf ("fwrite: fp\n");
+		refresh_screen();
+		return -1;
+	}else{
+	
+	   // if (s->flags & IOSTREAM_READ)
+	   //switch (s->node->type) arquivo, dispositivo, etc ... 
+		
+		
+		//if (stream->offset <= file->size)
+		
+		//ai tem algo errado
+		//if ( fp->_p < fp->_base )
+		//{
+			//msg
+			//return -1;
+		//}
+		
+		//if ( (fp->_p - n) < fp->_base )
+		//{
+			//return -1;
+		//}
+		
+		memcpy ( (void *) fp->_p, 
+		         (const void *) ptr, 
+		         (unsigned long) n );
+		         
+		 //update.        
+		 fp->_p = fp->_p + n; 
+    };
+	
+    return 0;
 }
 
 

@@ -350,10 +350,27 @@ void *gde_services ( unsigned long number,
 		return (void *) fileno ( (FILE *) arg2 );
 	}	
 
+    //ungetc
 	if ( number == 606 )
 	{
 		return (void *) ungetc ( (int) arg2, (FILE *) arg3 );
 	}		
+	
+	//fread
+	if ( number == 607 )
+	{
+		//return (void *) fread ( (void *) ptr, (size_t) 1, (size_t) n, (FILE *) fp );
+		return (void *) fread ( (void *) arg2, (size_t) 1, (size_t) arg3, (FILE *) arg4 );
+	}		
+	
+	
+	//fwrite
+	if ( number == 608 )
+	{
+        //size_t fwrite (const void *ptr, size_t size, size_t n, FILE *fp) 
+		return (void *) fwrite ( (const void *) arg2, (size_t) 1, (size_t) arg3, (FILE *) arg4 );
+	}	
+	
 	//...
 
 	
