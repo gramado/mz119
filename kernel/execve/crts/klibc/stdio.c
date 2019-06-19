@@ -99,41 +99,49 @@ int fclose (FILE *stream){
 //#bugbug
 //problemas na string de nome.
 
+// #todo: 
+// Precisamos inicializar corretamente a estrutura antes de 
+// retornarmos o ponteiro.
+
 FILE *fopen ( const char *filename, const char *mode ){
 	
     unsigned long fileret;
-	struct _iobuf *stream;
-	
-	// #bugbug: 
-	// aqui podemos usar o malloc
-	//Buffer usado cara colocar a estrutura.
-	//mas o problema é o free que ainda não funciona
-	
-    unsigned char struct_buffer[1024];
-	
-	//Buffer para armazenar o arquivo que vamos abrir.
+    
+    int i;
+    
+	//struct _iobuf *stream;
+	FILE *stream;
+
+	// Buffer para armazenar o arquivo que vamos abrir.
 	char *file_buffer;		
 	
+	// #bugbug: 
+	// aqui podemos usar o malloc ?
+	// Buffer usado para colocar a estrutura, 
+	// mas o problema é o free que ainda não funciona.
 	
-	//
-	//
-	//
-	
-	
+    // 1024 é desperdício.
+    unsigned char struct_buffer[1024];
+
+    //
+    // stream;
+    //	
+
 	//buffer da estrutura.
 	stream = (FILE *) &struct_buffer[0];	
 	
-	
-	
+
 	// #bugbug
 	// Estamos com problemas com a string de nome.
 	// #debug: vamos exibí-la.
 	
-	printf ("before_read_fntos: %s\n", filename );
+	// #debug
+	//printf ("before_read_fntos: %s\n", filename );
 	
 	read_fntos ( (char *) filename );
 	
-	printf ("after_read_fntos: %s\n", filename );	
+	// #debug
+	//printf ("after_read_fntos: %s\n", filename );	
 	
 	// #debug
 	//refresh_screen ();
@@ -149,9 +157,18 @@ FILE *fopen ( const char *filename, const char *mode ){
 	
 	size_t s = (size_t) fsGetFileSize ( (unsigned char *) filename );
 	
+	if ( s <= 0 )
+	{
+	    printf ("fopen: file size \n");
+	    goto fail;
+	    
+	    //refresh_screen();
+	    //return (FILE *) 0;	
+	}	
+	
 	
 	// #debug	
-	printf ("after_fsGetFileSize: %s\n", filename );	
+	//printf ("after_fsGetFileSize: %s\n", filename );	
 	//refresh_screen ();
 
 
@@ -188,34 +205,70 @@ FILE *fopen ( const char *filename, const char *mode ){
 	//já temos recursos para alocar memória para um buffer maior.
 	//obs: Essa alocação vai depender do tamanho do arquivo.
 	
-	//stream->_cnt = PROMPT_MAX_DEFAULT;
-	stream->_cnt = s;	
 	
-	//file_buffer = (char *) newPage();
+
 	
+	//file_buffer = (char *) newPage();	
 	file_buffer = (char *) malloc (s);
 	
 	if ( (char *) file_buffer == NULL )
 	{
-		printf("fopen: file_buffer");
-		die();
-	}	
-	  
-    stream->used = 1;
-	stream->magic = 1234;
+		printf ("fopen: file_buffer \n");
+		goto fail;
 		
-	stream->_base = file_buffer;
-	stream->_p = stream->_base;
+		//refresh_screen ();
+		//return (FILE *) 0;
+	}
+		
+		
+	//
+	// Configurando a stream;
+	//
 	
-	stream->_file = 0;
-	stream->_tmpfname = (char *) filename;	
 	
+	if ( (void *) stream == NULL )
+	{
+	    printf ("fopen: stream \n");
+	    goto fail;
+	    
+	    //refresh_screen();
+	    //return (FILE *) 0;	
+	    
+	}else{
+				  
+        stream->used = 1;
+	    stream->magic = 1234;
+		
+	    stream->_base = file_buffer;
+	    stream->_lb._base = file_buffer;
+	    stream->_r = 0;
+	    stream->_w = 0;	    
+	    stream->_p = stream->_base;
+	    
+	    //?? #todo: 
+	    // precisamos de um id
+	    // Esse ID é um indice da estrutura de processo.
+	    stream->_file = 0; 
+	    
+	    stream->_tmpfname = (char *) filename;			
+	
+        // Quanto falta para acabar o arquivo.
+	    stream->_cnt = s;	
+	    	
+		//...
+	};	
+	
+	
+	// #bugbug:
+	// Por enquanto esse esquema de pwd mais atrapalha que ajuda.
+	// Atenção !!
+ 
+	// pwd support.
 	fsUpdateWorkingDiretoryString ( (char *) filename );
-	
-	int i;
+		
 	if ( current_target_dir.current_dir_address == 0 )
 	{
-	    printf("sys_read_file2: current_target_dir.current_dir_address fail \n");
+	    printf ("fopen: current_target_dir.current_dir_address fail \n");
 		
 		//reset.
 		current_target_dir.current_dir_address = VOLUME1_ROOTDIR_ADDRESS;
@@ -225,17 +278,17 @@ FILE *fopen ( const char *filename, const char *mode ){
 			current_target_dir.name[i] = '\0';
 		}		
 		
-		//return -1;
-		return (FILE *) 0;
+		goto fail;
+		//return (FILE *) 0;
 	}
+
+    //
+	// Loading file.	
+	//
 	
 	
-	// #bugbug
-	// Ao chamar essa rotina a string do nome se estraga.
-	
-	// Loading file.
-	
-	printf ("before_fsLoadFile: %s\n", filename );
+	//#debug
+	//printf ("before_fsLoadFile: %s\n", filename );
 				
     //fileret = fsLoadFile ( VOLUME1_FAT_ADDRESS, 
 	//		      current_target_dir.current_dir_address,  
@@ -247,23 +300,33 @@ FILE *fopen ( const char *filename, const char *mode ){
 	              (unsigned char *) filename, 
 	              (unsigned long) stream->_base );	              
 	 
-	printf ("after_fsLoadFile: %s\n", filename );                           				
+	//printf ("after_fsLoadFile: %s\n", filename );                           				
 	
 	if ( fileret != 0 )
 	{	
-		printf ("fopen: fsLoadFile fail\n");
-		
 		stream = NULL;	
+				
+		printf ("fopen: fsLoadFile fail\n");
+		goto fail;
 		
-		return NULL;
+		//refresh_screen ();		
+		//return (FILE *) 0;
 	}
 	
-	//...
-
+done:
 	return (FILE *) stream; 	
+	
+fail:
+    refresh_screen ();
+    return (FILE *) 0;
 }
 
 
+/*
+ * fread:  
+ * 
+ */
+ 
 // #importante
 // Ler uma certa quantidade de chars de uma stream e
 // coloca-los no buffer.
@@ -278,7 +341,6 @@ size_t fread (void *ptr, size_t size, size_t n, FILE *fp){
 	//if ( size <= 0 )
 	    //return -1;
 	    
-	//#todo: message 
 	if ( n <= 0 )
 	{
 		printf ("fread: n \n");
@@ -311,11 +373,19 @@ size_t fread (void *ptr, size_t size, size_t n, FILE *fp){
         // dst = buffer no app.
         // src = base do buffer da stream + offset de leitura.	
 
-        //#todo: ainda não temos uma base do buffer devidamente inicializada.         	
-		//#hack hack: provisório, deletar depois.
+        //#todo: 
+        // ainda não temos uma base do buffer devidamente inicializada.         	
 		
-		fp->_lb._base = fp->_base; //precisamos inicializar quando usamos fopen
-		fp->_r = 0; //precisamos inicializar quando usamos fopen
+		// #hack hack: 
+		// provisório, deletar depois.
+		// precisamos inicializar quando usamos fopen
+		// suspendendo esse hack pois fiz as modificações no fopen
+		// pra inicialziar a estrutura.
+		// Então isso deve funcionar sem esse ajuste 
+		// pelo menos para arquivos abertos com fopen.
+		
+		//fp->_lb._base = fp->_base; 
+		//fp->_r = 0; 
         //...
         
 		//#debug
@@ -323,6 +393,8 @@ size_t fread (void *ptr, size_t size, size_t n, FILE *fp){
 		printf ("_r=%d \n",fp->_r);
 		printf ("_lb._base=%x \n",fp->_lb._base);
 		refresh_screen();		
+         
+        //#todo: _r limits
          
 		memcpy ( (void *) ptr, 
 		         (const void *) (fp->_lb._base + fp->_r ), 
@@ -336,31 +408,46 @@ size_t fread (void *ptr, size_t size, size_t n, FILE *fp){
 }
 
 
+/*
+ * fwrite:  
+ * 
+ */
+ 
 //#todo
-size_t fwrite (const void *ptr, size_t size, size_t n, FILE *fp)
-{
-	int result = -1;
+
+size_t fwrite (const void *ptr, size_t size, size_t n, FILE *fp){
 	
 	//tamanho do bloco. char short long ...
 	//if ( size <= 0 )
 	    //return -1;
 	    
-	   //#todo: message 
 	if ( n <= 0 )
+	{
+		printf ("fwrite: n \n");
+		refresh_screen();		
 	    return -1;
+	}
 	
 	if ( (void *) fp == NULL )
 	{
 		printf ("fwrite: fp\n");
 		refresh_screen();
 		return -1;
+		
 	}else{
 	
 	   // if (s->flags & IOSTREAM_READ)
 	   //switch (s->node->type) arquivo, dispositivo, etc ... 
+	   
+		//#debug
+		printf ("fwrite: copiando do buffer\n");
+		printf ("_w=%d \n",fp->_w);
+		printf ("_lb._base=%x \n",fp->_lb._base);
+		refresh_screen();
 		
-		
-		memcpy ( (void *) (fp->_lb._base + fp->_w), 
+		//#todo: _w limits	   
+				
+		memcpy ( (void *) (fp->_lb._base + fp->_w ), 
 		         (const void *) ptr, 
 		         (unsigned long) n );
 		         
