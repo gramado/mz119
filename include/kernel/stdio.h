@@ -399,10 +399,16 @@ unsigned long *gStreams;
 //_IONBF: The macro yields the value of the mode argument to 
 // setvbuf to indicate no buffering. (Flush the stream buffer at the end of each write operation.)
 
-#define  _IOFBF  4096    //Full buffer (uma página)
+/*
+#define  _IONBF  0       //unbuffered 
 #define  _IOLBF  256     //Uma linha.       
-#define  _IONBF  0   
+#define  _IOFBF  4096    //Full buffer (uma página)
+*/
 
+/*bsd-like*/
+#define	_IOFBF	0		// setvbuf should set fully buffered 
+#define	_IOLBF	1		// setvbuf should set line buffered 
+#define	_IONBF	2		// setvbuf should set unbuffered 
     
 //#define  BUFSIZ  512 
 #define  BUFSIZ  1024 
@@ -891,8 +897,18 @@ int kclearClientArea(int color);
 
 int insert_line ( char *string, int line );
 
-
 //int getchar();
+
+
+//
+// stream buffer support
+//
+
+// see: https://linux.die.net/man/3/setvbuf
+void setbuf(FILE *stream, char *buf);
+void setbuffer(FILE *stream, char *buf, size_t size);
+void setlinebuf(FILE *stream);
+int setvbuf(FILE *stream, char *buf, int mode, size_t size);
 
 //inicializa os buffers do fluxo padrão em stdio.c
 int stdioInitialize (void);

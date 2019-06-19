@@ -379,6 +379,39 @@ void *gde_services ( unsigned long number,
 	}	
 	
 	
+	//610 - setbuf
+	if ( number == 610 )
+	{
+		//void setbuf(FILE *stream, char *buf);
+		setbuf ( (FILE *) arg2, (char *) arg3 );
+		return NULL;
+	}	
+	
+	//611 - setbuffer
+	if ( number == 611 )
+	{
+		//void setbuffer(FILE *stream, char *buf, size_t size);
+		setbuffer ( (FILE *) arg2, (char *) arg3, (size_t) arg4 );
+	    return NULL;
+	}
+	
+	//612 - setlinebuf
+	if ( number == 612 )
+	{
+		//void setlinebuf(FILE *stream);
+		setlinebuf ( (FILE *) arg2 );
+		return NULL;
+	}
+	
+	//613 - setvbuf
+	//#todo: precisamos do argumento size.
+	if ( number == 613 )
+	{
+		//int setvbuf(FILE *stream, char *buf, int mode, size_t size);
+		return (void *) setvbuf ( (FILE *) arg2, (char *) arg3, (int) arg4, (size_t) 512 );
+	}	
+	
+	
 	//...
 
 	

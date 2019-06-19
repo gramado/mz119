@@ -240,7 +240,7 @@ FILE *fopen ( const char *filename, const char *mode ){
 	    stream->magic = 1234;
 		
 	    stream->_base = file_buffer;
-	    stream->_lb._base = file_buffer;
+	    stream->_bf._base = file_buffer;
 	    stream->_r = 0;
 	    stream->_w = 0;	    
 	    stream->_p = stream->_base;
@@ -384,20 +384,20 @@ size_t fread (void *ptr, size_t size, size_t n, FILE *fp){
 		// Então isso deve funcionar sem esse ajuste 
 		// pelo menos para arquivos abertos com fopen.
 		
-		//fp->_lb._base = fp->_base; 
+		//fp->_bf._base = fp->_base; 
 		//fp->_r = 0; 
         //...
         
 		//#debug
 		printf ("fread: copiando para o buffer\n");
 		printf ("_r=%d \n",fp->_r);
-		printf ("_lb._base=%x \n",fp->_lb._base);
+		printf ("_bf._base=%x \n",fp->_bf._base);
 		refresh_screen();		
          
         //#todo: _r limits
          
 		memcpy ( (void *) ptr, 
-		         (const void *) (fp->_lb._base + fp->_r ), 
+		         (const void *) (fp->_bf._base + fp->_r ), 
 		         (unsigned long) n );
 		
 		 //update.        
@@ -442,12 +442,12 @@ size_t fwrite (const void *ptr, size_t size, size_t n, FILE *fp){
 		//#debug
 		printf ("fwrite: copiando do buffer\n");
 		printf ("_w=%d \n",fp->_w);
-		printf ("_lb._base=%x \n",fp->_lb._base);
+		printf ("_bf._base=%x \n",fp->_bf._base);
 		refresh_screen();
 		
 		//#todo: _w limits	   
 				
-		memcpy ( (void *) (fp->_lb._base + fp->_w ), 
+		memcpy ( (void *) (fp->_bf._base + fp->_w ), 
 		         (const void *) ptr, 
 		         (unsigned long) n );
 		         
@@ -2162,7 +2162,7 @@ int stdioInitialize (void){
 	stdin->magic = 1234;
 	stdin->_base = &prompt[0];
 	stdin->_p =  &prompt[0];
-	stdin->_lb._base = stdin->_base;
+	stdin->_bf._base = stdin->_base;
 	stdin->_r = 0;
 	stdin->_w = 0;	
 	stdin->_cnt = PROMPT_MAX_DEFAULT;
@@ -2175,7 +2175,7 @@ int stdioInitialize (void){
 	stdout->magic = 1234;	
 	stdout->_base = &prompt_out[0];
 	stdout->_p = &prompt_out[0];
-	stdout->_lb._base = stdout->_base;
+	stdout->_bf._base = stdout->_base;
 	stdout->_r = 0;
 	stdout->_w = 0;		
 	stdout->_cnt = PROMPT_MAX_DEFAULT;
@@ -2188,7 +2188,7 @@ int stdioInitialize (void){
 	stderr->magic = 1234;	
 	stderr->_base = &prompt_err[0];
 	stderr->_p =  &prompt_err[0];
-	stderr->_lb._base = stderr->_base;
+	stderr->_bf._base = stderr->_base;
 	stderr->_r = 0;
 	stderr->_w = 0;	
 	stderr->_cnt = PROMPT_MAX_DEFAULT;
@@ -2414,6 +2414,105 @@ void REFRESH_STREAM ( FILE *stream ){
 	};
 	
 	stdio_terminalmode_flag = 0;  
+}
+
+
+//
+// stream buffer support
+//
+
+// see: 
+// https://linux.die.net/man/3/setvbuf
+
+void setbuf(FILE *stream, char *buf)
+{
+    if ( (void *) stream == NULL )
+    {
+		return;
+	}else{
+		
+		//#todo
+		//se o buffer é válido.
+        //if (stream->_bf._base != NULL) 
+        //{
+            //if (stream->cnt > 0)
+                //fflush (stream);
+                
+            //free (stream->buf);
+        //}
+        
+        // Udate stream.
+        stream->_bf._base = buf;
+        //stream->_lbfsize = size;        
+        // ?? stream->bufmode = mode;
+
+        stream->_p = buf;
+        // ??stream->cnt = 0;	        
+        //...		
+	};	
+}
+
+
+void setbuffer(FILE *stream, char *buf, size_t size)
+{
+    if ( (void *) stream == NULL )
+    {
+		return;
+	}else{
+		
+		//#todo
+		//se o buffer é válido.
+        //if (stream->_bf._base != NULL) 
+        //{
+            //if (stream->cnt > 0)
+                //fflush (stream);
+                
+            //free (stream->buf);
+        //}
+        
+        // Udate stream.
+        stream->_bf._base = buf;
+        stream->_lbfsize = size;        
+        // ?? stream->bufmode = mode;
+
+        stream->_p = buf;
+        // ??stream->cnt = 0;	        
+        //...		
+	};
+}
+
+void setlinebuf(FILE *stream)
+{	
+}
+
+int setvbuf(FILE *stream, char *buf, int mode, size_t size){
+
+    if ( (void *) stream == NULL )
+    {
+		return -1;
+	}else{
+		
+		//#todo
+		//se o buffer é válido.
+        //if (stream->_bf._base != NULL) 
+        //{
+            //if (stream->cnt > 0)
+                //fflush (stream);
+                
+            //free (stream->buf);
+        //}
+        
+        // Udate stream.
+        stream->_bf._base = buf;
+        stream->_lbfsize = size;        
+        // ?? stream->bufmode = mode;
+
+        stream->_p = buf;
+        // ??stream->cnt = 0;	        
+        //...		
+	};
+
+    return 0;
 }
 
 
