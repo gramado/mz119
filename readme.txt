@@ -1,7 +1,6 @@
 
  ~Main folders for Gramado Operating System.
- 
- 
+  
 ===================================
  layer: kernel > drivers > servers > user
  
