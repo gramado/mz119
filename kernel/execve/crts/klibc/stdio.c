@@ -2318,6 +2318,9 @@ int stdioInitialize (void){
 	current_stdin->used = 1;
 	current_stdin->magic = 1234;	
 	current_stdin->_base = (unsigned char *) &current_stdin_data_buffer[0];
+	current_stdin->_bf._base = current_stdin->_base;
+	current_stdin->_r = 0;
+	current_stdin->_w = 0;
 	current_stdin->_p = (unsigned char *) &current_stdin_data_buffer[0];
 	current_stdin->_cnt = 128;  //Limitando. na verdade e' 4KB.
 	current_stdin->_lbfsize = 128;
@@ -2337,6 +2340,9 @@ int stdioInitialize (void){
 	current_stdout->used = 1;
 	current_stdout->magic = 1234;		
 	current_stdout->_base = (unsigned char *) &current_stdout_data_buffer[0];
+	current_stdout->_bf._base = current_stdout->_base;
+	current_stdout->_r = 0;
+	current_stdout->_w = 0;
 	current_stdout->_p  = (unsigned char *) &current_stdout_data_buffer[0];
 	current_stdout->_cnt = 128;  //Limitando. na verdade e' 4KB.
 	current_stdout->_lbfsize = 128;
@@ -2356,6 +2362,9 @@ int stdioInitialize (void){
 	current_stderr->used = 1;
 	current_stderr->magic = 1234;		
 	current_stderr->_base = (unsigned char *) &current_stderr_data_buffer[0];
+	current_stderr->_bf._base = current_stderr->_base;
+	current_stderr->_r = 0;
+	current_stderr->_w = 0;
 	current_stderr->_p  = (unsigned char *) &current_stderr_data_buffer[0];
 	current_stderr->_cnt = 128;  //Limitando. na verdade e' 4KB.
 	current_stderr->_lbfsize = 128;

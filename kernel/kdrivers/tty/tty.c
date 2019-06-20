@@ -177,8 +177,8 @@ int ttyInit (int tty_id){
 	if ( (void *) CurrentTTY == NULL )
 	{
 		
-		printf ("ttyInit:");
-		die ();
+		panic ("ttyInit:");
+		//die ();
 		//return -1;
 	}
 	

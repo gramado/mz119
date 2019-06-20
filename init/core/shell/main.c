@@ -82,6 +82,11 @@
  less than console_loglevel. 
 */ 
 
+#include "sh.h"
+
+// A janela principal do aplicativo.
+struct window_d *hWindow;    
+
 //# usado para teste 
 //divisível por 4 é mais lento.
 
@@ -90,8 +95,6 @@
 #define WINDOW_LEFT      0      //10
 #define WINDOW_TOP       0      //10
 
- 
-#include "sh.h"
 
 
 // Input flags.
@@ -1012,10 +1015,6 @@ get_input_filename:
 	//       Provavelmente deve coincidir com a estrutura presente
     //nas rotinas de gerenciamento de janela que estão em kernel mode.	
 	//struct window_class_d *wc; 
-	
-	
-	// A janela principal do aplicativo.
-	struct window_d *hWindow;    
 
 	//JANELA CRIADA NA ÁREA DE CLIENTE DA JANELA PRINCIPAL.
     //struct window_d *hWindow2;       
@@ -4461,7 +4460,8 @@ done:
 	// Limpando a lista de argumentos.
 	// Um array de ponteiros.
 	
-	for ( i=0; i<TOKENLIST_MAX_DEFAULT; i++ ){
+	for ( i=0; i<TOKENLIST_MAX_DEFAULT; i++ )
+	{
 		tokenList[i] = NULL;
 	};
 	
@@ -4475,8 +4475,7 @@ done:
 	//refresh_screen();
 	
     return (unsigned long) ret_value;
-};
-
+}
 
 
 void shellInitSystemMetrics()
@@ -4530,38 +4529,22 @@ void shellInitWindowLimits(){
 
 void shellInitWindowSizes()
 {
-	
-//
-//  ## Window size ##
-//
-
-    //wsWindowWidth = wlMinWindowWidth;
-    //wsWindowHeight = wlMinWindowHeight;	
-	
-	//Tamanho da janela do shell com base nos limites 
-    //que ja foram configurados.	
-	
 	wsWindowWidth =  WINDOW_WIDTH;
 	wsWindowHeight = WINDOW_HEIGHT;
 	
 	
-	if ( wsWindowWidth < wlMinWindowWidth )
-	{
+	if ( wsWindowWidth < wlMinWindowWidth ){
 		wsWindowWidth = wlMinWindowWidth;
 	}
 	
-	if ( wsWindowHeight < wlMinWindowHeight )
-	{
+	if ( wsWindowHeight < wlMinWindowHeight ){
 	    wsWindowHeight = wlMinWindowHeight;	
 	}
-
-
-};
+}
 
 
 void shellInitWindowPosition()
 {
-	
 	//window position
 	wpWindowLeft = WINDOW_LEFT;
 	wpWindowTop = WINDOW_TOP;
@@ -4570,12 +4553,14 @@ void shellInitWindowPosition()
 	//wpWindowTop = (unsigned long) ( (smScreenHeight - wsWindowHeight)/2 );  	
 }
 
+
 /*
  ******************************************
  * shellShell:
  *     Constructor.
  *     Não emite mensagens.
  */
+ 
 void shellShell (){
 	
 	int i=0;
@@ -5168,9 +5153,8 @@ done:
 	//>>vamos tentar sem isso e confiarmos na função printf.
 	//apiShowWindow(window);
 	
-    return (int) 0;
-};
-
+    return 0;
+}
 
 
 int shellCheckPassword (){
@@ -5353,6 +5337,7 @@ int shellCheckPassword (){
  * escrever corretamente dentro dela.
  * e isso se faz através de uma chamada ao kernel.
  */
+ 
 void shellSetCursor ( unsigned long x, unsigned long y ){
 	
     //
@@ -5373,7 +5358,7 @@ void shellSetCursor ( unsigned long x, unsigned long y ){
 	//
     
 	move_to ( x, y);
-};
+}
 
 
 /*
@@ -5381,6 +5366,7 @@ void shellSetCursor ( unsigned long x, unsigned long y ){
  * shellThread:
  *     Um thread dentro para testes.
  */
+ 
 void shellThread (){
 	
 	printf("\n");
@@ -5395,15 +5381,7 @@ void shellThread (){
 	
     refresh_screen();
 	
-	while(1){}
-    while(1)
-	{	
-	    //printf("$");
-		asm ( "pause" );
-		asm ( "pause" );
-		asm ( "pause" );
-		asm ( "pause" );
-    }	
+	while (1){ asm ( "pause" ); };
 }
 
 
@@ -5454,7 +5432,6 @@ void shellPrompt (){
     printf ("[%s", current_user_name );
 	printf ("@%s]", current_host_name );
 	printf ("%s ", SHELL_PROMPT );	
-	
 }
 
 
@@ -5793,8 +5770,7 @@ void shellRefreshLine ( int line_number ){
 	    //Mostra um char do screen buffer.
 		printf( "%c", LINES[lin].CHARS[col] );
 	};
-	
-};
+}
 
 
 // a intenção aqui é fazer o refresh de apenas uma linha do arquivo.
@@ -5845,21 +5821,21 @@ void shellScroll (){
 	
 	//reabilita o cursor
 	//system_call ( 244, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);	
-};
+}
 
 
 static void save_cur (void){
 	
 	textSavedCol = textCurrentCol;
 	textSavedRow = textCurrentRow;
-};
+}
 
 
 static void restore_cur (void){
 	
 	textCurrentCol = textSavedCol;
 	textCurrentRow = textSavedRow;
-};
+}
 
 
 //line feed
@@ -5874,7 +5850,7 @@ static void lf (void){
 	
 	//#todo: Scroll up;
 	//scrup();
-};
+}
 
 
 // ??
@@ -5891,21 +5867,21 @@ static void ri (void){
 	
 	//@todo:
 	//scrdown();
-};
+}
 
 
 //carriege return
 static void cr (void){
 	
     textCurrentCol = 0;
-};
+}
 
 
 static void del (void){
 	
 	LINES[textCurrentRow].CHARS[textCurrentCol] = (char) '\0';
 	LINES[textCurrentRow].ATTRIBUTES[textCurrentCol] = 7;
-};
+}
 
 
 // Insere um caractere sentro do buffer.
@@ -5922,7 +5898,7 @@ shellInsertCharXY ( unsigned long x,
 
 	LINES[y].CHARS[x] = (char) c;
 	LINES[y].ATTRIBUTES[x] = 7;
-};
+}
 
 
  // Insere um caractere sentro do buffer.
@@ -5937,7 +5913,7 @@ shellGetCharXY ( unsigned long x,
 	}
 
 	return (char) LINES[y].CHARS[x];
-};
+}
 
 
 /*
@@ -5971,7 +5947,7 @@ void testScrollChar ( int c ){
 		//...
 		shellInsertNextChar ((char) c);	
 	}		
-};
+}
 
 
 /*
@@ -5980,6 +5956,7 @@ void testScrollChar ( int c ){
  *     Coloca um char na próxima posição do buffer.
  *     Memória de vídeo virtual, semelhante a vga.
  */
+ 
 void shellInsertNextChar (char c){
 		
 	//cursor da linha
@@ -6007,27 +5984,25 @@ void shellInsertNextChar (char c){
 	
 	LINES[textCurrentRow].pos = textCurrentCol;
 	LINES[textCurrentRow].right = textCurrentCol;
-};
-
+}
 
 
 void shellInsertCR (){
     
 	shellInsertNextChar ( (char) '\r' );		
-};
+}
 
 
 void shellInsertLF (){
 	
 	shellInsertNextChar ( (char) '\n' );
-};
+}
 
 
 void shellInsertNullTerminator (){
 	
 	shellInsertNextChar ( (char) '\0' );	
-};
-
+}
 
 
 /*
@@ -6035,8 +6010,8 @@ void shellInsertNullTerminator (){
  * shellTestMBR:
  *     Testar a leitura de um setor do disco.
  *     Testaremos o setor do mbr.
- *
  */
+ 
 void shellTestMBR (){
 	
 	unsigned char buffer[512];
@@ -6072,8 +6047,7 @@ void shellTestMBR (){
 	//printf("done");
 	//refresh_screen(); //??deletar.
 	//return;
-};
-
+}
 
 
 /*
@@ -6081,8 +6055,9 @@ void shellTestMBR (){
  *    Move o cursor de posição.
  *    Assim o próximo char será em outro lugar da janela.
  */
-void move_to ( unsigned long x, unsigned long y )
-{	
+ 
+void move_to ( unsigned long x, unsigned long y ){
+		
 	if ( x > wlMaxColumns || y > wlMaxRows )
 		return;
 	
@@ -6093,7 +6068,7 @@ void move_to ( unsigned long x, unsigned long y )
 	textCurrentRow = y;
 	
 	//screen_buffer_pos = ( screen_buffer_y * wlMaxColumns + screen_buffer_x ) ;
-};
+}
 
 
 //show shell info
@@ -6118,7 +6093,7 @@ void shellShowInfo (){
 	printf("wlMaxColumns={%d} \n", wlMaxColumns );
 	printf("wlMaxRows={%d} \n", wlMaxRows );	
 	//...
-};
+}
 
 
 //metrics
@@ -6127,21 +6102,25 @@ void shellShowMetrics (){
     //reinicializa as metricas do sistema.
 	//isso pega os valores e coloca nas variáveis globais.
 	
-	shellInitSystemMetrics();
+	shellInitSystemMetrics ();
 	
 	
 	printf("\n");  
 	printf(" # shellShowMetrics: # \n");
 	
-	printf("screenWidth={%d} screenHeight={%d}\n",smScreenWidth, smScreenHeight );
-	printf("cursorWidth={%d} cursorHeight={%d}\n", smCursorWidth, smCursorHeight );
+	printf("screenWidth={%d} screenHeight={%d}\n",
+	    smScreenWidth, smScreenHeight );
+	printf("cursorWidth={%d} cursorHeight={%d}\n", 
+	    smCursorWidth, smCursorHeight );
 	printf("mousepointerWidth={%d} mousepointerHeight={%d}\n", 
 	    smMousePointerWidth, smMousePointerHeight );
-	printf("charWidth={%d} charHeight={%d}\n", smCharWidth, smCharHeight );	
+	printf("charWidth={%d} charHeight={%d}\n", 
+	    smCharWidth, smCharHeight );	
 	//...
 	
-    printf("Done\n");	
-};
+    printf ("Done\n");	
+}
+
 
 //show system info
 void shellShowSystemInfo (){
@@ -6167,11 +6146,14 @@ void shellShowSystemInfo (){
 	WindowWithFocusId = (int) APIGetFocus();
 	
 	//valor de erro
-	if( WindowWithFocusId == (-1)){
+	if( WindowWithFocusId == (-1) )
+	{
 	    printf("ERROR getting Window With Focus ID\n");	
 	}	
-	printf("WindowWithFocusId={%d}\n", WindowWithFocusId );	
-};
+	
+	printf ("WindowWithFocusId={%d}\n", WindowWithFocusId );	
+}
+
 
 //mostrar informações sobre janelas.
 void shellShowWindowInfo (){
@@ -6221,7 +6203,7 @@ void shellShowWindowInfo (){
 	printf("Windows ID for current terminal = {%d} \n", wID);
 	
 	//...
-};
+}
 
 
 
@@ -6245,17 +6227,18 @@ shellSendMessage ( struct window_d *window,
 				   unsigned long long2 )
 {
 	return (unsigned long) shellProcedure ( window, msg, long1, long2 );
-};
+}
 
 
 //copia bytes	
-void shell_memcpy_bytes( unsigned char *Dest, 
-                         unsigned char *Source,
-                         unsigned long Length )
+void 
+shell_memcpy_bytes ( unsigned char *Dest, 
+                     unsigned char *Source,
+                     unsigned long Length )
 {
     while (Length--)
         *Dest++ = *Source++;
-};
+}
 
 
 /*
@@ -6271,12 +6254,11 @@ void shell_write_to_screen( struct shell_screen_d *screen,
 */
 
  
-//@todo: Criar rotina de saída do shell.
+
 void shellExit (int code){
-	
-	//@todo ...
+
 	exit (code);
-};
+}
  
 
 /*
@@ -6288,6 +6270,7 @@ void shellExit (int code){
  * ?? isso deve sser todo o pathname do pwd ?? 
  * ex: root:/volume0>
  */
+ 
 void shellUpdateWorkingDiretoryString ( char *string ){
 	
 	if ( pwd_initialized == 0 )
@@ -6315,11 +6298,14 @@ void shellUpdateWorkingDiretoryString ( char *string ){
 		        (unsigned long) string, (unsigned long) string );		
 		};
 	};
+	
 	//...
+	
 fail:	
+
 done:
     return;
-};
+}
 
 
 /*
@@ -6347,30 +6333,28 @@ void shellInitializeWorkingDiretoryString (){
 	//root:
     //primeiro colocamos a string que indica 
 	//a lista de volumes.
-    sprintf( current_workingdiretory_string, SHELL_VOLUMELIST_STRING ); 
+    sprintf ( current_workingdiretory_string, SHELL_VOLUMELIST_STRING ); 
 	
 	
 	// ## separador ##
 
 	//root:/
-	strcat( current_workingdiretory_string, SHELL_PATHNAME_SEPARATOR );
+	strcat ( current_workingdiretory_string, SHELL_PATHNAME_SEPARATOR );
 	
 	
 	//  ## volume root dir ##
 	
 	//root:/volumex
-	strcat( current_workingdiretory_string, current_volume_string );
+	strcat ( current_workingdiretory_string, current_volume_string );
 
 	
 	// ## separador ##
 
 	//root:/volumex/
-	strcat( current_workingdiretory_string, SHELL_PATHNAME_SEPARATOR );
+	strcat ( current_workingdiretory_string, SHELL_PATHNAME_SEPARATOR );
 	
     pwd_initialized = 1;
-};
-
-
+}
 
 
 
@@ -6429,8 +6413,7 @@ void shellTaskList (){
 	printf("...");
 	
     //...	
-	
-};
+}
 
 
 void shellShowPID (){
@@ -6487,7 +6470,8 @@ void shellShowDesktopID (){
 	
 	printf("Current desktop %d\n", 
 	    (int) system_call( SYSTEMCALL_GETCURRENTDESKTOP, 0, 0, 0) );
-};
+}
+
 
 void shellShowProcessHeapPointer (){
 	
@@ -6498,7 +6482,7 @@ void shellShowProcessHeapPointer (){
 	
 	printf("Current Process heap pointer address %x\n", 
 	    (unsigned long) heap_pointer );
-};
+}
 
 
 void shellShowKernelHeapPointer (){
@@ -6509,7 +6493,7 @@ void shellShowKernelHeapPointer (){
 	
 	printf("Current Process heap pointer address %x\n", 
 	    (unsigned long) heap_pointer );
-};
+}
 
 
 //mostra informações sobre o disco atual.
@@ -6517,7 +6501,8 @@ void shellShowDiskInfo (){
 	
 	//@todo: atualizar api.h
 	system_call ( 251, 0, 0, 0 );
-};
+}
+
 
 //mostra informações sobre o volume atual.
 void shellShowVolumeInfo (){
@@ -6530,20 +6515,21 @@ void shellShowVolumeInfo (){
 void shellShowMemoryInfo (){
 	
 	system_call ( SYSTEMCALL_MEMORYINFO, 0, 0, 0 );
-};
+}
+
 
 //mostrar informações gerais sobre a memória.
 void shellShowPCIInfo (){
 	
     system_call ( SYSTEMCALL_SHOWPCIINFO, 0, 0, 0 );	
-};
+}
+
 
 //mostrar informações gerais sobre a memória.
 void shellShowKernelInfo (){
 	
 	system_call ( SYSTEMCALL_SHOWKERNELINFO, 0, 0, 0 );
-};
-
+}
 
 
 /*
@@ -7137,8 +7123,8 @@ int shellExecuteThisScript ( char *script_name ){
 	
 	//EOF_Reached = EOF;
 
-    return (int) 0;		
-};
+    return 0;		
+}
 
 
 /*
@@ -7296,9 +7282,8 @@ int absolute_pathname ( char *string ){
 //fail:
 //Não é absoluto.
 	
-    return (int) 0;
-};
-
+    return 0;
+}
 
 
 //inicializaremos o supporte a pathname
@@ -7324,11 +7309,9 @@ int shellInitPathname (){
 //done:	
 
     pathname_initilized = 1;
-	return (int) 0;
-};
-
-
-
+    
+	return 0;
+}
 
  
 //inicializaremos o supporte a filename
@@ -7348,15 +7331,15 @@ int shellInitFilename (){
 	}
 	
 	filename_lenght = 0;
-	
     	
 	//...
 	
 //done:
 	
     filename_initilized = 1;
-	return (int) 0;
-};
+    
+	return 0;
+}
 
 
 /* 
@@ -7365,6 +7348,7 @@ int shellInitFilename (){
  PATH must contain enough space for MAXPATHLEN characters. 
  Credits: bash 1.05
  */
+ 
 void shell_pathname_backup ( char *path, int n ){
 	
     register char *p = path + strlen(path);
@@ -7394,9 +7378,7 @@ void shell_pathname_backup ( char *path, int n ){
 	
 	system_call ( 176, (unsigned long) saveN, (unsigned long) saveN, 
         (unsigned long) saveN );			
-    	
-};
-
+}
 
 
 // Imprime todas as strings de um vetor de ponteiros.
@@ -7433,7 +7415,7 @@ void shell_print_tokenList ( char *token_list[], char *separator ){
 		printf ("%s", token_list[i] );
 		printf ("%s", separator );
     };
-};
+}
 
 
 /* 
@@ -7512,12 +7494,13 @@ int is_bin ( char *cmd ){
 	if ( *p++ != '.' ) 
 		return 0;
 	
-    if ( strncmp ( (char *) p, "bin", 3 ) == 0 ){
+    if ( strncmp ( (char *) p, "bin", 3 ) == 0 )
+    {
 	    return 1;	
 	}
 
     return 0;
-};
+}
 
 
 /* Check if it's a .sh1 file */
@@ -7537,12 +7520,13 @@ int is_sh1 ( char *cmd ){
 	if ( *p++ != '.' ) 
 		return 0;
 	
-    if ( strncmp ( (char *) p, "sh1", 3 ) == 0 ){
+    if ( strncmp ( (char *) p, "sh1", 3 ) == 0 )
+    {
 	    return 1;	
 	}
 	
     return 0;
-};
+}
 
 
 /* 
@@ -7636,7 +7620,7 @@ int shell_save_file (){
 	printf("shell_save_file: done\n");	
 	
 	return (int) Ret;
-};
+}
 
 
 /*
@@ -7720,26 +7704,27 @@ read_name (str, infile)
 */
 
 //Qual será a linha que estará no topo da janela.
-void textSetTopRow ( int number )
-{
+void textSetTopRow ( int number ){
+	
     textTopRow = (int) number; 	
-};
+}
 
-int textGetTopRow ()
-{
+int textGetTopRow (){
+	
     return (int) textTopRow; 	
-};
+}
 
 //Qual será a linha que estará na parte de baixo da janela.
-void textSetBottomRow ( int number )
-{
+void textSetBottomRow ( int number ){
+	
     textBottomRow = (int) number; 	
-};
+}
 
-int textGetBottomRow ()
-{
+
+int textGetBottomRow (){
+	
     return (int) textBottomRow; 	
-};
+}
 
 
 
@@ -7769,7 +7754,7 @@ void clearLine ( int line_number )
 	};
 	
     //shell_buffer_pos = 0;  //?? posição dentro do buffer do shell.	
-};
+}
 
 
 //um teste mostrando todas as linhas do boffer de linhas.
@@ -7795,7 +7780,7 @@ void testShowLines()
 
 	//reabilita o cursor
 	system_call ( 244, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);	
-};
+}
 
 
 //mostra a área visível dentro do buffer de linhas.
@@ -7846,7 +7831,7 @@ void shellRefreshVisibleArea (){
 
 	//reabilita o cursor
 	system_call ( 244, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);	
-};
+}
 
 
 void testChangeVisibleArea()
@@ -7875,6 +7860,7 @@ void updateVisibleArea( int direction )
 
 
 //rotina de testes de socket
+//net sockets, not libc sockets;
 void shellSocketTest()
 {
 	//#todo: isso precisa ser um porteiro de estrutura.
@@ -7894,20 +7880,33 @@ void shellSocketTest()
 	//
 	
 	printf("Creating socket ...\n");
-	socketHandle = (void *) system_call ( 160, (unsigned long) 0xC0A80164, (unsigned long) 0, (unsigned long) 0x22C3 );
+	socketHandle = (void *) system_call ( 160, 
+	                            (unsigned long) 0xC0A80164, 
+	                            (unsigned long) 0, 
+	                            (unsigned long) 0x22C3 );
 	
 	printf("Updating socket ...\n");
-	system_call ( 163, (unsigned long) socketHandle, (unsigned long) 0xC0A80165, (unsigned long) 0x22C2 );
+	system_call ( 163, 
+	    (unsigned long) socketHandle, 
+	    (unsigned long) 0xC0A80165, 
+	    (unsigned long) 0x22C2 );
 	
 	printf("Getting ip from socket ...\n");
-	iplong = (unsigned long) system_call ( 161, (unsigned long) socketHandle, (unsigned long) socketHandle, (unsigned long) socketHandle);
+	iplong = (unsigned long) system_call ( 161, 
+	                             (unsigned long) socketHandle, 
+	                             (unsigned long) socketHandle, 
+	                             (unsigned long) socketHandle);
 	
 	printf("Getting port from socket ...\n");
-	port = (unsigned long) system_call ( 162, (unsigned long) socketHandle, (unsigned long) socketHandle, (unsigned long) socketHandle);
+	port = (unsigned long) system_call ( 162, 
+	                          (unsigned long) socketHandle, 
+	                          (unsigned long) socketHandle, 
+	                          (unsigned long) socketHandle);
 	
 	//
 	// output
 	//
+	
 	unsigned long tmp;
 	
 	tmp = iplong;
@@ -7931,6 +7930,5 @@ void shellSocketTest()
 		ip[0], ip[1], ip[2], ip[3], port );
 	
 	printf("done\n");
-};
-
+}
 
