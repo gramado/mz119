@@ -241,6 +241,7 @@ FILE *fopen ( const char *filename, const char *mode ){
 		
 	    stream->_base = file_buffer;
 	    stream->_bf._base = file_buffer;
+	    stream->_lbfsize = s; //#importante: file size.
 	    stream->_r = 0;
 	    stream->_w = 0;	    
 	    stream->_p = stream->_base;
@@ -1456,7 +1457,9 @@ long ftell (FILE *stream){
 	
 	if ( (void *) stream == NULL )
 	{
-		return (long) 0; //-1
+		printf ("ftell fail\n");
+		refresh_screen();
+		return (long) -1; 
 	}	
 	
     return (long) (stream->_p - stream->_base);	
@@ -1620,30 +1623,37 @@ int fseek ( FILE *stream, long offset, int whence ){
 	
 	switch (whence){
 		
-		case SEEK_SET:    
+		case SEEK_SET: 
+		    //printf ("SEEK_SET\n");   
 		    stream->_p = (stream->_base + offset); 
 			goto done;
 			break;
 			
 		case SEEK_CUR:
+		    //printf ("SEEK_CUR\n");
 		    stream->_p = (stream->_p + offset);
 		    goto done;
 			break;
 
 		case SEEK_END:
+		    //printf ("SEEK_END stream->_lbfsize=%d \n",stream->_lbfsize);
 		    stream->_p = ((stream->_base + stream->_lbfsize) + offset); 
 		    goto done;
 			break;
 
         default:
+            //printf ("default:\n");
 		    goto fail;
 			break;
 	};
 	
 fail:	
+	printf ("fseek fail\n");
+	refresh_screen();
     return (int) (-1);	
-	
-done:	
+    
+done:
+    //refresh_screen();	
     return 0;	
 }
 
@@ -2163,6 +2173,7 @@ int stdioInitialize (void){
 	stdin->_base = &prompt[0];
 	stdin->_p =  &prompt[0];
 	stdin->_bf._base = stdin->_base;
+	stdin->_lbfsize = 128; //#todo
 	stdin->_r = 0;
 	stdin->_w = 0;	
 	stdin->_cnt = PROMPT_MAX_DEFAULT;
@@ -2176,6 +2187,7 @@ int stdioInitialize (void){
 	stdout->_base = &prompt_out[0];
 	stdout->_p = &prompt_out[0];
 	stdout->_bf._base = stdout->_base;
+	stdout->_lbfsize = 128; //#todo
 	stdout->_r = 0;
 	stdout->_w = 0;		
 	stdout->_cnt = PROMPT_MAX_DEFAULT;
@@ -2189,6 +2201,7 @@ int stdioInitialize (void){
 	stderr->_base = &prompt_err[0];
 	stderr->_p =  &prompt_err[0];
 	stderr->_bf._base = stderr->_base;
+	stderr->_lbfsize = 128; //#todo
 	stderr->_r = 0;
 	stderr->_w = 0;	
 	stderr->_cnt = PROMPT_MAX_DEFAULT;

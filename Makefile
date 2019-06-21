@@ -14,7 +14,7 @@
 VERSION = 1
 PATCHLEVEL = 12
 SUBLEVEL = 0
-EXTRAVERSION = -rc17
+EXTRAVERSION = -rc18
 NAME = 
 
 
@@ -505,6 +505,10 @@ vhd-copy-files:
 	-sudo cp ../gde/bin/TASCII.BIN    /mnt/gramadovhd
 #...
 	
+# c test suite
+	-sudo cp ../gde/gt/tests/TEST1.C    /mnt/gramadovhd
+
+
 	
 #
 # ======== Creating the all the folders in root dir ========
