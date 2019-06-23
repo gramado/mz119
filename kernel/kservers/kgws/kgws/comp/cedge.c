@@ -91,14 +91,14 @@ void _outbyte (int c){
             // Branco no preto é um padrão para terminal.
 			
             draw_char ( cWidth*g_cursor_x, cHeight*g_cursor_y, c, 
-				COLOR_TERMINALTEXT, COLOR_TERMINAL2 );			
+				COLOR_TERMINALTEXT, COLOR_TERMINAL2 );
 			
 		}else{
 			
 			// ## TRANSPARENTE ##
 		    // se não estamos no modo terminal então usaremos
 		    // char transparente.
-            // Não sabemos o fundo. Vamos selecionar o foreground.		
+            // Não sabemos o fundo. Vamos selecionar o foreground.
 			
 			drawchar_transparent ( cWidth*g_cursor_x, cHeight*g_cursor_y, 
 				g_cursor_color, c );
@@ -108,7 +108,7 @@ void _outbyte (int c){
 		//g_cursor_x++;
      	
 		//goto done;
-        //return;		
+        //return;
 	};
 }
 
@@ -133,79 +133,94 @@ void outbyte (int c){
 	
 //checkChar:        
       
+    //Opção  
     //switch ?? 
 
-    //
-    // m$. É normal \n retornar sem imprimir nada.
-    //	
+
+    //form feed - Nova tela.
+    if ( c == '\f' )
+    {
+        g_cursor_y = g_cursor_top;
+        g_cursor_x = g_cursor_left;
+        return;
+    }
+
+    // #m$. 
+    // É normal \n retornar sem imprimir nada.
     
-    //Início da próxima linha.    
-	
+    //Início da próxima linha. 
     if ( c == '\n' && prev == '\r' ) 
     {
-		if ( g_cursor_y >= (g_cursor_bottom-1) )
-		{
-	        
-			scroll ();
-			
+		//#todo: melhorar esse limite.
+        if ( g_cursor_y >= (g_cursor_bottom-1) )
+        {
+            scroll ();
+
             g_cursor_y = (g_cursor_bottom-1);
-			prev = c; 
-			
-		}else{
-		    
-			g_cursor_y++;
-            g_cursor_x = g_cursor_left; //Por causa do prev.			
-		    prev = c;
-		};
-		
+
+            prev = c; 
+
+        }else{
+
+            g_cursor_y++;
+            g_cursor_x = g_cursor_left;
+            prev = c;
+        };
+
         return;
     };
-	
-        
-    //Próxima linha.
-	if ( c == '\n' && prev != '\r' ) 
+
+
+    //Próxima linha no modo terminal.
+    if ( c == '\n' && prev != '\r' ) 
     {
-		if ( g_cursor_y >= (g_cursor_bottom-1) ){
-	        
-			scroll();
-            g_cursor_y = (g_cursor_bottom-1);
-		    prev = c;
-			
-		}else{
-		    
-			g_cursor_y++;
+        if ( g_cursor_y >= (g_cursor_bottom-1) ){
+
+            scroll ();
             
+            g_cursor_y = (g_cursor_bottom-1);
+            prev = c;
+
+        }else{
+
+            g_cursor_y++;
+
 			//Retornaremos mesmo assim ao início da linha 
 			//se estivermos imprimindo no terminal.
-			if ( stdio_terminalmode_flag == 1 ){
-			    g_cursor_x = g_cursor_left;	
-			} 
-			
+            if ( stdio_terminalmode_flag == 1 )
+            {
+                g_cursor_x = g_cursor_left;	
+            } 
+
 			//verbose mode do kernel.
 			//permite que a tela do kernel funcione igual a um 
 			//terminal, imprimindo os printfs um abaixo do outro.
 			//sempre reiniciando x.
-			if ( stdio_verbosemode_flag == 1 ){
-			    g_cursor_x = g_cursor_left;	
-			} 
-			
+            if ( stdio_verbosemode_flag == 1 )
+            {
+                g_cursor_x = g_cursor_left;	
+            } 
+
 			//Obs: No caso estarmos imprimindo em um editor 
 			//então não devemos voltar ao início da linha.
-			
-			prev = c;
-		};	
-        return;		
-    };
-	
 
-    //tab
+            prev = c;
+        };
+
+        return;
+    };
+
+
+	//tab
 	//@todo: Criar a variável 'g_tab_size'.
     if( c == '\t' )  
     {
-		g_cursor_x += (4); 
+        g_cursor_x += (8);
+        //g_cursor_x += (4); 
         prev = c;
+        
         return; 
-		
+
 		//Não adianta só avançar, tem que apagar o caminho até lá.
 		
 		//int tOffset;
@@ -217,28 +232,29 @@ void outbyte (int c){
 		//set_up_cursor( g_cursor_x +tOffset, g_cursor_y );
 		//return;        
     };
-	
-	
+
+
 	//liberando esse limite.
 	//permitindo os caracteres menores que 32.
 	//if( c <  ' '  && c != '\r' && c != '\n' && c != '\t' && c != '\b' )
 	//{
     //    return;
     //};
-                
-    //Volta ao inicio da linha.
-    //	
+ 
+
+    //Apenas voltar ao início da linha.
     if( c == '\r' )
-	{
+    {
         g_cursor_x = g_cursor_left;  
         prev = c;
         return;    
-    };  	
-       
+    }; 
+
+
     //#@todo#bugbug 
     //retirei esse retorno para o espaço, com isso 
     // o ascii 32 foi pintado, mas como todos os 
-    //bits estão desligados, não pintou nada.	
+    //bits estão desligados, não pintou nada.
     //space 
     //if( c == ' ' )  
     //{
@@ -246,75 +262,73 @@ void outbyte (int c){
     //    prev = c;
     //    return;         
     //};
-        
-    //delete 
-    if( c == 8 )  
+ 
+ 
+    //Delete. 
+    //#bugbug: Limits.
+    if ( c == 8 )  
     {
-        g_cursor_x--;         
+        g_cursor_x--; 
         prev = c;
-        return;         
+        return;
     };
-	
-	
+
+
 	//
 	// limits
 	//
-        
-     
-    //
-    // Filtra as dimensões da janela onde está pintando.
-    // @todo: Esses limites precisam de variável global.
+
+	// Filtra as dimensões da janela onde está pintando.
+	// @todo: Esses limites precisam de variável global.
 	//        mas estamos usando printf pra tudo.
 	//        cada elemento terá que impor seu próprio limite.
 	//        O processo shell impõe seu limite.
 	//        a janela impõe seu limite etc...
 	//        Esse aqui é o limite máximo de uma linha.
-    // Poderia ser o limite imposto pela disciplina de linha
-    // do kernel para o máximo de input. Pois o input é
-    // armazenado em uma linha.	 
-	//
-	
-//checkLimits:	
-
-// caracteres normais.
-//default:
+	// Poderia ser o limite imposto pela disciplina de linha
+	// do kernel para o máximo de input. Pois o input é
+	// armazenado em uma linha.	 
 
 
-    // Imprime os caracteres normais.
-	//_outbyte (c);
+//checkLimits:
 
     //Limites para o número de caracteres numa linha.
     if ( g_cursor_x >= (g_cursor_right-1) )
-	{
+    {
         g_cursor_x = g_cursor_left;
         g_cursor_y++;  
-		
+
     }else{   
-	
+
 		// Incrementando.
 		// Apenas incrementa a coluna.
-		
-        g_cursor_x++;                          
+
+        g_cursor_x++;  
     };
-    
-	
+
+	// #bugbug
+	// Tem um scroll logo acima que considera um valor
+	// de limite diferente desse.
+
 	// Número máximo de linhas. (8 pixels por linha.)
-    
-	if ( g_cursor_y >= g_cursor_bottom )  
+    if ( g_cursor_y >= g_cursor_bottom )  
     { 
-	    scroll ();
-		
+        scroll ();
+
         g_cursor_y = g_cursor_bottom;
     };
-	
-	
+
+	//
+	// Imprime os caracteres normais.
+	//
+
 	// Nesse momento imprimiremos os caracteres.
     // Imprime os caracteres normais.
-	// Atualisa o prev.	
-	
-	_outbyte (c);
-	
-	prev = c;	   
+	// Atualisa o prev.
+
+    _outbyte (c);
+
+    prev = c;
 }
 
 

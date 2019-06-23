@@ -1304,58 +1304,58 @@ get_next:
 //usado para debug.
  
 void windowShowWindowList (void){
-	
+
 	int i = 0;
-	
+
 	struct window_d *hWnd;
 	struct window_d *hWindow;
-	
+
 	unsigned long left;
 	unsigned long top;
 	unsigned long width;
 	unsigned long height;
-	
-	//Se não estivermos em modo gráfico, não há o que mostrar.	
-    
-	if ( VideoBlock.useGui != 1 )
-	{
-	    return;	
-	};
-	
+
+	//Se não estivermos em modo gráfico, não há o que mostrar.
+
+    if ( VideoBlock.useGui != 1 )
+        return;
+
+
 	// A janela da área de trabalho.
-	if ( (void *) gui->main == NULL)
-	{
-	    return;
-	}else{
-		
-	    left = gui->main->left;
-	    top = gui->main->top;
-	
-	    width = gui->main->width;
-	    height = gui->main->height;	
-		
-	    //...
-	};
-	
-	
-		
+
+    if ( (void *) gui->main == NULL)
+    {
+        return;
+
+    }else{
+
+        left = gui->main->left;
+        top = gui->main->top;
+
+        width = gui->main->width;
+        height = gui->main->height;
+
+		//...
+    };
+
+
 	//@todo: Chamar método.	
 	//Cursor.
 	g_cursor_x = (left/8);
 	g_cursor_y = (top/8);  
 	//set_up_cursor(0,10);
-	
+
 	//
 	// Se estamos no modo gráfico.
 	//
-	
-	
+
+
 	//
 	// @todo: Usar esquema de cores padrão.
 	//
-	
-	if( VideoBlock.useGui == 1 )
-	{
+
+    if( VideoBlock.useGui == 1 )
+    {
 		//Parent window.
 	    //#warning: Já checamos isso anteriormente.
 		
@@ -1363,25 +1363,29 @@ void windowShowWindowList (void){
 		{
 	        return;
 	    };
-		
-	    hWindow = (void *) CreateWindow ( 3, 0, VIEW_MAXIMIZED, "Window List", 
-	                        left, top, width, height, 
-			     			gui->main, 0, 
-							KERNEL_WINDOW_DEFAULT_CLIENTCOLOR, 
-							KERNEL_WINDOW_DEFAULT_BGCOLOR ); 
 
-	    if ( (void *) hWindow == NULL )
-		{
-	        printf("show_window_list:\n");
-		    return;
+        hWindow = (void *) CreateWindow ( 3, 0, VIEW_MAXIMIZED, "window-list", 
+                               left, top, width, height, 
+                               gui->main, 0, 
+                               KERNEL_WINDOW_DEFAULT_CLIENTCOLOR, 
+                               KERNEL_WINDOW_DEFAULT_BGCOLOR ); 
+
+        if ( (void *) hWindow == NULL )
+        {
+            printf ("windowShowWindowList:\n");
+            return;
+ 
         }else{
-		    RegisterWindow(hWindow);
-			set_active_window(hWindow);
-			SetFocus(hWindow);
-	    };										
-		
-		
-		// Auterando as margens.
+
+            RegisterWindow (hWindow);
+
+            set_active_window (hWindow);
+
+            SetFocus (hWindow);
+        };
+
+
+		// Alterando as margens.
 		// Essas margens são usadas pela função printf.
 		// Obs: As medidas são feitas em números de caracteres.
 		// Obs: @todo: Devemos usar aqui o retângulo da área de cliente,
@@ -1391,7 +1395,10 @@ void windowShowWindowList (void){
 		// Obs: @todo:Acho que essa não é a forma correta de configurar isso. Uma 
 		//rotina deveria perceber as dimensões da janela de do caractere e determinar
 		//as margens.
-		
+
+		// #bugbug
+		// Cuidado para não dividir por '0'.
+
 		g_cursor_left = (hWindow->left/8);
 		g_cursor_top = (hWindow->top/8) + 4;   //Queremos o início da área de clente.
 		
@@ -1401,8 +1408,8 @@ void windowShowWindowList (void){
 		//cursor (0, mas com margem nova).
 		g_cursor_x = g_cursor_left; 
 		g_cursor_y = g_cursor_top; 
-		
-        //Mostrando as informações de todas as janelas registradas.		
+
+        //Mostrando as informações de todas as janelas registradas.
         while( i < WINDOW_COUNT_MAX )
         {	
 	        hWnd = (void *) windowList[i];
@@ -1454,7 +1461,6 @@ void windowShowWindowList (void){
 	refresh_screen();
     
 	//SetFocus(hWindow);
-
 }
 
 
@@ -2838,24 +2844,24 @@ void SetFocus ( struct window_d *window ){
 	            g_cursor_top = (window->top/8);   
 	            
 				g_cursor_right = g_cursor_left + (window->right/8);
-	            g_cursor_bottom = g_cursor_top + (window->height/8);			
+	            g_cursor_bottom = g_cursor_top + (window->height/8);
 			};
-			
-	
-            //#importante: 
-			//Posicionando o cursor. 
-			
-			g_cursor_x = g_cursor_left; 
-	        g_cursor_y = g_cursor_top; 
+
+
+			// #importante: 
+			// Posicionando o cursor. 
+
+            g_cursor_x = g_cursor_left; 
+            g_cursor_y = g_cursor_top; 
 
             if ( window->isEditBox == 1 )
             {
 				//#teste
 				//para ficar na segunda linha do editbox.
 				//tem que trabalhar isso melhor.
-				
+
 				g_cursor_y++; 
-			}				
+			}
 
 	
 	        //configurando o cursor específico da janela com o foco de entrada.
