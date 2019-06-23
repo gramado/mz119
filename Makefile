@@ -494,7 +494,8 @@ vhd-copy-files:
 	-sudo cp ../gde/bin/GDETM.BIN     /mnt/gramadovhd 
 
 	-sudo cp ../gde/bin/HELLO.BIN     /mnt/gramadovhd 
-	-sudo cp ../gde/bin/HELLO2.BIN     /mnt/gramadovhd 
+	-sudo cp ../gde/bin/HELLO2.BIN    /mnt/gramadovhd 
+	-sudo cp ../gde/bin/HELLO3.BIN    /mnt/gramadovhd 
 	-sudo cp ../gde/bin/JACKPOT.BIN   /mnt/gramadovhd 
 	-sudo cp ../gde/bin/CAT.BIN       /mnt/gramadovhd 
 	-sudo cp ../gde/bin/GLIBCT1.BIN   /mnt/gramadovhd 

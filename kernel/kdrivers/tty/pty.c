@@ -22,13 +22,13 @@ void pty_send_message_to_process ( unsigned long msg_buffer, int pid ){
 	struct thread_d *t;
 	
 	//#debug
-	printf ("services_send_message_to_process: PID=%d \n", pid);
+	printf ("pty_send_message_to_process: PID=%d \n", pid );
 	refresh_screen ();	
 	
 	if ( pid < 0 || pid >= PROCESS_COUNT_MAX )
 	{
 		// #debug
-		printf ("services_send_message_to_process: PID \n");
+		printf ("pty_send_message_to_process: PID \n");
 		refresh_screen ();
 		return;
 	}
@@ -38,7 +38,7 @@ void pty_send_message_to_process ( unsigned long msg_buffer, int pid ){
 	if ( (void *) p == NULL )
 	{
 	    // #debug
-		printf ("services_send_message_to_process: struct \n");
+		printf ("pty_send_message_to_process: struct \n");
 		refresh_screen ();
 		return;	
 		
@@ -47,7 +47,7 @@ void pty_send_message_to_process ( unsigned long msg_buffer, int pid ){
 		 if ( p->used != 1 || p->magic != 1234 )
 		 {
 		     // #debug
-			 printf ("services_send_message_to_process: p validation \n");
+			 printf ("pty_send_message_to_process: p validation \n");
 		     refresh_screen ();
 			 return;
 		 }
@@ -61,7 +61,7 @@ void pty_send_message_to_process ( unsigned long msg_buffer, int pid ){
 		 if ( (void *) t == NULL )
 		 {
 		     // #debug
-			 printf ("services_send_message_to_process: t struct \n");
+			 printf ("pty_send_message_to_process: t struct \n");
 		     refresh_screen ();
 			 return;
 
@@ -70,7 +70,7 @@ void pty_send_message_to_process ( unsigned long msg_buffer, int pid ){
 			 if ( t->used != 1 || t->magic != 1234 )
 			 {
 		         // #debug
-			     printf ("services_send_message_to_process: t validation \n");
+			     printf ("pty_send_message_to_process: t validation \n");
 		         refresh_screen ();
 			     return;
 			 }
@@ -81,7 +81,6 @@ void pty_send_message_to_process ( unsigned long msg_buffer, int pid ){
 			 
 			 pty_send_message_to_thread ( (unsigned long) msg_buffer, 
 			     (int) t->tid );   
-
 		 }
 	};
 }
@@ -101,17 +100,16 @@ void pty_send_message_to_thread ( unsigned long msg_buffer, int tid ){
     unsigned long *buffer = (unsigned long *) msg_buffer;
 	
 	
-	printf ("services_send_message_to_corrent_thread: TID=%d \n", tid);
+	printf ("pty_send_message_to_thread: TID=%d \n", tid);
 	refresh_screen ();	
 
     //
 	// TID
 	//
 
-	
 	if ( tid < 0 || tid >= THREAD_COUNT_MAX )
 	{
-	    printf ("services_send_message_to_corrent_thread: TID \n");
+	    printf ("pty_send_message_to_thread: TID \n");
 		refresh_screen ();
 		return;
 	}
@@ -126,7 +124,7 @@ void pty_send_message_to_thread ( unsigned long msg_buffer, int tid ){
 			
     if ( &buffer[0] == 0 )
 	{
-	    printf ("services_send_message_to_corrent_thread: buffer\n");
+	    printf ("pty_send_message_to_thread: buffer\n");
 		refresh_screen ();
 		return;
 		
@@ -138,7 +136,7 @@ void pty_send_message_to_thread ( unsigned long msg_buffer, int tid ){
         {
             if ( t->used != 1 && t->magic != 1234 )
 			{
-	            printf ("services_send_message_to_corrent_thread: validation\n");
+	            printf ("pty_send_message_to_thread: validation\n");
 		        refresh_screen ();
 		        return;	
 			}
@@ -150,12 +148,9 @@ void pty_send_message_to_thread ( unsigned long msg_buffer, int tid ){
 				
 			//sinalizando que temos uma mensagem.
 			t->newmessageFlag = 1; 
-
 		};
 	};
 }
-
-
 
 
 //#importante:
@@ -168,7 +163,11 @@ void pty_send_message_to_thread ( unsigned long msg_buffer, int tid ){
 
 void pty_test_sendmessagetoterminal (void){
 
-	//TEST.
+    //#suspensa.
+    return;
+    
+    /*
+	// #TEST.
 	int PID = 101;
 	
 	unsigned long message_address[8];
@@ -179,14 +178,14 @@ void pty_test_sendmessagetoterminal (void){
 	message_address[3] = 1000;  //TERMINALCOMMAND_PRINTCHAR
 
 
-    printf ("101: PID=%d\n", PID );
-    pty_send_message_to_process ( (unsigned long) &message_address[0], (int) PID );
-    printf ("101: done\n");
+    printf ("pty_test_sendmessagetoterminal: PID=%d\n", PID );
+    pty_send_message_to_process ( (unsigned long) &message_address[0], 
+        (int) PID );
+    
+    //printf ("pty_test_sendmessagetoterminal: done\n");
+    
+    */
 }
-
-
-
-
  
 
 
