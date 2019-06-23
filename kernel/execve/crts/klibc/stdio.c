@@ -1684,25 +1684,15 @@ int fputc ( int ch, FILE *stream ){
 		//se ainda não esgotamos o buffer,
 		//ou se esgotamos o buffer mas o caractere não é um caractere 
 		//de fim de linha;		
-		if ( stream->_w-- >= 0 || 
-		     ( stream->_w >= stream->_lbfsize && (char) ch != '\n' ) )
-		{	
-            sprintf ( stream->_p, "%c", ch);
-	        stream->_p++;
-	        
-	        //quanto falta para acabar o arquivo.
-	        stream->_cnt--;	
-	        				
-	    //se o buffer está esgotado.    				
-		}else{
-		     
-		     //?? esgotamos o buffer ??
-		     //o caractere é um fim de linha.
-		     //o posicionamento no buffer passou do limite inferior.
-		     //o posicionamento no buffer passou do limite superior.
-		    
-		    //?? como se comporta quando o caractere é um fim de linha ?? 
-		}
+		
+		//if ( stream->_w-- >= 0 || ( stream->_w >= stream->_lbfsize && (char) ch != '\n' ) )
+		
+		
+		sprintf ( stream->_p, "%c", ch);
+		stream->_p++;
+		stream->_w++;
+		stream->_cnt--;
+		
 	};
 
     return 0;		
