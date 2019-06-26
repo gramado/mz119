@@ -54,6 +54,9 @@ struct tty_d
 		
 	char name[64];
 	
+	//see: termios.h
+	//struct termios *termios;
+	
 	
 	//
 	// user, user session, room, desktop;

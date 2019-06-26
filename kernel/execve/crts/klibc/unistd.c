@@ -1,16 +1,22 @@
+/*
+ * File: unistd.c  
+ * 
+ */
 
 
 #include <kernel.h>
 
+
 //SVr4,  4.3BSD,  POSIX.1-2001. 
+
 int open (const char *pathname, int flags, mode_t mode ){
 	
 	//#obs:
-	//vamos retornar o indice da tabela dea rquivos abertos do processo atual.
-	
-	
-	struct process_d *p;
+	//vamos retornar o indice da tabela de arquivos abertos do processo atual.
+
 	FILE *stream;
+		
+	struct process_d *p;
 	int i;
 	
 	//int pid = -1;
@@ -39,9 +45,10 @@ int open (const char *pathname, int flags, mode_t mode ){
 		}else{
 		
 		     // agora temos uma stream va'lida. 
-			 // procurar um slot vazio na lista de arquivos abertos do processo atual.
+			 // procurar um slot vazio na lista de arquivos abertos do 
+			 // processo atual.
 	
-			 //NUMBER_OF_FILES = nu'mero ma'ximo de arquivos abertos em um processo.
+			 //NUMBER_OF_FILES = número máximo de arquivos abertos em um processo.
 		     for ( i=0; i< NUMBER_OF_FILES; i++ )
 			 {
 				 // Se encontramos um slot vazio, 
@@ -64,13 +71,16 @@ int open (const char *pathname, int flags, mode_t mode ){
     return -1;
 }
 
+
+
 // fechar um dos arquivos abertos do processo atual.
 // o descritor 'e um ipndice na sua tabela dearquivos abertos.
-int close ( int fd )
-{
-	struct process_d *p;
+
+int close ( int fd ){
+
 	FILE *stream;
-	
+		
+	struct process_d *p;
 	int i;
 	
 
@@ -94,8 +104,9 @@ int close ( int fd )
 		     return -1;
 		 }else{
 		 
-		     //#todo
-			 //fechar corretamente esse arquivo e liberar os recursos associados a ele.
+		     // #todo
+			 // Fechar corretamente esse arquivo e liberar os recursos 
+			 // associados a ele.
 			 
 			 stream = NULL;
 			 processList[fd] = (unsigned long) 0;
@@ -109,6 +120,16 @@ int close ( int fd )
 	//printf ("klibc-unistd-close: todo\n");
     return -1;
 }
+
+
+long fpathconf (int fildes, int name){
+    return -1;
+}
+
+long pathconf (const char *pathname, int name){
+    return -1;	
+} 
+
 
 
 

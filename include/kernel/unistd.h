@@ -52,5 +52,9 @@ int sys_read_pipe ( int fd, int count );
 //o serviço de escrever num pipe deve ser o mesmo de escrever num stream dado o fd.
 int sys_write_pipe ( int fd, int count );
 
+//#todo
+//https://www.mkssoftware.com/docs/man3/pathconf.3.asp
+long fpathconf (int fildes, int name);
+long pathconf (const char *pathname, int name);
 
 
