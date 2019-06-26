@@ -43,12 +43,16 @@ struct menuitem_d
 	int Selected;    //Flag. Selecionado ou não.
 	
     unsigned long color_bg;    //cor.
+    
     unsigned long x;           //deslocamento x.
     unsigned long y;           //deslocamento y.
+    
     unsigned long left;        //margem esquerda. 
     unsigned long top;         //margem superior.
+    
     unsigned long right;       //margem direita.  
     unsigned long bottom;      //margem inferior.       
+    
     unsigned long width;       //largura.
     unsigned long height;      //altura.
 	

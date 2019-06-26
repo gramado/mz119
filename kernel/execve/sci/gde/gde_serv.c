@@ -1472,15 +1472,16 @@ void *gde_services ( unsigned long number,
 			return (void *) gui->main;
 			break;
 			
-		//create grid and itens.
-		//n, view 
+		// 148 - Create grid and itens.
+		// window, n, view. 
 		case 148:
-		    return (void *) sys_grid ( (struct window_d *) arg2, 
-			                (int) arg3, (int) arg4 );
+		    return (void *) sys_grid ( (struct window_d *) arg2, (int) arg3, 
+		                        (int) arg4 );
             break;		
 
-        //test. menu.
-        //essa é uma rotina de teste, qua chama várias funções.			
+        // 149
+        // test. menu.
+        // essa é uma rotina de teste, qua chama várias funções.			
 		case 149:
 			sys_MainMenu ( (struct window_d *) arg2 );		
             break;		

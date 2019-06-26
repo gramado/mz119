@@ -8,11 +8,11 @@
  */
 
  
-#define GRID_HORIZONTAL 1000
-#define GRID_VERTICAL 2000
+#define GRID_HORIZONTAL    1000
+#define GRID_VERTICAL      2000
+
 
 #define GRID_COUNT_MAX 128
-
 
 
 typedef struct grid_d grid_t;
@@ -32,7 +32,6 @@ struct grid_d
     struct grid_d *next; 	
 };
 struct grid_d *GRID;
-//grid_t *GRID;
 //...
 
 
@@ -49,13 +48,14 @@ unsigned long screenGrid[GRID_COUNT_MAX];
 void *CreateGrid (void);
 
 
+//inicializa um grid.
 int 
-InitializeGrid ( struct window_d *window, 
+InitializeGridObject ( struct window_d *window, 
                  struct grid_d *g, 
                  int n, 
 				 int view );
 				
-
+// Cria um grid
 int grid ( struct window_d *window, int n, int view );
 
 
