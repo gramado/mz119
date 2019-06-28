@@ -1517,7 +1517,7 @@ void *CreateWindow ( unsigned long type,
 		
 		// Criar.
 		windowButton4 = CreateWindow ( WT_BUTTON, 1, 1, "^", 
-	                        1, 1, (window->width -2), 32,
+	                        1, 1, 32, 32, //(window->width -2), 32,
 		                    window, 0, 
 		                    (unsigned long) COLOR_TERMINAL2, 
 		                    (unsigned long) COLOR_TERMINAL2);
@@ -1537,7 +1537,7 @@ void *CreateWindow ( unsigned long type,
 		
 		// Criar.
 		windowButton5 = CreateWindow ( WT_BUTTON, 1, 1, "=", 
-	                        1, (window->height/2), (window->width -2), 32,
+	                        1, (window->height/2), 32, 32, //(window->width -2), 32,
 		                    window, 0, 
 		                    (unsigned long) COLOR_TERMINAL2, 
 		                    (unsigned long) COLOR_TERMINAL2);
@@ -1551,7 +1551,7 @@ void *CreateWindow ( unsigned long type,
 	    
 		// Criar.
 		windowButton6 = CreateWindow ( WT_BUTTON, 1, 1, "v", 
-	                        1, (window->height -32 -1), (window->width -2), 32,
+	                        1, (window->height -32 -1), 32, 32, //(window->width -2), 32,
 		                    window, 0, 
 		                    (unsigned long) COLOR_TERMINAL2, 
 		                    (unsigned long) COLOR_TERMINAL2 );
@@ -1659,8 +1659,8 @@ void *CreateWindow ( unsigned long type,
 		// No momento vamos criar a scrool bar apenas para testar e implementar.
 		
 		window->scrollbar = CreateWindow ( WT_SCROLLBAR, 1, 1, "scrollbar-test", 
-	                            window->right -40, window->top +2 +40 +2, 
-								40, (window->height -2 -40 -2 -24 -2),									  
+	                            window->right -37, window->top +2 +32 +2, 
+								35, (window->height -2 -35 -2 -24 -2),									  
 					            window, 0, 
 								(unsigned long) CurrentColorScheme->elements[csiScrollBar], 
 								(unsigned long) CurrentColorScheme->elements[csiScrollBar]);
