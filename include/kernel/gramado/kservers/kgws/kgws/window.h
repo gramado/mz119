@@ -866,6 +866,7 @@ struct window_d
 	int maximizebuttonUsed;
 	int closebuttonUsed;
 	int borderUsed;
+	// ...
 	
 // 
 //==================================================	
