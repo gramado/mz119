@@ -1821,6 +1821,11 @@ void SetGuiParameters( int refresh,
 // Bars support. (menubar)
 //
 
+int 
+UpdateStatusBar ( struct window_d *window, 
+                  unsigned char *string1, 
+		          unsigned char *string2 );
+
 struct window_d *
 StatusBar ( struct window_d *window, 
             unsigned char *string1, 

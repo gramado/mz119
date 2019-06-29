@@ -15,20 +15,66 @@
 #include <kernel.h>
 
 
-/*
-int UpdateStatusBar( struct window_d *window, 
-                     unsigned char *string1, 
-		             unsigned char *string2 );
 
-int UpdateStatusBar( struct window_d *window, 
-                     unsigned char *string1, 
-		             unsigned char *string2 )
+
+int 
+UpdateStatusBar ( struct window_d *window, 
+                  unsigned char *string1, 
+		          unsigned char *string2 )
 {
-	//@todo:
-	//atualizar as strings de uma status bar caso
-	//a janela tenha uma status bar.
-};
-*/
+	struct window_d *w;
+	
+	// parent
+    if ( (void *) window == NULL )
+    {
+		printf ("window\n");
+		refresh_screen();
+	    return -1;
+	}else{
+		
+	    if ( window->used != 1 || window->magic != 1234 )
+	    {
+		    printf ("window validation\n");
+		    refresh_screen();			
+			return -1;
+		}	
+		
+	    // the status bar
+	    w = window->statusbar;
+	    	
+	    if ( (void *) w == NULL )
+	    {
+		    printf ("w\n");
+		    refresh_screen();			
+		    return -1;	
+		}else{
+			
+	        if ( w->used != 1 || w->magic != 1234 )
+	        {
+		        printf ("w validation\n");
+		        refresh_screen();							
+			    return -1;
+		    }	
+			
+			//clean.
+		    drawDataRectangle ( w->left, w->top, 
+			    w->width, w->height, w->bg_color ); 
+			
+			//write.
+            draw_text ( w, 0* ( w->width/2), 1* (w->height/3), 
+                COLOR_WINDOWTEXT, string1 );
+
+            draw_text ( w, 1* (w->width/2), 1* (w->height/3), 
+                COLOR_WINDOWTEXT, string2 );			
+		
+		
+		    show_window_rect ( (struct window_d *) w );
+		};
+		
+	};
+
+    return 0;
+}
 
 
 /*
@@ -39,13 +85,16 @@ int UpdateStatusBar( struct window_d *window,
  * O tamanho da statusbar deve ser to tamanho da largura da janela. 
  * A scrollbar não deve invadir o espaço da statusbar.
  */
+ 
+// #bugbug
+// Essa rotina não é usada por CreateWindow. 
 
 struct window_d *StatusBar ( struct window_d *window, 
                              unsigned char *string1, 
                              unsigned char *string2 )
 {
 	int desktopID;
-	unsigned long StatusBarColor;	
+	unsigned long StatusBarColor;
 
 	unsigned long x;
 	unsigned long y;
@@ -54,19 +103,19 @@ struct window_d *StatusBar ( struct window_d *window,
 
 	// Parent window.
 	struct window_d *pWnd = (struct window_d *) window;
-	
+
     // A janela da status bar.
-    struct window_d *hWnd;	
-	
+    struct window_d *hWnd;
+
 	// Parent window.
 	
 	if ( (void *) pWnd == NULL )
 	{
 		printf ("StatusBar: pWnd\n");
         goto fail;
-		
+
     }else{
-				
+
 		// #obs:
 		// #Aviso: Estamos retornando se não existir área de cliente.
 	    // A Statusbar é um elemento dentro da janela.
@@ -77,7 +126,7 @@ struct window_d *StatusBar ( struct window_d *window,
 			printf ("StatusBar: rcClient\n");
 		    goto fail;
 	    }
-		
+
 		// validation.
 		
 	    if ( pWnd->rcClient->used != 1 || 
@@ -95,16 +144,16 @@ struct window_d *StatusBar ( struct window_d *window,
 	    y = (unsigned long) pWnd->rcClient->bottom -32;  
 	    
 		width = (unsigned long) pWnd->rcClient->width;       
-	    height = (unsigned long) 32;  		
-		
+	    height = (unsigned long) 32; 
+
 		// Nothing.
 	};  
-	
+
 	// #todo: 
 	// Checar limites.
 
-	
-    //
+
+	//
 	// Draw.
 	//
 
@@ -122,9 +171,8 @@ struct window_d *StatusBar ( struct window_d *window,
 		//Erro fatal:
 		//Precisamos de um esquema de cores válido.
 		
-		printf ("StatusBar: CurrentColorScheme");
-		die ();
-		
+		panic ("StatusBar: CurrentColorScheme");
+
 	}else{
 		
 		// validation.
@@ -133,10 +181,9 @@ struct window_d *StatusBar ( struct window_d *window,
 		     CurrentColorScheme->magic != 1234 )
 		{
 		    //Erro fatal:
-		    //Precisamos de um esquema de cores válido.			
+		    //Precisamos de um esquema de cores válido.
 		    
-			printf("StatusBar: CurrentColorScheme validation");
-		    die();			
+			panic ("StatusBar: CurrentColorScheme validation");
 		};
 		
 		// Como o esquema de cores foi aprovado, vamos usa-lo.
@@ -147,41 +194,41 @@ struct window_d *StatusBar ( struct window_d *window,
 		//Nothing.
 	};
 	
-	
 	//Desktop.
-	desktopID = (int) get_current_desktop_id ();	
+	desktopID = (int) get_current_desktop_id ();
 	
 	//
 	// Window
     //
 	
-	hWnd = (void *) CreateWindow ( WT_STATUSBAR, 0, 0, "statusbar", 
-	                   x, y, width, height, 
-					   pWnd, desktopID, StatusBarColor, StatusBarColor); 
-	
+    hWnd = (void *) CreateWindow ( WT_STATUSBAR, 0, 0, "statusbar", 
+                       x, y, width, height, 
+                       pWnd, desktopID, StatusBarColor, StatusBarColor ); 
+
 	if ( (void *) hWnd == NULL )
 	{
 		printf ("StatusBar: hWnd\n");
         goto fail;
-		
+
     }else{
-			
-	    RegisterWindow (hWnd);
+
+        RegisterWindow (hWnd);
+
+        draw_text ( hWnd, 0* (width/2), 1* (height/3), 
+            COLOR_WINDOWTEXT, string1 );
+
+        draw_text ( hWnd, 1* (width/2), 1* (height/3), 
+            COLOR_WINDOWTEXT, string2 );
+
 		
-		
-	    draw_text ( hWnd, 
-		    0* (width/2), 1* (height/3), 
-		    COLOR_WINDOWTEXT, string1 );
-				   
-	    draw_text ( hWnd, 
-		    1* (width/2), 1* (height/3), 
-			COLOR_WINDOWTEXT, string2 );
-				   
+		//
+		// Parent 
+		//
 		
 		// Seleciona a statusbar da parent window.
-		
-		pWnd->statusbar = hWnd;		   
-      
+
+		pWnd->statusbar = hWnd;
+
 		// ... ?
 		
 	    goto done;
@@ -191,11 +238,12 @@ struct window_d *StatusBar ( struct window_d *window,
 	
 	// More ?!
 	
-done:     
+done:
+
 	return (struct window_d *) hWnd;
-	
+
 fail:
-	
+
     //printf ("fail\n");
 	return NULL;
 }

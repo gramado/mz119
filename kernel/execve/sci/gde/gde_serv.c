@@ -277,6 +277,13 @@ void *gde_services ( unsigned long number,
 	    return (void *) serviceCreateWindow ( (char *)  arg2 );
 	}
 	
+	//atualiza as strings de uma statusbar de uma janela.
+	if ( number == 300 )
+	{
+	    return (void *) UpdateStatusBar ( (struct window_d *) arg2, 
+                            (unsigned char *) arg3, 
+		                    (unsigned char *) arg4 );
+	}
 	
 	//
 	// x server and wm support
