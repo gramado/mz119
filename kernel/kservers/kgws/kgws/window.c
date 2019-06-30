@@ -555,20 +555,21 @@ void windowSetUpColorScheme (int type){
 		humility->name = "Humility";
 		
 		//Colors
-		humility->elements[csiNull] = 0;                               //0
-        humility->elements[csiDesktop] = COLOR_BACKGROUND;             //1		
-		humility->elements[csiWindow]  = COLOR_WINDOW;                 //2
-        humility->elements[csiWindowBackground] = xCOLOR_GRAY1;	       //3	
-		humility->elements[csiActiveWindowBorder] = xCOLOR_GRAY2;      //4
-        humility->elements[csiInactiveWindowBorder] = xCOLOR_GRAY3;    //5		
-		humility->elements[csiActiveWindowTitleBar] = xCOLOR_GRAY2;    //6
-        humility->elements[csiInactiveWindowTitleBar] = xCOLOR_GRAY3;  //7	 	
-		humility->elements[csiMenuBar] = COLOR_MENUBAR;                //8
-        humility->elements[csiScrollBar] = COLOR_SEASHELL; //xCOLOR_GRAY3; //9  
-		humility->elements[csiStatusBar] = COLOR_STATUSBAR3;             //10
-        humility->elements[csiMessageBox] = xCOLOR_GRAY2;		       //11
-		humility->elements[csiSystemFontColor] =   COLOR_BLACK;		   //12
-		humility->elements[csiTerminalFontColor] = COLOR_WHITE;	       //13
+		//Definidas em ws.h
+		humility->elements[csiNull] = 0;                             //0
+        humility->elements[csiDesktop] = HUMILITY_COLOR_BACKGROUND;  //1		
+		humility->elements[csiWindow] = HUMILITY_COLOR_WINDOW;       //2
+        humility->elements[csiWindowBackground] = HUMILITY_COLOR_WINDOW_BACKGROUND;	 //3	
+		humility->elements[csiActiveWindowBorder] = HUMILITY_COLOR_ACTIVE_WINDOW_BORDER;  //4
+        humility->elements[csiInactiveWindowBorder] = HUMILITY_COLOR_INACTIVE_WINDOW_BORDER;  //5		
+		humility->elements[csiActiveWindowTitleBar] = HUMILITY_COLOR_ACTIVE_WINDOW_TITLEBAR;  //6
+        humility->elements[csiInactiveWindowTitleBar] = HUMILITY_COLOR_INACTIVE_WINDOW_TITLEBAR;  //7	 	
+		humility->elements[csiMenuBar] = HUMILITY_COLOR_MENUBAR;                //8
+        humility->elements[csiScrollBar] = HUMILITY_COLOR_SCROLLBAR;            //9  
+		humility->elements[csiStatusBar] = HUMILITY_COLOR_STATUSBAR;            //10
+        humility->elements[csiMessageBox] = HUMILITY_COLOR_MESSAGEBOX;		    //11
+		humility->elements[csiSystemFontColor] = HUMILITY_COLOR_SYSTEMFONT;		//12
+		humility->elements[csiTerminalFontColor] = HUMILITY_COLOR_TERMINALFONT;	//13
 		//...
 		
 		//Sanvando na estrutura padrão para o esquema humility.
@@ -598,20 +599,21 @@ void windowSetUpColorScheme (int type){
 		pride->name = "Pride";
 		
 		//Colors
+		//Definidas em ws.h
 		pride->elements[csiNull] = 0;
-        pride->elements[csiDesktop] = COLOR_BACKGROUND;  
-		pride->elements[csiWindow] = COLOR_WINDOW;
-        pride->elements[csiWindowBackground] = xCOLOR_GRAY1;
-		pride->elements[csiActiveWindowBorder] = 0x0080FFFF; //(LIGHT GREEN) 
-        pride->elements[csiInactiveWindowBorder] = 0x0080FFFF;  
-		pride->elements[csiActiveWindowTitleBar] = 0x0080FFFF;    
-        pride->elements[csiInactiveWindowTitleBar] = 0x0080FFFF;		
-		pride->elements[csiMenuBar] = COLOR_GRAY;
-        pride->elements[csiScrollBar] = COLOR_SEASHELL; //COLOR_GRAY;		
-		pride->elements[csiStatusBar] = 0x2EB982;//COLOR_STATUSBAR3;   
-        pride->elements[csiMessageBox] = COLOR_GRAY;
-		pride->elements[csiSystemFontColor] = COLOR_BLACK;    //12
-		pride->elements[csiTerminalFontColor] = COLOR_WHITE;  //13		
+        pride->elements[csiDesktop] = PRIDE_COLOR_BACKGROUND;  
+		pride->elements[csiWindow] = PRIDE_COLOR_WINDOW;
+        pride->elements[csiWindowBackground] = PRIDE_COLOR_WINDOW_BACKGROUND;
+		pride->elements[csiActiveWindowBorder] = PRIDE_COLOR_ACTIVE_WINDOW_BORDER;  
+        pride->elements[csiInactiveWindowBorder] = PRIDE_COLOR_INACTIVE_WINDOW_BORDER;  
+		pride->elements[csiActiveWindowTitleBar] = PRIDE_COLOR_ACTIVE_WINDOW_TITLEBAR;    
+        pride->elements[csiInactiveWindowTitleBar] = PRIDE_COLOR_INACTIVE_WINDOW_TITLEBAR;		
+		pride->elements[csiMenuBar] = PRIDE_COLOR_MENUBAR;
+        pride->elements[csiScrollBar] = PRIDE_COLOR_SCROLLBAR;  		
+		pride->elements[csiStatusBar] = PRIDE_COLOR_STATUSBAR;    
+        pride->elements[csiMessageBox] = PRIDE_COLOR_MESSAGEBOX;
+		pride->elements[csiSystemFontColor] = PRIDE_COLOR_SYSTEMFONT;    //12
+		pride->elements[csiTerminalFontColor] = PRIDE_COLOR_TERMINALFONT;  //13		
 		//...
 		
 		//Sanvando na estrutura padrão para o esquema pride.

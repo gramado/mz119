@@ -84,6 +84,10 @@ update_button ( struct button_d *button,
  * Retorna o ponteiro pra estrutura do botão.
  */
 
+
+//#todo
+//Precisamos usar o esquema de cores.
+
 void *draw_button ( struct window_d *window,
                     unsigned char *string,
                     int style,
@@ -182,10 +186,10 @@ void *draw_button ( struct window_d *window,
 		case BS_DEFAULT:
 		    Selected = 0;
 			b->selected = 0;
-		    border1 = COLOR_BUTTONHIGHLIGHT2;
-			border2 = COLOR_BUTTONSHADOW2;
-			b->border1 = COLOR_BUTTONHIGHLIGHT2;
-			b->border2 = COLOR_BUTTONSHADOW2;
+		    border1 = COLOR_BUTTONHIGHLIGHT3;
+			border2 = COLOR_BUTTONSHADOW3;
+			b->border1 = COLOR_BUTTONHIGHLIGHT3;
+			b->border2 = COLOR_BUTTONSHADOW3;
 			break;
 
 		case BS_FOCUS:
@@ -199,10 +203,10 @@ void *draw_button ( struct window_d *window,
         case BS_PRESS:
 		    Selected = 1;
 			b->selected = 1;
-		    border1 = COLOR_BUTTONHIGHLIGHT2;
-			border2 = COLOR_BUTTONSHADOW2;
-            b->border1 = COLOR_BUTTONHIGHLIGHT2;
-			b->border2 = COLOR_BUTTONSHADOW2;
+		    border1 = COLOR_BUTTONHIGHLIGHT3;
+			border2 = COLOR_BUTTONSHADOW3;
+            b->border1 = COLOR_BUTTONHIGHLIGHT3;
+			b->border2 = COLOR_BUTTONSHADOW3;
             break;
 			
 		case BS_HOVER:
@@ -210,6 +214,8 @@ void *draw_button ( struct window_d *window,
 			break;
         
 		case BS_DISABLED:
+		    //Selected = 0;
+			//b->selected = 0;
 		    border1 = COLOR_GRAY;
 			border2 = COLOR_GRAY;
             b->border1 = COLOR_GRAY;

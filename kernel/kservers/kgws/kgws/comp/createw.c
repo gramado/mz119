@@ -1599,10 +1599,12 @@ void *CreateWindow ( unsigned long type,
 	// #obs
 	// As cores das bordas dependem do status.
 	
+	// #obs:
+	// Aqui o botão sempre é desenhado no mesmo estado.
+	
 	if ( (unsigned long) type == WT_BUTTON )
 	{
-	
-        window->button = (struct button_d *) draw_button ( Parent, windowname, BS_DEFAULT, 0, 0,
+        window->button = (struct button_d *) draw_button ( Parent, windowname, 0, BS_DEFAULT, 0,
                                                  window->left, window->top, window->width, window->height, 
                                                  window->bg_color );
         // #bugbug

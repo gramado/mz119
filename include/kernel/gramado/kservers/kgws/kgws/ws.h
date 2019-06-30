@@ -57,6 +57,47 @@
 //
 //  ## COLOR DEFINES ##
 // 
+
+// #importante
+// usaremos essas definições para configurarmos
+// os dois esquemas básicos, humility e pride.
+// Apenas poucas cores devem ser definidas aqui. Elas
+// servirão de base para outros conjuntos. Devem ser definidas
+// com números.
+
+#define HUMILITY_COLOR_BACKGROUND                 0x00008080 
+#define HUMILITY_COLOR_WINDOW                     0x00FFFFFF 
+#define HUMILITY_COLOR_WINDOW_BACKGROUND          0x00202020 
+#define HUMILITY_COLOR_ACTIVE_WINDOW_BORDER       0x00404040 
+#define HUMILITY_COLOR_INACTIVE_WINDOW_BORDER     0x00606060 
+#define HUMILITY_COLOR_ACTIVE_WINDOW_TITLEBAR     0x00404040 
+#define HUMILITY_COLOR_INACTIVE_WINDOW_TITLEBAR   0x00606060 
+#define HUMILITY_COLOR_MENUBAR                    0x00808080 
+#define HUMILITY_COLOR_SCROLLBAR                  0x00FFF5EE 
+#define HUMILITY_COLOR_STATUSBAR                  0x0083FCFF 
+#define HUMILITY_COLOR_MESSAGEBOX                 0x00404040 
+#define HUMILITY_COLOR_SYSTEMFONT                 0x00000000 
+#define HUMILITY_COLOR_TERMINALFONT               0x00FFFFFF 
+//...
+
+#define PRIDE_COLOR_BACKGROUND                    0x00008080 
+#define PRIDE_COLOR_WINDOW                        0x00FFFFFF 
+#define PRIDE_COLOR_WINDOW_BACKGROUND             0x00202020 
+#define PRIDE_COLOR_ACTIVE_WINDOW_BORDER          0x0080FFFF
+#define PRIDE_COLOR_INACTIVE_WINDOW_BORDER        0x0080FFFF
+#define PRIDE_COLOR_ACTIVE_WINDOW_TITLEBAR        0x0080FFFF
+#define PRIDE_COLOR_INACTIVE_WINDOW_TITLEBAR      0x0080FFFF
+#define PRIDE_COLOR_MENUBAR                       0x00808080 
+#define PRIDE_COLOR_SCROLLBAR                     0x00FFF5EE 
+#define PRIDE_COLOR_STATUSBAR                     0x002EB982
+#define PRIDE_COLOR_MESSAGEBOX                    0x00808080  
+#define PRIDE_COLOR_SYSTEMFONT                    0x00000000  
+#define PRIDE_COLOR_TERMINALFONT                  0x00FFFFFF  
+//...
+
+
+
+
  
 // #importante:
 // As definições de cores aqui se aplicam somente 
@@ -436,22 +477,28 @@
 // A cor padrão para o Bg é azul quase escuro,
 // o azul escuro é usado em seleção de item.
 
-#define COLOR_BACKGROUND  0x008080  
+#define COLOR_BACKGROUND  0x00008080  
 #define COLOR_BACKGROUNDTEXT  COLOR_TEXT  
 
 #define COLOR_BORDER  COLOR_SILVER 
 
+
+
 // ## button support ##
-#define COLOR_BUTTONFACE 0xF0F0F0
-#define COLOR_BUTTONFACE2 0xE0E0E0
-#define COLOR_BUTTONFACE3 0xD0D0D0
-#define COLOR_BUTTONHIGHLIGHT 0xFFFFFF
-#define COLOR_BUTTONHIGHLIGHT2 0x404040
-#define COLOR_BUTTONHIGHLIGHTTEXT COLOR_WHITE
-#define COLOR_BUTTONHIGHLIGHTTEXT2 COLOR_WHITE //@todo: branco menos intenso.
-#define COLOR_BUTTONSHADOW 0xA0A0A0
-#define COLOR_BUTTONSHADOW2 0x303030  
-#define COLOR_BUTTONTEXT COLOR_TEXT
+#define COLOR_BUTTONFACE            0x00F0F0F0
+#define COLOR_BUTTONFACE2           0x00E0E0E0
+#define COLOR_BUTTONFACE3           0x00D0D0D0
+#define COLOR_BUTTONHIGHLIGHT       0x00FFFFFF
+#define COLOR_BUTTONHIGHLIGHT2      0x00404040
+#define COLOR_BUTTONHIGHLIGHT3      0x00008080
+#define COLOR_BUTTONHIGHLIGHTTEXT   COLOR_WHITE
+#define COLOR_BUTTONHIGHLIGHTTEXT2  COLOR_WHITE 
+#define COLOR_BUTTONSHADOW          0x00A0A0A0
+#define COLOR_BUTTONSHADOW2         0x00303030 
+#define COLOR_BUTTONSHADOW3         0x00202020 
+#define COLOR_BUTTONTEXT            COLOR_TEXT
+
+
 
 // # control support #
 #define COLOR_CONTROL             0xF0F0F0
