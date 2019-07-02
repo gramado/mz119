@@ -626,54 +626,20 @@ system_procedure ( struct window_d *window,
         case MSG_SYSKEYDOWN:                 
             switch (long1)	       
             {   
-                //
-				// As funções F1 à F12 são opções para o desenvolvedor.
-				//
+ 
+                // F1 ~  F4 (usadas pelos aplicativos)
+                // F5 ~  F8 (usados pelo sistema nessa fase do desenvolvimento)				
+				// F9 ~  F12 (usadas pelos aplicativos)
 				
-				// Obs: Essa variáveis de estatus serão variáveis encapsuladas
-				//      no driver de teclado. Para saber o valor delas
-				//      tem que chamar uma função do driver. keyboard.c
-				//Obs: 
-				// *Importante: Tem que chamar método pra pegar variável dentro de driver.
-				
-				//Help. 
+                // F1 ~  F4 (usadas pelos aplicativos)
 				case VK_F1:	
-					// #importante 
-					// Mostraremos a ajuda do aplicativo.
-					
-					
-					//1 = initialize.
-					//diskATADialog ( 1, FORCEPIO, FORCEPIO );
-					//show_ide_info ();
-                    //rotina provisória de teste de read.
-					//procTestF6();
-					break;
-					
-				
-				//Kernel info.	
                 case VK_F2:
-					//KiInformation();
-					break;
-				
-	
-                //CPU info.
-                //intel? deveria ser independente. 				
-                case VK_F3: 
-					
-					//show_cpu_intel_parameters();
-					break;
-					
-				//Window tests.	
                 case VK_F4:
-					//if (AltStatus == 1)
-					//{ 
-					//    closeActiveWindow(); 
-					//	alt_status = 0;
-					//	goto done;
-					//	break;
-					//};
-					//windowShowWindowList();  
+                    // Nothing.
 					break;
+					
+					
+					
 				
                 //#tests
 				//Vamos usar F5 para testar as funcionalidades dos drivers apenas.	
@@ -827,117 +793,17 @@ system_procedure ( struct window_d *window,
 					refresh_screen();
 					goto done;	
 					break;
+					
+					
 				
-                //Reboot.  				
+                // F9 ~  F12 (usadas pelos aplicativos)  				
 				case VK_F9:
-					systemReboot();
-					break;				
-
-				//Task Manager.	
 				case VK_F10:
-				   // kill_all_threads();
-					//KiInformation();
-					//current_idle_thread = 3;
-					//if(AltStatus == 1){ window_with_focus = 10; break;};
-					//if(CtrlStatus == 1){ active_window = 10; break;};
-			        //if(ShiftStatus == 1){ printf("shift_F10\n"); break;};
-				    
-					//KiShowThreadList(); //threadi.c
-					//mostra_slots();  //threadi.c
-					
-					//@todo: abrir o gerenciador de tarefas.
-					//volumeShowVolumeInfo(0);
-					//show_process_information();
-					//show_thread_information();					
-				    
-					//aumentando gradativamente uma janela de pouco em pouco.
-					//xxxx = (void*) windowList[6];
-					//xxxx->width  -= 20;
-					//xxxx->height -= 20;
-					//resize_window(xxxx, xxxx->width, xxxx->height);
-					//redraw_window(xxxx);					
-					//refresh_screen();
-					break;
-					
-				//Program manager.
-                //@todo: usar F11 para FULL SCREEN.				
-				case VK_F11:
-				    //windowSwitchFullScreen();
-					//goto done;
-					break;
-					
-					
-				//case VK_F12:
-					//if(AltStatus == 1){ window_with_focus = 12; break;};
-					//if(CtrlStatus == 1){ active_window = 12; break;};
-				    //procedureGrid();
-					
-					//testando informaçõe sobre os processos.
-					//show_process_information();
-					
-					//testando informações sobre as threads.
-					//show_thread_information();
-					
-					//Testando repintar todas as janelas seguindo a ordem list.
-					//redraw_screen();
-					
-					//Teste de GC. 
-					//Funcionando bem.
-					//printf("F12: alocando ...\n");
-					//buff = (void*) malloc(4*1024);
-					//printf("F12: liberando ...\n");
-					//free(buff);
-					//printf("F12: testando GC ...\n");
-					//gc();
-					//printf("F12: OK\n");
-					
- 	
-					//SystemMenu();
-					//printf("@todo Control menu.\n");
-					//@todo:control menu da area de trabalho.
-					//MainMenu();
-								
-					//printf("time={%d}\n", get_time());
-					//printf("date={%d}\n", get_date());
-					
-                    //Visualizando informações de memória obtidas através do rtc.
-					//memoryShowMemoryInfo();
-					
-					//Testando limites na criação de componentes do /microkernel.
-					//Ok, funcionou bem.
-					//microkernelTestLimit();
-					
-					//Testando Limites na utilização de recursos do módulo pages.c.
-					//??
-
-					//Testando Limites na utilização de recursos do módulo memory.c.
-					//??
-					
-					//Testando Limites na utilização de recursos do módulo window.c.
-					//??
-					
-					//Testando imprimir mensagem na janela com o foco de entrada.
-					//que no caso é a janela do desenvolvedor.
-					//procedureWindowWithFocusTest();
-					
-					//drawScreenGrid();
-					
-					
-					//repintar uma janela qualquer.
-					
-					
-					//xxxx = (void*) windowList[4];
-					//MaximizeWindow(xxxx);
-					//redraw_window(xxxx);
-
-					//xxxx = (void*) windowList[5];
-					//replace_window(xxxx, 100, 100);
-					//redraw_window(xxxx);
-
-					//xxxx = (void*) windowList[6];
-					//resize_window(xxxx, 100, 100);
-					//redraw_window(xxxx);
-				//	break;
+				case VK_F11:					
+				case VK_F12:
+                    // Nothing,
+				    break;
+				
 				
 				
 				//#IMPORTANTE
