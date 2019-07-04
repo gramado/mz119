@@ -262,7 +262,7 @@ void outbyte (int c){
     //    prev = c;
     //    return;         
     //};
- 
+    
  
     //Delete. 
     //#bugbug: Limits.

@@ -22,8 +22,8 @@ void pty_send_message_to_process ( unsigned long msg_buffer, int pid ){
 	struct thread_d *t;
 	
 	//#debug
-	printf ("pty_send_message_to_process: PID=%d \n", pid );
-	refresh_screen ();	
+	//printf ("pty_send_message_to_process: PID=%d \n", pid );
+	//refresh_screen ();	
 	
 	if ( pid < 0 || pid >= PROCESS_COUNT_MAX )
 	{
@@ -100,8 +100,8 @@ void pty_send_message_to_thread ( unsigned long msg_buffer, int tid ){
     unsigned long *buffer = (unsigned long *) msg_buffer;
 	
 	
-	printf ("pty_send_message_to_thread: TID=%d \n", tid);
-	refresh_screen ();	
+	//printf ("pty_send_message_to_thread: TID=%d \n", tid);
+	//refresh_screen ();	
 
     //
 	// TID
