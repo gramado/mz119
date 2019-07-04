@@ -489,15 +489,20 @@ void *gde_services ( unsigned long number,
 	int xxx_ch;
     if ( number == 1002 )	
 	{
+		//pega
 		xxx_ch = (int) *CurrentTTY->ring0_stdout_last_ptr;
 		
-	    CurrentTTY->ring0_stdout_last_ptr++;	
+		//apaga.
+		*CurrentTTY->ring0_stdout_last_ptr = 0;
 		
+		//incrementa e circula
+	    CurrentTTY->ring0_stdout_last_ptr++;	
 		if ( CurrentTTY->ring0_stdout_last_ptr >= CurrentTTY->ring0_stdout_limit )
 		{
 			CurrentTTY->ring0_stdout_last_ptr = CurrentTTY->ring0_stdout->_base;
 		}
 		
+		//retorna o que pegou.
 		return (void *) xxx_ch;
     } 
 	
