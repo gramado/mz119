@@ -473,31 +473,52 @@ void systemSetupVersion (void){
  *
  * classe: ram/sm
  */
-int system_dispatch_to_procedure( struct window_d *window, 
-                                  int msg, 
-								  unsigned long long1, 
-								  unsigned long long2)
-{	
-	asm(" pushl %0" :: "r" ((unsigned long) long2)  : "%esp"); 
-    asm(" pushl %0" :: "r" ((unsigned long) long1)  : "%esp"); 
-    asm(" pushl %0" :: "r" ((unsigned long) msg)    : "%esp");        
-    asm(" pushl %0" :: "r" ((unsigned long) window) : "%esp"); 	 
+ 
+// #bugbug
+// Essa rotina não é usada.
+// Vamos suspender.
+// #todo: Deletar !!! 
+ 
+int 
+system_dispatch_to_procedure ( struct window_d *window, 
+                               int msg, 
+							   unsigned long long1, 
+							   unsigned long long2 )
+							   
+{
+	
+/*	
+	// #bugbug
+	// Os carinhas do gcc 9.1.0 resolveram sacanear.
+	// Não posso usar mais isso porque eles tiveram um ataque de pelanca.
+	// Warning:
+	// "Listening the stack pointer register in a clobber list is deprecated." 
+	
+	//asm(" pushl %0" :: "r" ((unsigned long) long2)  : "%esp"); 
+    //asm(" pushl %0" :: "r" ((unsigned long) long1)  : "%esp"); 
+    //asm(" pushl %0" :: "r" ((unsigned long) msg)    : "%esp");        
+    //asm(" pushl %0" :: "r" ((unsigned long) window) : "%esp"); 	 
+    
+	asm(" pushl %0" :: "r" ((unsigned long) long2)  ); 
+    asm(" pushl %0" :: "r" ((unsigned long) long1)  ); 
+    asm(" pushl %0" :: "r" ((unsigned long) msg)    );        
+    asm(" pushl %0" :: "r" ((unsigned long) window) ); 	 
+
     asm(" call *_g_next_proc ");    //Chama o xProc.
     asm(" pop %eax \n ");
 	asm(" pop %eax \n ");
 	asm(" pop %eax \n ");
 	asm(" pop %eax \n ");	
    
-	/*
-	 * Status: 
-	 *     A mensagem já foi enviada ao procedimento e processada por ele.
-	 *     Então avisamos que não há mais mensagens.
-     */
-	
-	g_nova_mensagem = 0;
-	
-done:	
-	return (int) 0;
+	//Status: 
+	//A mensagem já foi enviada ao procedimento e processada por ele.
+	//     Então avisamos que não há mais mensagens.
+     
+	g_nova_mensagem = 0;	
+    return 0;
+*/
+
+    return -1;
 }  
 
 

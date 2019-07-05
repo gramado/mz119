@@ -184,50 +184,75 @@ int setFlags (int variable){
 
 int Push (int value){
 	
-    __asm ("pushl %0" : : "r" (value) : "%esp");
-};
+	// #bugbug
+	// gcc 9 não aceita isso.
+	// Mas não estamos usando esse código. Então vamos suspender.
+    //__asm ("pushl %0" : : "r" (value) : "%esp");
+    
+}
 
 
 int Pop (int variable){
 	
-    __asm ("popl %0" : "=r" (variable) : : "%esp");
-};
+	// #bugbug
+	// gcc 9 não aceita isso.
+	// Mas não estamos usando esse código. Então vamos suspender.	
+    //__asm ("popl %0" : "=r" (variable) : : "%esp");
+}
 
 
 int pushRegs (void){
-	
-    __asm ("pushal" : : : "%esp");
+
+	// #bugbug
+	// gcc 9 não aceita isso.
+	// Mas não estamos usando esse código. Então vamos suspender.	
+    //__asm ("pushal" : : : "%esp");
 }
 
 
 int popRegs (void){
 	
-    __asm ("popal" : : : "%esp");
+	// #bugbug
+	// gcc 9 não aceita isso.
+	// Mas não estamos usando esse código. Então vamos suspender.	
+    //__asm ("popal" : : : "%esp");
 }
 
 
 int pushFlags (void){
 	
-    __asm ("pushfl" : : : "%esp");
-};
+	// #bugbug
+	// gcc 9 não aceita isso.
+	// Mas não estamos usando esse código. Então vamos suspender.	
+    //__asm ("pushfl" : : : "%esp");
+}
 
 
 int popFlags (void){
-	
-    __asm ("popfl" : : : "%esp");
-};
+
+	// #bugbug
+	// gcc 9 não aceita isso.
+	// Mas não estamos usando esse código. Então vamos suspender.	
+    //__asm ("popfl" : : : "%esp");
+}
 
 
 int getStackPointer (int addr){
-	
-    __asm ("movl %%esp, %0" : "=r" (addr) );
-};
+
+	// #bugbug
+	// gcc 9 não aceita isso.
+	// Mas não estamos usando esse código. Então vamos suspender.	
+    //__asm ("movl %%esp, %0" : "=r" (addr) );
+}
 
 
 int setStackPointer (int addr){
-	
-    __asm ("movl %0, %%esp" : : "r" (addr) : "%esp");
-};
+
+	// #bugbug
+	// gcc 9 não aceita isso.
+	// Mas não estamos usando esse código. Então vamos suspender.	
+    //__asm ("movl %0, %%esp" : : "r" (addr) : "%esp");
+}
 
 
 

@@ -139,9 +139,23 @@ executa_tarefa ( int id,
 	asm (" movw %ax, %fs ");
 	asm (" movw %ax, %gs ");
 	
+	
+	// #bugbug
+	// Os carinhas do gcc 9.1.0 resolveram sacanear.
+	// Não posso usar mais isso porque eles tiveram um ataque de pelanca.
+	// Warning:
+	// "Listening the stack pointer register in a clobber list is deprecated." 	
+	
+    /*
     asm (" pushl %0" :: "r" (eflags): "%esp");  
     asm (" pushw %0" :: "r" (cs)    : "%esp");             
     asm (" pushl %0" :: "r" (eip)   : "%esp");  
+    */
+    
+    asm (" pushl %0" :: "r" (eflags) );  
+    asm (" pushw %0" :: "r" (cs)     );             
+    asm (" pushl %0" :: "r" (eip)    ); 
+
 	
     // #bugbug 
 	// Isso realmente não é necessário ... 

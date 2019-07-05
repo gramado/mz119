@@ -175,8 +175,8 @@ void spawn_thread (int id){
 	
 	if ( spawn_Pointer->state != RUNNING )
 	{
-        printf("* spawn_thread: State TID={%d}\n", id );
-		die();
+        printf ("* spawn_thread: State TID={%d}\n", id );
+		die ();
 	};
 	
 	
@@ -266,14 +266,29 @@ void spawn_thread (int id){
 	
 	asm (" pushl $0x3000 \n");
 	asm (" popfl \n");	
-	  
+	
+	// #bugbug
+	// Os carinhas do gcc 9.1.0 resolveram sacanear.
+	// Não posso usar mais isso porque eles tiveram um ataque de pelanca.
+	// Warning:
+	// "Listening the stack pointer register in a clobber list is deprecated."  
+	
+	
 	//Pilha para iret.
+    /*
     asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->ss)     : "%esp");    //ss.
     asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->esp)    : "%esp");    //esp.
     asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->eflags) : "%esp");    //eflags.
     asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->cs)     : "%esp");    //cs.
     asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->eip)    : "%esp");    //eip.
-	
+    */
+
+	//Pilha para iret.
+    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->ss)     );    //ss.
+    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->esp)    );    //esp.
+    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->eflags) );    //eflags.
+    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->cs)     );    //cs.
+    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->eip)    );    //eip.	
 
     // #importante
 	// Precismos disso pois foi o irq0 quem nos trouxe aqui.

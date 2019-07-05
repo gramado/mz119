@@ -56,6 +56,12 @@ jmp_address ( unsigned long arg1,
               unsigned long arg3, 
               unsigned long arg4 )  
 { 
+	
+	// #bugbug
+	// gcc 9 não aceita isso.
+	// Mas não estamos usando esse código. Então vamos suspender.
+	
+	/*
     asm (" pushl %0" :: "r" (arg4) : "%esp");    //Window.
     asm (" pushl %0" :: "r" (arg3) : "%esp");    //Msg.
     asm (" pushl %0" :: "r" (arg2) : "%esp");    //Long1.       
@@ -67,6 +73,7 @@ jmp_address ( unsigned long arg1,
 	// No return !
 	//
 	
+	*/
 	return (int) -1;
 }
 
