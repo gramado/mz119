@@ -569,28 +569,6 @@ void *CreateWindow ( unsigned long type,
 		// backbuffer and front buffer.
 		window->BackBuffer = (void *) g_backbuffer_va;
 		window->FrontBuffer = (void *) g_frontbuffer_pa;
-
-	    //@todo:
-	    //Se não for uma Child, deve-se resetar todas as informações relativas
-	    //à parent window.
-
-		//#  =================  BUGBUG =====================
-
-		// ESTAMOS SUSPENDENDO O USO DE JANELA MAE ... 
-		// PARA TESTAR NA GIGABYTE/INTEL
-		
-		//Parent support
-		//window->parent = (void *) Parent;
-		
-		// Isso impede que acessemos um ponteiro nulo.
-		//if ( (void *) Parent != NULL )
-		//{
-		//	if ( Parent->used == 1 && Parent->magic == 1234 )
-		//	{
-		//	   window->parentid = (unsigned long) Parent->id;
-		//	}
-		//}
-		
 		
 		
 		//Child window linked list.
@@ -649,7 +627,7 @@ void *CreateWindow ( unsigned long type,
 		//window->linkedlist = NULL;
 		
 		//Prev e next.
-		window->prev = (void*) Parent;
+		window->prev = (void *) Parent;
 		window->next = NULL;
 			
 		//#debug
@@ -1602,14 +1580,29 @@ void *CreateWindow ( unsigned long type,
 	// #obs:
 	// Aqui o botão sempre é desenhado no mesmo estado.
 	
+	// #bugbug
+	// Se o tipo é um botao então o posicionamento é relativo.
+	// tentaremos transformalo em absoludo, somando ao deslocamento da
+	// janela mãe. Isso depois de pintarmos.
+	// #bugbug: provavelmente isso dará problemas na hora de repintar,
+	//tentaremos corrigir depois.
+	
 	if ( (unsigned long) type == WT_BUTTON )
 	{
-        window->button = (struct button_d *) draw_button ( Parent, windowname, 0, BS_DEFAULT, 0,
-                                                 window->left, window->top, window->width, window->height, 
+        window->button = (struct button_d *) draw_button ( Parent, windowname, 
+                                                 0, BS_DEFAULT, 0,
+                                                 window->left, window->top, 
+                                                 window->width, window->height, 
                                                  window->bg_color );
         // #bugbug
         // E se retornar NULL ?
         //if ( (void *) window->button == NULL ){}
+     
+		//window->left   = Parent->left + window->left;
+		//window->top    = Parent->top  + window->top;   
+        
+        //#test
+        window->parent = Parent;
         
 		window->isButton = 1;
 	}	

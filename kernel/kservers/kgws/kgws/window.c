@@ -3861,6 +3861,11 @@ int windowLoadGramadoIcons (void){
 
 // wm.
  
+// #bugbug
+// No caso dos botões o deslocamento encontrado é relativo
+// à sua janela mãe. Então também precisamos considerar
+// o posicionamento da janela mãe ?? 
+ 
 int windowScan ( unsigned long x, unsigned long y ){
 
 	struct window_d *w;
@@ -3893,7 +3898,34 @@ int windowScan ( unsigned long x, unsigned long y ){
 			// validation
 			if ( w->used == 1 && w->magic == 1234 )
 			{
+				// #bugbug
+				// Precisamos considerar o deslocamento da janela mãe
+				// para sabermso seu posicionamaento em relação à tela.
+				
+				// Para o botao vamos considerar o deslocamento
+				// da janela mae.
 				// Dentro da área da janela.
+				if ( w->type == WT_BUTTON || w->type == WT_EDITBOX )
+				{
+					if ( (void *) w->parent == NULL )
+					{
+						panic ("windowScan: parent\n");
+					}
+					
+				    if ( x > (w->parent->left + w->left)    && 
+					     x < (w->parent->right + w->right)  && 
+				         y > (w->parent->top + w->top)      &&
+				         y < (w->parent->bottom + w->bottom)  )					
+					{
+						WID = w->id;
+					    window_mouse_over = w->id;    
+						return (int) WID;											
+					}
+				}
+				
+				
+				// Dentro da área da janela.
+				/*
 				if ( x > w->left   && 
 					 x < w->right  && 
 				     y > w->top    &&
@@ -3920,18 +3952,16 @@ int windowScan ( unsigned long x, unsigned long y ){
 						return (int) WID;					
 					}	
 					
-					// ...
-					
+					// ...	
 				}; 
+				*/
+				
+				
 			};		
 		};	
 	};
-	
-//fail:
-	
-    return (int) -1;	
-//done:	
-    //return (int) WID;	
+
+    return (int) -1;
 }
 
 

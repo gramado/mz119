@@ -503,6 +503,8 @@ vhd-copy-files:
 	-sudo cp ../gde/bin/LISP.BIN      /mnt/gramadovhd 
 	-sudo cp ../gde/bin/NORATERM.BIN  /mnt/gramadovhd
 	-sudo cp ../gde/bin/REBOOT.BIN    /mnt/gramadovhd
+	-sudo cp ../gde/bin/REBOOT2.BIN   /mnt/gramadovhd
+	-sudo cp ../gde/bin/LAUNCHER.BIN  /mnt/gramadovhd
 	-sudo cp ../gde/bin/TASCII.BIN    /mnt/gramadovhd
 #...
 	
