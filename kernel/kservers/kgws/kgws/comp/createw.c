@@ -1596,10 +1596,7 @@ void *CreateWindow ( unsigned long type,
                                                  window->bg_color );
         // #bugbug
         // E se retornar NULL ?
-        //if ( (void *) window->button == NULL ){}
-     
-		//window->left   = Parent->left + window->left;
-		//window->top    = Parent->top  + window->top;   
+        //if ( (void *) window->button == NULL ){} 
         
         //#test
         window->parent = Parent;

@@ -3913,9 +3913,9 @@ int windowScan ( unsigned long x, unsigned long y ){
 					}
 					
 				    if ( x > (w->parent->left + w->left)    && 
-					     x < (w->parent->right + w->right)  && 
+					     x < (w->parent->left + w->left + w->width)  && 
 				         y > (w->parent->top + w->top)      &&
-				         y < (w->parent->bottom + w->bottom)  )					
+				         y < (w->parent->top + w->top + w->height)  )			         
 					{
 						WID = w->id;
 					    window_mouse_over = w->id;    
