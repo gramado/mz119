@@ -510,7 +510,9 @@ vhd-copy-files:
 	
 # c test suite
 	-sudo cp ../gde/gt/tests/TEST1.C    /mnt/gramadovhd
-
+	-sudo cp ../gde/gt/tests/TEST2.C    /mnt/gramadovhd
+	-sudo cp ../gde/gt/tests/TEST3.C    /mnt/gramadovhd
+	
 
 	
 #
