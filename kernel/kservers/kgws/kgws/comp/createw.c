@@ -1478,6 +1478,9 @@ void *CreateWindow ( unsigned long type,
 	 
 	if ( (unsigned long) type == WT_SCROLLBAR )
 	{
+		
+        //#test
+        window->parent = Parent;
 
         //bg
 		drawDataRectangle ( window->left, window->top, 
@@ -1542,23 +1545,11 @@ void *CreateWindow ( unsigned long type,
 	
 	
 	
-	//if ( (unsigned long) type == WT_STATUSBAR )
-	//{
-		//#debug 
-		//printf("CreateWindow.WT_STATUSBAR\n");
-		
-	//	drawDataRectangle ( window->left, window->top, 
-	//		window->width -1, window->height, window->bg_color ); 	
-						   
-		//draw_string ( window->left +8, window->top +8, COLOR_TEXT,  
-		//	window->name );  
-			
-			
-		//#importante 
-		//#todo
-        //Parent->statusbarUsed = 1;
-		//Parent->statusbar = window;
-	//};
+	if ( (unsigned long) type == WT_STATUSBAR )
+	{
+        //#test
+        window->parent = Parent;
+	}
 	
 	
 	//
@@ -1606,9 +1597,19 @@ void *CreateWindow ( unsigned long type,
 
     if ( (unsigned long) type == WT_EDITBOX )	
 	{
+		
+        //#test
+        window->parent = Parent;
+        		
 		window->isEditBox = 1;
 	}
-
+	
+	
+    if ( (unsigned long) type == WT_SIMPLE )	
+	{	
+	    //#test
+        window->parent = Parent;
+    }
 
 	//
 	// Continua ... ( Pinta detalhes da janela, caso ouver )
@@ -1634,6 +1635,10 @@ void *CreateWindow ( unsigned long type,
 	// Overlapped.
 	if (window->type == WT_OVERLAPPED)
 	{
+
+	    //#test
+        window->parent = Parent;		
+		
 		active_window = window->id;
 		window->active = 1;
 		
