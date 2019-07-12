@@ -57,6 +57,9 @@ struct tty_d
 	//see: termios.h
 	//struct termios *termios;
 	
+	//devemos colocar sem ponteiro,
+	//isso será tratado em tty.c
+	//struct termios termios;   
 	
 	//
 	// user, user session, room, desktop;
@@ -69,6 +72,12 @@ struct tty_d
 	struct room_d *room;
 	
 	struct desktop_d *desktop;
+
+	//
+	// Janela.
+	//
+	
+	struct window_d *window;
 		
 	// Quantas objetos associados a essa tty?
 	int count;
@@ -77,9 +86,6 @@ struct tty_d
 	int terminal_id;  //tdo deletar.
 	int terminal_pid;  //todo: usar esse
 
-	//Janela.
-	struct window_d *window;
-	
 	
    //#todo: buffer?
 	

@@ -15,6 +15,38 @@
 #include <kernel.h> 
 
 
+
+/*
+void tty_reset_termios ( struct tty_d *tty );
+void tty_reset_termios ( struct tty_d *tty )
+{
+    //#todo: Limits messages
+    if ( (void *) tty == NULL )
+        return;
+ 
+	tty->termios.c_iflag = ICRNL | IXON | BRKINT;
+	tty->termios.c_oflag = OPOST | ONLCR | NL0 | CR0 | TAB0 | BS0 | VT0 | FF0;
+	tty->termios.c_lflag = ECHO | ECHOE | ECHOK | ISIG | ICANON;
+	tty->termios.c_cflag = CS8 | CREAD;
+	
+	tty->termios.c_ispeed = B9600;
+	tty->termios.c_ospeed = B9600;
+
+	tty->termios.c_cc[VINTR] = 3;//EOI
+	tty->termios.c_cc[VQUIT] = 28;//FS
+	tty->termios.c_cc[VERASE] = 8;//BS
+	tty->termios.c_cc[VEOF] = 4;//EOT
+	tty->termios.c_cc[VSUSP] = 26;//BS
+	tty->termios.c_cc[VEOL] = 0;//BS
+	tty->termios.c_cc[VKILL] = 1;//BS
+	tty->termios.c_cc[VEOL] = 2;//BS
+	
+	//tty->win_size.ws_col = 80;
+	//tty->win_size.ws_row = 25;
+}
+*/
+
+
 // mostrar o conteúdo do arquivo stdout.
 
 void check_CurrentTTY (void){
@@ -93,9 +125,10 @@ void check_CurrentTTY (void){
 			}
 		}
 	}
-	
-	
+
+//#todo: delete label.	
 done:
+
 	//reset
     CurrentTTY->stdout_status = 0;
     CurrentTTY->stdout_update_what = 0;
@@ -144,6 +177,7 @@ void reset_tty ( struct tty_d *tty ){
 }
 */
 
+
 /*
 //procura um slot livre na lista de ttys
 int tty_find_empty_slot ();
@@ -152,6 +186,7 @@ int tty_find_empty_slot (){
 }
 */
 
+ 
  
 /*
  ***********************************
@@ -164,104 +199,94 @@ int tty_find_empty_slot (){
 // e usando o mesmo fluxo padr~ao que o teclado usa.
 
 int ttyInit (int tty_id){
+	
+	int i;
 		
 	debug_print ("ttyInit:\n");
 	
-	if ( tty_id < 0 || tty_id > 7 )
-	{
+	if ( tty_id < 0 || tty_id > 7 ){
+		
 	    panic ("ttyInit: tty_id");
 	}
 	
+	//
+	// CurrentTTY
+	//
+	
 	CurrentTTY = (struct tty_d *) malloc ( sizeof(struct tty_d) );
 	
-	if ( (void *) CurrentTTY == NULL )
-	{
+	if ( (void *) CurrentTTY == NULL ){
 		
 		panic ("ttyInit:");
-		//die ();
 		//return -1;
-	}
+		
+	}else{
+		
+	    // Inicializa.
+	    CurrentTTY->index = tty_id;
+	    CurrentTTY->used = 1;
+	    CurrentTTY->magic = 1234;	
 	
 	
-	// Inicializa.
-	CurrentTTY->index = tty_id;
-	CurrentTTY->used = 1;
-	CurrentTTY->magic = 1234;
+	    // Configurando uma janela básica, pra não ficar null.
+	    //CurrentTTY->window = gui->main;
+	    CurrentTTY->window = NULL;	
+	    
+	    // #bugbug
+	    // Ainda não estamos usando esse fluxo padrão do tty.
+	    // Estamos usando outro, configurado logo abaixo.
 	
+	    CurrentTTY->stdin = stdin;
+	    CurrentTTY->stdout = stdout;
+	    CurrentTTY->stderr = stderr;
 	
-	//#bugbug
-	// Precisamos criar o ambiente de janelas antes de configurarmos isso pela
-	// rimeira vez.
+	    CurrentTTY->stdout_status = 0;
+	    CurrentTTY->stdout_update_what = 0;	
 	
-	// Configurando uma janela básica, pra não ficar null.
-	//CurrentTTY->window = gui->main;
-	CurrentTTY->window = NULL;
+        CurrentTTY->left = 0; 
+	    CurrentTTY->top = 0;
+	    //CurrentTTY->width = 0;
+	    //CurrentTTY->height = 0;	
+	    
 	
-	
-	// #bugbug
-	// Ainda não estamos usando esse fluxo padrão do tty.
-	// Estamos usando outro, configurado logo abaixo.
-	
-	CurrentTTY->stdin = stdin;
-	CurrentTTY->stdout = stdout;
-	CurrentTTY->stderr = stderr;
-	
-	CurrentTTY->stdout_status = 0;
-	CurrentTTY->stdout_update_what = 0;	
-	
-	
-    CurrentTTY->left = 0; 
-	CurrentTTY->top = 0;
-	//CurrentTTY->width = 0;
-	//CurrentTTY->height = 0;
-	
-	
-	//
-	// Fluxo padrão.
-	//
-	
+	    //
+	    // Fluxo padrão.
+	    //
 	 
-	// #importante:
-	// Esse é o mesmo fluxo padrão que pe usado pelo teclado
-	// como buffer de input em kdrivers/x.
-	// Presumindo que esses ponteiros foram inicializados antes. #bugbug
+	    // #importante:
+	    // Esse é o mesmo fluxo padrão que pe usado pelo teclado
+	    // como buffer de input em kdrivers/x.
+	    // Presumindo que esses ponteiros foram inicializados antes. #bugbug
 	
-	CurrentTTY->ring0_stdin = current_stdin;
-	CurrentTTY->ring0_stdout = current_stdout;
-	CurrentTTY->ring0_stderr = current_stderr;	
+	    CurrentTTY->ring0_stdin = current_stdin;
+	    CurrentTTY->ring0_stdout = current_stdout;
+	    CurrentTTY->ring0_stderr = current_stderr;	
+	    
+	    //
+	    // buffer circular.
+	    //
 	
-	//
-	// buffer circular.
-	//
+	    //base
+	    CurrentTTY->ring0_stdout_last_ptr = CurrentTTY->ring0_stdout->_p;
 	
+	    //limite
+	    CurrentTTY->ring0_stdout_limit = (CurrentTTY->ring0_stdout->_p + CurrentTTY->ring0_stdout->_lbfsize);		
 	
-	//base
-	CurrentTTY->ring0_stdout_last_ptr = CurrentTTY->ring0_stdout->_p;
+	    //fazer o mesmo para os outros dois arquivos.
+	    //...	    
+	    
 	
-	//limite
-	CurrentTTY->ring0_stdout_limit = (CurrentTTY->ring0_stdout->_p + CurrentTTY->ring0_stdout->_lbfsize);		
+        for (i=0; i<8; i++)
+	    {
+		    ttyList[i] = 0;
+	    }
 	
-	//fazer o mesmo para os outros dois arquivos.
-	//...
+	    ttyList[tty_id] = (unsigned long) CurrentTTY;
+	       
+	       
+	    // More ?    
+    };
 	
-	
-	int i;
-	for (i=0; i<8; i++)
-	{
-		ttyList[i] = 0;
-	}
-	
-	ttyList[tty_id] = (unsigned long) CurrentTTY;
-
-	
-	//
-	// more ?
-	//
-	
-	// #bugbug
-	// Devemos retornar '0'.
-	
-    //return -1;	
 	return 0;
 }
 

@@ -76,6 +76,7 @@ struct termios {
   tcflag_t c_oflag;		// output modes 
   tcflag_t c_cflag;		// control modes 
   tcflag_t c_lflag;		// local modes 
+  
   speed_t  c_ispeed;	// input speed 
   speed_t  c_ospeed;	// output speed 
   
