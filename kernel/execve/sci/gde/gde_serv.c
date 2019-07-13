@@ -174,6 +174,11 @@ void *gde_services ( unsigned long number,
 	struct process_d *p;
 	struct thread_d *t;
 	
+	//generic file pointer
+	FILE *__fp;
+	
+	//bmp file pointer.
+	FILE *__bmfp;
 	
 	//
 	// Setup.
@@ -535,25 +540,61 @@ void *gde_services ( unsigned long number,
 		 return (void *) stdout;
 	 }
 	
-	//
-	// test
-	//
 	
+	 // bmp:
+	 // Carrega o bmp na memória e decodifica no backbuffer.
+	 // Isso não mostra na tela.
+	 if ( number == 4000 )
+     {
+	     // load and show bmp
+		 //sys_fopen ( (const char *) arg2, (const char *) arg3 );
+		 //__bmfp = sys_fopen ( "folder.bmp", "r+" );
+		 __bmfp = sys_fopen ( (const char *) arg2, "r+" );
+					
+		 //decodificando no backbuffer.
+		 bmpDisplayBMP ( __bmfp->_base, arg3, arg4 );
+										
+		//refresh_rectangle ( 100, 100, 200, 200 );  		 
+	     return NULL;	 
+     }
 	
-	//#bugbug: estamos revendo isso, veja sci/gde
-	// 7000 ~ 7999
-	// Suporte as chamadas de socket da libc.
-	// crts/klibc/socket.c
-	
-	/* #suspenso vamos mudar esse numeros e atender aqui mesmo
-	if ( number >= 7000 && number < 8000 )
-	{
-		return (void *) socket_services ( (unsigned long) number, (unsigned long) arg2, 
-						    (unsigned long) arg3, (unsigned long) arg4 );
-	};
-    */
-	
-
+	 // bmp:
+	 // Carrega o bmp na memória e decodifica diretamente no frontbuffer.
+	  // Isso mostra na tela.
+	 if ( number == 4001 )
+     {
+	     // load and show bmp
+		 //sys_fopen ( (const char *) arg2, (const char *) arg3 );
+		 //__bmfp = sys_fopen ( "folder.bmp", "r+" );
+		 __bmfp = sys_fopen ( (const char *) arg2, "r+" );
+					
+		 //bmp_change_color_flag = BMP_CHANGE_COLOR_TRANSPARENT;
+		 //bmp_selected_color = COLOR_WHITE;
+		 bmpDirectDisplayBMP ( __bmfp->_base, arg3, arg4 );
+		 //bmp_change_color_flag = 0;
+		//bmp_selected_color = 0;
+					
+	     return NULL;	 
+     }
+     
+     //api - load file
+     //#todo: Tem que retornar algum identificador para a api.
+     //poderia ser um indice na tabela de arquivos abertos pelo processo.
+     if ( number == 4002 )
+     {
+		 return (void *) sys_fopen ( (const char *) arg2, "r+" );		
+	 }
+	 
+     //api - load file
+     //#todo: Tem que retornar algum identificador para a api.
+     //#bugbug: Podemos retornar o endereço base. Isso pode dar problemas?
+     if ( number == 4003 )
+     {
+		 __fp = sys_fopen ( (const char *) arg2, "r+" );		
+	     return (void *) __fp->_base;
+	 }
+	 
+	 //...
 	
 	//
 	// ## Switch ##

@@ -622,33 +622,43 @@ system_procedure ( struct window_d *window,
             };		
 			break;
           
-		/* ## Teclas do sistema interceptadas pelo kernel ## */  
+		//## Teclas do sistema interceptadas pelo kernel ##   
+        // F1 ~  F4 (usadas pelos aplicativos)
+        // F5 ~  F8 (usados pelo sistema nessa fase do desenvolvimento)				
+		// F9 ~  F12 (usadas pelos aplicativos)
         case MSG_SYSKEYDOWN:                 
             switch (long1)	       
-            {   
- 
-                // F1 ~  F4 (usadas pelos aplicativos)
-                // F5 ~  F8 (usados pelo sistema nessa fase do desenvolvimento)				
-				// F9 ~  F12 (usadas pelos aplicativos)
-				
-                // F1 ~  F4 (usadas pelos aplicativos)
+            {   		
 				case VK_F1:	
                 case VK_F2:
                 case VK_F4:
                     // Nothing.
 					break;
 					
-					
-					
-				
                 //#tests
 				//Vamos usar F5 para testar as funcionalidades dos drivers apenas.	
+				FILE *bmfp;
 				case VK_F5:
 
-					printf("F5:\n"); 
+					printf("F5:\n");
+					
+					// load and show bmp
+					//sys_fopen ( (const char *) arg2, (const char *) arg3 );
+					bmfp = sys_fopen ( "folder.bmp", "r+" );
+					
+					//decodificando no backbuffer.
+					bmpDisplayBMP ( bmfp->_base, 100, 100 );
+					
+					//bmp_change_color_flag = BMP_CHANGE_COLOR_TRANSPARENT;
+					//bmp_selected_color = COLOR_WHITE;
+					bmpDirectDisplayBMP ( bmfp->_base, 100, 100 );
+					//bmp_change_color_flag = 0;
+					//bmp_selected_color = 0;
+					
+					//refresh_rectangle ( 100, 100, 200, 200 );  										
 					
 					//process info
-					show_process_information ();					
+					//show_process_information ();					
 					
 					//testando driver ahci
 					//ahciSATAInitialize (1);
@@ -795,8 +805,6 @@ system_procedure ( struct window_d *window,
 					break;
 					
 					
-				
-                // F9 ~  F12 (usadas pelos aplicativos)  				
 				case VK_F9:
 				case VK_F10:
 				case VK_F11:					

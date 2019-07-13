@@ -34,8 +34,8 @@ static int nibble_count_16colors = 0;
  ********************************************************
  * bmpDirectDisplayBMP:
  *
- *     Mostra na tela uma imagem bmp que já está 
- * carregada na memória. (diretamente no LFB)
+ *     Mostra na tela uma imagem bmp que já está carregada na memória. 
+ * (diretamente no LFB)
  * 
  * IN:
  *     address = endereço base
@@ -421,11 +421,12 @@ bmpDirectDisplayBMP ( char *address,
 done:	
 	//Debug
 	//printf("w={%d} h={%d}\n", bi->bmpWidth, bi->bmpHeight );
-	return (int) 0;
+	return 0;
+	
 fail:	
     //printf("fail");	
 	return (int) 1;
-};
+}
 
 
 
@@ -433,8 +434,8 @@ fail:
  ********************************************************
  * bmpDisplayBMP:
  *
- *     Mostra na tela uma imagem bmp que já está 
- * carregada na memória. (pinta no backbuffer)
+ *     Mostra na tela uma imagem bmp que já está carregada na memória. 
+ * (pinta no backbuffer)
  * 
  * IN:
  *     address = endereço base
@@ -847,12 +848,12 @@ bmpDisplayBMP ( char *address,
 done:	
 	//Debug
 	//printf("w={%d} h={%d}\n", bi->bmpWidth, bi->bmpHeight );
-	return (int) 0;
+	return 0;
+	
 fail:	
     //printf("fail");	
 	return (int) 1;
-};
-
+}
 
 
 //mostra no lfb
@@ -885,9 +886,8 @@ bmpDisplayMousePointerBMP ( char *address,
 	bmp_change_color_flag = 0;
 	bmp_selected_color = 0;
 	
-    return (int) 0;
-};
-
+    return 0;
+}
 
 
 //mostra no lfb
@@ -916,9 +916,8 @@ bmpDisplayCursorBMP ( char *address,
 	bmp_change_color_flag = 0;
 	bmp_selected_color = 0;
     
-	return (int) 0;
-};
-
+	return 0;
+}
 
 
 //
