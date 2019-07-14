@@ -506,6 +506,7 @@ vhd-copy-files:
 	-sudo cp ../gde/bin/REBOOT2.BIN   /mnt/gramadovhd
 	-sudo cp ../gde/bin/LAUNCHER.BIN  /mnt/gramadovhd
 	-sudo cp ../gde/bin/TASCII.BIN    /mnt/gramadovhd
+	-sudo cp ../gde/bin/DUMPIT.BIN    /mnt/gramadovhd
 #...
 	
 # c test suite

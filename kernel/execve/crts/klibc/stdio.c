@@ -1280,9 +1280,9 @@ int fprintf ( FILE *stream, const char *format, ... ){
 	// Validation.
 	//
 	
-	
-	kprintf ("klibc-stdio-fprintf: stream=%x \n",stream);
-	kprintf ("klibc-stdio-fprintf: stdout=%x \n",stdout);
+	//#debug
+	//kprintf ("klibc-stdio-fprintf: stream=%x \n",stream);
+	//kprintf ("klibc-stdio-fprintf: stdout=%x \n",stdout);
 	
     if ( (void *) stream == NULL )
 	{
