@@ -11,8 +11,6 @@
 
 /ux
 
-
-	
 	
 Projetos:
     + gramado virtual machine experience 
