@@ -408,10 +408,13 @@ void do_request_12 ( int tid )
 do_printf_error_message:
 	
     printf ("do_request_12: do_printf_error_message\n");
+	refresh_screen ();
 	
 do_exit:
 	
-    printf ("do_request_12: Exit thread, no error\n");	
+	//#debug
+	//Se não ha erros, não mostramos mensagem.
+    //printf ("do_request_12: Exit thread, no error\n");	
 	
     //#importante
 	// Isso está certo. O que importa é exibir
@@ -447,8 +450,10 @@ do_exit:
 	// #bugbug:
 	// Isso é realmente necessário ?
 	// Queremos apenas exibir a mensagem no terminal.
-	kprintf ("done :) \n");
-	refresh_screen ();
+	
+	//#debug
+	//kprintf ("done :) \n");
+	//refresh_screen ();
 	
 	// Clear request structure.
 	clear_request ();

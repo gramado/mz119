@@ -648,8 +648,8 @@ update_standard_stream ( int PID,
 {
 	struct process_d *p;
 	
-	
-	printf ("update_standard_stream: PID %d \n", PID);
+    //#debug	
+	//printf ("update_standard_stream: PID %d \n", PID);
 	
 	//#todo limits
 	if ( PID < 0 )
@@ -660,8 +660,6 @@ update_standard_stream ( int PID,
 	if ( (void *) p == NULL )
 	{
 		panic ("update_standard_stream: p fail\n");
-		//refresh_screen ();
-		//return -1;
 	};
 	
 	
@@ -670,8 +668,6 @@ update_standard_stream ( int PID,
 		 (void *) stream3 == NULL )
 	{
 		panic ("update_standard_stream: args fail\n");
-		//refresh_screen ();
-		//return -1;		
 	}
 	
 	//p->Streams[0] = (unsigned long) stream1;  
@@ -688,9 +684,8 @@ update_standard_stream ( int PID,
 	
     if ( (void *) CurrentTTY == NULL )
 	{	
-		printf ("update_standard_stream: CurrentTTY");
-		die();
-		//return -1;
+		panic ("update_standard_stream: CurrentTTY");
+		
 	}else{
 	    
 		//CurrentTTY->stdin = stdin;
@@ -699,8 +694,9 @@ update_standard_stream ( int PID,
 	}
 	
 	
-	printf ("update_standard_stream: done\n");
-	refresh_screen ();	
+	//#debug
+	//printf ("update_standard_stream: done\n");
+	//refresh_screen ();	
 	
 	return 0;
 }

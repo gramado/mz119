@@ -116,8 +116,7 @@ pid_t do_clone_execute_process (char *filename){
 	//unsigned long old_image_pa; //usado para salvamento.
 
 	//#debug message.
-
-    printf ("do_clone_execute_processs: clona o pai e executa o filho..\n");
+    //printf ("do_clone_execute_processs: clona o pai e executa o filho..\n");
 
 
 	// ## Current ##
@@ -1367,8 +1366,8 @@ int processCopyMemory ( struct process_d *process ){
 	// Copying memory.
 	//
 	
-	
-	printf ("copying memory ...\n");
+	//#debug
+	//printf ("copying memory ...\n");
 	
 	//copia 200 KB
 	memcpy ( (void *) new_base, (const void *) process->Image, ( 1024 * 200 ) );
@@ -1377,7 +1376,9 @@ int processCopyMemory ( struct process_d *process ){
 	// transformando o endereço virtual em físico.
 	unsigned long new_base_PA = (unsigned long) virtual_to_physical ( new_base, gKernelPageDirectoryAddress ); 
 	
-	printf ("base da imagem new_base_PA=%x  \n", new_base_PA );
+	
+	//#debug
+	//printf ("base da imagem new_base_PA=%x  \n", new_base_PA );
 	
 	
 	//
@@ -1414,9 +1415,9 @@ int processCopyMemory ( struct process_d *process ){
 	
 //done:
 	
-	printf ("processCopyMemory: ok\n");
-	
-	refresh_screen ();
+	//#debug
+	//printf ("processCopyMemory: ok\n");
+	//refresh_screen ();
 	
     return 0;
 }

@@ -1224,10 +1224,10 @@ void *gde_services ( unsigned long number,
 		// arg2, arg3
 		// endereço do buffer da mensagem, pid	
 		case SYS_SENDMESSAGETOPROCESS:
-			printf ("112: PID=%d\n", arg3 );
+			//printf ("112: PID=%d\n", arg3 );
 			pty_send_message_to_process ( (unsigned long) &message_address[0], 
 			    (int) arg3 );
-			printf ("112: done\n");
+			//printf ("112: done\n");
 			break;
 			
 		

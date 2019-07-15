@@ -552,9 +552,9 @@ found:
 	
     //Carrega fat na memória.
 	
-#ifdef KERNEL_VERBOSE		
-	printf ("loading FAT..\n");
-#endif 
+//#ifdef KERNEL_VERBOSE		
+	//printf ("loading FAT..\n");
+//#endif 
 	
 	//=============================
 	//#bugbug: 
@@ -568,11 +568,10 @@ found:
     // Carregar o arquivo, cluster por cluster.
     // @todo: Por enquanto, um cluster é igual à um setor, 512 bytes.
  
-    //Debug:
-#ifdef KERNEL_VERBOSE		
-    printf ("Loading clusters..\n");
-    //refresh_screen();
-#endif
+
+//#ifdef KERNEL_VERBOSE		
+    //printf ("Loading clusters..\n");
+//#endif
 
 	// Loop: 
 	//     Loop de entradas na FAT.

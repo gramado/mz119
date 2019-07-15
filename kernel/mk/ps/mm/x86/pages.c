@@ -208,9 +208,8 @@ void *CreatePageDirectory (void){
 	
 	if ( destAddressVA == 0 )
 	{
-        printf ("CreatePageDirectory: destAddressVA\n");
-		die ();
-		
+        panic ("CreatePageDirectory: destAddressVA\n");
+		//die ();
 		//return NULL;
 	}
 	
@@ -372,7 +371,7 @@ void *CreatePageTable ( unsigned long directory_address_va,
 		
 	if ( ptVA == 0 )
 	{
-		kprintf ("CreatePageTable: ptVA\n");
+		kprintf ("CreatePageTable: ptVA #bugbug\n");
 	}	
 	
 	// O endereço virtual permite manipularmos a pagetable daqui do kernel.
@@ -440,7 +439,7 @@ void *CreatePageTable ( unsigned long directory_address_va,
 	// ...
 	
 	//#debug
-	printf (">> region_address = %x \n",region_address);
+	//printf (">> region_address = %x \n",region_address);
 	
 	
 	for ( i=0; i < 1024; i++ )
@@ -451,7 +450,7 @@ void *CreatePageTable ( unsigned long directory_address_va,
 	
 	
 	//#debug
-	printf (">> newPT[0] = %x \n", newPT[0]);
+	//printf (">> newPT[0] = %x \n", newPT[0]);
 	
 	
 	
@@ -485,8 +484,8 @@ void *CreatePageTable ( unsigned long directory_address_va,
     unsigned long ptPA = (unsigned long) virtual_to_physical ( ptVA, 
                                              gKernelPageDirectoryAddress ); 
 	
-	printf (">> ptVA = %x \n",ptVA);
-	printf (">> ptPA = %x \n",ptPA);	
+	//printf (">> ptVA = %x \n",ptVA);
+	//printf (">> ptPA = %x \n",ptPA);	
 
 	if ( ptPA == 0 )
 	{
@@ -539,6 +538,8 @@ void SetCR3 (unsigned long address){
 
 unsigned long mapping_ahci1_device_address ( unsigned long address ){
 	
+    int i;
+    
     unsigned long *page_directory = (unsigned long *) gKernelPageDirectoryAddress;      
 
 	
@@ -546,7 +547,8 @@ unsigned long mapping_ahci1_device_address ( unsigned long address ){
 	//Esse endereço é improvisado. Parece que não tem nada nesse endereço.
 	//#todo: temos que alocar memória e converter o endereço lógico em físico.
 	
-	unsigned long *ahci1_page_table = (unsigned long *) PAGETABLE_AHCI1; //0x00083000 
+	// ?? //0x00083000 
+	unsigned long *ahci1_page_table = (unsigned long *) PAGETABLE_AHCI1; 
 	
 	
     // If you do use a pointer to the device register mapping, 
@@ -563,10 +565,8 @@ unsigned long mapping_ahci1_device_address ( unsigned long address ){
 	// Ainda não calculamos o uso de memória física.
 	// Precisamos saber quanta memória física esse dispositivo está usando.
 	
-	int i;
-	for ( i=0; i < 1024; i++ ){
-		
-		
+	for ( i=0; i < 1024; i++ )
+	{	
 		// 10=cache desable 8= Write-Through 0x002 = Writeable 0x001 = Present
 		// 0001 1011
 		ahci1_page_table[i] = (unsigned long) address | 0x1B; // 0001 1011
@@ -599,6 +599,8 @@ unsigned long mapping_ahci1_device_address ( unsigned long address ){
 
 unsigned long mapping_nic1_device_address ( unsigned long address ){
 	
+    int i;    
+    
     unsigned long *page_directory = (unsigned long *) gKernelPageDirectoryAddress;      
 
 	
@@ -624,11 +626,8 @@ unsigned long mapping_nic1_device_address ( unsigned long address ){
 	// Ainda não calculamos o uso de memória física.
 	// Precisamos saber quanta memória física esse dispositivo está usando.
 	
-	
-	int i;
-	for ( i=0; i < 1024; i++ ){
-		
-		
+	for ( i=0; i < 1024; i++ )
+	{
 		// 10=cache desable 8= Write-Through 0x002 = Writeable 0x001 = Present
 		// 0001 1011
 		nic0_page_table[i] = (unsigned long) address | 0x1B; // 0001 1011
@@ -644,10 +643,9 @@ unsigned long mapping_nic1_device_address ( unsigned long address ){
     page_directory[ENTRY_NIC1_PAGES] = (unsigned long) page_directory[ENTRY_NIC1_PAGES] | 0x1B; // 0001 1011   		
     //page_directory[ENTRY_NIC1_PAGES] = (unsigned long) page_directory[ENTRY_NIC1_PAGES] | 3;   	
 	
-	
 	//(virtual)
 	return (unsigned long) NIC1_VA;
-};
+}
 
 
 /*
@@ -1627,12 +1625,9 @@ int SetUpPaging (void){
 		framepoolList[5] = (unsigned long) pageable_fp;
 	};
 	
-	//
-	// More?!
-	//
+	// More ?
 
 // Done.
-//done:
 	
 #ifdef MK_VERBOSE
 	printf("Done\n");
@@ -1644,7 +1639,8 @@ int SetUpPaging (void){
 
 /*
  * initializeFramesAlloc:
- *     Inicializa o framepool. */
+ *     Inicializa o framepool. 
+ */
 
 void initializeFramesAlloc (void){
 	
@@ -1669,9 +1665,10 @@ void initializeFramesAlloc (void){
 	
 	if ( p == NULL )
 	{
-		printf("initializeFramesAlloc:\n");
+		printf ("initializeFramesAlloc:\n");
 		return;
 		//goto done;
+		
 	}else{
 		
 	    p->id = 0;
@@ -1703,7 +1700,7 @@ void initializeFramesAlloc (void){
  * lidando com páginas pre alocadas e não pageframes.
  */
 
-void *allocPages ( int size ){
+void *allocPages (int size){
 	
 	int Index;
 	
@@ -1725,17 +1722,18 @@ void *allocPages ( int size ){
 	// Checando limites.
 	//
 	
-#ifdef MK_VERBOSE
-    printf("allocPageFrames: Initializing ...\n");	
-#endif
+//#ifdef MK_VERBOSE
+    //printf ("allocPages: Initializing ...\n");	
+//#endif
 
 	//problemas com o size.
-	if(size <= 0)
+	if (size <= 0)
 	{
 		//if debug
-		printf("allocPageFrames: size 0\n");
+		printf ("allocPages: size 0\n");
 		return NULL;
 	};
+	
 			
     //Se é pra alocar apenas uma página.
 	if (size == 1)
@@ -1747,7 +1745,7 @@ void *allocPages ( int size ){
     if ( size > PAGE_COUNT_MAX )
 	{
 		//if debug
-		printf("allocPageFrames: size limits\n");
+		printf ("allocPages: size limits\n");
 		goto fail;
 	}
 	
@@ -1766,9 +1764,9 @@ void *allocPages ( int size ){
 		goto fail;
 	}
 	
-#ifdef MK_VERBOSE	
-    printf("allocPageFrames: for ...\n");		
-#endif 
+//#ifdef MK_VERBOSE	
+    //printf ("allocPages: for ...\n");		
+//#endif 
  
 	//começamos a contar do frame logo após o condutor.
 	
@@ -1786,7 +1784,7 @@ void *allocPages ( int size ){
 			
 			if ( p == NULL )
 			{
-				printf("allocPageFrames: 2\n");
+				printf ("allocPages: fail 2\n");
 				goto fail;
 			};
 			
@@ -1840,14 +1838,15 @@ void *allocPages ( int size ){
 	};
 	
 fail:
-    printf("allocPageFrames: fail \n");		
+    printf ("allocPages: fail \n");		
     return NULL;	
+
+	//#Importante:
+	//Retornaremos o endereço virtual inicial do primeiro pageframe da lista.
+	    
 done:
-    //printf("allocPageFrames: done ...\n");	
-    
-	//*Importante:
-	//retornaremos o endereço virtual inicial do primeiro pageframe da lista.
-	return (void *) ( base + (Ret->id * 4096) );
+
+    return (void *) ( base + (Ret->id * 4096) );
 }
 
 
@@ -1855,17 +1854,18 @@ done:
 int pEmpty (struct page_d *p){
 	
     return p == NULL ? 1 : 0;
-};
+}
 
 
 //selecionar a página como livre.
 void freePage (struct page_d *p){
 	
-	if (p == NULL){
+	if (p == NULL)
+	{
 		return;  //fail	
 	}
 	    
-    if( p->used == 1 && p->magic == 1234 )
+    if ( p->used == 1 && p->magic == 1234 )
 	{
 	    p->free = 1;
 	}		
