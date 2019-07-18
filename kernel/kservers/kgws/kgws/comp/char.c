@@ -1,5 +1,5 @@
 /*
- * File: gws\gws\char.c
+ * File: kgws/comp/char.c
  *
  * Descrição:
  *     Constrói caractere em modo gráfico.
@@ -10,7 +10,6 @@
  * History:
  *     2015 - Created by Fred Nora.
  *     2018 - Revision.
- *
  */
 
  
@@ -27,13 +26,12 @@
  * my_buffer_char_blt:
  *     Constrói um caractere transparente 8x8 no buffer.
  */
-
-//void charBuiltCharBackBuffer( unsigned long x, unsigned long y, unsigned long color, unsigned long c)
-
-void my_buffer_char_blt ( unsigned long x, 
-                          unsigned long y, 
-						  unsigned long color, 
-						  unsigned long c )
+ 
+void 
+my_buffer_char_blt ( unsigned long x, 
+                     unsigned long y, 
+					 unsigned long color, 
+					 unsigned long c )
 {
     drawchar_transparent ( x, y, color, c );								
 }
@@ -75,16 +73,17 @@ drawchar_transparent ( unsigned long x,
                        unsigned long y, 
 					   unsigned long color, 
 					   unsigned long c )
-{	
+{
+	// #todo: rever isso.
+	struct window_d *hWindow;		
+		
 	int x2;
     int y2;
 
-	char *work_char;  
-	
     unsigned char bit_mask = 0x80;	
     
-	struct window_d *hWindow;			
-	  
+	char *work_char;  
+  
     //
 	// Window Terminal.
 	//
@@ -234,16 +233,16 @@ draw_char ( unsigned long x,
 			unsigned long fgcolor,
 			unsigned long bgcolor )
 {	
+	// #todo: Rever isso.
+	struct window_d *hWindow;
+		
 	int x2;
     int y2;
-	
-	char *work_char;  
-	
+		
     unsigned char bit_mask = 0x80;	
-    
-	struct window_d *hWindow;
 
-	  
+	char *work_char;  
+		  
     //
 	// Window Terminal.
 	//

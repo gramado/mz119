@@ -1,5 +1,5 @@
 /*
- * File: gws\gws\pixel.c
+ * File: pixel.c
  *
  * Descrição:
  *     Rotinas de pintura de pixel.
@@ -27,7 +27,7 @@
  * não a estrutura de buffer e sim apenas o ponteiro para o buffer. se bem que 
  * se fosse passado um ponteiro para um estrutura de buffer seria bem mais seguro.
  *
- * Versão 1.0, 2015.
+ * 2015.
  */
 
  
@@ -85,7 +85,7 @@ pixelPutPixelWindowBuffer( void *buffer,
 						   unsigned long color )
 {
 	//return; //@todo: Ainda não implementada.					  
-};
+}
 
 										 
 /*
@@ -182,7 +182,7 @@ useDedicatedBuffer:
 	
 	*/
     return;	
-};
+}
 
 
 /*
@@ -282,14 +282,7 @@ lfb_putpixel ( unsigned long ax,
 		       unsigned long cx, 
 		       unsigned long dx )
 {
-    
-	//hal_lfb_putpixel ( ax, bx, cx, dx );
-	
-	//#test
-	//tentando um novo método.
-	
 	unsigned char *where = (unsigned char *) 0xC0400000;
-	
 	
 	unsigned long color = (unsigned long) ax;
 	
@@ -316,6 +309,8 @@ lfb_putpixel ( unsigned long ax,
 		case 24:
 		    bytes_count = 3;
 			break;
+			
+		//...
 	}	
 	
 	//#importante
@@ -351,8 +346,7 @@ unsigned long get_pixel ( unsigned long x,  unsigned long y ){
 	
 	unsigned char *backbuffer = (unsigned char *) BACKBUFFER_ADDRESS;
 
-	// = 3; 
-	//24bpp
+	// = 3; 24bpp
 	int bytes_count;
 
 	switch (SavedBPP)
@@ -364,6 +358,8 @@ unsigned long get_pixel ( unsigned long x,  unsigned long y ){
 		case 24:
 		    bytes_count = 3;
 			break;
+		
+		//...
 	}	
 
 	// #importante
@@ -392,9 +388,7 @@ void refresh_pixel ( unsigned long x,  unsigned long y ){
 	
     unsigned char *frontbuffer = (unsigned char *) FRONTBUFFER_ADDRESS;	
 	
-	
-	// = 3; 
-	//24bpp
+	// = 3; 24bpp
 	int bytes_count;
 	
 	switch (SavedBPP)
@@ -406,6 +400,8 @@ void refresh_pixel ( unsigned long x,  unsigned long y ){
 		case 24:
 		    bytes_count = 3;
 			break;
+			
+		//...
 	}	
 
 	//#importante
@@ -417,6 +413,13 @@ void refresh_pixel ( unsigned long x,  unsigned long y ){
 	
 	//pego o pixel no backbuffer
 	COLOR = get_pixel ( x, y );
+		
+	//#todo:
+	// Checar o limite de pos.
+	//unsigned long address = &frontbuffer[pos];
+	
+	// #bugbug:
+	// Isso é potencialmente perigoso para compilar.	
 	
 	*( unsigned long * ) &frontbuffer[pos] = COLOR;
 }

@@ -66,6 +66,7 @@ int save_window (struct window_d *window){
     if ( (void *) window == NULL )
     {
 		return 1;
+
 	} else {
 	
         if ( window->used != 1 || window->magic != 1234 )
@@ -74,8 +75,8 @@ int save_window (struct window_d *window){
 		}
 
 		save_rect ( window->left, window->top, window->width, window->height );
+        
         //... 		
-		
 	};		
 }
 
@@ -91,7 +92,8 @@ int show_saved_window (struct window_d *window){
     if( (void *) window == NULL )
     {
 		return 1;
-	} else {
+
+	}else{
 	
         if ( window->used != 1 || window->magic != 1234 )
         {
@@ -146,10 +148,10 @@ int show_window_rect (struct window_d *window){
 				//return (int) 0;	
 			//}
 			
-	        refresh_rectangle ( window->left, window->top, window->width, 
-		        window->height ); 		
+	        refresh_rectangle ( window->left, window->top, 
+	            window->width, window->height ); 		
 			
-			return (int) 0;
+			return 0;
 		}		
 	};
 
@@ -180,8 +182,9 @@ int windowKillTimer ( struct window_d *window, int id ){
 
 fail:
 //done:	
+
     return (int) Status;	
-};
+}
 
 
 /*
@@ -194,23 +197,24 @@ fail:
 // para conseguir a contagem que precisa.
 // #teste, começaremos contagem simples para teste.
 
+// IN:
+// janela, id do timer, tempo (medida indefinida ainda)
+
 int
-windowSetTimer( struct window_d *window, //janela
-                int id,                  //id do timer
-				int time )               //tempo(medida indefinida ainda)
+windowSetTimer ( struct window_d *window, 
+                int id,  
+                int time )  
 {
     int Status = 0;
-	
-	// ## Window  ##
-	
+    
 	if( (void *) window == NULL )
 	{
 		Status = 1;
 		goto fail;
+
 	}else{
 		
-		if ( window->used != 1 ||
-		     window->magic != 1234 )
+		if ( window->used != 1 || window->magic != 1234 )
 		{
 			Status = 1;
 		    goto fail;
@@ -227,13 +231,12 @@ windowSetTimer( struct window_d *window, //janela
 		
 		//...
 	};
-	
-	
+		
 fail:
 done:	
-    return (int) Status;
-};
 
+    return (int) Status;
+}
 
 
 /*
@@ -647,7 +650,7 @@ void windowSetUpColorScheme (int type){
 
 
 //seleciona o tipo ...isso é um serviço.
-int windowSelectColorScheme ( int type ){
+int windowSelectColorScheme (int type){
 	
 	//#debug
 	//printf("windowSelectColorScheme: type={%d} \n", type);
@@ -861,43 +864,12 @@ windowSendMessage ( unsigned long arg1,
  * Ex: void *windowGetMessageWWF()
  */
 
-//#suspensa ?
-
-// Salvando a estrutura para o app pegar elemento por eemento.	(#teste)
-struct message_d *xxxxsavemessage; 
+//#suspensa: deletar.
  
-void *windowGetHandleWindow (struct window_d *window){
-	
-	//if( window_getch_lock == 1){
-	//	return NULL;
-	//}
-	
-	//#importante.
-	//Essa rotina ainda não é chamada pelo consumidor,
-	//apenas as outras 3.
-	
-	//@todo: Precisa fazer essa função.
-	
-//fast_return:
-	return NULL;
-	
-	//fast way 
-	//@todo: melhorar isso
-	struct window_d *wFocus;
-	
-	wFocus = (void *) windowList[window_with_focus];
-	
-	//@todo: habilitar esse if.
-	//if( wFocus->newmessageFlag == 0 ){
-	//	return NULL;
-	//}
-	
-	return (void*) wFocus->msg_window;
-	
-	//Nothing.
-fail:	
-	return NULL;
-};
+void *windowGetHandleWindow (struct window_d *window)
+{
+   return NULL;
+}
 
 
 /*
@@ -1009,37 +981,10 @@ fail:
 };
 
 
-//#suspensa ?
-void *windowGetLong2(struct window_d *window){
-	
-	//if( window_getch_lock == 1){
-	//	return NULL;
-	//}
-	
-	//@todo: Liberar long2.
-	return NULL;
-	
-	//fast way 
-	//@todo: melhorar isso
-	struct window_d *wFocus;
-	
-	wFocus = (void *) windowList[window_with_focus];
-	
-	if( wFocus->newmessageFlag == 0 )
-	{
-		return NULL;
-	}
-	
-	//sinaliza que a mensagem foi lida, e que não temos nova mensagem.
-	wFocus->newmessageFlag = 0;
-	
-	return (void *) wFocus->long2;
-	
-	//Nothing.
-	
-fail:	
-
-	return NULL;
+//#suspensa: deletar.
+void *windowGetLong2 (struct window_d *window)
+{
+	return NULL;	
 }
 
 
@@ -1057,31 +1002,26 @@ fail:
  */
  
 // window server. low level.
- 
+//pode ser que esse aplicativo não tenha janela,
+//mas esteja rodando na janela do shell.
+	 
 int window_getch (void){
-	
-	//pode ser que esse aplicativo não tenha janela,
-	//mas esteja rodando na janela do shell.
-	
-	struct window_d *wFocus;	
-	
+
+	struct window_d *wFocus;		
 	unsigned char SC;
 	int save;
 	
-	
-	//
 	// Bloqueia pra que nenhum aplicativo pegue mensagens 
 	// na estrutura de janela até que window_getch termine.
-	//
 	
 	//window_getch_lock = 1;
 	
-	//
 	// Pegamos um scancode na fila do teclado,
 	// transformamos ela em mensagem e colocamos a 
 	// mensagem na estrutura da janela com o foco de entrada.
-	//
 	
+	// #bugbug
+	// Rever esse buffer. Talvez as coisas mudaram um pouco por lá.
 
 	SC = (unsigned char) keybuffer[keybuffer_head];
 	
@@ -1160,48 +1100,41 @@ done:
 
 // #bugbug
 // Essas rotinas de buffer dedicado precisam serem revistas. 
+
+// Buffer size.
+// Alocando memória no Heap do kernel.
+// #todo: 
+// Usar variável para quantidade de bytes por pixel. 
  
 int windowCreateDedicatedBuffer (struct window_d *window){
 
-	size_t bufferSize;
+	size_t bufferSize = 0;
 	
-	//Check;
 	if ((void *) window == NULL )
 	{ 
-	    return (int) 1;  //Fail. 
+	    return (int) 1;  
 	};
 	
-    //
-    // Buffer size.
-    //
-	
-	//@todo: Usar variável para quantidade de bytes por pixel.
 	bufferSize = (size_t) (window->width * 3) + (window->height * 3);
 	
-	//
-	// Alocando memória no Heap do kernel.
-	//
-	
-	if(bufferSize == 0){
-	    return (int) 1;    //Fail.	
-	}
-	else
+	if (bufferSize == 0)
 	{
+	    return (int) 1;    
+	
+	}else{
+		
 	    window->DedicatedBuffer = (void *) malloc (bufferSize);	
 	    
 	    if( (void *) window->DedicatedBuffer == NULL )
 	    {
-		    return (int) 1;    //Fail.	
+		    return (int) 1;    
 		}
-		goto done;
+		
+		return 0;
 	};
-	//Nothing
 	
-	//Success.
-	
-done:
-
-	return 0;
+//fail:	
+	return 1;
 }
 
 
@@ -1218,9 +1151,11 @@ void windowLock (struct window_d *window){
 	if ( (void *) window == NULL )
 	{
 	    return;
-    };
-	
-    window->locked = (int) WINDOW_LOCKED;
+
+    }else{
+		
+        window->locked = (int) WINDOW_LOCKED;
+	};
 }
 
 
@@ -1237,9 +1172,11 @@ void windowUnlock (struct window_d *window){
 	if ( (void *) window == NULL )
 	{
 	    return;
-    };  
     
-	window->locked = (int) WINDOW_UNLOCKED;
+    }else{
+		
+    	window->locked = (int) WINDOW_UNLOCKED;		
+	};
 }
 
 
@@ -1258,6 +1195,7 @@ void set_current_window (struct window_d *window){
 	};  
     
 	CurrentWindow = (void *) window;
+	
 	current_window = (int) window->id;
 }
 
@@ -1366,8 +1304,8 @@ void windowShowWindowList (void){
 
 	int i = 0;
 
-	struct window_d *hWnd;
 	struct window_d *hWindow;
+	struct window_d *hWnd;
 
 	unsigned long left;
 	unsigned long top;
@@ -1583,7 +1521,6 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 	int Status; 
 	unsigned long border_size = 0;
 	unsigned long border_color = COLOR_BORDER;	
-
 	
 	if ( (void *) window == NULL )
 	{
@@ -2029,10 +1966,14 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 			if ( window->statusbar->used == 1 && 
 			     window->statusbar->magic == 1234 )
 			{
-		        drawDataRectangle ( window->statusbar->left, window->statusbar->top, 
-			        window->statusbar->width -1, window->statusbar->height, window->statusbar->bg_color ); 	
+		        drawDataRectangle ( window->statusbar->left, 
+		            window->statusbar->top, 
+			        window->statusbar->width -1, 
+			        window->statusbar->height, 
+			        window->statusbar->bg_color ); 	
 						   
-		        draw_string ( window->statusbar->left +8, window->statusbar->top +8, 
+		        draw_string ( window->statusbar->left +8, 
+		            window->statusbar->top +8, 
 		            COLOR_TEXT, window->statusbar->name ); 
 			}
 		}
@@ -2056,7 +1997,8 @@ int redraw_window (struct window_d *window, unsigned long flags ){
         {
 			if ( (void *) window->button != NULL )
 			{
-				if ( window->button->used == 1 && window->button->magic == 1234 )
+				if ( window->button->used == 1 && 
+				     window->button->magic == 1234 )
 				{
 					// #importante
 				    // Redesenhar o botão com base nas informações da estrutura.    
@@ -2097,33 +2039,40 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 					};
 					
 	                //bg
-	                drawDataRectangle ( window->left + window->button->x, window->top + window->button->y, 
+	                drawDataRectangle ( window->left + window->button->x, 
+	                    window->top + window->button->y, 
 	                    window->button->width, window->button->height, window->button->color );					
 					
 					//board1, borda de cima e esquerda.
-	                drawDataRectangle ( window->left + window->button->x, window->top + window->button->y, 
+	                drawDataRectangle ( window->left + window->button->x, 
+	                    window->top + window->button->y, 
 	                    window->button->width, 1, window->button->border1 );
 		
-	                drawDataRectangle ( window->left + window->button->x, window->top + window->button->y, 
+	                drawDataRectangle ( window->left + window->button->x, 
+	                    window->top + window->button->y, 
 	                    1, window->button->height, window->button->border1 );
 
 	                //board2, borda direita e baixo.
-	                drawDataRectangle ( window->left + window->button->x + window->button->width -1, window->top + window->button->y, 
+	                drawDataRectangle ( window->left + window->button->x + window->button->width -1, 
+	                    window->top + window->button->y, 
 		                1, window->button->height, window->button->border2 );
 					   
-	                drawDataRectangle ( window->left + window->button->x, window->top + window->button->y + window->button->height -1, 
+	                drawDataRectangle ( window->left + window->button->x, 
+	                    window->top + window->button->y + window->button->height -1, 
 		                window->button->width, 1, window->button->border2 );					
 				    
 					//#todo: if aqui tem duas opções de draw string.
                     if ( window->button->selected == 1 )
 					{
-					    draw_string ( window->left + window->button->x +8, window->top + window->button->y +8, 
+					    draw_string ( window->left + window->button->x +8, 
+					        window->top + window->button->y +8, 
 			                COLOR_WHITE, window->button->string );
                     }
 					
                     if ( window->button->selected == 0 )
                     {
-					    draw_string ( window->left + window->button->x +8, window->top + window->button->y +8, 
+					    draw_string ( window->left + window->button->x +8, 
+					        window->top + window->button->y +8, 
 			                COLOR_TERMINALTEXT, window->button->string );					
 					}						
 				}				
@@ -2179,16 +2128,16 @@ fail:
  */
  
 //wm.
+
+// Vamos procurar na lista por ponteiros válidos.
+// Repintaremos todas as janelas com ponteiros válidos. 
  
 int redraw_screen (void){
 	
 	int z;
     int RedrawStatus;	
-	
+    
 	struct window_d *zWindow;
-	
-	// Vamos procurar na lista por ponteiros válidos.
-	// Repintaremos todas as janelas com ponteiros válidos.
 	
 	for ( z = 0; z < ZORDER_COUNT_MAX; z++ )
 	{
@@ -2224,17 +2173,18 @@ int redraw_screen (void){
        //nothing.
 	};	
 
-	//#bugbug ?? Repintaremos duas vezes a última janela.
+	// #bugbug: ?? 
+	// Repintaremos duas vezes a última janela.
     // Repintaremos novamente a última janela.
-    //Agora com foco de entrada.	
+    // Agora com foco de entrada.	
 
     if ( (void *) zWindow != NULL )
 	{
 		if ( zWindow->used == 1 && zWindow->magic == 1234 )
 		{
-            set_active_window(zWindow);	
+            set_active_window (zWindow);	
             
-            SetFocus(zWindow);
+            SetFocus (zWindow);
 
 	        //Repinta uma janela.
 	        RedrawStatus = (int) redraw_window (zWindow, 1);
@@ -2303,7 +2253,8 @@ replace_window ( struct window_d *window,
 				 unsigned long x, 
 				 unsigned long y )
 {
-    if ( (void *) window == NULL ){
+    if ( (void *) window == NULL )
+    {
 		return 1;
 	
 	} else {
@@ -2369,7 +2320,7 @@ int is_window_maximized (struct window_d *window){
 		
 	} else {
 	    
-		//Checa se está maximizada.
+		//Checa se já está maximizada.
         if ( window->view == VIEW_MAXIMIZED )
         {
 	        return (int) 1;
@@ -2381,20 +2332,22 @@ int is_window_maximized (struct window_d *window){
 }
 
 
-// todo: 
-// rever o retorno
 
-// wm.
+/*
+ * is_window_minimized:
+ */
+ 
+// wm stuff
 
 int is_window_minimized (struct window_d *window){	
     
 	if ( (void *) window == NULL)
 	{
-	    return (int) 0;    //FALSE.
+	    return 0;
 	
 	} else {
 		
-	    //Checa se está minimizada.
+	    // Checa se já está minimizada.
         if ( window->view == VIEW_MINIMIZED )
         {
 	        return (int) 1;

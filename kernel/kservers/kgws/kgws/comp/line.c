@@ -1,5 +1,5 @@
 /*
- * File: gws/gws/line.c
+ * File: line.c
  *
  * Descrição:
  *     Rotinas de pintura de linha.

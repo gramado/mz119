@@ -1,5 +1,5 @@
 /*
- * File: gws/gws/bg.c 
+ * File: kgws/comp/bg.c 
  *
  * Descrição:
  *     Rotinas de configuração do background de um desktop.
@@ -36,24 +36,20 @@ extern unsigned long SavedBPP;
  *     #todo get device info.
  */
 
+// #bugbug
+// Isso não está funcionando,
+// Tá dando page fault.
+
 void backgroundDraw (unsigned long color){
 	
-	// #bugbug
-	// Isso não está funcionando,
-	// Tá dando page fault.
-	
-	//return;
-	
-    unsigned long i;
+    unsigned long i=0;
 		
     if (VideoBlock.useGui != 1)
 	    return;
 	
-	//for ( i=0; i< 400; i++ )
     for ( i=0; i<SavedY; i++ )
 	{			
         my_buffer_horizontal_line ( 0, i, SavedX, color );
-        //my_buffer_horizontal_line ( 0, i, 400, color );
 	}
 	
 	//#bugbug
@@ -83,17 +79,18 @@ void backgroundSetColor (unsigned long color)
 
 /*
  * backgroundRedraw:
- *     Redraw bg. */
+ *     Redraw bg. 
+ */
 
 void backgroundRedraw (unsigned long color){
 	
-    if ( gui->backgroundStatus == 0 ){
-		
+    if ( gui->backgroundStatus == 0 )
+    {	
         return;
-    };
+    }
 	
-	if ( (void *) gui->background != NULL ){
-		
+	if ( (void *) gui->background != NULL )
+	{	
 	   backgroundDraw (color);	
 	}
 }
@@ -112,10 +109,12 @@ void backgroundBackground (void){
 
 int backgroundInit (void){
 	
-	int i=0;
 	unsigned long *lfb = (unsigned long *) BACKBUFFER_VA;
-	
-	//#test velocidade?
+	int i=0;
+		
+	// #bugbug:
+	// As dimensões precisam de variáveis.	
+		
 	for ( i=0; i< 800*600; i++ )
 		lfb[i] = COLOR_BLACK;
 	
@@ -123,6 +122,7 @@ int backgroundInit (void){
 	// Ainda não implementada.
 	
 	backgroundBackground ();
+	
 	//...
 	
 	return 0; 

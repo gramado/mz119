@@ -1,10 +1,8 @@
 /*
  * File: rect.c
  *
- * Descrição:
- *     Rotina de pintura de retangulos.
- *     Faz parte do módulo Window Manager do tipo MB.
- *
+ *     Draw rectangles.
+ *  
  * History:
  *    2015 - Created by Fred Nora.
  */
@@ -28,14 +26,20 @@ extern unsigned long SavedBPP;
 
 // ??
 // Copiando ...
+// Destination is an Null pointer? 
+// Source is an Null pointer? 
+// Zero-sized copy? 
+// Destination is Source?
 
-void *rectStrCopyMemory32 ( unsigned long *dest, unsigned long *src, int count ) 
+void *rectStrCopyMemory32 ( unsigned long *dest, 
+                            unsigned long *src, 
+                            int count ) 
 {
-	// Destination is an Null pointer? Source is an Null pointer? Zero-sized copy? Destination is Source?
+	int i;
 	
-	if ( (dest == NULL) || 
-	     (src == NULL)  || 
-		 (count == 0) || 
+	if ( (dest == NULL)  || 
+	     (src == NULL)   || 
+		 (count == 0)    || 
 		 (src == dest) ) 
 	{
         // Yes		
@@ -44,7 +48,6 @@ void *rectStrCopyMemory32 ( unsigned long *dest, unsigned long *src, int count )
 	
 	// GCC should optimize this for us :)
 	
-	int i;
 	for ( i=0; i < count; i++ ) 
 	{
 		dest[i] = src[i];
@@ -209,7 +212,6 @@ drawDataRectangle ( unsigned long x,
         rect.right = SavedX;
 	}	
 
-	//teste
     if ( rect.bottom > SavedY )
 	{
         rect.bottom = SavedY;
@@ -312,13 +314,14 @@ refresh_rectangle ( unsigned long x,
 	unsigned long Width = (unsigned long) screenGetWidth();
 	unsigned long Height = (unsigned long) screenGetHeight();
 
+	int count; 
+
+	// = 3; 24bpp
+	int bytes_count;
+
 	line_size = (unsigned int) width; 
 	lines = (unsigned int) height;
 
-
-	// = 3; 
-	//24bpp
-	int bytes_count;
 	
 	switch (SavedBPP)
 	{
@@ -349,8 +352,6 @@ refresh_rectangle ( unsigned long x,
 	vsync ();	
 		
 	//(line_size * bytes_count) é o número de bytes por linha. 
-	
-	int count; 
 
 	//#importante
 	//É bem mais rápido com múltiplos de 4.	
@@ -396,6 +397,7 @@ refresh_rectangle2 ( unsigned long x,
                      unsigned long buffer2 )
 {    
 	void *p = (void *) buffer1;		
+	
 	const void *q = (const void *) buffer2;
 
 	//register unsigned int i;
@@ -406,11 +408,13 @@ refresh_rectangle2 ( unsigned long x,
 	unsigned long Width = (unsigned long) screenGetWidth();
 	unsigned long Height = (unsigned long) screenGetHeight();	
 
+	int count; 
+
+	// = 3; //24bpp
+	int bytes_count;
+	
 	line_size = (unsigned int) width; 
 	lines = (unsigned int) height;
-	
-	
-	int bytes_count;// = 3; //24bpp
 	
 	switch (SavedBPP)
 	{
@@ -435,8 +439,6 @@ refresh_rectangle2 ( unsigned long x,
 	
 	
 	//(line_size * 3) é o número de bytes por linha. 
-	
-	int count; 
 	
 	//se for divisível por 4.
 	if( ((line_size * 3) % 4) == 0 )
@@ -476,8 +478,7 @@ refresh_rectangle2 ( unsigned long x,
 		p += (Width * 3);
 	};	
 	*/
-};
-
+}
 
 
 // Inicializando a estrutura de gerenciamento de retângulo salvo.
@@ -500,8 +501,7 @@ int initialize_saved_rect (void){
 	
 	    if ( (void *) SavedRect->buffer_address == NULL )
 	    {
-		    printf ("initialize_saved_rect: buffer fail");
-	        die ();	
+		    panic ("initialize_saved_rect: buffer fail");
 	    }
 
         SavedRect->x = 0; 		
@@ -522,14 +522,12 @@ int initialize_saved_rect (void){
 	};		
 
 	//#debug
-	printf("gws-initialize_saved_rect: **** done");
+	printf ("initialize_saved_rect: *done");
 	//refresh_screen();
 	
-	//while (1){
-	//	asm("hlt");
-	//}
+	//while (1){ asm ("hlt"); }
 	
-    return (int) 0;
+    return 0;
 }
 
 
@@ -551,8 +549,7 @@ save_rect ( unsigned long x,
 
 	    if ( (void *) SavedRect->buffer_address == NULL )
 	    {
-		    printf ("save_rect: buffer fail");
-	        die ();	
+		    panic ("save_rect: buffer fail");	
 	    }
     };
 
@@ -575,11 +572,13 @@ save_rect ( unsigned long x,
 	unsigned long Width = (unsigned long) screenGetWidth();
 	unsigned long Height = (unsigned long) screenGetHeight();
 
+	int count; 
+	
+	// = 3; //24bpp
+	int bytes_count;
+
 	line_size = (unsigned int) width; //passado por argumento
 	lines = (unsigned int) height;    //passado por argumento
-
-
-	int bytes_count;// = 3; //24bpp
 	
 	switch (SavedBPP)
 	{
@@ -611,8 +610,6 @@ save_rect ( unsigned long x,
 	
 	//(line_size * 3) é o número de bytes por linha. 
 	
-	int count; 
-	
 	//se for divisível por 4.
 	if( ((line_size * 3) % 4) == 0 )
 	{
@@ -629,7 +626,7 @@ save_rect ( unsigned long x,
 	}
 
 	//se não for divisível por 4.
-	if( ((line_size * 3) % 4) != 0 )
+	if ( ((line_size * 3) % 4) != 0 )
 	{
 
         //count = (line_size * 3);  		
@@ -637,6 +634,7 @@ save_rect ( unsigned long x,
 	    for ( i=0; i < lines; i++ )
 	    {
 		    memcpy ( (void *) p, (const void *) q, (line_size * 3) );
+		    
 		    q += (Width * 3);
 		    p += (Width * 3);
 	    };	
@@ -651,7 +649,7 @@ save_rect ( unsigned long x,
 	};	 
     */
 
-    return (int) 0;
+    return 0;
 }
 
 
@@ -683,8 +681,7 @@ show_saved_rect ( unsigned long x,
 
 	    if ( (void *) SavedRect->buffer_address == NULL )
 	    {
-		    printf ("save_rect: buffer fail");
-	        die ();	
+		    panic ("show_saved_rect buffer");	
 	    }
     };
 
@@ -701,8 +698,8 @@ show_saved_rect ( unsigned long x,
 	
 	int count; 
 	
-	int bytes_count;  // = 3; //24bpp	
-	
+	// = 3; //24bpp
+	int bytes_count;  	
 	
 	unsigned int offset1;  //offset dentro do buffer de salvamento.
 	unsigned int offset2;  //offset dentro do backbuffer
@@ -767,12 +764,13 @@ show_saved_rect ( unsigned long x,
 	    for ( i=0; i < lines; i++ )
 	    {
 		    memcpy ( (void *) p, (const void *) q, (line_size * 3) );
+		    
 		    q += (Width * 3);
 		    p += (Width * 3);
 	    };
 	}
 
-    return (int) 0;
+    return 0;
 }
 
 

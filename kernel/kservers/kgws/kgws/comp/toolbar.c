@@ -1,7 +1,7 @@
 /*
  * File: kgws/comp/toolbar.c
  *
- * Toolbar support for kgws.
+ *     Toolbar support for kgws.
  *
  * History:
  *     2019 - Created by Fred Nora.
@@ -39,7 +39,7 @@ struct window_d *ToolBar ( struct window_d *window ){
 	
 	if ( (void *) pWnd == NULL )
 	{
-		printf ("StatusBar: pWnd\n");
+		printf ("ToolBar: pWnd\n");
         goto fail;
 		
     }else{
@@ -51,16 +51,15 @@ struct window_d *ToolBar ( struct window_d *window ){
 	    
 		if ( (void *) pWnd->rcClient == NULL )
 		{
-			printf ("StatusBar: rcClient\n");
+			printf ("ToolBar: rcClient\n");
 		    goto fail;
 	    }
 		
 		// validation.
 		
-	    if ( pWnd->rcClient->used != 1 || 
-	         pWnd->rcClient->magic != 1234 )
+	    if ( pWnd->rcClient->used != 1 || pWnd->rcClient->magic != 1234 )
 	    {
-			printf ("StatusBar: validation\n");
+			printf ("ToolBar: validation\n");
 		    goto fail;
 	    }		
 		
@@ -99,22 +98,18 @@ struct window_d *ToolBar ( struct window_d *window ){
 		//Erro fatal:
 		//Precisamos de um esquema de cores válido.
 		
-		printf ("StatusBar: CurrentColorScheme");
-		die ();
+		panic ("ToolBar: CurrentColorScheme");
 		
 	}else{
 		
 		// validation.
-		
+		// Erro fatal: Precisamos de um esquema de cores válido.			
+		    		
 		if ( CurrentColorScheme->used != 1 || 
 		     CurrentColorScheme->magic != 1234 )
 		{
-		    //Erro fatal:
-		    //Precisamos de um esquema de cores válido.			
-		    
-			printf("StatusBar: CurrentColorScheme validation");
-		    die();			
-		};
+			panic ("ToolBar: CurrentColorScheme validation");		
+		}
 		
 		// Como o esquema de cores foi aprovado, vamos usa-lo.
 	    // Configurando as cores usadas na status bar.
@@ -138,7 +133,7 @@ struct window_d *ToolBar ( struct window_d *window ){
 	
 	if ( (void *) hWnd == NULL )
 	{
-		printf ("StatusBar: hWnd\n");
+		printf ("ToolBar: hWnd\n");
         goto fail;
 		
     }else{

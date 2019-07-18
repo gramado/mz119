@@ -1,5 +1,5 @@
 /*
- * File: gui\dtext.c
+ * File: dtext.c
  *
  * Descrição:
  *     Escreve um texto dentro de uma janela.
@@ -17,7 +17,8 @@
  *     Draw text on a window.
  *
  * #test: 
- *     Como opção, se nenhuma janela for especificada, então pintaremos na janela principal.
+ *     Como opção, se nenhuma janela for especificada, 
+ *     então pintaremos na janela principal.
  */
 
 void 
@@ -31,6 +32,7 @@ draw_text ( struct window_d *window,
 	{
 		draw_string ( gui->main->left +x, gui->main->top +y, color, string );
         return;
+        
     }else{
         draw_string ( window->left +x, window->top +y, color, string );
     };
@@ -46,7 +48,7 @@ draw_string ( unsigned long x,
               unsigned long color,
               unsigned char *string )
 {	
-	int Index;
+	int Index=0;
 	
 	int cWidth = get_char_width ();
 	//int cHeight = get_char_height ();
@@ -54,9 +56,7 @@ draw_string ( unsigned long x,
 	//if ( cWidth == 0 || cHeight == 0 )
 	if ( cWidth == 0 )
 	{
-		//#debug
-		printf("gws-dtext-draw_string: fail w ");
-		die();
+		panic ("dtext-draw_string: cWidth");
 	}
       
     for ( Index=0; string[Index] != 0; Index++ )
@@ -71,7 +71,7 @@ draw_string ( unsigned long x,
 		
         x += cWidth;
     };
-};
+}
 
 
 //
