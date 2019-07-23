@@ -1,5 +1,5 @@
 /*
- * File: intel.c   
+ * File: kdrivers/network/nicintel.c   
  *
  * Descrição:
  *     Network interface controller
@@ -13,6 +13,7 @@
  *     2016 - Created by Fred Nora.
  *     2018 - Credits: Ítalo Lima Marconato Matias, Chicago OS.
  */
+
 
  /*
    wikipedia - NIC
@@ -37,6 +38,7 @@ techniques:
     Polling, Interrupt-driven I/O, Programmed input/output, Direct memory access.
  
  */
+ 
  
  
 #include <kernel.h>
@@ -103,7 +105,7 @@ e1000_init_nic ( unsigned char bus,
 	// #todo
 	// Fazer uma lista de dispositivos Intel suportados por esse driver.
 	// +usar if else.
-	
+
     if ( Vendor != 0x8086 || Device != 0x100E )
     {
         return -1;
@@ -165,7 +167,7 @@ e1000_init_nic ( unsigned char bus,
 			refresh_screen ();
 			while (1){}
 
-			return -1;
+			//return -1;
 		}
 
 		pci_device->BAR0 = (unsigned long) diskReadPCIConfigAddr ( bus, dev, fun, 0x10 );
@@ -307,8 +309,8 @@ e1000_init_nic ( unsigned char bus,
 		    currentNIC->mac_address[3] = base_address[ 0x5400 + 3 ];
 		    currentNIC->mac_address[4] = base_address[ 0x5400 + 4 ];
 		    currentNIC->mac_address[5] = base_address[ 0x5400 + 5 ];
-	    };
-	};
+        };
+    };
 
 
 	//
@@ -319,7 +321,7 @@ e1000_init_nic ( unsigned char bus,
 	// #define PCI_COMMAND 0x04
 	// We really need to do it?
 	// Yes, set the bus mastering bit
-	// And write back 		
+	// And write back 
 
 	//( bus, slot, func, PCI_COMMAND )
 
@@ -338,7 +340,7 @@ e1000_init_nic ( unsigned char bus,
 			(int) 0x04, (int) cmd ); 
 	};
 
-    printf ("done\n");
+    printf ("Done\n");
 
     return 0;
 }
@@ -526,8 +528,8 @@ void xxxe1000handler (void){
 				//essa rotina vai copiar de um buffer para outro.
 			    E1000Send ( (void *) currentNIC, (uint32_t) arp_tx_len, (uint8_t *) &buffer[0]);
 
-				printf("\n");
-				refresh_screen();
+				printf ("\n");
+				refresh_screen ();
 				return;
 			} 
 		    return;
@@ -1044,7 +1046,7 @@ void NetSendEthPacket ( PNetworkDevice dev,
 {
 	
 	//if ((dev == Null) || (dev->send == Null) || (dest == Null)) 
-	//{																					// Sanity checks
+	//{																					
 	//	return;
 	//}
 	
@@ -1072,41 +1074,40 @@ void NetSendEthPacket ( PNetworkDevice dev,
 */
 
  
-//dispositivo, tamanho, dados a serem copiados no buffer.
+// Dispositivo, tamanho, dados a serem copiados no buffer.
 void E1000Send ( void *ndev, uint32_t len, uint8_t *data ){
-	
-	//printf("E1000Send: GO!!! \n");
-	//refresh_screen();	
-	
-	//
-	// ## dev ##
-	//
 	
 	struct intel_nic_info_d *dev = (struct intel_nic_info_d *) ndev;
 	
+	uint32_t i;
+	
+	
+	// dev.
+		
 	if ( (void *) dev == NULL )
 		return;
 	
 	//
-	// ## quem ? ##
+	// Quem ?
 	//
 	
 	uint16_t old = dev->tx_cur;
 	
 	
 	// ## Copiando o pacote no buffer ##
-	//com base no comprimento indicado no argmento.
-	//pegando o endereço virtual do buffer na estrutura do dispositivo.	
+	// com base no comprimento indicado no argmento.
+	// Pegando o endereço virtual do buffer na estrutura do dispositivo.	
 
 	unsigned char *buffer = (unsigned char *) currentNIC->tx_descs_virt[old];
 	unsigned char *src_data = (unsigned char *) data; 	
 
-	if(len==0)
+	//
+	// Copiando o header ethernet.
+	//
+		
+	if (len==0)
 		return;	
 	
-	uint32_t i;
-	
-	//copiando o header ethernet
 	for (i=0; i<len; i++)
 	{
 		buffer[i] = src_data[i];
@@ -1130,8 +1131,8 @@ void E1000Send ( void *ndev, uint32_t len, uint8_t *data ){
 	*( (volatile unsigned int *)(dev->mem_base + 0x3818)) = dev->tx_cur;	
 
 	//#debug
-	printf("sending broadcast arp(while)\n");
-	refresh_screen();	
+	printf ("Sending broadcast arp, (while)\n");
+	refresh_screen ();	
 		
 	while ( !(dev->legacy_tx_descs[old].status & 0xFF) )
 	{
@@ -1163,13 +1164,10 @@ send_ipv4_packet ( struct intel_nic_info_d *dev,
 }
 
 
-// #deletar isso
-// transmit:
-
+// #todo: Deletar isso.
 void nic_i8254x_transmit (void)
 {
-	//cancelada; fizemos outra.
-	printf ("nic_i8254x_transmit:\n");  
+    //Cancelada.
 }
 
 
@@ -1217,9 +1215,6 @@ void show_current_nic_info (){
 		//(section 13.4.2). This is a 4 byte register that starts at byte 8 
 		//of the register space. You should get 0x80080783, which indicates 
 		//a full duplex link is up at 1000 MB/s, among other things.		
-		
-		
- 
 		
 		printf("Device status %x \n", currentNIC->DeviceStatus );
 		
@@ -1285,8 +1280,7 @@ void show_current_nic_info (){
 		//...
 		
 	};	    
-	
-};
+}
 */
 
 

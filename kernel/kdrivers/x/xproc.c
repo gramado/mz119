@@ -1,9 +1,9 @@
 /*
- * File: sm/sys/proc.c
+ * File: xproc.c
  *
  *     System Procedure.
  *
- *     ****   Central de diálogo.   ****
+ *     ****   Central de diálogo do x server  ****
  *
  * A qui ficarão todos os diálogos para conversar com os módulos do kernel base.
  * Eles serão chamados de 'dialog' ou 'procedure'. 

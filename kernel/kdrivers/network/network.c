@@ -1,5 +1,5 @@
 /*
- * File: dd/network/network.c
+ * File: kdrivers/network/network.c
  *     
  *     Network sopport.
  *
@@ -86,21 +86,19 @@ int networkGetStatus (void){
 
 int networkInit (void){
 
-	// Status
-
-	//zera status.
+	// Zera status.
 	networkSetstatus (0);
 
 
-	// Host info struct
-	// host.h
+	// Host info struct. 
+	// See: host.h
 
 	HostInfo = (struct host_info_d *) malloc ( sizeof( struct host_info_d ) ); 
 
 	if ( (void *) HostInfo == NULL )
 	{
 		printf ("networkInit: HostInfo");
-		die();
+		die ();
 	
 	}else{
 		
@@ -121,13 +119,14 @@ int networkInit (void){
 		
 	};		
 	
-	//criando socket para local host porta 80
-	
+	// Criando socket para local host porta 80;
 	// Localhost (127.0.0.1):80 
+	// COnfigurando soquete atual.
 	
 	LocalHostHTTPSocket = (struct socket_d *) create_socket ( 0, 0 );  
 	
 	CurrentSocket = (struct socket_d *) LocalHostHTTPSocket;
+	
 	//...
 	
 
@@ -137,15 +136,20 @@ int networkInit (void){
 	
 	//ok
 	//todos os componentes da rede estão inicializados.
+	// #todo: 
+	// Só acionaremos essa flag quando realmente tudo estiver inicializado.
 	
-	//Obs: #todo: Só acionaremos essa flag quando realmente tudo estiver 
-	//inicializado.
+//done: 
 	
 	//networkSetstatus (1);
 	
 	return 0;
 }
 
+
+// #todo:
+// Isso não precisa ficar dentro do kernel base.
+// Algum aplicativo pode pegar essas informações, uma a uma.
 
 void show_network_info (void){
 	
@@ -175,6 +179,10 @@ void show_network_info (void){
 	show_current_nic_info ();	
 }
 
+
+// #todo:
+// Isso não precisa ficar dentro do kernel base.
+// Algum aplicativo pode pegar essas informações, uma a uma.
 
 void show_current_nic_info (void){
 	
@@ -295,26 +303,29 @@ void show_current_nic_info (void){
 }
 
 
-// Manipular o pacote ipv6 recebido pelo handle do e1000.
+/*
+ * handle_ipv6:
+ *     Manipular o pacote ipv6 recebido pelo handle do e1000.
+ */
 
 int 
 handle_ipv6 ( struct intel_nic_info_d *nic, 
               struct ipv6_header_d *header )
 {
-
     //printf("\n");
     //printf("handle_ipv6: Initializing ...\n");
 
     if ( (void *) nic == NULL )
 	{
-		printf("handle_ipv6: nic fail\n");
+		printf ("handle_ipv6: nic fail\n");
 		return -1;
-	}
+	};
 
     if ( (void *) header == NULL )
 	{
-		printf("handle_ipv6: header fail\n");
+		printf ("handle_ipv6: header fail\n");
 		return -2;
+		
 	}else{
 		
 		//printf("ver_tc_label=%x len=%d next_header=%x hop_limit=%d \n",
@@ -417,32 +428,49 @@ void testNIC (void){
 }
 
 
+/*
+ * SendIPV4: 
+ *    Criando e enviando um pacote ipv4.    
+ */
+
 void 
 SendIPV4 ( uint8_t source_ip[4], 
            uint8_t target_ip[4], 
            uint8_t target_mac[6], 
            uint8_t data[32] )
 {
-	
-	int i=0;
-	
-	struct ether_header *eh;
-	struct ether_arp *h;
-	struct ipv4_header_d *ipv4;
-	struct udp_header_d *udp;
-	
+    int i=0;
+    int j=0;
+
+	// Ethernet, arp, ipv4, udp.
+    struct ether_header *eh;
+    struct ether_arp *h;
+    struct ipv4_header_d *ipv4;
+    struct udp_header_d *udp;
+
+	//
+	// Nic device structure.
+	//
+
 	if ( currentNIC == NULL )
 	{
 		printf ("SendIPV4: currentNIC\n");
-		return;		
-	}
+		return;
 	
-	//configurando a estrutura do dispositivo,
+	}else{
+		
+		// Configurando a estrutura do dispositivo.
+	
+        currentNIC->ip_address[0] = source_ip[0];  //192;
+	    currentNIC->ip_address[1] = source_ip[1];  //168;
+	    currentNIC->ip_address[2] = source_ip[2];  //1;    	
+	    currentNIC->ip_address[3] = source_ip[3];  //112;  			
+		
+		//...
+	};
 
-	currentNIC->ip_address[0] = source_ip[0];  //192;
-	currentNIC->ip_address[1] = source_ip[1];  //168;
-	currentNIC->ip_address[2] = source_ip[2];  //1;    	
-	currentNIC->ip_address[3] = source_ip[3];  //112;  	
+
+
 	
 	
 	//
@@ -451,19 +479,25 @@ SendIPV4 ( uint8_t source_ip[4],
 	
 	eh = (void *) malloc ( sizeof(struct ether_header ) );
 	
-	if ( (void*) eh == NULL)
+	if ( (void *) eh == NULL)
 	{
 		printf ("struct eh fail");
 		die ();
-	}
+		
+	}else{
+		
+	    for ( i=0; i<6; i++)
+	    {
+		    eh->src[i] = currentNIC->mac_address[i];    //source ok
+		    eh->dst[i] = target_mac[i];                 //dest. (broadcast)	
+	    }	
 	
-	for( i=0; i<6; i++)
-	{
-		eh->src[i] = currentNIC->mac_address[i];    //source ok
-		eh->dst[i] = target_mac[i];                 //dest. (broadcast)	
-	}	
+	    eh->type = (uint16_t) ToNetByteOrder16 (ETH_TYPE_ARP);		
+	    
+	    //...
+	};
 	
-	eh->type = (uint16_t) ToNetByteOrder16 (ETH_TYPE_ARP);
+
 	
 	
     //==============================================
@@ -530,7 +564,6 @@ SendIPV4 ( uint8_t source_ip[4],
 	unsigned char *src_ipv4 = (unsigned char *) ipv4; 
 	unsigned char *src_udp = (unsigned char *) udp; 
 	
-	int j=0;
 	
 	//copia o header ethernet
 	for ( j=0; j<ETHERNET_HEADER_LENGHT; j++ )
@@ -566,6 +599,9 @@ SendIPV4 ( uint8_t source_ip[4],
 	
 	currentNIC->tx_cur = ( currentNIC->tx_cur + 1 ) % 8;
 	
+	
+	// ?? send ??
+	
 	*( (volatile unsigned int *)(currentNIC->mem_base + 0x3818)) = currentNIC->tx_cur;	
 	
 	
@@ -573,9 +609,10 @@ SendIPV4 ( uint8_t source_ip[4],
 	printf ("sending ipv4 (while)\n");
 	refresh_screen ();	
 	
-	//checamos o status do old pra ver se ele foi enviado.
-	//fica travado aqui até que seja envidao.
-	//poderia ter um timemout??.
+	// #bugbug: Cuidado.
+	// Checamos o status do old pra ver se ele foi enviado.
+	// fica travado aqui até que seja envido.
+	// Poderia ter um timemout?
 	
 	while ( !(currentNIC->legacy_tx_descs[old].status & 0xFF) )
 	{
@@ -583,31 +620,45 @@ SendIPV4 ( uint8_t source_ip[4],
 	}
 }
 	
-	
+
+/*
+ * SendARP:
+ *     Enviar um pacote ARP.
+ */
+
 void 
 SendARP ( uint8_t source_ip[4], 
           uint8_t target_ip[4], 
           uint8_t target_mac[6] )
 {
-	
-	int i=0;
-	
-	struct ether_header *eh;
-	struct  ether_arp *h;
-	
+    int i=0;
+
+    struct ether_header *eh;
+    struct ether_arp *h;
+
+	//
+	// nic device structure.
+	//
+
 	if ( currentNIC == NULL )
 	{
 		printf ("SendARP: currentNIC\n");
-		return;		
-	}
+		return;
 
-	
-	//configurando a estrutura do dispositivo,
+	}else{
+		
+		//configurando a estrutura do dispositivo,
 
-	currentNIC->ip_address[0] = source_ip[0];  //192;
-	currentNIC->ip_address[1] = source_ip[1];  //168;
-	currentNIC->ip_address[2] = source_ip[2];  //1;    	
-	currentNIC->ip_address[3] = source_ip[3];  //112;  			
+	    currentNIC->ip_address[0] = source_ip[0];  //192;
+	    currentNIC->ip_address[1] = source_ip[1];  //168;
+	    currentNIC->ip_address[2] = source_ip[2];  //1;    	
+	    currentNIC->ip_address[3] = source_ip[3];  //112;  					
+		
+		//...
+	};
+
+
+
 
 	//
 	// ====================== ## ETH HEADER ## ====================
@@ -619,15 +670,21 @@ SendARP ( uint8_t source_ip[4],
 	{
 		printf ("struct eh fail");
 		die ();
-	}
+		
+	}else{
+		
+	    for( i=0; i<6; i++)
+	    {
+		    eh->src[i] = currentNIC->mac_address[i];    //source ok
+		    eh->dst[i] = target_mac[i];                 //dest. (broadcast)	
+	    }	
 	
-	for( i=0; i<6; i++)
-	{
-		eh->src[i] = currentNIC->mac_address[i];    //source ok
-		eh->dst[i] = target_mac[i];                 //dest. (broadcast)	
-	}	
+	    eh->type = (uint16_t) ToNetByteOrder16(ETH_TYPE_ARP);		
+		
+		//...
+	};
 	
-	eh->type = (uint16_t) ToNetByteOrder16(ETH_TYPE_ARP);
+
 
     
 	
@@ -651,6 +708,8 @@ SendARP ( uint8_t source_ip[4],
 	//==================================
 	
 	
+	
+	
 	//#debug
 	//printf("debug *hang");
 	//refresh_screen();
@@ -666,37 +725,49 @@ SendARP ( uint8_t source_ip[4],
 	{
 		printf ("struct h fail");
 		die ();
-	}
 	
-    // Hardware type (HTYPE) // (00 01)
-	// Protocol type (PTYPE) //(08 00)	
-	// Hardware address length (MAC)	
-	// Protocol address length (IP)
-	
-	h->type = 0x0100; 
-	h->proto = 0x0008;      
-	h->hlen = 6;
-	h->plen = 4;
+	}else{
 		
-	//Operation (OPER) (dois bytes invertidos)
+		
+		// Hardware type (HTYPE) // (00 01)
+		// Protocol type (PTYPE) //(08 00)	
+		// Hardware address length (MAC)	
+		// Protocol address length (IP)
 	
-	//h->op = ToNetByteOrder16(ARP_OPC_REPLY);  	
-    h->op = ToNetByteOrder16(ARP_OPC_REQUEST);
+	    h->type = 0x0100; 
+	    h->proto = 0x0008;      
+	    h->hlen = 6;
+	    h->plen = 4;
 	
-	//mac
-	for( i=0; i<6; i++)
-	{
-		h->arp_sha[i] = currentNIC->mac_address[i];  //sender mac
-		h->arp_tha[i] = target_mac[i];               //target mac
-	}	
+		//Operation (OPER) (dois bytes invertidos)
 	
-	//ip
-	for ( i=0; i<4; i++)
-	{
-		h->arp_spa[i] = source_ip[i];    //sender ip
-		h->arp_tpa[i] = target_ip[i];    //target ip
-	}		
+        //h->op = ToNetByteOrder16(ARP_OPC_REPLY);  	
+        h->op = ToNetByteOrder16(ARP_OPC_REQUEST);
 	
+		// mac
+		// sender mac
+		// target mac
+	    for( i=0; i<6; i++)
+	    {
+		    h->arp_sha[i] = currentNIC->mac_address[i];  
+		    h->arp_tha[i] = target_mac[i];               
+	    }	
+
+		// ip
+		// sender ip
+		// target ip
+	    for ( i=0; i<4; i++)
+	    {
+		    h->arp_spa[i] = source_ip[i];    
+		    h->arp_tpa[i] = target_ip[i];    
+	    }		
+	
+	    //...
+	};
+	
+	
+//debug:
+
 	//==================================
 	//#debug
     //show arp
@@ -724,6 +795,7 @@ SendARP ( uint8_t source_ip[4],
 	}
 	*/
 	//==================================
+
 	
 	
 	// ## quem ? ##

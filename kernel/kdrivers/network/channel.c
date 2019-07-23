@@ -62,18 +62,16 @@ void *CreateChannel ( struct process_d *OwnerProcess,
 
 int DestroyChannel (struct channel_d *channel){
 	
-	if((void *) channel == NULL )
+	if ( (void *) channel == NULL )
 	{
-	    return (int) 0;    //Nothing to do.	    	
-	};
+	    return 0;    //Nothing to do.	    	
+	}
     
 	
-	//@todo? ...
-	
-//done:
-	
-    return (int) 0;	
-};
+	//#todo? ...
+		
+    return 0;	
+}
 
 
 
@@ -87,15 +85,16 @@ int OpenChannel ( struct channel_d *channel,
 				  struct thread_d *SenderThread,
 				  struct thread_d *ReceiverThread)
 {
-	if((void*) channel == NULL )
+	if ( (void*) channel == NULL )
 	{
 	    return (int) 1;    //Fail.
+
 	}else{
 		
 	    channel->State = 1;
 	};
 	
-    return (int) 0;	
+    return 0;	
 }
 
 
@@ -108,14 +107,17 @@ int OpenChannel ( struct channel_d *channel,
 
 int CloseChannel (struct channel_d *channel){
 	
-    if ( (void*) channel == NULL ){
+    if ( (void *) channel == NULL ){
+
 	    return (int) 1;
+	    
 	}else{
 	    channel->State = 0;
 	};
 	
-    return (int) 0;	
+    return 0;	
 }
+
 
 //
 // End.
