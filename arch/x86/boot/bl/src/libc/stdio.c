@@ -120,10 +120,11 @@ int kprintf( char *message, unsigned int line, int color )
             *message++; 
             i++; 
             
-			vidmemp[i] = color; 
+            vidmemp[i] = color; 
             i++; 
         };
-        //Nothing.		
+ 
+        //Nothing.
     }; 
 
     return 0; 
@@ -133,14 +134,15 @@ int kprintf( char *message, unsigned int line, int color )
 /*
  * prints:
  *     Print string.
- *     Parte da função printf(). */
+ *     Parte da função printf(). 
+ */
 
 static int prints ( char **out, const char *string, int width, int pad ){
 	
     register int pc = 0, padchar = ' ';
 
     if (width > 0) 
-	{
+    {
 	    register int len = 0;
 		register const char *ptr;
 		
@@ -148,58 +150,69 @@ static int prints ( char **out, const char *string, int width, int pad ){
 		if (len >= width) width = 0;
 		else width -= len;
 		if (pad & PAD_ZERO) padchar = '0';
-	};
-	
-	if( !(pad & PAD_RIGHT) ) 
+    };
+
+	if ( !(pad & PAD_RIGHT) ) 
 	{
 		for ( ; width > 0; --width){
 		    printchar( out, padchar);
 			++pc;
 		};
 	};
-	
-	for( ; *string ; ++string){
+
+
+	for ( ; *string ; ++string)
+	{
 		printchar(out, *string);
 		++pc;
 	};
-	
-	for( ; width > 0; --width){
+
+
+	for ( ; width > 0; --width)
+	{
 		printchar (out, padchar);
 		++pc;
 	};
+
+
     //Nothing.
+
 done:
-	return pc;
-};
+    return pc;
+}
 
 
 /*
  * printi:
  *     Parte da função printf()
- *
  */
-static int printi( char **out, int i, int b, int sg, int width, int pad, int letbase)
+ 
+static int printi ( char **out, int i, int b, int sg, int width, int pad, int letbase)
 {
 	char print_buf[PRINT_BUF_LEN];
 	register char *s;
 	register int t, neg = 0, pc = 0;
 	register unsigned int u = i;
 
-	if(i == 0){
+	if (i == 0)
+	{
 		print_buf[0] = '0';
-		print_buf[1] = '\0';		
+		print_buf[1] = '\0';
 		return prints(out, print_buf, width, pad);
 	};
-	
-	if(sg && b == 10 && i < 0){
+
+
+	if (sg && b == 10 && i < 0)
+	{
 		neg = 1;
 		u = -i;
 	};
 
+
 	s = print_buf + PRINT_BUF_LEN-1;
 	*s = '\0';
 
-	while(u) 
+	while (u) 
 	{
 		t = u % b;
 		
@@ -209,7 +222,8 @@ static int printi( char **out, int i, int b, int sg, int width, int pad, int let
 		    u /= b;
 	};
 
-	if(neg) 
+
+	if (neg) 
 	{
 		if( width && (pad & PAD_ZERO) ) 
 		{
@@ -220,25 +234,29 @@ static int printi( char **out, int i, int b, int sg, int width, int pad, int let
 			*--s = '-';
 		};
 	};
-	
-// Done.	
+
+
+// Done.
+
 done:
-	return pc + prints(out, s, width, pad);
-};
+    return pc + prints(out, s, width, pad);
+}
 
 
 /*
  * print:
  *     Parte da função printf()
  */
-static int print(char **out, int *varg)
-{
+
+static int print (char **out, int *varg){
+
 	register int width, pad;
 	register int pc = 0;
 	register char *format = (char *)(*varg++);
 	char scr[2];
 
-	for(; *format != 0; ++format) 
+
+	for (; *format != 0; ++format) 
 	{
 		if(*format == '%') 
 		{
@@ -308,7 +326,7 @@ static int print(char **out, int *varg)
 	
 	if (out) **out = '\0';
 	return pc;
-};
+}
 
 
 /*
@@ -317,63 +335,71 @@ static int print(char **out, int *varg)
  * Obs:
  *     Assuming sizeof(void *) == sizeof(int). 
  */
-int printf(const char *format, ...)
-{    
+
+int printf ( const char *format, ... ){
+
     //sincronisa.  
     // vsync();
     
-	register int *varg = (int *)(&format);
-	return print(0, varg);
-};
+    register int *varg = (int *)(&format);
+
+    return print (0, varg);
+}
 
 
 /*
  * sprintf:
  *     Lib C.
  */
-int sprintf(char *out, const char *format, ...)
-{	
-    // vsync();
-	
-    register int *varg = (int *)(&format);
-	return print(&out, varg);
-};
-
-
  
+int sprintf (char *out, const char *format, ... ){
+
+    // vsync();
+
+    register int *varg = (int *)(&format);
+
+    return print (&out, varg);
+}
+
+
 /*
  * printchar:
  *     Print a char.
- *
  */
-static void printchar(char **str, int c)
-{
+
+static void printchar (char **str, int c){
+
 	//extern int putchar(int c);
-	if(str) 
+    if (str) 
     {
 		**str = c;
 		++(*str);
-	}
-	else (void) putchar(c);
-};
+    }
+    else (void) putchar (c);
+}
+
 
 
 /*
  * putchar:
  *     Put a char.
  */
-int putchar(int ch){    
-    outbyte(ch);  
+
+int putchar (int ch){
+
+    outbyte (ch);
+  
     return ch;    
-};
+}
 
 
 /*
  * outbyte:
  *     Trata o caractere antes de por na memória de video.
  */
-void outbyte(int c)
-{
+
+void outbyte (int c){
+
     static char prev = 0;
     
     //sendo menor que espaço, não pode ser 'tab,return,back...)    
@@ -463,27 +489,30 @@ void outbyte(int c)
 	
 done: 
     return;
-};
+}
 
 
 /*
  * _outbyte: 
  *     Coloca um char na tela. Com opções de modo de vídeo.
- * 
  */
-void _outbyte(int c)
-{
+
+void _outbyte (int c){
+
     unsigned long i;
-	unsigned long x;
-	unsigned long y;	
-	char ch = (char) c;
-	char ch_atributo = (char) g_char_attrib;
-	char *vm = (char *) 0x000B8000;  
-    
+
+    unsigned long x;
+    unsigned long y;
+
+    char ch = (char) c;
+    char ch_atributo = (char) g_char_attrib;
+
+    char *vm = (char *) 0x000B8000;  
+
     // Caso estivermos em modo gráfico.
 	if(VideoBlock.useGui == 1)
 	{
-	    //	vsync();
+	    //vsync();
 		
 	    switch(VideoBlock.vesaMode)
 		{
@@ -497,7 +526,7 @@ void _outbyte(int c)
 			    my_buffer_char_blt( 8*g_cursor_x, 8*g_cursor_y, COLOR_WHITE, c);
 			    break;
 		}; 
-        goto done;		
+        goto done;
 	};
 	
 	
@@ -512,11 +541,13 @@ void _outbyte(int c)
 		//envia o caractere.
 		vm[i+0] = ch;             //char.
         vm[i+1] = ch_atributo;    //atributo (foreground,background).
-	};	
+	};
+
 	//Nothing.
-done:	
-    return;     
-};
+
+done:
+    return; 
+}
 
 
 /*
@@ -551,6 +582,7 @@ done:
  * -3: -3   left justif.
  * -3:   -3 right justif.
  */
+
 int printf_main(void)
 {
 	
@@ -609,7 +641,8 @@ int printf_main(void)
 
 /*
  * input:
- *     Coloca os caracteres digitados em uma string. */
+ *     Coloca os caracteres digitados em uma string. 
+ */
 
 unsigned long input (unsigned long ch){
 	
@@ -628,11 +661,11 @@ unsigned long input (unsigned long ch){
 	
 	switch (c)
 	{
-	    //enter	
+	    //enter
 		case KEY_RETURN:
 	    //case 0x1C:
 		    prompt[prompt_pos] = (char )'\0';
-            goto input_done;			
+            goto input_done;
 		    break;
 
 	    //backspace
@@ -651,7 +684,7 @@ unsigned long input (unsigned long ch){
 			//Apaga o anterior
 			g_cursor_x--;
 			g_cursor_x--;
-			printf("%c",'_');	
+			printf("%c",'_');
 			g_cursor_x--;
 			break;
 			
@@ -662,33 +695,36 @@ unsigned long input (unsigned long ch){
 			printf("%c",'_');
 			g_cursor_x--;
 			break;
-			
 	};
-//Nothing.	
-input_more:	
-	return 0;
+
+
 //Nothing.
-input_done:	
-    return KEY_RETURN;	
-};
+input_more:
+    return 0;
+
+//Nothing.
+input_done:
+    return KEY_RETURN;
+
+}
 
 
 /*
  * my_buffer_horizontal_line:
- *     Pinta uma linha horinzontal no Back Buffer. */
+ *     Pinta uma linha horinzontal no Back Buffer. 
+ */
 
-void my_buffer_horizontal_line ( unsigned long x1,
-                                 unsigned long y, 
-								 unsigned long x2,  
-								 unsigned long color )
+void 
+my_buffer_horizontal_line ( unsigned long x1,
+                            unsigned long y, 
+                            unsigned long x2, 
+                            unsigned long color )
 {
-	while (x1 < x2)
-	{
+    while (x1 < x2)
+    {
         my_buffer_put_pixel ( color, x1, y, 0 );
         x1++;  
     }
-	
-	//return;
 }
 
 
@@ -700,19 +736,24 @@ void my_buffer_horizontal_line ( unsigned long x1,
  * c = y
  * d = null
  */
-extern void gui_buffer_putpixel();	
-void my_buffer_put_pixel( unsigned long ax, 
-                          unsigned long bx, 
-						  unsigned long cx, 
-						  unsigned long dx )
+ 
+extern void gui_buffer_putpixel();
+
+void 
+my_buffer_put_pixel ( unsigned long ax, 
+                      unsigned long bx, 
+                      unsigned long cx, 
+                      unsigned long dx )
 {
+
 	//asm volatile(" \n "
 	//	          : // no inputs
 	//	          : "a"(ax), "b"(bx), "c"(cx), "d"(dx) );
-		
+
+
 	//#Warning
 	//suspenso, vamos tentar não usar o assembly
-	//gui_buffer_putpixel(); 	
+	//gui_buffer_putpixel(); 
 	//return;
 	
 	//SOFTWARELIB_BACKBUFFER EQU (0x1000000 - 0x800000)
@@ -761,23 +802,25 @@ void my_buffer_put_pixel( unsigned long ax,
 	//teste
 	if ( SavedBPP == 32 )
 	{
-	    where[offset +3] = a;	
+	    where[offset +3] = a;
 	}
-};
+}
 
 
 /*
  * my_buffer_char_blt:
- *     Draw a char using ROM's font. */
+ *     Draw a char using ROM's font. 
+ */
 
-void my_buffer_char_blt( unsigned long x, 
-                         unsigned long y, 
-						 unsigned long color, 
-						 unsigned long c )
+void 
+my_buffer_char_blt ( unsigned long x, 
+                     unsigned long y, 
+                     unsigned long color, 
+                     unsigned long c )
 { 
     int x2, y2;
     unsigned char bit_mask = 0x80;
-	char *work_char = (char*) 0x000FFA6E + (c * 8);    //char height.     
+    char *work_char = (char*) 0x000FFA6E + (c * 8);    //char height.     
 
 
     for ( y2=0; y2<8; y2++ )
@@ -792,22 +835,23 @@ void my_buffer_char_blt( unsigned long x,
         };
                        
 		y++;            //Próxima linha.
-		work_char++;    //Incrementa 8 bits.	   
-	};	         	   
+		work_char++;    //Incrementa 8 bits.
+	};
 }
 
 
 /*
  * vsync: 
  *     Sincroniza a pintura com o retraço vertical.
- *     OBS: Talvez deva usar cli e sti */
+ *     OBS: Talvez deva usar cli e sti 
+ */
 
 void vsync (){
-	
+
 	//Wait until any previous retrace has ended 
-	do {
+    do {
      //nothing.
-	}while( gui_inb(0x3DA) & 8);
+    }while ( gui_inb(0x3DA) & 8 );
 
 	//Wait until a new retrace has just begun 
     do {
@@ -862,19 +906,20 @@ unsigned long get_cursor_y (){
  * d - null
  */
 
-void carrega_bitmap_16x16 ( unsigned long ax, 
-                            unsigned long bx, 
-                            unsigned long cx, 
-                            unsigned long dx )
+void 
+carrega_bitmap_16x16 ( unsigned long ax, 
+                       unsigned long bx, 
+                       unsigned long cx, 
+                       unsigned long dx )
 {
     asm volatile (" \n "
 		          : // no inputs
 		          : "a"(ax), "b"(bx), "c"(cx), "d"(dx) );
 	
     // Coloca no buffer. 
-	// Não precisa esperar o retraço vertical.	         	
+	// Não precisa esperar o retraço vertical.
 	
-	my_buffer_load_bitmap_16x16();    			  
+	my_buffer_load_bitmap_16x16 (); 
 }
 
 

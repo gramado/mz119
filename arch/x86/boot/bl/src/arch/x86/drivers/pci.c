@@ -11,10 +11,10 @@
  *     2016 - Created by Fred Nora.
  *     2019 - Revision.
  */
-	 
- 
+
+
 #include <bootloader.h> 
- 
+
 
 /*
  * pciConfigReadWord:
@@ -37,107 +37,108 @@ pciConfigReadWord ( unsigned char bus,
                     unsigned char offset )
 {
     unsigned long address;
-    
-	unsigned long lbus  = (unsigned long) bus;
+
+    unsigned long lbus  = (unsigned long) bus;
     unsigned long lslot = (unsigned long) slot;
     unsigned long lfunc = (unsigned long) func;
-    
-	unsigned short tmp = 0;
- 
 
-    // Create configuration address.
-    
-	address = (unsigned long) ( (lbus << 16) | (lslot << 11) | (lfunc << 8) | (offset & 0xfc) | ((unsigned long) 0x80000000) );
- 
-    
-    // Write out the address.
+    unsigned short tmp = 0;
+
+
+	// Create configuration address.
+
+    address = (unsigned long) ( (lbus << 16) | (lslot << 11) | (lfunc << 8) | (offset & 0xfc) | ((unsigned long) 0x80000000) );
+
+
+	// Write out the address.
 
     outportl ( PCI_ADDRESS_PORT, address );
-    
-	
+
+
 	// Read in the data port.
-	
+
 	tmp = (unsigned short) ( ( inportl (PCI_DATA_PORT) >> ((offset & 2) * 8)) & 0xffff );
 	
 	
     // (offset & 2) * 8) = 0 
 	// Will choose the first word of the 32 bits register.  
   
-	return (unsigned short) tmp; 
+    return (unsigned short) tmp; 
 }
  
 
 /*
  * pciCheckDevice:
- *     Check device, offset 2. */ 
+ *     Check device, offset 2. 
+ */
 
 unsigned short pciCheckDevice ( unsigned char bus, unsigned char slot ){
-    
-    //Off 0.
+
+	//Off 0.
 	//Offset 2 = device.
-	
-	unsigned short Vendor;    
+
+    unsigned short Vendor;    
     unsigned short Device;    
- 	
+
 	//Pega o vendor.
 	//PCI_OFFSET_VENDORID
-	
-	Vendor = pciConfigReadWord ( bus, slot, 0, 0 );    
-    
+
+    Vendor = pciConfigReadWord ( bus, slot, 0, 0 );    
+
 	//Vendor inválido.
-	
+
     if ( Vendor == PCI_INVALID_VENDORID )
-	{
-	    return (unsigned short) 0;
+    {
+        return (unsigned short) 0;
     }
-	
+
 	//Pega o device
 	//PCI_OFFSET_DEVICEID
-	
-	Device = pciConfigReadWord ( bus, slot, 0, 2 );    		
-    
-	return (unsigned short) Device;
+
+    Device = pciConfigReadWord ( bus, slot, 0, 2 ); 
+
+    return (unsigned short) Device;
 }
 
 
 /*
  * pciCheckVendor:
- *     Check vendor, offset 0. */
+ *     Check vendor, offset 0. 
+ */
 
 unsigned short pciCheckVendor ( unsigned char bus, unsigned char slot ){
-	
-    //Offset 0.
-	
-	unsigned short Vendor;    
-	
+
+	//Offset 0.
+
+    unsigned short Vendor;    
+
 	//Pega o vendor.
 	//PCI_OFFSET_VENDORID
 	
 	Vendor = pciConfigReadWord ( bus, slot, 0, 0 );    
-    
+
 	//Vendor inválido.
-	
+
     if ( Vendor == PCI_INVALID_VENDORID )
-	{
-	    return (unsigned short) 0;
-    };	
-	
-	return (unsigned short) Vendor; 
-};
+    {
+        return (unsigned short) 0;
+    };
+
+    return (unsigned short) Vendor; 
+}
 
 
 unsigned char pciGetClassCode ( unsigned char bus, unsigned char slot ){
-	
+
 	unsigned char ClassCode;
 	
-	ClassCode = (unsigned char) pciConfigReadWord ( bus, slot, 0, 
-	                                PCI_OFFSET_CLASSCODE );
-	
-	
+    ClassCode = (unsigned char) pciConfigReadWord ( bus, slot, 0, 
+                                    PCI_OFFSET_CLASSCODE );
+
 	//#todo: Checar a validade do class code.
-	
-	return (unsigned char) ClassCode;
-};
+
+    return (unsigned char) ClassCode;
+}
 
 
 /*
@@ -146,35 +147,35 @@ unsigned char pciGetClassCode ( unsigned char bus, unsigned char slot ){
  */
  
 int pciInfo (){
-	
-	unsigned char i;
+
+    unsigned char i;
     unsigned char j;
-	
+
 	//Offset 0.
 	//Offset 2.
-	
+
 	unsigned short Vendor;    
 	unsigned short Device;    
-	
-	printf("PCI INFO:\n");
-	printf("=========\n");
-	
-	
+
+    printf ("PCI INFO: \n");
+    printf ("========= \n");
+
+
 	// This allows up to 256 buses, 
 	// each with up to 32 devices, 
 	// each supporting 8 functions.
-	
-    //Bus.
+
+	//Bus.
 	//Slots. (devices)
-	
+
 	i=0;    
 	j=0;    
-	
+
 	//bus
-	for ( i=0; i< 0xFF; i++ )    
-	{
+    for ( i=0; i< 0xFF; i++ )    
+    {
 		//Device.
-	    for ( j=0; j<32; j++ )
+        for ( j=0; j<32; j++ )
         {
 		    //Checks.
 		    Vendor = pciCheckVendor (i, j);
@@ -189,11 +190,11 @@ int pciInfo (){
 		    };
 
             //@todo: Registrar o que foi encontrado em estrutura.
-            //usar malloc pra alocar memoria pra estrutura. 			
-		};			
+            //usar malloc pra alocar memoria pra estrutura. 
+		};
 	};
-	
-    /*	
+
+	/*
 	// Checa vários slots no bus 0. 
 	i = 0;
 	do
@@ -257,14 +258,19 @@ int pciInfo (){
 	
     //hal_hardware_detect();
 	*/
-	
+
+
+
 //
 // Done.
-//	
-done:
-	printf("Done\n");
-    return (int) 0; 
-};
+//
+
+//done:
+
+    printf ("Done\n");
+
+    return 0; 
+}
 
 
 /*
@@ -273,9 +279,9 @@ done:
  */
  
 int pciInit (){
-	
+
 	//int i;
-	//int j;	
+	//int j;
     
 	//Offset 0.
 	//Offset 2.
@@ -348,16 +354,20 @@ int pciInit (){
 				};
 			    //Nothing.
 		    };		
-		};			
+		};
 	};
-	
+
+
+
 done:	
     //g_driver_pci_initialized = (int) 1; 
 	printf("Done.\n");
 	
 	*/
-	return (int) 0;
-};
+
+
+    return 0;
+}
 
 
 //

@@ -64,28 +64,32 @@ void cpu_falts (unsigned long fault_number){
 		    printf ("PAGE FAULT \n");
 		    break;
 	    
-	    default:			
-			printf ("Default number\n");			
+	    default:
+			printf ("Default number\n");
 			break;
 	};
 	
 	// More ?! 
 	// Tratamento, informações.
-	
+
+
 //done:
-    
-	faultsShowRegisters ();	
-    die();
-	
+
+    faultsShowRegisters ();
+    die ();
+
 	//
-    //  No return.
-    //	     
-};
+	//  No return.
+	//
+
+}
 
 
-void faultsShowRegisters (){
+void faultsShowRegisters ()
+{
     //#todo
 }
+
 
 //
 // End.

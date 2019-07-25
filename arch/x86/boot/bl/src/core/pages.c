@@ -62,16 +62,19 @@
  * Oct 2016, Revision.
  * ...
  */
-//int pagesSetUpPages()
  
+//int pagesSetUpPages()
+
+
 int SetUpPaging (){
-	
+
     unsigned int i;
-	
-    //
+
+
+	//
 	//(Phase 1) Endereços da memória físicas acessíveis em Kernel Mode.
-    //	
-	
+	//
+
 	//
 	// Kernel.
 	//
@@ -474,31 +477,35 @@ Entry_770:
 	//LFB
     //Criando a entrada número 769 do diretório.
     taskman_page_directory[769] = (unsigned long) &lfb_page_table[0];
-    taskman_page_directory[769] = taskman_page_directory[769] | 7;    //Configurando atributos.		
+    taskman_page_directory[769] = taskman_page_directory[769] | 7;    //Configurando atributos.
 	
 	//Entrada 770.
 	//backbuffer.
     //Criando a entrada número 770 do diretório.
     taskman_page_directory[770] = (unsigned long) &buff_page_table[0];
-    taskman_page_directory[770] = taskman_page_directory[770] | 7;    //Configurando atributos.		
-	
+    taskman_page_directory[770] = taskman_page_directory[770] | 7;    //Configurando atributos.
+
+
 	//
 	// O que foi feito:
 	// ================
 	//    Foram criados 4 diretórios.
-    //    kernel, idle, shell e taskman. 
-    //    As tabelas configuradas para 
-    //    o diretório kernel foram
-    //    reaproveitadas nos demais diretórios.
-    //
-	
+	//    kernel, idle, shell e taskman. 
+	//    As tabelas configuradas para 
+	//    o diretório kernel foram
+	//    reaproveitadas nos demais diretórios.
+	//
 
-	
+
 // Done.
+
 done:
-	//printf("Done.\n");	 
-    return (int) 0;
-};
+    //printf ("Done\n");
+
+    return 0;
+}
+
+
 
 //
 // End.

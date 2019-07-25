@@ -1,3 +1,8 @@
+/*
+ * stdlib.c
+ *     libc for bl.
+ */
+
 
 
 #include <bootloader.h>
@@ -8,31 +13,39 @@
 /* 
  *****************************************
  * malloc:
- *     Standard malloc function. */
+ *     Standard malloc function. 
+ */
 
 void *malloc (size_t size){
 
-	void *h;
-	unsigned long s = ( unsigned long) size;
+    void *h;
+    unsigned long s = ( unsigned long) size;
+
 
 	//s = (s ? s : 1);	/* if s == 0, s = 1 */
 
-	if ( s < 0 ){
-		return NULL;
-	};
-	
-	if ( s == 0 ){
+    if ( s < 0 )
+    {
+        return NULL;
+    };
+    
+
+	if ( s == 0 )
+	{
 		s=1;
 	};
+
 
 	//Alocar memória no heap do kernel.
 
 	h = (void *) heapAllocateMemory (s);
 	
-	if ( (void *) h == NULL ){
+	if ( (void *) h == NULL )
+	{
 		return NULL;
 	}
-	
+
+
     return (void *) h; 
 }
 
@@ -57,17 +70,20 @@ void *malloc (size_t size){
  *     uma estratégia seria apenas sinalizarmos na estrutura que 
  * desejamos que o GC libere os recurso. Em seguida devemos sinalizar 
  * no mmblock que libere o bloco para outras alocações. 
- *
  */
 
 void free (void *ptr){
-	
-	if ( (void *) ptr == NULL )
-	    return;
+
+    if ( (void *) ptr == NULL )
+        return;
 
 	//memory.c
-    FreeHeap (ptr);	
-	
-	//return;
+    FreeHeap (ptr);
 }
+
+
+//
+// End.
+//
+
 

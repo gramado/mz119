@@ -11,13 +11,14 @@
 //Variáveis internas. 
 
 //int mmStatus;
-unsigned long last_valid;         //Último heap pointer válido. 
-unsigned long last_size;          //Último tamanho alocado.
-unsigned long mm_prev_pointer;    //Endereço da úntima estrutura alocada.
+unsigned long last_valid;         // Último heap pointer válido. 
+unsigned long last_size;          // Último tamanho alocado.
+unsigned long mm_prev_pointer;    // Endereço da úntima estrutura alocada.
+
 
 
 /*
- ****************************************************************
+ ************************************************************
  * heapAllocateMemory:
  *     Aloca memória no heap do bl.
  *
@@ -45,7 +46,7 @@ unsigned long mm_prev_pointer;    //Endereço da úntima estrutura alocada.
  */
 
 unsigned long heapAllocateMemory ( unsigned long size ){
-	
+
     struct mmblock_d *Current;
 
     // @todo: Aplicar filtro.
@@ -460,30 +461,33 @@ void FreeHeap (void *ptr){
 //int memoryInitializeHeapManager() 
 
 int init_heap (){
-	
-	int i = 0;
 
-    //Globals.	
-	bl_heap_start = (unsigned long) BL_HEAP_START;  
+    int i=0;
+
+    //Globals.
+    bl_heap_start = (unsigned long) BL_HEAP_START;  
     bl_heap_end = (unsigned long)   BL_HEAP_END;  
-	
+
+
 	//Heap Pointer, Available heap and Counter.
-	g_heap_pointer = (unsigned long) bl_heap_start;    	
+    g_heap_pointer = (unsigned long) bl_heap_start;    	
     g_available_heap = (unsigned long) (bl_heap_end - bl_heap_start);    	 
-	heapCount = 0;      
-	
+    heapCount = 0;      
+
+
 	// #importante
 	// Último heap pointer válido. 
-	last_valid = (unsigned long) g_heap_pointer;
-	last_size = 0;
-	
+    last_valid = (unsigned long) g_heap_pointer;
+    last_size = 0;
+
 	//Check Heap Pointer.
-	if ( g_heap_pointer == 0 )
-	{	
-	    printf("init_heap fail: Heap pointer\n");
+    if ( g_heap_pointer == 0 )
+    {
+	    printf ("init_heap fail: Heap pointer\n");
 		goto fail;
-	}
-	
+    }
+
+
 	//Check Heap Pointer overflow.
 	if( g_heap_pointer > bl_heap_end )
 	{
@@ -550,11 +554,12 @@ fail:
     printf ("init_heap: Fail\n");
     refresh_screen ();
 
+
 	/*
 	// #debug
-	printf("* Debug: %x %x  \n", bl_heap_start, bl_heap_end );	
-	refresh_screen();	 
-    while(1){}		
+	printf("* Debug: %x %x  \n", bl_heap_start, bl_heap_end );
+	refresh_screen();
+    while(1){}
 	*/
 
     return 1;

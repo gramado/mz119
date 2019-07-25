@@ -1,5 +1,5 @@
 /*
- * File: unb\hdd.c 
+ * File: hdd.c 
  * 
  * Descrição:
  *     Interface de acesso a discos do tipo HDD.
@@ -51,13 +51,12 @@
  
 extern void os_read_sector();
 extern void os_write_sector();
-extern void reset_ide0();	
+extern void reset_ide0();
 
 
 //Usadas por read e write.
 extern unsigned long hd_buffer;
 extern unsigned long hd_lba;
-
 
 
 //Variáveis internas
@@ -67,50 +66,51 @@ int hddError;
 
 
 
-//interna
+// interna
 static void hdd_ata_pio_read ( int p, void *buffer, int bytes ){
-	
+
     __asm__ __volatile__ (\
                 "cld;\
                 rep; insw":: "D" (buffer),\
                 "d" ( ide_ports[p].base_port + 0 ),\
                 "c" (bytes/2));
-};
+}
 
 
 void hdd_ata_pio_write ( int p, void *buffer, int bytes ){
-	
+
     __asm__ __volatile__ (\
                 "cld;\
                 rep; outsw"::"S"(buffer),\
                 "d"( ide_ports[p].base_port + 0 ),\
                 "c"(bytes/2));
-};
+}
 
 
 uint8_t hdd_ata_status_read (int p){
-	
-    //#bugbug: 
+
+	//#bugbug: 
 	//rever o offset
-   	
+
 	//return inb(ata[p].cmd_block_base_addr + ATA_REG_STATUS);
+
     return (uint8_t) inportb ( (int) ide_ports[p].base_port + 7);
-};
+}
  
 
 int hdd_ata_wait_not_busy (int p){
-	
+
     while( hdd_ata_status_read(p) & ATA_SR_BSY )
     if ( hdd_ata_status_read(p) & ATA_SR_ERR )
         return 1;
 
-    return (int) 0;
-};
+    return 0;
+}
 
 
 void hdd_ata_cmd_write ( int port, int cmd_val ){
 
-    // no_busy      	
+    // no_busy 
 	hdd_ata_wait_not_busy(port);
 	
 	//outb(ata.cmd_block_base_address + ATA_REG_CMD,cmd_val);
@@ -119,52 +119,50 @@ void hdd_ata_cmd_write ( int port, int cmd_val ){
 	
 	// Esperamos 400ns
 	ata_wait (400);  
-};
+}
 
 
 int hdd_ata_wait_no_drq (int p){
-	
+
     while( hdd_ata_status_read(p) &ATA_SR_DRQ)
     if(hdd_ata_status_read(p) &ATA_SR_ERR)
-    return 1;
+        return 1;
 
     return 0;
-};
+}
 
 
 /*
- ******************************************************************
+ *****************************
  * pio_rw_sector
  * 
  * IN:
  *   buffer - Buffer address
- *	lba - LBA number 
- *   rw - Flag read or write.	
+ *   lba - LBA number 
+ *   rw - Flag read or write.
  *
  *   //inline unsigned char inportb (int port)
  *   //outportb ( int port, int data )
- *   (IDE PIO)	
+ *   (IDE PIO)
  */
 
 int 
 pio_rw_sector ( unsigned long buffer, 
                 unsigned long lba, 
-				int rw, 
-				int port,
+                int rw, 
+                int port,
                 int slave )
 {
-
     unsigned long tmplba = (unsigned long) lba;
-	
-	
+
 	//#bugbug
 	//só funcionaram as portas 0 e 2.
 	//para primary e secondary.
-	
+
 	if ( port < 0 || port >= 4 )
 		return -1;
-	
-	
+
+
 	//Selecionar se é master ou slave.
 	//outb (0x1F6, slavebit<<4)
 	//0 - 3		In CHS addressing, bits 0 to 3 of the head. 
@@ -236,29 +234,33 @@ pio_rw_sector ( unsigned long buffer,
 	
 	
 	//
-	// #timeout sim, não podemos esperar para sempre.
+	// timeout sim, não podemos esperar para sempre.
 	//
-	
+
+	// #todo
+	// Colocar essas declarações no início da função.
+
 	unsigned char c; 
-	
 	unsigned long timeout = 4444*512;
-	
+
 again:
-	
+
 	c = (unsigned char) inportb ( (int) ide_ports[port].base_port + 7);
-	
+
 	c = ( c & 8 );
-	
+
 	if ( c == 0 )
 	{
 		timeout--;
 		if ( timeout == 0 )
 		{
-			printf("rw sector timeout fail;\n");
+			printf ("rw sector timeout fail.\n");
 			return -3;
 		}
-	   //#bugbug: isso pode enrroscar aqui.	
-	   goto again;	
+		
+	   // #bugbug: 
+	   // Isso pode enrroscar aqui.
+	   goto again;
 	}
 	
 	
@@ -272,7 +274,7 @@ again:
 		//write
 		case 0x30:
 		    hdd_ata_pio_write ( (int) port, (void *) buffer, (int) 512 );
-			
+
             //Flush Cache
     
 	        //ata_cmd_write(p,ATA_CMD_FLUSH_CACHE);
@@ -281,17 +283,20 @@ again:
             if ( hdd_ata_wait_no_drq(port) != 0)
 	        {
                 return -1;
-            }	
-			break;
-        
+            }
+            break;
+
+
 		//fail
+
 		default:
             printf ("pio_rw_sector: fail *hang");
-			die();
-			break; 		
+			die ();
+			break;
 	};
-		
-    return (int) 0;	
+
+
+    return 0;
 }
 
 
@@ -305,26 +310,28 @@ again:
  * Opção: void hddReadSector(....)
  */
  
-void my_read_hd_sector ( unsigned long ax, 
-                         unsigned long bx, 
-						 unsigned long cx, 
-						 unsigned long dx )
+void 
+my_read_hd_sector ( unsigned long ax, 
+                    unsigned long bx, 
+                    unsigned long cx, 
+                    unsigned long dx )
 {
-	
-	
-	//=========================================== ATENÇAO ==============================
+
+	//====================== ATENÇAO ==============================
 	// #IMPORTANTE:
-    //#todo
-	//s'o falta conseguirmos as variaveis que indicam o canal e se 'e master ou slave.	
-	
- 
-    // (buffer, lba, rw flag, port number, master )
-	pio_rw_sector ( (unsigned long) ax, 
-					(unsigned long) bx, 
-					(int) 0x20, 
-					(int) g_current_ide_channel,       // 0
-                    (int) g_current_ide_device );	   // 1
-	
+	// #todo
+	// Só falta conseguirmos as variaveis que indicam o canal e 
+	// se é master ou slave.
+
+	// (buffer, lba, rw flag, port number, master )
+
+    pio_rw_sector ( (unsigned long) ax, 
+        (unsigned long) bx, 
+        (int) 0x20, 
+        (int) g_current_ide_channel,     // 0
+        (int) g_current_ide_device );    // 1
+
+
 	/*
 	 //antigo.
 	
@@ -339,8 +346,8 @@ void my_read_hd_sector ( unsigned long ax,
 	//testar sem ele antes.
 	
 	*/
-	return;
-};
+
+}
 
 
 /*
@@ -352,33 +359,34 @@ void my_read_hd_sector ( unsigned long ax,
  * edx - null
  * Opção: void hddWriteSector(....)
  */
-void my_write_hd_sector ( unsigned long ax, 
-                          unsigned long bx, 
-						  unsigned long cx, 
-						  unsigned long dx )
+
+void 
+my_write_hd_sector ( unsigned long ax, 
+                     unsigned long bx, 
+                     unsigned long cx, 
+                     unsigned long dx )
 {
-	
-	//=========================================== ATENÇAO ==============================
+
+	// =========================== ATENÇAO ==============================
 	// #IMPORTANTE:
-    //#todo
-	//s'o falta conseguirmos as variaveis que indicam o canal e se 'e master ou slave.
-	
-	
+	// #todo
+	// Só falta conseguirmos as variaveis que indicam o canal e 
+	// se é master ou slave.
+
 	//#bugbug:
 	// a rotina de salvar um arquivo invocada pelo shell 
 	//apresentou problemas. Estamos testando ...
  
 	// read test (buffer, lba, rw flag, port number )
-   // pio_rw_sector ( (unsigned long) ax, (unsigned long) bx, (int) 0x30, (int) 0 );		
-	
+	// pio_rw_sector ( (unsigned long) ax, (unsigned long) bx, (int) 0x30, (int) 0 );
+
     pio_rw_sector ( (unsigned long) ax, 
-					(unsigned long) bx, 
-					(int) 0x30, 
-					(int) g_current_ide_channel,   //0 
-					(int) g_current_ide_device );  //1
-	
-	
-	
+        (unsigned long) bx, 
+        (int) 0x30, 
+        (int) g_current_ide_channel,   //0 
+        (int) g_current_ide_device );  //1
+
+
 /*
 	//antigo.
     // Passando os argumentos.	
@@ -390,11 +398,10 @@ void my_write_hd_sector ( unsigned long ax,
 	
 	os_write_sector(); 
 
-*/	
-	//#todo: deletar esse return.
-	//testar sem ele antes.	
-	return;
-};   
+*/
+
+}
+
 
 
 /*
@@ -405,19 +412,17 @@ void my_write_hd_sector ( unsigned long ax,
  */
 
 int init_hdd (){
-	
-    //
-    // @todo: We need to do something here.
-    //	
 
-	diskATADialog ( 1, FORCEPIO, FORCEPIO );
-	
-//done:
+    // #todo: 
+    // We need to do something here. haha
+
+    diskATADialog ( 1, FORCEPIO, FORCEPIO );
 
     g_driver_hdd_initialized = (int) 1;
-    
-	return (int) 0;
-};
+
+    return 0;
+}
+
 
 
 /*
@@ -432,6 +437,7 @@ int hddInit()
     return (int) 0;	
 };
 */
+
 
 //
 // End.

@@ -370,15 +370,15 @@ void keyboardHandler (){
 	screen[76] = (char) ch;
 	screen[77] = (char) 9;     
 
-	
+
 	//
 	// Step 4: Send message to Boot Loader procedure.
 	//
-	
-	bl_procedure ( 0, (int) mensagem, (unsigned long) ch, 
-	    (unsigned long) status );
 
-	
+    bl_procedure ( 0, (int) mensagem, (unsigned long) ch, 
+        (unsigned long) status );
+
+
 	//
 	// Step 5: EOI.
 	//
