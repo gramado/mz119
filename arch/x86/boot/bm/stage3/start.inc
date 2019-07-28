@@ -29,10 +29,11 @@
 ;    AL  = new initialization mode.
 ;    EBX = 0
 ;    ECX = 0
-;	 EDX = 0
+;    EDX = 0
 ;
 ; 2015 - Created by Fred Nora.
 ;
+
 
 
 ;=======================================================
@@ -45,24 +46,23 @@
 ; de 32 bits.
 ;
 
-start:	
+start:
     
 	;; #bugbug 
-	;; Esse valor pode estar errado durante 
-	;; a inicialização em modo texto.
+	;; Esse valor pode estar errado durante a inicialização em modo texto.
 	
-	mov byte [BOOT.modo], al			    
+	mov byte [BOOT.modo], al
     
 	xor edx, edx
 	xor ecx, ecx
 	xor ebx, ebx
 	xor eax, eax
 	
-;	
+
+
 ; ajusta_modo: 
-;     Inicia um modo da configuração permanente.	
+;     Inicia um modo da configuração permanente.
 ;     @todo: Trocar o nome.
-;
 
 ajusta_modo:
     nop
@@ -92,7 +92,7 @@ startSetupMode:
 	je startCLI
 	
 	cmp al, byte 2  
-	je startGUI	
+	je startGUI
 	
 	; Default mode.
 	
@@ -101,8 +101,9 @@ startSetupMode:
 	;jmp $
 	
 
+
 ;============================
-; startCLI:	
+; startCLI:
 ;     Inicia o Shell do Boot Manager. 
 	
 startCLI:
@@ -112,7 +113,7 @@ startCLI:
 	;Segmentos e pilha.
 	cli
 	mov ax, word 0x10  
-	mov ds, ax		 
+	mov ds, ax
 	mov es, ax 
 	mov eax, stack_ptr
 	mov esp, eax 
@@ -131,28 +132,31 @@ startCLI:
 	;Limpa a tela em modo texto.
 	;call clear_screen
 	
-    ;Habilita todas interrupções.
-.enableInterrupts:	
 	
-	mov al, 0					                  
-	out 0xA1, al                                   
-	out 0x21, al    
+    ;Habilita todas interrupções.
+.enableInterrupts:
+
+	mov al, 0
+	out 0xA1, al 
+	out 0x21, al 
 	sti 
 	
+	
     ;;
-    ;; ======== ##  SHELL LOOP  ## ========
-    ;;    
+    ;; ======== SHELL LOOP ========
+    ;;
 
 	;; #importante
 	;; O shell está em msm/shell
 	;; Esse é loop do shell do boot manager.
 	
-startShellLoop:	
+startShellLoop:
     
 	;;shell.inc
 	call shellPrintShellVersion    
 	
-.shellInit:	
+	
+.shellInit:
     
 	;;shell.inc
 	call shellInit                
@@ -169,8 +173,9 @@ startShellLoop:
 	cmp eax, 1
 	je .exit1
 	
-	jmp startShellLoop	
+	jmp startShellLoop
 	JMP $
+
 
 ;	
 ;Saimos do loop do shell.
@@ -178,40 +183,49 @@ startShellLoop:
 ;Apenas reiniciamos o sistema.
 .exit0:
 	mov esi, start_msg_rebooting
-	call os_output	
+	call os_output
     jmp keyboardReboot
 	jmp $
 
-;	
+
+;
 ;Saimos do loop do shell.
 ;Alguma alteração foi feita, precisamos salvar o metafile.
 ;Reiniciamos o sistema para validar as alterações feitas no metafile. 
 .exit1:
+
 	mov esi, start_msg_saving_metafile
-	call os_output	
-	;obs: Essa rotina deve ser realizada em 32bit.
-    call fs32SaveMetafile ;@todo (fs\fs32.inc) 
+	call os_output
 	
+	; obs: 
+	; Essa rotina deve ser realizada em 32bit.
+	; ;@todo (fs\fs32.inc)
+
+    call fs32SaveMetafile  
+
 	mov esi, start_msg_rebooting
-	call os_output		
+	call os_output
 	jmp keyboardReboot
-	jmp $	
+	jmp $
 	
-	
+;strings
 start_msg_saving_metafile  db 'start: Saving metafile..',13,10,0
 start_msg_rebooting        db 'start: Rebooting..',13,10,0
+	
 	
 	
 ;==========================================================================
 ; startGUI:
 ;     Inicia o BL.BIN no modo gráfico.
 ;	  Obs: Quando retornamos para o modo real e ativamos o modo gráfico,
-; satalmos para cá com a opção de usamos mensagens em modo gráfico em modo protegido.
-;
-;
-;; * IMPORTANTE:
-;;   O OBJETIVO É CHEGARMOS AQUI COM O ARQUIVO BL.BIN CARREGADO NA MEMÓRIA
-;;   E PASSARMOS O COMANDO PARA ELE, SEM TERMOS QUE CARREGA LO USANDO RECURSOS DE 32BIT.
+;     Saltamos para cá com a opção de usamos mensagens em modo gráfico 
+; em modo protegido.
+
+
+;; IMPORTANTE:
+;; O OBJETIVO É CHEGARMOS AQUI COM O ARQUIVO BL.BIN CARREGADO NA MEMÓRIA
+;; E PASSARMOS O COMANDO PARA ELE, SEM TERMOS QUE CARREGA LO 
+;; USANDO RECURSOS DE 32BIT.
 
 	;; *Importante:
 	;; Fazendo configurações aqui mesmo ao invés de chamarmos 
@@ -222,35 +236,41 @@ start_msg_rebooting        db 'start: Rebooting..',13,10,0
 	;; Obs: Isso está funcionando bem.
 	;; Mas o timer foi configurado várias vezes.
 
+
+
 	;;===============
 	;;setup machine
 
 startGUI:
 
 	cli
-	
+
 	;GDT and IDT. 
-	lgdt [lgdt_opcode] 
-	lidt [lidt_opcode]	
+	lgdt [lgdt_opcode]
+	lidt [lidt_opcode]
+
 	
-	;; @todo: Nessa hora alguns vetores podem ser configurados.
-	;;        primeiro as excessões e depois as ISRs.
+	;; #todo: 
+	;; Nessa hora alguns vetores podem ser configurados.
+	;; Primeiro as excessões e depois as ISRs.
 	;; Selecting the 'Processor Interrup Mode'.
-	;; * PIC MODE *
+	;; PIC MODE
     ;; Todos os componentes APIC são ignorados e o sistema opera
     ;; no modo single-thread usando LINT0.
 
-;.setupPICMODE:	
+
+;.setupPICMODE:
+
 
 	;PIC.
 	cli
-	mov al, 00010001b		;begin PIC 1 initialization.
+	mov al, 00010001b		; Begin PIC 1 initialization.
 	out 0x20, al
-	mov al, 00010001b		;begin PIC 2 initialization.
+	mov al, 00010001b		; Begin PIC 2 initialization.
 	out 0xA0, al	
-	mov al, 0x20			;IRQ 0-7: interrupts 20h-27h.
+	mov al, 0x20			; IRQ 0-7: interrupts 20h-27h.
 	out 0x21, al
-	mov al, 0x28			;IRQ 8-15: interrupts 28h-2Fh.
+	mov al, 0x28			; IRQ 8-15: interrupts 28h-2Fh.
 	out 0xA1, al
 	mov al, 4
 	out 0x21, al
@@ -259,6 +279,7 @@ startGUI:
 	mov al, 1
 	out 0x21, al
 	out 0xA1, al
+	
 	
 	
 	;;@todo:
@@ -274,7 +295,7 @@ startGUI:
 	;wakeup vector alignment, caching consdarations,ap idle state)	
 	;apenas o básico para o boot manager.
 	
-		
+
 	;;
 	;; Fazendo alguma inicialização de dispositivos de I/O suportados.
 	;;
@@ -292,7 +313,7 @@ startGUI:
 	;;	
 	
 	;KEYBOARD.
-	;call keyboardInit		
+	;call keyboardInit
 	
 	
 	;IDE0.   #BUGUBG NO QEMU
@@ -305,13 +326,12 @@ startGUI:
 	
 	
 
-	
-	;
 	; #BUGBUG
-	; @todo:
-	;     Aqui estamos usando constantes, porem esses valores precisam ser
-	; detectados, pois variam à cada formatação.
-	;
+	; #todo:
+	; Aqui estamos usando constantes, porem esses valores precisam 
+	; serem detectados, pois variam à cada formatação.
+	
+	
 	
 	;Detectar os parâmetros do sistema de arquivos FAT16.
 	;fat lba, root lba ...
@@ -321,7 +341,7 @@ startGUI:
     mov dword [g_current_fat_lba],        FAT16_FAT_LBA       ;Fat do volume atual
     mov dword [g_current_directory_lba],  FAT16_ROOTDIR_LBA   ;Diretório do volume atual.
 	mov dword [g_current_dataarea_lba],   FAT16_DATAAREA_LBA  ;?? ;lba do inicio da area de dados do volume atual.
-	;Continua...	
+	;Continua...
 	
 
 	
@@ -334,7 +354,7 @@ startGUI:
 	;; o BL do que para o BM.)
 	
 	;step
-	;;PCI device descovery.	
+	;;PCI device descovery.
 
 	
 	;CURSOR.
@@ -345,17 +365,17 @@ startGUI:
 	; Continua ...
 	;
 	
-	;mask all interrupts.
 	
+	;mask all interrupts.
 	cli 
 	mov al, 255
 	out 0xA1, al
-	out 0x21, al		
+	out 0x21, al
+	
 	
 	; setup registers.
-	
 	mov ax, word 0x10  
-	mov ds, ax		 
+	mov ds, ax
 	mov es, ax 
 	mov eax, stack_ptr
 	mov esp, eax 
@@ -391,8 +411,11 @@ startGUI:
 	;call blconfig_set_modo	
 	;call do_save
 	
-	;@todo: Não é certo pintar um backgraund direto na memória de video.
-    ;o Boot Manger não tem sincronização vertical ainda.	 
+	
+	; #todo: 
+	; Não é certo pintar um backgraund direto na memória de video.
+    ; O Boot Manger não tem sincronização vertical ainda.	 
+	 
 	 
 	;background test!
     ;call _background
@@ -402,24 +425,25 @@ startGUI:
 	
 	
 	;;
-	;; **** TESTING STRINGS ****
+	;; ==== TESTING STRINGS ====
 	;;
 	
-	;; bug bug as rotinas de 'char' 'string' e 'load' aparentemente
-	;; estão travando o sistema, as duas janelas de status estão funcionando
-	;; quando não chamamos essas funções.
+	;; #bugbug: 
+	;; As rotinas de 'char' 'string' e 'load' aparentemente estão travando 
+	;; o sistema, as duas janelas de status estão funcionando quando não 
+	;; chamamos essas funções.
 	
-	
-	;
-	; * Aqui vamos testar a rotina de mostrar strings no modo gráfico.
-	;   O caractere deve ser construído, píxel por píxel, utilizando
+	; #obs:
+	; Aqui vamos testar a rotina de mostrar strings no modo gráfico.
+	; O caractere deve ser construído, píxel por píxel, utilizando 
 	; o mapa de caracteres do BIOS.
-	;
-	
+
+
 .testingStrings:
     nop
-	;@todo: Testar rotina de mostrar uma string.
     
+	; #todo: 
+	; Testar rotina de mostrar uma string.
 
 	;debug break
 	;jmp $
@@ -431,7 +455,7 @@ startGUI:
 	;mov ebx, 0    ;y.
 	;mov ecx, 20   ;largura.
 	;mov edx, 20   ;altura.	
-    ;mov edi, dword  0x80808000    ;blue    	
+    ;mov edi, dword  0x80808000    ;blue 
 	;call CreateWindow
 	;call _asm_refresh_screen
 	
@@ -444,14 +468,14 @@ startGUI:
   
     ;; @todo: Fazer debug da função print char antes de tudo ...
     ;; status: testando ...
+
   
 ;Char.
-    ;
+
     ; a =  cor (rrggbbaa)
     ; b =  x
     ; c =  y
-    ; d =  Char.
-    ;	    
+    ; d =  Char.    
   
 .TestingPrintChar:  
 	
@@ -505,7 +529,7 @@ startGUI:
 	;push edx 
 	;mov eax, 0x00ffff00  ;; Color
 	;xor edx, edx 
-	;mov dl, 'B'          ;; Caractere de teste.	
+	;mov dl, 'B'          ;; Caractere de teste.
 	;call lib32PrintChar	
 	;pop edx 
 	;pop ecx 
@@ -516,63 +540,46 @@ startGUI:
 	;debug break
 	;jmp $
 
-.TestingPrintString:	
-	
-	;;Cursor.
+
+.TestingPrintString:
+
+	;; Cursor.
 	mov dword [g_cursor_x], 4
-	mov dword [g_cursor_y], 4		
+	mov dword [g_cursor_y], 4
 	
 	;String
 	;mov esi, msg_start_loading
 	;call lib32PrintString
-	;call _asm_refresh_screen	
-	
-  	;;debug
+	;call _asm_refresh_screen
+
+
+    ;;debug
 	mov esi, startMsgTest1   
 	call lib32PrintString
     call _asm_refresh_screen
 	
-	;#debug
-	;jmp $	
+	; #debug 
+	; #todo: 
+	; Testando modos no geforce.
+    ; jmp $
 	
-	;
-	; @todo: testando modos no geforce.
-	;
-    ;jmp $
-	
-    ;
-	; @todo: 
-	;     Não há funções de string em modo gráfico no bootmanager ainda.
-	;     Então para o carregamento do BL.BIN não há mensagens.      
-	;
-
+    
+	; #todo: 
+	; Não há funções de string em modo gráfico no bootmanager ainda.
+	; Então para o carregamento do BL.BIN não há mensagens.      
 	
 	; Carrega o Boot Loader.
 	; Carrega o arquivo  BL.BIN na memória e passa o comando para ele.
 	; Enviando argumento em AL, e EBX.
 	
-.LoadBootLoader:	
+.LoadBootLoader:
 	
-    ;;;;
-	;;;;    ****  ATENÇÃO   ****
-	;;;;
+	;;;; ATENÇÃO 
 	;;;; O BL.BIN FOI CARREGADO PELO MBR USANDO RECURSOS DO BIOS.
-	;;;;  *NÃO* DEVEMOS CARREGA-LO NOVAMENTE NESSE MOMENTO USANDO RECURSO DE 32BIT.
-	;;;;
+	;;;; NÃO DEVEMOS CARREGA-LO NOVAMENTE NESSE MOMENTO USANDO RECURSO DE 32BIT.
 	
-	
-	; Obs: Não carrega mais pois ele está em assembly 
-	; e faz parte do System4Nora.
-	; Obs: Estamos sinalizando o progresso desenhando janelas,
-	;      más haverá uma rotina de imprime caracteres.
-	
-	;mov eax, 40  ;x.
-	;mov ebx, 0   ;y.
-	;mov ecx, 20  ;largura.
-	;mov edx, 20  ;altura.	
-    ;mov edi, dword  0x80808000    ;blue    	
-	;call CreateWindow
-	;call _asm_refresh_screen
+	; Obs: 
+	; ?? Não carrega mais pois ele está em assembly e faz parte do System4Nora.
 
 	;mov esi, msg_start_ok
 	;call lib32PrintString	
@@ -596,11 +603,14 @@ startGUI:
 	
 	;; #bugbug
 	;; Temos que permitir o formato elf.
-	
-	;;
+	;; Porém o BL ainda está no formato PE.
+
+
+    ;;
     ;; Check PE binary in BL.BIN.
-	;;
-	
+    ;;
+
+
 	;IMAGE_ADDRESS
 	
 	mov edx, dword 0x20000   
@@ -608,21 +618,22 @@ startGUI:
     
 	;first byte.
 	cmp al, byte 'L'
-	jne .peFail	
+	jne .peFail
 	
 	inc edx 
 	mov eax, [edx]
 
 	;second byte.
 	cmp al, byte 0x01
-	jne .peFail	
-	
+	jne .peFail
+
+
 .preparandoArgumentos:
  
     ;;
-	;;  ## Boot Block ## 
-	;;
-	
+    ;;  ## Boot Block ## 
+    ;;
+
 	;; Prepara a tabela.
 	;; Estamos preparando a tabela para enviarmos para o Boot Loader.
 	
@@ -637,24 +648,24 @@ startGUI:
 	; ...
 	
 	xor eax, eax
-	mov eax, dword [ModeInfo_PhysBasePtr]  	
-	mov dword [BootBlock.lfb], eax	
+	mov eax, dword [ModeInfo_PhysBasePtr]  
+	mov dword [BootBlock.lfb], eax
 	
 	xor eax, eax
 	mov ax, word [ModeInfo_XResolution]    
-	mov dword [BootBlock.x], eax 	
+	mov dword [BootBlock.x], eax 
 	
 	xor eax, eax
 	mov ax, word [ModeInfo_YResolution]    
-	mov dword [BootBlock.y], eax 	
+	mov dword [BootBlock.y], eax 
 	
 	xor eax, eax
 	mov al, byte [ModeInfo_BitsPerPixel]   
 	mov dword [BootBlock.bpp], eax 
 
 	xor eax, eax
-	mov eax, dword META$FILE                 	
-	mov dword [BootBlock.metafile_address], eax	
+	mov eax, dword META$FILE    
+	mov dword [BootBlock.metafile_address], eax
     
 	;Continua...
 	
@@ -668,52 +679,60 @@ startGUI:
 	
 .goBL:
 
-	;
-    ; Go!  
-    ;	
-	
-	;( Passa o comando para o entrypoint do Boot Loader. ) BL.BIN.
-	
+
+    ; Go!
+	; Passa o comando para o entrypoint do Boot Loader. BL.BIN.
+
+
 	jmp 8:IMAGE_ADDRESS_ENTRY_POINT
 	JMP $
+
 	
 	;;
-	;;  ## fail ##
+	;; Fail.
 	;;
-	
-;O arquivo não está presente na memória.	
+
+
+; O arquivo não está presente na memória.
+; Muda a cor da string.	
 .peFail:
 
-    mov eax, 0x00ffff00 ;color
+    mov eax, 0x00ffff00
 	mov esi, msg_start_sig
 	call lib32PrintString
 	
-	
-    mov eax, 0x00ffff00 ;color
+    mov eax, 0x00ffff00
 	mov esi, 0x20000
 	call lib32PrintString
-	
+
     call _asm_refresh_screen
-    jmp $
-
-		
-	;
-	; @fim, 
+    
+    ;; #bugbug
+    ;; Temos que melhorar isso e colocarmos um cli/hlt.
+   
+    ;jmp $
+.peFailHalt:
+    cli
+    hlt
+    jmp .peFailHalt
+    
+    
+    
+	; #fim, 
 	; Começam as rotinas internas do arquivo.
-	;
 	
+
+;;=======================================================================
+;;=======================================================================
 ;;=======================================================================
 ;;=======================================================================
 
 
-;;=======================================================================
-;;=======================================================================
 
 
 
-	
 ;
-; Libs --------------------------------------------
+; ==== Libs =======================================
 ;
 
 
@@ -725,15 +744,16 @@ startGUI:
 
 ;startSetupLFB:
 	
-configura_lfb:	 
+configura_lfb:
 	push edx   
-	mov  edx, dword [ModeInfo_PhysBasePtr]    	
-	mov dword [VIDEO.lfb], edx	
+	mov  edx, dword [ModeInfo_PhysBasePtr]  
+	mov dword [VIDEO.lfb], edx
 	pop edx
 	ret
 ;--
 
-	
+
+
 ;-------------------------------------
 ; configura_buffer:
 ;     Configura buffer para modo gráfico.
@@ -770,18 +790,20 @@ configura_buffer:
 	;pop edx
 	
 	ret
-;--	
-	
-	
+;--
+
+
+
 ;
 ; Start mensagens.
 ;
 
 ;usando em start.
 startMsgTest1        db "BM: start: startGUI:", 13, 10, 0
-msg_start_ok         db "BM:startGUI: OK", 13, 10, 0	
-msg_start_jumping    db "BM:startGUI: Jumping to BL.BIN", 13, 10, 0		
-msg_start_sig        db "BM:startGUI: PE sig fail", 13, 10, 0	
+msg_start_ok         db "BM:startGUI: OK", 13, 10, 0
+msg_start_jumping    db "BM:startGUI: Jumping to BL.BIN", 13, 10, 0
+msg_start_sig        db "BM:startGUI: PE sig fail", 13, 10, 0
+
 
 ;filtrar.
 ;msg_start_debug_hang db "BM: *start: Debug hang!", 13,10,0	

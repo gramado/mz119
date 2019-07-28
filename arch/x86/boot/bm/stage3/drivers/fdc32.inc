@@ -1,5 +1,5 @@
 ; 
-; File: drivers\fdc32.inc 
+; File: drivers/fdc32.inc 
 ;
 ; Descrição: 
 ;     Driver do FDC (Floppy Disk Controller) para 32bit.
@@ -9,8 +9,8 @@
 ;     * Sendo tão difícil fazer um driver de floppy que funcione,
 ;       considere guarda-lo.
 ;
-; Histórico:
-;     2013 - Versão 1.0, Created.
+; History:
+;     2013 - Created.
 ;     2017 - Revision.
 ;
 
@@ -163,16 +163,18 @@ ALIGN 4
 ;================================================
 ; _irq6: 
 ;     Floppy disk irq.
-;	
+;
 _irq6:  
+
 	PUSH AX
-	MOV AL,020h
-	OUT 0A0h,AL
-	OUT 020h,AL
+	MOV AL, 020h
+	OUT 0A0h, AL
+	OUT 020h, AL
 	POP AX
 	IRETD
-	
-	
+
+
+
 ;================================================================
 ; _fdc_main:
 ;     Função principal do driver FDC. (Ler setor).
@@ -487,11 +489,12 @@ transfer:
 	jns .transfer
 	RET
 
-	
-;--------------------------------
+
+;;===============================================================
 ; write:
 ;     WRITE.
 ;
+
 write:
     ;move 
     mov edi, fdc_buffer*4

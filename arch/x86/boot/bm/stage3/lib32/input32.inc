@@ -24,7 +24,8 @@ align 2
 align 2
 
 
-;-----------------------------------------
+
+;; =================================================================
 ; os_input:
 ;     Take string from keyboard entry.
 ;
@@ -35,16 +36,18 @@ align 2
 ;       ECX = Length of string that was inputed (NULL not counted).
 ;	          All other registers preserved.
 ;
+
 os_input:
 
-	push edi
-	push edx    ;Counter to keep track of max accepted characters.
-	push eax
+    push edi
+    push edx    ;Counter to keep track of max accepted characters.
+    push eax
 
-	mov edx, ecx    ;Max chars to accept.
-	xor ecx, ecx	;Offset from start.
+    mov edx, ecx    ; Max chars to accept.
+    xor ecx, ecx    ; Offset from start.
 
-;++	
+
+;++
 os_input_more:
 	
 	;Prompt.
@@ -107,18 +110,20 @@ os_halt_and_more:
 os_input_done:	
 	mov al, 0x00
 	stosb				    ;We NULL terminate the string.
-	
-	mov al, ' '
-	call os_output_char
-	
-	pop eax
-	pop edx
-	pop edi
-	RET
+
+
+    mov al, ' '
+    call os_output_char
+
+    pop eax
+    pop edx
+    pop edi
+    RET
 ;--------------------
 
 
-;-----------------------------------------------
+
+;;=====================================================
 ; os_input_key:
 ;     Scans keyboard for input.
 ;
@@ -129,20 +134,26 @@ os_input_done:
 ;       clear if there was not.
 ;	    All other registers preserved.
 ;
+
 os_input_key:
-	mov al, [key]    ;Pega.
-	
-	cmp al, 0
-	je os_input_key_no_key
-	
-	mov byte [key], 0x00    ;Clear the variable as the keystroke is in AL now.
-	stc			            ;Set the carry flag.
-	ret	
+
+    mov al, [key]    ;Pega.
+
+    cmp al, 0
+    je os_input_key_no_key
+
+    mov byte [key], 0x00    ;Clear the variable as the keystroke is in AL now.
+    stc                     ;Set the carry flag.
+    ret
+
 os_input_key_no_key:
-	clc			            ;Clear the carry flag.
-	ret
+    clc                     ;Clear the carry flag.
+    ret
 ;--------------------
 
+
 ;
-;fim.
+; End.
 ;
+
+

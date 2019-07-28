@@ -90,7 +90,7 @@ os_dec_cursor_done:
 ;
 reset_cursor:
 	mov word [os_Screen_Cursor_Col], 0
-	mov word [os_Screen_Cursor_Row], 0	
+	mov word [os_Screen_Cursor_Row], 0
     ret
 
 
@@ -543,20 +543,22 @@ boot_set_cursor:
 
 
 
-;-----------------------------------------------------
+;;===========================================================
 ; print_char:
 ;     Write a ASCII character to the console.
 ;
 ; Arguments:
 ;   AL = ASCII character.
 ;
+
 print_char:
     ;nop
-;screen32PrintChar:	
-	pushad
-	call os_output_char
+;screen32PrintChar:
+    pushad
+    call os_output_char
     popad
     ret
+
 
 ;------------------------------------------------------------------
 ; print_spaces:
@@ -565,9 +567,10 @@ print_char:
 ; Arguments:
 ;   AL = number to spaces.
 ;
+
 print_spaces:
     ;nop
-;screen32PrintSpaces:	
+;screen32PrintSpaces:
     pushad
     xor     cx, cx
     mov     cl, al                  ; use CX as the loop counter
@@ -580,15 +583,16 @@ print_spaces:
     popad
     ret
 
-;--------------------------------------------------------------------------
+;;======================================================
 ; Write the byte value to the console in hex.
 ;
 ; Arguments:
 ;   AL = Value to be displayed in hex.
 ;
+
 print_hex:
     ;nop
-;screen32PrintHex:	
+;screen32PrintHex:
     pushad
     mov     cx, WORD 4
     bswap   eax
@@ -616,7 +620,7 @@ print_nibble:
     add     al, 'A' - '9' - 1
 .print_ascii:
     call    print_char
-    ret	
-				
+    ret
+
 ; =============================================================================
 ; EOF

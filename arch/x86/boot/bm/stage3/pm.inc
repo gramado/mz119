@@ -15,9 +15,10 @@
 ;    AL  = New initialization mode.
 ;    EBX = ECX = EDX = 0.
 ;
-; Histórico:
-;     Versão: 1.0, 2015 - Adaptado de versões antigas.
-;     Versão: 1.0, Oct 2016 - Revisão.
+; History:
+;     ? - Created by Fred Nora.
+;     2015 - Adapted from older version.
+;     Oct 2016 - Revision.
 ;     ...
 ;
 
@@ -49,7 +50,7 @@ pmInit:
     ;call Window.StatusBar
     ;mov si, msg_Test
     ;call PoeString
-    ;popa	
+    ;popa
 	
 	;debug
 	;jmp $
@@ -62,40 +63,41 @@ pmInit:
 trampoline:
 	
 	;setup registers 
-	
-	cli
-	mov ax, 0        
+
+    cli
+    mov ax, 0  
     mov ds, ax
     mov es, ax
-	;mov fs, ax           
-	;mov gs, ax        
-	xor ax, ax
+    ;mov fs, ax  
+    ;mov gs, ax  
+    xor ax, ax
     mov ss, ax
     mov sp, 0x6000 
-	
-	 
+
+
 	;;
 	;; GDTR
 	;;
-	
-	;Carrega o gdtr do stage 2.	
+
+	;Carrega o gdtr do stage 2.
 	lgdt [stage2_gdtr]
 
 	;;
 	;; CR0 - PE
 	;;
-	
+
 	;Muda PE.
-	mov eax, cr0
+    mov eax, cr0
     or al, 1
     mov cr0, eax
-	
 
-	
+
+
 	;;
 	;; Flush pipeline.
 	;;
-	
+
+
 	;CS.
 pmFlushPipeline:
     jmp stage2_CODE_SEL:pm32 
@@ -162,15 +164,15 @@ pm32:
 .debug_textmode:    
     nop
 
-    ;mov byte [0B8000h], byte 'P'
-    ;mov byte [0B8001h], byte 7
+	;mov byte [0B8000h], byte 'P'
+	;mov byte [0B8001h], byte 7
 	;mov byte [0B8002h], byte 'M'
 	;mov byte [0B8003h], byte 7
 	;jmp $
-	
 
-.debug_graphicmode:	
-    nop    
+
+.debug_graphicmode:
+    nop 
 	;jmp $
 	
 .do_start:
@@ -188,19 +190,22 @@ pm32:
 	;or eax, 0x100
 	;mov cr4, eax
 	
-		
-	;;
-	;; IMPORTANTE: A ROTINA PARA VOLTAR PARA O MODO REAL E EXECUTAR UM SERVIÇO, FUNCIONOU CORRETAMENTE,
-	;; MAS NÃO SERÁ CHAMADA NESSE MOMENTO.
-	;;
-	
+
+
+	;; IMPORTANTE: 
+	;; A ROTINA PARA VOLTAR PARA O MODO REAL E EXECUTAR UM SERVIÇO 
+	;; FUNCIONOU CORRETAMENTE, MAS NÃO SERÁ CHAMADA NESSE MOMENTO.
+
+
 	; start:
 	; Inicia o modo escolhido que foi salvo em 'BOOT.modo'.
 	; IN: AL = Boot mode.
 	; #bugbug podemos ter um proble nessa variável BOOT BOOT.modo.
 	; start.inc
-    	
-	mov al, byte [BOOT.modo]	
+
+
+	mov al, byte [BOOT.modo]
+
 
     ;;
     ;;  Go to start
@@ -210,8 +215,10 @@ pm32:
 	JMP $
 	
 
-;pmMsg1 db "bm:pm: Starting PM and GM in Assembly..", 13, 10, 0	
-	
+;#todo: Deletar.
+;pmMsg1 db "bm:pm: Starting PM and GM in Assembly..", 13, 10, 0
+
+
 ;
 ; Contexto dos registradores após o JMP para o start.
 ; ==================================================	
@@ -246,7 +253,7 @@ pm32:
 ;;Essa tabela precisa ser inicializada.
 ;rm_services_block:
 ;    .shutdown dd 0     ;<<----- rmShutdown
-;	;...
+;    ;...
 
 
 ;;
@@ -286,29 +293,29 @@ pmode_16bit:
 
 	; Ajusta os seletores de c'odigo para modo protegido de 16 bits.
 	
-	mov	ax, RM_Data_Sel
-	mov	ss, ax
-	mov	ds, ax
-	mov	es, ax
+	mov ax, RM_Data_Sel
+	mov ss, ax
+	mov ds, ax
+	mov es, ax
 	;mov	fs, ax
 	;mov	gs, ax
 
 	;Carrega ivt = 0:0
 	
-	lidt [ivtr_rm]  	
+	lidt [ivtr_rm] 
 	
 ;5. Clear the PE flag in the CR0 register to switch to real-address mode.
    mov eax, cr0
    and al, 0xFE
    mov cr0, eax
    
-;#############################################################################
+;########################################################################
 ;6. Execute a far JMP instruction to jump to a real-address mode program. 
 ; This operation flushes the instruction queue and loads the appropriate 
 ; base and access rights values in the CS register.
 
     ;; Usando um jmp de 16 bits modo real.
-	JMP 0:do_rm 	
+    JMP 0:do_rm 
     ;;
 do_rm:
     
@@ -329,69 +336,83 @@ do_rm:
     mov ax, 0x0000
     mov ss, ax
     mov sp, 0xFFFF
-	
+
+
 	;Reprogram PIC: 
 	;change IRQ 0-7 to INT 08h-0Fh, and  
 	;       IRQ 8-15 to INT 70h-77h
 
-    mov al, 10001b       ; begin PIC 1 initialization
+
+    mov al, 10001b       ; Begin PIC 1 initialization.
     out 20h, al
-    mov al, 10001b       ; begin PIC 2 initialization
+    mov al, 10001b       ; Begin PIC 2 initialization.
     out 0A0h, al
-	
-    mov al, 08h          ; IRQ 0-7: back to ints 8h-Fh
+
+    mov al, 08h          ; IRQ 0-7: back to ints 8h-Fh.
     out 21h, al
-	
-    mov al, 70h          ; IRQ 8-15: back to ints 70h-77h
+
+    mov al, 70h          ; IRQ 8-15: back to ints 70h-77h.
     out 0A1h, al
-	
-    mov al, 100b         ; slave connected to IRQ2
+
+    mov al, 100b         ; Slave connected to IRQ2.
     out 21h, al
     mov al, 2
     out 0A1h, al
-    mov al, 1            ; Intel environment, manual EOI
+    mov al, 1            ; Intel environment, manual EOI.
     out 21h, al
     out 0A1h, al
     in al, 21h
-	
-	;Mask off all interrupts for now. 
-	;PERMITE TODAS AS INTS.
-	
-	mov	al, 0		
-	out	0x21, al
-	out	0xA1, al
-	
-	;enable interrupts
-    sti    
+
+
+	; Mask off all interrupts for now. 
+	; PERMITE TODAS AS INTS.
+
+	mov al, 0
+	out 0x21, al
+	out 0xA1, al
+
+
+    ; #importante:
+    ; Enable interrupts
+
+    sti 
+
+
 
 .enableTextMode:
 
 	; set text mode for screen
 
-    mov   ax,0x0003      
-    int   0x10
+    mov ax, 0x0003 
+    int 0x10
 
-	 ;*Importante:
-	 ;Mensagem em modo real.
- 	
+
+	 ; Importante:
+	 ; Mensagem em modo real.
+
 	mov si, rm_shutdown_msg1
-	call DisplayMessage	
-	
+	call DisplayMessage
+
+
 .stop:
-    ; wait for a key	
+
+    ; wait for a key
     xor AX, AX    
     int 16h
-	
+
+
 	;Another message.
 	;mov si, rm_shutdown_msg1
-	;call DisplayMessage	
+	;call DisplayMessage
+
 
 .doShutdown:
 	call stage2Shutdown
 	jmp $
-	
-;;Mensagens para a rotina de shut down.	
-rm_shutdown_msg1 db 'pm.inc: RM, Press a key to shutdown',13,10,0		
+
+
+;;Mensagens para a rotina de shut down.
+rm_shutdown_msg1 db 'pm.inc: RM, Press a key to shutdown',13 ,10 ,0
 ;rm_shutdown_msg2 db '*',13,10,0
 ;rm_shutdown_msg3 db '.',13,10,0
 ;rm_shutdown_msg4 db '.',13,10,0
@@ -400,11 +421,11 @@ rm_shutdown_msg1 db 'pm.inc: RM, Press a key to shutdown',13,10,0
 
 ;;
 ;; =========================================================================
-;;	
+;;
 
 
 ;; Temos que mdar para 32bit [bits 32]
-;; para não estragar codigos subsequêntes.			
+;; para não estragar codigos subsequêntes.
 
 [bits 32]   
 
@@ -426,20 +447,20 @@ rm_shutdown_msg1 db 'pm.inc: RM, Press a key to shutdown',13,10,0
 
 rmStartGUI:
 
-    mov ax, DATA_SEL    
-	mov ds, ax
-	mov es, ax
-	;mov fs, ax
-	;mov gs, ax
-	
-	mov ss,ax
-	mov esp, dword 0x0009FFFC
-	
+    mov ax, DATA_SEL 
+    mov ds, ax
+    mov es, ax
+    ;mov fs, ax
+    ;mov gs, ax
+
+    mov ss,ax
+    mov esp, dword 0x0009FFFC
+
 	;; #Importante:
 	;; Daqui pra frente não usaremos mais o seletor para 32bit, somente 
 	;; o seletor para modo protegido de 16bit.
-    ;; Pula para o o modo protegido de 16bit, usando o seletor de 16bit.
-	
+	;; Pula para o o modo protegido de 16bit, usando o seletor de 16bit.
+
 	jmp RM_Code_Sel:pmode_16bit_startgui
 	
 [BITS 16]
@@ -447,22 +468,22 @@ rmStartGUI:
 pmode_16bit_startgui:
 
     ; Ajusta os seletores de codigo para modo protegido de 16 bits.
-	
-	mov	ax, RM_Data_Sel
-	mov	ss, ax
-	mov	ds, ax
-	mov	es, ax
-	
-	;mov	fs, ax
-	;mov	gs, ax
-	
+
+    mov ax, RM_Data_Sel
+    mov ss, ax
+    mov ds, ax
+    mov es, ax
+	;mov fs, ax
+	;mov gs, ax
+
+
 	;debug
 	;jmp $
 	
 	;Carrega ivt = 0:0
 
-	lidt [ivtr_rm]  	
-	
+	lidt [ivtr_rm] 
+
 ;5. Clear the PE flag in the CR0 register to switch to real-address mode.
 
    mov eax, cr0
@@ -475,77 +496,89 @@ pmode_16bit_startgui:
 ;; base and access rights values in the CS register.
 
     ;; Usando um jmp de 16 bits modo real.
-	
-	JMP 0:do_rm_startgui 	
-    
+
+    JMP 0:do_rm_startgui 
+
+
 	;; Nothing.
 	
 do_rm_startgui:
-    
+
+
 	;; 7. Load the SS, DS, ES, FS, and GS registers as needed by the 
 	;; real-address mode code. If any of the registers are not going 
 	;; to be used in real-address mode, write 0s to them.
 	
 	;; Segmento 0
-	
-	cli
-    mov ax, 0x0000        
+
+    cli
+    mov ax, 0x0000
     mov ds, ax
     mov es, ax
     mov fs, ax
     mov gs, ax
-    
+
+
+
 	; Create stack
     mov ax, 0x0000
     mov ss, ax
     mov sp, 0xFFFF
-	
+
+
 	;; Reprogram PIC: 
 	;; Voltando ao estado legado.
-	
 	;; changes: 
 	;; IRQ 0-7 to INT 08h-0Fh  
 	;; IRQ 8-15 to INT 70h-77h
 
-    mov al, 10001b       ; begin PIC 1 initialization
+
+    mov al, 10001b       ; Begin PIC 1 initialization.
     out 20h, al
-    mov al, 10001b       ; begin PIC 2 initialization
+    mov al, 10001b       ; Begin PIC 2 initialization.
     out 0A0h, al
-	
-    mov al, 08h          ; IRQ 0-7: back to ints 8h-Fh
+
+    mov al, 08h          ; IRQ 0-7: back to ints 8h-Fh.
     out 21h, al
-	
-    mov al, 70h          ; IRQ 8-15: back to ints 70h-77h
+
+    mov al, 70h          ; IRQ 8-15: back to ints 70h-77h.
     out 0A1h, al
-	
-    mov al, 100b         ; slave connected to IRQ2
+
+    mov al, 100b         ; Slave connected to IRQ2.
     out 21h, al
     mov al, 2
     out 0A1h, al
-    mov al, 1            ; Intel environment, manual EOI
+    mov al, 1            ; Intel environment, manual EOI.
     out 21h, al
     out 0A1h, al
     in al, 21h
-	
-	;Mask off all interrupts for now. 
-	;PERMITE TODAS AS INTS.
-	;enable interrupts
-	
-	mov	al, 0		
-	out	0x21, al
-	out	0xA1, al
-	
+
+
+	; Mask off all interrupts for now. 
+	; PERMITE TODAS AS INTS.
+	; Enable interrupts
+
+    mov al, 0
+    out 0x21, al
+    out 0xA1, al
+
+    ; #importante
+    ; Renable interrupts.
+
     sti    
 
-.enableTextMode:	
-	
-    ; #importante:
+
+.enableTextMode:
+
+
+	; #importante:
 	; Entraremos no modo texto para exibimos mensagens em modo real.
 	; set text mode for screen
-	
-	mov ax, 0x0003      
+
+    mov ax, 0x0003
     int 0x10
-	
+
+
 	;; #Importante:
 	;; Mensagem em modo real.
  	;; Suspenderemos essa mensagem porque está degradando o desempenho.
@@ -554,12 +587,15 @@ do_rm_startgui:
 	;; #debug
 	;; mov si, rm_startgui_msg1
 	;; call DisplayMessage	
-	
+
+
 ;.stop:
 
-    ;; wait for a key	
-    ;; xor AX, AX    
+    ;; #debug
+    ;; wait for a key
+    ;; xor AX, AX 
     ;; int 16h
+
 
 .doStartGUI:
 
@@ -572,33 +608,34 @@ do_rm_startgui:
 	;; definição do arquivo main.asm
 	
 	mov word [META$FILE.VIDEO_MODE], G_VIDEO_MODE
-	
-    
+
+
 	;Inicializa o modo selecionado.
 	;(lib16/s2modes.inc)
-	
-	JMP s2modesActivateMode     
-	jmp $
-	
-	
+
+    JMP s2modesActivateMode 
+    jmp $
+
+
+
 ;;Mensagens para a rotina de shut down.	
-rm_startgui_msg1 db 'pm.inc: RM, Press a key to start GUI',13,10,0		
+rm_startgui_msg1 db 'pm.inc: RM, Press a key to start GUI',13 ,10 ,0
 ;rm_startgui_msg2 db '*',13,10,0
 ;rm_startgui_msg3 db '.',13,10,0
 ;rm_startgui_msg4 db '.',13,10,0
-;...
+; ...
 
 ;;
 ;; =========================================================================
-;;	
+;;
 
 
 ;; #importante
 ;; Temos que mudar para 32bit [bits 32]
-;; para não estragar codigos subsequêntes.			
+;; para não estragar codigos subsequêntes.
 
-[bits 32]   	
-	
+[bits 32]
+
 ;
 ; End.
 ;

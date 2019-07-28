@@ -14,12 +14,13 @@
 ; Versão: 1.0, 2015.
 ;
 
+
 align 2
     db 'DEBUG: STRING '
 align 2
 
 
-;--------------------------------------------------
+;;==============================================
 ; os_int_to_string:
 ;     Convert a binary integer into an string.
 ;
@@ -35,14 +36,17 @@ align 2
 ;   (20 for the digits and 1 for the string terminator).
 ;   Adapted from http://www.cs.usfca.edu/~cruse/cs210s09/rax2uint.s
 ;
-os_int_to_string:
-	push edx
-	push ecx
-	push ebx
-	push eax
 
-	mov ebx, 10					; base of the decimal system
-	xor ecx, ecx					; number of digits generated
+os_int_to_string:
+
+    push edx
+    push ecx
+    push ebx
+    push eax
+
+    mov ebx, 10						; base of the decimal system
+    xor ecx, ecx					; number of digits generated
+
 os_int_to_string_next_divide:
 	xor edx, edx					; RAX extended to (RDX,RAX)
 	div ebx						; divide by the number-base
@@ -59,12 +63,13 @@ os_int_to_string_next_digit:
 	xor al, al
 	stosb						; Store the null terminator at the end of the string
 
-	pop eax
-	pop ebx
-	pop ecx
-	pop edx
-	ret
+    pop eax
+    pop ebx
+    pop ecx
+    pop edx
+    ret
 ;-----------------------------------------------------------------------
+
 
 
 ;--------------------------------------------------------------------
@@ -101,41 +106,50 @@ os_string_to_int_invalid:
 	ret
 ;------------------------------------------------------------
 
-;---------------------------------------------------------------------
+
+;;==========================================================
 ; os_string_length:
 ;     Return length of a string.
 ;  IN:	RSI = string location
 ; OUT:	RCX = length (not including the NULL terminator)
 ;	All other registers preserved
-os_string_length:
-	push edi
-	push eax
-	
-	xor ecx, ecx
-	xor eax, eax
-	mov edi, esi
-	not ecx
-	cld
-	repne scasb	; compare byte at RDI to value in AL
-	not ecx
-	dec ecx
 
-	pop eax
-	pop edi
-	ret
+os_string_length:
+
+    push edi
+    push eax
+
+    xor ecx, ecx
+    xor eax, eax
+    mov edi, esi
+    not ecx
+    cld
+    repne scasb    ;Compare byte at RDI to value in AL.
+    not ecx
+    dec ecx
+
+    pop eax
+    pop edi
+
+    ret
 ;--------------------------------------------------
 
 
-; -----------------------------------------------------------------------------
+
+;;===============================================================
 ; os_string_copy -- Copy the contents of one string into another
 ;  IN:	RSI = source
 ;	RDI = destination
 ; OUT:	All registers preserved
-; Note:	It is up to the programmer to ensure that there is sufficient space in the destination
+; Note:	It is up to the programmer to ensure that 
+; there is sufficient space in the destination.
+;
+
 os_string_copy:
-	push esi
-	push edi
-	push eax
+
+    push esi
+    push edi
+    push eax
 
 os_string_copy_more:
 	lodsb				; Load a character from the source string
@@ -143,28 +157,31 @@ os_string_copy_more:
 	cmp al, 0			; If source string is empty, quit out
 	jne os_string_copy_more
 
-	pop eax
-	pop edi
-	pop esi
-	ret
+    pop eax
+    pop edi
+    pop esi
+    ret
 ; -----------------------------------------------------------------------------
 
 
-; -----------------------------------------------------------------------------
+;;==========================================================
 ; os_string_compare -- See if two strings match
 ;  IN:	RSI = string one
 ;	RDI = string two
 ; OUT:	Carry flag set if same
+
 os_string_compare:
-	push esi
-	push edi
-	push ebx
-	push eax
+
+    push esi
+    push edi
+    push ebx
+    push eax
 
 os_string_compare_more:
+
 	mov al, [esi]			; Store string contents
 	mov bl, [edi]
-	cmp al, 0			; End of first string?
+	cmp al, 0				; End of first string?
 	je os_string_compare_terminated
 	cmp al, bl
 	jne os_string_compare_not_same
@@ -231,6 +248,8 @@ os_string_find_char_not_found:
 	xor eax, eax	; not found, set RAX to 0
 	ret
 ; -----------------------------------------------------------------------------
+
+
 
 
 ;=============================================================================
@@ -391,16 +410,21 @@ os_string_parse_done:
 ; -----------------------------------------------------------------------------
 
 
-; -----------------------------------------------------------------------------
+
+;;==========================================================
 ; os_string_append -- Append a string to an existing string
 ;  IN:	RSI = String to be appended
 ;	RDI = Destination string
 ; OUT:	All registers preserved
-; Note:	It is up to the programmer to ensure that there is sufficient space in the destination
+; Note:	It is up to the programmer to ensure that 
+; there is sufficient space in the destination.
+;
+
 os_string_append:
-	push esi
-	push edi
-	push ecx
+
+    push esi
+    push edi
+    push ecx
 
 	xchg esi, edi
 	call os_string_length
@@ -408,14 +432,15 @@ os_string_append:
 	add edi, ecx
 	call os_string_copy
 
-	pop ecx
-	pop edi
-	pop esi
-	ret
+    pop ecx
+    pop edi
+    pop esi
+    ret
 ; -----------------------------------------------------------------------------
 
 
-; -----------------------------------------------------------------------------
+
+;;========================================================
 ; os_hex_string_to_int -- Convert up to 8 hexascii to bin
 ;  IN:	RSI = Location of hex asciiz string
 ; OUT:	RAX = binary value of hex string

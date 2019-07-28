@@ -14,7 +14,8 @@
 ;     + Rotinas de reboot, via teclado.
 ;     + Rotinas de shutdown (@todo: Retirar daqui.).
 ;
-; 2015 - Created by Fred Nora.
+; History:
+;     2015 - Created by Fred Nora.
 ;
 
 
@@ -48,26 +49,26 @@
 ;
  
 global _g_scancode
-_g_scancode:
-    dd 0
+_g_scancode:    dd 0
 
-	
+
 ;
 ; Variáveis.
 ;
 
 ;Debug support.
-debug_char:  db "k"	
-debug_color: db 9
+debug_char:     db "k"
+debug_color:    db 9
 
 
-_key_status:       db 0    ;Novo char.
-nova_tecla_status: db 0    ;Status. Se há uma nova tecla pressionada ou não.
+_key_status:        db 0    ;Novo char.
+nova_tecla_status:  db 0    ;Status. Se há uma nova tecla pressionada ou não.
 
-	
+
+
 ;Minústulas.
 keylayoutlower:
-    db 0x00,   
+	db 0x00,   
 	db 0, 
 	db '1', 
 	db '2', 
@@ -81,8 +82,8 @@ keylayoutlower:
 	db '0', 
 	db '-', 
 	db '=', 
-	db 0x0e  ;BACKSPACE       
-	db 0x0F, ;TAB 
+	db 0x0e    ;BACKSPACE  
+	db 0x0F,   ;TAB 
 	db 'q', 
 	db 'w', 
 	db 'e', 
@@ -95,8 +96,8 @@ keylayoutlower:
 	db 'p', 
 	db '´', 
 	db '[', 
-	db 0x1c  ;;ENTER       
-	db 0x1d, ;;CNTROL 
+	db 0x1c    ;ENTER 
+	db 0x1d,   ;CNTROL 
 	db 'a', 
 	db 's', 
 	db 'd', 
@@ -108,7 +109,7 @@ keylayoutlower:
 	db 'l', 
 	db 'ç', 
 	db '~', 
-	db '.', ;;??
+	db '.',    ;?
 	db '~', 
 	db ']'  
 	db 'z', 
@@ -123,21 +124,21 @@ keylayoutlower:
 	db ';', 
 	db KEY_RIGHTSHIFT, 
 	db '*', 
-	db 0x38,   ;;alt grado
-	db ' ', ;;space
-	db 0x3A, ;;caps lock
-	db 0x3B,    ;;F1
+	db 0x38,    ;alt grado
+	db ' ',     ;space
+	db 0x3A,    ;caps lock
+	db 0x3B,    ;F1
 	db 0x3C,
 	db 0x3D,
 	db 0x3E,
 	db 0x3F,
-	db 0x40, ;;F6
+	db 0x40,    ;F6
 	db 0x41,
 	db 0x42,
 	db 0x43,
-	db 0x44,  ;;F10
-	db 0x45,  ;;Pause
-	db 0x46, ;;scroll
+	db 0x44,    ;F10
+	db 0x45,    ;Pause
+	db 0x46,    ;scroll
 	db '7',
 	db '8',
 	db '9',
@@ -150,23 +151,24 @@ keylayoutlower:
 	db '2',
 	db '3',
 	db '0',
-	db 0x53, ;;delete no teclado numerico.
-	db 0x54, ;;print
+	db 0x53,    ;delete no teclado numerico.
+	db 0x54,    ;print
 	db '.',
 	db '\\',
-	db 0x57, ;;F11
-	db 0x58, ;;F12
+	db 0x57,    ;F11
+	db 0x58,    ;F12
 	db '/',
 	db 0
 
 
-	
+
 ;Maiúsculas
 keylayoutupper:
-    db 0x00, 0, '!', '@', '#', '$', '%', '¨', '&', '*', '(', ')', '_', '+', 0x0e 
-	db       0, 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', 0x1c 
-	db		 0, 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ç', 0x22, '~' 
-	db		 0, '|', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '<', '>', ':', 0, 0, 0, ' ', 0
+  db 0, 0, '!', '@', '#', '$', '%', '¨', '&', '*', '(', ')', '_', '+', 0x0e 
+  db    0, 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', 0x1c 
+  db    0, 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ç', 0x22, '~' 
+  db    0, '|', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '<', '>', ':', 0, 0, 0, ' ', 0
+
 
 
 ; 0e = backspace
@@ -174,33 +176,33 @@ keylayoutupper:
 
 
 
-;--------------------------------------------
+;;==================================================================
 ; keyboard:
 ;     Keyboard interrupt. (IRQ 0x01), (INT 0x21)
-;++
 
+;++
 keyboard:
     ;nop
-_irq1:	
+_irq1:
 
-	push eax
-	push ebx
-	
+    push eax
+    push ebx
+
 	;Debug.
-    ;mov al, byte [debug_char]	
+    ;mov al, byte [debug_char]
     ;mov byte [0xB8002], al
     ;inc byte [debug_char]
 	
 	;For debug to see if system is still running.
-	;call keyboard_debug		
+	;call keyboard_debug
 
 	;Get the scancode from the keyboard.
 	
 	xor eax, eax
-	in al, 0x60			
+	in al, 0x60
 	
 	;@todo: Escape, volta para o Shell.
-	;cmp al, SCAN_ESC	
+	;cmp al, SCAN_ESC
 	
 	cmp al, 0x2A		   ;Left Shift Make.
 	je keyboard_shift
@@ -219,31 +221,28 @@ _irq1:
 	;Key up.
 	jmp keyup
 	
-	;;
-	;;
-	
-;=======	
+;=======
 ;Keydown.
 keydown:
 	cmp byte [key_shift], 0x00
 	jne keyboard_lowercase
 	jmp keyboard_uppercase
-;Minúsculas.	
+;Minúsculas.
 keyboard_lowercase:
 	mov ebx, keylayoutupper
 	jmp keyboard_processkey
 ;Maiúsculas.
-keyboard_uppercase:	
+keyboard_uppercase:
 	mov ebx, keylayoutlower
 ;Convert the scancode.
-keyboard_processkey:			
+keyboard_processkey:
 	add ebx, eax
 	mov bl, [ebx]
 	mov [key], bl    ;Pega a tecla.
 	mov al, [key]
 	jmp keyboard_done
 	
-;======	
+;======
 ;Keyup.
 keyup:
 	jmp keyboard_done
@@ -259,31 +258,30 @@ keyboard_noshift:
 keyboard_done:
 
     ;Put the typed character in the bottom right hand corner.
-	mov byte [0xB8F9C], al	
+    mov byte [0xB8F9C], al
 
 	;Debug.
-	;mov al, byte "."	
+	;mov al, byte "."
 	;call write_char
 	
 	;Avisa que tem nova tecla.
 	
-	mov al, byte 1
-	mov byte [nova_tecla_status], al
-	
-	mov al, 0x20			
-	out 0x20, al
-	
-	pop ebx
-	pop eax
-	
-	iretd
-	
-	
-	
-;-----------------------------------
+    mov al, byte 1
+    mov byte [nova_tecla_status], al
+
+    mov al, 0x20
+    out 0x20, al
+
+    pop ebx
+    pop eax
+    iretd
+
+
+
+;;=============================================
 ; get_key:
 ;     Pega mensagem do teclado.
-	
+
 get_key:
 	;Pega a nova tecla.
 	mov al, byte [key]
@@ -293,15 +291,16 @@ get_key:
 	mov bl, byte 0
 	mov byte [nova_tecla_status], bl
 	pop bx
-    
+
 	RET
 
-	
+
+
 ;------------------------
 ; pega_status_nova_tecla:
 ;
 	
-pega_status_nova_tecla:	
+pega_status_nova_tecla:
 
     ;Vê o status.
     mov al, byte [nova_tecla_status]
@@ -316,6 +315,7 @@ pega_status_nova_tecla:
     mov al, byte 1	
 	ret
 
+ 
  
 ;------------------------------
 ; wait_key:
@@ -345,13 +345,14 @@ wait_key:
 	;pega a tecla
 	mov al, byte [key]
 	; muda o status
-	mov byte [nova_tecla_status], byte 0	
+	mov byte [nova_tecla_status], byte 0
 
     pop edx
-	ret
-	
-	
-	
+    ret
+
+
+
+
 ;============================================================
 ; keyboardInit:
 ;     Set keyboard repeat rate to max.
@@ -392,14 +393,14 @@ reboot:
     ;nop
 keyboardReboot:
     ;Wait for an empty Input Buffer.
-	in al, 0x64
-	test al, 00000010b
-	jne reboot
+    in al, 0x64
+    test al, 00000010b
+    jne reboot
 	;Send the reboot call to the keyboard controller.
-	mov al, 0xFE
-	out 0x64, al
-	jmp reboot
-	jmp $
+    mov al, 0xFE
+    out 0x64, al
+    jmp reboot
+    jmp $
 
 
 ;
