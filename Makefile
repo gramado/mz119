@@ -14,7 +14,7 @@
 VERSION = 1
 PATCHLEVEL = 13
 SUBLEVEL = 0
-EXTRAVERSION = -rc9
+EXTRAVERSION = -rc11
 NAME = 
 
 ARCH ?= x86
@@ -526,24 +526,28 @@ vhd-copy-files:
 	-sudo mkdir /mnt/gramadovhd/BOOT
 	-sudo mkdir /mnt/gramadovhd/DEV
 	-sudo mkdir /mnt/gramadovhd/EFI
-	-sudo mkdir /mnt/gramadovhd/EFI/BOOT	
+	-sudo mkdir /mnt/gramadovhd/EFI/BOOT
 	-sudo mkdir /mnt/gramadovhd/GDE
-	-sudo mkdir /mnt/gramadovhd/GDE/BIN		
+	-sudo mkdir /mnt/gramadovhd/GDE/BIN
 	-sudo mkdir /mnt/gramadovhd/HOME
-	-sudo mkdir /mnt/gramadovhd/LIB	
+	-sudo mkdir /mnt/gramadovhd/LIB
 	-sudo mkdir /mnt/gramadovhd/MNT
 	-sudo mkdir /mnt/gramadovhd/TMP
 
 
 #
 # ======== Files in the BIN/ folder. ========
-#	
+#
 
-	-sudo cp ../gde/bin/*         /mnt/gramadovhd/BIN 
-	
+# bugbug
+# Suspendendo isso por falta de espaço na partição.
+
+	#-sudo cp ../gde/bin/*         /mnt/gramadovhd/BIN 
+
+
 #
 # ======== Files in the BOOT/ folder. ========
-#	
+#
 
 # principais.
 # Serão carregados por bl.bin. 
