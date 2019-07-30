@@ -17,7 +17,7 @@ init_pci:
 e1000_init_nic:
 e1000_setup_irq
 e1000_reset_controller
-pci_setup_devices: done
+pci_setup_devices: Done
 init_executive: diskATADialog
 init_architecture_dependent
 create_logon

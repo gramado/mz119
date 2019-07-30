@@ -1,8 +1,12 @@
-
-//pciinfo.c
+/*
+ * File: pciinfo.c 
+ * 
+ * Created by Fred Nora.
+ */
 
 
 #include <kernel.h>
+
 
 //
 // Class strings.
@@ -37,33 +41,39 @@ static const char* pci_class_strings[] = {
 
 
 /*
- * Mostra informações sobre um dispositivo PCI da lista.
+ * pciShowDeviceInfo:
+ *     Mostra informações sobre um dispositivo PCI da lista.
  */
 
 int pciShowDeviceInfo (int number){
-	
+
     struct pci_device_d *D;
-  
-	if(number < 0 || number > 32)
-	{
-		return 0;
-	}
-	
-	//Pega um ponteiro de estrutura na lista.
-	D = (void *) pcideviceList[number];
-	
-	//Checa se o ponteiro é válido.
-	if( (void *) D != NULL )
-	{
-		if (D->magic == 1234)
-		{
-			
-			printf ("Vendor={%x} Device={%x} ClassCode={%x} IntLine={%x} \n",
-			    D->Vendor, D->Device, D->classCode, D->irq_line );
-		}
-	}
-	//Nothing
-	return 0;
+
+    // Limits
+
+    if (number < 0 || number > 32)
+    {
+        return 0;
+        //return 1; //#todo: Usar ese retorno.
+
+    }else{
+
+		// Pega um ponteiro de estrutura na lista.
+        D = (void *) pcideviceList[number];
+
+        if ( (void *) D != NULL )
+        {
+            //if ( D->used == 1 && D->magic == 1234 )
+            if (D->magic == 1234)
+            {
+                printf ("Vend={%x} Dev={%x} ClassCode={%x} IntLine={%x} \n",
+                    D->Vendor, D->Device, D->classCode, D->irq_line );
+            }
+        }
+    };
+
+
+    return 0;
 }
 
 
@@ -74,52 +84,55 @@ int pciShowDeviceInfo (int number){
  * pciInfo:
  *     Mostra as informações salvas nas estruturas da lista de dispositivos. 
  *
- * 0x2668	82801FB (ICH6) High Definition Audio Controller 0x8086	Intel Corporation.
- * 0x2829	Intel(R) ICH8M SATA AHCI Controller	0x8086	Intel Corporation.
- * 0x1237	PCI & Memory	0x8086	Intel Corporation.
+ * 0x2668  82801FB (ICH6) High Definition Audio Controller 0x8086 Intel.
+ * 0x2829  Intel(R) ICH8M SATA AHCI Controller 0x8086 Intel.
+ * 0x1237  PCI & Memory 0x8086 Intel.
  * ...
  */
 
-int pciInfo (void){
-	
-	int i;
-	int Max = 32;
-
-	struct pci_device_d *D;
-	
-	printf("pciInfo: \n");
-	
-	//
 	// Uma lista com no máximo 32 ponteiros para estrutura de dispositivo pci.
-	//
-	
-	for ( i=0; i<Max; i++ )
-	{
+
+int pciInfo (void){
+
+    struct pci_device_d *D;
+    int i;
+    int Max = 32;
+
+
+    printf ("pciInfo: \n");
+
+
+    for ( i=0; i<Max; i++ )
+    {
 		//Pega um ponteiro de estrutura na lista.
-		D = (void *) pcideviceList[i];
-		
-		//Checa se o ponteiro é válido.
-		if( (void *) D != NULL )
-		{
-			//@todo: Mostrar mais informações.
-			if (D->magic == 1234)
-			{
-				printf("\n [%d/%d/%d] Vendor=%x Device=%x Class=%s SubClass=%x iLine=%d iPin=%d \n",
-				       D->bus, D->dev , D->func,
-					   D->Vendor, D->Device, 
-					   pci_class_strings[ D->classCode ], D->subclass, 
-					   D->irq_line, D->irq_pin );
-			};
-		};
-	};
-	
-	printf("done\n");
-	return (int) 0; 
+        D = (void *) pcideviceList[i];
+
+        if ( (void *) D != NULL )
+        {
+			// #todo: 
+			// Mostrar mais informações.
+			// Separar isso em mais de um printf.
+
+            if (D->magic == 1234)
+            {
+                printf ("\n [%d/%d/%d] Vend=%x Dev=%x Class=%s SubClass=%x iLine=%d iPin=%d \n",
+                    D->bus, D->dev , D->func,
+                    D->Vendor, D->Device, 
+                    pci_class_strings[ D->classCode ], D->subclass, 
+                    D->irq_line, D->irq_pin );
+            }
+        }
+    };
+
+
+    printf ("Done\n");
+
+    return 0; 
 }
 
-
-
-
+//
+// End.
+//
 
 
 

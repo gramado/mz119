@@ -1,6 +1,9 @@
+/*
+ * File: pciscan.c 
+ * 
+ * Created by Fred Nora.
+ */
 
-
-//pciscan.c
 
 #include <kernel.h>
 
@@ -24,150 +27,159 @@
  * entao inicializamos o dispositivo.
  */
 
+// #bugbug
+// Não precisamos inicialziar os dispositivos nesse momento.
+// Somente colocar na estrutura.
 
-//##bugbug
-//Não precisamos inicialziar os dispositivos nesse momento.
-//somente colocar na estrutura
+int pci_setup_devices (void){
 
-int pci_setup_devices (void){	
-	
-    unsigned short Vendor;    //Offset 0.
-	unsigned short Device;    //Offset 2.
-	 	
-	unsigned char i = 0; //Bus.
-    unsigned char j = 0; //Devices. (Slots).
-	unsigned char k = 0; //Functions
-		
-	unsigned char HeaderType;
-	int funcCount;
-	
-	
-	//#debug
-    kprintf ("pci_setup_devices:\n");	
+    unsigned short Vendor;    // Offset 0.
+    unsigned short Device;    // Offset 2.
+
+	// Bus, Devices and Functions.
+	// #todo: Change names. Ex: (bus, dev, fun).
+
+    unsigned char i = 0;
+    unsigned char j = 0;
+    unsigned char k = 0;
+
+
+    unsigned char HeaderType;
+    int funcCount;
+
+
+	// #debug
+
+    kprintf ("pci_setup_devices:\n");
     //kprintf ("Detecting PCI Devices..\n");
 
 
-	//Bus.
-	for ( i=0; i < PCI_MAX_BUSES; i++ )   
-	{
-		//Device.
+	// Bus.
+    for ( i=0; i < PCI_MAX_BUSES; i++ )
+    {
+		// Device.
         for ( j=0; j < PCI_MAX_DEVICES; j++ )
         {
-			
-		    // Valid device ?
-			
-		    Vendor = (unsigned short) pciCheckVendor (i,j);			
-		    
-			if ( Vendor != 0 && Vendor != PCI_INVALID_VENDORID )
-		    { 
-				
+
+			// Valid device ?
+
+             Vendor = (unsigned short) pciCheckVendor (i, j);
+
+            if ( Vendor != 0 && Vendor != PCI_INVALID_VENDORID )
+            {
+
 				//#debug
 				//printf ("vendor=%x\n",Vendor);
-				
+
 				// Multifunction ??
 				//Se o bit 7 estiver acionado, entao e' multifunction.
-				
-				HeaderType = pciGetHeaderType (i,j);
-                
-				funcCount = HeaderType & PCI_TYPE_MULTIFUNC ? PCI_MAX_FUNCTIONS : 1;
-				
-				//function
-			    for ( k=0; k<funcCount; k++)
-			    {
-				    //#debug
-					//printf("+");
-				    //pci.c
-					
-					pciHandleDevice ( i, j, k );			
-			    }; //fuction for.
-				
-		    };				
-					
-		};  // Device for.		
-		
-	};  //bus for.
-	
+
+                HeaderType = pciGetHeaderType (i, j);
+
+                funcCount = HeaderType & PCI_TYPE_MULTIFUNC ? PCI_MAX_FUNCTIONS : 1;
+
+				// Function.
+                for ( k=0; k<funcCount; k++)
+                {
+                    pciHandleDevice ( i, j, k );
+                }; 
+
+            };
+		};    // Device for.
+	};    // Bus for.
+
 
     //#debug
     //printf("Detecting PCI Devices completes..\n");
-	
+
 	//serial debug
-	debug_print ("pci_setup_devices: done\n");
-	
+    debug_print ("pci_setup_devices: Done\n");
+
 	//refresh_screen();
 	//while(1){}
+
 
     return 0; 
 }
 
 
-//procurar na lista de dispositivos por um dispositivo de 
-//determinados vendor e device.
+/*
+ * scan_pci_device_list:
+ *     Procurar na lista de dispositivos por um dispositivo de determinados 
+ * vendor e device.
+ */
 
 struct pci_device_d *scan_pci_device_list ( unsigned short vendor, 
-										    unsigned short device )
+                                            unsigned short device )
 {
     struct pci_device_d *D;
-	
-	int i;
-	
+
+    int i;
+
 	//#bugbug
 	//Nossa lista só tem 32 slots por enquanto.
-	
-	for ( i=0; i<32; i++ )
-	{
-	    D = (void *) pcideviceList[i];
-		
-		if ( (void *) D != NULL )
-		{
-			if ( D->used == 1 && D->magic == 1234 )
-			{
-			    if ( D->Vendor == vendor && D->Device == device )
-				{
-					return (struct pci_device_d *) D;
-				}	
-			}
-		}
-	}
-	
+
+    for ( i=0; i<32; i++ )
+    {
+        D = (void *) pcideviceList[i];
+
+        if ( (void *) D != NULL )
+        {
+            if ( D->used == 1 && D->magic == 1234 )
+            {
+                if ( D->Vendor == vendor && D->Device == device )
+                {
+                    return (struct pci_device_d *) D;
+                }
+            }
+        }
+    };
+
+
     return NULL;
 } 
 
-		
-//procurar na lista de dispositivos por um dispositivo de 
-//determinada classe e subclasse.
+
+/*
+ * scan_pci_device_list2:
+ *     Procurar na lista de dispositivos por um dispositivo de determinada 
+ * classe e subclasse.
+ */
+
 struct pci_device_d *scan_pci_device_list2 ( unsigned char class, 
-										    unsigned char subclass )
+                                             unsigned char subclass )
 {
     struct pci_device_d *D;
-	
-	int i;
-	
-	//#bugbug
-	//Nossa lista só tem 32 slots por enquanto.
-	
-	for ( i=0; i<32; i++ )
-	{
-	    D = (void *) pcideviceList[i];
-		
-		if ( (void *) D != NULL )
-		{
-			if ( D->used == 1 && D->magic == 1234 )
-			{
-			    if ( D->classCode == class && D->subclass == subclass )
-				{
-					return (struct pci_device_d *) D;
-				}	
-			}
-		}
-	}
-	
+
+    int i;
+
+	// #bugbug
+	// Nossa lista só tem 32 slots por enquanto.
+
+    for ( i=0; i<32; i++ )
+    {
+        D = (void *) pcideviceList[i];
+
+        if ( (void *) D != NULL )
+        {
+            if ( D->used == 1 && D->magic == 1234 )
+            {
+                if ( D->classCode == class && D->subclass == subclass )
+                {
+                    return (struct pci_device_d *) D;
+                }
+            }
+        }
+    };
+
+
     return NULL;
-} 
+}
 
 
 
-
-
+//
+// End.
+//
 
 
