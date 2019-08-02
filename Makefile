@@ -20,6 +20,11 @@ NAME =
 ARCH ?= x86
 
 
+# That's our default target when none is given on the command line
+PHONY := _all
+_all: xxx_x86
+
+
 
 # Setup disk:
 # For now we're using IDE disk on primary master.
@@ -169,10 +174,6 @@ ifeq ($(ARCH),arm)
    # NOTHING FOR NOW
 endif
 
-  
-
-#not file.
-#.PHONY x86
 
 xxx_x86: /mnt/gramadovhd compile-kernel link-x86 vhd-x86 vhd-mount vhd-copy-files vhd-unmount clean
 
