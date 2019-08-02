@@ -17,13 +17,35 @@ SUBLEVEL = 0
 EXTRAVERSION = -rc12
 NAME = 
 
-ARCH ?= x86
+
 
 
 # That's our default target when none is given on the command line
 PHONY := _all
 _all: xxx_x86
 
+
+ARCH ?= x86
+
+
+# Make variables (CC, etc...)
+#AS		= as
+#LD		= ld
+#CC		= gcc
+#AR		= ar
+#OBJCOPY		= objcopy
+#OBJDUMP		= objdump
+#LEX		= flex
+#YACC	= bison
+#PERL		= perl
+#PYTHON		= python
+#PYTHON2		= python2
+#PYTHON3		= python3
+#RUBY		= ruby
+
+
+
+#GRAMADOINCLUDE := -I include/
 
 
 # Setup disk:
