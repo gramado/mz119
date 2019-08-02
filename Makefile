@@ -1,4 +1,3 @@
-
 # Compiling Gramado on Manjaro Linux.
 # BSD License
 # SPDX-License-Identifier: GPL-3.0+
@@ -6,7 +5,6 @@
 #     2018 - Created by Matheus Castello.
 #     2019 - Fred Nora.
 #     2019 - Luciano Gonçalez.
-
 
 # important
 # We will have a new name just when the release changes.
@@ -16,6 +14,7 @@ PATCHLEVEL = 13
 SUBLEVEL = 
 EXTRAVERSION = 
 NAME = Uninteresting
+
 
 
 
