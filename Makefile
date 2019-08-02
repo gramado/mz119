@@ -199,6 +199,11 @@ endif
 
 xxx_x86: /mnt/gramadovhd compile-kernel link-x86 vhd-x86 vhd-mount vhd-copy-files vhd-unmount clean
 
+#final message.
+	@echo "Gramado $(VERSION) $(PATCHLEVEL) $(SUBLEVEL) $(EXTRAVERSION) $(NAME) "
+	@echo "Arch x86"
+
+
 compile-kernel:
 
 	@echo "Compiling kernel ..."
