@@ -1,3 +1,5 @@
+
+
 [Kernel] kernel_main:
 [Kernel] kernel_main: Using GUI
 [Kernel] kernel_main: Initializing runtime
