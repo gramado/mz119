@@ -1,5 +1,3 @@
-
-
 [Kernel] kernel_main:
 [Kernel] kernel_main: Using GUI
 [Kernel] kernel_main: Initializing runtime
@@ -41,3 +39,4 @@ fsLoadFile:
 x86main: done
 fsLoadFile:
 fsLoadFile:
+ state 

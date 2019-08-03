@@ -119,9 +119,9 @@ XPROC_SEND_MESSAGE ( struct window_d *window,
 		
 		if ( w->used != 1 || w->magic != 1234 )
 		{
-			printf("LINE_DISCIPLINE: w validation");
+			printf ("LINE_DISCIPLINE: w validation");
 			die();
-		}		
+		}
 
 		//
 		// ## thread ##
@@ -143,8 +143,8 @@ XPROC_SEND_MESSAGE ( struct window_d *window,
 		{
 			printf ("LINE_DISCIPLINE: t validation \n");
 			die ();
-		}        
-			
+		} 
+
 		//#importante:
 		//??
 		
@@ -165,19 +165,16 @@ XPROC_SEND_MESSAGE ( struct window_d *window,
 		t->long2 = long2;
 		
 		t->newmessageFlag = 1;
-		
-	};	
- 	
-    return 0;	
+    };
+
+
+    return 0;
 }
 
 
 
 
-
-
-
-
+// ??
 void xxxtestSHELLServer (void){
 
    //#atenção:
@@ -214,32 +211,34 @@ void xxxtestSHELLServer (void){
 }
 
 
+
 // #IMPORTANTE
 // REFRESH STDOUT
 
 void xxxtestlibcSTDOUT (void){
 
-     char *c;
-     
-	 sprintf ( current_stdout->_base, "TESTING STDOUT ..." );
-	 
-	 int i;
-	 int j;
-	 
-	 j = 80*25;
-	 
-	 c = current_stdout->_base;
-	  
-	int cWidth = get_char_width ();
-	int cHeight = get_char_height ();
-	
-	if ( cWidth == 0 || cHeight == 0 )
-	{
+    char *c;
+
+    sprintf ( current_stdout->_base, "TESTING STDOUT ..." );
+
+    int i;
+    int j;
+
+    j = 80*25;
+
+    c = current_stdout->_base;
+
+    int cWidth = get_char_width ();
+    int cHeight = get_char_height ();
+
+    if ( cWidth == 0 || cHeight == 0 )
+    {
 		//#debug
 		printf ("servicesPutChar: fail w h ");
 		die();
-	}
-	
+    }
+
+
      stdio_terminalmode_flag = 1;  
 	 for (i=0; i<j; i++)
 	 {
@@ -284,7 +283,7 @@ void xxxtestlibc (void){
 		    printf ("stream info:\n");
 		    printf ("f1->_base: %x\n",f1->_base);
 		    printf ("f1->_p: %x\n",f1->_p);
-		    printf ("f1->_cnt: %d\n",f1->_cnt);			
+		    printf ("f1->_cnt: %d\n",f1->_cnt);
 		}
 		
 
@@ -309,7 +308,7 @@ void xxxtestlibc (void){
 				
 			}else{
 				//printf("+");
-			    printf ("%c", ch_test);	
+			    printf ("%c", ch_test);
 			};
 		};
 }
@@ -317,6 +316,7 @@ void xxxtestlibc (void){
 
 
 
+// ?? testando rotina de write sector.
 void procTestF6 (void){
 	
 	void *address = (void *) kmalloc (1024);
@@ -328,7 +328,7 @@ void procTestF6 (void){
 	    (unsigned long) 559, 
 		(int) 0x30, 
 		(int) g_current_ide_channel, 
-		(int) g_current_ide_device );	
+		(int) g_current_ide_device );
 	 
 	// #debug
 	// printf("Signature: [ %x %x ] \n" , buffer[0x1FE], buffer[0x1FF] ); 
@@ -358,33 +358,37 @@ void procTestF6 (void){
 unsigned long 
 system_procedure ( struct window_d *window, 
                    int msg, 
-				   unsigned long long1, 
-				   unsigned long long2 ) 
-{ 	
+                   unsigned long long1, 
+                   unsigned long long2 ) 
+{
+
 	// @todo: *importante:
 	//        Não rpecisa dar refresh_screen para todos os casos.
 	//        Cada caso é diferente ... 
 	//        ?? Quem deve chamar esse refresh dos elentos gráficos ??
 	//        O aplicativo ?? acionando a flag através de ShowWindow por exemplo??
-	
+
+
 	//debug!
 	//printf("system_procedure: msg={%d} long1={%d}\n", msg, long1);  
-	
-	void *buff;
-	
-	int AltStatus;
-	int CtrlStatus;
-	int ShiftStatus;
+
+
+    void *buff;
+
+    int AltStatus;
+    int CtrlStatus;
+    int ShiftStatus;
 	//...
-	
+
+
 	//usado no refresh_rectangle
 	//unsigned long saveX, saveY;
-	
+
 
 	//Get status.
-	AltStatus = (int) get_alt_status(); 
-	CtrlStatus = (int) get_ctrl_status();	
-	//ShiftStatus = (int) get_shift_status();
+    AltStatus = (int) get_alt_status(); 
+    CtrlStatus = (int) get_ctrl_status();
+    //ShiftStatus = (int) get_shift_status();
 	//...
 	
 
@@ -392,7 +396,7 @@ system_procedure ( struct window_d *window,
 	unsigned long left; 
 	unsigned long top;   
 	unsigned long width; 
-	unsigned long height; 		
+	unsigned long height; 
 
 	
 	//janela de teste.
@@ -413,18 +417,19 @@ system_procedure ( struct window_d *window,
 	// Window With Focus !
 	//window é a janela com o foco de entrada, obtita pelo ldisc.c 
 	//e passada via argumento.
-	if ( (void *) window == NULL )
-	{
-	    
-		printf("sm-sys-system_procedure: window");
-        die();		
-	
-	}else{
-	
+
+    if ( (void *) window == NULL )
+    {
+
+        panic ("xproc-system_procedure: window");
+
+    }else{
+
 	    //
 	    // Configurando o cursor para ficar de acordo com a janela com o foco de entrda.
 	    //
-		
+
+
 		//
 		// @todo:
 		// Aqui deveríamos apenas pegar o ponteiro para a estrutura 
@@ -436,7 +441,7 @@ system_procedure ( struct window_d *window,
 		//left   = window->left;
 	    //top    = window->top;
 	    //width  = window->width;
-	    //height = window->height;		
+	    //height = window->height;
 	
 	    //
 		// simular valores aqui para teste ... como 80 25
@@ -461,27 +466,28 @@ system_procedure ( struct window_d *window,
 		
         //if( g_cursor_bottom == 0 ){
 		//	g_cursor_bottom = 1;
-		//}		
+		//}
 		
 		//cursor (0, mas com margem nova).
 		//#bugbug ... isso reiniciaria o cursor a cada tecla pressionada.
 		//g_cursor_x = g_cursor_left; 
-		//g_cursor_y = g_cursor_top;  		
+		//g_cursor_y = g_cursor_top; 
            
 	
 	    //...
 	};
 
-    //
-    //*importante:
+
+	// *importante:
 	// Desejamos que as teclas de controle sejam tratadas por esse 
 	// procedimento mesmo que a janela seja do tipo terminal ...
 	// pois as teclas de comtrole permite trocarmos a jenala com 
 	// o foco de entrada sem fecharmos o terminal.
-    //	
-    
-	switch (msg)
-    { 
+
+ 
+    switch (msg)
+    {
+
 		//teclas de digitação.
 		case MSG_KEYDOWN:
             switch (long1)
@@ -509,7 +515,7 @@ system_procedure ( struct window_d *window,
 					//SendMessage(window,MSG_DEVELOPER,1,0);
 					//CloseWindow(window);
                     KillFocus(window);
-					goto done;				
+					goto done;
 				    break;
 					
 				//Obs: Não deve ser preocupação do desenvolvedor de aplicação 
@@ -540,7 +546,7 @@ system_procedure ( struct window_d *window,
                 //o tab deve fazer parte das teclas de difitação. ??
                 case VK_TAB:
 					//if(AltStatus == 1){
-                    //    //@todo: Chama uma rotina que muda a janela com o foco de entrada.						
+                    //    //@todo: Chama uma rotina que muda a janela com o foco de entrada.
 					//	break;
 					//};
 					
@@ -570,8 +576,8 @@ system_procedure ( struct window_d *window,
 					//    KiInformation();	
 					//}
 					goto done;
-					break;				
-				   					
+					break;	
+	
 					//Se for do tipo terminal as teclas de digitação se 
 					//serão tratadas pelo procedimento de janelas do terminal.
 					//para isso é só ir para o fim desse procedimento.
@@ -624,19 +630,20 @@ system_procedure ( struct window_d *window,
           
 		//## Teclas do sistema interceptadas pelo kernel ##   
         // F1 ~  F4 (usadas pelos aplicativos)
-        // F5 ~  F8 (usados pelo sistema nessa fase do desenvolvimento)				
+        // F5 ~  F8 (usados pelo sistema nessa fase do desenvolvimento)
 		// F9 ~  F12 (usadas pelos aplicativos)
-        case MSG_SYSKEYDOWN:                 
-            switch (long1)	       
-            {   		
-				case VK_F1:	
+        case MSG_SYSKEYDOWN:     
+            switch (long1)
+            { 
+
+                case VK_F1:
                 case VK_F2:
                 case VK_F4:
                     // Nothing.
-					break;
-					
+                    break;
+
                 //#tests
-				//Vamos usar F5 para testar as funcionalidades dos drivers apenas.	
+				//Vamos usar F5 para testar as funcionalidades dos drivers apenas.
 				FILE *bmfp;
 				case VK_F5:
 
@@ -655,7 +662,7 @@ system_procedure ( struct window_d *window,
 					//bmp_change_color_flag = 0;
 					//bmp_selected_color = 0;
 					
-					//refresh_rectangle ( 100, 100, 200, 200 );  										
+					//refresh_rectangle ( 100, 100, 200, 200 ); 
 					
 					//process info
 					//show_process_information ();					
@@ -689,18 +696,15 @@ system_procedure ( struct window_d *window,
 					//no inci'cio do arquivo
 					//xxxtestlibc();
 					
-					//show_ide_info ();		 //execve/dd/disk1.c			
+					//show_ide_info ();		 //execve/dd/disk1.c
 	                //show_ideports_info();    //execve/sm/disk/diskvol.c
 					
 					//#test testando inicialização do IDE, #funcionou.
 					//ata_initialize();
 				
-					
-					//
 					// NIC test
-					//
-					//testNIC();					
-					
+					//testNIC();
+
 					//init_nic ();  //intel.c (obs: essa rotina tambem reseta o controlador.)
 					//refresh_screen();
 					//testSend();
@@ -712,19 +716,17 @@ system_procedure ( struct window_d *window,
 					//refresh_screen();
 
 					//pci_info();     //PCI information.
-				    					
-					//systemShowDevicesInfo();
-										
-					break;
 				
+					//systemShowDevicesInfo();
+					break;
+
+
                 //#testes
-				//Testes diversos.	
-				case VK_F6:
-							
-					printf("\n"); 
-					testNIC();
-					//refresh_screen();
-					
+                //Testes diversos.
+                case VK_F6:
+
+                    testNIC ();
+
 					//#test
 					//fsList("volume1");
 					
@@ -758,10 +760,11 @@ system_procedure ( struct window_d *window,
 					
 					//printf("F6: Testando linkar um driver ...\n");
 					//procedureLinkDriverTest();
-					
-					break;
-				
-                //Testing				
+                    break;
+
+
+
+                //Testing
 				case VK_F7:
 					
 					//clonar o pai e executar o filho dado o nome do filho.
@@ -794,26 +797,25 @@ system_procedure ( struct window_d *window,
 					
 				// Cls. 
 				// (reiniciar as configurações originais)
-                // Seta o foco na janela principal.				
+                // Seta o foco na janela principal.
 				case VK_F8:
                     ldisc_init_modifier_keys();
 					ldisc_init_lock_keys();
 					videoInit ();
-					SetFocus (gui->main);					
+					SetFocus (gui->main);
 					refresh_screen();
-					goto done;	
+					goto done;
 					break;
-					
-					
-				case VK_F9:
-				case VK_F10:
-				case VK_F11:					
-				case VK_F12:
+
+
+                case VK_F9:
+                case VK_F10:
+                case VK_F11:
+                case VK_F12:
                     // Nothing,
-				    break;
-				
-				
-				
+                    break;
+
+
 				//#IMPORTANTE
 				//caps lock keydown
 				//#test testando a utilização de maiúsculas,

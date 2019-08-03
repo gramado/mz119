@@ -65,7 +65,16 @@ PCIRegisterIRQHandler ( uint16_t bus,
  *****************************************************
  * e1000_init_nic:
  *     Inicializando o controlador NIC da Intel.
+ *
+ * #importante:
+ * Essa rotina é chamada quando sondamos para encontrar os dispositivos pci. 
  */
+
+// Pegaremos mais informações sobre o dispositivo pci e colocaremos na 
+// estrutura.
+// 8086:100e
+// 82540EM Gigabit Ethernet Controller
+
 
 int 
 e1000_init_nic ( unsigned char bus, 
@@ -77,24 +86,18 @@ e1000_init_nic ( unsigned char bus,
     uint32_t data;
 
     unsigned long phy_address;
+    unsigned short tmp16;
+    uint32_t i; 
 
 
-	//#debug
-	//printf("\n");
-	//printf("e1000_init_nic: Probing PCI..\n");
+	// #debug
     printf ("e1000_init_nic:\n");
     debug_print ("e1000_init_nic:\n");
 
-	// #pci	
-	// # get info
-	// Pegaremos mais informações e colocaremos na estrutura de 
-	// dispositivo pci.
 
 	//#importante
 	//devemos falhar antes de alocarmos memória para a estrutura.
 
-	// 8086:100e
-	// 82540EM Gigabit Ethernet Controller
 
     data = (uint32_t) diskReadPCIConfigAddr ( bus, dev, fun, 0 );
 
@@ -108,6 +111,10 @@ e1000_init_nic ( unsigned char bus,
 
     if ( Vendor != 0x8086 || Device != 0x100E )
     {
+		// #todo: 
+		// Criar mensagem aqui. Pois essa rotina foi chamada porque encontramos
+		// esse dispositivo específicamente.
+
         return -1;
     }
 
@@ -120,7 +127,8 @@ e1000_init_nic ( unsigned char bus,
 	//
 	// pci_device
 	//
-	
+
+
 	//pci device struct
 	//passado via argumento. 
 
@@ -129,7 +137,7 @@ e1000_init_nic ( unsigned char bus,
 
         printf ("e1000_init_nic: pci_device\n");
         die ();
-		
+
 		//return (int) -1;
 
     }else{
@@ -163,36 +171,54 @@ e1000_init_nic ( unsigned char bus,
 
 			printf ("#debug breakpoint\n");
 			printf ("e1000_init_nic: 82540EM not found\n");
+			die ();
 
-			refresh_screen ();
-			while (1){}
-
+			//refresh_screen ();
+			//while (1){}
 			//return -1;
 		}
 
-		pci_device->BAR0 = (unsigned long) diskReadPCIConfigAddr ( bus, dev, fun, 0x10 );
-		pci_device->BAR1 = (unsigned long) diskReadPCIConfigAddr ( bus, dev, fun, 0x14 ); 
-		pci_device->BAR2 = (unsigned long) diskReadPCIConfigAddr ( bus, dev, fun, 0x18 );
-		pci_device->BAR3 = (unsigned long) diskReadPCIConfigAddr ( bus, dev, fun, 0x1C );
-		pci_device->BAR4 = (unsigned long) diskReadPCIConfigAddr ( bus, dev, fun, 0x20 );
-		pci_device->BAR5 = (unsigned long) diskReadPCIConfigAddr ( bus, dev, fun, 0x24 );
+
+		//
+		// BARs
+		//
+
+        pci_device->BAR0 = (unsigned long) diskReadPCIConfigAddr ( bus, 
+                                               dev, fun, 0x10 );
+        pci_device->BAR1 = (unsigned long) diskReadPCIConfigAddr ( bus, 
+                                               dev, fun, 0x14 ); 
+        pci_device->BAR2 = (unsigned long) diskReadPCIConfigAddr ( bus, 
+                                               dev, fun, 0x18 );
+        pci_device->BAR3 = (unsigned long) diskReadPCIConfigAddr ( bus, 
+                                               dev, fun, 0x1C );
+        pci_device->BAR4 = (unsigned long) diskReadPCIConfigAddr ( bus, 
+                                               dev, fun, 0x20 );
+        pci_device->BAR5 = (unsigned long) diskReadPCIConfigAddr ( bus, 
+                                               dev, fun, 0x24 );
 
 
-		// ## IRQ ##
-        pci_device->irq_line = (uint8_t) pciConfigReadByte ( bus, dev, fun, 0x3C );  //irq
-        pci_device->irq_pin  = (uint8_t) pciConfigReadByte ( bus, dev, fun, 0x3D );  //letras	
+		// IRQ.
+
+		// irq
+        pci_device->irq_line = (uint8_t) pciConfigReadByte ( bus, 
+                                             dev, fun, 0x3C );
+
+		// letras
+        pci_device->irq_pin  = (uint8_t) pciConfigReadByte ( bus, 
+                                             dev, fun, 0x3D ); 
 
 
 		// ##importante:
 		// Grab the Base I/O Address of the device
 		// Aqui nós pegamos o endereço dos registadores na BAR0,
 		// Então mapeamos esse endereço físico para termos um endereço virtual 
-		// para manipularmos os registradores. 	
+		// para manipularmos os registradores. 
 
-        phy_address = (pci_device->BAR0 & 0xFFFFFFF0);
+        phy_address = ( pci_device->BAR0 & 0xFFFFFFF0 );
 
         //...
-    }
+    };
+
 
 	//
 	// ## Base address ##
@@ -201,30 +227,33 @@ e1000_init_nic ( unsigned char bus,
 	// #importante:
 	// Mapeando para obter o endereço virtual que o kernel pode manipular.
 	// pages.c
+	// #bugbug: 
+	// Isso é um improviso. Ainda falta criar rotinas melhores.
 
     unsigned long virt_address = mapping_nic1_device_address ( phy_address );
 
 	// Endereço base.
 	// Preparando a mesma base de duas maneiras.
-	
+
     unsigned char *base_address = (unsigned char *) virt_address;
     unsigned long *base_address32 = (unsigned long *) virt_address;
 
 	//
 	//  NIC
 	//
-	
-	unsigned short tmp16;
-	
+
+	//#todo: Checar essa estrutura.
+
 	currentNIC = (void *) malloc ( sizeof( struct intel_nic_info_d ) );
 	
 	if ( (void *) currentNIC ==  NULL )
 	{
 		printf ("e1000_init_nic: currentNIC struct\n");
-	    return (int) -1;	
+		return (int) -1;
 		
 	} else {
-		
+
+
 		currentNIC->used = 1;
 		currentNIC->magic = 1234;
 		
@@ -242,7 +271,9 @@ e1000_init_nic ( unsigned char bus,
 		
 		//device status
 		currentNIC->DeviceStatus = base_address[0x8];
-		
+
+
+
 		//
 		// ## EEPROM ##
 		//
@@ -251,29 +282,29 @@ e1000_init_nic ( unsigned char bus,
 		//Como ainda não sabemos, vamos dizer que não.
 		currentNIC->eeprom = 0; 
 
-		uint32_t i; 
-		
-	    for ( i=0; i < 1000 && !currentNIC->eeprom; i++ ) 
-	    {
-		    // Let's try to discover reading the status field!
-		    uint32_t val = E1000ReadCommand ( currentNIC, 0x14 );
+		// Let's try to discover reading the status field!
+
+        for ( i=0; i < 1000 && !currentNIC->eeprom; i++ ) 
+        {
+            uint32_t val = E1000ReadCommand ( currentNIC, 0x14 );
 
 		    // We have?
-		    if ( (val & 0x10) == 0x10) 
-		    {
+            if ( (val & 0x10) == 0x10) 
+            {
                 // Yes :)
-			    currentNIC->eeprom = 1;
-		    }
-	    };
+                currentNIC->eeprom = 1;
+            }
+        };
+
 
 		//
 		// ## MAC ##
 		//
-		
-	    // Let's read the MAC Address!		
 
-		
-		
+
+		// Let's read the MAC Address!
+
+
 	    // We can use the EEPROM!
 	    if (currentNIC->eeprom == 1) 
 	    {
@@ -313,6 +344,7 @@ e1000_init_nic ( unsigned char bus,
     };
 
 
+
 	//
 	// ## bus mastering ##
 	//
@@ -340,6 +372,8 @@ e1000_init_nic ( unsigned char bus,
 			(int) 0x04, (int) cmd ); 
 	};
 
+
+
     printf ("Done\n");
 
     return 0;
@@ -348,37 +382,47 @@ e1000_init_nic ( unsigned char bus,
 
 /*
  *******************************************
+ *    >>>> HANDLER <<<<
+ *******************************************
  * xxxe1000handler:
  *     e1000 handler :)
  */
 
 void xxxe1000handler (void){
 
-    int i;	
-	
-	//structs
-	struct ipv6_header_d *ipv6_h;
-	struct ether_header *eh;
-	struct ether_arp *arp_h;
-	
-	
-	// #flag !!
+	//Structs.
+
+    struct ipv6_header_d *ipv6_h;
+    struct ether_header *eh;
+    struct ether_arp *arp_h;
+
+    int i;
+
+
+	// #importante:
+	// #flag 
 	// Essa flag precisa ser acionada para a rotina funcionar.
 	// F6 tem acionado essa flag.
-	
+
+
 	if ( e1000_interrupt_flag != 1 )
-		return;	
-	
+		return;
+
+
+
 	//intel.h
 	e1000_irq_count++;
-	
-	
-	//printf("xxxe1000handler: #debug e1000\n");
-	//refresh_screen();	
-	
+
+
+	// #debug
+	// printf("xxxe1000handler: #debug e1000\n");
+	// refresh_screen();
+
+
 	// Without this, the card may spam interrupts...
-	E1000WriteCommand ( currentNIC, 0xD0, 1);		
-	
+	E1000WriteCommand ( currentNIC, 0xD0, 1);
+
+
 	//status
 	uint32_t status = E1000ReadCommand ( currentNIC, 0xC0 ); 
 
@@ -416,21 +460,24 @@ void xxxe1000handler (void){
 		}
     };
 
+
+
+
 	//
 	// =================== ## Reagir ## ================================
 	//
 
+	// #importante
+	// Qual buffer?
 
-	//pega o buffer 0 de rx 
-	//unsigned char *buffer = (unsigned char *) currentNIC->rx_descs_virt[0];
-	
-	//#esse funcionou.
-	//unsigned char *buffer = (unsigned char *) currentNIC->rx_descs_virt[1];
+	// Atenção:
+	// Nesse momento checaremos se no início do buffer temos o header ethernet.
+	// Em seguida o 'switch' chama as rotinas apropriadas para cada tipo 
+	// de pacode.
+	// Os tipos são: IPV4, ARP, IPV6 e default.
 
-	//#todo
-	//mas vamos tentar ler o rx current
-	unsigned char *buffer = (unsigned char *) currentNIC->rx_descs_virt[old];
-	
+    unsigned char *buffer = (unsigned char *) currentNIC->rx_descs_virt[old];
+
 	//
 	// ## eth header ##
 	//
@@ -462,103 +509,134 @@ void xxxe1000handler (void){
 	//refresh_screen();
 	
 	uint16_t type = FromNetByteOrder16(eh->type);
-	
-	switch ( (uint16_t) type)
-	{
+
+
+    switch ( (uint16_t) type)
+    {
+
+		//::: IPV4
 		//0x0800	Internet Protocol version 4 (IPv4)
-		case 0x0800:
-		   //printf("todo: Internet Protocol version 4 (IPv4)\n");
-		   //printf("IPv4 ");
-		   //refresh_screen();
-		   return;
-		   break;
-		   
+        case 0x0800:
+           // #debug
+           //printf("todo: Internet Protocol version 4 (IPv4)\n");
+           //printf("IPv4 ");
+           //refresh_screen();
+           return;
+           break;
+
+		//::: ARP
 		//0x0806	Address Resolution Protocol (ARP)
-		case 0x0806:
-		    //printf("\nARP ");
-			arp_h = (void *) &buffer[14];
-		    //printf("todo: Address Resolution Protocol (ARP) ");
-			if ( arp_h->op == ToNetByteOrder16(ARP_OPC_REPLY) )
-			{
+		//#todo: devemos chamar uma rotina para tratamento de ARP e não
+		//fazermos tudo aqui. kkk.
+        case 0x0806:
+            //printf("\nARP ");
+            arp_h = (void *) &buffer[14];
+           //printf("todo: Address Resolution Protocol (ARP) ");
+
+            if ( arp_h->op == ToNetByteOrder16(ARP_OPC_REPLY) )
+            {
 				//#debug
-				//printf("REPLY received\n");
-	            //printf("src: ");
+                //printf("REPLY received\n");
+                //printf("src: ");
                 //for( i=0; i<4; i++)
-	            //	printf("%x ",arp_h->arp_spa[i]);
-				//refresh_screen();
-                return;				
-			}
+                //    printf("%x ",arp_h->arp_spa[i]);
+                //refresh_screen();
+                return;
+             }
+
 			if ( arp_h->op == ToNetByteOrder16(ARP_OPC_REQUEST) )
 			{
 				//#debug
-				printf("REQUEST received ");
-                for( i=0; i<6; i++){ printf("%x ",eh->src[i]); }
+
+                printf ("\n ARP REQUEST received | ");
+                for( i=0; i<6; i++){ printf("%x ",eh->src[i]); };
+
                 printf(" | ");
-				for( i=0; i<6; i++){ printf("%x ",eh->dst[i]); }
+                for( i=0; i<6; i++){ printf("%x ",eh->dst[i]); };
+
                 printf(" | ");
-				for( i=0; i<4; i++){ printf("%d ",arp_h->arp_spa[i]); }
-				 printf(" | ");
-				for( i=0; i<4; i++){ printf("%d ",arp_h->arp_tpa[i]); }
-				//refresh_screen();
+                for( i=0; i<4; i++){ printf("%d ",arp_h->arp_spa[i]); };
+
+                printf(" | ");
+                for( i=0; i<4; i++){ printf("%d ",arp_h->arp_tpa[i]); };
+
 				//cache
-				for (i=0; i<32; i++)
-				{
-				    //livre
-					if ( currentNIC->arp_cache[i].used == 1 && currentNIC->arp_cache[i].magic == 1234 )
-					{
+
+                for ( i=0; i<32; i++ )
+                {
+                    // livre.
+                    if ( currentNIC->arp_cache[i].used == 1 && 
+                         currentNIC->arp_cache[i].magic == 1234 )
+                    {
+
 						//compara o ip
-					    if ( strncmp( (char *) &currentNIC->arp_cache[i].ipv4_address[0], (char *) &arp_h->arp_spa[0], 4 ) == 0 )
-						{
-							memcpy ( (void*) &currentNIC->arp_cache[i].mac_address[0] , (const void *) &eh->src[0], 6);
-							
-							//sinaliza que está em uso.
-							currentNIC->arp_cache[i].magic = 4321;
-						}
-							
-					}
-				}
-				
-				uint16_t arp_tx_old = currentNIC->tx_cur;
-			    uint32_t arp_tx_len = currentNIC->legacy_tx_descs[arp_tx_old].length;
-			
-				//muda para REPLAY.
-				arp_h->op = ToNetByteOrder16(ARP_OPC_REPLY);
+                        if ( strncmp ( (char *) &currentNIC->arp_cache[i].ipv4_address[0], 
+                                 (char *) &arp_h->arp_spa[0], 
+                                 4 ) == 0 )
+                        {
+                            memcpy ( (void *) &currentNIC->arp_cache[i].mac_address[0], 
+                                (const void *) &eh->src[0], 
+                                6 );
+
+							// Sinaliza que está em uso.
+                            currentNIC->arp_cache[i].magic = 4321;
+                        }
+                    }
+                };
+
+
+                uint16_t arp_tx_old = currentNIC->tx_cur;
+                uint32_t arp_tx_len = currentNIC->legacy_tx_descs[arp_tx_old].length;
+
+				//Muda para REPLAY.
+                arp_h->op = ToNetByteOrder16(ARP_OPC_REPLY);
 
 				//reenvia os mesmos dados, mas modificados para replay.
 				//essa rotina vai copiar de um buffer para outro.
-			    E1000Send ( (void *) currentNIC, (uint32_t) arp_tx_len, (uint8_t *) &buffer[0]);
+				printf ("\n Sending ARP reply ...\n");
+                E1000Send ( (void *) currentNIC, 
+                    (uint32_t) arp_tx_len, 
+                    (uint8_t *) &buffer[0]);
 
-				printf ("\n");
-				refresh_screen ();
-				return;
-			} 
-		    return;
-			break;
+                printf ("\n");
+                refresh_screen ();
+                return;
+            }
+            return;
+            break;
 
+
+		//::: IPV6
 		//0x86DD	Internet Protocol Version 6 (IPv6)
-		case 0x86DD:
+        case 0x86DD:
 			//printf("IPv6 ");
-		    ipv6_h = (void *) &buffer[14];
-		    //
-			handle_ipv6 ( (struct intel_nic_info_d *) currentNIC, 
-			    (struct ipv6_header_d *) ipv6_h );
-			//refresh_screen();
-			return;	
-		    break;
+            ipv6_h = (void *) &buffer[14];
 
-		default:
-		    //printf("default ethernet type\n");
-		    //refresh_screen();
-			return;
-			break;
+            handle_ipv6 ( (struct intel_nic_info_d *) currentNIC, 
+                (struct ipv6_header_d *) ipv6_h );
+
+            return;
+            break;
+
+		//::: DEFAULT
+        // Error: Default package type.
+        default:
+            // #debug
+            //printf("default ethernet type\n");
+            //refresh_screen();
+            return;
+            break;
+
 	};
+
 
 	//printf("\n");
 	//refresh_screen();
 	//while(1){}
 	
-	return;
+	//return;
 }
+
 
 
 //=======================================================

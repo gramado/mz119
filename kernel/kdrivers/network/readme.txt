@@ -1,10 +1,6 @@
 
 
-Sobre o diretório sm/network:
+Sobre o diretório kdrivers/network:
 
-    Essa é a parte do kernel base responsável pelo gerenciamento 
-recursos de rede.
-
-    
-
-    
+    Essa é a parte do kernel base responsável pelo gerenciamento dos recursos 
+ de rede.

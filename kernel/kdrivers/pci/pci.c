@@ -1310,14 +1310,17 @@ pciHandleDevice ( unsigned char bus,
         {
 			 //serial debug
              debug_print ("0x8086:0x100E found \n"); 
-			 //printf("b=%d d=%d f=%d \n", D->bus, D->dev, D->func );
-		     //printf("82540EM Gigabit Ethernet Controller found\n");
+			//printf("b=%d d=%d f=%d \n", D->bus, D->dev, D->func );
+			//printf("82540EM Gigabit Ethernet Controller found\n");
 
-		     Status = (int) e1000_init_nic ( (unsigned char) D->bus, 
-							   (unsigned char) D->dev, 
-							   (unsigned char) D->func, 
-							   (struct pci_device_d *) D );
-			
+			//See: network/nicintel.c
+
+            Status = (int) e1000_init_nic ( (unsigned char) D->bus, 
+                               (unsigned char) D->dev, 
+                               (unsigned char) D->func, 
+                               (struct pci_device_d *) D );
+
+
 			 if (Status == 0)
 			 {
 			      //# irq and reset.
@@ -1333,9 +1336,10 @@ pciHandleDevice ( unsigned char bus,
 				  //while(1){} 
 				 
 		     }else{
-			      printf ("pciHandleDevice: #debug NIC");
-				  die();
-		    }
+
+                  printf ("pciHandleDevice: #debug NIC");
+                  die();
+             }
         }
 
 
