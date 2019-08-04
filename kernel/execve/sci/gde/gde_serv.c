@@ -1,5 +1,5 @@
 /*
- * File: execve/sci/gde_serv.c 
+ * File: execve/sci/gde/gde_serv.c 
  *
  *       (SCI) = SYSTEM CALL INTERFACE
  *
@@ -116,28 +116,30 @@ void *gde_services ( unsigned long number,
 	//Args. (strings)
 	unsigned char *stringZ = (unsigned char *) arg2;
 	unsigned char *stringZZ = (unsigned char *) arg3;
-	
-	unsigned long *a2 = (unsigned long*) arg2;
-	unsigned long *a3 = (unsigned long*) arg3;
-	unsigned long *a4 = (unsigned long*) arg4;
-	
 
-	char *aa2 = (char *) arg2;
-	char *aa3 = (char *) arg3;
-	char *aa4 = (char *) arg4;
 
-	
+    unsigned long *a2 = (unsigned long*) arg2;
+    unsigned long *a3 = (unsigned long*) arg3;
+    unsigned long *a4 = (unsigned long*) arg4;
+
+    char *aa2 = (char *) arg2;
+    char *aa3 = (char *) arg3;
+    char *aa4 = (char *) arg4;
+
+
     char *tokenList[8];
-	
-	*tokenList = (char*) arg3;
-	
+
+    *tokenList = (char *) arg3;
+
+
 	//Char and string support.
 	char *argChar;
 	unsigned char* argString;
 
 	//Retorno.
-	void* Ret;
-	
+	void *Ret;
+
+
 	//Function(CreateWindow)
 	//arg2 =Type
 	//arg3=Status
@@ -149,7 +151,8 @@ void *gde_services ( unsigned long number,
 	unsigned long WindowRect;
 	unsigned long WindowView;      //Min, max.
 	char *WindowName;            
-	
+
+
 	//
 	// Window stuffs:
 	//
@@ -163,29 +166,37 @@ void *gde_services ( unsigned long number,
     struct window_d *NewWindow;  //Ponteiro para a janela criada pelo serviço.
 	
 	
-	//void* kHWND;
-	void* kMSG;
-	//void* kLONG1;
-	//void* kLONG2;
+	//void *kHWND;
+	void *kMSG;
+	//void *kLONG1;
+	//void *kLONG2;
 	//...
-	
+
+
+
+
 	//Para identificarmos qual processo e qual thread está chamando.
 	//struct window_d *Thread;
-	struct process_d *p;
-	struct thread_d *t;
-	
+    struct process_d *p;
+    struct thread_d *t;
+
+
+
 	//generic file pointer
 	FILE *__fp;
 	
 	//bmp file pointer.
 	FILE *__bmfp;
-	
+
+
+
+
 	//
 	// Setup.
 	//
 	
 	//Window.
-	hWnd = (void*) arg2;
+	hWnd = (void *) arg2;
 
 
 	// #todo: 
@@ -205,8 +216,11 @@ void *gde_services ( unsigned long number,
 	unsigned long WindowColor = COLOR_WINDOW;  
 	unsigned long WindowClientAreaColor = COLOR_WINDOW;  
 
-    struct rect_d *r;	
-	
+    struct rect_d *r;
+
+
+
+
 	//
 	// ## message support ##
 	//
@@ -249,17 +263,19 @@ void *gde_services ( unsigned long number,
 		     CurrentColorScheme->magic != 1234 )
 		{
 		    printf ("gde_services: CurrentColorScheme validation");
-		    die ();		
+		    die ();
 		};
 		//Nothing.
-	};	
-	
+	};
+
+
+
 	//Configurando cores.
 	WindowColor = CurrentColorScheme->elements[csiWindowBackground];  
 	WindowClientAreaColor = CurrentColorScheme->elements[csiWindow]; 	
 	
 	 
-	desktopID = (int) get_current_desktop_id ();		
+	desktopID = (int) get_current_desktop_id ();
 	
 	
 	// #bug
@@ -268,10 +284,12 @@ void *gde_services ( unsigned long number,
 	
 	if (gui->main == NULL)
 	{
-		panic ("services: gui->main");
-	};		
-	
-	
+		panic ("gde_services: gui->main");
+	};
+
+
+
+
 	//
 	// ## Create Window ##
 	//
@@ -437,8 +455,18 @@ void *gde_services ( unsigned long number,
 							(FILE *) arg4 );
 	}
 	
-	
-	
+    //
+    // network stuff
+    //
+ 
+    /*
+    //arp request test.
+    if ( number == 800 )
+    {   
+		return (void *) 0;
+    }
+    */
+
 	
 	// t900
 	//clona e executa o filho dado o nome do filho.
