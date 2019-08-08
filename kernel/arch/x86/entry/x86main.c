@@ -783,23 +783,33 @@ void x86main (void){
     ps2 ();
 
 
+
+
+
 	//
 	// Loading file tests.
 	//
 
 
-/*
-    //#obs: me parece que isso vai funcionar sem problemas.
-	
+
+    // #obs: 
+    // Me parece que isso vai funcionar sem problemas.
+
+
 	// 2MB --
     void *__buffer = (void *) allocPages ( 512 );
 
     fsLoadFile ( VOLUME1_FAT_ADDRESS, VOLUME1_ROOTDIR_ADDRESS, 
-	    "GRAMADO BMP", (unsigned long) __buffer );
-	
-	 bmpDisplayBMP ( (char *) __buffer, 0, 0 );  
-*/
-	
+        "DENNIS  BMP", (unsigned long) __buffer );
+        //"GRAMADO BMP", (unsigned long) __buffer );
+
+    // #bugbug: A imagem sai cortada do lado direito.
+	bmpDisplayBMP ( (char *) __buffer, 0, 0 );  
+
+    // #bugbug: A imagem sai cortada do lado direito.
+    //bmpDisplayBMP ( (char *) __buffer, 0, 0 );
+    //refresh_screen ();
+
 
 	// #Aviso:
 	// Isso funcionou, não mudar de lugar.

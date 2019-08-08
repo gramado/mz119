@@ -505,6 +505,7 @@ vhd-copy-files:
 	sudo cp kernel/kservers/kgws/bmp/TERMINAL.BMP  /mnt/gramadovhd
 
 
+
 # fonts
 	sudo cp bin/NC2.FON /mnt/gramadovhd	
 
