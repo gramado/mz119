@@ -800,15 +800,12 @@ void x86main (void){
     void *__buffer = (void *) allocPages ( 512 );
 
     fsLoadFile ( VOLUME1_FAT_ADDRESS, VOLUME1_ROOTDIR_ADDRESS, 
-        "DENNIS  BMP", (unsigned long) __buffer );
-        //"GRAMADO BMP", (unsigned long) __buffer );
+        "GRAMADO BMP", (unsigned long) __buffer );
+        //"DENNIS  BMP", (unsigned long) __buffer );
+
 
     // #bugbug: A imagem sai cortada do lado direito.
 	bmpDisplayBMP ( (char *) __buffer, 0, 0 );  
-
-    // #bugbug: A imagem sai cortada do lado direito.
-    //bmpDisplayBMP ( (char *) __buffer, 0, 0 );
-    //refresh_screen ();
 
 
 	// #Aviso:
