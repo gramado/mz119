@@ -795,7 +795,7 @@ void x86main (void){
     // #obs: 
     // Me parece que isso vai funcionar sem problemas.
 
-
+/*
 	// 2MB --
     void *__buffer = (void *) allocPages ( 512 );
 
@@ -806,6 +806,10 @@ void x86main (void){
 
     // #bugbug: A imagem sai cortada do lado direito.
 	bmpDisplayBMP ( (char *) __buffer, 0, 0 );  
+*/
+
+
+
 
 
 	// #Aviso:
