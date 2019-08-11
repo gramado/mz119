@@ -3800,7 +3800,7 @@ int windowLoadGramadoIcons (void){
 
 
 /*
- ************************* 
+ *******************************************************************
  * windowScan:
  *     Escaneia as janelas existentes procurando uma que contenha o 
  * posicionamento do cursor.
@@ -3821,62 +3821,70 @@ int windowLoadGramadoIcons (void){
  
 int windowScan ( unsigned long x, unsigned long y ){
 
-	struct window_d *w;
-	
+    struct window_d *w;
+
 	//register int i;
-	int i = 0;
-	int WID;
-	
+    int i = 0;
+    int WID;
+
+
 	// #bugbug
 	// Vamos sondar toda a lista de janelas.
 	// pois pode haver fragmentação na lista de janelas.
 	// Então mesmo com uma contagem baixa de janelas pode haver 
 	// janelas válidas em posições altas.
 	// Então vamos sondar por toda a lista.
-	
+
+
 	// #BUGBUG
 	// O problema nessa técnica são as sobreposição de janelas.
 	// Quando uma janela está dentro da outr, então duas janelas
 	// estão áptas a serem selecionadas.
 	// Talvez devamos filtrar e só aceitarmos sondar procurando 
 	// por controles.
-	
-	for ( i=0; i < WINDOW_COUNT_MAX; i++ )	
-	{
-		w = (struct window_d *) windowList[i];
-		
-		// se o ponteiro for válido.
-		if ( (void *) w != NULL )
-		{
-			// validation
-			if ( w->used == 1 && w->magic == 1234 )
-			{
+
+
+    for ( i=0; i < WINDOW_COUNT_MAX; i++ )
+    {
+        w = (struct window_d *) windowList[i];
+
+        if ( (void *) w != NULL )
+        {
+            if ( w->used == 1 && w->magic == 1234 )
+            {
+
 				// #bugbug
 				// Precisamos considerar o deslocamento da janela mãe
-				// para sabermso seu posicionamaento em relação à tela.
-				
+				// para sabermos seu posicionamaento em relação à tela.
+
 				// Para o botao vamos considerar o deslocamento
 				// da janela mae.
 				// Dentro da área da janela.
-				if ( w->type == WT_BUTTON || w->type == WT_EDITBOX )
-				{
-					if ( (void *) w->parent == NULL )
-					{
-						panic ("windowScan: parent\n");
-					}
-					
-				    if ( x > (w->parent->left + w->left)    && 
-					     x < (w->parent->left + w->left + w->width)  && 
-				         y > (w->parent->top + w->top)      &&
-				         y < (w->parent->top + w->top + w->height)  )			         
-					{
-						WID = w->id;
-					    window_mouse_over = w->id;    
-						return (int) WID;											
-					}
-				}
-				
-				
+
+				// >> BUTTON or EDITBOX <<
+
+                if ( w->type == WT_BUTTON || w->type == WT_EDITBOX )
+                {
+                    if ( (void *) w->parent == NULL )
+                    {
+                        panic ("windowScan: parent\n");
+                    }
+
+                    if ( x > (w->parent->left + w->left)  && 
+                         x < (w->parent->left + w->left + w->width)  && 
+                         y > (w->parent->top + w->top)  &&
+                         y < (w->parent->top + w->top + w->height)  )
+                    {
+
+                        WID = w->id;
+                        window_mouse_over = w->id;
+
+                        return (int) WID;
+                    }
+                }
+
+
+
 				// Dentro da área da janela.
 				/*
 				if ( x > w->left   && 
@@ -3895,27 +3903,31 @@ int windowScan ( unsigned long x, unsigned long y ){
 					{    
 						WID = w->id;
 					    window_mouse_over = w->id;    
-						return (int) WID;					
+						return (int) WID;
 					}
 					
 					if ( w->type == WT_EDITBOX )
 					{    
 						WID = w->id;
 					    window_mouse_over = w->id;    
-						return (int) WID;					
-					}	
+						return (int) WID;
+					}
 					
-					// ...	
+					// ...
 				}; 
 				*/
-				
-				
-			};		
-		};	
-	};
+
+
+
+			};
+		};
+
+	}; //for
+
 
     return (int) -1;
 }
+
 
 
 //Envia uma mensagem PAINT para o aplicativo atualizar a área de trabalho.
