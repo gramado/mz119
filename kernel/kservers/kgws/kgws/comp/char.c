@@ -165,18 +165,18 @@ drawchar_transparent ( unsigned long x,
 
         case FONT8X8:
             //gws_currentfont_address = (unsigned long) BIOSFONT8X8;    //getFontAddress(...)
-		    //gcharWidth = 8;
-		    //gcharHeight = 8;
-		    set_char_width(8);
-			set_char_height(8);
+            //gcharWidth = 8;
+            //gcharHeight = 8;
+            set_char_width (8);
+            set_char_height (8);
             break;
 
         case FONT8X16:
             //gws_currentfont_address = (unsigned long) BIOSFONT8X16;    //getFontAddress(...)
-		    //gcharWidth = 8;
-		    //gcharHeight = 16;
-		    set_char_width(8);
-			set_char_height(16);
+            //gcharWidth = 8;
+            //gcharHeight = 16;
+            set_char_width (8);
+            set_char_height (16);
             break;
 
 		//#todo: 
@@ -333,17 +333,17 @@ draw_char ( unsigned long x,
 
         case FONT8X8:
             //gws_currentfont_address = (unsigned long) BIOSFONT8X8;    //getFontAddress(...)
-		    //gcharWidth = 8;
-		    //gcharHeight = 8;
-		    set_char_width (8);
-			set_char_height (8);
+            //gcharWidth = 8;
+            //gcharHeight = 8;
+            set_char_width (8);
+            set_char_height (8);
             break;
 
 
         case FONT8X16:
             //gws_currentfont_address = (unsigned long) BIOSFONT8X16;    //getFontAddress(...)
-		    //gcharWidth = 8;
-		    //gcharHeight = 16;
+            //gcharWidth = 8;
+            //gcharHeight = 16;
             set_char_width (8);
             set_char_height (16);
             break;
