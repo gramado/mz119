@@ -226,7 +226,6 @@ void x86mainStartFirstThread ( void ){
 	//base dos arquivos.
 
     unsigned char *buff1 = (unsigned char *) 0x00400000;
-    
 
 
 	//init
@@ -283,12 +282,12 @@ void x86StartInit (void){
 	// > UPROCESS_IMAGE_BASE;
 
     InitProcess = (void *) create_process ( NULL, NULL, NULL, 
-                                           (unsigned long) 0x00400000, 
-                                           PRIORITY_HIGH, 
-                                           (int) KernelProcess->pid, 
-                                           "INIT-PROCESS", 
-                                           RING3, 
-                                           (unsigned long ) CreatePageDirectory() );
+                               (unsigned long) 0x00400000, 
+                               PRIORITY_HIGH, 
+                               (int) KernelProcess->pid, 
+                               "INIT-PROCESS", 
+                               RING3, 
+                               (unsigned long ) CreatePageDirectory() );
 
     if ( (void *) InitProcess == NULL )
     {
@@ -344,7 +343,10 @@ void x86StartInit (void){
 	//registra um dos servidores do gramado core.
 	//server_index, process, thread
 
-    ipccore_register ( (int) 0, (struct process_d *) InitProcess, (struct thread_d *) IdleThread );
+    ipccore_register ( (int) 0, 
+        (struct process_d *) InitProcess, 
+        (struct thread_d *) IdleThread );
+
 }
 
 
@@ -367,12 +369,12 @@ void x86StartGramadoCore (void){
 	// > UPROCESS_IMAGE_BASE;
 
     InitProcess = (void *) create_process ( NULL, NULL, NULL, 
-                                           (unsigned long) 0x00400000, 
-                                           PRIORITY_HIGH, 
-                                           (int) KernelProcess->pid, 
-                                           "INIT-PROCESS", 
-                                           RING3, 
-                                           (unsigned long ) CreatePageDirectory() );
+                               (unsigned long) 0x00400000, 
+                               PRIORITY_HIGH, 
+                               (int) KernelProcess->pid, 
+                               "INIT-PROCESS", 
+                               RING3, 
+                               (unsigned long ) CreatePageDirectory() );
 
     if ( (void *) InitProcess == NULL )
     {
@@ -428,7 +430,9 @@ void x86StartGramadoCore (void){
 	//registra um dos servidores do gramado core.
 	//server_index, process, thread
 
-    ipccore_register ( (int) 0, (struct process_d *) InitProcess, (struct thread_d *) IdleThread );
+    ipccore_register ( (int) 0, 
+        (struct process_d *) InitProcess, 
+        (struct thread_d *) IdleThread );
 
 
 	//==============================================   
@@ -442,23 +446,26 @@ void x86StartGramadoCore (void){
 
     // Creating Shell process.
     ShellProcess = (void *) create_process ( NULL, NULL, NULL, 
-										   (unsigned long) 0x00450000, 
-                                           PRIORITY_HIGH, 
-										   (int) KernelProcess->pid, 
-										   "SHELL-PROCESS", 
-										   RING3, 
-										   (unsigned long )  CreatePageDirectory() );
+                                (unsigned long) 0x00450000, 
+                                PRIORITY_HIGH, 
+                                (int) KernelProcess->pid, 
+                                "SHELL-PROCESS", 
+                                RING3, 
+                                (unsigned long )  CreatePageDirectory() );
+
     if ( (void *) ShellProcess == NULL )
-	{
+    {
         panic ("x86main: ShellProcess\n");
 
     }else{
-		
-		fs_initialize_process_pwd ( ShellProcess->pid, current_workingdiretory_string );
-		
+
+       fs_initialize_process_pwd ( ShellProcess->pid, 
+           current_workingdiretory_string );
+
         //...
     };
-		
+
+
     //=============================================
     // Create shell Thread. tid=1. 
     ShellThread = (void *) KiCreateShell ();
@@ -470,108 +477,114 @@ void x86StartGramadoCore (void){
     }else{
 
         //ShellThread->ownerPID = (int) ShellProcess->pid;
-        
-		ShellThread->tss = current_tss;
+
+        ShellThread->tss = current_tss;
 		
 		//...
-    };	
-	
+    };
 
-	ShellProcess->Heap = (unsigned long) g_gramadocore_shell_heap_va;
-	ShellProcess->control = ShellThread; 
+
+    ShellProcess->Heap = (unsigned long) g_gramadocore_shell_heap_va;
+    ShellProcess->control = ShellThread; 
 		
 	//registra um dos servidores do gramado core.
 	//server_index, process, thread
-	ipccore_register ( (int) 1, (struct process_d *) ShellProcess, (struct thread_d *) ShellThread );
-	
-#endif	
+
+    ipccore_register ( (int) 1, 
+        (struct process_d *) ShellProcess, 
+        (struct thread_d *) ShellThread );
+
+#endif
 
 
 
 #ifdef ENTRY_CREATE_TASKMAN
 	
     //Creating Taskman process. 
-    TaskManProcess = (void *) create_process( NULL, NULL, NULL, 
-											 (unsigned long) 0x004A0000, 
-                                             PRIORITY_LOW, 
-											 KernelProcess->pid, 
-											 "TASKMAN-PROCESS", 
-											 RING3, 
-											 (unsigned long )  CreatePageDirectory() ); 	
+    TaskManProcess = (void *) create_process ( NULL, NULL, NULL, 
+                                  (unsigned long) 0x004A0000, 
+                                  PRIORITY_LOW, 
+                                  KernelProcess->pid, 
+                                  "TASKMAN-PROCESS", 
+                                  RING3, 
+                                  (unsigned long )  CreatePageDirectory() ); 
+
     if ( (void *) TaskManProcess == NULL ){
-		
+
         panic ("x86main: TaskManProcess\n");
-		
+
     }else{
-		
-		fs_initialize_process_pwd ( TaskManProcess->pid, "no-directory" );
-		
+
+        fs_initialize_process_pwd ( TaskManProcess->pid, "no-directory" );
+
         //...
     };
-	
+
     //===================================
     //Create taskman Thread. tid=2.   
-	
-	TaskManThread = (void *) KiCreateTaskManager ();
-    	
-	if( (void *) TaskManThread == NULL )
-	{
+
+    TaskManThread = (void *) KiCreateTaskManager ();
+
+    if ( (void *) TaskManThread == NULL )
+    {
         panic ("x86main: TaskManThread\n");
 
     }else{
 
         //TaskManThread->ownerPID = (int) TaskManProcess->pid;
-		
-		TaskManThread->tss = current_tss;
-		
+
+        TaskManThread->tss = current_tss;
+
         //...
     };
-	
-	TaskManProcess->Heap = (unsigned long) g_gramadocore_taskman_heap_va;
-	TaskManProcess->control = TaskManThread;
-		
+
+    TaskManProcess->Heap = (unsigned long) g_gramadocore_taskman_heap_va;
+    TaskManProcess->control = TaskManThread;
+
 	//registra um dos servidores do gramado core.
 	//server_index, process, thread
-	ipccore_register ( (int) 2, (struct process_d *) TaskManProcess, (struct thread_d *) TaskManThread );
-	
-#endif	
+    ipccore_register ( (int) 2, 
+        (struct process_d *) TaskManProcess, 
+        (struct thread_d *) TaskManThread );
+
+#endif
 
 
 
 #ifdef ENTRY_CREATE_KERNELTHREAD_RING0
-	
+
     //===================================
     // Cria uma thread em ring 0.
-	// Ok. isso funcionou bem.
-    
+    // Ok. isso funcionou bem.
+
 	// >>>>> Como essa thread pertence ao processo kernel, então mudaremos ela 
 	// um pouco pra cima, onde criamos o processo kernel.
 	// obs: Mesmo não sendo ela o primeiro TID.
-	
-	RING0IDLEThread = (void *) KiCreateRing0Idle ();
-	
+
+    RING0IDLEThread = (void *) KiCreateRing0Idle ();
+
     if( (void *) RING0IDLEThread == NULL )
-	{
+    {
         panic ("x86main: RING0IDLEThread\n");
 
     }else{
 
-		
+
         //RING0IDLEThread->ownerPID =  (int) KernelProcess->pid; 
-		
+
 		RING0IDLEThread->tss = current_tss;
-        
-		
+
+
 		// #importante
 		// Sinalizando que ainda não podemos usar as rotinas que dependam
 		// de que o dead thread collector esteja funcionando.
 		// Esse status só muda quando a thread rodar.
-		
+
 		dead_thread_collector_status = 0;
 		//...
     };
-	
-#endif		
+
+#endif
 
 }
 
@@ -594,9 +607,9 @@ void x86StartGramadoCore (void){
 void x86main (void){
 
     int Status = 0;
-	
-	// se usaremos todos os processos do x server
-	int gramado_core = 0;	
+
+	// Se usaremos todos os processos do x server.
+    int gramado_core = 0;
 
 
     debug_print ("[x86] x86main:\n");
@@ -616,7 +629,7 @@ void x86main (void){
 	//
 
 	//#importante
-	//#obs: É durante essa rotina que começamos a ter mensagens.	
+	//#obs: É durante essa rotina que começamos a ter mensagens.
 	
 	//#importante
 	//Daqui pra frente tem coisa que é dependente da arquitetura x86 e coisa
@@ -634,12 +647,12 @@ void x86main (void){
     {
         debug_print ("x86main: systemInit fail\n");
         printf ("x86main: systemInit fail\n");
-		
+
         KernelStatus = KERNEL_ABORTED;
 
         goto fail;
     }
-	
+
 
 	//
 	//    #### GDT ####
@@ -649,44 +662,43 @@ void x86main (void){
 	// Vamos criar uma TSS e configurarmos a GDT,
 	// assim poderemos usar a current_tss quando criarmos as threads
 	// Essa função faz as duas coisas, cria a tss e configura a gdt.
-	
-	init_gdt ();
+
+    init_gdt ();
 
 
-	debug_print ("[x86] x86main: processes and threads\n");
-	
-	
- 
-	
-	
+    debug_print ("[x86] x86main: processes and threads\n");
+
 
 	//
 	//  ## Processes ##
-    //
-	
+	//
+
     //=================================================
     // processes and threads initialization.
     // Creating processes and threads.
     // The processes are: Kernel, Idle, Shell, Taskman.
     // ps: The images are loaded in the memory.
 
-//createProcesses:	
-    
+
+//createProcesses:
+
 	// #debug
     // printf ("creating kernel process ...\n");
 
     // Creating Kernel process. PID=0.
-	
+
+
     KernelProcess = (void *) create_process ( NULL, // Window station.
-                                              NULL, // Desktop.
-                                              NULL, // Window.
-                                              (unsigned long) 0xC0000000,  // base address. 
-                                              PRIORITY_HIGH,               // Priority.
-                                              (int) 0,                     // ppid.
-                                              "KERNEL-PROCESS",            // Name.
-                                              RING0,                       // iopl. 
-                                              (unsigned long ) gKernelPageDirectoryAddress ); // Page directory.
-    if( (void *) KernelProcess == NULL )
+                                 NULL, // Desktop.
+                                 NULL, // Window.
+                                 (unsigned long) 0xC0000000,  // base address. 
+                                 PRIORITY_HIGH,               // Priority.
+                                 (int) 0,                     // ppid.
+                                 "KERNEL-PROCESS",            // Name.
+                                 RING0,                       // iopl. 
+                                 (unsigned long ) gKernelPageDirectoryAddress ); // Page directory.
+
+    if ( (void *) KernelProcess == NULL )
     {
         panic ("x86main: KernelProcess\n");
 
@@ -696,38 +708,36 @@ void x86main (void){
 
         //...
     };
-	
-	
 
-#ifdef ENTRY_GRAMADO_CORE		
-	gramado_core = 1;
-#endif	
-	
-	
-	if ( gramado_core == 1 )
-	{
+
+
+#ifdef ENTRY_GRAMADO_CORE
+    gramado_core = 1;
+#endif
+
+
+    if ( gramado_core == 1 )
+    {
 		printf ("Starting all processes\n");
 	    
 		//varios processos.
 		x86StartGramadoCore ();
 		
-	}else{
-         
+    }else{
+
 		printf ("Starting only init\n");
 		
 		//apenas o init.
-		x86StartInit ();	
+		x86StartInit ();
     };
-	
-	
-	
-	 
-	
-    //
+
+
+
+	//
 	//===============================================
 	//
-	
-		
+
+
 	//...
 
 
@@ -742,14 +752,14 @@ void x86main (void){
     {
         printf ("[x86] x86main: debug\n");
         KernelStatus = KERNEL_ABORTED;
-        
-		goto fail;
-		
+
+        goto fail;
+
     }else{
         KernelStatus = KERNEL_INITIALIZED;
     };
 
-#endif	
+#endif
 
 
 
@@ -772,8 +782,8 @@ void x86main (void){
 
 	// Initializing ps/2 controller.
 	// ldisc.c
-	
-	debug_print ("[x86] x86main: ps2\n");    
+
+    debug_print ("[x86] x86main: ps2\n");    
 
 
 	//#DEBUG
@@ -781,8 +791,6 @@ void x86main (void){
 	//refresh_screen(); 
 
     ps2 ();
-
-
 
 
 
@@ -825,7 +833,12 @@ void x86main (void){
 	// #todo: Isso pode ficar no módulo gws ?
 
     gwsInstallFont ("NC2     FON");
+    //gwsInstallFont ("NC3     FON");
 
+    // #todo:
+    // Temos que configurar informações sobre a fonte.
+    gwsSetCurrentFontCharWidth (8);
+    gwsSetCurrentFontCharHeight (8);
 
 	//
 	// ## testando suporte a salvamento de retângulo ##

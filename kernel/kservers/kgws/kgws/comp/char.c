@@ -30,34 +30,34 @@
 void 
 my_buffer_char_blt ( unsigned long x, 
                      unsigned long y, 
-					 unsigned long color, 
-					 unsigned long c )
+                     unsigned long color, 
+                     unsigned long c )
 {
-    drawchar_transparent ( x, y, color, c );								
+    drawchar_transparent ( x, y, color, c );
 }
 
 
 void set_char_width ( int width )
-{	
-	gcharWidth = (int) width;
+{
+    gcharWidth = (int) width;
 }
 
 
 void set_char_height (int height)
-{	
-	gcharHeight = (int) height;
+{
+    gcharHeight = (int) height;
 }
 
 
 int get_char_width (void)
 {
-	return (int) gcharWidth;
+    return (int) gcharWidth;
 }
 
 
 int get_char_height (void)
 {
-	return (int) gcharHeight;
+    return (int) gcharHeight;
 }
 
 
@@ -71,23 +71,25 @@ int get_char_height (void)
 void 
 drawchar_transparent ( unsigned long x, 
                        unsigned long y, 
-					   unsigned long color, 
-					   unsigned long c )
+                       unsigned long color, 
+                       unsigned long c )
 {
 	// #todo: rever isso.
-	struct window_d *hWindow;		
-		
-	int x2;
+
+    struct window_d *hWindow;
+
+    int x2;
     int y2;
 
-    unsigned char bit_mask = 0x80;	
-    
-	char *work_char;  
-  
-    //
+    unsigned char bit_mask = 0x80;
+
+    char *work_char;  
+
+	//
 	// Window Terminal.
 	//
-	
+
+
 	/*
 	if( VideoBlock.useGui == 1 )
 	{
@@ -101,123 +103,141 @@ drawchar_transparent ( unsigned long x,
 			    x = hWindow->left + x;
 			    y = hWindow->top + y;
 			};
-			
-		};		
-    };	
+		};
+    };
 	*/
-	  
-	  
-    /*
+
+
+
+	/*
 	 * @todo: 
 	 *     +Criar variáveis internas para tamanho de fonte.
 	 *     +Pegar as informações em uma estrutura.
 	 *     ...
 	 */
-	 
-    //int CharWidth;
+
+
+
+	//int CharWidth;
 	//int CharHeight;  
-	  
-	  
-    /*
+
+
+
+	/*
 	 * Get the font pointer.
 	 *
 	 * @todo:
-     *     usar variavel g8x8fontAddress.	 
+	 *     usar variavel g8x8fontAddress.
 	 *     + Criar e usar uma estrutura para fonte.
 	 *     + Usar o ponteiro para a fonte atual que foi carregada.
 	 *     + Criar um switch para o tamanho da fonte.
 	 *     isso deveria estar na inicialização do módulo char.
 	 *     ...
 	 */
-	 
-    if ( gws_currentfont_address == 0 || 
-	     gcharWidth <= 0 || 
-		 gcharHeight <= 0 )
-	{
-	    gws_currentfont_address = (unsigned long) BIOSFONT8X8;    //ROM bios.
-		gcharWidth = DEFAULT_CHAR_WIDTH;               //8.
-		gcharHeight = DEFAULT_CHAR_HEIGHT;             //8.
-		
-		// #debug
-		// Estamos parando para testes.
-		
-		printf("drawchar_transparent: address fail\n");
-		die();
-	};
-	
 
-	//@todo: 
-	//Criar essas variáveis e definições.
-	
-	switch (gfontSize){
-		
-		case FONT8X8:
-	        //gws_currentfont_address = (unsigned long) BIOSFONT8X8;    //getFontAddress(...)
+	// Default:
+	//     Testando o uso de uma fonte default no caso de erro.
+	//     Testando a troca da fonte padrão.
+	//     O sistema não vai parar no caso de erro. Nesse caso ele escolhera
+	// um valor default.
+	// Definido em: include/kernel/gramado/kservers/kgws/kgws/ws.h
+
+
+    // Usaremos a ROM bios no caso de falha.
+    if ( gws_currentfont_address == 0 )
+    {
+        gws_currentfont_address = (unsigned long) BIOSFONT8X8;
+    }
+
+    // 8x8
+    if ( gcharWidth <= 0 || gcharHeight <= 0 )
+    {
+        gcharWidth = DEFAULT_CHAR_WIDTH;
+        gcharHeight = DEFAULT_CHAR_HEIGHT;
+    }
+
+
+	// #todo: 
+	// Criar essas variáveis e definições.
+
+
+    switch (gfontSize){
+
+        case FONT8X8:
+            //gws_currentfont_address = (unsigned long) BIOSFONT8X8;    //getFontAddress(...)
 		    //gcharWidth = 8;
 		    //gcharHeight = 8;
 		    set_char_width(8);
 			set_char_height(8);
-			break;
-		
-		case FONT8X16:
-	        //gws_currentfont_address = (unsigned long) BIOSFONT8X16;    //getFontAddress(...)
+            break;
+
+        case FONT8X16:
+            //gws_currentfont_address = (unsigned long) BIOSFONT8X16;    //getFontAddress(...)
 		    //gcharWidth = 8;
 		    //gcharHeight = 16;
 		    set_char_width(8);
-			set_char_height(16);			
-		    break;
-		 
+			set_char_height(16);
+            break;
+
 		//#todo: 
 		//Criar opções
 		//...
-		
+
 		// #importante:
 		// #BUGBUG
 		// Se não temos um tamanho selecionado então teremos 
 		// que usar o tamanho padrão.
-		
-		default:
-		    gws_currentfont_address = (unsigned long) BIOSFONT8X8;    //ROM bios.
-		    set_char_width(8);
-			set_char_height(8);	
-            gfontSize = FONT8X8;  //#todo: fução para configurar isso.			
-			break;
-	};
-	
 
+        ////ROM bios.
+        default:
+            gws_currentfont_address = (unsigned long) BIOSFONT8X8;    
+            set_char_width (8);
+            set_char_height (8);
+            gfontSize = FONT8X8;  //#todo: fução para configurar isso.
+            break;
+    };
+
+
+	// #importante:
 	// O caractere sendo trabalhado.
-	// Offset da tabela de chars de altura 8 na ROM.	
-	
-	work_char = (void *) gws_currentfont_address + (c * gcharHeight);
+	// Offset da tabela de chars de altura 8 na ROM.
+
+
+    work_char = (void *) gws_currentfont_address + (c * gcharHeight);
+
 
 	//
 	// Draw.
 	//
-	
+
+
     for ( y2=0; y2 < gcharHeight; y2++ )
     {
         bit_mask = 0x80;
 
         for ( x2=0; x2 < gcharWidth; x2++ )
-        {			
-	        //Put pixel. 
+        {
+            // Put pixel. 
             if ( ( *work_char & bit_mask ) )
-			{ 
-                backbuffer_putpixel ( color, x + x2, y, 0 );  				
-			}
-            
-			//Rotate bitmask.
-			bit_mask = (bit_mask >> 1);                
+            { 
+                backbuffer_putpixel ( color, x + x2, y, 0 ); 
+            }
+
+            // Rotate bitmask.
+            bit_mask = (bit_mask >> 1); 
         };
-		
-		y++;            //Próxima linha da 8 linhas do caractere.
-		work_char++;   
-	};
-	
-	// Algo mais ?        	   
+
+        // Próxima linha da n linhas do caractere.
+        y++; 
+        work_char++; 
+    };
+
+
+	// Algo mais ?
 }
 
-				
+
+
 /*
  *****************************************************
  * draw_char:
@@ -229,24 +249,27 @@ drawchar_transparent ( unsigned long x,
 void 
 draw_char ( unsigned long x, 
             unsigned long y,  
-			unsigned long c,
-			unsigned long fgcolor,
-			unsigned long bgcolor )
-{	
+            unsigned long c,
+            unsigned long fgcolor,
+            unsigned long bgcolor )
+{
 	// #todo: Rever isso.
-	struct window_d *hWindow;
-		
-	int x2;
-    int y2;
-		
-    unsigned char bit_mask = 0x80;	
 
-	char *work_char;  
-		  
-    //
+    struct window_d *hWindow;
+
+    int x2;
+    int y2;
+
+    unsigned char bit_mask = 0x80;
+
+    char *work_char;  
+
+
+	//
 	// Window Terminal.
 	//
-	
+
+
 	/*
 	if( VideoBlock.useGui == 1 )
 	{
@@ -260,113 +283,130 @@ draw_char ( unsigned long x,
 			    x = hWindow->left + x;
 			    y = hWindow->top + y;
 			};
-			
-		};		
-    };	
+		};
+    };
 	*/
-	  
-	  
-	  
-    /*
+
+
+
+	/*
 	 * Get the font pointer.
 	 *
 	 * @todo:
-     *     usar variavel g8x8fontAddress.	 
+	 *     usar variavel g8x8fontAddress.
 	 *     + Criar e usar uma estrutura para fonte.
 	 *     + Usar o ponteiro para a fonte atual que foi carregada.
 	 *     + Criar um switch para o tamanho da fonte.
 	 *     isso deveria estar na inicialização do módulo char.
 	 *     ...
 	 */
-	 
-    if ( gws_currentfont_address == 0 || 
-	     gcharWidth <= 0 || 
-		 gcharHeight <= 0 )
-	{
-	    gws_currentfont_address = (unsigned long) BIOSFONT8X8;    //ROM bios.
-		gcharWidth = DEFAULT_CHAR_WIDTH;               //8.
-		gcharHeight = DEFAULT_CHAR_HEIGHT;             //8.
-		
-		//#debug
-		//Estamos parando só para testes.
-		
-		printf("draw_char: address fail\n");
-		die();
-	};
-	
-    //@todo: 
-	//Criar essas variáveis e definições.
-	
-	switch (gfontSize){
-		
-		case FONT8X8:
-	        //gws_currentfont_address = (unsigned long) BIOSFONT8X8;    //getFontAddress(...)
+
+
+	// Default:
+	//     Testando o uso de uma fonte default no caso de erro.
+	//     Testando a troca da fonte padrão.
+	//     O sistema não vai parar no caso de erro. Nesse caso ele escolhera
+	// um valor default.
+	// Definido em: include/kernel/gramado/kservers/kgws/kgws/ws.h
+
+
+    // Usaremos a ROM bios no caso de falha.
+    if ( gws_currentfont_address == 0 )
+    {
+        gws_currentfont_address = (unsigned long) BIOSFONT8X8;
+    }
+
+    // 8x8
+    if ( gcharWidth <= 0 || gcharHeight <= 0 )
+    {
+        gcharWidth = DEFAULT_CHAR_WIDTH;
+        gcharHeight = DEFAULT_CHAR_HEIGHT;
+    }
+
+
+
+	// #todo: 
+	// Criar essas variáveis e definições.
+
+
+    switch (gfontSize){
+
+        case FONT8X8:
+            //gws_currentfont_address = (unsigned long) BIOSFONT8X8;    //getFontAddress(...)
 		    //gcharWidth = 8;
 		    //gcharHeight = 8;
-		    set_char_width(8);
-			set_char_height(8);
-			break;
-		
-		case FONT8X16:
-	        //gws_currentfont_address = (unsigned long) BIOSFONT8X16;    //getFontAddress(...)
+		    set_char_width (8);
+			set_char_height (8);
+            break;
+
+
+        case FONT8X16:
+            //gws_currentfont_address = (unsigned long) BIOSFONT8X16;    //getFontAddress(...)
 		    //gcharWidth = 8;
 		    //gcharHeight = 16;
-		    set_char_width(8);
-			set_char_height(16);			
-		    break;
-		 
-		//#todo: 
-		//Criar opções
-		//...
-		
+            set_char_width (8);
+            set_char_height (16);
+            break;
+
+
+		// #todo: 
+		// Criar opções
+		// ...
+
+
 		// #importante:
 		// #BUGBUG
 		// Se não temos um tamanho selecionado então teremos 
 		// que usar o tamanho padrão.
-		
-		default:
-		    gws_currentfont_address = (unsigned long) BIOSFONT8X8;    //ROM bios.
-		    set_char_width(8);
-			set_char_height(8);	
-            gfontSize = FONT8X8;  //#todo: fução para configurar isso.			
-			break;
-	};
-	
-	
-	//tentando pintar um espaço em branco.
-    //Nas rotinas da biblioteca gráfica, quando encontram
-	//um espaço(32), nem manda para cá, apenas incrementam o cursor.
 
+        // ROM bios.
+        default:
+            gws_currentfont_address = (unsigned long) BIOSFONT8X8; 
+            set_char_width (8);
+            set_char_height (8);
+            gfontSize = FONT8X8;  //#todo: fução para configurar isso.
+            break;
+    };
+
+
+
+	// tentando pintar um espaço em branco.
+	// Nas rotinas da biblioteca gráfica, quando encontram
+	// um espaço(32), nem manda para cá, apenas incrementam o cursor.
+
+	// #imporatante:
 	// O caractere sendo trabalhado.
-	// Offset da tabela de chars de altura 8 na ROM.	
-	
-	work_char = (void *) gws_currentfont_address + (c * gcharHeight);
+	// Offset da tabela de chars de altura 8 na ROM.
+
+    work_char = (void *) gws_currentfont_address + (c * gcharHeight);
+
 
 	//
 	// Draw.
 	//
-	
+
+
     for ( y2=0; y2 < gcharHeight; y2++ )
     {
         bit_mask = 0x80;
 
         for ( x2=0; x2 < gcharWidth; x2++ )
         {
-				
-			//Put pixel.				
-			backbuffer_putpixel ( *work_char & bit_mask ? fgcolor: bgcolor, 
-			    x + x2, y, 0 );
-				
-			
-            bit_mask = (bit_mask >> 1); 								 
+
+			// Put pixel.
+            backbuffer_putpixel ( *work_char & bit_mask ? fgcolor: bgcolor, 
+                x + x2, y, 0 );
+
+            bit_mask = (bit_mask >> 1); 
         };
-		
-		//Próxima linha da (y) linhas do caractere.
-		y++;            
-		work_char++;   
-	};
-	
-	// Algo mais ?       	   
+
+		// Próxima linha da (y) linhas do caractere.
+        y++; 
+        work_char++; 
+    };
+
+
+	// Algo mais ? 
 }
 
 
@@ -416,7 +456,7 @@ int charInit()
 		    gcharWidth = DEFAULT_CHAR_WIDTH;               //8.
 		    gcharHeight = DEFAULT_CHAR_HEIGHT;             //8.	
             
-            //gfontStatus = 0;  //fail 			
+            //gfontStatus = 0;  //fail 
 		    
 			break;
 	};

@@ -2,6 +2,7 @@
  * File: x86fault.c
  * 
  *     x86 faults.
+ *     x86 faulter.
  *
  * History:
  *     2015 - Created by Fred Nora.
@@ -67,7 +68,7 @@ void faults ( unsigned long number ){
 	
 	if ( current_thread < 0 )
 	{
-		printf ("x86fault: current_thread fail\n");		
+		printf ("x86fault: current_thread fail\n");
 		goto fail;
 	}
 
@@ -75,7 +76,7 @@ void faults ( unsigned long number ){
 	
 	if( (void *) t == NULL )
 	{
-		printf ("x86fault: t fail\n");		
+		printf ("x86fault: t fail\n");
 		goto fail;
 	
     }else{
@@ -104,8 +105,8 @@ void faults ( unsigned long number ){
         
 	    printf ("Number={%d}\n", number);               
 
-	    printf ("TID %d Step %d \n", current_thread, t->step );				
-	    printf ("Running Threads %d \n", ProcessorBlock.threads_counter );        
+	    printf ("TID %d Step %d \n", current_thread, t->step );
+	    printf ("Running Threads %d \n", ProcessorBlock.threads_counter ); 
         
         //printf ("Init Phase %d \n", KeInitPhase);
 	    //printf ("logonStatus %d | guiStatus %d \n", logonStatus, guiStatus );

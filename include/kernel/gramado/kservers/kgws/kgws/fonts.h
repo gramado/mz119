@@ -24,3 +24,24 @@ typedef enum {
 }font_type_t;
 
 
+//font address
+void gwsSetCurrentFontAddress ( unsigned long address );
+unsigned long gwsGetCurrentFontAddress (void);
+
+/* Carregando e instalando uma fonte dado o nome. */
+int gwsInstallFont ( char *file_name );
+
+
+void gwsSetCurrentFontCharWidth (int width);
+void gwsSetCurrentFontCharHeight (int height);
+int gwsGetCurrentFontCharWidth (void);
+int gwsGetCurrentFontCharHeight (void);
+
+
+//
+// End.
+//
+
+
+
+

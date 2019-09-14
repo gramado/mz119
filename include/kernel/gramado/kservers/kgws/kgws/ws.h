@@ -673,7 +673,7 @@ struct color_scheme_d
 	//ou o padrão de cores por si pode representar um estilo.
 	int style;
 	
-	char *name;  	
+	char *name; 
 	
 	//cada índice desse array representará um elemento gráfico,
 	//os valores no array são cores correspondentes aos elementos gráficos 
@@ -811,13 +811,7 @@ unsigned long g_mousepointer_x;
 unsigned long g_mousepointer_y;
 
 
-void gwsSetCurrentFontAddress ( unsigned long address );
 
-unsigned long gwsGetCurrentFontAddress (void);
-
-/* Carregando e instalando uma fonte dado o nome. */
-
-int gwsInstallFont ( char *file_name );
 
 
 //
