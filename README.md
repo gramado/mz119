@@ -17,8 +17,8 @@
 
 ## Links:
 
-- [Github](https://github.com/frednora/gramado)
-- [Facebook](https://facebook.com/groups/gramadocommunity)
+- [Gramado on Github](https://github.com/frednora/gramado)
+
 
 ## What is Gramado?
 
