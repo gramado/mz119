@@ -122,19 +122,20 @@ void BlMain (){
 
 
 	//
-	//@todo: Limpar a tela.
+	// #todo: Clean the screen.
 	//
 
-	//Welcome Message.
-	//banner
+	// Welcome Message.
+	// banner
 
 #ifdef BL_VERBOSE
     printf ("BlMain: Starting Boot Loader..\n");
-#endif
-
 	//Debug:
 	//kprintf( "BlMain: Boot Loader 32 bits em C (TEXT Mode) #test. #hang", 9, 9 );
 	//while(1){}
+#endif
+
+
 
     if (g_initialized != 1)
     {
@@ -160,8 +161,8 @@ void BlMain (){
 
 	//Carrega arquivos.
 #ifdef BL_VERBOSE	
-    printf("BlMain: Loading files..\n");
-    refresh_screen();
+    printf ("BlMain: Loading files..\n");
+    refresh_screen ();
 #endif
 
 
@@ -172,8 +173,9 @@ void BlMain (){
 
 	// Ok isso deu certo.
 
-    fs_load_rootdirEx();
-    fs_load_fatEx();
+    fs_load_rootdirEx ();
+    fs_load_fatEx ();
+
 
     g_fat16_root_status = 1;
     g_fat16_fat_status = 1;	
@@ -223,7 +225,7 @@ void BlMain (){
 	//     que o kernel faça uma reconfiguração completa.
 
 #ifdef BL_VERBOSE	
-	printf("BlMain: Initializing pages..\n");
+	printf ("BlMain: Initializing pages..\n");
 	//refresh_screen();
 #endif	
 	
@@ -235,18 +237,16 @@ void BlMain (){
 // Done:
 //     Ao retornar, head.s configura CR0 e CR3.
 
+
 //done:
 
-	//Debug message.
-
-//#ifdef BL_VERBOSE
-//	printf("BlMain: LFB={%x} \n",g_lbf_pa);
-//#endif
+	// Debug message.
 
 #ifdef BL_VERBOSE	
-    printf("BlMain: Done\n");
-    //printf("#DEBUG: *HANG\n");
-    refresh_screen();
+    printf ("BlMain: Done\n");
+    //printf ("BlMain: LFB={%x} \n",g_lbf_pa);
+    //printf ("#DEBUG: *HANG\n");
+    refresh_screen ();
     //while(1){};
 #endif
 

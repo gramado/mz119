@@ -63,15 +63,21 @@ void scroll (void){
 	};
 	
 	//80 vezes
-    for (i=0; i < SCREEN_WIDTH; i++){
+    for (i=0; i < SCREEN_WIDTH; i++)
+    {
 		*p1++ = 0x07*256 + ' '; 
 		//*p1++ = REVERSE_ATTRIB*256 + ' ';
 	};
 }
 
 
-/* bl_clear: 
- * Limpa a tela em text mode. */
+/* 
+ * bl_clear: 
+ * Limpa a tela em text mode. 
+ */
+ 
+// #bugbug
+// Não usamos mas esse modo de vídeo. 
  
 int bl_clear (int color){
 	
@@ -97,9 +103,13 @@ int bl_clear (int color){
 /*
  * kprintf:
  *     Imprime uma string em uma determinada linha. 
- *     @todo: Mudar para bl_print(...) */
+ *     @todo: Mudar para bl_print(...) 
+ */
 
-int kprintf( char *message, unsigned int line, int color )
+// #bugbug
+// Não usamos mas esse modo de vídeo. 
+
+int kprintf ( char *message, unsigned int line, int color )
 {
 	unsigned int i = 0;	
 	char *vidmemp = (char *) 0x000B8000; 
@@ -154,21 +164,22 @@ static int prints ( char **out, const char *string, int width, int pad ){
 
 	if ( !(pad & PAD_RIGHT) ) 
 	{
-		for ( ; width > 0; --width){
-		    printchar( out, padchar);
+		for ( ; width > 0; --width)
+		{
+		    printchar (out, padchar);
 			++pc;
 		};
 	};
 
 
-	for ( ; *string ; ++string)
+	for ( ; *string ; ++string )
 	{
-		printchar(out, *string);
+		printchar (out, *string);
 		++pc;
 	};
 
 
-	for ( ; width > 0; --width)
+	for ( ; width > 0; --width )
 	{
 		printchar (out, padchar);
 		++pc;
@@ -198,7 +209,8 @@ static int printi ( char **out, int i, int b, int sg, int width, int pad, int le
 	{
 		print_buf[0] = '0';
 		print_buf[1] = '\0';
-		return prints(out, print_buf, width, pad);
+
+		return prints (out, print_buf, width, pad);
 	};
 
 
@@ -225,9 +237,9 @@ static int printi ( char **out, int i, int b, int sg, int width, int pad, int le
 
 	if (neg) 
 	{
-		if( width && (pad & PAD_ZERO) ) 
+		if ( width && (pad & PAD_ZERO) ) 
 		{
-		    printchar(out, '-');
+		    printchar (out, '-');
 			++pc;
 			--width;
 		}else{
@@ -258,56 +270,60 @@ static int print (char **out, int *varg){
 
 	for (; *format != 0; ++format) 
 	{
-		if(*format == '%') 
+		if (*format == '%') 
 		{
 			++format;
 			width = pad = 0;
 			
-			if(*format == '\0') break;
-			if(*format == '%')  goto out;
+			if (*format == '\0') break;
+			if (*format == '%')  goto out;
 			
-			if(*format == '-'){
+			if (*format == '-')
+			{
 				++format;
 				pad = PAD_RIGHT;
 			};
 			
-			while(*format == '0'){
+			while (*format == '0')
+			{
 				++format;
 				pad |= PAD_ZERO;
 			};
 			
-			for( ; *format >= '0' && *format <= '9'; ++format){
+			for ( ; *format >= '0' && *format <= '9'; ++format)
+			{
 				width *= 10;
 				width += *format - '0';
 			};
 			
-			if( *format == 's' ){
+			if ( *format == 's' )
+			{
 				register char *s = *((char **)varg++);
 				pc += prints (out, s?s:"(null)", width, pad);
 				continue;
 			}
 			
-			if( *format == 'd' ){
+			if ( *format == 'd' ){
 				pc += printi (out, *varg++, 10, 1, width, pad, 'a');
 				continue;
 			}
 			
-			if( *format == 'x' ){
+			if ( *format == 'x' ){
 				pc += printi (out, *varg++, 16, 0, width, pad, 'a');
 				continue;
 			}
 			
-			if( *format == 'X' ){
+			if ( *format == 'X' ){
 				pc += printi (out, *varg++, 16, 0, width, pad, 'A');
 				continue;
 			}
 			
-			if( *format == 'u' ){
+			if ( *format == 'u' ){
 				pc += printi (out, *varg++, 10, 0, width, pad, 'a');
 				continue;
 			}
 			
-			if( *format == 'c' ) 
+			if ( *format == 'c' ) 
 			{
 				/* char are converted to int then pushed on the stack */
 				scr[0] = *varg++;
@@ -402,68 +418,75 @@ void outbyte (int c){
 
     static char prev = 0;
     
-    //sendo menor que espaço, não pode ser 'tab,return,back...)    
-    if( c <  ' '  && 
-	    c != '\r' && 
-		c != '\n' && 
-		c != '\t' && 
-		c != '\b' )
+    //Sendo menor que espaço, não pode ser 'tab,return,back...)    
+
+    if ( c <  ' '  && 
+	     c != '\r' && 
+		 c != '\n' && 
+		 c != '\t' && 
+		 c != '\b' )
     {
         return;
     };
-                
-    /*
-     *  Sendo maior que 'espaço'.
-     */ 
     
-	//volta ao início da linha.
-	if( c == '\r' ){
+
+    // Sendo maior que 'espaço'. 
+    
+	// Volta ao início da linha.
+	if ( c == '\r' )
+	{
         g_cursor_x = 0; //volta ao inicio da linha
         prev = c;
         return;    
     };        
        
-    //vai pra próxima linha e volta ao inicio da linha.    
-    if( c == '\n' && prev != '\r' ){
-        g_cursor_y++; //proxima linha
-        g_cursor_x = 0; //inicio da linha 
+    // Vai pra próxima linha e volta ao inicio da linha.    
+    if ( c == '\n' && prev != '\r' )
+    {
+        g_cursor_y++;      // proxima linha
+        g_cursor_x = 0;    // inicio da linha 
         prev = c;
         return;
     };
         
-    if( c == '\n' && prev == '\r' ){
-        g_cursor_y++; //proxima linha
+    if ( c == '\n' && prev == '\r' )
+    {
+        g_cursor_y++;    //proxima linha
         prev = c;
         return; 
     };
 
     //tab
-    if( c == '\t' ){
-        g_cursor_x += (4); //criar a var -> 'g_tab_size'
+    if ( c == '\t' )
+    {
+        g_cursor_x += (4);    //criar a var -> 'g_tab_size'
         prev = c;
         return;         
     };
         
     //space 
-    if( c == ' ' ){
+    if ( c == ' ' )
+    {
         g_cursor_x++; 
         prev = c;
         return;         
     };
         
     //delete 
-    if( c == 8 ){
+    if ( c == 8 )
+    {
         g_cursor_x--; 
         prev = c;
         return;         
     };
+       
         
     /*
      *  Filtra as dimensões da janela onde esta pintando.
      */
 	
     //limite horizontal	
-    if( g_cursor_x > 80)  // 80 = g_coluna_max 
+    if ( g_cursor_x > 80)  // 80 = g_coluna_max 
     {
         g_cursor_x = 0;
         g_cursor_y++;  
@@ -473,15 +496,20 @@ void outbyte (int c){
         g_cursor_x++;    //Incrementa coluna.                             
     };
     
+    
 	// Limite vertical. (@todo: Testando limite maior, ja que estamos em modo grafico.)
-	if( g_cursor_y > 74 ) //25 = g_linha_max (50*8 pixels) 
+	if ( g_cursor_y > 74 ) //25 = g_linha_max (50*8 pixels) 
     { 
 	    scroll();
         g_cursor_y = 74; //isso pode ir para dentro da função scroll().
     };
 
-    //Imprime os caracteres normais.
-	_outbyte(c);
+    
+	// #importante:
+	// Imprime os caracteres normais.
+	
+	_outbyte (c);
+
 	
     prev = c;    //Atualisa o prev.	   
 	
@@ -583,8 +611,8 @@ done:
  * -3:   -3 right justif.
  */
 
-int printf_main(void)
-{
+
+int printf_main (void){
 	
 /*	
 	char *ptr = "Hello world!";
@@ -634,6 +662,7 @@ int printf_main(void)
     printf("%s", buf);
 
 */	
+
 //done:	
 	return 0;
 }
@@ -680,19 +709,19 @@ unsigned long input (unsigned long ch){
 			prompt[prompt_pos] = (char ) '\0';
 			
 			//Apaga o atual
-			printf("%c",' ');
+			printf ("%c",' ');
 			//Apaga o anterior
 			g_cursor_x--;
 			g_cursor_x--;
-			printf("%c",'_');
+			printf ("%c",'_');
 			g_cursor_x--;
 			break;
 			
 		default:
 		    prompt[prompt_pos] = c;
 		    prompt_pos++;          //incrementa fila.
-			putchar(c);
-			printf("%c",'_');
+			putchar (c);
+			printf ("%c",'_');
 			g_cursor_x--;
 			break;
 	};
@@ -758,8 +787,7 @@ my_buffer_put_pixel ( unsigned long ax,
 	
 	//SOFTWARELIB_BACKBUFFER EQU (0x1000000 - 0x800000)
 	unsigned char *where = (unsigned char *) (0x1000000 - 0x800000); //0xC0800000;
-	
-	
+		
 	unsigned long color = (unsigned long) ax;
 	
 	char b, g, r, a;
@@ -862,7 +890,8 @@ void vsync (){
 
 /*
  * gui_inb:
- *     Pega um byte na porta. */
+ *     Pega um byte na porta. 
+ */
 
 char gui_inb (int port){
 	
@@ -870,14 +899,15 @@ char gui_inb (int port){
 	
     value = inportb (port);
 	
-	asm(" nop \n");
-	asm(" nop \n");
-	asm(" nop \n");
-	asm(" nop \n"); 
+	asm (" nop \n");
+	asm (" nop \n");
+	asm (" nop \n");
+	asm (" nop \n"); 
 	
 	return value;
 }
 
+//#bugbug
 //@todo: Rever isso.
 unsigned long get_cursor_x (){  
 	
@@ -885,6 +915,7 @@ unsigned long get_cursor_x (){
     return   int_args[4];
 }
 
+//#bugbug
 //@todo: Rever isso.
 unsigned long get_cursor_y (){ 
 	

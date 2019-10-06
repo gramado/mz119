@@ -36,7 +36,7 @@
  */
  
 /* 
-int fs_load_file( unsigned char *file_name, unsigned long file_address ){    
+int fs_load_file ( unsigned char *file_name, unsigned long file_address ){    
 	return (int) 0;    //Ainda não implementada.
 }; 
 
@@ -96,7 +96,10 @@ fatClustToSect ( unsigned short cluster,
  * fatLoadCluster:
  *     Load a cluster full of data 
  */
- 
+
+// Começa do primeiro setor do cluster.
+// SECTOR_SIZE = 512;
+
 void 
 fatLoadCluster ( unsigned long sector, 
                  unsigned long address, 
@@ -104,12 +107,11 @@ fatLoadCluster ( unsigned long sector,
 {
     unsigned long i;
 
-	// Começa do primeiro setor do cluster.
     for ( i=0; i < spc; i++ )
     {
         read_lba ( address, sector + i );
 
-        address = (unsigned long) address + SECTOR_SIZE;    //+512;
+        address = (unsigned long) address + SECTOR_SIZE;
     };
 }
 
@@ -153,14 +155,14 @@ unsigned long fs_find_not_empty_entry (){
 
 
 /* */
-void fs_test_fat_vector (){
-
-};
+void fs_test_fat_vector ()
+{
+}
 
 
 /* */
-unsigned long fs_get_fat_entry (unsigned long n){
-
+unsigned long fs_get_fat_entry (unsigned long n)
+{
     return (unsigned long) 0;
 }
 
@@ -184,7 +186,7 @@ fs_create_entry ( char *name,
                   unsigned long cluster,
                   unsigned long size )
 {
-    //return;    //Nothing for now.
+     // Nothing for now.
 }
 
 
@@ -192,12 +194,13 @@ fs_create_entry ( char *name,
  * fsCreateFileName:
  *     Cria um nome de arquivo.    
  */
+
 void 
 fsCreateFileName ( char *name, 
                    unsigned long id,
                    unsigned long eid )
 {
-    //return;
+     // Nothing for now.
 }
 
 
@@ -212,7 +215,7 @@ fsSaveFileName ( unsigned char *name,
                  unsigned long eid, 
                  unsigned long initial_cluster )
 {        
-	//return;    //Nothing for now.
+     // Nothing for now.
 }
 
 

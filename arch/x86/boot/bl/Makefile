@@ -80,15 +80,13 @@ bl-x86:
 	
 	#rem c. 
 	gcc -c src/core/faults.c  -I include/ $(CFLAGS) -o faults.o
-	gcc -c src/core/pages.c   -I include/ $(CFLAGS) -o pages.o
-	
-	gcc -c src/core/heap.c   -I include/ $(CFLAGS) -o heap.o
+	gcc -c src/core/pages.c   -I include/ $(CFLAGS) -o pages.o	
+	gcc -c src/core/heap.c    -I include/ $(CFLAGS) -o heap.o
 	
     #rem echo -{ ...
     #echo -{ Libc
-	gcc -c src/libc/stdio.c  -I include/ $(CFLAGS) -o stdio.o
-	gcc -c src/libc/string.c -I include/ $(CFLAGS) -o string.o
-	
+	gcc -c src/libc/stdio.c   -I include/ $(CFLAGS) -o stdio.o
+	gcc -c src/libc/string.c  -I include/ $(CFLAGS) -o string.o
 	gcc -c src/libc/stdlib.c  -I include/ $(CFLAGS) -o stdlib.o
 		
     #rem echo -{ ...
