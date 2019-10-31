@@ -1,5 +1,5 @@
 /*
- * File: gws/gws/bmp.c
+ * File: kgws/kgws/comp/bmp.c
  *
  * Description:
  *     BMP support.
@@ -23,26 +23,33 @@
 #include <kernel.h>
 
 
-extern unsigned long SavedX;            //Screen width. 
-extern unsigned long SavedY;            //Screen height.
+// Screen width and height. 
+// Herdadas do bootloader.
+
+extern unsigned long SavedX;
+extern unsigned long SavedY;
+
 
 // 4bpp support.
 static int nibble_count_16colors = 0;
 
 
+
 /*
- ********************************************************
+ **********************************
  * bmpDirectDisplayBMP:
  *
- *     Mostra na tela uma imagem bmp que já está carregada na memória. 
- * (diretamente no LFB)
+ *     Decodifica uma imagem BM que já está carregada na memória. 
+ *    ( Pinta diretamente no LFB )
  * 
  * IN:
  *     address = endereço base
  *     x       = posicionamento 
  *     y       = posicionamento
  *
- *	// @todo: Criar defines para esses deslocamentos.
+ * 
+ *	#todo: 
+ *  Criar defines para esses deslocamentos.
  */ 
 
 int 
@@ -84,38 +91,38 @@ bmpDirectDisplayBMP ( char *address,
 	xLimit = SavedX;
 	yLimit = SavedY;	
 	
-	//
+
 	// Sincronização do retraço vertical.
-	//
-	
+
 	vsync ();
 	
 	
 	// Limits.
+
 	if ( x > xLimit || y > yLimit )
 	{
-		printf("bmpDirectDisplayBMP: Limits \n");
+		printf ("bmpDirectDisplayBMP: Limits \n");
         goto fail;		
         //return (int) 1; 
-	};
+	}
 	
 
-	// @todo:
+	// #todo:
 	// Testar validade do endereço.
-	if ( address == 0 ){
+	
+	if ( address == 0 )
+	{
 		//goto fail;
-	};
+	}	
 	
 	
 	//
 	// struct for Info header
 	//
 	
-	//## BUGBUG 
-	// Um malloc aqui pode esgotar o heap 
-	//na hora de movimentar o mouse.
-	//precisamos usar um buffer interno para
-	//essa estrutura.
+	// #BUGBUG 
+	// Um malloc aqui pode esgotar o heap na hora de movimentar o mouse.
+	// Precisamos usar um buffer interno para essa estrutura.
 	
 	char buffer[512];
 	char buffer2[512];
@@ -128,13 +135,18 @@ bmpDirectDisplayBMP ( char *address,
 		//goto fail;
 	}	
 	
+	
 	// Signature.
-	sig = *( unsigned short* ) &bmp[0];
+	
+	sig = *( unsigned short * ) &bmp[0];
 	bh->bmpType = sig;
 	
 	// Size. ( 2 bytes )
-	unsigned short Size = *( unsigned short* ) &bmp[2];
+	
+	unsigned short Size = *( unsigned short * ) &bmp[2];
+	
 	bh->bmpSize = Size;
+	
 	
 	
 	//
@@ -175,9 +187,11 @@ bmpDirectDisplayBMP ( char *address,
 	
 	
 	// 0 = Nenhuma compressão.
-	if ( bi->bmpCompression != 0 ){
+	if ( bi->bmpCompression != 0 )
+	{
 		//fail
 	}
+	
 	
 	
 	//
@@ -221,6 +235,8 @@ bmpDirectDisplayBMP ( char *address,
 		    base = 0x36;
 			break;
 	};	
+	
+	
 	
 //#Aprendendo:
 //1     -  1 bpp (Mono)
@@ -431,18 +447,20 @@ fail:
 
 
 /*
- ********************************************************
+ *************************
  * bmpDisplayBMP:
  *
- *     Mostra na tela uma imagem bmp que já está carregada na memória. 
- * (pinta no backbuffer)
+ *     Decodifica uma imagem BMP que já está carregada na memória. 
+ *     (Pinta no backbuffer)
  * 
  * IN:
  *     address = endereço base
  *     x       = posicionamento 
  *     y       = posicionamento
  *
- *	// @todo: Criar defines para esses deslocamentos.
+ * 
+ *	#todo: 
+ *  Criar defines para esses deslocamentos.
  */
 
 int 
@@ -475,8 +493,13 @@ bmpDisplayBMP ( char *address,
 	unsigned long *palette = (unsigned long *) (address + 0x36);		
 	unsigned char *palette_index = (unsigned char *) &pal_address;	
 	
+	
+	//
 	// Limits
-	// @todo: get system metrics.
+	//
+	
+	// #todo: 
+	// Get system metrics.
 	
 	//xLimit = 800;
 	//yLimit = 600;
@@ -484,16 +507,16 @@ bmpDisplayBMP ( char *address,
 	xLimit = SavedX;
 	yLimit = SavedY;		
 	
-	// Limits.
+	
 	if ( x > xLimit || y > yLimit )
 	{
 		printf("bmpDisplayBMP: Limits \n");
         goto fail;		
         //return (int) 1; 
-	};
+	}
 	
 
-	// @todo:
+	// #todo:
 	// Testar validade do endereço.
 	
 	
@@ -506,29 +529,41 @@ bmpDisplayBMP ( char *address,
 	// struct for Info header
 	//
 	
-	//## BUGBUG 
-	// Um malloc aqui pode esgotar o heap 
-	//na hora de movimentar o mouse.
-	//precisamos usar um buffer interno para
-	//essa estrutura.
+	// #BUGBUG 
+	// Um malloc aqui pode esgotar o heap na hora de movimentar o mouse.
+	// Precisamos usar um buffer interno para essa estrutura.
 	
 	char buffer[512];
 	char buffer2[512];
 	
+	
 	//bh = (struct bmp_header_d *) malloc( sizeof(struct bmp_header_d) );	
     bh = (struct bmp_header_d *) &buffer[0];
-	if( (void*) bh == NULL )
+	
+	if ( (void *) bh == NULL )
 	{
 		//goto fail;
 	}	
 	
-	// Signature.
-	sig = *( unsigned short* ) &bmp[0];
+	
+	// Signature. ( 2 bytes )
+	
+	sig = *(unsigned short *) &bmp[0];
 	bh->bmpType = sig;
 	
+	
 	// Size. ( 2 bytes )
-	unsigned short Size = *( unsigned short* ) &bmp[2];
+	// #bugbug: Isso deve ser 4 bytes
+	
+	unsigned short Size = *( unsigned short * ) &bmp[2];
+	//unsigned long Size = *( unsigned long * ) &bmp[2];
 	bh->bmpSize = Size;
+	
+	
+	//Offset from beginning of file to the beginning of the bitmap data
+	//unsigned long DataOffset = *( unsigned long * ) &bmp[10];
+	//bh->bmpOffBits = DataOffset;	
+	
 	
 	
 	//
@@ -538,44 +573,76 @@ bmpDisplayBMP ( char *address,
 	//Windows bmp.
 	//bi = (struct bmp_infoheader_d *) malloc( sizeof(struct bmp_infoheader_d) );
     bi = (struct bmp_infoheader_d *)  &buffer2[0];
-	if( (void*) bi == NULL )
+	
+	if ( (void *) bi == NULL )
 	{
 		//goto fail;
 	}	
 	
+	
 	//The size of this header.
+	
 	bi->bmpSize = *( unsigned long* ) &bmp[14];
 	
+
+	
 	// Width and height.
+
     Width = *( unsigned long * ) &bmp[18];
     Height = *( unsigned long * ) &bmp[22];	
+
 	
-	//@todo: checar validade da altura e da largura encontrada.
+	// #todo: 
+	// Checar a validade da altura e da largura encontrada.
 	
-	// Salvar.
+	
+	// Salvando altura e largura.
+
 	bi->bmpWidth = (unsigned long) Width;
 	bi->bmpHeight = (unsigned long) Height;
 	
 	
 	// Number of bits per pixel.
 	// 1, 4, 8, 16, 24 and 32.
+	
 	bi->bmpBitCount = *( unsigned short * ) &bmp[28];
 	
 	// 24
-	//if( bi->bmpBitCount != 24 ){
+	// if ( bi->bmpBitCount != 24 ){
 	//	//fail
 	//}
 	
 	
+	
+	// Compression
 	// 0 = Nenhuma compressão.
-	if( bi->bmpCompression != 0 ){
+    //bi->bmpCompression = *( unsigned long * ) &bmp[30];
+
+	if ( bi->bmpCompression != 0 )
+	{
 		//fail
 	}
 	
 	
+	
+
+    // offset 2E - the number of colors in the color palette, 
+    // or 0 to default to 2^n
+	//bi->bmpClrUsed = *( unsigned long * ) &bmp[46];    
+    
+    
+    // offset 32 - the number of important colors used, 
+    // or 0 when every color is important; generally ignored	
+	//bi->bmpClrImportant = *( unsigned long * ) &bmp[50];	
+	
+	
+	// More ?
+	
+	
 	//
-	// # Draw #
+	//============ # Draw # ==================
 	//
+
 	
 //DrawBMP:	
 
@@ -583,37 +650,50 @@ bmpDisplayBMP ( char *address,
 	top = y; 
 	bottom = ( top + bi->bmpHeight );
 
-	// Início da área de dados do BMP.
-	
-	//#importante:
-	//A base é diferente para os tipos ?? 
+    //
+    // Data Area.
+    //
 
-	switch( bi->bmpBitCount )
+	// Início da área de dados do BMP.
+	// #importante: A base é diferente para os tipos ?? 
+    // Obs: Cada cor é representada com 4 bytes. RGBA.
+
+	switch ( bi->bmpBitCount )
     {
-		//Obs: Cada cor é representada com 4 bytes. RGBA.
-		
+        // 1 bit
 		//case 1:
 		//    base = (0x36 + 0x40);
 		//    break;
-		    
+
+		
+		// 2 bit    
 		//case 2:
 		//    base = (0x36 + 0x40);
 		//    break;
+
 		
+		// 4 bit
         // 4 bytes pra cada cor, 16 cores, 64 bytes.		
 		case 4:
 		    base = (0x36 + 0x40);
 		    break; 
+
 		
-        //4 bytes pra cada cor, 256 cores, 1024bytes.		
+		// 8 bit
+        // 4 bytes pra cada cor, 256 cores, 1024 bytes.		
 		case 8: 
 		    base = (0x36 + 0x400); 
 			break; 
-			
+
+
+		// ?
+		// 24bpp, 32bpp.
 		default:
 		    base = 0x36;
 			break;
 	};	
+	
+	
 	
 //#Aprendendo:
 //1     -  1 bpp (Mono)
@@ -627,13 +707,13 @@ bmpDisplayBMP ( char *address,
 //320   - 32 bpp (True color, RGBA)	
 
 	
-	for( i=0; i < bi->bmpHeight; i++ )	
+	for ( i=0; i < bi->bmpHeight; i++ )	
 	{		
-		for( j=0; j < bi->bmpWidth; j++ )	
+		for ( j=0; j < bi->bmpWidth; j++ )	
 		{	
 	        // 16 cores
             // Um pixel por nibble.
-	        if(bi->bmpBitCount == 4 )
+	        if (bi->bmpBitCount == 4 )
 	        {				
 				offset = base;
 							    
@@ -832,6 +912,7 @@ bmpDisplayBMP ( char *address,
 		left = x;    
 	};	
 	
+	
 	// ## test palette 
 	//int p;
 	
@@ -844,6 +925,7 @@ bmpDisplayBMP ( char *address,
 	//    }
 	//    printf("\n");
 	//};
+	
 	
 done:	
 	//Debug
