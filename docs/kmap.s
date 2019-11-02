@@ -2242,9 +2242,9 @@ Linker script and memory map
  .rodata        0x00000000c0031a2a        0x5 atairq.o
  *fill*         0x00000000c0031a2f        0x1 
  .rodata        0x00000000c0031a30      0x321 atapci.o
- .rodata        0x00000000c0031d51       0x38 hdd.o
- .rodata        0x00000000c0031d89        0x5 channel.o
- *fill*         0x00000000c0031d8e        0x2 
+ .rodata        0x00000000c0031d51       0x37 hdd.o
+ .rodata        0x00000000c0031d88        0x5 channel.o
+ *fill*         0x00000000c0031d8d        0x3 
  .rodata        0x00000000c0031d90      0x39c network.o
  .rodata        0x00000000c003212c      0x2a9 nicintel.o
  *fill*         0x00000000c00323d5        0x3 
