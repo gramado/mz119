@@ -510,38 +510,38 @@ vhd-copy-files:
 	sudo cp bin/NC2.FON /mnt/gramadovhd	
 
 #Get available apps
-	-sudo cp ../gde/bin/GRAMCODE.BIN  /mnt/gramadovhd 
-	-sudo cp ../gde/bin/GRAMTEXT.BIN  /mnt/gramadovhd 
-	-sudo cp ../gde/bin/GFE.BIN       /mnt/gramadovhd 
-	-sudo cp ../gde/bin/SPR.BIN       /mnt/gramadovhd 
+	-sudo cp ../garden/bin/GRAMCODE.BIN  /mnt/gramadovhd 
+	-sudo cp ../garden/bin/GRAMTEXT.BIN  /mnt/gramadovhd 
+	-sudo cp ../garden/bin/GFE.BIN       /mnt/gramadovhd 
+	-sudo cp ../garden/bin/SPR.BIN       /mnt/gramadovhd 
 
-	-sudo cp ../gde/bin/GDEINIT.BIN   /mnt/gramadovhd 
-	-sudo cp ../gde/bin/GDESHELL.BIN  /mnt/gramadovhd 
-	-sudo cp ../gde/bin/GDETERM.BIN   /mnt/gramadovhd 
-	-sudo cp ../gde/bin/GDETM.BIN     /mnt/gramadovhd 
+	-sudo cp ../garden/bin/GDEINIT.BIN   /mnt/gramadovhd 
+	-sudo cp ../garden/bin/GDESHELL.BIN  /mnt/gramadovhd 
+	-sudo cp ../garden/bin/GDETERM.BIN   /mnt/gramadovhd 
+	-sudo cp ../garden/bin/GDETM.BIN     /mnt/gramadovhd 
 
-	-sudo cp ../gde/bin/HELLO.BIN     /mnt/gramadovhd 
-	-sudo cp ../gde/bin/HELLO2.BIN    /mnt/gramadovhd 
-	-sudo cp ../gde/bin/HELLO3.BIN    /mnt/gramadovhd 
-	-sudo cp ../gde/bin/JACKPOT.BIN   /mnt/gramadovhd 
-	-sudo cp ../gde/bin/CAT.BIN       /mnt/gramadovhd 
-	-sudo cp ../gde/bin/GLIBCT1.BIN   /mnt/gramadovhd 
-	-sudo cp ../gde/bin/GRAMC.BIN     /mnt/gramadovhd 
-	-sudo cp ../gde/bin/GRAM.BIN      /mnt/gramadovhd 
-	-sudo cp ../gde/bin/CC500.BIN     /mnt/gramadovhd 
-	-sudo cp ../gde/bin/LISP.BIN      /mnt/gramadovhd 
-	-sudo cp ../gde/bin/NORATERM.BIN  /mnt/gramadovhd
-	-sudo cp ../gde/bin/REBOOT.BIN    /mnt/gramadovhd
-	-sudo cp ../gde/bin/REBOOT2.BIN   /mnt/gramadovhd
-	-sudo cp ../gde/bin/LAUNCHER.BIN  /mnt/gramadovhd
-	-sudo cp ../gde/bin/TASCII.BIN    /mnt/gramadovhd
-	-sudo cp ../gde/bin/DUMPIT.BIN    /mnt/gramadovhd
+	-sudo cp ../garden/bin/HELLO.BIN     /mnt/gramadovhd 
+	-sudo cp ../garden/bin/HELLO2.BIN    /mnt/gramadovhd 
+	-sudo cp ../garden/bin/HELLO3.BIN    /mnt/gramadovhd 
+	-sudo cp ../garden/bin/JACKPOT.BIN   /mnt/gramadovhd 
+	-sudo cp ../garden/bin/CAT.BIN       /mnt/gramadovhd 
+	-sudo cp ../garden/bin/GLIBCT1.BIN   /mnt/gramadovhd 
+	-sudo cp ../garden/bin/GRAMC.BIN     /mnt/gramadovhd 
+	-sudo cp ../garden/bin/GRAM.BIN      /mnt/gramadovhd 
+	-sudo cp ../garden/bin/CC500.BIN     /mnt/gramadovhd 
+	-sudo cp ../garden/bin/LISP.BIN      /mnt/gramadovhd 
+	-sudo cp ../garden/bin/NORATERM.BIN  /mnt/gramadovhd
+	-sudo cp ../garden/bin/REBOOT.BIN    /mnt/gramadovhd
+	-sudo cp ../garden/bin/REBOOT2.BIN   /mnt/gramadovhd
+	-sudo cp ../garden/bin/LAUNCHER.BIN  /mnt/gramadovhd
+	-sudo cp ../garden/bin/TASCII.BIN    /mnt/gramadovhd
+	-sudo cp ../garden/bin/DUMPIT.BIN    /mnt/gramadovhd
 #...
 	
 # c test suite
-	-sudo cp ../gde/gt/tests/TEST1.C    /mnt/gramadovhd
-	-sudo cp ../gde/gt/tests/TEST2.C    /mnt/gramadovhd
-	-sudo cp ../gde/gt/tests/TEST3.C    /mnt/gramadovhd
+	-sudo cp ../garden/gt/tests/TEST1.C    /mnt/gramadovhd
+	-sudo cp ../garden/gt/tests/TEST2.C    /mnt/gramadovhd
+	-sudo cp ../garden/gt/tests/TEST3.C    /mnt/gramadovhd
 	
 
 	
@@ -555,8 +555,8 @@ vhd-copy-files:
 	-sudo mkdir /mnt/gramadovhd/DEV
 	-sudo mkdir /mnt/gramadovhd/EFI
 	-sudo mkdir /mnt/gramadovhd/EFI/BOOT
-	-sudo mkdir /mnt/gramadovhd/GDE
-	-sudo mkdir /mnt/gramadovhd/GDE/BIN
+	-sudo mkdir /mnt/gramadovhd/GARDEN
+	-sudo mkdir /mnt/gramadovhd/GARDEN/BIN
 	-sudo mkdir /mnt/gramadovhd/HOME
 	-sudo mkdir /mnt/gramadovhd/LIB
 	-sudo mkdir /mnt/gramadovhd/MNT
@@ -570,7 +570,7 @@ vhd-copy-files:
 # bugbug
 # Suspendendo isso por falta de espaço na partição.
 
-	#-sudo cp ../gde/bin/*         /mnt/gramadovhd/BIN 
+	#-sudo cp ../garden/bin/*         /mnt/gramadovhd/BIN 
 
 
 #
@@ -598,13 +598,13 @@ vhd-copy-files:
 #	-sudo cp arch/x86/boot/efi/BOOTIA32.EFI  /mnt/gramadovhd/EFI/BOOT
 
 #
-# ======== Files in the GDE/ folder. ========
-#	
+# ======== Files in the GARDEN/ folder. ========
+#
 
-#gde
-	-sudo cp arch/x86/boot/vhd/tests/TEST1.ASM  /mnt/gramadovhd/GDE
-	-sudo cp ../gde/bin/*                       /mnt/gramadovhd/GDE/BIN 
-	
+#garden
+	-sudo cp arch/x86/boot/vhd/tests/TEST1.ASM  /mnt/gramadovhd/GARDEN
+	-sudo cp ../garden/bin/*                    /mnt/gramadovhd/GARDEN/BIN 
+
 
 #
 # ======== Files in the LIB/ folder. ========
