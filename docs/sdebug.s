@@ -39,15 +39,6 @@ fsLoadFile:
 x86main: done
 fsLoadFile:
 fsLoadFile:
- state fsLoadFile:
-fsLoadFile:
-fsLoadFile:
-fsLoadFile:
-fsLoadFile:
-fsLoadFile:
-fsLoadFile:
-fsLoadFile:
-fsLoadFile:
 [Kernel] kernel_main:
 [Kernel] kernel_main: Using GUI
 [Kernel] kernel_main: Initializing runtime
@@ -88,5 +79,4 @@ fsLoadFile:
 fsLoadFile:
 x86main: done
 fsLoadFile:
- state fsLoadFile:
-fsLoadFile:
+ state 

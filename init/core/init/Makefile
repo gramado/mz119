@@ -1,6 +1,6 @@
 
-#init process
-
+# init process
+# It's is a ring3 process used to initialize the system.
 
 VERSION = 0
 PATCHLEVEL = 1
@@ -51,7 +51,7 @@ stubs.o
 .PHONY: all all-c shell-link finalize clean
 
 all: crt0.o main.o all-c shell-link finalize clean
-	@echo "Ok?"
+	@echo "Init Ok?"
 
 head.o:
 #	nasm  head.s  -felf -o head.o
@@ -72,19 +72,19 @@ all-c:
 #	gcc  -c  net.c       -I ../../include/libc/ $(CFLAGS) -o net.o
 #	gcc  -c  terminal.c  -I ../../include/libc/ $(CFLAGS) -o terminal.o
 
+
 	cp $(APIOBJ)/api.o .
-	
+
+
 	cp $(LIBCOBJ)/ctype.o .
 	cp $(LIBCOBJ)/stdio.o .
 	cp $(LIBCOBJ)/stdlib.o .
 	cp $(LIBCOBJ)/string.o .
 	cp $(LIBCOBJ)/conio.o .
-#	cp ../../../lib/wait.o .
-
 	cp $(LIBCOBJ)/unistd.o .
-	
 	cp $(LIBCOBJ)/stubs.o .
-	
+
+
 
 shell-link:
 	ld -m elf_i386 -T link.ld -o INIT.BIN $(myObjects) -Map map.s
