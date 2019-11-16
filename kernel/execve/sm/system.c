@@ -528,111 +528,140 @@ system_dispatch_to_procedure ( struct window_d *window,
  */
 
 int SystemMenu (void){
-	
-    struct window_d *Current;    //Parent window.	
-	struct window_d *hWindow;    //Menu window.
-	
-	//Tentativa de utilizar control menu não estando no modo gráafico.
-	if(VideoBlock.useGui != 1)
-	{
-		//@todo: Notificar erro via modo texto.
-	    return (int) 1;   
-	};
-	
-    //
+
+    struct window_d *Current;    //Parent window.
+    struct window_d *hWindow;    //Menu window.
+
+
+	// Tentativa de utilizar control menu não estando no modo gráafico.
+
+    if ( VideoBlock.useGui != 1 )
+    {
+        // #todo: 
+        // Notificar erro via modo texto.
+
+        return (int) 1;   
+    }
+
+
+	//
 	// Usar a estrutura da Client Area.
 	// A área da tela menos a área da barra de tarefas, ou barra de menu.
 	//
-	
+
+
 	//
-	// ?? desktop ?? Uma estrutura de janela , dentro da estrutura gui.
+	// ?? desktop ?? 
+	// Uma estrutura de janela , dentro da estrutura gui.
 	//
-	
-	if( (void*) gui->desktop == NULL )
-	{
-		gui->desktop = (void*) gui->screen;
-		
+
+    if ( (void *) gui->desktop == NULL )
+    {
+        gui->desktop = (void *) gui->screen;
+
 		//No Screen.
-		if( (void*) gui->desktop == NULL ){
-			return (int) 1; //erro.
-		};		
-	};
+        if ( (void *) gui->desktop == NULL )
+        {
+			//erro.
+            return (int) 1;    
+        }
+    }
+
 
 	//Set current.
-	if( (void*) gui->desktop != NULL ){
-        Current = (void*) gui->desktop;		
-	};
-	
-	//No Current.
-	if( (void*) Current == NULL ){
+
+    if ( (void *) gui->desktop != NULL )
+    {
+        Current = (void *) gui->desktop;
+    }
+
+
+	// No Current.
+	// #bugbug: 
+	// Reavaliar isso. 
+	// Estamos checando um ponteiro não inicializado.
+	// Mas de qualquer forma não podemos avançar com esse ponteiro nulo.
+
+    if ( (void *) Current == NULL )
+    {
         return (int) 1;    //erro.
-	};
-	
+    }
+
 	//
-    // Cria o System Menu.
+	// Cria o System Menu.
 	// Envia uma parent window via argumento.
 	// Retorna a janela criada para o menu.
-    //	
-	
-    hWindow = (void *) create_menu(Current,4,0,0,0);
-	
-	//Se houve falha na criação da janela.
-	if( (void *) hWindow == NULL ){
-	    printf("sm-sys-system-SystemMenu: hWindow\n");
-		die();
-	};
-	
-	//Se houve falha na criação do menu.
-	if( (void *) hWindow->defaultMenu == NULL ){
-	    return (int) 1;
-	}else{
-		
-		//Inicializa o array de menuítens.
-	    initmenuArray( hWindow->defaultMenu, 4);
+	//
 
-        //Cria os ítens.		
-	    create_menu_item( hWindow->defaultMenu, "System menu item 1", 0);
-        create_menu_item( hWindow->defaultMenu, "System menu item 2", 0);
-	    create_menu_item( hWindow->defaultMenu, "System menu item 3", 0);
-	    create_menu_item( hWindow->defaultMenu, "System menu item 4", 1);
+    hWindow = (void *) create_menu ( Current, 4, 0, 0, 0 );
+
+	// Se houve falha na criação da janela.
+
+    if ( (void *) hWindow == NULL )
+    {
+        printf ("sm-sys-system-SystemMenu: hWindow\n");
+        die ();
+    }
+
+	// Se houve falha na criação do menu.
+    if ( (void *) hWindow->defaultMenu == NULL )
+    {
+        return (int) 1;
+    }else{
+
+		//Inicializa o array de menuítens.
+        initmenuArray ( hWindow->defaultMenu, 4 );
+
+        //Cria os ítens.
+        create_menu_item ( hWindow->defaultMenu, "System menu item 1", 0 );
+        create_menu_item ( hWindow->defaultMenu, "System menu item 2", 0 );
+        create_menu_item ( hWindow->defaultMenu, "System menu item 3", 0 );
+        create_menu_item ( hWindow->defaultMenu, "System menu item 4", 1 );
 		//...
-	};
+    };
+
 	//Nothing.
-done: 
-	SetProcedure( (unsigned long) &SystemMenuProcedure);	
-	return (int) 0;
-};
+
+// #todo: deletar essa label.
+done:
+
+    SetProcedure ( (unsigned long) &SystemMenuProcedure);
+
+    return 0;
+}
 
 
 /*
  * SystemMenuProcedure:
  *     O procedimento do control menu principal.
  *     menu do sistema, manipula a janela ativa.
- *     ram /sm  
- */																
-unsigned long SystemMenuProcedure( struct window_d *window, 
-                                   int msg, 
-								   unsigned long long1, 
-								   unsigned long long2 ) 
+ */
+
+unsigned long 
+SystemMenuProcedure ( struct window_d *window, 
+                      int msg, 
+                      unsigned long long1, 
+                      unsigned long long2 ) 
 {
-    switch(msg)
-	{
+    switch (msg)
+    {
         case MSG_KEYDOWN:
-            switch(long1)
+            switch (long1)
             {
-                case VK_ESCAPE:	
-				   SetProcedure( (unsigned long) &system_procedure);						
-				   break;
-				   
+                case VK_ESCAPE:
+                   SetProcedure ( (unsigned long) &system_procedure );
+                   break;
+
                 default:
-				    //Nothing.
+					//Nothing.
                     break; 
             };
-        break;	
-	
-		case MSG_SYSKEYDOWN:                 
-            switch(long1)	       
-            {   
+        break;
+
+
+        case MSG_SYSKEYDOWN:
+            switch (long1)
+            { 
 				//Restaturar janela	
 				case VK_F1:
 				    //#bugbug: Aqui não devemos criar a 
@@ -643,7 +672,7 @@ unsigned long SystemMenuProcedure( struct window_d *window,
 				//Minimizar janela
                 case VK_F2:
 				    //#bugbug: Aqui não devemos criar a 
-					//status bar apenas atualizar as strings.				
+					//status bar apenas atualizar as strings.
 				    //StatusBar( gui->screen, "Status Bar", "F2");
                     break;
 					
@@ -658,74 +687,84 @@ unsigned long SystemMenuProcedure( struct window_d *window,
 			    //...
 				
 				default:
-                    //Nothing.				
+                    //Nothing.
 				    break;
-		    };              
+		    };           
         break;
-		
-	    case MSG_SYSKEYUP:
-           //Nothing.		
-        break;
-		
-		default:
-		    //Nothing.
-		    break;
-	};
-	
+
+        case MSG_SYSKEYUP:
+            //Nothing.
+            break;
+
+
+        default:
+            //Nothing.
+            break;
+    };
+
 
 done:
-	
-	if (VideoBlock.useGui == 1)
-	{
-	    refresh_screen();
-	};
-	
-	return (unsigned long) 0;
+
+    if (VideoBlock.useGui == 1)
+    {
+        refresh_screen ();
+    }
+
+    return (unsigned long) 0;
 }
+
 
 
 /*
  *******************************************************
  * systemReboot:
  *     Interface de inicialização da parte de sistema para o processo de reboot.
- *     realiza rotinas de desligamento de sistema antes de chamar o reiniciamento de hardware.
- *     *IMPORTANTE: Um processo em user mode deve realizar as rotinas de desligamento.
+ *     realiza rotinas de desligamento de sistema antes de chamar 
+ * o reiniciamento de hardware.
+ *     *IMPORTANTE: Um processo em user mode deve realizar as rotinas 
+ * de desligamento.
  *     passar para o kernel somente depois de fechar todos os processos.
- *     Quando essa rotina checar os processos verá que não há mais nada pra fechar.
- *     se ainda tiver algum processo pra fechar, então essa rotina fecha, senão termina a rotina. 
+ *     Quando essa rotina checar os processos verá que não há mais nada 
+ * pra fechar.
+ *     se ainda tiver algum processo pra fechar, então essa rotina fecha, 
+ * senão termina a rotina. 
  */
 
 void systemReboot (void){
-	
+
 	//int i;
 	//unsigned long left;
 	//unsigned long top;
 	//unsigned long width;
-	//unsigned long height;		
+	//unsigned long height;
 	
 	//struct process_d *P;
 	//struct thread_d *T;
 		
 	//struct window_d *hWnd;
-	//struct window_d *hWindow;	
-	
-	asm ("cli");
-	
+	//struct window_d *hWindow;
+
+
+    asm ("cli");
+
 	//No graphics.	
-    if ( VideoBlock.useGui != 1 ){
-		hal_reboot();
-	}
-	
+    if ( VideoBlock.useGui != 1 )
+    {
+        hal_reboot ();
+    }
+
+
 	//#importante:
 	//suspendendo a rotina de reboot,
 	//até que todas funcionalidades gráficas estejam em ordem.
 	//Na verdade deveria existir um aplicativo chamado reboot 
 	//que inicialise essa rotina deixando par ao kernel apenas 
 	//a parte de baixo nível.
-	
-	hal_reboot();
-	
-/*	
+
+    hal_reboot ();
+
+
+/*
 		
 	//Parent window.
 	if ( (void *) gui->main == NULL )
@@ -764,7 +803,7 @@ void systemReboot (void){
 		    RegisterWindow(hWindow);
 			set_active_window(hWindow);
 			SetFocus(hWindow);
-	    };										
+	    };
 		
 		
 		// Auterando as margens.
@@ -939,23 +978,26 @@ void systemReboot (void){
         //apenas atualizar as strings 		
 		//StatusBar(hWindow,"Esc=EXIT","Enter=?");		
 		//Nothing.
-	};	   
-
+	};
  */
-	
+
+
+
 	//Nothing.
-	
+
+
+
 done:
-	
-    refresh_screen();
-	
-	sleep (8*8000);
-	
-	printf ("systemReboot: Rebooting ...");
-	refresh_screen();
-	
-	sys_reboot ();
-	
+
+    refresh_screen ();
+
+	//?
+    sleep (8*8000);
+
+    printf ("systemReboot: Rebooting ...");
+    refresh_screen ();
+
+    sys_reboot ();
     die ();
 }
 
@@ -970,10 +1012,10 @@ void systemShutdown (void){
 	 
 	//@todo ...
 
-	printf ("systemShutdown: It's safe to turnoff your computer");
-	refresh_screen ();
-	
-	die ();
+    printf ("systemShutdown: It's safe to turnoff your computer");
+
+    refresh_screen ();
+    die ();
 }
 
 
@@ -1000,11 +1042,12 @@ void systemShutdownViaAPM (void){
 		
 	//Pilha para iret.
     //asm("pushl %0" :: "r" ((unsigned long) 8)     : "%esp");    //cs.
-    //asm("pushl %0" :: "r" ((unsigned long) shutdown_address)    : "%esp");    //eip.
+    //asm("pushl %0" :: "r" ((unsigned long) shutdown_address)    : "%esp");  //eip.
 	//asm("iret \n");    //Fly!	
 		
 	//};
-	
+
+
     panic ("systemShutdownViaAPM:\n");
 }
 
@@ -1022,12 +1065,13 @@ void systemShutdownViaAPM (void){
  */
 
 void *systemGetSystemMetric (int number){
-	
-	if ( number <= 0 )
-        return NULL;	
-	
-	switch ( number )
-	{
+
+    if ( number <= 0 )
+        return NULL;
+
+
+    switch ( number )
+    {
 		//case SM_NULL:
 		//    return NULL;
 		//	break;
@@ -1042,21 +1086,22 @@ void *systemGetSystemMetric (int number){
         
 		//Essa é uma versão para o desenvolvedor??
         case SM_DEVELOPER_EDITION:
-            if(gSystemEdition == SYSTEM_DEVELOPER_EDITION){
-				return (void*) 1; //Sim, essa é uma versão para o desenvolvedor.
+            if(gSystemEdition == SYSTEM_DEVELOPER_EDITION)
+            {
+				return (void *) 1; //Sim, essa é uma versão para o desenvolvedor.
 			}else{ return NULL; }; //Não, essa não é uma versão para o desenvolvedor.
 		    break;
 			
-            //Continuar ... 			
-		 	
-		default:
-		    return NULL;
-	};
+            //Continuar ... 
+
+        default:
+            return NULL;
+    };
 }
 
 
 /*
- ********************************************************************
+ **************************************************
  * systemGetSystemstatus:
  *     Retorna o valor de alguma variável global relativa 
  * apenas a status de algum elemento do sistema.
@@ -1065,13 +1110,13 @@ void *systemGetSystemMetric (int number){
  */
 
 void *systemGetSystemStatus (int number){
-    
-	if ( number <= 0 )
-        return NULL;		
-	
-	
-	switch ( number )
-	{
+
+    if ( number <= 0 )
+        return NULL;
+
+
+    switch ( number )
+    {
 		//case SS_NULL:
 		//    return NULL;
 		//	break;
@@ -1083,22 +1128,21 @@ void *systemGetSystemStatus (int number){
         case SS_USING_GUI:
             return (void *) g_useGUI;
 			break;
-        //Continuar ... 			
-		 	
-		default:
-		    return NULL;
-	};
-};
+        //Continuar ... 
 
+        default:
+            return NULL;
+    };
+}
 
 
 /*
- * ********************************************
+ ***************************************
  * die:
  *     Função sem retorno. Aqui termina tudo.
  *      O sistema trava e não tem volta.
- * Final message!	
- * Refresh.	
+ * Final message!
+ * Refresh.
  * HALT.
  */
 
@@ -1106,20 +1150,21 @@ void die (void){
 	
 	//*Bullet.
     printf ("die: * System Halted\n");      
-	
-	if ( VideoBlock.useGui == 1 )
-	{
-	    refresh_screen ();
-	}
-	
+
+    if ( VideoBlock.useGui == 1 )
+    {
+        refresh_screen ();
+    }
+
 //halt:
-	
-	asm ("hlt");   
-	
-	while (1){ 
-		asm ("cli");
-	    asm ("hlt");                        
-	};     	
+
+    asm ("hlt");   
+
+
+    while (1){ 
+        asm ("cli");
+        asm ("hlt");
+    };
 }
 
 
@@ -1131,15 +1176,15 @@ void die (void){
  */
 
 unsigned long systemGetSystemMetrics ( int index ){
-	
+
 	//print("#debug: systemGetSystemMetrics: i={%d} \n",index)
-	
-	if ( index <= 0 )
-	    return (unsigned long) 0;	
-	
-	
-	switch ( index )
-	{		
+
+    if ( index <= 0 )
+        return (unsigned long) 0;
+
+
+    switch ( index )
+    {
 		//screen width.
 		case 1:
 		    return (unsigned long) screenGetWidth();
@@ -1186,12 +1231,13 @@ unsigned long systemGetSystemMetrics ( int index ){
 		default:
 		    goto done;
 		    break;
-	}
-	
-	
-done:	
-	return (unsigned long) 0;
-};
+    };
+
+
+done:
+    return (unsigned long) 0;
+}
+
 
 
 //
@@ -1207,23 +1253,24 @@ done:
  *     Cria uma nova linked list.
  */
 
-void *newLinkedlist (void)
-{
+void *newLinkedlist (void){
+
     struct linkedlist_d *new_list; 
-	
-	new_list = (void *) malloc ( sizeof(struct linkedlist_d) );
-	
+
+    new_list = (void *) malloc ( sizeof(struct linkedlist_d) );
+
     if ( (void *) new_list == NULL )
-	{
-		return NULL;
-	}
+    {
+        return NULL;
+    }
 
     /* put in the data  */
     //new_node->data  = new_data;
     
-	new_list->head =  NULL;
-    new_list->tail =  NULL;
-	
+    new_list->head = NULL;
+    new_list->tail = NULL;
+
+
     return (void *) new_list;
 }
 
@@ -1234,69 +1281,74 @@ void *newLinkedlist (void)
  *     Cria um novo nodo.
  */
 
-void *newNode (void)
-{
+void *newNode (void){
+
     struct node_d *new_node; 
-	
-	new_node = (void *) malloc( sizeof(struct node_d) );
-	
-    if ( (void *) new_node == NULL ){
-		return NULL;
-	}
+
+    new_node = (void *) malloc ( sizeof(struct node_d) );
+
+    if ( (void *) new_node == NULL )
+    {
+        return NULL;
+    }
  
     /* put in the data  */
     //new_node->data  = new_data;
-    
-	new_node->flink = NULL;
+
+    new_node->flink = NULL;
  
     return (void *) new_node;
 }
 
 
-void Removing_from_the_beginning(struct linkedlist_d *list)
-{
+void Removing_from_the_beginning (struct linkedlist_d *list){
+
     struct node_d *old_head;
     struct node_d *new_head;
-	
-	if( (void*) list == NULL){
-	   return;
-	};
-	
-	old_head = list->head;
-	new_head = old_head->flink;
-	
-	list->head = new_head; 
-	
+
+    if ( (void*) list == NULL)
+    {
+        return;
+    }
+
+
+    old_head = list->head;
+    new_head = old_head->flink;
+
+    list->head = new_head; 
+
+
 done:
-	return;
-};
+    return;
+}
 
 
 
-void Removing_from_the_middle(struct linkedlist_d *list)
+void Removing_from_the_middle (struct linkedlist_d *list)
 {
-  //todo identifica~çao do node que esta no meio,
-};
+  //todo identificaçao do node que esta no meio,
+}
 
 
 void Removing_from_the_end (struct linkedlist_d *list){
-	
+
     struct node_d *old_tail;
     struct node_d *new_tail;
 
-	if ( (void *) list == NULL){
-	   return;
-	};
+    if ( (void *) list == NULL)
+    {
+        return;
+    }
 
-	old_tail = list->tail;
-	new_tail = old_tail->blink;
-	
-	list->tail = new_tail; 
+    old_tail = list->tail;
+    new_tail = old_tail->blink;
+
+    list->tail = new_tail; 
 }
 
 
 /*
- *******************************************************************
+ *******************************************
  * systemStartUp:
  *     Rotina de inicialização do sistema.
  *
@@ -1325,27 +1377,27 @@ void Removing_from_the_end (struct linkedlist_d *list){
  */
 
 int systemStartUp (void){
-	
+
     int Status = 0;
-	
-	debug_print("systemStartUp:\n");
 
-	KeInitPhase = 0;  //Set Kernel phase.    
+    debug_print("systemStartUp:\n");
 
-    //
-	// Antes de tudo: CLI, Video, runtime.
-	//
-	
-	//   ## BUGBUG ##
+    KeInitPhase = 0;    //Set Kernel phase.    
+
+
+	// Antes de tudo: 
+	// CLI, Video, runtime.
+
+	// ## BUGBUG ##
 	// As mensagens do abort podem não funcionarem nesse caso.
 	// AINDA NÃO INICIALIZAMOS O RECURSO DE MENSAGENS.
 	
-	if ( KeInitPhase != 0 )
-	{		
-		KiAbort ();	
+    if ( KeInitPhase != 0 )
+    {
+		KiAbort ();
 		
-	}else{
-		
+    }else{
+
 	    //Disable interrupts, lock taskswitch and scheduler.
 	    
 		asm ("cli");	
@@ -1453,15 +1505,16 @@ int systemStartUp (void){
 //           as fases estão em init().
 	
 done:
-	
-    //printf("systemStartUp: Done!\n");	
-	//refresh_screen();	
+
+    //printf("systemStartUp: Done!\n");
+	//refresh_screen();
 	
 	if (KeInitPhase != 3)
 	{ 
 	    Status = (int) 1; 
 	};
-	
+
+
     return (int) Status;
 }
 
@@ -1473,25 +1526,25 @@ done:
  */
 
 int systemInit (void){
-	
-	int Status;
-	
-	debug_print ("systemInit:\n");
-	
+
+    int Status;
+
+    debug_print ("systemInit:\n");
+
 	//Colocando na variável global, a opção selecionada manualmente pelo 
 	//desenvolvedor.
-	
+
     gSystemEdition = SYSTEM_EDITION;
     //...
-	
+
 	// Podemos fazer algumas inicializações antes de chamarmos 
 	//a rotina de start up.
-	
-	Status =  (int) systemStartUp ();	
-	
+
+    Status = (int) systemStartUp ();
+
 	
 #ifdef BREAKPOINT_TARGET_AFTER_SYSTEM
-    
+
 	//#debug 
 	//a primeira mensagem só aparece após a inicialização da runtime.
 	//por isso não deu pra limpar a tela antes.
@@ -1499,7 +1552,7 @@ int systemInit (void){
 	printf (">>>debug hang: after init");
 	refresh_screen(); 
 	while (1){ asm ("hlt"); }
-#endif	
+#endif
 	
 	
 	//#debug :  
@@ -1509,27 +1562,28 @@ int systemInit (void){
 	// quem chamou essa funçao foi o começo da inicializaçao do kernel.
 	// retornamos para x86main.c para arch x86.
 	
-	//printf ("++++++++++++++++++++++++++++++++++++++++++++++++ systemInit ++++++\n");
+	//printf ("+++++++++++++++++ systemInit ++++++\n");
     //refresh_screen(); 
-    //while(1){}		
+    //while(1){}
 
-	
-	
+
+
 	//retornando para a rotina de entrypoint da arquitetura alvo.
-	return (int) Status;
+    return (int) Status;
 }
 
 
 /*
- ************************************************************
+ ******************************************
  * systemSystem:
  *     Construtor.
  * Não tem valor de retorno, tem o mesmo nome que a classe.
  * Uma chamada à um construtor criaria uma estrutura com seu nome e 
- * o construtor pode inicializar alguma variável. */
+ * o construtor pode inicializar alguma variável. 
+ */
 
-void systemSystem (void){
-	
+void systemSystem (void)
+{
     gSystemStatus = 1;
 }
 
