@@ -240,7 +240,21 @@ struct ProcessorBlock_d ProcessorBlock;
 
   
 //...
- 
+
+
+//
+// Speaker support.
+//
+
+//OUT - Play sound using built in speaker
+void hal_speaker_on (void);
+
+//IN - make it shutup
+void hal_speaker_off (void);
+
+// Testando o beep;
+void hal_test_speaker (void);
+
 
 
 
@@ -251,20 +265,19 @@ struct ProcessorBlock_d ProcessorBlock;
 void 
 hal_backbuffer_putpixel ( unsigned long ax, 
                           unsigned long bx, 
-						  unsigned long cx, 
-						  unsigned long dx ); 
-							  
+                          unsigned long cx, 
+                          unsigned long dx ); 
+
+
 void 
 hal_lfb_putpixel ( unsigned long ax, 
                    unsigned long bx, 
-				   unsigned long cx, 
-				   unsigned long dx ); 
-							  
-							  
-							  
-							
-		 
-				 
+                   unsigned long cx, 
+                   unsigned long dx ); 
+
+
+
+ 
 /*
 VOID
 NSDumpMemory(

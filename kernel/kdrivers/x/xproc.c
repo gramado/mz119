@@ -78,6 +78,7 @@ void procTestF6 (void);
 
 
 
+
 /*
  * XPROC_SEND_MESSAGE
  *     Envia uma mensagem para a thread de controle da janela 
@@ -573,7 +574,7 @@ system_procedure ( struct window_d *window,
 				case VK_PAUSE:
                     //#test
 					//if(CtrlStatus == 1){
-					//    KiInformation();	
+					//    KiInformation();
 					//}
 					goto done;
 					break;	
@@ -725,7 +726,8 @@ system_procedure ( struct window_d *window,
                 //Testes diversos.
                 case VK_F6:
 
-                    testNIC ();
+                    hal_test_speaker();
+                    //testNIC ();
 
 					//#test
 					//fsList("volume1");
@@ -824,11 +826,11 @@ system_procedure ( struct window_d *window,
 				case VK_CAPITAL:
 				    break;
 					
-                // Nothing for now!  				
+                // Nothing for now!
                 case VK_LMENU:
 				    break;
 					
-				// Nothing for now!	
+				// Nothing for now!
                 case VK_LCONTROL: 
 					break;
                 

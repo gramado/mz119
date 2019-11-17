@@ -272,7 +272,7 @@ void hal_init_vectors_table (void)
  
 /*
  * Beep support
- *
+ * #bugbug: Não quero comprometer a programação do PIT.
 void Beep::tone(int freq) {
     if (freq == 0) {
         int i = io_in8(0x61);
@@ -289,6 +289,48 @@ void Beep::tone(int freq) {
 */ 
  
  
+//OUT 
+//Play sound using built in speaker
+void hal_speaker_on (void){
+
+    uint8_t tmp;
+
+    //And play the sound using the PC speaker
+
+    tmp = inb (0x61);
+
+    if (tmp != (tmp | 3))
+    {
+        outb (0x61, tmp | 3);
+    }
+}
+
+
+//IN
+//make it shutup
+void hal_speaker_off (void)
+{
+    uint8_t tmp = inb(0x61) & 0xFC;
+
+    outb (0x61, tmp);
+}
+ 
+ 
+
+//testando o beep;
+void hal_test_speaker (void)
+{
+	int i;
+
+    printf ("testing speaker ...\n");
+    refresh_screen();
+
+    hal_speaker_on ();
+    
+    for( i=0; i<49000; i++){};
+
+    hal_speaker_off ();
+} 
  
 
 
