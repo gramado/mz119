@@ -1,10 +1,10 @@
 /*
- * Gramado Executive - The main file for the Executive module in the 
- * kernel base. 
- * (c) Copyright 2015-2019 Fred Nora.
- *
  * File: execve.c 
  * 
+ * Gramado Executive - The main file for the Executive module in the 
+ * kernel base. 
+ * 
+ * (c) Copyright 2015-2019 Fred Nora.
  */
  
  
@@ -40,27 +40,27 @@
  * IN:
  * serviço, file name, arg, env.
  */
-	
+
 int 
 do_gexecve ( int i,
              const char *arg1, 
              const char *arg2, 
              const char *arg3 )
 {
-	int Status = 1;    // fail.
+    int Status = 1;    // fail.
 
 	//??
 	//Esse é o primeiro argumento.
-	int Plane = 0;
+    int Plane = 0;
 	
-	char *s;
-	struct thread_d *Thread;
+    char *s;
+    struct thread_d *Thread;
 
 	// Usados gerenciamento de arquivo.
 	
-	size_t l;                        //lenght.
- 	char bin_string[] = ".bin";	
- 	//char bin2_string[] = ".BIN";	
+    size_t l;                        //lenght.
+    char bin_string[] = ".bin";
+     //char bin2_string[] = ".BIN";
 
 	
 	//#debug
@@ -74,32 +74,34 @@ do_gexecve ( int i,
 	// É o mesmo que consierar que o processo INIT já seja o clone 
 	// de outro válido.
 		
-    //??		
+    //??
 	//array de ponteiros.
-	unsigned long *p = (unsigned long *) arg2;
-    
+
+    unsigned long *p = (unsigned long *) arg2;
+
 	// #importante:
 	// Memória compartilhada entre o kernel e o aplicativo.
 	// O aplicativo vai ler esse trem 
-	unsigned char *shared_memory = (unsigned char *) (0xC0800000 -0x100);
-	
-    // #IMPORTANTE:
-    // PRECISAMOS ENVIAR A MENSAGEM SOMENTE DEPOIS QUE O NOVO PROGRAMA FOR 
+
+    unsigned char *shared_memory = (unsigned char *) (0xC0800000 - 0x100);
+
+	// #IMPORTANTE:
+	// PRECISAMOS ENVIAR A MENSAGEM SOMENTE DEPOIS QUE O NOVO PROGRAMA FOR 
 	// COLOCADO NA MEMÓRIA, SENÃO AO COLOCAR O PROGRAMA NA MEMÓRIA A MENSAGEM 
-    // SERÁ SOBRESCRITA.	
-    // #TODO: CRIAR UM MECANISMO DE TROCA DE MENSAGENS MAIS EFICIENTE,
+	// SERÁ SOBRESCRITA.
+	// #TODO: CRIAR UM MECANISMO DE TROCA DE MENSAGENS MAIS EFICIENTE,
 	// BASEADO NESSE.
 	
-    //=================================================
-    //  ## CMD ##
-		
+	//=================================================
+	//  ## CMD ##
+
 	//#importante.
 	//antes de tudo vamos testar o comando.
 	//se ele não existir então nem vamos mexer na estrutura da trhead.
 	//se não mexermos na estrutura da thread ele continuará presa no while 
 	//do exit da libc.
-	
-	
+
+
 	//
 	// ## Load file ##
 	//
@@ -112,51 +114,51 @@ do_gexecve ( int i,
 	// Como essa rotina é para executar um arquivo .bin,
 	// caso não exista uma extensão .bin e o nome seja menor que 8, 
 	// podemos adicionar a extensão .bin.
-		
+
     l = (size_t) strlen ( (char *) arg1 );
-		
+
     if ( l > 11 )
     {
 		// #fail 
-        printf ("executive_gramado_core_init_execve: l fail\n");	
+        printf ("do_gexecve: l fail\n");
 		// Obs: Não sairemos da função pois isso é um teste ainda.
 		// goto fail;
 		
     }else{
-					
-			// Se não existe um ponto entre os oito primeiros chars,
-            // então colocamos a extensão .bin logo após o nome passado.
-            // Ele é pelo menos menor que 11, mas deveria ser menor que oito.			
-			
-			if ( arg1[0] != '.' && 
-			     arg1[1] != '.' && 
+
+		// Se não existe um ponto entre os oito primeiros chars,
+		// então colocamos a extensão .bin logo após o nome passado.
+		// Ele é pelo menos menor que 11, mas deveria ser menor que oito.
+		
+            if ( arg1[0] != '.' && 
+                 arg1[1] != '.' && 
                  arg1[2] != '.' && 
                  arg1[3] != '.' && 
                  arg1[4] != '.' && 
                  arg1[5] != '.' && 
                  arg1[6] != '.' && 
                  arg1[7] != '.' )
-			{       
-				if ( l > 8 )
-				{
-					printf ("executive_gramado_core_init_execve: File without ext is too long\n");
+            {       
+                if ( l > 8 )
+                {
+                    printf ("do_gexecve: File without ext is too long\n");
 					// Obs: 
 					// Não sairemos da função pois isso é um teste ainda.
 					// goto fail;
 				}
-					
-		        strcat ( (char *) arg1, (const char *) bin_string );
-			};
-				
-			// #obs:	
+
+                strcat ( (char *) arg1, (const char *) bin_string );
+            };
+
+			// #obs:
 			// Se estamos aqui, isso significa existe um ponto 
             // nos primeiros oito bytes.
             // Ainda não sabemos se todo o nome do arquivo está certo,
-            // mas ja sabemos que não precisamos incluir uma extenção.			
-		};
-		
-	
-	
+            // mas ja sabemos que não precisamos incluir uma extenção.
+        };
+
+
+
     // #importante
 	// Transformando o nome do arquivo em maiúscula pos estamos
 	// usando FAT16, que exige isso.
@@ -176,55 +178,57 @@ do_gexecve ( int i,
 	// do processo que está solicitando o carregamento e execução.
 	// Ou carregarmos em um endereço físico e mapearmos no
 	// diretório de páginas do processo na posição 0x400000.
-	
-	
 
-	
+
       Status = (int) fsLoadFile ( VOLUME1_FAT_ADDRESS, VOLUME1_ROOTDIR_ADDRESS, 
-	                   (unsigned char *) arg1, (unsigned long) 0x00400000 );
-	
-	
-	
-	if ( Status == 1 )
-	{		
-		printf ("executive_gramado_core_init_execve: Couldn't load file\n");
-		goto fail;
-	}
-	
+                         (unsigned char *) arg1, (unsigned long) 0x00400000 );
+
+
+
+    if ( Status == 1 )
+    {
+        printf ("do_gexecve: Couldn't load file\n");
+        goto fail;
+    }
+
+
 	//
 	// Check ELF signature.
 	//
-	
+
 	// OK. O comando existe e o arquivo foi carregado, mas 
 	// precisamos saber se a assinatura de ELF é válida.
-		
-
-	    Status = (int) fsCheckELFFile ( (unsigned long) 0x00400000 );		
 
 
-	
-	if ( Status == 0 ){
-		goto format_ok;	
-	}else{
-		
+    Status = (int) fsCheckELFFile ( (unsigned long) 0x00400000 );
+
+    if ( Status == 0 )
+    {
+        goto format_ok;
+    }else{
+
 		// #debug
-		printf ("executive_gramado_core_init_execve: #debug It's not a valid ELF file\n");
-		die ();
-		//goto fail;
-	};
-	
+
+        printf ("do_gexecve: It's not a valid ELF file\n");
+        die ();
+        //goto fail;
+    };
+
+
 	//
 	// ELF Signature OK
 	//
-		
-format_ok:	
-	
+
+
+format_ok:
+
 	//#debug
 	//tentando receber uma linha de ocmando inteira.
 	//printf("\nexecutive_gramado_core_init_execve: testing..\n\n");
 	
 	//# ISSO DEU CERTO #
-	//testando se o shell transferiu toda alinha de comandos para a memória compartilhada.
+	//testando se o shell transferiu toda alinha de comandos para 
+	//a memória compartilhada.
 	//printf(">>>cmdline2={%s}\n", shared_memory);
 	
 	
@@ -294,12 +298,13 @@ format_ok:
 	// tenha destruido a estrutura depois de um app mudar o estado para zombie 
 	// por causa de um exit.
 	//Então é melhor criarmos uma thread nova. Mas se fizermos isso
-	//sem antes o deadthread collector ter destruido a estrutua e liberado a memória 
-	//então a antiga estrutura de thread ficará sem porteiro e poderemos desalocar a memória 
-	//usanda, ou pior, se não mudarmos o status ele pode querer destruir a que estamos criando
-	//então só criaremos se o ponteiro for NULL, significando que o deadthread collector 
+	//sem antes o deadthread collector ter destruido a estrutua e liberado 
+	//a memória então a antiga estrutura de thread ficará sem porteiro e 
+	//poderemos desalocar a memória usanda, ou pior, se não mudarmos o 
+	//status ele pode querer destruir a que estamos criando então só 
+	//criaremos se o ponteiro for NULL, significando que o deadthread collector 
 	//ja destruiu a estrutura e aproveitou a memória se conseguiu.
-	
+
 	//#importante:
 	//Podemos eswperar que essa thread esteja no estado ZOMBIE.
 	//Pois um aplicativo pode ter efetuado um exit.
@@ -311,30 +316,33 @@ format_ok:
 	
 	// #bugbug
 	// Esse ponteiro ode dar problemas.
-	
-	if ( i == 216 )
-	{
-		printf ("execve: ClonedThread \n");
-	    Thread = (struct thread_d *) ClonedThread; 				
-	}else{
-		printf ("execve: IdleThread \n");
-	    Thread = (struct thread_d *) IdleThread; 					
-	}
 
-	
-	if ( (void *) Thread == NULL )
-	{
+
+    if ( i == 216 )
+    {
+        printf ("do_gexecve: ClonedThread \n");
+        Thread = (struct thread_d *) ClonedThread;
+
+	}else{
+
+        printf ("do_gexecve: IdleThread \n");
+        Thread = (struct thread_d *) IdleThread;
+    };
+
+
+    if ( (void *) Thread == NULL )
+    {
 		// #imporante:
 		// Vamos tornar um erro fatal por enquanto, para podermos refletir sobre 
 		// esse assunto;
-		
-		printf ("executive_gramado_core_init_execve: Thread Fail \n");
-		die ();
-		
+
+        printf ("do_gexecve: Thread Fail \n");
+        die ();
+
 		//goto fail;
-		
-	} else {
-		
+
+    }else{
+
 		// #importante:
 		// Checar a flag de reaproveitamento.
 		// Se a flag do reaproveitamento falhar então o exit no kernel
@@ -375,29 +383,29 @@ format_ok:
 		// Se for um aplicativo de terminal então terá uma janela 
 		// para rodar. Pois o ldisc manda mensagens para a thread de controle 
 		// da janela com foco de entrada. Vamos fazer isso manualmente.
-		
-		if ( (void *) CurrentTTY != NULL )
-		{
-			if ( CurrentTTY->used == 1 && CurrentTTY->magic == 1234 )
-			{
-				current_tty = CurrentTTY->index;
-				
-			    Thread->tty_id = current_tty;
-				
+
+        if ( (void *) CurrentTTY != NULL )
+        {
+            if ( CurrentTTY->used == 1 && CurrentTTY->magic == 1234 )
+            {
+                current_tty = CurrentTTY->index;
+
+                Thread->tty_id = current_tty;
+
 				// #terminal window.
-				window_with_focus = CurrentTTY->window->id;
+                window_with_focus = CurrentTTY->window->id;
                 terminal_window = CurrentTTY->window->id;
-				
+
 				//#importante
 				//a thread de controle da janela, para qual
 				//serão enviadas as mensagens pelo ldisc
-				CurrentTTY->window->control = Thread;
-			}
-			
-		}else{
-		    //Thread->tty_id = 0; //-1
-		}
-		
+                CurrentTTY->window->control = Thread;
+            }
+
+        }else{
+			//Thread->tty_id = 0; //-1
+        };
+
 
 		//
 		// Context.
@@ -455,7 +463,9 @@ format_ok:
 
 fail:
 
-    printf ("executive_gramado_core_init_execve: #fail\n");
+    printf ("do_gexecve: Fail\n");
+
+	// #debug
 	// refresh_screen ();
 
 done:
@@ -464,22 +474,18 @@ done:
 	//printf(">>>shared_p0={%s}\n"     ,shared_p[0]);
 	//printf(">>>shared_p1={%s}\n"     ,shared_p[1]);
 	//printf(">>>shared_p2={%s}\n\n"   ,shared_p[2]);
-	//printf(">>>shared_p3={%s}\n\n"   ,shared_p[3]);	
+	//printf(">>>shared_p3={%s}\n\n"   ,shared_p[3]);
 	//refresh_screen();
-	//while(1){
-	//	asm("hlt");
-	//}
+	//while(1){ asm("hlt"); }
 
 
 	//#debug
-	//printf("done\n");	
-	
-	//
+	//printf("done\n");
+
 	// #Obs: 
 	// +Não devemos emitir mensagens no caso de acerto.
 	// +refresh_screen só no caso de erro.
-	//
-	
+
 	// #bugbug
 	// #obs: 
 	// Estamos usando isso só por enquanto para debug.
@@ -491,37 +497,36 @@ done:
 
 
 /*
- *****************************************************************
+ *******************************************
  * do_execve:
- *    
+ *     #todo: Melhorar a descrição do objetivo dessa rotina.
+ *     Efetua o serviço execve, rodando um novo programa no processo atual.
+ *     Tá usando a thread atual e transformando ela em thread de controle.
+ *     args:  ?, name, arg, env.
  */
 
-// efetua o serviço execve, rodando um novo programa
-// no processo atual;
-// tá usando a thread atual e transformando ela em thread de controle.
- 
 int 
-do_execve ( int i,              
-            const char *arg1,   //name
-            const char *arg2,    //arg
-            const char *arg3 )   //env
+do_execve ( int i, 
+            const char *arg1, 
+            const char *arg2, 
+            const char *arg3 ) 
 {
-	int Status = 1;    // fail.
+    int Status = 1;    // fail.
 
 	//??
 	//Esse é o primeiro argumento.
-	int Plane = 0;
-	
-	char *s;
-	struct thread_d *Thread;
+    int Plane = 0;
+
+    char *s;
+    struct thread_d *Thread;
 
 	// Usados gerenciamento de arquivo.
-	
-	size_t l;                        //lenght.
- 	char bin_string[] = ".bin";	
- 	//char bin2_string[] = ".BIN";	
 
-	
+    size_t l;                        //lenght.
+    char bin_string[] = ".bin";
+    //char bin2_string[] = ".BIN";
+
+
 	//#debug
 	//printf("0=%s ",&argv[0]);
 	//printf("1=%s ",&argv[1]);
@@ -532,26 +537,26 @@ do_execve ( int i,
 	// usando a thread primária do processo !
 	// É o mesmo que consierar que o processo INIT já seja o clone 
 	// de outro válido.
-		
-    //??		
+
+	//??
 	//array de ponteiros.
-	unsigned long *p = (unsigned long *) arg2;
-    
+    unsigned long *p = (unsigned long *) arg2;
+
 	// #importante:
 	// Memória compartilhada entre o kernel e o aplicativo.
 	// O aplicativo vai ler esse trem 
-	unsigned char *shared_memory = (unsigned char *) (0xC0800000 -0x100);
-	
-    // #IMPORTANTE:
-    // PRECISAMOS ENVIAR A MENSAGEM SOMENTE DEPOIS QUE O NOVO PROGRAMA FOR 
+    unsigned char *shared_memory = (unsigned char *) (0xC0800000 - 0x100);
+
+	// #IMPORTANTE:
+	// PRECISAMOS ENVIAR A MENSAGEM SOMENTE DEPOIS QUE O NOVO PROGRAMA FOR 
 	// COLOCADO NA MEMÓRIA, SENÃO AO COLOCAR O PROGRAMA NA MEMÓRIA A MENSAGEM 
-    // SERÁ SOBRESCRITA.	
-    // #TODO: CRIAR UM MECANISMO DE TROCA DE MENSAGENS MAIS EFICIENTE,
+	// SERÁ SOBRESCRITA.
+	// #TODO: CRIAR UM MECANISMO DE TROCA DE MENSAGENS MAIS EFICIENTE,
 	// BASEADO NESSE.
-	
-    //=================================================
-    //  ## CMD ##
-		
+
+	//=================================================
+	//  ## CMD ##
+
 	//#importante.
 	//antes de tudo vamos testar o comando.
 	//se ele não existir então nem vamos mexer na estrutura da trhead.
@@ -571,57 +576,57 @@ do_execve ( int i,
 	// Como essa rotina é para executar um arquivo .bin,
 	// caso não exista uma extensão .bin e o nome seja menor que 8, 
 	// podemos adicionar a extensão .bin.
-		
+
     l = (size_t) strlen ( (char *) arg1 );
-		
+
     if ( l > 11 )
     {
 		// #fail 
         printf ("do_execve: l fail\n");	
 		// Obs: Não sairemos da função pois isso é um teste ainda.
 		// goto fail;
-		
+
     }else{
-					
-			// Se não existe um ponto entre os oito primeiros chars,
-            // então colocamos a extensão .bin logo após o nome passado.
-            // Ele é pelo menos menor que 11, mas deveria ser menor que oito.			
-			
-			if ( arg1[0] != '.' && 
-			     arg1[1] != '.' && 
+
+		// Se não existe um ponto entre os oito primeiros chars,
+		// então colocamos a extensão .bin logo após o nome passado.
+		// Ele é pelo menos menor que 11, mas deveria ser menor que oito.
+
+            if ( arg1[0] != '.' && 
+                 arg1[1] != '.' && 
                  arg1[2] != '.' && 
                  arg1[3] != '.' && 
                  arg1[4] != '.' && 
                  arg1[5] != '.' && 
                  arg1[6] != '.' && 
                  arg1[7] != '.' )
-			{       
-				if ( l > 8 )
-				{
-					printf ("do_execve: File without ext is too long\n");
+            {       
+                if ( l > 8 )
+                {
+                    printf ("do_execve: File without ext is too long\n");
+
 					// Obs: 
 					// Não sairemos da função pois isso é um teste ainda.
 					// goto fail;
-				}
-					
-		        strcat ( (char *) arg1, (const char *) bin_string );
-			};
-				
-			// #obs:	
-			// Se estamos aqui, isso significa existe um ponto 
-            // nos primeiros oito bytes.
-            // Ainda não sabemos se todo o nome do arquivo está certo,
-            // mas ja sabemos que não precisamos incluir uma extenção.			
-		};
-		
-	
-	
-    // #importante
-	// Transformando o nome do arquivo em maiúscula pos estamos
-	// usando FAT16, que exige isso.
+                }
 
-	read_fntos ( (char *) arg1 );
-	
+                strcat ( (char *) arg1, (const char *) bin_string );
+            };
+
+			// #obs:
+			// Se estamos aqui, isso significa existe um ponto 
+			// nos primeiros oito bytes.
+			// Ainda não sabemos se todo o nome do arquivo está certo,
+			// mas ja sabemos que não precisamos incluir uma extenção.
+        };
+
+
+	// #importante
+	// Transformando o nome do arquivo em maiúscula, pois estamos usando FAT16, 
+	// que exige isso.
+
+    read_fntos ( (char *) arg1 );
+
 	//
 	// Load file.
 	//
@@ -645,64 +650,60 @@ do_execve ( int i,
 	// referente ao endereço físico desejado e esse endereço lógico
 	// deve pertencer ao diretório de páginas do kernel.
 	
-	
-	unsigned long base;
-	
-	struct process_d *process;
-	process = (struct process_d *) processList[current_process];
+
+    unsigned long base;
+
+    struct process_d *process;
+    process = (struct process_d *) processList[current_process];
 
 
-    //Status = (int) fsLoadFile ( VOLUME1_FAT_ADDRESS, VOLUME1_ROOTDIR_ADDRESS, 
-    //                   (unsigned char *) arg1, (unsigned long) 0x00400000 );
-	
     Status = (int) fsLoadFile ( VOLUME1_FAT_ADDRESS, VOLUME1_ROOTDIR_ADDRESS, 
                        (unsigned char *) arg1, (unsigned long) process->Image );
 
-	if ( Status == 1 )
-	{
-		printf ("do_execve: Couldn't load file\n");
-		goto fail;
-	}
+    if ( Status == 1 )
+    {
+        printf ("do_execve: Couldn't load file\n");
+        goto fail;
+    }
 
-	    // Check ELF signature.
-	    // OK. O comando existe e o arquivo foi carregado, mas 
-	    // precisamos saber se a assinatura de ELF é válida.
-		
-	 //Status = (int) fsCheckELFFile ( (unsigned long) 0x00400000 );	
-	 Status = (int) fsCheckELFFile ( (unsigned long) process->Image );		
+		// Check ELF signature.
+		// OK. O comando existe e o arquivo foi carregado, mas 
+		// precisamos saber se a assinatura de ELF é válida.
 
-	if ( Status == 0 )
-	{
-		goto format_ok;	
-	}else{
-		
+    Status = (int) fsCheckELFFile ( (unsigned long) process->Image );
+
+    if ( Status == 0 )
+    {
+        goto format_ok;
+    }else{
+
 		// #debug
-		printf ("do_execve: #debug It's not a valid ELF file\n");
+		printf ("do_execve: It's not a valid ELF file\n");
 		die ();
 		//goto fail;
-	};
-	
+    };
+
 	//
 	// ELF Signature OK
 	//
-		
-format_ok:	
-	
+
+format_ok:
+
 	//#debug
 	//tentando receber uma linha de ocmando inteira.
 	//printf("\nexecutive_gramado_core_init_execve: testing..\n\n");
-	
-	//# ISSO DEU CERTO #
-	//testando se o shell transferiu toda alinha de comandos para a memória compartilhada.
+
+	// # ISSO DEU CERTO #
+	// testando se o shell transferiu toda alinha de comandos para a 
+	// memória compartilhada.
 	//printf(">>>cmdline2={%s}\n", shared_memory);
-	
 	
 	//#IMPORTANTE:
 	//se a linha de comandos está na memória compartilhada 
 	//e o nome do arquivo programa foi passado via endereço 
 	//então temos tudo o que é preciso 
 	//para enviarmos a linha de comandos para o aplicativo.
-	
+
 	//...
 	
 	
@@ -749,13 +750,13 @@ format_ok:
 	//printf(">>>shared_p0={%s}\n"     ,shared_p[0]);
 	//printf(">>>shared_p1={%s}\n"     ,shared_p[1]);
 	//printf(">>>shared_p2={%s}\n\n"   ,shared_p[2]);
-	//printf(">>>shared_p3={%s}\n\n"   ,shared_p[3]);	
+	//printf(">>>shared_p3={%s}\n\n"   ,shared_p[3]);
 	
  
 	//#debug
 	//ok. isso funcionou.
 	//printf("Showpipe={%s}\n",pipe);
-	//printf("Showsharedmemory={%s}\n",shared_memory);	 
+	//printf("Showsharedmemory={%s}\n",shared_memory);
 	
 	
 	// Pegar o ponteiro da thread primária do processo INIT.
@@ -763,12 +764,16 @@ format_ok:
 	// tenha destruido a estrutura depois de um app mudar o estado para zombie 
 	// por causa de um exit.
 	//Então é melhor criarmos uma thread nova. Mas se fizermos isso
-	//sem antes o deadthread collector ter destruido a estrutua e liberado a memória 
-	//então a antiga estrutura de thread ficará sem porteiro e poderemos desalocar a memória 
-	//usanda, ou pior, se não mudarmos o status ele pode querer destruir a que estamos criando
-	//então só criaremos se o ponteiro for NULL, significando que o deadthread collector 
+	//sem antes o deadthread collector ter destruido a estrutua e 
+	// liberado a memória 
+	//então a antiga estrutura de thread ficará sem porteiro e poderemos 
+	//desalocar a memória 
+	//usanda, ou pior, se não mudarmos o status ele pode querer destruir a 
+	//que estamos criando
+	//então só criaremos se o ponteiro for NULL, significando que o 
+	// deadthread collector 
 	//ja destruiu a estrutura e aproveitou a memória se conseguiu.
-	
+
 	//#importante:
 	//Podemos eswperar que essa thread esteja no estado ZOMBIE.
 	//Pois um aplicativo pode ter efetuado um exit.
@@ -785,17 +790,20 @@ format_ok:
 	if ( i == 216 )
 	{
 		printf ("do_execve: ClonedThread \n");
-	    Thread = (struct thread_d *) ClonedThread; 				
+	    Thread = (struct thread_d *) ClonedThread; 
 	}else{
 		printf ("do_execve: IdleThread \n");
-	    Thread = (struct thread_d *) IdleThread; 					
+	    Thread = (struct thread_d *) IdleThread;
 	}
     */
-	
+
+
+
+
 	//
 	// Current Thread.
 	//
-	
+
 	// #obs
 	// A thread que chamou essa rotina deve ser a current_thread. Certo ?
 	// +Não podemos retornar para ela após essa chamada. 
@@ -803,25 +811,25 @@ format_ok:
 	// #bugbug: Perderemos a pilha salva na chamada.
 	// #bugbug: Se retornarmos teremos problema pois a thread foi alterada.
 	// Só nos resta reinicializarmos a thread atual e rodarmos ela.
-		
-	Thread = (struct thread_d *) threadList[current_thread];	
-	
-	if ( (void *) Thread == NULL )
-	{
+
+    Thread = (struct thread_d *) threadList[current_thread];
+
+    if ( (void *) Thread == NULL )
+    {
 		// #imporante:
-		// Vamos tornar um erro fatal por enquanto, para podermos refletir sobre 
-		// esse assunto;
-		
-		printf ("do_execve: Thread Fail \n");
-		die ();
-		
+		// Vamos tornar um erro fatal por enquanto, para podermos 
+		// refletir sobre esse assunto;
+
+        printf ("do_execve: Thread Fail \n");
+        die ();
+
 		//goto fail;
-		
-	} else {
-		
+
+    }else{
+
 		// #importante:
 		// Não podemos voltar para essa trhead.
-			
+
 		// #importante:
 		// Checar a flag de reaproveitamento.
 		// Se a flag do reaproveitamento falhar então o exit no kernel
@@ -855,40 +863,36 @@ format_ok:
 		// Plano. bg/fg.
 
         Thread->plane = Plane;
-		
-		
+
 		//#test
 		// Vamos associar ao primeiro tty, mesmo que seja um aplicatibo GUI.
 		// Se ele for um aplicativo GUI ele irá atualizar o foco.
 		// Se for um aplicativo de terminal então terá uma janela 
 		// para rodar. Pois o ldisc manda mensagens para a thread de controle 
 		// da janela com foco de entrada. Vamos fazer isso manualmente.
-		
-		if ( (void *) CurrentTTY != NULL )
-		{
-			if ( CurrentTTY->used == 1 && CurrentTTY->magic == 1234 )
-			{
-				current_tty = CurrentTTY->index;
-				
-			    Thread->tty_id = current_tty;
-				
+
+        if ( (void *) CurrentTTY != NULL )
+        {
+            if ( CurrentTTY->used == 1 && CurrentTTY->magic == 1234 )
+            {
+                current_tty = CurrentTTY->index;
+
+                Thread->tty_id = current_tty;
+
 				// #terminal window.
-				window_with_focus = CurrentTTY->window->id;
+                window_with_focus = CurrentTTY->window->id;
                 terminal_window = CurrentTTY->window->id;
-				
+
 				//#importante
 				//a thread de controle da janela, para qual
 				//serão enviadas as mensagens pelo ldisc
-				CurrentTTY->window->control = Thread;
-			}
-			
-		}else{
-		    //Thread->tty_id = 0; //-1
-		}		
-		
-		
-		
-		
+                CurrentTTY->window->control = Thread;
+            }
+
+        }else{
+            //Thread->tty_id = 0; //-1
+        };
+
 
 		//
 		// Context.
@@ -902,20 +906,20 @@ format_ok:
 
         Thread->ss = 0x23; 
         //Thread->esp = (unsigned long) 0x0044FFF0; 
-        Thread->esp = (unsigned long) process->Image + 0x4FFF0; 		
+        Thread->esp = (unsigned long) process->Image + 0x4FFF0; 
         Thread->eflags = 0x3200; 
         Thread->cs = 0x1B; 
         //Thread->eip = (unsigned long) 0x00401000; 
         Thread->eip = (unsigned long) process->Image + 0x1000;
-		// Registradores de segmento.
 
+
+		// Registradores de segmento.
         Thread->ds = 0x23; 
         Thread->es = 0x23; 
         Thread->fs = 0x23; 
         Thread->gs = 0x23; 
 
 		// Outros.
-
         Thread->eax = 0;
         Thread->ebx = 0;
         Thread->ecx = 0;
@@ -926,11 +930,9 @@ format_ok:
 
 
 		// Next thread.
-
         Thread->Next = NULL;
 
 		// Thread queue.
-
         queue_insert_data ( queue, (unsigned long) Thread, QUEUE_INITIALIZED );
 
 
@@ -939,8 +941,8 @@ format_ok:
 		// Isso permitira que o taskswitch selecione ela pra rodar.
 
         SelectForExecution (Thread); 
-		
-		KiSpawnTask ( Thread->tid );
+
+        KiSpawnTask ( Thread->tid );
 
         goto done;
     };
@@ -958,22 +960,17 @@ done:
 	//printf(">>>shared_p0={%s}\n"     ,shared_p[0]);
 	//printf(">>>shared_p1={%s}\n"     ,shared_p[1]);
 	//printf(">>>shared_p2={%s}\n\n"   ,shared_p[2]);
-	//printf(">>>shared_p3={%s}\n\n"   ,shared_p[3]);	
+	//printf(">>>shared_p3={%s}\n\n"   ,shared_p[3]);
 	//refresh_screen();
-	//while(1){
-	//	asm("hlt");
-	//}
-
+	//while(1){ asm("hlt"); }
 
 	//#debug
 	//printf("done\n");	
-	
-	//
+
 	// #Obs: 
 	// +Não devemos emitir mensagens no caso de acerto.
 	// +refresh_screen só no caso de erro.
-	//
-	
+
 	// #bugbug
 	// #obs: 
 	// Estamos usando isso só por enquanto para debug.
@@ -985,28 +982,15 @@ done:
 
 
 
-	
-
-
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
 /* 
  * sys_showkernelinfo:
  *     Show kernel info. 
  */
 
-void sys_showkernelinfo (void){
-	
-	KiInformation ();
+void sys_showkernelinfo (void)
+{
+    KiInformation ();
 }
 
 
@@ -1017,8 +1001,8 @@ void sys_showkernelinfo (void){
  *     Chamando uma rotina interna de reboot do sistema.
  */
 
-void sys_reboot (void){
-
+void sys_reboot (void)
+{
     hal_reboot ();
 }
 
@@ -1028,8 +1012,8 @@ void sys_reboot (void){
  *     Chama uma rotina interna para desligar a máquina.
  */
 
-void sys_shutdown (void){
-
+void sys_shutdown (void)
+{
     hal_shutdown ();
 }
 
@@ -1043,33 +1027,36 @@ void sys_shutdown (void){
  */
  
 int init_executive (void){
-	
+
     int Status = 0;
-	
+
+
 	//#debug
 #ifdef KERNEL_VERBOSE
-	printf("EXECUTIVE:\n");
-#endif	
+    printf ("EXECUTIVE:\n");
+#endif
 
-	
-    debug_print("init_executive:\n");
-	
+
+    debug_print ("init_executive:\n");
+
+
 	// PCI - Pega informações da PCI.
-	// CLOCK - Pega informações de Hora e Data.	
-	
-	init_pci();
-	
-	init_clock();
-	get_cmos_info();
-	
+    init_pci ();
+
+
+	// CLOCK - Pega informações de Hora e Data.
+    init_clock ();
+    get_cmos_info ();
+
 	//...
-	
-	//#importante: 
-	//so depois de inicializarmos o ata 'e que podemos carregar alguma coisa.
-	
-	debug_print ("init_executive: diskATADialog\n");
-	diskATADialog ( 1, FORCEPIO, FORCEPIO );
-	
+
+
+	// #importante: 
+	// Só depois de inicializarmos o ata 'e que podemos carregar alguma coisa.
+
+    debug_print ("init_executive: diskATADialog\n");
+    diskATADialog ( 1, FORCEPIO, FORCEPIO );
+
 	// ??
 	// configura a tabela do kernel de funções exportadas
 	// e tabela de ponteiros para tabelas dos outros programas em kernel mode.
@@ -1077,14 +1064,15 @@ int init_executive (void){
 
 	//Continua ...
     
-	//@todo: Checar a validade de 'Initialization' ??
+	// #todo: 
+	// Checar a validade de 'Initialization' ??
 
 	//#debug
 	//printf("Done!\n");
-	
-    Initialization.executive = 1;	
-	
-	return (int) Status;
+
+    Initialization.executive = 1;
+
+    return (int) Status;
 }
 
 
