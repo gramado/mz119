@@ -10,10 +10,10 @@
 # We will have a new name just when the release changes.
 
 VERSION = 1
-PATCHLEVEL = 14
+PATCHLEVEL = 15
 SUBLEVEL = 0
-EXTRAVERSION = 0
-NAME = Urban Garden 
+EXTRAVERSION = -rc0
+NAME =  
 
 
 
