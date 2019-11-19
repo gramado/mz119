@@ -849,7 +849,7 @@ void x86main (void){
 	//refresh_screen();
 	
 	//isso funcionou ...
-	//initialize_saved_rect ();
+	initialize_saved_rect ();
 	
 	//testando salvar um retângulo ...
 	//save_rect ( 0, 0, 100, 100 );
@@ -889,19 +889,19 @@ void x86main (void){
 		//gui->taskmanWindow->msg = 123; //temos uma mensagem.
 		//gui->taskmanWindow->long1 = 0;
 		//gui->taskmanWindow->long2 = 0;
-		//gui->taskmanWindow->newmessageFlag = 1;		
+		//gui->taskmanWindow->newmessageFlag = 1;
 
     };
 
 
-	// #debug	
+	// #debug
 	// printf("\n");
 	// refresh_screen();
 	// die();
 
 
 //    ====================== ## TESTS ## =============================
-// #end.	
+// #end.
 
 
 
@@ -954,7 +954,7 @@ fail:
 	// em ring 0, isso depois de criadas as threads em user mode.
 
     printf ("x86main: fail\n");
-    refresh_screen();
+    refresh_screen ();
 }
 
 

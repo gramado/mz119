@@ -90,19 +90,22 @@ void test_move_window (void)
    //___xxx = ___xxx + 5;
    //___yyy = ___yyy + 5;
 
-   ___xxx = w->left + 5;
-   ___yyy = w->top + 5;
+   //___xxx = w->left + 5;
+   //___yyy = w->top + 5;
 
-    w->left = ___xxx;
-    w->top = ___yyy;
+    //w->left = ___xxx;
+    //w->top = ___yyy;
 
     save_window ( (struct window_d *) w );
 
-    replace_window ( (struct window_d *) w, ___xxx, ___yyy);
+    //replace_window ( (struct window_d *) w, ___xxx, ___yyy);
 
     show_saved_window ( (struct window_d *) w );
 
-    show_window_rect ( (struct window_d *) w );
+    //show_window_rect ( (struct window_d *) w );
+    
+    //coloca uma parte grande do buffer de salvamento no lfb.
+    refresh_rectangle2 ( 0, 0, 800, 600, FRONTBUFFER_ADDRESS, SavedRect->buffer_address);
 
     //#debug
     //refresh_screen();
