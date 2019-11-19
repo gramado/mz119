@@ -77,6 +77,23 @@ void procTestF6 (void);
 
 
 
+//tentando mover a janela com o foco.
+unsigned long ___xxx;
+unsigned long ___yyy;
+void test_move_window (void)
+{
+	
+	___xxx = ___xxx + 5;
+	___yyy = ___yyy + 5;
+
+    save_window ( (struct window_d *) windowList[window_with_focus] );
+	replace_window ( (struct window_d *) windowList[window_with_focus], ___xxx, ___yyy);
+	show_saved_window ( (struct window_d *) windowList[window_with_focus] );
+	show_window_rect ( (struct window_d *) windowList[window_with_focus] );
+}
+
+
+
 
 
 /*
@@ -726,7 +743,9 @@ system_procedure ( struct window_d *window,
                 //Testes diversos.
                 case VK_F6:
 
-                    hal_test_speaker();
+                    test_move_window();
+                    
+                    //hal_test_speaker();
                     //testNIC ();
 
 					//#test
