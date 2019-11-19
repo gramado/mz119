@@ -82,14 +82,30 @@ unsigned long ___xxx;
 unsigned long ___yyy;
 void test_move_window (void)
 {
-	
-	___xxx = ___xxx + 5;
-	___yyy = ___yyy + 5;
+	struct window_d *w;
 
-    save_window ( (struct window_d *) windowList[window_with_focus] );
-	replace_window ( (struct window_d *) windowList[window_with_focus], ___xxx, ___yyy);
-	show_saved_window ( (struct window_d *) windowList[window_with_focus] );
-	show_window_rect ( (struct window_d *) windowList[window_with_focus] );
+
+    w = (struct window_d *) windowList[window_with_focus];
+
+   //___xxx = ___xxx + 5;
+   //___yyy = ___yyy + 5;
+
+   ___xxx = w->left + 5;
+   ___yyy = w->top + 5;
+
+    w->left = ___xxx;
+    w->top = ___yyy;
+
+    save_window ( (struct window_d *) w );
+
+    replace_window ( (struct window_d *) w, ___xxx, ___yyy);
+
+    show_saved_window ( (struct window_d *) w );
+
+    show_window_rect ( (struct window_d *) w );
+
+    //#debug
+    //refresh_screen();
 }
 
 

@@ -58,26 +58,36 @@ extern unsigned long kArg4;	   //??.
  */
 
 
+
 //salva o retãngulo de uma janela no buffer de salvamento.
 //isso será usado para mover a janela.
 //wm.
 int save_window (struct window_d *window){
-	
+
     if ( (void *) window == NULL )
     {
-		return 1;
+		//#debug
+        printf ("save_window: struct\n");
+        return 1;
 
-	} else {
+    }else{
 	
         if ( window->used != 1 || window->magic != 1234 )
         {
-			return 1;
-		}
+			//#debug
+            printf ("save_window: validation\n");
+            return 1;
+         }
 
-		save_rect ( window->left, window->top, window->width, window->height );
-        
-        //... 		
-	};		
+        //#debug
+        //Ok. está pegando os valores certos.
+        //printf ("l=%d t=%d w=%d h=%d \n", window->left, window->top, window->width, window->height );
+        //refresh_screen();
+        //while(1){}
+
+
+        save_rect ( window->left, window->top, window->width, window->height );
+    };
 }
 
 
@@ -121,6 +131,8 @@ int show_window_rect (struct window_d *window){
 	
     if ( (void *) window == NULL )
     {
+		//#debug
+		printf ("show_window_rect: window\n");
 		return (int) 1;
 		
 	} else {
@@ -139,21 +151,22 @@ int show_window_rect (struct window_d *window){
 			
 			//if ( window->shadowUsed == 1 )
 			//{
-				
-			    window->width = window->width +4;
-				window->height = window->height +4;	
+
+			    //window->width = window->width +4;
+				//window->height = window->height +4;
 			    
 				//refresh_rectangle ( window->left, window->top, 
-				//    window->width +2, window->height +2 ); 					
+				//    window->width +2, window->height +2 ); 
 				//return (int) 0;	
 			//}
 			
-	        refresh_rectangle ( window->left, window->top, 
-	            window->width, window->height ); 		
-			
+            refresh_rectangle ( window->left, window->top, 
+                window->width, window->height ); 
+
 			return 0;
-		}		
+		}
 	};
+
 
 	//fail.
     return (int) 1;	
@@ -485,7 +498,7 @@ void windowSetForegroundWindow(struct window_d *window)
 
 //get parent window
 //wm.
-void *GetParentWindow(struct window_d * hwnd){
+void *GetParentWindow (struct window_d * hwnd){
 	
 	if ( (void *) hwnd == NULL )
 	{
@@ -3808,8 +3821,9 @@ int windowLoadGramadoIcons (void){
  *
  * Obs:
  *    A função retorna na primeira janela encontrada.
- *    Mas deveríamos observar se essa janela possui janelas filhas, pois o 
- * ponteiro pode passar em cima de uma janela que está dentro de outra janela.  
+ *    #todo: Mas deveríamos observar se essa janela possui janelas filhas, 
+ * pois o ponteiro pode passar em cima de uma janela que está dentro de 
+ * outra janela.  
  */
 
 // wm.
@@ -3818,6 +3832,9 @@ int windowLoadGramadoIcons (void){
 // No caso dos botões o deslocamento encontrado é relativo
 // à sua janela mãe. Então também precisamos considerar
 // o posicionamento da janela mãe ?? 
+
+// IN: posicionamento do cursor.
+// OUT: ID da janela.
  
 int windowScan ( unsigned long x, unsigned long y ){
 
@@ -3934,7 +3951,7 @@ int windowScan ( unsigned long x, unsigned long y ){
 void windowUpdateWindow ( struct window_d *window ){
 	
     windowSendMessage ( (unsigned long) window, (unsigned long) MSG_PAINT, 
-	    (unsigned long) 0, (unsigned long) 0 );	
+	    (unsigned long) 0, (unsigned long) 0 );
 }
 
 

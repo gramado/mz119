@@ -541,45 +541,61 @@ save_rect ( unsigned long x,
             unsigned long width, 
             unsigned long height )
 {
+	
+	
+        //#debug
+        //Ok. está pegando os valores certos.
+        //printf ("l=%d t=%d w=%d h=%d \n", x, y, width, height );
+        //refresh_screen();
+        //while(1){}
+
+
     if ( (void *) SavedRect ==  NULL )
     {
-	    return (int) 1;
+        printf ("save_rect: SavedRect\n");
+        return (int) 1;
 
-	} else {
+    }else{
 
-	    if ( (void *) SavedRect->buffer_address == NULL )
-	    {
-		    panic ("save_rect: buffer fail");	
-	    }
+        if ( (void *) SavedRect->buffer_address == NULL )
+        {
+            panic ("save_rect: buffer fail");
+        }
     };
 
-   // ## transferindo ... ##
-   //======================
 
+    // ## transferindo ... ##
+    //======================
     //do backbuffer para o buffer de salvamento.
-	
-	void *p = (void *) SavedRect->buffer_address; //(buffer para salvar)		
-	const void *q = (const void *) BACKBUFFER_ADDRESS;
+
+
+    void *p = (void *) SavedRect->buffer_address;    //(buffer para salvar)
+    const void *q = (const void *) BACKBUFFER_ADDRESS;
+
 
 	//register unsigned int i;
-	unsigned int i;
+    unsigned int i;
 
-	unsigned int line_size, lines;
+    unsigned int line_size, lines;
 
-	unsigned int offset1;  
-	unsigned int offset2;  
-
-	unsigned long Width = (unsigned long) screenGetWidth();
-	unsigned long Height = (unsigned long) screenGetHeight();
-
-	int count; 
-	
 	// = 3; //24bpp
-	int bytes_count;
+    int bytes_count;
 
-	line_size = (unsigned int) width; //passado por argumento
-	lines = (unsigned int) height;    //passado por argumento
-	
+    unsigned int offset1;  
+    unsigned int offset2;  
+
+    unsigned long Width = (unsigned long) screenGetWidth ();
+    unsigned long Height = (unsigned long) screenGetHeight ();
+
+    int count; 
+
+
+
+
+    line_size = (unsigned int) width;    //passado por argumento
+    lines = (unsigned int) height;       //passado por argumento
+
+
 	switch (SavedBPP)
 	{
 		case 32:
@@ -589,31 +605,51 @@ save_rect ( unsigned long x,
 		case 24:
 		    bytes_count = 3;
 			break;
-	}
+
+		default:
+		    printf ("save_rect: default\n");
+		    return 1;
+	};
 
 
-	offset1 = (unsigned int) ( (bytes_count*SavedX*(y)) + (bytes_count*(x)) );
-	
+
+
+
 	//atualizando o offset do backbuffer
+    //offset1 = 0;
 	//offset1 = (unsigned int) BUFFER_PIXEL_OFFSET( x, y );
-	
+    offset1 = (unsigned int) ( (bytes_count*SavedX*(y)) + (bytes_count*(x)) );
+
 	//configurando o offset do buffer de salvamento.
 	offset2 = 0;
-	
+
+
 	p = (void *) (p + offset2);
 	q = (const void *) (q + offset1);
 
 
+    /*
+    //#debug
+    //O off1 apresentou um valor alto.
+    //pois é o valor do offset do backbuffer que será copiado para o
+    //buffer de salvamento.
+    //printf ("off1=%d off2=%d ",offset1, offset2);
+    //refresh_screen();
+    //while(1){}
+    */
+
 	//não precisa de sincronização pois não estamos enviando para o LFB.
-	//vsync ();	
-	
-	
+	//vsync ();
+
+
 	//(line_size * 3) é o número de bytes por linha. 
-	
+	//#todo: usar bytes_count
+
+
 	//se for divisível por 4.
-	if( ((line_size * 3) % 4) == 0 )
+	if ( ((line_size * 3) % 4) == 0 )
 	{
-        count = ((line_size * 3) / 4);  	
+        count = ((line_size * 3) / 4); 
 
 	    for ( i=0; i < lines; i++ )
 	    {
@@ -623,13 +659,16 @@ save_rect ( unsigned long x,
 			q += (Width * 3);
 	 	    p += (Width * 3);
 	    };
+	    
+	    return 0;
 	}
+
 
 	//se não for divisível por 4.
 	if ( ((line_size * 3) % 4) != 0 )
 	{
 
-        //count = (line_size * 3);  		
+        //count = (line_size * 3); 
 	
 	    for ( i=0; i < lines; i++ )
 	    {
@@ -637,9 +676,12 @@ save_rect ( unsigned long x,
 		    
 		    q += (Width * 3);
 		    p += (Width * 3);
-	    };	
-	}  			
-	
+	    };
+	    
+	    return 0;
+	} 
+
+
 	/*
 	for ( i=0; i < lines; i++ )
 	{
@@ -648,6 +690,23 @@ save_rect ( unsigned long x,
 		p += (Width * 3);
 	};	 
     */
+
+
+
+    /*
+    //#debug
+    //printf ("save_rect: done\n");
+    printf ("Show buffer: \n");
+    unsigned char *__p = (unsigned char *) SavedRect->buffer_address;
+    int z;
+    for (z=0; z<100; z++)
+    {
+        printf ("%x ",__p[z]);
+    }
+    refresh_screen();
+    while(1){}
+    */
+
 
     return 0;
 }
@@ -675,13 +734,14 @@ show_saved_rect ( unsigned long x,
 	
 	if ( (void *) SavedRect ==  NULL )
     {
+        printf ("show_saved_rect: SavedRect\n");
 	    return (int) 1;
 		
 	} else {
 
 	    if ( (void *) SavedRect->buffer_address == NULL )
 	    {
-		    panic ("show_saved_rect buffer");	
+		    panic ("show_saved_rect: buffer");
 	    }
     };
 
@@ -699,7 +759,7 @@ show_saved_rect ( unsigned long x,
 	int count; 
 	
 	// = 3; //24bpp
-	int bytes_count;  	
+	int bytes_count;  
 	
 	unsigned int offset1;  //offset dentro do buffer de salvamento.
 	unsigned int offset2;  //offset dentro do backbuffer
@@ -723,20 +783,35 @@ show_saved_rect ( unsigned long x,
 		    bytes_count = 3;
 			break;
 	};
-	
 
+
+
+   //p backbuffer
 	offset1 = (unsigned int) ( ( bytes_count * SavedX * (y) ) + ( bytes_count * (x) ) );
-	
+
+
+    //q buffer de salvamento.
+    //o conteúdo salvo está no início do buffer de salvamento
 	offset2 = 0;
-	
-	
-	p = (void *) (p + offset1);    
-	
-	q = (const void *) (q + offset2);    
-	 
+
+
+    p = (void *) (p + offset1);          //backbuffer.
+    q = (const void *) (q + offset2);    //buffer de salvamento
+
+
+    /*
+    //#debug
+    //copiando todo o buffer de salvamento no backbuffer,
+    //e mostrando o backbuffer.
+    //memcpy32 ( (void *) BACKBUFFER_ADDRESS, (const void *) SavedRect->buffer_address, 
+    //    (Width * 3)*400);
+    //refresh_screen();
+    //while(1){}
+    */
+ 
     // #importante:
 	// Não precisa de sincronização pois não estamos enviando para o LFB.
-	// vsync ();		
+	// vsync ();
 	
 	//(line_size * 3) é o número de bytes por linha. 
 	
@@ -769,6 +844,10 @@ show_saved_rect ( unsigned long x,
 		    p += (Width * 3);
 	    };
 	}
+
+
+    //#debug
+    //printf ("show_saved_rect: done\n");
 
     return 0;
 }

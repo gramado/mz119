@@ -1,5 +1,5 @@
 /*
- * File: ps2mouse.c
+ * File: i8042/ps2mouse.c
  * 
  *      + ps2 mouse controler support.
  *      + mouse event support.
@@ -86,6 +86,7 @@ int MOUSE_SEND_MESSAGE (void *buffer) {
 
     if ( (void *) buffer == NULL )
         return (int) -1;
+
 
     unsigned char *chars = (unsigned char *) buffer;
 
@@ -191,7 +192,7 @@ int MOUSE_BAT_TEST (void){
 
 
 /*
- **********************
+ ******************************************************
  * mouse_install:
  * ...
  */
@@ -240,7 +241,6 @@ void mouse_install (void){
 	//printf ("mouse_install: 4\n");
 	//refresh_screen();
 
-
     kbdc_wait (1);
 }
 
@@ -260,6 +260,7 @@ static unsigned char getMouseData (void){
 
     while ((data & 0x21) != 0x21)
         kernelProcessorInPort8 (0x64, data);
+
 
     kernelProcessorInPort8 (0x60, data);
 
@@ -283,12 +284,16 @@ void kernelPS2MouseDriverReadData (void)
 
 
 /*
- **************************************
+ *******************************************************
  * load_mouse_bmp:  
+ * 
  *     ## teste ##
- *     Carregando o arquivo MOUSE.BMP que é o ponteiro de mouse.
+ * 
+ *     Carregando o arquivo MOUSE.BMP, que é o ponteiro de mouse.
  *     Usar isso na inicialização do mouse.
+ * 
  *     #bugbug isso pode ir para windowLoadGramadoIcons
+ * 
  *     2018 - Created by Fred Nora.
  */
 
@@ -480,18 +485,18 @@ quit:
  *     Handler de mouse. 
  *
  * *Importante: 
- *     Se estamos aqui é porque os dados disponíveis no 
- * controlador 8042 pertencem ao mouse.
+ *     Se estamos aqui é porque os dados disponíveis no controlador 8042 
+ * pertencem ao mouse.
  *
- * @todo: Essa rotina não pertence ao line discipline.
- * Obs: Temos externs no início desse arquivo.
+ * Obs: 
+ * Temos externs no início desse arquivo.
  */
 
 
 void mouseHandler (void){
 
 	// #importante:
-	// Essa será a thread que receberá a mensagem
+	// Essa será a thread que receberá a mensagem.
 
 	struct thread_d *t;
 
@@ -507,7 +512,7 @@ void mouseHandler (void){
 
 	// Coordenadas do mouse.
 	// Obs: Isso pode ser global.
-	// O tratador em assembly tem as variáveis globais do posicionamento.
+	// ?? O tratador em assembly tem as variáveis globais do posicionamento.
 
     int posX = 0;
     int posY = 0;
@@ -537,15 +542,13 @@ void mouseHandler (void){
 	// Contagem de interruções:
 	// Obs: Precisamos esperar 3 interrupções.
 
-	// #bugbug: 
-	// Essa variável está inicializando toda vez que se chama o handler 
-	// porque ela é interna. ??
 
+	//#obs: count_mouse é global. Provavelmente nesse arquivo mesmo.
 
     switch ( count_mouse )
     {
 
-		// Essa foi a primeira interrupção.
+		// > Essa foi a primeira interrupção.
         case 0:
             //Pegamos o primeiro char.
             buffer_mouse[0] = (char) *_byte;
@@ -554,7 +557,7 @@ void mouseHandler (void){
             break;
 
 
-		// Essa foi a segunda interrupção.
+		// >> Essa foi a segunda interrupção.
         case 1:
             //Pegamos o segundo char.
             buffer_mouse[1] = (char) *_byte;
@@ -562,82 +565,65 @@ void mouseHandler (void){
             break;
 
 
-		//#importante.
-		// Essa foi a terceira interrupção.
+		// >>> Essa foi a terceira interrupção. É a última.
         case 2:
             //Pegamos o terceiro char.
             buffer_mouse[2] = (char) *_byte;
             count_mouse = 0;
 
-			//#importante:
-			//A partir de agora já temos os três chars.
+			// A partir de agora já temos os três chars.
+			// Colocando os três chars em variáveis globais.
+			// Isso ficará assim caso não haja overflow.
 
-			//??
-			//Colocando os três chars em variáveis globais.
-			//Isso ficará assim caso não haja overflow ...
+            mouse_packet_data = buffer_mouse[0];    // Primeiro char
+            mouse_packet_x    = buffer_mouse[1];    // Segundo char.
+            mouse_packet_y    = buffer_mouse[2];    // Terceiro char.
 
-            mouse_packet_data = buffer_mouse[0];
-            mouse_packet_x = buffer_mouse[1];
-            mouse_packet_y = buffer_mouse[2];
-
-			// #importante:
-			// #todo: Isso está em Assembly, lá em hwlib.inc, 
-			// mas queremos que seja feito em C.
-			// #obs: Uma rotina interna aqui nesse arquivo está tentando isso.
-
-			//#importante.
-			//salvando antes de atualizar.
-			//paga poder apagar daqui a pouco.
+			// Salvando antes de atualizar.
+			// Para poder apagar daqui a pouco.
 
             saved_mouse_x = mouse_x;
             saved_mouse_y = mouse_y;
 
+			// Atualizando.
+
             update_mouse ();
 
-			// #importante:
 			// Agora vamos manipular os valores obtidos através da 
 			// função de atualização dos valores.
+			// A função de atualização atualizou os valores de
+			// mouse_x e mouse_y.
 
             mouse_x = (mouse_x & 0x000003FF );
             mouse_y = (mouse_y & 0x000003FF );
 
 
+			// #importante:
 			// Checando limites.
-			// #todo: 
-			// Os valores foram determinados. 
-			// Precisamos usar variáveis.
+			// Isso é provisório.
 
             if ( mouse_x < 1 ){ mouse_x = 1; }
             if ( mouse_y < 1 ){ mouse_y = 1; }
-
-            if ( mouse_x > (SavedX-16) )
-            { 
-                mouse_x = (SavedX-16); 
-            }
-
-            if ( mouse_y > (SavedY-16) )
-            {
-                mouse_y = (SavedY-16); 
-            }
+            if ( mouse_x > (SavedX-16) ){ mouse_x = (SavedX-16); }
+            if ( mouse_y > (SavedY-16) ){ mouse_y = (SavedY-16); }
 
 
 			//
-			// # Draw BMP #
+			// # Draw BMP
 			//
-
-
+			
 			// Isso está funcionando bem.
-			//+ copia no LFB um retângulo do backbuffer para apagar o 
-			//  ponteiro antigo.
-			//+ decodifica o mouse diretamente no LFB.
-			//copiar para o lfb o antigo retângulo. 
-			//Para apagar o ponteiro que está no lfb.
 
 
             // Apaga o antigo.
+            // + Copia no LFB um retângulo do backbuffer 
+            // para apagar o ponteiro antigo.
             refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
 
             // Acende o novo.
+            //+ Decodifica o mouse diretamente no LFB.
+            // Copiar para o LFB o antigo retângulo  
+            // para apagar o ponteiro que está no LFB.
             bmpDisplayMousePointerBMP ( mouseBMPBuffer, mouse_x, mouse_y );
 
 
@@ -649,7 +635,7 @@ void mouseHandler (void){
             break;
 
 
-        // Problemas na contagem.
+        // Problemas na contagem de interrupções.
         default:
             count_mouse = 0;
             break;
