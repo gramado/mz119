@@ -396,9 +396,8 @@ refresh_rectangle2 ( unsigned long x,
                      unsigned long buffer1,
                      unsigned long buffer2 )
 {    
-	void *p = (void *) buffer1;		
-	
-	const void *q = (const void *) buffer2;
+	void *p = (void *) buffer1;   // destino
+	const void *q = (const void *) buffer2;  //origem.
 
 	//register unsigned int i;
 	unsigned int i;
@@ -435,7 +434,7 @@ refresh_rectangle2 ( unsigned long x,
 	p = (void *) (p + offset);    
 	q = (const void *) (q + offset);    
 	 
-    vsync ();	
+    //vsync ();
 	
 	
 	//(line_size * 3) é o número de bytes por linha. 
@@ -491,7 +490,8 @@ int initialize_saved_rect (void){
 
     if ( (void *) SavedRect ==  NULL )
     {
-	    return (int) 1;	
+		panic ("initialize_saved_rect: struct");
+	    //return (int) 1;	
 		
 	} else {
      
@@ -504,7 +504,7 @@ int initialize_saved_rect (void){
 		    panic ("initialize_saved_rect: buffer fail");
 	    }
 
-        SavedRect->x = 0; 		
+        SavedRect->x = 0; 
 	    SavedRect->y = 0;
 		SavedRect->width = 0;
 		SavedRect->height = 0;
@@ -572,7 +572,6 @@ save_rect ( unsigned long x,
     void *p = (void *) SavedRect->buffer_address;    //(buffer para salvar)
     const void *q = (const void *) BACKBUFFER_ADDRESS;
 
-
 	//register unsigned int i;
     unsigned int i;
 
@@ -590,6 +589,48 @@ save_rect ( unsigned long x,
     int count; 
 
 
+   /*
+    
+    //obs: essa rotina é boa. Podemos aproveitar algo aqui.
+    //#debug: test
+    //move do backbuffer para o buffer de salvamento
+    //printf ("testing buffers,,,\n");
+    //void *__b;
+    //__b = (void *) malloc (4096 * 200);
+
+    //refresh_rectangle2 ( x, y, width, height, SavedRect->buffer_address, BACKBUFFER_ADDRESS );
+
+    //refresh_rectangle2 ( 0, 0, 50, 50, __b, BACKBUFFER_ADDRESS );
+    //refresh_rectangle2 ( 0, 0, 50, 50, FRONTBUFFER_ADDRESS, __b );
+
+    //refresh_rectangle2 ( 0, 0, 400, 400, BACKBUFFER_ADDRESS, BACKBUFFER_ADDRESS + 200000 );
+    //refresh_rectangle2 ( 0, 0, 400, 400, FRONTBUFFER_ADDRESS, BACKBUFFER_ADDRESS );
+ 
+    //refresh_rectangle2 ( 0, 0, 400, 400, BACKBUFFER_ADDRESS +4000000, BACKBUFFER_ADDRESS );
+    //refresh_rectangle2 ( 0, 0, 400, 400, FRONTBUFFER_ADDRESS, BACKBUFFER_ADDRESS +4000000 );
+
+    //refresh_rectangle2 ( 0, 0, 400, 400, BACKBUFFER_ADDRESS +8000000, BACKBUFFER_ADDRESS );
+    //refresh_rectangle2 ( 0, 0, 400, 400, BACKBUFFER_ADDRESS, BACKBUFFER_ADDRESS +8000000 );
+    //refresh_rectangle2 ( 0, 0, 400, 400, FRONTBUFFER_ADDRESS, BACKBUFFER_ADDRESS );
+    
+    //atualiza x e y,
+   // x = x+5;
+   // y = y+5;
+    //move do buffer de salvamento para ao backbuffer 
+    //refresh_rectangle2 ( x, y, width, height, BACKBUFFER_ADDRESS, SavedRect->buffer_address ); 
+    //refresh_rectangle2 ( 0, 0, 800, 600, BACKBUFFER_ADDRESS, SavedRect->buffer_address ); 
+    //move do backbuffer para o lfb
+    //refresh_rectangle ( x, y, width, height); 
+    //refresh_rectangle ( 0, 0, 800, 600); 
+    //refresh_screen();
+    
+    //coloca o conteúdo do buffer de salvamento no lfb, sem sincronizar;
+    //refresh_rectangle2 ( 0, 0, 400, 400, FRONTBUFFER_ADDRESS, SavedRect->buffer_address );    
+    //while(1){}
+    
+    */
+    
+ 
 
 
     line_size = (unsigned int) width;    //passado por argumento
