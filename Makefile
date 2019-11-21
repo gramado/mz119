@@ -533,6 +533,7 @@ vhd-copy-files:
 	-sudo cp ../garden/bin/NORATERM.BIN  /mnt/gramadovhd
 	-sudo cp ../garden/bin/REBOOT.BIN    /mnt/gramadovhd
 	-sudo cp ../garden/bin/REBOOT2.BIN   /mnt/gramadovhd
+	-sudo cp ../garden/bin/WINTEST.BIN   /mnt/gramadovhd 
 	-sudo cp ../garden/bin/LAUNCHER.BIN  /mnt/gramadovhd
 	-sudo cp ../garden/bin/TASCII.BIN    /mnt/gramadovhd
 	-sudo cp ../garden/bin/DUMPIT.BIN    /mnt/gramadovhd

@@ -604,7 +604,9 @@ save_rect ( unsigned long x,
     // #test
     // Salvando 
     
-    refresh_rectangle2 ( x, y, width, height, SavedRect->buffer_address, BACKBUFFER_ADDRESS );
+    refresh_rectangle2 ( x, y, width, height, 
+        (unsigned long) SavedRect->buffer_address, 
+        (unsigned long) BACKBUFFER_ADDRESS );
     return 0;
 
 
@@ -773,7 +775,9 @@ show_saved_rect ( unsigned long x,
     
     //#test
     //copiando do buffer de salvamento para o backbuffer.
-    refresh_rectangle2 ( x, y, width, height, BACKBUFFER_ADDRESS, SavedRect->buffer_address);    
+    refresh_rectangle2 ( x, y, width, height, 
+        (unsigned long) BACKBUFFER_ADDRESS, 
+        (unsigned long) SavedRect->buffer_address);    
     return 0;
     
     

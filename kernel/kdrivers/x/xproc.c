@@ -107,7 +107,8 @@ void test_move_window (void)
     //coloca uma parte grande do buffer de salvamento no lfb.
     //refresh_rectangle2 ( 0, 0, 800, 600, FRONTBUFFER_ADDRESS, SavedRect->buffer_address);
     refresh_rectangle2 ( w->left +5, w->top +5, w->width, w->height, 
-        FRONTBUFFER_ADDRESS, SavedRect->buffer_address);
+        (unsigned long) FRONTBUFFER_ADDRESS, 
+        (unsigned long) SavedRect->buffer_address);
 
 
     //#debug
