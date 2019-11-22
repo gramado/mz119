@@ -12,7 +12,7 @@
 VERSION = 1
 PATCHLEVEL = 15
 SUBLEVEL = 0
-EXTRAVERSION = -rc0
+EXTRAVERSION = -rc1
 NAME =  
 
 
@@ -159,7 +159,7 @@ ifeq ($(ARCH),x86)
 	
 	KSERVERS_OBJECTS := cf.o format.o fs.o read.o search.o write.o \
 	cedge.o bg.o bmp.o button.o char.o createw.o dtext.o font.o grid.o \
-	line.o menu.o menubar.o pixel.o rect.o sbar.o toolbar.o window.o \
+	line.o menu.o menubar.o pixel.o rect.o sbar.o toolbar.o wm.o \
 	logoff.o \
 	logon.o \
 	input.o output.o terminal.o \
@@ -382,6 +382,11 @@ compile-kernel:
 	gcc -c kernel/execve/sm/sys/sm.c       -I include/ $(CFLAGS) -o sm.o
 
 
+	# kservers/kgwm - Kernel Gramado Window Manager.
+
+	gcc -c kernel/kservers/kgwm/wm.c    -I include/ $(CFLAGS) -o wm.o
+
+
 	# kservers/kgws - Kernel Gramado Window Server.
 
 	gcc -c kernel/kservers/kgws/kgws/comp/bg.c       -I include/ $(CFLAGS) -o bg.o
@@ -399,9 +404,8 @@ compile-kernel:
 	gcc -c kernel/kservers/kgws/kgws/comp/pixel.c    -I include/ $(CFLAGS) -o pixel.o
 	gcc -c kernel/kservers/kgws/kgws/comp/rect.c     -I include/ $(CFLAGS) -o rect.o
 	gcc -c kernel/kservers/kgws/kgws/comp/sbar.c     -I include/ $(CFLAGS) -o sbar.o
-	gcc -c kernel/kservers/kgws/kgws/comp/toolbar.c  -I include/ $(CFLAGS) -o toolbar.o	
-	
-	gcc -c kernel/kservers/kgws/kgws/window.c    -I include/ $(CFLAGS) -o window.o
+	gcc -c kernel/kservers/kgws/kgws/comp/toolbar.c  -I include/ $(CFLAGS) -o toolbar.o
+
 	
 	gcc -c kernel/kservers/kgws/logon/logon.c    -I include/ $(CFLAGS) -o logon.o
 	gcc -c kernel/kservers/kgws/logoff/logoff.c  -I include/ $(CFLAGS) -o logoff.o

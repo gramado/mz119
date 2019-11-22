@@ -8,6 +8,33 @@
  */
 
 
+/*
+struct root_window_d {
+
+    // Current root window.
+    struct window_d *window;
+
+};
+struct root_window_d *root_window;
+*/
+
+
+/*
+  Estrutura para gerenciamento de telas.
+  Cada tela tem uma janela raiz.
+  Uma janela raiz pode  compreender a 'area de duas telas.
+  #obs: ja temos uma estrutura de screen.
+  observar os conceitos de desktop, room e user session.
+  
+struct screen_d {
+
+    int id;
+    struct root_window_d *root_window;
+
+};
+*/
+
+
 //void gwsEnableTextCursor ();
 //void gwsDisableTextCursor ();
 

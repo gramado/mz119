@@ -47,7 +47,7 @@ _windowzoneStart    0x4               main.o
 _partition          0x4               main.o
 _cwArg1             0x4               gde_serv.o
 _save_client_rect_top
-                    0x4               window.o
+                    0x4               wm.o
 _dma_addr           0x4               ata.o
 _fatbits            0x4               main.o
 _g9x14fontAddress   0x4               main.o
@@ -604,7 +604,7 @@ _g_pageable_framepool_index_max
 _current_thread     0x4               main.o
 _Pipes              0x20              main.o
 _processorsList     0x80              main.o
-_fsStatus           0x4               window.o
+_fsStatus           0x4               wm.o
 _Bank               0x4               main.o
 _fileBuffer         0x4               main.o
 _timer_cursor_status
@@ -666,7 +666,7 @@ _delta_y            0x1               main.o
 _framepoolPageableSpace
                     0x4               main.o
 _save_client_rect_left
-                    0x4               window.o
+                    0x4               wm.o
 _lineLineMax        0x4               main.o
 _KernelHeapSize     0x4               main.o
 _xxx_gdt_ptr        0x6               main.o
@@ -757,7 +757,7 @@ _g8x8fontAddress    0x4               main.o
 _KernelStackSize    0x4               main.o
 _zica               0x4               main.o
 _save_client_rect_height
-                    0x4               window.o
+                    0x4               wm.o
 _memorysizeInstalledPhysicalMemory
                     0x4               main.o
 _keybuffer_index    0x4               main.o
@@ -866,7 +866,7 @@ _CurrentScreen      0x4               main.o
 _sys_time_ticks_total
                     0x4               main.o
 _save_client_rect_width
-                    0x4               window.o
+                    0x4               wm.o
 _ttyLineCounter     0x4               main.o
 _g_char_attrib      0x4               main.o
 _HumilityColorScheme
@@ -1699,7 +1699,7 @@ Linker script and memory map
                 0x00000000c001e918                _StatusBar
  .text          0x00000000c001eae8      0x17d toolbar.o
                 0x00000000c001eae8                _ToolBar
- .text          0x00000000c001ec65     0x29ce window.o
+ .text          0x00000000c001ec65     0x29ce wm.o
                 0x00000000c001ec65                _save_window
                 0x00000000c001ece1                _show_saved_window
                 0x00000000c001ed3d                _show_window_rect
@@ -2312,7 +2312,7 @@ Linker script and memory map
  *fill*         0x00000000c0035b4d        0x3 
  .rodata        0x00000000c0035b50       0xd0 sbar.o
  .rodata        0x00000000c0035c20       0x98 toolbar.o
- .rodata        0x00000000c0035cb8      0x64b window.o
+ .rodata        0x00000000c0035cb8      0x64b wm.o
  .rodata        0x00000000c0036303       0x21 logoff.o
  .rodata        0x00000000c0036324      0x240 logon.o
  .rodata        0x00000000c0036564        0x5 input.o
@@ -2533,7 +2533,7 @@ Linker script and memory map
                                          0x64 (size before relaxing)
  .eh_frame      0x00000000c003db60       0x20 toolbar.o
                                          0x38 (size before relaxing)
- .eh_frame      0x00000000c003db80      0x800 window.o
+ .eh_frame      0x00000000c003db80      0x800 wm.o
                                         0x818 (size before relaxing)
  .eh_frame      0x00000000c003e380       0x40 logoff.o
                                          0x58 (size before relaxing)
@@ -2792,7 +2792,7 @@ Linker script and memory map
  *fill*         0x00000000c004c90c       0x14 
  .data          0x00000000c004c920      0x1ec toolbar.o
  *fill*         0x00000000c004cb0c       0x14 
- .data          0x00000000c004cb20      0x1ec window.o
+ .data          0x00000000c004cb20      0x1ec wm.o
  *fill*         0x00000000c004cd0c       0x14 
  .data          0x00000000c004cd20      0x1ec logoff.o
  *fill*         0x00000000c004cf0c       0x14 
@@ -3606,7 +3606,7 @@ Linker script and memory map
  *fill*         0x00000000c008e448       0x18 
  COMMON         0x00000000c008e460    0x10000 write.o
                 0x00000000c008e460                _list
- COMMON         0x00000000c009e460       0x14 window.o
+ COMMON         0x00000000c009e460       0x14 wm.o
                 0x00000000c009e460                _save_client_rect_top
                 0x00000000c009e464                _fsStatus
                 0x00000000c009e468                _save_client_rect_left
@@ -3749,7 +3749,7 @@ Linker script and memory map
  .bss           0x00000000c009f2e8       0x28 rect.o
  .bss           0x00000000c009f310       0x28 sbar.o
  .bss           0x00000000c009f338       0x28 toolbar.o
- .bss           0x00000000c009f360       0x28 window.o
+ .bss           0x00000000c009f360       0x28 wm.o
  .bss           0x00000000c009f388       0x28 logoff.o
  .bss           0x00000000c009f3b0       0x28 logon.o
  .bss           0x00000000c009f3d8       0x28 input.o
@@ -3881,7 +3881,7 @@ LOAD pixel.o
 LOAD rect.o
 LOAD sbar.o
 LOAD toolbar.o
-LOAD window.o
+LOAD wm.o
 LOAD logoff.o
 LOAD logon.o
 LOAD input.o
@@ -4012,7 +4012,7 @@ OUTPUT(KERNEL.BIN elf32-i386)
  .comment       0x0000000000000011       0x12 rect.o
  .comment       0x0000000000000011       0x12 sbar.o
  .comment       0x0000000000000011       0x12 toolbar.o
- .comment       0x0000000000000011       0x12 window.o
+ .comment       0x0000000000000011       0x12 wm.o
  .comment       0x0000000000000011       0x12 logoff.o
  .comment       0x0000000000000011       0x12 logon.o
  .comment       0x0000000000000011       0x12 input.o
@@ -4228,7 +4228,7 @@ OUTPUT(KERNEL.BIN elf32-i386)
  .note.GNU-stack
                 0x0000000000000000        0x0 toolbar.o
  .note.GNU-stack
-                0x0000000000000000        0x0 window.o
+                0x0000000000000000        0x0 wm.o
  .note.GNU-stack
                 0x0000000000000000        0x0 logoff.o
  .note.GNU-stack
