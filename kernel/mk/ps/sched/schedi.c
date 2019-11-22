@@ -1,5 +1,5 @@
 /*
- * File: schedi.c
+ * File: ps/sched/schedi.c
  *
  * Descrição:
  *     Scheduler (Internal).
@@ -31,21 +31,20 @@
 //o status recebido
 
 int do_wait ( int *status ){
-	
+
     int i;
-	
-	int pid;
-	
-	struct process_d *p;   
+    int pid;
+    struct process_d *p;   
 
 	//#todo
 	//inicializando
-	*status = 0;
-	
+
+    *status = 0;
+
     for (i=0; i<PROCESS_COUNT_MAX; i++)
     {
-		p = (struct process_d *) processList[i];
-		
+        p = (struct process_d *) processList[i];
+
 		if ( (void *) p != NULL )
 		{
 			if( p->used == 1 && p->magic == 1234 )
@@ -64,57 +63,76 @@ int do_wait ( int *status ){
 						//do processo
 						*status = 1; //fake value. 
 						
-					    return (int) p->pid;	
+					    return (int) p->pid;
 					}
-				}					
+				}
 			}
-		}
-	};
-	
+        }
+    };
+
+
 	//aqui precisamos dar informações sobre o status 
 	//do processo
-	*status = 1; //fake value. 
 
-    return -1;	
-};
+    //fake value. 
+    *status = 1; 
 
 
-//bloqueia por um motivo
+    return (int) (-1);
+}
+
+
+/*
+ * block_for_a_reason:
+ *     Bloqueia por um motivo.
+ * 
+ */
+
 void block_for_a_reason ( int tid, int reason ){
-	
-	struct thread_d *t;
-	
-    if ( tid < 0 || tid >= THREAD_COUNT_MAX ){
-		return;
-	} 
-	
-	if( reason < 0 || reason >= 8 ){
-		return;	
-	} 	
-	
-	//thread
-	t = (struct thread_d *) threadList[tid];
-	
-	if ( (void *) t == NULL )
-	{	
+
+    struct thread_d *t;
+
+
+    if ( tid < 0 || tid >= THREAD_COUNT_MAX )
+    {
         return;
-		
-	} else {
-		
-		if ( t->used == 1 && t->magic == 1234 )
-		{
+    } 
+
+
+    if ( reason < 0 || reason >= 8 )
+    {
+        return;
+    }
+
+
+	//thread
+    t = (struct thread_d *) threadList[tid];
+
+    if ( (void *) t == NULL )
+    {
+        return;
+
+    } else {
+
+        if ( t->used == 1 && t->magic == 1234 )
+        {
 			t->wait_reason[reason] = 1;
 	        
 			//
 			// ## Block ##
 			//
 			
-			do_thread_sleeping (tid);		
-		}	
-	};
-};
+			do_thread_sleeping (tid);
+        }
+    };
+}
 
- 
+
+
+/*
+ * wakeup_thread_reason:
+ * 
+ */
 
 //acordar uma determinada thread se ela estiver 
 //esperando por um evento desse tipo.
@@ -122,29 +140,30 @@ void block_for_a_reason ( int tid, int reason ){
 //todas as threads que esperam pelo memso motivo.
 
 int wakeup_thread_reason ( int tid, int reason ){
-	
-	struct thread_d *t;
-	
-    if ( tid < 0 ||
-         tid >= THREAD_COUNT_MAX )
-	{
-	    goto fail;		
-	} 
-	
-	if( reason < 0 ||
-	    reason >= 8 )
-	{
-	    goto fail;		
-	} 
-	
+
+    struct thread_d *t;
+
+
+    if ( tid < 0 || tid >= THREAD_COUNT_MAX )
+    {
+        goto fail;
+    } 
+
+
+    if ( reason < 0 || reason >= 8 )
+    {
+        goto fail;
+    }
+
+
 	//thread
-	t = (struct thread_d *) threadList[tid];
-	
-	if ( (void *) t == NULL )
-	{	
-		goto fail;
-		
-	} else {
+    t = (struct thread_d *) threadList[tid];
+
+    if ( (void *) t == NULL )
+    {
+        goto fail;
+
+    } else {
 		
 		if ( t->used != 1 || t->magic != 1234 )
 		{
@@ -179,7 +198,7 @@ int wakeup_thread_reason ( int tid, int reason ){
 				//Esperando uma thread morrer. Mas qual ??
 				case EVENT_WAIT4TID:
 				    //se a thread que acabamos de fechar for a mesma que 
-					//a thread estava esperando.				
+					//a thread estava esperando.
 					if ( current_dead_thread > 0 && 
 					     current_dead_thread == t->wait4tid )
 					{
@@ -188,65 +207,72 @@ int wakeup_thread_reason ( int tid, int reason ){
 					}
 					break;
 			    
-                // ...				
+                // ...
 			}
 			
             goto done;
 		}
 		
 		//nothing
-	};
-	
+    };
+
+
 fail:
-    return (int) 1;	
+    return (int) 1;
+
 done:
-    return (int) 0;	
-};
+    return 0;
+}
 
 
-
+/*
+ * wakeup_scan_thread_reason:
+ * 
+ */
 
 // Acorda todas as threads da lista que estão esperando por 
 // evento de determinado tipo.
 
 int wakeup_scan_thread_reason ( int reason ){
-	
+
     int i;
-	
-	if ( reason < 0 ||
-	     reason >= 8 )
-	{
-	    goto fail;		
-	} 
-	
-	for ( i=0; i<THREAD_COUNT_MAX; i++ )
-	{
-        wakeup_thread_reason ( i, reason );		    	
-	}
-	
-	
-	switch (reason)
-	{
+
+    if ( reason < 0 || reason >= 8 )
+    {
+        goto fail;
+    } 
+
+
+    for ( i=0; i<THREAD_COUNT_MAX; i++ )
+    {
+        wakeup_thread_reason ( i, reason );
+    };
+
+
+    switch (reason)
+    {
 		//já acordamos todas as threads que esperavam por essa razão.
 		//podemos sinalizar que não há mais nenhum processo morto recentemente.
 		case EVENT_WAIT4PID:
 			current_dead_process = 0;
 			break;
-					
+
 		//já acordamos todas as threads que esperavam por essa razão.
 		//podemos sinalizar que não há mais nenhuma thread morta recentemente.
 		case EVENT_WAIT4TID:
     		current_dead_thread = 0;
 			break;
 			    
-                // ...				
-	};	
-	
+                // ...
+    };
+
+
 done:
-    return (int) 0;		
+    return 0;
+
 fail:
-    return (int) 1;	
-};
+    return (int) 1;
+}
 
 
 
@@ -279,80 +305,83 @@ int KiScheduler (void){
 	//#bugbug 
 	//Porque retornamos 0 ???
 	//Scheduler Status. (LOCKED, UNLOCKED).
-	
-	if (g_scheduler_status == LOCKED)
-	{
-        return (int) 0;
-    };
+
+
+    if (g_scheduler_status == LOCKED)
+    {
+        return 0;
+    }
 
 	// Retornaremos se tivermos apenas um thread rodando.
 	// Pois não há o que trocar.
-	if ( ProcessorBlock.threads_counter == 1 )
-	{ 
-		//Se só temos uma então devemos retornar a idle.
-		current_thread = idle;
-		return (int) idle;
-	};
-	
+	//Se só temos uma então devemos retornar a idle.
+
+    if ( ProcessorBlock.threads_counter == 1 )
+    { 
+        current_thread = idle;
+        return (int) idle;
+    }
+
+
     //Chama o Scheduler.
 
-	return (int) scheduler ();
-}; 
-
-
+    return (int) scheduler ();
+}
 
 
  
-/* KiSelectNextThread: */ 
-/* #todo: rever isso */
+/* 
+ * KiSelectNextThread: 
+ */ 
+
+//#todo: rever isso 
 
 int KiSelectNextThread (int current ){
-	
+
 	//
-    // @todo: Fazer filtros.
+	// @todo: Fazer filtros.
 	//
-	
+
 	//@todo: Max.
 	
-	if (current < 0)
-	{
-		current = next_thread;
-	}
-	
-//done:
+    if (current < 0)
+    {
+        current = next_thread;
+    }
+
 
     return (int) SelectNextThread (current);
-};
+}
 
 
-void KiDoThreadReady (int id){
-	
-    do_thread_ready(id);
-};
+void KiDoThreadReady (int id)
+{
+    do_thread_ready (id);
+}
 
 
-void KiDoThreadRunning (int id){
-	
-    do_thread_running(id);
-};
+void KiDoThreadRunning (int id)
+{
+    do_thread_running (id);
+}
 
 
-void KiDoThreadSleeping (int id){
-	
-    do_thread_sleeping(id);
-};
+void KiDoThreadSleeping (int id)
+{
+    do_thread_sleeping (id);
+}
 
 
-void KiDoThreadZombie (int id){
-	
-	do_thread_zombie(id);
-};
+void KiDoThreadZombie (int id)
+{
+    do_thread_zombie (id);
+}
 
 
-void KiDoThreadDead (int id){
-	
-    do_thread_dead(id);
-};
+void KiDoThreadDead (int id)
+{
+    do_thread_dead (id);
+}
 
  
 /*
@@ -381,17 +410,19 @@ void KiDispatchTask (void)
 
 
 /*
- *****************************************************
+ ****************************************
  * KiSetCurrent:
  *     Seleciona a thread atual.
  *     @todo: Mudar o argumento para (int tid).
  */
-void KiSetCurrent (int id){
-	
+ 
+void KiSetCurrent (int id)
+{
+
 	//@todo: Filtro.
-	
+
     set_current (id);
-};
+}
 
 
 /*
@@ -399,8 +430,8 @@ void KiSetCurrent (int id){
  *     Pega o tid da thread atual.
  */
  
-int KiGetCurrent (void){
-	
+int KiGetCurrent (void)
+{
     return (int) get_current ();
 }
 
@@ -411,19 +442,20 @@ int KiGetCurrent (void){
  *     #bugbug: Esse nome é inapropriado.
  */
  
-int KiGetCurrentTask (void){
-	
-    return (int) get_current_task(); 
+int KiGetCurrentTask (void)
+{
+    return (int) get_current_task (); 
 }
 
 
 /* 
- * Obtendo o TID da thread atual. 
+ * get_current:
+ *     Obtendo o TID da thread atual. 
  */
 
 int get_current (void)
 {
-	return (int) current_thread;
+    return (int) current_thread;
 }
 
 
@@ -434,88 +466,116 @@ int get_current (void)
  */
 
 int get_current_task (void)
-{	
-    return (int) get_current();
+{
+    return (int) get_current ();
 }
 
 
-/* #todo: mudar para set_current_thread ( int tid ). */
+/* 
+ * set_current:
+ *     #todo: 
+ *     Mudar para set_current_thread ( int tid ). 
+ */
+ 
 void set_current (int id){
-	
-	if ( id == current_thread ){
-		return;
-	}
-	
-	// Limits.
-	if (id < 0 || id >= THREAD_COUNT_MAX){
-	    return;
-	}
-	
-	// Nothing ?!
-	
-	// Done.	
 
-	current_thread = (int) id; 	
-};
+    if ( id == current_thread )
+    {
+        return;
+    }
+
+
+	// Limits.
+    if (id < 0 || id >= THREAD_COUNT_MAX)
+    {
+        return;
+    }
+
+	// Nothing ?!
+	// Done.
+
+
+    current_thread = (int) id;
+}
+
 
 
 void do_thread_initialized (int id){
-	
-    struct thread_d *t; 
-	
-	if (id < 0 || id >= THREAD_COUNT_MAX){
-	    return;
-	}
-	
-	t = (void *) threadList[id]; 	
-	
-	if ( (void *) t != NULL )
-	{
-		//if ( t->used == 1 && t->magic == 1234 )
-			
-	    t->state = INITIALIZED;
-	}
-};
 
-/* do_thread_ready: #todo: mudar o argumento para tid */ 
+    struct thread_d *t; 
+
+
+    if (id < 0 || id >= THREAD_COUNT_MAX)
+    {
+        return;
+    }
+
+
+    t = (void *) threadList[id];
+
+    if ( (void *) t != NULL )
+    {
+		//if ( t->used == 1 && t->magic == 1234 )
+
+        t->state = INITIALIZED;
+    }
+}
+
+
+/* 
+ * do_thread_ready: 
+ *     #todo: 
+ *     Mudar o argumento para tid. 
+ */
+  
 void do_thread_ready (int id){
 	
     struct thread_d *t; 
-	
-	if (id < 0 || id >= THREAD_COUNT_MAX){
-	    return;
-	}
-	
-	t = (void *) threadList[id]; 	
-	
-	if ( (void *) t != NULL )
-	{
+
+    if (id < 0 || id >= THREAD_COUNT_MAX)
+    {
+        return;
+    }
+
+
+    t = (void *) threadList[id];
+
+    if ( (void *) t != NULL )
+    {
 		//if ( t->used == 1 && t->magic == 1234 )
-			
-	    t->state = READY;
-	}
-};
+
+        t->state = READY;
+    }
+}
 
 
-/* do_thread_running: #todo: mudar o argumento para tid */
+/* 
+ * do_thread_running: 
+ *     #todo: 
+ *     Mudar o argumento para tid. 
+ */
+
 void do_thread_running (int id){
-	
+
     struct thread_d *t; 
-	
-	if (id < 0 || id >= THREAD_COUNT_MAX){
-	    return;
-	}
-	
-	t = (void *) threadList[id]; 	
-	
-	if ( (void *) t != NULL )
-	{
+
+
+    if (id < 0 || id >= THREAD_COUNT_MAX)
+    {
+        return;
+    }
+
+
+    t = (void *) threadList[id];
+
+    if ( (void *) t != NULL )
+    {
 		if ( t->used == 1 && t->magic == 1234 )
 		{
-		    t->state = RUNNING;	
+		    t->state = RUNNING;
 		}
-	};
-};
+    };
+}
 
 
 /*
@@ -524,63 +584,82 @@ void do_thread_running (int id){
  *     Muda o state de uma thread pra blocked.
  *     @todo: Mudar o nome da função para do_thread_blocked.
  */
+
 void do_thread_sleeping (int id){
-	
+
     struct thread_d *t; 
 
-	if (id < 0 || id >= THREAD_COUNT_MAX){
-	    return;
-	}
+
+    if (id < 0 || id >= THREAD_COUNT_MAX)
+    {
+        return;
+    }
 
     // Struct.
-	t = (void *) threadList[id];	
-	
-	if ( (void *) t != NULL){
-	    t->state = BLOCKED;
-    }	
-};
+    t = (void *) threadList[id];
+
+    if ( (void *) t != NULL)
+    {
+        t->state = BLOCKED;
+    }
+}
 
 
-/* do_thread_zombie: #todo: mudar o argumento para tid */
+/* 
+ * do_thread_zombie: 
+ *     #todo: 
+ *     Mudar o argumento para tid 
+ */
+
 void do_thread_zombie (int id){
-	
+
     struct thread_d *t; 
-	 
-	if (id < 0 || id >= THREAD_COUNT_MAX){
-	    return;
-	}
-	
-	t = (void *) threadList[id]; 
-	
-	if( (void *) t == NULL )
-	{
-	    return;
-	}else{
-        
-		if ( id != IDLE )
-		{
+
+ 
+    if (id < 0 || id >= THREAD_COUNT_MAX)
+    {
+        return;
+    }
+
+
+    t = (void *) threadList[id]; 
+
+    if ( (void *) t == NULL )
+    {
+        return;
+    }else{
+
+        if ( id != IDLE ){
             t->state = ZOMBIE;
         }
     };
-};
+}
 
 
-/* do_thread_dead: #todo: mudar o argumento para tid */
+/* 
+ * do_thread_dead: 
+ *     #todo: 
+ *     Mudar o argumento para tid. 
+ */
+
 void do_thread_dead (int id){
-	
-    struct thread_d *t; 
-	
-	if (id < 0 || id >= THREAD_COUNT_MAX){
-	    return;
-	}
 
-	t = (void *) threadList[id]; 	
-	
-	if ( (void *) t != NULL )
-	{
-	    t->state = DEAD;
-	}
-};
+    struct thread_d *t; 
+
+
+    if (id < 0 || id >= THREAD_COUNT_MAX)
+    {
+        return;
+}
+
+
+    t = (void *) threadList[id];
+
+    if ( (void *) t != NULL )
+    {
+        t->state = DEAD;
+    }
+}
 
 
 /*
@@ -592,28 +671,31 @@ void do_thread_dead (int id){
  *
  * @todo:
  *     Criar scheduleriWakeupYhread(int tid);
- * 
  */
+
 void wakeup_thread (int tid){
-	
+
     int Status;
-    struct thread_d *t; 	
+    struct thread_d *t;
 	//...
-	
-	//Limits.
-	if ( tid < 0 || tid >= THREAD_COUNT_MAX ){
-	    return;
-	}
+
+
+	// Limits.
+
+    if ( tid < 0 || tid >= THREAD_COUNT_MAX )
+    {
+        return;
+    }
 
     //Struct.
-	t = (void *) threadList[tid]; 
-	
-	if ( (void *) t == NULL )
-	{ 	
-	    return;    
-	
-	}else{
-	    
+
+    t = (void *) threadList[tid]; 
+
+    if ( (void *) t == NULL )
+    {
+        return;    
+    }else{
+    
 		//Se o contexto não foi salvo. 
 		//Não tem como acorda-la.
 		//Pois acordar significa apenas retornar 
@@ -632,12 +714,12 @@ void wakeup_thread (int tid){
 	    //Isso acorda a thread,
 		//mas não coloca ela imediatamente para rodar,
 		//nem precisa.
-	    do_thread_running(tid);
-	
+
+        do_thread_running (tid);
 	};
 
     // Nothing ?!
-};
+}
  
 
 /*
@@ -647,37 +729,37 @@ void wakeup_thread (int tid){
  * indicada via argumento.
  *
  * @todo: Mudar para schediSelectNextThread(int current);.
- *
  */
+
 int SelectNextThread (int current){
-	
-	int Next;
-	
+
+    int Next;
     struct thread_d *t; 
     struct thread_d *n; 
-    
-	//Limits.
-	
-	if ( current < 0 || current >= THREAD_COUNT_MAX ){
-		
-	    return (int) 0;
-	}
-	
+
+
+	// Limits.
+
+    if ( current < 0 || current >= THREAD_COUNT_MAX )
+    {
+        return 0;
+    }
+
+
     // Struct.
-	
-    t = (void *) threadList[current];		
-	
-	if( (void *) t == NULL )
-	{
-	    return (int) 0;
-	
-	}else{
-		
+
+    t = (void *) threadList[current];
+
+    if ( (void *) t == NULL )
+    {
+        return 0;
+    }else{
+
         //Se não existe indicação de próxima.
-	    if( (void *) t->Next == NULL )
-	    {
+        if ( (void *) t->Next == NULL )
+        {
 		    //Procura a próxima tarefa, de acordo com a prioridade.
-		    Next = (int) find_higher_priority();
+		    Next = (int) find_higher_priority ();
 			
 		    n = (void *) threadList[Next];
 		    
@@ -691,12 +773,13 @@ int SelectNextThread (int current){
 			    Next = (int) n->tid;    //Pega id.
 			    return (int) Next;
 			};
-	    
+
+
 		//Aceita a indicação de próxima.
-		}else{
-			
-			n = (void *) t->Next;
-			
+        }else{
+
+            n = (void *) t->Next;
+
 			if ( (void *) n == NULL )
 			{
 				Next = next_thread;
@@ -707,18 +790,15 @@ int SelectNextThread (int current){
 				t->Next = NULL;
                 return (int) Next;
 			};
-			//Nothing.
-		};
-        //Nothing.		
-	};
-	
-	// More ?!
-	
-// Done.
-done:	
-    return (int) Next;
-};
 
+			//Nothing.
+        };
+        //Nothing.
+    };
+
+
+    return (int) Next;
+}
 
 
 /*
@@ -732,29 +812,26 @@ done:
  */
  
 void check_for_standby (void){
-	
+
     int newId;
-	
-	struct thread_d *New;
-	
-	
-	// #todo: 
-	// Max variable.
-	
-	int i = 0;
-	int Max = 32;
-	
-	
-#ifdef SERIAL_DEBUG_VERBOSE	
-	debug_print(" check_for_standby ");
-#endif	
-	
-	do {
-		
-		New = (void *) queue->standbyList[i];
-		
-		if ( (void *) New != NULL )
-		{
+    struct thread_d *New;
+
+    int i = 0;
+    int Max = 32;
+
+
+
+#ifdef SERIAL_DEBUG_VERBOSE
+    debug_print (" check_for_standby ");
+#endif
+
+
+    do {
+
+        New = (void *) queue->standbyList[i];
+
+        if ( (void *) New != NULL )
+        {
 		    if ( New->used == 1 && 
 			     New->magic == 1234 && 
 				 New->state == STANDBY )   
@@ -764,45 +841,47 @@ void check_for_standby (void){
 			    goto do_spawn;
 			
 			};
-		};
-		
-		i++;
-		
-	} while (i < Max);  
+        };
 
-	//
+        i++;
+
+    } while (i < Max);  
+
+
     // Done: 
     // Nenhuma tarefa precisa ser inicializada.
     // Podemos apenas retornar para o taskswitch.
-	//
-	
-#ifdef SERIAL_DEBUG_VERBOSE	
-	debug_print(" nothing ");
-#endif    
-	
-	return;
-	
-	
+
+
+#ifdef SERIAL_DEBUG_VERBOSE
+    debug_print (" Nothing ");
+#endif
+
+
+    return;
+
+
 	//
 	//  ======== ## SPAWN ## ========
 	//
-	
+
 
     // spawn.c
-	
+
 do_spawn:
-	
-	
-#ifdef SERIAL_DEBUG_VERBOSE	
+
+
+#ifdef SERIAL_DEBUG_VERBOSE
     debug_print(" SPAWN \n");
-#endif    
-	
-	KiSpawnTask ( current_thread );
-	
+#endif 
+
+
+   KiSpawnTask ( current_thread );
+
     //  ## No return ##	
-	
-    panic ("schedi-check_for_standby: ERROR");	
-};
+
+    panic ("schedi-check_for_standby: ERROR");
+}
 
 
 /*
@@ -815,36 +894,37 @@ do_spawn:
  */
 
 int check_quantum (void){
-	
-    //int newId;	
-	
-	struct thread_d *New;
-	
-	int i=0;
-	
-	while ( i < THREAD_COUNT_MAX )
-	{
-        New = (void *) threadList[i];    	
-	    
-		if ( (void *) New != NULL )
-		{ 
+
+    //int newId;
+    struct thread_d *New;
+
+    int i=0;
+
+
+    while ( i < THREAD_COUNT_MAX )
+    {
+        New = (void *) threadList[i];
+    
+        if ( (void *) New != NULL )
+        { 
 		    if ( New->used == 1 && 
 				 New->magic == 1234 &&
 				 New->state == READY &&
 				 New->quantum == QUANTUM_LIMIT )
 			{
 		        return (int) New->tid;
-			};
+			}
 			//Nothing.
-		};	
-		
-		i++;
-	};
-	
+        };
+
+        i++;
+    };
+
+
 	// Nothing ?!
-	
-    return (int) 0;
-};
+
+    return 0;
+}
 
 
 //

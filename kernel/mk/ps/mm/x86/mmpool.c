@@ -21,17 +21,18 @@
  */
 
 void *page (void){
-	
-	struct page_d *New;
-	
-	int Index;	
-	
+
+    struct page_d *New;
+
+    int Index;
+
+
     for ( Index=0; Index < PAGE_COUNT_MAX; Index++ )
-	{
-	    New = (void*) pageAllocList[Index];
-		
-		if ( New == NULL )
-		{
+    {
+        New = (void *) pageAllocList[Index];
+
+        if ( New == NULL )
+        {
 			New = (void *) malloc ( sizeof( struct page_d ) );
 			
 			if ( New == NULL )
@@ -50,7 +51,7 @@ void *page (void){
 			
 			//not free
 			New->free = 0;  
-						
+
 			New->next = NULL;
 			
 			
@@ -60,19 +61,20 @@ void *page (void){
 			//...
 			
 			pageAllocList[Index] = ( unsigned long ) New; 
-			
-		    return (void *) New;
-		};
-	};	
+
+            return (void *) New;
+        };
+    };
+
 
 fail:
-	
-    return NULL;    
+
+    return NULL; 
 }
 
 
 /*
- *********************************************************************
+ ***************************************************
  * newPage:
  *     Aloca uma página e retorna seu endereço virtual inicial. 
  *     Isso é feito com base no id do pageframe e no endereço virtual inicial 
@@ -85,31 +87,32 @@ fail:
  */
 
 void *newPage (void){
-	
-	struct page_d *New;
-	
+
+    struct page_d *New;
+
 	// Esse é o endereço virtual do início do pool de pageframes.
 	// Isso significa que num pool temos vários pageframes.
-	
-	unsigned long base = (unsigned long) g_pagedpool_va;	
-	
-	unsigned long va;
+
+    unsigned long base = (unsigned long) g_pagedpool_va;
+
+    unsigned long va;
     unsigned long pa;
-	
+
+
 	// Cria e registra uma estrutura de página.
-	   
-	New	= (void *) page ();	
-	
-	if ( New == NULL )
-	{
+
+    New = (void *) page ();
+
+    if ( New == NULL )
+    {
 		printf ("pc-mm-newPage: New\n");
 		
 		goto fail;
 		
-	}else{
-	    
+    }else{
+
         if ( New->used == 1 && New->magic == 1234 )
-		{
+        {
 			// Pega o id 
 			// Checa o limite de slots.
 			
@@ -131,9 +134,9 @@ void *newPage (void){
 				
 				
 			    if ( ( pa % PAGE_SIZE) != 0 ) 
-			    {		
-			        pa = pa - ( pa % PAGE_SIZE);			
-		 	    }	 	
+			    {
+			        pa = pa - ( pa % PAGE_SIZE);
+		 	    }
 			
 			    New->frame_number = (pa / PAGE_SIZE);
 			
@@ -145,13 +148,20 @@ void *newPage (void){
 				// Retorna o endereço virtual.	
 				
 				return (void *) ( base + (New->id * 4096) );
-			}				
-		};		
-	};
-	
+			}
+        };
+    };
+
+
 fail:
-	
-    return NULL;	
+
+    return NULL;
 }
+
+//
+// End.
+//
+
+
 
 

@@ -1,5 +1,5 @@
 /*
- * File: sched/sched.c
+ * File: ps/sched/sched.c
  *
  * Descrição:
  *     O escalonador de processos do Kernel.
@@ -63,52 +63,50 @@
  */
 
 struct thread_d *pick_next_thread (void){
-	
-	int i;    //id da fila selecionada
-	int old;  //salva id da current thread
-	
-	struct thread_d *t;
-	struct thread_d *next;
 
-	
+    int i;      //id da fila selecionada
+    int old;    //salva id da current thread
+
+    struct thread_d *t;
+    struct thread_d *next;
+
+
 	//salva antiga thread
-	old = next_thread;	
+    old = next_thread;
 	
 	
 	//se temos um ponteiro para fila de drivers.
-	
     if ( QUEUES[0] != 0 ){
-	
-		i = 0;
-		
-	//se temos um ponteiro para a fila de servidores.
-		
-	} else if ( QUEUES[1] != 0 ){
-	
-		i = 1;
-		
-		//nos resta a fila de apps de usuário.	
-	}else{
-	
-	    i = 2;
-	};
-	
 
-	
+        i = 0;
+
+	//se temos um ponteiro para a fila de servidores.
+
+    } else if ( QUEUES[1] != 0 ){
+
+        i = 1;
+
+	//nos resta a fila de apps de usuário.
+    }else{
+        i = 2;
+    };
+
+
 	//
 	// # Checando o conductor. #
 	//
-	
+
+
 	//se o elemento tem um valor não nulo..
     if (QUEUES[i] != 0)
-	{
+    {
 	    //Ok temos uma fila.
 		//vamos pegar a primeira thread da fila.
 		
-		t = (void *) QUEUES[i];
-				
-	}else{
-	
+        t = (void *) QUEUES[i];
+
+    }else{
+
 		// nenhuma thread est'a no estado de READY ... entao nenhuma das
 		// filas foi construida.
 		// nos reata usarmos a thread idle. 
@@ -119,71 +117,80 @@ struct thread_d *pick_next_thread (void){
 		
 		//selecionamos a idle.
 		
-		t = IdleThread;
-	};
-	
+        t = IdleThread;
+    };
+
+
+
 	//
 	// Checando a thread selecionada.
 	//
-	
-	if ( ( void *) t == NULL )
-	{
+
+    if ( ( void *) t == NULL )
+    {
 	    //fail
 		next_thread = old;
 		
-	}else{
-	
-	    if ( t->used != 1 || t->magic != 1234 )
-		{
-		    //fail
-		    next_thread = old;			
-		}
-	
+    }else{
+
+        // #bugbug
+        // Se a estrutura falhou então não podemos usar essa thread.
+        // Tem que abortar a tentativa.
+        
+        if ( t->used != 1 || t->magic != 1234 )
+        {
+            next_thread = old;
+            goto prepare_next;
+        }
+
 		//Ok.
-		next_thread = t->tid;
-	};
-	
-	
+        next_thread = t->tid;
+    };
+
+
+prepare_next:
+
 	//
 	// # Checando a validade da next thread. #
 	//
-	
-	next = (void *) threadList[next_thread];
-	
-	if ( ( void *) next == NULL )	
-	{
+
+    next = (void *) threadList[next_thread];
+
+    if ( ( void *) next == NULL )
+    {
 	    //fail
 	    // #debug
 	    //Não conseguimos selecionar nenhuma thread como próxima.
 		//não temos nem mesmo uma thread idle para inicializarmos o round.
 			
 		//#debug
-		printf ("#DEBUG\n");
-		printf ("pick_next_thread: No next_thread, we could't initialize the round\n");
-		die();
-		
-	}else{
+		//printf ("#DEBUG\n");
+        printf ("pick_next_thread: No next_thread, we could't initialize the round\n");
+        die ();
+
+    }else{
 	
-	    
-		if ( next->used != 1 || next->magic != 1234 )
-		{
+
+        if ( next->used != 1 || next->magic != 1234 )
+        {
 	        //fail
 	        // #debug
 	        //Não conseguimos selecionar nenhuma thread como próxima.
 		    //não temos nem mesmo uma thread idle para inicializarmos o round.
 		    //#debug
-		    printf ("#DEBUG\n");
-		    printf ("pick_next_thread: No next_thread, we could't initialize the round\n");
-		    die();	
-		}
-		
-		if ( next->state == READY )
-		{
-		    return (struct thread_d *) next;
-		}
-	}
-	
-	return NULL;
+			//printf ("#DEBUG\n");
+            printf ("pick_next_thread: No next_thread, we could't initialize the round\n");
+            die ();
+        }
+
+        if ( next->state == READY )
+        {
+            return (struct thread_d *) next;
+        }
+    };
+
+
+    return NULL;
 }
 
 
@@ -218,14 +225,16 @@ struct thread_d *pick_next_thread (void){
 //podemos contar os rounds;
 
 int scheduler (void){
-	
-	int Index;
-	struct thread_d *Thread;
-	
-#ifdef SERIAL_DEBUG_VERBOSE		
-	debug_print(" [*SCHEDULER*] ");
-#endif	
-	
+
+    int Index;
+    struct thread_d *Thread;
+
+
+#ifdef SERIAL_DEBUG_VERBOSE
+    debug_print(" [*SCHEDULER*] ");
+#endif
+
+
 	//#debug
 	//printf ("scheduler: Running Threads %d \n", ProcessorBlock.threads_counter );
 	//refresh_screen();
@@ -250,10 +259,9 @@ int scheduler (void){
   
   //#debug
   //printf ("scheduler: 1\n");
-	
- 	Conductor2 = (void *) rootConductor;
-	
-	
+
+    Conductor2 = (void *) rootConductor;
+
 	
 	//
 	// ## preparando 'next_thread' ##
@@ -286,8 +294,8 @@ int scheduler (void){
  // printf ("scheduler: 3\n"); 
 	
 	//Next thread.
-	Conductor2->Next = (void *) threadList[next_thread];  
-	
+    Conductor2->Next = (void *) threadList[next_thread];
+
 	//
 	//  ## MARCADOR GLOBAL ##
 	//
@@ -297,8 +305,8 @@ int scheduler (void){
   
 	//TID=0
 	//vamos começar a lista dessa aqui.
-	Conductor = (void *) Conductor2->Next;	
-	
+    Conductor = (void *) Conductor2->Next;
+
 	
 	// Obs: 
 	// ## IMPORTANTE  ##
@@ -329,16 +337,17 @@ int scheduler (void){
 	// Daqui pra baixo pegaremos na lista threadList[] 
 	// onde estão todas as threads.
 
-    //@todo pegar primeiro por prioridade.	
+    //@todo pegar primeiro por prioridade.
 	
   //#debug
  // printf ("scheduler: 5\n");
-	
+
+
 	//READY.
-	for ( Index=0; Index < THREAD_COUNT_MAX; Index++ )
-	{
-		Thread = (void *) threadList[Index];
-		
+    for ( Index=0; Index < THREAD_COUNT_MAX; Index++ )
+    {
+        Thread = (void *) threadList[Index];
+
 		if ( (void *) Thread != NULL )
 		{
 			if ( Thread->used == 1 && 
@@ -351,7 +360,7 @@ int scheduler (void){
 		    //Nothing.
 		};
 		//Nothing.
-	};	
+    };
 
 
 	//
@@ -359,18 +368,19 @@ int scheduler (void){
 	//
 
   //#debug
- // printf ("scheduler: 6\n");
+  // printf ("scheduler: 6\n");
 
 	//finaliza a lista
-	Conductor2 = (void *) Conductor2->Next; 
-	Conductor2->Next = NULL;
+    Conductor2 = (void *) Conductor2->Next; 
+    Conductor2->Next = NULL;
+
 
     return (int) Conductor2->tid;
-};
+}
 
 
 /*
- ***************************************************
+ *************************************************
  * scheduler_start:
  *     +Inicializa o sheduler.
  *     +Trava o scheduler.
@@ -397,16 +407,20 @@ void scheduler_start (void){
 }
 
 
-/* scheduler_lock: */
-void scheduler_lock (void){
-	
+/* 
+ * scheduler_lock: 
+ */
+void scheduler_lock (void)
+{
     g_scheduler_status = (unsigned long) LOCKED;
 }
 
 
-/* scheduler_unlock: */  
-void scheduler_unlock (void){
-	
+/* 
+ * scheduler_unlock: 
+ */  
+void scheduler_unlock (void)
+{
     g_scheduler_status = (unsigned long) UNLOCKED;
 }
 
@@ -426,10 +440,13 @@ unsigned long scheduler_get_status (void)
  * new_task_scheduler: 
  *     ?? #deletar
  */
+
+/* CANCELADA !*/ 
+
 void new_task_scheduler (void)
 {   
-    return;    /* CANCELADA !*/  		
-};	
+    return;
+}
 
 
 /*
@@ -442,23 +459,24 @@ void new_task_scheduler (void)
 
 void init_scheduler (void)
 {
-	// @todo: Implementar inicialização de variaveis do scheduler.
-	//        O nome poderia ser schedulerInit().
-	//        Formato de classes.Init é um método. 
-};
+	// #todo: 
+	// Implementar inicialização de variaveis do scheduler.
+	// O nome poderia ser schedulerInit().
+	// Formato de classes.Init é um método. 
+}
 
 
 /*
- * constructor.
-int schedulerScheduler(){
-	;
-};
+ constructor.
+int schedulerScheduler()
+{
+}
 */
 
 /*
-int schedulerInit(){
-	;
-};
+int schedulerInit()
+{
+}
 */
 
 

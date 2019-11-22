@@ -1,5 +1,5 @@
 /*
- * File: pc/action/dispatch.c
+ * File: ps/action/dispatch.c
  *
  * Descrição:
  *     Arquivo principal do dispatcher do kernel.
@@ -69,108 +69,121 @@ int dispatch_Default (void);
  *     Porém os tipos diferentes de dispacher ainda não estão habilitados, 
  * só um funciona.
  */
- 
+
+// #todo
+// Change the return type and return with error
+// if something goes wrong. So this way we can try another thing.
+// int dispatcher ( int type ){
+
 void dispatcher ( int type ){
-	
-	int Status;
-	
-	struct thread_d *dispatch_Pointer;
-	
-	
+
+    int Status;
+    struct thread_d *dispatch_Pointer;
+
+
 	// Obs: 
 	// @todo:
 	// (Fase de teste). 
-	// Usando apenas um tipo de dispatcher. 	
+	// Usando apenas um tipo de dispatcher. 
 	// Deteminando o tipo de dispacher por enquanto
-	
-	
-	if ( type != DISPATCHER_CURRENT )
-	{
-	    type = DISPATCHER_CURRENT;
-	};
-	
-	
+
+
+    if ( type != DISPATCHER_CURRENT )
+    {
+        type = DISPATCHER_CURRENT;
+    }
+
+
 	//
 	// Seleciona o tipo.
 	//
-	
+
+    // #todo:
+    // All the different types of dispatch need to be implemented.
+
 //SelectDispatcherType:
-	
-	switch (type)
-	{
-	    case DISPATCHER_NULL:
-		    goto dispatchCurrent;     
-		    break;
-		
-		case DISPATCHER_SYSCOOP:
-            goto dispatchSyscoop; 			
+
+
+    switch (type)
+    {
+
+        // It's not implemented.
+        case DISPATCHER_NULL:
+            goto dispatchCurrent;     
             break;
-			
-		case DISPATCHER_USERCOOP:
-		    goto dispatchUsercoop; 
+
+        // It's not implemented.
+        case DISPATCHER_SYSCOOP:
+            goto dispatchSyscoop;
             break;
-			
-		case DISPATCHER_SYSCONC: 
+
+        // It's not implemented.
+        case DISPATCHER_USERCOOP:
+            goto dispatchUsercoop; 
+            break;
+
+        // It's not implemented.
+        case DISPATCHER_SYSCONC: 
             goto dispatchSysconc;
-			break;
-			
-		case DISPATCHER_USERCONC: 
-		    goto dispatchUserconc;
-			break;
-			
-		//System.
-	    case DISPATCHER_SYSTEM:
-		    goto dispatchCurrent;
-		    break;
-		
-		//Idle.
-	    case DISPATCHER_IDLE:
-		    goto dispatchCurrent;
-		    break;
+            break;
 
-		//Periodic. 
-	    case DISPATCHER_PERIODIC:
-		    goto dispatchCurrent;
-		    break;
-		
-		//Round Robin. (RR).
-	    case DISPATCHER_RR:
-		    goto dispatchCurrent;
-		    break;
-		
-		//Realtime.
-	    case DISPATCHER_REALTIME:
-		    goto dispatchRealtime;
-		    break;
-		
-		
-		//
-		// ## PRINCIPAL ##
-		//
-		
-		//Despacha a tarefa atual.
-		// >> (Usando esse!)
-		
-		case DISPATCHER_CURRENT:
-		    goto dispatchCurrent;
-		    break;
-		 
-		//Despacha da fila do dispatcher(ready queue)
-		case DISPATCHER_READY:
-		    goto dispatchReady;
-		    break; 
-		
-		//default.
-		default:
-		    goto dispatchCurrent;
-		    break;
-	};
+        // It's not implemented.
+        case DISPATCHER_USERCONC: 
+            goto dispatchUserconc;
+            break;
 
-	
-	//
-	// Obs: E se escapar do laço acima ?!
-	//
-	
+        // It's not implemented.
+        //System.
+        case DISPATCHER_SYSTEM:
+            goto dispatchCurrent;
+            break;
+
+        // It's not implemented.
+        //Idle.
+        case DISPATCHER_IDLE:
+            goto dispatchCurrent;
+            break;
+
+        // It's not implemented.
+        //Periodic. 
+        case DISPATCHER_PERIODIC:
+            goto dispatchCurrent;
+            break;
+
+        // It's not implemented.
+        //Round Robin. (RR).
+        case DISPATCHER_RR:
+            goto dispatchCurrent;
+            break;
+
+        // It's not implemented.
+        //Realtime.
+        case DISPATCHER_REALTIME:
+            goto dispatchRealtime;
+            break;
+
+
+        // This is working ...
+        case DISPATCHER_CURRENT:
+            goto dispatchCurrent;
+            break;
+ 
+        // It's not implemented.
+        //Despacha da fila do dispatcher(ready queue)
+        case DISPATCHER_READY:
+            goto dispatchReady;
+            break; 
+
+        //default.
+        default:
+            goto dispatchCurrent;
+            break;
+     };
+
+
+	// Obs: 
+	// E se escapar do laço acima ?!
+
 
 //Dispatch sys coop.
 dispatchSyscoop: 
@@ -190,103 +203,97 @@ dispatchSysconc:
 //Dispatch user conc.
 dispatchUserconc:
     current_thread = userconcDispatcher();
-    goto do_dispatch; 	
-	
-//Dispatch realtime.	
-dispatchRealtime:	
-    current_thread = realtimeDispatcher();	
-	goto do_dispatch;
+    goto do_dispatch; 
+
+//Dispatch realtime.
+dispatchRealtime:
+    current_thread = realtimeDispatcher();
+    goto do_dispatch;
 
 //Dispatch ready.
-dispatchReady:	
+dispatchReady:
     current_thread = readyDispatcher();
-    goto do_dispatch;	
-	
-
-//	
-// ## Principal ##	
-//
+    goto do_dispatch;
 
 
 //Dispatch current.
-
 dispatchCurrent:
     //current_thread = current_thread;
-    goto do_dispatch;	
+    goto do_dispatch;
 
-	
+
     //
     //    ####  DO DISPATCH ####
-    //	
-	
-	
-//----------------------------------------	
+    //
+
+//----------------------------------------
 // Do Dispatch: Dispatch 'current_thread'.
 //----------------------------------------
 
-do_dispatch:		
-	
-	
+do_dispatch:
+
+
 	// Checa estrutura.
-	
-	dispatch_Pointer = (void *) threadList[current_thread];
-	
-	if ( (void *) dispatch_Pointer == NULL )
-	{
-	    printf("action-dispatch-dispatcher: Struct ERROR\n");
-		die();
-	};
-	
+
+    dispatch_Pointer = (void *) threadList[current_thread];
+
+    if ( (void *) dispatch_Pointer == NULL )
+    {
+        printf ("dispatch-dispatcher: struct\n");
+        die ();
+    }
+
+
 	// Checa o 'state'.
-	
-	if ( dispatch_Pointer->state != READY )
-	{
-	    printf("action-dispatch-dispatcher: State ERROR\n");
-		die();
-	};
-	
-	
+
+    if ( dispatch_Pointer->state != READY )
+    {
+        printf ("dispatch-dispatcher: State ERROR\n");
+        die ();
+    }
+
+
 	// #importante
-	// * MOVEMENT 4 (Ready --> Running).	
+	// * MOVEMENT 4 (Ready --> Running).
 	// A thread passa para o estado RUNNING.
 	// Reinicia a contagem.
-	
-	if ( dispatch_Pointer->state == READY )
-	{
-	    dispatch_Pointer->state = RUNNING;	
-		
-		dispatch_Pointer->runningCount = 0;
-		
-		queue_insert_data ( queue, (unsigned long) dispatch_Pointer, 
-            QUEUE_RUNNING );
-			
-	};
-	
-	
+
+
+    if ( dispatch_Pointer->state == READY )
+    {
+        dispatch_Pointer->state = RUNNING;
+        dispatch_Pointer->runningCount = 0;
+
+        queue_insert_data ( queue, 
+            (unsigned long) dispatch_Pointer, QUEUE_RUNNING );
+    }
+
+
 	//
 	// ## RESTORE CONTEXT ##
 	//
-	
-    // #importante	
+
+	// #importante
 	// Flag sinalizando que o contexto não está mais salvo.
 	// Esse flag é acionada quando o contexto é salvo no início 
 	// da task switch.
-	
-	dispatch_Pointer->saved = 0;
-	
+
+    dispatch_Pointer->saved = 0;
+
 	// #importante
 	// Chama a rotina que colocará as informações da estrutura de thread 
 	// nas variáveis usadas pelo assembly para configurar os registradores 
 	// antes do iretd.
-	
-	restore_current_context ();
-	
-    //	
-    //  ## Done ##
-    //
-	
-//done:
-    return; //deletar.
+
+    restore_current_context ();
+
+
+// #todo
+// Change the return type and return with error
+// if something goes wrong. So this way we can try another thing.
+    //return 0;
+
+    return;
 }
 
 
@@ -303,6 +310,9 @@ do_dispatch:
  *     Pega a head da fila de ready quando vencer o tempo dela de espera.
  *     Obs: Esse tipo de dispacher ainda não foi habilitado.
  */
+
+// #todo
+// It's not implemented.
 
 int readyDispatcher (void)
 {
@@ -338,8 +348,8 @@ int readyDispatcher (void)
 //Done.
 done:
 	current_thread = (int) dispatch_Pointer->tid;
-	return (int) current_thread;	
-};
+	return (int) current_thread;
+}
 
 
 
@@ -347,6 +357,9 @@ done:
  * syscoopDispatcher:
  *  Obs: Esse tipo de dispacher ainda não foi habilitado.
  */
+ 
+// #todo
+// It's not implemented.
 
 int syscoopDispatcher (void)
 {
@@ -375,14 +388,17 @@ int syscoopDispatcher (void)
 	
 fail:
     //todo: hang
-    return (int) current_thread;	
-};
+    return (int) current_thread;
+}
 
 
 /*
  * usercoopDispatcher:
  *  Obs: Esse tipo de dispacher ainda não foi habilitado.
  */
+ 
+// #todo
+// It's not implemented.
 
 int usercoopDispatcher (void)
 {
@@ -411,14 +427,17 @@ int usercoopDispatcher (void)
 
 fail:
     //todo: hang
-    return (int) current_thread;	
-};
+    return (int) current_thread;
+}
 
 
 /*
  * sysconcDispatcher:
  *  Obs: Esse tipo de dispacher ainda não foi habilitado.
  */
+ 
+// #todo
+// It's not implemented.
 
 int sysconcDispatcher (void)
 {
@@ -447,14 +466,17 @@ int sysconcDispatcher (void)
 
 fail:
     //todo: hang
-    return (int) current_thread;		
-};
+    return (int) current_thread;
+}
 
 
 /*
  * userconcDispatcher:
  *  Obs: Esse tipo de dispacher ainda não foi habilitado.
  */
+
+// #todo
+// It's not implemented.
 
 int userconcDispatcher (void)
 {
@@ -484,7 +506,7 @@ int userconcDispatcher (void)
 fail:
     //todo: hang
     return (int) current_thread;
-};
+}
 
 
 /*
@@ -495,9 +517,12 @@ fail:
  * chamar o dispacher. 
  */
 
+// #todo
+// It's not implemented.
+
+// # suspensa #
 int systemDispatcher (void)
 { 
-    // # suspensa #
     return 0; 
 }
 
@@ -515,17 +540,18 @@ int systemDispatcher (void)
  *     Se o kernel detectar quen não há mas nenhuma thread 
  * no sistema então o kernel deve selecionar uma nova 
  * idle atual e despacha-la. 
- *
  */
+ 
+// #todo
+// It's not implemented.
+
+// ## suspensa ##
 
 int idleDispatcher (void)
 { 
     //current_idle_thread
-	
 
-    // ## suspensa ##
-
-	return 0; 
+    return 0; 
 }
 
 
@@ -535,11 +561,14 @@ int idleDispatcher (void)
  *     Obs: Esse tipo de dispacher ainda não foi habilitado.
  */
 
+// #todo
+// It's not implemented.
+
 int periodicDispatcher (void)
 { 
     // struct thread_d *New;
    
-	return 0; 
+    return 0; 
 }
 
 
@@ -548,10 +577,13 @@ int periodicDispatcher (void)
  *     Round robin dispatcher.
  *     Obs: Esse tipo de dispacher ainda não foi habilitado.
  */
+ 
+// #todo
+// It's not implemented.
 
 int rrDispatcher (void)
 { 
-	return 0; 
+    return 0; 
 }
 
 
@@ -568,6 +600,9 @@ int rrDispatcher (void)
  *     Na verdade não é tão real time assim.
  *     Obs: Esse tipo de dispacher ainda não foi habilitado.
  */
+
+// #todo
+// It's not implemented.
 
 int realtimeDispatcher (void)
 {
@@ -592,14 +627,18 @@ int realtimeDispatcher (void)
 //
 
 fail:
-    return (int) 0; //idle.	
-};
+    return 0; //idle.
+}
 
 
 /*
  * dispatch_Default:
  *  Obs: Esse tipo de dispacher ainda não foi habilitado.
  */
+ 
+// #todo
+// It's not implemented.
+
 int dispatch_Default (void){
 	
 	struct thread_d *New;
@@ -733,7 +772,7 @@ int dispatch_Default (void){
 		
 		return (int) New->tid;
 	};
-};
+}
 
 
 
@@ -751,7 +790,7 @@ void dispatch_thread2 (void){
 	// *RESTORE CONTEXT. (current_thread)
 	//
 	
-	restore_current_context();	
+	restore_current_context();
 	
 	//
 	// Struct.
@@ -769,10 +808,7 @@ void dispatch_thread2 (void){
 	    t->saved = 0;         //Náo está mais salvo o contexto.
 	    t->state = RUNNING;   //Movimento 2 ou 4. ??
 	};
-	
-//done:
-	//return; 	
-};
+}
 
 
 
@@ -783,21 +819,21 @@ void dispatch_thread2 (void){
  */
  
 void dispatch_thread (struct thread_d *thread){
-	
-	int Status = 0;
-	
-    //
+
+    int Status = 0;
+
+	//
 	// Structure.
 	//
-	
-	if ( (void *) thread == NULL )
-	{
-        printf("pc-dispatch-dispatch_thread: thread tid={%d}",
-		    current_thread); 
-        die();
-	}else{
-		
-	    // Context.	
+
+    if ( (void *) thread == NULL )
+    {
+        printf ("dispatch-dispatch_thread: thread tid={%d}", current_thread ); 
+        die ();
+
+    }else{
+
+	    // Context.
 		// #bugbug: Não estamos mais usando esse filtro
         // que seleciona apenas threads em ring 3.		
 	    //Status = contextCheckThreadRing3Context(thread->tid);
@@ -807,7 +843,6 @@ void dispatch_thread (struct thread_d *thread){
 	    //};
 	    //...
 	};
-	
 
 	
 	/*
@@ -816,7 +851,7 @@ void dispatch_thread (struct thread_d *thread){
 	 *     +Spawn no caso de INITIALIZED.
 	 */
 	 
- 	switch(thread->state)
+ 	switch (thread->state)
 	{
 	    //Se vai rodar pela primeira vez
 		case INITIALIZED:
@@ -826,21 +861,22 @@ void dispatch_thread (struct thread_d *thread){
 	        break;
 		//Continua ?? ...	
 		
-        //Nothing for now.		
+        //Nothing for now.
 		default:
-            printf("dispatch_thread fail: State!\n");  		
+            printf("dispatch_thread fail: State!\n");
 		    break;
 	};
-	
+
+
 fail:
-    printf("pc-dispatch-dispatch_thread: fail");
-    die();
-};
+    printf ("dispatch-dispatch_thread: fail");
+    die ();
+}
 
 
 
 /*
- ******************************************************************
+ *************************************
  * init_dispatcher:
  *     inicializa o dispacher.
  *
@@ -869,66 +905,72 @@ fail:
  */ 
  
 int init_dispatcher (void){
-	
-	int i;
-	
+
+    int i;
+
 	//
 	// Para um dispatcher na forma de array.
 	//
-	
+
+
 //dispatcher_array:
 	
 	//Index
     dispatcherQueueIndex = (int) 0;
 
 	//Seleciona o tipo de dispatcher.
-	dispatcherType = DISPATCHER_SYSTEM; 	
-	
+    dispatcherType = DISPATCHER_SYSTEM;
+
 	//inicializa a fila do dispacher.
-	for ( i=0; i <= PRIORITY_MAX; i++ ){
-		
-	    dispatcherReadyList[i] = (unsigned long) 0;
-	};
-	
+
+    for ( i=0; i <= PRIORITY_MAX; i++ )
+    {
+        dispatcherReadyList[i] = (unsigned long) 0;
+    };
+
+
 	//Idle.
 	dispatcherReadyList[0] = (unsigned long) IdleThread;
-		
+
+
 	//
 	// (Desliga realtime dispatcher.) ??
 	//
 	
 	
-	
 	//
 	// Para um dispatcher na forma de Linked List.
 	//
-//dispatcher_linked_list:	
+
+//dispatcher_linked_list:
 	
-	//inicializa o indice de condutores
-	conductorIndex = 0;
+	// Inicializa o indice de condutores.
+    conductorIndex = 0;
 	
 	//inicializa a lista
 	//Conductor = (void*) IdleThread;
 		
-	rootConductor = (void *) malloc ( sizeof(struct thread_d) );
+    rootConductor = (void *) malloc ( sizeof(struct thread_d) );
 	
-	if ( (void *) rootConductor == NULL ){
-		
-		panic ("init_dispatcher: rootConductor");
-	};
-	
-	//Usado para task switch.
-	Conductor = (void *) rootConductor;
-	
-	//#bugbug 
-	//Deveríamos iniciar com a idle thread e não com a thread 0.
-	
-	//Inicia a lista.
- 	Conductor2 = (void *) rootConductor;
-	Conductor2->Next = (void *) threadList[0]; 
+    if ( (void *) rootConductor == NULL )
+    {
+        panic ("init_dispatcher: rootConductor");
+    }
 
-    return (int) 0;
-};
+	// Usado para task switch.
+    Conductor = (void *) rootConductor;
+
+	// #bugbug 
+	// Deveríamos iniciar com a idle thread e não com a thread 0.
+
+	//Inicia a lista.
+
+    Conductor2 = (void *) rootConductor;
+    Conductor2->Next = (void *) threadList[0]; 
+
+
+    return 0;
+}
 
 
 
@@ -943,68 +985,75 @@ int init_dispatcher (void){
  * tempo. Vamos preserva-lo. 
  */
 
+	// #todo
+	// Create error messages.
+
 void IncrementDispatcherCount ( int type ){
-	
+
 	// Testing struct.
-	if ( (void *) DispatchCountBlock == NULL )
-	{
-		return;
-	};
-	
-	// type limits.
-	if (type < 0 || type > 10)
-	{
-	    return;	
-	};
-	
+
+    if ( (void *) DispatchCountBlock == NULL )
+    {
+        return;
+    }
+
+	// Limits.
+
+    if (type < 0 || type > 10)
+    {
+        return;
+    }
+
+
 	// Activating the selected type.
-	switch (type)
-	{
-		case SELECT_IDLE_COUNT:
-	        DispatchCountBlock->SelectIdleCount++;
+
+    switch (type)
+    {
+        case SELECT_IDLE_COUNT:
+            DispatchCountBlock->SelectIdleCount++;
             break;
-		
-        case SELECT_INITIALIZED_COUNT:		
-		    DispatchCountBlock->SelectInitializedCount++;
-	        break;
-		
-        case SELECT_NEXT_COUNT:		
-		    DispatchCountBlock->SelectNextCount++;
-	        break;
-		
-		case SELECT_CURRENT_COUNT:
-		    DispatchCountBlock->SelectCurrentCount++;	
-		    break;
-			
-		case SELECT_ANY_COUNT:		
-		    DispatchCountBlock->SelectAnyCount++;
-	        break;
-			
-		case SELECT_IDEAL_COUNT:	
-		    DispatchCountBlock->SelectIdealCount++;
-	        break;
-			
-		case SELECT_DISPATCHER_COUNT:	
-		    DispatchCountBlock->SelectDispatcherQueueCount++;
-	        break;
+
+        case SELECT_INITIALIZED_COUNT:
+            DispatchCountBlock->SelectInitializedCount++;
+            break;
+
+        case SELECT_NEXT_COUNT:
+            DispatchCountBlock->SelectNextCount++;
+            break;
+
+        case SELECT_CURRENT_COUNT:
+            DispatchCountBlock->SelectCurrentCount++;
+            break;
+
+       case SELECT_ANY_COUNT:
+            DispatchCountBlock->SelectAnyCount++;
+            break;
+
+       case SELECT_IDEAL_COUNT:
+            DispatchCountBlock->SelectIdealCount++;
+            break;
+
+       case SELECT_DISPATCHER_COUNT:
+            DispatchCountBlock->SelectDispatcherQueueCount++;
+            break;
+
 		//...
-		
-		default:
-		    //Nothing.
-			//Aqui poderia ter um contador de indefinições.
-			break;
+
+       // Nothing.
+       // Aqui poderia ter um contador de indefinições.
+       default:
+           break;
     };
-	
-	
+
 	// Nothing.
 	//     #bugbug
 	//     Obs: @todo: O laço acima pode não selecionar nada.
-	
-};
+
+}
 
 
 /*
- *Constructor.
+   Constructor.
 int dispatchDispatch()
 {};
 */

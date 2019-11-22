@@ -1,5 +1,5 @@
 /*
- * File: pc/mm/x86/memory.c
+ * File: ps/mm/x86/memory.c
  *
  * Descrição:
  *     Arquivo principal do módulo /mm do /pc, Memory Manager. 
@@ -189,27 +189,30 @@ unsigned long heap_set_new_handler( unsigned long address )
  */
 
 unsigned long get_process_heap_pointer ( int pid ){
-	
-	struct process_d *P;
-	
-	unsigned long heapLimit;
-	
+
+    struct process_d *P;
+
+    unsigned long heapLimit;
+
+
 	//@todo: Limite máximo.
-	
-	if (pid < 0)
-	{	
+
+    if (pid < 0)
+    {
 		printf ("get_process_heap_pointer: pid fail\n");
 		goto fail;
-	};
-	
-	P = (void *) processList[pid];
-	
-	if ( (void *) P == NULL )
-	{	
+    }
+
+
+    P = (void *) processList[pid];
+
+    if ( (void *) P == NULL )
+    {
 		printf ("get_process_heap_pointer: struct fail\n");
 		goto fail;
-	};
-	
+    }
+
+
 	//Obs podemos checar 'used' e 'magic'.
 	
 	// Limits:
@@ -220,18 +223,18 @@ unsigned long get_process_heap_pointer ( int pid ){
 	heapLimit = (unsigned long) (P->Heap + P->HeapSize);
 	
 	//Se for menor que o início ou maior que o limite.
-	if ( P->HeapPointer < P->Heap || P->HeapPointer >= heapLimit )
-	{	
+    if ( P->HeapPointer < P->Heap || P->HeapPointer >= heapLimit )
+    {
 		printf ("get_process_heap_pointer: heapLimit\n");
 		goto fail;
-	};
+    }
 
-	
+
     //Retorna o heap pointer do processo. 
-	return (unsigned long) P->HeapPointer;
-	
+    return (unsigned long) P->HeapPointer;
+
 fail:
-	
+
     return (unsigned long) 0;    
 }
 
@@ -249,8 +252,8 @@ void
 SetKernelHeap ( unsigned long HeapStart, 
                 unsigned long HeapSize )
 {
-	struct heap_d *h;    //Kernel Heap struct.    
-	
+    struct heap_d *h;    //Kernel Heap struct.    
+
 	
 	// Check limits.
 	
@@ -534,7 +537,7 @@ try_again:
 	
     Current = (void *) g_heap_pointer;    
 
-    if( (void *) Current != NULL )
+    if ( (void *) Current != NULL )
     {
         // #importante:
 		// Obs: Perceba que 'Current' e 'Current->Header' 
@@ -670,11 +673,11 @@ try_again:
     // Colocar o conteúdo da estrutura no lugar destinado para o header.
     // O header conterá informações sobre o heap.
 	// Se falhamos, retorna 0. Que equivalerá à NULL.
-	
+
+
 fail:
-	
+
     refresh_screen ();
-    
     return (unsigned long) 0;
 }
 
@@ -685,32 +688,35 @@ fail:
  */
 
 void FreeHeap (void *ptr){
-	
-	struct mmblock_d *Header;		
-	
-	if ( (void *) ptr == NULL )
-	    return;
-	
-	
-    if ( ptr < (void *) KERNEL_HEAP_START || ptr >= (void *) KERNEL_HEAP_END ){
-		return;
-	}
-	
-	
+
+    struct mmblock_d *Header;
+
+
+    if ( (void *) ptr == NULL )
+        return;
+
+
+    if ( ptr < (void *) KERNEL_HEAP_START || ptr >= (void *) KERNEL_HEAP_END )
+    {
+        return;
+    }
+
+
 	// Header
 	// Encontrando o endereço do header.
 	// O ponteiro passado é o endereço da área de cliente.
-	
-	unsigned long UserAreaStart = (unsigned long) ptr; 
-	
-	Header = (void *) ( UserAreaStart - MMBLOCK_HEADER_SIZE );
-	
-	if ( (void *) Header == NULL )
-	{
+
+    unsigned long UserAreaStart = (unsigned long) ptr; 
+
+
+    Header = (void *) ( UserAreaStart - MMBLOCK_HEADER_SIZE );
+
+    if ( (void *) Header == NULL )
+    {
 		return;
 		
-	}else{
-	
+    }else{
+
 		if ( Header->Used != 1 || Header->Magic != 1234 )	
 		{
 			return;
@@ -729,12 +735,12 @@ void FreeHeap (void *ptr){
 		Header->Magic = 0;
 		
 		g_heap_pointer = (unsigned long) Header;
-	}    
+    };
 }
 
 
 /*
- ***********************************************************************
+ *********************************************
  * init_heap:
  *     Iniciar a gerência de Heap do kernel. 
  *     @todo: Usar heapInit() ou heapHeap(). memoryInitializeHeapManager().
@@ -750,11 +756,12 @@ void FreeHeap (void *ptr){
 //int memoryInitializeHeapManager() 
 
 int init_heap (void){
-	
-	int i = 0;
 
-    //Globals.	
-	kernel_heap_start = (unsigned long) KERNEL_HEAP_START;  
+    int i = 0;
+
+
+    //Globals.
+    kernel_heap_start = (unsigned long) KERNEL_HEAP_START;  
     kernel_heap_end = (unsigned long) KERNEL_HEAP_END;  
 	
 	//Heap Pointer, Available heap and Counter.
@@ -766,74 +773,81 @@ int init_heap (void){
 	// Último heap pointer válido. 
 	last_valid = (unsigned long) g_heap_pointer;
 	last_size = 0;
-	
+
+
 	//Check Heap Pointer.
-	if ( g_heap_pointer == 0 )
-	{	
-	    printf("init_heap fail: Heap pointer\n");
+    if ( g_heap_pointer == 0 )
+    {
+	    printf ("init_heap fail: Heap pointer\n");
 		goto fail;
-	}
-	
+    }
+
+
 	//Check Heap Pointer overflow.
-	if( g_heap_pointer > kernel_heap_end )
-	{
-        printf("init_heap fail: Heap Pointer Overflow\n");
+    if( g_heap_pointer > kernel_heap_end )
+    {
+        printf ("init_heap fail: Heap Pointer Overflow\n");
 		goto fail;
-    }	
-	
+    }
+
+
     //Heap Start.
-	if( kernel_heap_start == 0 )
-	{
+    if ( kernel_heap_start == 0 )
+    {
 	    printf("init_heap fail: HeapStart={%x}\n", kernel_heap_start );
 	    goto fail;
-	}
-	
+    }
+
+
 	//Heap End.
-	if( kernel_heap_end == 0 )
-	{
+    if ( kernel_heap_end == 0 )
+    {
 	    printf("init_heap fail: HeapEnd={%x}\n", kernel_heap_end );
 	    goto fail;
-	}
-	
+    }
+
+
 	//Check available heap.
-	if( g_available_heap == 0 )
-	{
+    if ( g_available_heap == 0 )
+    {
 	    //@todo: Tentar crescer o heap.
 		
 		printf("init_heap fail: Available heap\n");
 		goto fail;
-	}
-	
+    }
+
+
 	// Heap list:
 	// Inicializa a lista de heaps.
-	
-	while ( i < HEAP_COUNT_MAX )
-	{
+
+    while ( i < HEAP_COUNT_MAX )
+    {
         heapList[i] = (unsigned long) 0;
-		i++;
+        i++;
     };
-	
+
+
 	//KernelHeap = (void*) x??;
-	
+
 	//More?!
-	
+
 // Done.
-//done:
 
 #ifdef MK_VERBOSE
-    printf("Done\n");
-#endif	
-	
-	return (int) 0;
-	
-    
+    printf ("Done\n");
+#endif
+
+    return 0;
+
+
 	// Fail. 
 	// Falha ao iniciar o heap do kernel.
 
 fail:
-    printf("init_heap: Fail\n");
-	refresh_screen();
-	
+    printf ("init_heap: Fail\n");
+    refresh_screen ();
+
+
 	/*
 	// #debug
 	printf("* Debug: %x %x %x %x \n", kernel_heap_start, 
@@ -843,8 +857,9 @@ fail:
 	refresh_screen();	 
     while(1){}		
 	*/
-    
-	return (int) 1;
+
+
+    return (int) 1;
 }
 
 
@@ -856,31 +871,35 @@ fail:
  */
  
 int init_stack (void){
-	
+
     //Globals.
 	//#bugbug
-	
-	kernel_stack_end = (unsigned long) KERNEL_STACK_END; 
-	kernel_stack_start = (unsigned long) KERNEL_STACK_START; 
-	
+
+
+    kernel_stack_end = (unsigned long) KERNEL_STACK_END; 
+    kernel_stack_start = (unsigned long) KERNEL_STACK_START; 
+
+
     //End.
-	if ( kernel_stack_end == 0 )
-	{
+    if ( kernel_stack_end == 0 )
+    {
 	    printf ("init_stack: fail StackEnd={%x}\n", kernel_stack_end );
 	    goto fail;
-	};
-	
+    }
+
+
 	//Start.
-	if ( kernel_stack_start == 0 )
-	{
+    if ( kernel_stack_start == 0 )
+    {
 	    printf ("init_stack: fail StackStart={%x}\n", kernel_stack_start );
 	    goto fail;
-	};
-	
+    }
+
+
 	// Done.
 
     return 0;
-	
+
 fail:
     return (int) 1;
 }
@@ -894,10 +913,10 @@ fail:
  */
  
 int init_mm (void){
-	
+
     int Status = 0;
-	int i = 0;	
-	
+    int i = 0;
+
 	
 	// @todo: 
 	// Inicializar algumas variáveis globais.
@@ -927,7 +946,7 @@ int init_mm (void){
 	{
 	    printf("init_mm fail: Stack\n");
 	    return (int) 1;
-	};		
+	};
 
 	
 	// Zerar a lista.
@@ -1013,13 +1032,13 @@ int init_mm (void){
 	
 	// Continua...
 
-    return (int) Status;	
+    return (int) Status;
 }
 
 
 //
 // Segue rotinas de GC.
-// =====================================================
+// ==================================================
 //
 
 //limpa a camada /gramado
@@ -1113,8 +1132,9 @@ int gcEXECUTIVE (void){
 	//#importante: Nessa lista tem ponteiros para uma estrutura especial,
 	//usada pela malloc para organizar os blocos de memória que serão utilizados 
 	//para alocação dinâmica.
-	for ( i=0; i<MMBLOCK_COUNT_MAX; i++ )
-	{
+
+    for ( i=0; i<MMBLOCK_COUNT_MAX; i++ )
+    {
 	    b = (void *) mmblockList[i];
 		
 		//ponteiro válido.
@@ -1126,15 +1146,16 @@ int gcEXECUTIVE (void){
 				goto clear_mmblock;
 			}
 		}
-	};
+    };
 	
 	
 	//heapList[]
 	//Limpar a lista de heaps.
 	//Existirão vários heaps que poderão ser usados pelos alocadores.
 	//Essa lista tem o pnteiros para heaps.
-	for ( i=0; i<HEAP_COUNT_MAX; i++ )
-	{
+
+    for ( i=0; i<HEAP_COUNT_MAX; i++ )
+    {
 	    h = (void *) heapList[i];
 		
 		//ponteiro válido.
@@ -1146,8 +1167,9 @@ int gcEXECUTIVE (void){
 				goto clear_heap;
 			}
 		}
-	};
-	
+    };
+
+
 	//
 	// #### #importante ####
 	// @todo: Cria os 'for's para as outras listas.
@@ -1219,28 +1241,31 @@ clear_heap:
 	//Nothing.
 
 	//
-	// @todo: Criar as rotinas de limpeza para as outras listas.
+	// #todo: 
+	// Criar as rotinas de limpeza para as outras listas.
 	//
+
 
 fail:
     refresh_screen();
-	return (int) 1;
-done:	
-	return (int) 0;	
-};
+    return (int) 1;
+
+done:
+    return 0;
+}
 
 
 //limpa a camada /microkernel
 int gcMICROKERNEL (void)
-{	
-	return 0;
-};
+{
+    return 0;
+}
 
 
 //limpa a camada /hal
 int gcHAL (void)
-{	
-	return 0;
+{
+    return 0;
 }
 
 
@@ -1278,7 +1303,7 @@ int gcHAL (void)
 int gc (void){
 	
     int Status;
-	
+
 //clearGramadoLayer:
 
     Status = (int) gcGRAMADO ();
@@ -1328,8 +1353,8 @@ int gc (void){
 	}
 
 	// Done.
-	
-    return 0;	
+
+    return 0;
 }
 
 

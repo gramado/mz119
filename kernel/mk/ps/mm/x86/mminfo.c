@@ -10,16 +10,15 @@
 #include <kernel.h>
 
 
- 
-
 
 void mmShowPDE (int index, unsigned long pd_va){
 
 	//#todo: filtros.
-	
+
 	if (pd_va == 0)
 		return;
-	
+
+
 	unsigned long *dir = (unsigned long *) pd_va;
 	
 	//#todo: filtros.
@@ -219,17 +218,18 @@ void memoryShowMemoryInfo (void){
  */
 
 void show_memory_structs (void){
-	
-	int i = 0;
-    struct mmblock_d *B;	
-	
+
+    int i = 0;
+    struct mmblock_d *B;
+
+
 	// Title.
 	printf("Memory Block Information:\n\n");
 	//printf("=========================\n");
 	
-	//Mostra os heap da lista.		
-	while (i < MMBLOCK_COUNT_MAX) 
-	{
+	//Mostra os heap da lista.
+    while (i < MMBLOCK_COUNT_MAX) 
+    {
         B = (void *) mmblockList[i];
 		
 		i++;
@@ -246,7 +246,8 @@ void show_memory_structs (void){
 		};
 		//Nothing.
     };
-		
+
+
 	// Aqui podemos aprentar informações sobre o heap.
 	// como tamanho, espaço disponível, ponteiro, à que processo ele 
 	// pertence.
@@ -262,18 +263,20 @@ void show_memory_structs (void){
  *     Rotina de teste. */ 
 
 void testingPageAlloc (void){
-	
-	int Index;
+
+    int Index;
     struct page_d *p;
-	
-	void *RetAddress;
-	unsigned long fileret;
-	
+
+    void *RetAddress;
+    unsigned long fileret;
+
+
 	//#bugbug .;;;: mais que 100 dá erro ...
 	//@todo: melhorar o código de alocação de páginas.
 	//printf("testingPageAlloc: #100\n");
-	printf("testingPageAlloc:\n");
-	
+    printf ("testingPageAlloc:\n");
+
+
 	//
 	// =============================================
 	//
@@ -294,10 +297,10 @@ void testingPageAlloc (void){
 		
 	//printf ("BaseOfList={%x} Showing #32 \n", RetAddress );
     
-	// show info.	
-	
-	for ( Index=0; Index < 32; Index++ )   	
-	{  
+	// show info.
+
+    for ( Index=0; Index < 32; Index++ ) 
+    {  
         p = (void *) pageAllocList[Index]; 
 		
 		if ( (void *) p == NULL )
@@ -310,16 +313,17 @@ void testingPageAlloc (void){
 		    printf ("id={%d} used={%d} magic={%d} free={%d} handle={%x} next={%x}\n", 
 				p->id, p->used, p->magic, p->free, p, p->next ); 	
 		}
-	};
-	
+    };
+
+
     //===================================
 	 
 	fileret = fsLoadFile (  VOLUME1_FAT_ADDRESS, VOLUME1_ROOTDIR_ADDRESS, 
 	              "BMP1    BMP", (unsigned long) RetAddress ); 
-				  
+
 	if (fileret != 0)
 	{
-		printf("BMP1    BMP FAIL\n");
+		printf ("BMP1    BMP FAIL\n");
 		//escrevendo string na janela
 	    //draw_text( gui->main, 10, 500, COLOR_WINDOWTEXT, "DENNIS  BMP FAIL");
         //draw_text( gui->main, 10, 500, COLOR_WINDOWTEXT, "FERRIS  BMP FAIL");
@@ -329,52 +333,63 @@ void testingPageAlloc (void){
 	}else{
 		
 	    bmpDisplayBMP ( (char *) RetAddress, 20, 20 );	
-	    refresh_rectangle ( 20, 20, 16, 16 );		
+	    refresh_rectangle ( 20, 20, 16, 16 );
 	};
-    //===================================							
+    //===================================	
 	
 	
 	printf ("pc-mm-testingPageAlloc: *hang\n");
     die ();
-	
+
+
 done:
-  // Nothing for now.	
+  // Nothing for now.
+
 fail:
-	refresh_screen ();
-    return;	
+    refresh_screen ();
+    return;
 }
 
 
 //mostra as estruturas de pagina usadas para paginação no pagedpool.
 void showFreepagedMemory ( int max ){
 
-	int Index;
-	struct page_d *p;
-	
-    if (max < 0 || max >= 1024 )
-		return;
+    int Index;
+    struct page_d *p;
 
-	for ( Index=0; Index < max; Index++ )   	
-	{  
+
+    if (max < 0 || max >= 1024 )
+        return;
+
+
+    for ( Index=0; Index < max; Index++ )
+    {  
         p = (void *) pageAllocList[Index]; 
-		
+
 		//if ( (void *) p == NULL )
 		//{
 		//    printf("null\n");	 
 		//}
-	    
-		if ( (void *) p != NULL )
-		{
+
+        if ( (void *) p != NULL )
+        {
 		    printf ("id=%d free=%d frameno=%d ref=%d \n", 
 				p->id, 
 				p->free, 
 				p->frame_number,
-				p->ref_count ); 	
-		}
-	};
-	
-	refresh_screen ();	
+				p->ref_count );
+        }
+    };
+
+
+    refresh_screen ();
 }
+
+
+//
+// End.
+//
+
 
 
 

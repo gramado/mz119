@@ -38,21 +38,19 @@ static inline void spawnSetCr3 ( unsigned long value ){
  */
  
 void KiSpawnTask (int id){
-	
-	if ( id < 0 )
-	{
-		printf ("spawn-KiSpawnTask: TID=%d", id );
-		
-		die ();
-	}
-	
-	spawn_thread (id);
 
-	panic ("spawn-KiSpawnTask");
-	
-	//
+    if ( id < 0 )
+    {
+        printf ("spawn-KiSpawnTask: TID=%d", id );
+        die ();
+    }
+
+
+    spawn_thread (id);
+
+    panic ("spawn-KiSpawnTask");
+    
 	// No return!
-	//
 }
 
 
@@ -64,6 +62,10 @@ void KiSpawnTask (int id){
  *     @todo: Mudar para spawnThread(int tid).
  */ 
  
+	// #bugbug
+	// Archtecture dependent stuff.
+	// x86.
+ 
 void spawn_thread (int id){
 	
 	int Status;
@@ -74,11 +76,11 @@ void spawn_thread (int id){
 	// #todo: 
 	// Filtrar tid.
 
-	if ( id < 0 )
-	{
-		//#todo
-	    return;	
-	}
+	//#todo: mensagem de erro.
+    if ( id < 0 )
+    {
+        return;
+    }
 
 
 	//
@@ -87,23 +89,23 @@ void spawn_thread (int id){
 
 	// Pega e salva a atual.
 	// Será usada no caso de falha.
-	
-	Current = (void *) threadList[current_thread];
+
+    Current = (void *) threadList[current_thread];
 
 	// #importante:
 	// Struct para a thread que será executada.
 	// O id foi passado via argumento.
 
-	spawn_Pointer = (void *) threadList[id]; 
-	
-	if ( (void *) spawn_Pointer == NULL )
-	{
+    spawn_Pointer = (void *) threadList[id]; 
+
+    if ( (void *) spawn_Pointer == NULL )
+    {
 	    printf ("spawn_thread: Pointer TID={%d}", id );
 		die();
 		
-	} else {
-	    
-		// State ~ Checa o estado da thread.	 
+    } else {
+
+		// State ~ Checa o estado da thread.
         
 		if ( spawn_Pointer->state != STANDBY )
 		{
@@ -117,30 +119,30 @@ void spawn_thread (int id){
         if ( spawn_Pointer->saved == 1 )
 		{
             printf ("spawn_thread: Saved TID={%d}\n", id );
-		    die();
+		    die ();
         };  
 		
 		
 	    // ??
 		// More checks ?
-	};	
-	
-	
+    };
+
+
     //
     // Preparar a thread para executar.
     //
 
-	
+
 	// Context:
 	// Se a thread NÃO está com contexto salvo, então pode ser que ela nunca 
 	// tenha sido executada.
 
-	if ( spawn_Pointer->saved == 0 )
-	{
-		
+    if ( spawn_Pointer->saved == 0 )
+    {
+
 		// Configura a variável global.
-		
-	    current_thread = (int) spawn_Pointer->tid;    
+
+        current_thread = (int) spawn_Pointer->tid;    
 		
 		// Configura a próxima.
 		// A next será a antiga current salva anteriormente.
@@ -156,7 +158,7 @@ void spawn_thread (int id){
 			
 			queue_insert_data ( queue, (unsigned long) spawn_Pointer, 
 			    QUEUE_RUNNING );
-		};	
+		};
 		
 		
 		// Destrava o mecanismo de taskswitch.
@@ -164,50 +166,50 @@ void spawn_thread (int id){
 		
 		set_task_status(UNLOCKED);    
 	    scheduler_unlock();	           
-		
+
 	    //@todo: Continua ...
-	};
+    };
 
 
 	// #importante
 	// Se o status estiver diferente de RUNNING, então algo 
 	// deu errado na preparação.
-	
-	if ( spawn_Pointer->state != RUNNING )
-	{
-        printf ("* spawn_thread: State TID={%d}\n", id );
-		die ();
-	};
-	
-	
-	// Configura a variável global.
-	
-	current_process = spawn_Pointer->process->pid;
-	
 
-	IncrementDispatcherCount (SELECT_INITIALIZED_COUNT);
-	
-	
+    if ( spawn_Pointer->state != RUNNING )
+    {
+        printf ("* spawn_thread: State TID={%d}\n", id );
+        die ();
+    }
+
+
+	// Configura a variável global.
+
+    current_process = spawn_Pointer->process->pid;
+
+
+    IncrementDispatcherCount (SELECT_INITIALIZED_COUNT);
+
+
 	//Set cr3 and flush TLB.
-	
-	spawnSetCr3 ( (unsigned long) spawn_Pointer->DirectoryPA );
-	
-	asm ("movl %cr3, %eax");
-	asm ("nop");
-	asm ("nop");
-	asm ("nop");
-	asm ("nop");
+
+    spawnSetCr3 ( (unsigned long) spawn_Pointer->DirectoryPA );
+
+    asm ("movl %cr3, %eax");
+    asm ("nop");
+    asm ("nop");
+    asm ("nop");
+    asm ("nop");
     asm ("movl %eax, %cr3");
-	
-	
-	
+
+
+
 	//#bugbug
 	//mensagem e refesh screeen dao problema nesse momento.
 	//vamos tentar atualizar a gdt sem emitir mensagem.
 	
 	
 	//#test
-	//printf ("Test ");	
+	//printf ("Test ");
 	//printf ("updating gdt ...");
 	//refresh_screen();
 	
@@ -247,15 +249,16 @@ void spawn_thread (int id){
                   " mov %ax, %es \n"
                   " mov %ax, %fs \n"
                   " mov %ax, %gs \n");  
-				 
-	//unsigned long argc = 1234;	
+
+
+	//unsigned long argc = 1234;
 	//#test
-    //Tentando enviar linha de comando para crt0 ou main() do aplicativo.	
+	//Tentando enviar linha de comando para crt0 ou main() do aplicativo.
 	//#importante: O aplicativo não pode ler uma string que esteja escrito 
 	//em kernel mode, então não adianta passar o ponteiro.
-	
-	//asm("pushl %0" :: "r" ((unsigned long) ? ) : "%esp");			 
-	//asm("pushl %0" :: "r" ((unsigned long) argc ) : "%esp");  //argc 	
+
+	//asm("pushl %0" :: "r" ((unsigned long) ? ) : "%esp");
+	//asm("pushl %0" :: "r" ((unsigned long) argc ) : "%esp");  //argc 
 
 	//argc 
 	//Ok. isso funcionou ... main no aplicativo recebeu argc do crt0.
@@ -265,7 +268,7 @@ void spawn_thread (int id){
 	//Mudando eflags para iopl 3 antes de usarmos a pilha.
 	
 	asm (" pushl $0x3000 \n");
-	asm (" popfl \n");	
+	asm (" popfl \n");
 	
 	// #bugbug
 	// Os carinhas do gcc 9.1.0 resolveram sacanear.
@@ -274,13 +277,15 @@ void spawn_thread (int id){
 	// "Listening the stack pointer register in a clobber list is deprecated."  
 	
 	
-	//Pilha para iret.
+	// Pilha para iret.
+    // ss, esp, eip, cs, eip;
+
     /*
-    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->ss)     : "%esp");    //ss.
-    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->esp)    : "%esp");    //esp.
-    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->eflags) : "%esp");    //eflags.
-    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->cs)     : "%esp");    //cs.
-    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->eip)    : "%esp");    //eip.
+    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->ss)     : "%esp"); 
+    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->esp)    : "%esp"); 
+    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->eflags) : "%esp"); 
+    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->cs)     : "%esp"); 
+    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->eip)    : "%esp"); 
     */
 
 	//Pilha para iret.
@@ -288,34 +293,31 @@ void spawn_thread (int id){
     asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->esp)    );    //esp.
     asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->eflags) );    //eflags.
     asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->cs)     );    //cs.
-    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->eip)    );    //eip.	
+    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->eip)    );    //eip.
 
-    // #importante
+	// #importante
 	// Precismos disso pois foi o irq0 quem nos trouxe aqui.
-	
+
 	asm ("movb $0x20, %al \n");
 	asm ("outb %al, $0x20 \n");
-	
+
+
 	//
 	// Fly!
 	//
-	
+
 	asm ("iret \n");    
 
-	
-	//
+    /*
 	// # teste sujo
-	//
-	
 	//tss
 	//isso será um test para taskswitch via hardware,
 	//precisa habilitar flag nt antes,
-	//asm  ("ljmp $0x2B, $0x401000 \n\t");	
+	//asm  ("ljmp $0x2B, $0x401000 \n\t");
 	//asm ("sti  \n"); 
-	
+    */
 
-	
-	panic ("spawn_thread");
+    panic ("spawn_thread");
 }
 
 
