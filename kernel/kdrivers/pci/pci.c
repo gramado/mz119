@@ -1254,13 +1254,12 @@ pciHandleDevice ( unsigned char bus,
 	//printf ("bus=%d dev=%d fun=%d \n", bus, dev, fun);
 
 
-
     D = (void *) malloc ( sizeof( struct pci_device_d  ) );
 
     if ( (void *) D == NULL )
     {
         panic ("pciHandleDevice: D \n");
-        //return -1;
+        //return (int) -1;
 
     }else{
 
@@ -1298,22 +1297,22 @@ pciHandleDevice ( unsigned char bus,
 		D->irq_line = (unsigned char) pciGetInterruptLine(bus, dev);
 		D->irq_pin = (unsigned char) pciGetInterruptPin(bus, dev);
 
-
 		D->next = NULL;   //Next device.
 
-
+		//
 		// Nic Intel.
+		//
 
         if ( (D->Vendor == 0x8086)  && 
              (D->Device == 0x100E ) && 
              (D->classCode == PCI_CLASSCODE_NETWORK) )
         {
-			 //serial debug
-             debug_print ("0x8086:0x100E found \n"); 
-			//printf("b=%d d=%d f=%d \n", D->bus, D->dev, D->func );
-			//printf("82540EM Gigabit Ethernet Controller found\n");
+            //serial debug
+            debug_print ("0x8086:0x100E found \n"); 
+            //printf("b=%d d=%d f=%d \n", D->bus, D->dev, D->func );
+            //printf("82540EM Gigabit Ethernet Controller found\n");
 
-			//See: network/nicintel.c
+            //See: network/nicintel.c
 
             Status = (int) e1000_init_nic ( (unsigned char) D->bus, 
                                (unsigned char) D->dev, 
@@ -1321,25 +1320,24 @@ pciHandleDevice ( unsigned char bus,
                                (struct pci_device_d *) D );
 
 
-			 if (Status == 0)
-			 {
-			      //# irq and reset.
-				 
-				  //printf("8086:100e initialized\n");
-			      
-				  e1000_setup_irq();
-				  e1000_reset_controller();
-			      
-				  //printf("8086:100e done\n");
-				  //printf("#debug breakpoint");
-				  //refresh_screen();
-				  //while(1){} 
-				 
-		     }else{
+            if (Status == 0)
+            {
+                // # irq and reset.
+                //printf("8086:100e initialized\n");
 
-                  printf ("pciHandleDevice: #debug NIC");
-                  die();
-             }
+                e1000_setup_irq ();
+                e1000_reset_controller ();
+
+                //printf("8086:100e done\n");
+                //printf("#debug breakpoint");
+                //refresh_screen();
+                //while(1){} 
+ 
+            }else{
+
+                printf ("pciHandleDevice: #debug NIC");
+                die ();
+            };
         }
 
 

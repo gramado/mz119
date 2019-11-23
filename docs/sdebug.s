@@ -13,11 +13,12 @@ fsInit:
 init_architecture_independent
 init_executive:
 init_pci:
+>>>> pci_setup_devices:
 0x8086:0x100E found 
 e1000_init_nic:
 e1000_setup_irq
 e1000_reset_controller
-pci_setup_devices: Done
+>>>> pci_setup_devices: Done
 init_executive: diskATADialog
 init_architecture_dependent
 create_logon
@@ -37,6 +38,4 @@ fsLoadFile:
 fsLoadFile:
 fsLoadFile:
 x86main: done
-fsLoadFile:
-fsLoadFile:
 fsLoadFile:

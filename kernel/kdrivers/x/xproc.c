@@ -766,10 +766,10 @@ system_procedure ( struct window_d *window,
                 //Testes diversos.
                 case VK_F6:
 
-                    test_move_window();
-                    
+                     testNIC ();
+
+                    //test_move_window();
                     //hal_test_speaker();
-                    //testNIC ();
 
 					//#test
 					//fsList("volume1");

@@ -355,6 +355,7 @@ handle_ipv6 ( struct intel_nic_info_d *nic,
 
 
 /*
+ **********************************************************
  * testNIC:
  *     Testando o funcionamento das rotinas do drivers.
  *     Isso bota ele pra funcionar depois de inicializado.
@@ -362,19 +363,17 @@ handle_ipv6 ( struct intel_nic_info_d *nic,
 
 // #IMPORTANTE
 // Chamada por F6 no procedimento de janela do sistema.
+// Essa rotina aciona uma flag que (DESTRAVA) o handler da interrupção.
 
 void testNIC (void){
 
     printf ("\n\n ============ TEST NIC ================= \n\n"); 
-    //printf("\n\ntestNIC:\n\n"); 
-    printf ("testNIC: Setup flag \n");
-    printf ("testNIC: Sending arp request \n");
-    printf ("\n\n #debug: e1000_irq_count=%d \n\n", e1000_irq_count );
 
+    //
+    // Flag. (UNLOCK)
+    //
 
-
-	// Testando apenas o send 
-
+    printf ("testNIC: Unlock interrupt handler \n");
 	e1000_interrupt_flag = 1;
 	
 	uint8_t source_ip_address[4];
@@ -401,6 +400,8 @@ void testNIC (void){
 	
 	//mudar network.
 	//tem que ter uma abstração que selecione o nic atual
+
+    printf ("testNIC: Sending arp request \n");
 	SendARP ( source_ip_address, target_ip_address, target_mac_address );
 	
 
@@ -415,21 +416,23 @@ void testNIC (void){
     xxxdata[3] = 4;
 
 
-	//#todo: testar isso;
+	// #todo: 
+	// testar isso;
+	printf ("testNIC: Sending IPV4 \n");
     SendIPV4 ( source_ip_address, target_ip_address, 
         target_mac_address, xxxdata );
+
 
 	//se tivermos informações para mostrar é sinal que a inicialização do kernel 
 	//funcionou. 
 	
-	//printf("\n\n");
-	//show_current_nic_info ();
-	
+
 	//printf("\n\n");
 	//pciInfo ();
 
+	//printf("\n\n");
+	show_current_nic_info ();
 
-    //printf ("testNIC: Done\n");
     printf ("\n\n ============ TEST DONE ================= \n\n"); 
 
     refresh_screen ();

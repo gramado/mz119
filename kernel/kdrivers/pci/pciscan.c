@@ -49,6 +49,9 @@ int pci_setup_devices (void){
 
 
 	// #debug
+	
+	//serial debug
+    debug_print (">>>> pci_setup_devices:\n");
 
     kprintf ("pci_setup_devices:\n");
     //kprintf ("Detecting PCI Devices..\n");
@@ -92,13 +95,12 @@ int pci_setup_devices (void){
     //#debug
     //printf("Detecting PCI Devices completes..\n");
 
-	//serial debug
-    debug_print ("pci_setup_devices: Done\n");
-
 	//refresh_screen();
 	//while(1){}
 
-
+	//serial debug
+    debug_print (">>>> pci_setup_devices: Done\n");
+    
     return 0; 
 }
 

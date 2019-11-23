@@ -212,7 +212,7 @@ void create_gui (void){
 
         systemCreateSystemMenuBar ();
 #ifdef KERNEL_VERBOSE
-        printf ("System menubar ok\n");
+        printf ("wm: System menubar ok\n");
 #endif
 
 

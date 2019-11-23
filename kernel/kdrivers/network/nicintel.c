@@ -399,6 +399,7 @@ void xxxe1000handler (void){
     int i;
 
 
+
 	// #importante:
 	// #flag 
 	// Essa flag precisa ser acionada para a rotina funcionar.
@@ -406,7 +407,17 @@ void xxxe1000handler (void){
 
 
 	if ( e1000_interrupt_flag != 1 )
+	{
+		//#debug
+        printf ("xxxe1000handler: *interrrupt\n");
+        refresh_screen();
 		return;
+	}else{
+		//#debug
+        printf ("xxxe1000handler: *interrrupt\n");
+        refresh_screen();
+	};
+
 
 
 
