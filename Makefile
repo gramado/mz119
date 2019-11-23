@@ -164,7 +164,7 @@ ifeq ($(ARCH),x86)
 	logon.o \
 	input.o output.o terminal.o \
 	desktop.o room.o userenv.o usession.o \
-	kgws.o \
+	kgwm.o \
 	vfs.o 
 	
 	
@@ -384,6 +384,7 @@ compile-kernel:
 
 	# kservers/kgwm - Kernel Gramado Window Manager.
 
+	gcc -c kernel/kservers/kgwm/kgwm.c  -I include/ $(CFLAGS) -o kgwm.o
 	gcc -c kernel/kservers/kgwm/wm.c    -I include/ $(CFLAGS) -o wm.o
 
 
@@ -419,9 +420,9 @@ compile-kernel:
 	gcc -c kernel/kservers/kgws/user/room.c      -I include/ $(CFLAGS) -o room.o
 	gcc -c kernel/kservers/kgws/user/usession.c  -I include/ $(CFLAGS) -o usession.o
 	
-	gcc -c kernel/kservers/kgws/kgws.c  -I include/ $(CFLAGS) -o kgws.o
-	
-	#system	
+
+
+	#system
 	gcc -c kernel/system/create.c  -I include/  $(CFLAGS) -o create.o
 
 
