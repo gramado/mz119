@@ -114,9 +114,8 @@ void *gde_services ( unsigned long number,
 	//
 
 	//Args. (strings)
-	unsigned char *stringZ = (unsigned char *) arg2;
-	unsigned char *stringZZ = (unsigned char *) arg3;
-
+    unsigned char *stringZ = (unsigned char *) arg2;
+    unsigned char *stringZZ = (unsigned char *) arg3;
 
     unsigned long *a2 = (unsigned long*) arg2;
     unsigned long *a3 = (unsigned long*) arg3;
@@ -126,18 +125,17 @@ void *gde_services ( unsigned long number,
     char *aa3 = (char *) arg3;
     char *aa4 = (char *) arg4;
 
-
     char *tokenList[8];
 
     *tokenList = (char *) arg3;
 
 
 	//Char and string support.
-	char *argChar;
-	unsigned char* argString;
+    char *argChar;
+    unsigned char* argString;
 
 	//Retorno.
-	void *Ret;
+    void *Ret;
 
 
 	//Function(CreateWindow)
@@ -146,33 +144,31 @@ void *gde_services ( unsigned long number,
 	//arg4=Name
 	
 	//Window.
-	unsigned long WindowType;      //Tipo de janela.
-	unsigned long WindowStatus;    //Status, ativa ou não.
-	unsigned long WindowRect;
-	unsigned long WindowView;      //Min, max.
-	char *WindowName;            
+    unsigned long WindowType;      //Tipo de janela.
+    unsigned long WindowStatus;    //Status, ativa ou não.
+    unsigned long WindowRect;
+    unsigned long WindowView;      //Min, max.
+    char *WindowName;            
 
 
 	//
 	// Window stuffs:
 	//
-	
-	int ActiveWindow;          //Current id.
-	
-	struct window_d *hWnd;
+
+    int ActiveWindow;          //Current id.
+
+    struct window_d *hWnd;
 	//struct window_d *cWnd;     //Current window.
-	//struct window_d *aWnd;     //Active Window. 	
-	struct window_d *focusWnd;   //Janela com foco de entrada.
+	//struct window_d *aWnd;     //Active Window. 
+    struct window_d *focusWnd;   //Janela com foco de entrada.
     struct window_d *NewWindow;  //Ponteiro para a janela criada pelo serviço.
-	
-	
-	//void *kHWND;
-	void *kMSG;
-	//void *kLONG1;
-	//void *kLONG2;
+
+
+    //void *kHWND;
+    void *kMSG;
+    //void *kLONG1;
+    //void *kLONG2;
 	//...
-
-
 
 
 	//Para identificarmos qual processo e qual thread está chamando.
@@ -181,22 +177,19 @@ void *gde_services ( unsigned long number,
     struct thread_d *t;
 
 
-
 	//generic file pointer
-	FILE *__fp;
-	
+    FILE *__fp;
+
 	//bmp file pointer.
-	FILE *__bmfp;
-
-
+    FILE *__bmfp;
 
 
 	//
 	// Setup.
 	//
-	
+
 	//Window.
-	hWnd = (void *) arg2;
+    hWnd = (void *) arg2;
 
 
 	// #todo: 
@@ -207,14 +200,14 @@ void *gde_services ( unsigned long number,
 	//Obs: Emulando telas de celulares.
 	// 320x480.
 	// Terminal abaixo dos diálogos.
-	unsigned long WindowX = (2*(800/20));  //100;   >          
-	unsigned long WindowWidth  = 320;               
-	
-    unsigned long WindowY = (2*(600/20)); //100;   V                
+    unsigned long WindowX = (2*(800/20));  //100;   >  
+    unsigned long WindowWidth  = 320;  
+
+    unsigned long WindowY = (2*(600/20)); //100;   V  
     unsigned long WindowHeight = 480;  
-	
-	unsigned long WindowColor = COLOR_WINDOW;  
-	unsigned long WindowClientAreaColor = COLOR_WINDOW;  
+
+    unsigned long WindowColor = COLOR_WINDOW;  
+    unsigned long WindowClientAreaColor = COLOR_WINDOW;  
 
     struct rect_d *r;
 
@@ -224,41 +217,42 @@ void *gde_services ( unsigned long number,
 	//
 	// ## message support ##
 	//
-	
+
 	//o endereço do array passado pelo aplicativo
 	//usaremos para enviar uma mensagem com 4 elementos.
-	unsigned long *message_address = (unsigned long *) arg2;
-	
-	unsigned char SC;
+    unsigned long *message_address = (unsigned long *) arg2;
+
+    unsigned char SC;
 	//struct window_d *wFocus;
-	
-	int desktopID;
-	
-	
+
+    int desktopID;
+
+
 	//
 	// ================================
 	// save context.
 	//
-	
+
+
     //save_current_context ();
     //Current->saved = 1; 	//#todo
 
 	//
 	// ================================
 	// Color scheme.
-	//	
+	//
 	
-	
+
 	// *Importante: 
 	// Checando se o esquema de cores está funcionando.
-	
-	if ( (void *) CurrentColorScheme == NULL )
-	{
+
+    if ( (void *) CurrentColorScheme == NULL )
+    {
 		printf ("gde_services: CurrentColorScheme");
 		die ();
 	
-	}else{
-		
+    }else{
+
 		if ( CurrentColorScheme->used != 1 || 
 		     CurrentColorScheme->magic != 1234 )
 		{
@@ -266,8 +260,7 @@ void *gde_services ( unsigned long number,
 		    die ();
 		};
 		//Nothing.
-	};
-
+    };
 
 
 	//Configurando cores.
@@ -281,180 +274,182 @@ void *gde_services ( unsigned long number,
 	// #bug
 	// Se a área de trabalho for válida, usaremos suas dimensões, 
 	// caso não seja, temos um problema.
-	
-	if (gui->main == NULL)
-	{
-		panic ("gde_services: gui->main");
-	};
 
+    if (gui->main == NULL)
+    {
+        panic ("gde_services: gui->main");
+    }
 
 
 
 	//
 	// ## Create Window ##
 	//
-	
+
 	// Serviço especial. Antes dos outros.
-	if ( number == SYS_118 )
-	{
-	    return (void *) serviceCreateWindow ( (char *)  arg2 );
-	}
-	
+    if ( number == SYS_118 )
+    {
+        return (void *) serviceCreateWindow ( (char *)  arg2 );
+    }
+
 	//atualiza as strings de uma statusbar de uma janela.
-	if ( number == 300 )
-	{
-	    return (void *) UpdateStatusBar ( (struct window_d *) arg2, 
+    if ( number == 300 )
+    {
+        return (void *) UpdateStatusBar ( (struct window_d *) arg2, 
                             (unsigned char *) arg3, 
-		                    (unsigned char *) arg4 );
-	}
-	
+                            (unsigned char *) arg4 );
+    }
+
+
 	//
 	// x server and wm support
 	//
-	
-	
+
+
 
 	// 512 - get x server PID
-	if ( number == SYS_GET_X_SERVER )
-	{
-	    return (void *) g_xserver_pid;
-	}
-	
+    if ( number == SYS_GET_X_SERVER )
+    {
+        return (void *) g_xserver_pid;
+    }
+
 	// 513 - set x server PID
-	if ( number == SYS_SET_X_SERVER )
-	{		
+    if ( number == SYS_SET_X_SERVER )
+    {
 		g_xserver_pid = (int) arg2;
 		return NULL;
-	}
-	
-	// 514 - get wm PID
-	if ( number == SYS_GET_WM_PID )
-	{
-	    return (void *) g_wm_pid;
-	}
-	
-	// 515 - set wm PID
-	if ( number == SYS_SET_WM_PID )
-	{
-	    g_wm_pid = (int) arg2;
-		return NULL;
-	}	
-	
-    // 516 - show x server info	
-	if ( number == SYS_SHOW_X_SERVER_INFO )
-	{
-		kprintf ("x server info: PID=%d \n", g_xserver_pid);
-	    refresh_screen ();	
-		return NULL;
-	}
+    }
 
-    // 517 - show wm info		
-	if ( number == SYS_SHOW_WM_INFO )
-	{
-		kprintf ("window manager info: PID=%d \n", g_wm_pid);
-	    refresh_screen ();	
-		return NULL;		
-	}
+	// 514 - get wm PID
+    if ( number == SYS_GET_WM_PID )
+    {
+        return (void *) g_wm_pid;
+    }
+
+	// 515 - set wm PID
+    if ( number == SYS_SET_WM_PID )
+    {
+        g_wm_pid = (int) arg2;
+        return NULL;
+    }
+
+    // 516 - show x server info	
+    if ( number == SYS_SHOW_X_SERVER_INFO )
+    {
+        kprintf ("x server info: PID=%d \n", g_xserver_pid);
+        refresh_screen ();
+        return NULL;
+    }
+
+    // 517 - show wm info
+    if ( number == SYS_SHOW_WM_INFO )
+    {
+        kprintf ("window manager info: PID=%d \n", g_wm_pid);
+        refresh_screen ();
+        return NULL;
+    }
 
 	// 600 - dup
-	if ( number == 600 )
-	{
-	    return (void *) sys_dup ( (int) arg2 );
-	}
+    if ( number == 600 )
+    {
+        return (void *) sys_dup ( (int) arg2 );
+    }
 
 	// 601 - dup2
-	if ( number == 601 )
-	{
-	    return (void *) sys_dup2 ( (int) arg2, (int) arg3 );	
-	}
+    if ( number == 601 )
+    {
+        return (void *) sys_dup2 ( (int) arg2, (int) arg3 );
+    }
 
 	// 602 - dup3
-	if ( number == 602 )
-	{
-	    return (void *) sys_dup3 ( (int) arg2, (int) arg3, (int) arg4 );	
-	}
-	
+    if ( number == 602 )
+    {
+        return (void *) sys_dup3 ( (int) arg2, (int) arg3, (int) arg4 );
+    }
+
 	// 605 - fileno
-	if ( number == 605 )
-	{
-		return (void *) fileno ( (FILE *) arg2 );
-	}	
+    if ( number == 605 )
+    {
+        return (void *) fileno ( (FILE *) arg2 );
+    }
 
     // 606 - ungetc
-	if ( number == 606 )
-	{
-		return (void *) ungetc ( (int) arg2, (FILE *) arg3 );
-	}		
-	
+    if ( number == 606 )
+    {
+        return (void *) ungetc ( (int) arg2, (FILE *) arg3 );
+    }
+
 	// 607 - fread
-	if ( number == 607 )
-	{
+    if ( number == 607 )
+    {
 		//return (void *) fread ( (void *) ptr, (size_t) 1, (size_t) n, (FILE *) fp );
-		return (void *) fread ( (void *) arg2, (size_t) 1, (size_t) arg3, (FILE *) arg4 );
-	}		
-	
-	
+        return (void *) fread ( (void *) arg2, (size_t) 1, (size_t) arg3, (FILE *) arg4 );
+    }
+
+
 	//608 - fwrite
-	if ( number == 608 )
-	{
+    if ( number == 608 )
+    {
         //size_t fwrite (const void *ptr, size_t size, size_t n, FILE *fp) 
-		return (void *) fwrite ( (const void *) arg2, (size_t) 1, (size_t) arg3, (FILE *) arg4 );
-	}	
-	
+        return (void *) fwrite ( (const void *) arg2, (size_t) 1, (size_t) arg3, (FILE *) arg4 );
+    }
+
 	//609
-	if ( number == 609 )
-	{
-		rewind ( (FILE *) arg2 );
-		return NULL;
-	}	
-	
-	
+    if ( number == 609 )
+    {
+        rewind ( (FILE *) arg2 );
+        return NULL;
+    }
+
+
 	//610 - setbuf
-	if ( number == 610 )
-	{
+    if ( number == 610 )
+    {
 		//void setbuf(FILE *stream, char *buf);
-		setbuf ( (FILE *) arg2, (char *) arg3 );
-		return NULL;
-	}	
-	
+        setbuf ( (FILE *) arg2, (char *) arg3 );
+        return NULL;
+    }
+
 	//611 - setbuffer
-	if ( number == 611 )
-	{
+    if ( number == 611 )
+    {
 		//void setbuffer(FILE *stream, char *buf, size_t size);
-		setbuffer ( (FILE *) arg2, (char *) arg3, (size_t) arg4 );
-	    return NULL;
-	}
-	
+        setbuffer ( (FILE *) arg2, (char *) arg3, (size_t) arg4 );
+        return NULL;
+    }
+
 	//612 - setlinebuf
-	if ( number == 612 )
-	{
+    if ( number == 612 )
+    {
 		//void setlinebuf(FILE *stream);
-		setlinebuf ( (FILE *) arg2 );
-		return NULL;
-	}
-	
+        setlinebuf ( (FILE *) arg2 );
+        return NULL;
+    }
+
+
 	//613 - setvbuf
 	//#todo: precisamos do argumento size.
-	if ( number == 613 )
-	{
+    if ( number == 613 )
+    {
 		//int setvbuf(FILE *stream, char *buf, int mode, size_t size);
-		return (void *) setvbuf ( (FILE *) arg2, (char *) arg3, (int) arg4, (size_t) 512 );
-	}	
-	
-	
+        return (void *) setvbuf ( (FILE *) arg2, (char *) arg3, (int) arg4, (size_t) 512 );
+    }
+
+
 	//...
 
-	
+
 	// 700 - atualiza o fluxo padrão do processo atual
     if ( number == 700 )
-	{
+    {
 		//stdio.c
-	    return (void *) update_standard_stream ( (int) current_process, 
-						    (FILE *) arg2, 
-							(FILE *) arg3, 
-							(FILE *) arg4 );
-	}
-	
+        return (void *) update_standard_stream ( (int) current_process, 
+                            (FILE *) arg2, 
+                            (FILE *) arg3, 
+                            (FILE *) arg4 );
+    }
+
+
     //
     // network stuff
     //
@@ -474,54 +469,57 @@ void *gde_services ( unsigned long number,
 	//process.c
 	
     if ( number == 900 )
-    {   
-		return (void *) do_clone_execute_process ( (char *) arg2 );
+    { 
+        return (void *) do_clone_execute_process ( (char *) arg2 );
     }
-	
-  
+
+
 	// t901
 	//clona um processo, retorna par ao pai e inicializa o processo
 	//filho do seu entrypoint. (#test)
 	//process.c
-	
+
     if ( number == 901 )
     {
         return (void *) do_fork_process2 ();
     }
-	
+
 	// t18
-    // O arg2 é o PID.
+	// O arg2 é o PID.
 	// devemos retornar o ponteiro para o stdout do terminal
 	// associado com o aplicativo.
     if ( number == 1000 )
-    {	
+    {
 		// #provisório
 		// Isso é o mesmo que current_stdout usado pelo teclado.
         return (void *) CurrentTTY->ring0_stdout;
     }
-	
-	
+
+
 	//
     if ( number == 1001 )
-	{
+    {
 		printf ("service1001: configurando tty stream \n",arg2);
 		
 		CurrentTTY->stdout = (FILE *) arg2;
 		stdout = (FILE *) arg2;
 		
 		//#provisório
-        return (void *) NULL;	
-	}
-	
+        //return (void *) NULL;
+        return NULL;
+    }
+
+
 	// pega um char na stream, o último que foi pego,
 	// não o último que foi colocado.
 	// #importante: uma no terminal deve chamar isso.
 	// mas o terminal precisa ser alertado de que tem mensagens
 	//para ele o tty, então modemos enviar uma MSG_TTY?? vaisando que
 	//o terminal pode pegar sua mensagem na tty através dessa chamada aqui.
-	int xxx_ch;
-    if ( number == 1002 )	
-	{
+
+    int xxx_ch;
+    if ( number == 1002 )
+    {
 		//pega
 		xxx_ch = (int) *CurrentTTY->ring0_stdout_last_ptr;
 		
@@ -536,111 +534,111 @@ void *gde_services ( unsigned long number,
 		}
 		
 		//retorna o que pegou.
-		return (void *) xxx_ch;
+        return (void *) xxx_ch;
     } 
-	
-	
-	//set terminal pid.
-	if ( number == 1003 )
-	{
-		CurrentTTY->terminal_pid = (int) arg2;
-		return NULL;
-	}
+
+
+	// Set terminal PID.
+    if ( number == 1003 )
+    {
+        CurrentTTY->terminal_pid = (int) arg2;
+        return NULL;
+    }
 
 	//get terminal pid.
-	if ( number == 1004 )
-	{
-		return (void *) CurrentTTY->terminal_pid;
-	}
+    if ( number == 1004 )
+    {
+        return (void *) CurrentTTY->terminal_pid;
+    }
 
-	
-	 if ( number == 1005 )
-	 {
-		 CurrentTTY->stdout = stdout;
-		 fprintf (stdout, "dirty\n");
-		 
-		 return NULL;
-	 }
-	
+
+    if ( number == 1005 )
+    {
+        CurrentTTY->stdout = stdout;
+        fprintf (stdout, "dirty\n");
+        return NULL;
+    }
+
 	 //get sdtout
-	 if ( number == 1006 )
-	 {
-		 return (void *) stdout;
-	 }
-	
+    if ( number == 1006 )
+    {
+        return (void *) stdout;
+    }
+
 	
 	 // bmp:
 	 // Carrega o bmp na memória e decodifica no backbuffer.
 	 // Isso não mostra na tela.
-	 if ( number == 4000 )
-     {
-	     // load and show bmp
-		 //sys_fopen ( (const char *) arg2, (const char *) arg3 );
-		 //__bmfp = sys_fopen ( "folder.bmp", "r+" );
-		 __bmfp = sys_fopen ( (const char *) arg2, "r+" );
-					
+    if ( number == 4000 )
+    {
+		// load and show bmp
+		//sys_fopen ( (const char *) arg2, (const char *) arg3 );
+		//__bmfp = sys_fopen ( "folder.bmp", "r+" );
+        __bmfp = sys_fopen ( (const char *) arg2, "r+" );
+
 		 //decodificando no backbuffer.
 		 bmpDisplayBMP ( __bmfp->_base, arg3, arg4 );
-										
-		//refresh_rectangle ( 100, 100, 200, 200 );  		 
-	     return NULL;	 
-     }
-	
-	 // bmp:
-	 // Carrega o bmp na memória e decodifica diretamente no frontbuffer.
-	  // Isso mostra na tela.
-	 if ( number == 4001 )
-     {
-	     // load and show bmp
-		 //sys_fopen ( (const char *) arg2, (const char *) arg3 );
-		 //__bmfp = sys_fopen ( "folder.bmp", "r+" );
-		 __bmfp = sys_fopen ( (const char *) arg2, "r+" );
-					
-		 //bmp_change_color_flag = BMP_CHANGE_COLOR_TRANSPARENT;
-		 //bmp_selected_color = COLOR_WHITE;
-		 bmpDirectDisplayBMP ( __bmfp->_base, arg3, arg4 );
-		 //bmp_change_color_flag = 0;
+
+		//refresh_rectangle ( 100, 100, 200, 200 ); 
+        return NULL;
+    }
+
+	// bmp:
+	// Carrega o bmp na memória e decodifica diretamente no frontbuffer.
+	// Isso mostra na tela.
+    if ( number == 4001 )
+    {
+		// load and show bmp
+		//sys_fopen ( (const char *) arg2, (const char *) arg3 );
+		//__bmfp = sys_fopen ( "folder.bmp", "r+" );
+        __bmfp = sys_fopen ( (const char *) arg2, "r+" );
+
+		//bmp_change_color_flag = BMP_CHANGE_COLOR_TRANSPARENT;
+		//bmp_selected_color = COLOR_WHITE;
+        bmpDirectDisplayBMP ( __bmfp->_base, arg3, arg4 );
+		//bmp_change_color_flag = 0;
 		//bmp_selected_color = 0;
-					
-	     return NULL;	 
-     }
-     
+
+        return NULL;
+    }
+
      //api - load file
      //#todo: Tem que retornar algum identificador para a api.
      //poderia ser um indice na tabela de arquivos abertos pelo processo.
-     if ( number == 4002 )
-     {
-		 return (void *) sys_fopen ( (const char *) arg2, "r+" );		
-	 }
-	 
-     //api - load file
-     //#todo: Tem que retornar algum identificador para a api.
-     //#bugbug: Podemos retornar o endereço base. Isso pode dar problemas?
-     if ( number == 4003 )
-     {
-		 __fp = sys_fopen ( (const char *) arg2, "r+" );		
-	     return (void *) __fp->_base;
-	 }
-	 
-	 //...
-	
+    if ( number == 4002 )
+    {
+        return (void *) sys_fopen ( (const char *) arg2, "r+" );
+    }
+
+
+    //api - load file
+    //#todo: Tem que retornar algum identificador para a api.
+    //#bugbug: Podemos retornar o endereço base. Isso pode dar problemas?
+    if ( number == 4003 )
+    {
+        __fp = sys_fopen ( (const char *) arg2, "r+" );
+        return (void *) __fp->_base;
+    }
+ 
+	//...
+
 	//
 	// ## Switch ##
 	//
-	
-	switch (number)
-	{
+
+    switch (number)
+    {
 	    //0 - Null, O processo pode ser malicioso.
 	    case SYS_NULL: 
 	        return NULL;
-			break; 	   
-		
+			break; 
+
 		//1 (i/o) Essa rotina pode ser usada por um driver em user mode.
 		case SYS_READ_LBA: 
 			sys_my_read_hd_sector ( (unsigned long) arg2, 
 			    (unsigned long) arg3, 0 , 0 ); 
 			break;
-			
+
 		//2 (i/o) Essa rotina pode ser usada por um driver em user mode.
 		case SYS_WRITE_LBA: 
 			sys_my_write_hd_sector ( (unsigned long) arg2, 
@@ -650,8 +648,8 @@ void *gde_services ( unsigned long number,
 		//3 fopen (i/o)
 		//Carregar um arquivo, dado o nome e o endereço.
 		//#obs: chamar rotinas de interface sys_ simplificam 
-        //o atendimento às system calls.	
-		// A funçao esta' em fs/fs.c	
+        //o atendimento às system calls.
+		// A funçao esta' em fs/fs.c
 		//IN: name. address
 		case SYS_READ_FILE:
 			
@@ -666,37 +664,37 @@ void *gde_services ( unsigned long number,
 
 
 		//4 (i/o)
-		case SYS_WRITE_FILE:
-		    taskswitch_lock();
-	        scheduler_lock();	
-		    
-			sys_fsSaveFile ( (char *) message_address[0],         //name
-			             (unsigned long) message_address[1],  //3, //@todo: size in sectors 
-						 (unsigned long) message_address[2],  //255, //@todo: size in bytes
-						 (char *) message_address[3],         //arg3,//address
-						 (char) message_address[4] );         //,arg4 ); //flag
-						
-			scheduler_unlock();
-	        taskswitch_unlock();
-		    break;
-		
+        case SYS_WRITE_FILE:
+            taskswitch_lock ();
+            scheduler_lock ();
+
+            sys_fsSaveFile ( (char *) message_address[0],    //name
+                (unsigned long) message_address[1],  //3, //@todo: size in sectors 
+                (unsigned long) message_address[2],  //255, //@todo: size in bytes
+                (char *) message_address[3],         //arg3,//address
+                (char) message_address[4] );         //,arg4 ); //flag
+
+            scheduler_unlock ();
+            taskswitch_unlock ();
+            break;
+
 		// 5 Vertical Sync. 
-		// Usada pelos servidores.	
+		// Usada pelos servidores.
 		// #todo: chamar kgws_vsync ()
         case SYS_VSYNC:
-		    sys_vsync ();       		
-			break;
-			
-			
-		// 6 - Put pixel. 
+            sys_vsync (); 
+            break;
+
+
+        // 6 - Put pixel. 
         // Coloca um pixel no backbuffer.
         // Isso pode ser usado por um servidor. 
-        // cor, x, y, 0.	
+        // cor, x, y, 0.
 		// todo: chamar kgws_backbuffer_putpixel
-        case SYS_BUFFER_PUTPIXEL:		
+        case SYS_BUFFER_PUTPIXEL:
             sys_backbuffer_putpixel ( (unsigned long) a2, 
-			    (unsigned long) a3, (unsigned long) a4, 0 );   		
-			break;
+                (unsigned long) a3, (unsigned long) a4, 0 ); 
+            break;
 
 		// 7
 		// desenha um char no backbuffer.
@@ -718,69 +716,75 @@ void *gde_services ( unsigned long number,
 		// Supondo que os aplicativos escreverão mais em terminal por enquanto 
 		// a cor padrão de fonte será a cor de terminal.
 		
-		// #importante	
+		// #importante
 		// Aqui está pintando o caractere na janela com o foco de entrada.
-			
-		case SYS_BUFFER_DRAWCHAR:
+
+        case SYS_BUFFER_DRAWCHAR:
 			focusWnd = (void *) windowList[window_with_focus];
-			if( (void *) focusWnd == NULL ){ 
+			if ( (void *) focusWnd == NULL )
+			{ 
 			    break; 
 			};
 			
 			//x, y, color, char.
-			sys_my_buffer_char_blt( (unsigned long) (focusWnd->left + arg2),             
-			                    (unsigned long) (focusWnd->top + arg3),              
-								CurrentColorScheme->elements[csiTerminalFontColor],   
-								(unsigned long) arg4 ); 								 
-			break;
+            sys_my_buffer_char_blt ( (unsigned long) (focusWnd->left + arg2),             
+                (unsigned long) (focusWnd->top + arg3),  
+                CurrentColorScheme->elements[csiTerminalFontColor],   
+                (unsigned long) arg4 ); 
+            break;
 
 		//8 @todo: BugBug, aqui precisamos de 4 parâmetros.
         case SYS_BUFFER_DRAWLINE:
-			sys_my_buffer_horizontal_line ( (unsigned long) a2, 
-			    (unsigned long) a3, (unsigned long) a4, COLOR_WHITE ); 		
-			break;
+            sys_my_buffer_horizontal_line ( (unsigned long) a2, 
+                (unsigned long) a3, (unsigned long) a4, COLOR_WHITE ); 
+            break;
 
 		//9 @todo: BugBug, aqui precisamos de 5 parâmetros.
         case SYS_BUFFER_DRAWRECT:
             sys_drawDataRectangle ( 0, (unsigned long) a2, (unsigned long) a3, 
-				(unsigned long) a4, COLOR_WHITE );    		
-			break;
+                (unsigned long) a4, COLOR_WHITE );  
+            break;
 
 		// 10 Create window.
         // # suspensa.
         case SYS_BUFFER_CREATEWINDOW: 
             return NULL;
-			break;
-			
+            break;
+
+
 		//11, Coloca o conteúdo do backbuffer no LFB.
         case SYS_REFRESHSCREEN: 
-			sys_refresh_screen ();
-			break;			
-			
+            sys_refresh_screen ();
+            break;
+
         //rede: 12,13,14,15	
 			
 			
 		//i/o:  16,17,18,19	
 			
 		// open()
-		// Retorna um i'ndice na tabela de arquivos abertos do proceso atual.	
+		// Retorna um i'ndice na tabela de arquivos abertos do proceso atual.
 		// unistd.c
 		// O tipo mode_t precisa de kernel/sys/types.h
 		// pathname, flags, mode
-		case 16:
-			return (void *) sys_open ( (const char *) arg2, (int) arg3, (mode_t) arg4 );
-			break;
-			
-		case 17:
-			return (void *) sys_close ( (int) arg2 );
-			break;
-			
+        case 16:
+            return (void *) sys_open ( (const char *) arg2, 
+                                (int) arg3, (mode_t) arg4 );
+            break;
+
+
+        case 17:
+            return (void *) sys_close ( (int) arg2 );
+            break;
+
+
 		//24
-		// window.c	
-		case 24:
-		    return (void *) sys_show_window_rect ( (struct window_d *) arg2 );
-		    break;
-			
+		// window.c
+        case 24:
+            return (void *) sys_show_window_rect ( (struct window_d *) arg2 );
+            break;
+
+
 		//34	
         case SYS_VIDEO_SETCURSOR: 
 			sys_set_up_cursor ( (unsigned long) arg2, (unsigned long) arg2);
@@ -788,7 +792,7 @@ void *gde_services ( unsigned long number,
 
 		//35 - Configura o procedimento da tarefa atual.
         case SYS_SETPROCEDURE:  
-            g_next_proc = (unsigned long) arg2;		
+            g_next_proc = (unsigned long) arg2;
             break;
 			
 		//36
@@ -796,31 +800,31 @@ void *gde_services ( unsigned long number,
         case SYS_KSENDMESSAGE: 
 		    g_nova_mensagem = 1;    //flag = Existe uma nova mensagem.
             sys_system_dispatch_to_procedure ( (struct window_d *) arg2, 
-			    (int) arg2, (unsigned long) arg4, (unsigned long) 0);			
+			    (int) arg2, (unsigned long) arg4, (unsigned long) 0);
             break;    
       
 		//37 - Chama o procedimento procedimento default. 
 		// #todo
-		// Vamos passar na forma de mesagens para que tenhamos quatro argumentos.	
-		case SYS_CALLSYSTEMPROCEDURE: 	
+		// Vamos passar na forma de mesagens para que tenhamos quatro argumentos.
+		case SYS_CALLSYSTEMPROCEDURE: 
 			return (void *) sys_system_procedure ( (struct window_d *) message_address[0], 
 							    (int) message_address[1], 
 								(unsigned long) message_address[2], 
-								(unsigned long) message_address[3] );	
+								(unsigned long) message_address[3] );
             break;    
         
         //42 - Load bitmap 16x16. #cancelada.
-		case SYS_LOADBMP16X16 :       
-            return NULL;			
+        case SYS_LOADBMP16X16 :  
+            return NULL;
             break;
 
         // 45 - Message Box. #cancelada 
-        case SYS_MESSAGEBOX:		
+        case SYS_MESSAGEBOX:
             return NULL;
 			break;
 		
         //47, cancelada.		
-		case SYS_BUFFER_CREATEWINDOWx:
+        case SYS_BUFFER_CREATEWINDOWx:
 			return NULL;
 			break;
 		
@@ -835,7 +839,7 @@ void *gde_services ( unsigned long number,
 			break;	
 
 		//50 resize window (handle,x,y)
-		case SYS_BUFFER_RESIZEWINDOW:		
+		case SYS_BUFFER_RESIZEWINDOW:
 		    return (void *) sys_resize_window ( (struct window_d*) arg2, arg3, arg4);
 		    break;
 		
@@ -879,23 +883,23 @@ void *gde_services ( unsigned long number,
 			
 		//58.	
 		case SYS_CLOSEWINDOW: 
-			sys_CloseWindow ( (struct window_d *) hWnd ); 							  
+			sys_CloseWindow ( (struct window_d *) hWnd ); 
 			break;
-			
+
         //60
-		case SYS_SETACTIVEWINDOW:			
+		case SYS_SETACTIVEWINDOW:
 			sys_set_active_window (hWnd);
 			break;
 
         //61
 		//Id. (int).	
 		case SYS_GETACTIVEWINDOW:
-            return (void *) sys_get_active_window ();    		
+            return (void *) sys_get_active_window (); 
 			break;
 
         //62
 		case SYS_SETFOCUS: 
-			sys_SetFocus ( (struct window_d *) hWnd ); 							  
+			sys_SetFocus ( (struct window_d *) hWnd ); 
 			break;
 			
         //63 id
@@ -905,10 +909,10 @@ void *gde_services ( unsigned long number,
 			
         //64
 		case SYS_KILLFOCUS:
-			sys_KillFocus ( (struct window_d *) hWnd ); 							  
+			sys_KillFocus ( (struct window_d *) hWnd ); 
 			break;
 
-		// 65	
+		// 65
 		// Coloca um char usando o 'terminal mode' de stdio.
 		// selecionado em _outbyte.
 		// stdio_terminalmode_flag = não transparente.
@@ -947,10 +951,11 @@ void *gde_services ( unsigned long number,
 			
 		// #importante
 		// Não devemos usar rotinas da libc para imprimir caracteres na tela
-		// e sim rotina do x server ou kgws. As rotinas da libc apenas lidam com arquivos
-		// do fluxo padrão. Então nesse serviço vamos chamar alguma rotina do kgws para
-		// imprimir no terminal e isso deve ficar explícito.
-			
+		// e sim rotina do x server ou kgws. As rotinas da libc apenas 
+		// lidam com arquivos do fluxo padrão. Então nesse serviço vamos chamar
+		// alguma rotina do kgws para imprimir no terminal e isso deve 
+		// ficar explícito.
+
 		case SYS_KGWS_PUTCHAR:
 			kgws_terminal_putchar ( (int) arg2 );
 			break;
@@ -959,54 +964,55 @@ void *gde_services ( unsigned long number,
 		//case 66:
 		//	break;
 
-		//67- reservado pra input de usuário.	
+		//67- reservado pra input de usuário.
 		//case 67:
 		//	break;
 
-		//68- Reservado pra input de mouse.	
-		//case 68:		
+		//68- Reservado pra input de mouse.
+		//case 68:
 		//	break;
+
 
 		// 69 - Reservado pra input de teclado.
 		case 69:
-			printf ("service 69: #todo\n");
+			printf ("Service 69: #todo\n");
 			break;
-			
-			
-		//
+
+
+        //
         // ## EXIT ##
-        //		
-			
+        //
+
 		// 70 - Exit. 
 		// Criaremos um request que será atendido somente quando houver uma 
 		// interrupção de timer. Enquanto isso a thread deve esperar em um loop.
-			
-		case SYS_EXIT:
-			sys_create_request ( (unsigned long) 12,  // number 
-                 (int) 1,                             // status 
-                 (int) 0,                             // timeout. 0=imediatamente.
-				 (int) current_process,               // target_pid
-				 (int) current_thread,                // target_tid
-                 NULL,                                // window 
-                 (int) 0,                             // msg  
-                 (unsigned long) arg2,                // long1  
-                 (unsigned long) arg3 );              // long2
-			break;
-		
+
+        case SYS_EXIT:
+            sys_create_request ( (unsigned long) 12, // number 
+                (int) 1,                             // status 
+                (int) 0,                             // timeout. 0=imediatamente.
+                (int) current_process,               // target_pid
+                (int) current_thread,                // target_tid
+                NULL,                                // window 
+                (int) 0,                             // msg  
+                (unsigned long) arg2,                // long1  
+                (unsigned long) arg3 );              // long2
+            break;
+
         // 71
-		// #bugbug	
+		// #bugbug
 		// #importante: A questão é que precisamos do contexto salvo ;;;
 		// Essa função precisa de uma interrupção que salve o contexto do mesmo modo
 		// que o timer faz.
-		// podemos retornar com o clone bloqueado.	
+		// podemos retornar com o clone bloqueado.
 		case SYS_FORK: 
 		    //return (void *) sys_do_fork_process ();
 		    return (void *) do_fork_process ();
-			break;	
+			break;
 
 		// 72 - Create thread.
-		// #todo: enviar os argumentos via buffer.		
-		case SYS_CREATETHREAD:			
+		// #todo: enviar os argumentos via buffer.
+		case SYS_CREATETHREAD:
 			return (void *) sys_create_thread ( 
 			                NULL,             // w. station 
 							NULL,             // desktop
@@ -1019,9 +1025,9 @@ void *gde_services ( unsigned long number,
 
 			
 		// 73 - Create process.
-		// #todo: enviar os argumentos via buffer.		
+		// #todo: enviar os argumentos via buffer.
         // #todo: Ok, nesse momento, precisamos saber qual é o processo pai do processo 
-        // que iremos criar. Esse deve ser o processo atual ...  		
+        // que iremos criar. Esse deve ser o processo atual ...  
 		// PPID = 0. Nesse momento todo processo criado será filho do processo número 0.
 		// mas não é verdade. @tpdp: Precisamos que o aplicativo em user mode 
 		// nos passe o número do processo pai, ou o proprio kernel identifica qual é o 
@@ -1057,9 +1063,9 @@ void *gde_services ( unsigned long number,
 		// 83
 		// schedi.c
 		// #todo.	
-		// TID, PID 		
+		// TID, PID 
 		// TID é a thread atual.
-		// PID veio via argumento.			
+		// PID veio via argumento.
         case SYS_WAIT4PID: 
 			return (void *) sys_do_wait ( (int *) arg2 );
 			//block_for_a_reason ( (int) current_thread, (int) arg2 ); //suspenso
@@ -1086,7 +1092,7 @@ void *gde_services ( unsigned long number,
         //se for válido retorna 1234		
 		//testando...
 		case SYS_88:   
-            return (void *) sys_processTesting (arg2);			
+            return (void *) sys_processTesting (arg2);
 			break;
 			
 		// 89 Up. 	
@@ -1094,7 +1100,7 @@ void *gde_services ( unsigned long number,
 		    return (void *) sys_Up ( (struct semaphore_d *) arg2 );
 		    break;
 		
-		//90 Coletor de threads Zombie. (a tarefa idle pode chamar isso.)		
+		//90 Coletor de threads Zombie. (a tarefa idle pode chamar isso.)
 		case SYS_DEADTHREADCOLLECTOR: 
 			sys_dead_thread_collector ();
 			break;
@@ -1106,7 +1112,7 @@ void *gde_services ( unsigned long number,
 		    //t = (struct thread_d *) arg2;
             //sys_SelectForExecution (t);
 			sys_SelectForExecution ( (struct thread_d *) arg2 );
-			break;		
+			break;
 			
 		// 99
 		// Pega 'hwnd' na fila da janela com o foco de entrada.
@@ -1143,7 +1149,7 @@ void *gde_services ( unsigned long number,
 		//Um processo produtor envia uma mensagem para o PCB de outr processo.
 		//Argumentos: serviço, produtor, consumidor, mensagem.
 		//@todo:		
-		case SYS_SENDMESSAGE:			
+		case SYS_SENDMESSAGE:	
 			break;
 
 			
@@ -1167,10 +1173,10 @@ void *gde_services ( unsigned long number,
 		
 		// A intenção agora é pegar a mensagem na estrutura de thread atual.
 		// Desse modo cada aplicativo, quando estiver rodando, pegará as 
-        // suas mensagens em sua própria fila.  		
+        // suas mensagens em sua própria fila.  
 		// Se não houver mensagem na estrutura da thread, então tentaremos colocar alguma.
 		// Vamos colocar alguma coisa do buffer de teclado.
-			
+
 		case 111:
 		    if ( &message_address[0] == 0 )
 			{
@@ -1211,7 +1217,7 @@ void *gde_services ( unsigned long number,
 					{
 						ke0 = 2;
 						goto sc_again;
-					}					
+					}
 					
 					//#obs:
 					//o scancode é enviado para a rotina,
@@ -1239,26 +1245,27 @@ void *gde_services ( unsigned long number,
                     
 				//sinalizamos que a mensagem foi consumida.
 				//#todo: nese momento a estrutura da thread também precisa ser limpa.
-                t->newmessageFlag = 0; 					
+                t->newmessageFlag = 0; 
 				    
 				//sinaliza que há mensagem
 				return (void *) 1; 
 			};
 		    break;
-			
-			
-		// 112	
-		// Enviar uma mensagem para a thread de controle de um processo.	
+
+
+
+		// 112
+		// Enviar uma mensagem para a thread de controle de um processo.
 		// arg2, arg3
-		// endereço do buffer da mensagem, pid	
+		// endereço do buffer da mensagem, pid
 		case SYS_SENDMESSAGETOPROCESS:
 			//printf ("112: PID=%d\n", arg3 );
 			pty_send_message_to_process ( (unsigned long) &message_address[0], 
 			    (int) arg3 );
 			//printf ("112: done\n");
 			break;
-			
-		
+
+
 		//Envia uma mensagem PAINT para o aplicativo atualizar a área de trabalho.
 		case 113:
 		    sys_windowUpdateWindow ( (struct window_d *) arg2 );
@@ -1266,13 +1273,13 @@ void *gde_services ( unsigned long number,
 			
 		// 114	
         // Envia uma mensagem para a thread atual.
-		// endereço do buffer da mensagem, tid.			
-		case SYS_SENDMESSAGETOCURRENTTHREAD:	
+		// endereço do buffer da mensagem, tid.
+		case SYS_SENDMESSAGETOCURRENTTHREAD:
 			pty_send_message_to_thread ( (unsigned long) &message_address[0], 
 			    (int) current_thread );
 		    break;
-			
-			
+
+
 		// 115 - ## IMPORTANTE ## 
 		// Usado por servidores do sistema para se comunicarem 
 		// com o kernel.
@@ -1287,7 +1294,7 @@ void *gde_services ( unsigned long number,
 				current_taskman_server = (int) arg4;
 				//printf("115: acoplando ...\n");
 				//refresh_screen();
-                return NULL; 				
+                return NULL; 
 			}; 
 			
 			if ( arg3 == 1234 )
@@ -1312,7 +1319,7 @@ void *gde_services ( unsigned long number,
 			            message_address[2] = (unsigned long) 0;
 			            message_address[3] = (unsigned long) 0;
 					    gui->taskmanWindow->newmessageFlag = 0;
-                        return NULL;						
+                        return NULL;
 					}
 					//se existe uma mensagem na janela do servidor taskman.
 					if( gui->taskmanWindow->newmessageFlag == 1 )
@@ -1334,7 +1341,7 @@ void *gde_services ( unsigned long number,
 		    gui->taskmanWindow->msg = (int) arg2;                //123=temos uma mensagem. 
 		    gui->taskmanWindow->long1 = (unsigned long) arg3;    //0;
 		    gui->taskmanWindow->long2 = (unsigned long) arg4;    //0;
-            gui->taskmanWindow->newmessageFlag = 1;				
+            gui->taskmanWindow->newmessageFlag = 1;
 		    break;
 			
 		
@@ -1477,7 +1484,7 @@ void *gde_services ( unsigned long number,
 		case 136:
 			return (void *) sys_fgetc ( (FILE *) arg2 );
 			break;
-			
+
 			
 		// 137
 		// Isso é usado pela biblioteca stdio em user mode
@@ -1495,25 +1502,25 @@ void *gde_services ( unsigned long number,
 		//#todo: isso precisa ir para a API.
         case 138:
 		    return (void *) sys_keyboardGetKeyState ( (unsigned char) arg2 );
-            break;		
+            break;
 			
 		//139
         case SYS_GETSCANCODE:
 		    return (void *) sys_get_scancode ();
-            break;		
+            break;
 
         //140
         case SYS_SET_CURRENT_KEYBOARD_RESPONDER:
-            sys_set_current_keyboard_responder(arg2);		
+            sys_set_current_keyboard_responder (arg2);
 		    break;
-			
+
 		//141	
 		case SYS_GET_CURRENT_KEYBOARD_RESPONDER:
 		    return (void *) sys_get_current_keyboard_responder();
 		    break;
 			
 		//142	
-        case SYS_SET_CURRENT_MOUSE_RESPONDER:			
+        case SYS_SET_CURRENT_MOUSE_RESPONDER:
 		    sys_set_current_mouse_responder(arg2);
 			break;
 			
@@ -1532,14 +1539,14 @@ void *gde_services ( unsigned long number,
 		
 		//145
         //configura a client area	
-        //@todo: O ponteiro para estrutura de retângulo é passado via argumento.		
+        //@todo: O ponteiro para estrutura de retângulo é passado via argumento.
 		case SYS_SETCLIENTAREARECT:
 			sys_setClientAreaRect ( arg2, arg3, arg4, 0);
             break;
 
 		//146	
 		//#bugbug: isso não parece seguro, precismos checar a validade da estrutura antes,
-        //mas vai ficar assim por enquanto.					
+        //mas vai ficar assim por enquanto.
 		case 146:	
 		    //return (void *) gwsScreenWindow(); //#todo
 		    return (void *) gui->screen;
@@ -1558,19 +1565,19 @@ void *gde_services ( unsigned long number,
 		case 148:
 		    return (void *) sys_grid ( (struct window_d *) arg2, (int) arg3, 
 		                        (int) arg4 );
-            break;		
+            break;
 
         // 149
         // test. menu.
-        // essa é uma rotina de teste, qua chama várias funções.			
+        // essa é uma rotina de teste, qua chama várias funções.
 		case 149:
-			sys_MainMenu ( (struct window_d *) arg2 );		
-            break;		
+			sys_MainMenu ( (struct window_d *) arg2 );	
+            break;
 			
 		//152 - get user id	
 		case SYS_GETCURRENTUSERID:
 		    return (void *) current_user;
-			break;			
+			break;
 		
 		//154 - get group id	
 		case SYS_GETCURRENTGROUPID:
@@ -1602,7 +1609,7 @@ void *gde_services ( unsigned long number,
             //                    (const char *) arg2, 
             //                    (const char *) arg3, 
             //                    (const char *) arg4 ); 
-			
+
             return (void *) do_gexecve ( 0, 
                                 (const char *) arg2, 
                                 (const char *) arg3, 
@@ -1631,7 +1638,7 @@ void *gde_services ( unsigned long number,
 			break;	
 			
 		//159 - get desktop id
-        case SYS_GETCURRENTDESKTOP:		
+        case SYS_GETCURRENTDESKTOP:
 		    return (void *) current_desktop; 
 			break;
 			
@@ -1702,9 +1709,9 @@ void *gde_services ( unsigned long number,
 		    current_volume = (int) arg2;
             break;	
 
-		//173 Lista arquivos de um diretório, dado o número do disco,
+		//173 - Lista arquivos de um diretório, dado o número do disco,
         //o número do volume e o número do diretório,
-        //args in: disk id, volume id, directory id		
+        //args in: disk id, volume id, directory id
         case SYS_LISTFILES:
             sys_fsListFiles ( arg2, arg3, arg4 );  
 			break;
@@ -1719,7 +1726,7 @@ void *gde_services ( unsigned long number,
 		//175
 		// cd.
         //Atualiza o pathname na estrutura do processo atual.
-        //Atualiza o pathname na string global.		
+        //Atualiza o pathname na string global.
 		case 175:
 		    sys_fsUpdateWorkingDiretoryString ( (char *) arg2 );
             sys_fsLoadFileFromCurrentTargetDir ();
@@ -1737,21 +1744,21 @@ void *gde_services ( unsigned long number,
 		//comando dir no shell.
 		//Listando arquivos em um diretório dado o nome.	
 		case 177:
-		    sys_fsList ( (const char *) arg2 );		
+		    sys_fsList ( (const char *) arg2 );
             break;
 
 		 //#test
-		 //implementando esse serviço.			
+		 //implementando esse serviço.
         case 178:
-		    taskswitch_lock();
-	        scheduler_lock();	
+            taskswitch_lock ();
+            scheduler_lock ();
 			//name , address.
             Ret = (void *) sys_fsGetFileSize ( (unsigned char *) arg2 ); 
-			scheduler_unlock();
-	        taskswitch_unlock();
-			return (void *) Ret;		    
-            break;		
-			
+			scheduler_unlock ();
+	        taskswitch_unlock ();
+			return (void *) Ret; 
+            break;
+
 			
 		//179
 		//#bugbug: isso é um teste
@@ -1763,7 +1770,7 @@ void *gde_services ( unsigned long number,
            return (void *) do_gexecve ( 216, 
                                 (const char *) arg2, 
                                 (const char *) arg3, 
-                                (const char *) arg4 ); 			
+                                (const char *) arg4 ); 
 			break;
 			
 
@@ -1791,7 +1798,7 @@ void *gde_services ( unsigned long number,
 		//fputc	
 		case 196:	
 		    return (void *) sys_fputc ( (int) arg2 , (FILE *) arg3 );
-            break;			
+            break;
 			
         //197
 		//scroll de área de cliente de uma janela;
@@ -1799,7 +1806,7 @@ void *gde_services ( unsigned long number,
 		    //essa é uma boa rotina, mas precisamos tabalhar nisso,
 			//está dando page fault.
 			//scroll_client_window ( (struct window_d *) arg2 );
-            break; 		
+            break; 
 			
 
 		//199 - Garbage Collector.	
@@ -1809,7 +1816,7 @@ void *gde_services ( unsigned long number,
 			//return (void *) gc (); 
 		    break;
 		
-		//200 - Envia um sinal para um processo.	
+		//200 - Envia um sinal para um processo.
 		//argumentos (process handle, signal number).
 		case SYS_SENDSIGNAL:
 		    sys_signalSend ( (void *) a2, (int) arg3 );
@@ -1845,7 +1852,7 @@ void *gde_services ( unsigned long number,
 			break;
 			
 		//214
-        case SYS_SETTERMINALINPUTBUFFER:		
+        case SYS_SETTERMINALINPUTBUFFER:
 		    break;
 
 		// 215
@@ -1983,7 +1990,7 @@ void *gde_services ( unsigned long number,
 		    sys_timerDisableTextCursor ();
 		    //timerShowTextCursor = 0;
 		    //gwsDisableTextCursor ();
-            break;		
+            break;
 			
 		//246 ~ 249 reservado para libc support.	
 			
@@ -2078,28 +2085,29 @@ void *gde_services ( unsigned long number,
 	
 	//Debug.
 	//printf("SystemService={%d}\n",number);
-    
-	
+   
+
 	// * importante:
 	//   Depois de esgotados os 'cases', vamos para a saída da função.
-
-    //    No caso de um aplicativo ter chamado essa rotina, 
+	//    No caso de um aplicativo ter chamado essa rotina, 
 	// o retorno será para o ISR da int 0x80, feito em assembly.
-    //    No caso do kernel ter chamado essa rotina, apenas retorna.
-	
-//Done.
+	//    No caso do kernel ter chamado essa rotina, apenas retorna.
+
+
 done:
     //Debug.
     //printf("Done\n",number);
 	//refresh_screen();
-    return NULL;	
+    return NULL;
 }
 
 
 
 /*
+ ******************************************************
  * serviceCreateWindow:
  *     Cria uma janela com base nos argumentos passados no buffer.
+ *     Essa rotina é o serviço 118.
  */
 
 unsigned long serviceCreateWindow ( char *message_buffer ){
@@ -2108,8 +2116,8 @@ unsigned long serviceCreateWindow ( char *message_buffer ){
 	
 	//Ponteiro para a janela criada pelo serviço.
     struct window_d *NewWindow;  
-		
-	cwArg1 = message_address[0];             // Type. 		
+
+	cwArg1 = message_address[0];             // Type. 
 	cwArg2 = message_address[1];             // WindowStatus 
 	cwArg3 = message_address[2];             // view
 	cwArg4 = (char *) message_address[3];    // a4 Window name.
@@ -2120,15 +2128,15 @@ unsigned long serviceCreateWindow ( char *message_buffer ){
 		
 	//parent window.
 	//message_address[8];
-	//cwArg9 = gui->screen;  //@todo: O argumento arg4 está enviando parent window. 		
+	//cwArg9 = gui->screen;  //@todo: O argumento arg4 está enviando parent window. 
 	cwArg9 = (struct window_d *) message_address[8];  //parent
 		
 	//onde?
 	//message_address[9];
-	//cwArg10 = arg4;  //desktop ID 		
+	//cwArg10 = arg4;  //desktop ID 
 		
 	cwArg11 = message_address[10];    //cor da area de cliente.
-	cwArg12 = message_address[11];    //cor da janela.	
+	cwArg12 = message_address[11];    //cor da janela.
 	
 	   //==========
 	
@@ -2168,7 +2176,8 @@ unsigned long serviceCreateWindow ( char *message_buffer ){
 	//gui->screen  = cwArg9; 
 	//desktopID = cwArg10; 
 
-	WindowClientAreaColor = (unsigned long) cwArg11;  //Obs: A cor da área de cliente será escolhida pelo app.   
+	//Obs: 11 - A cor da área de cliente será escolhida pelo app.   
+	WindowClientAreaColor = (unsigned long) cwArg11;  
 	WindowColor = (unsigned long) cwArg12;     
 
 
@@ -2176,7 +2185,7 @@ unsigned long serviceCreateWindow ( char *message_buffer ){
 	int desktopID;
 	
 	
-	desktopID = (int) get_current_desktop_id ();	
+	desktopID = (int) get_current_desktop_id ();
 	
     // Importante:
 	// Nesse momento é fundamental saber qual é a parent window da janela que vamos criar 
@@ -2189,24 +2198,23 @@ unsigned long serviceCreateWindow ( char *message_buffer ){
 	//com um endereço da área de memória do app.
 	
     NewWindow = (void *) CreateWindow ( WindowType, WindowStatus, 
-	                        WindowView, WindowName, 
-	                        WindowX, WindowY, WindowWidth, WindowHeight,									  
-							cwArg9, desktopID, 
-							(unsigned long) WindowClientAreaColor, 
-							(unsigned long) WindowColor );
-	
-	if ( (void *) NewWindow == NULL )
-	{ 
-        //?? Mensagem.
-	    //return NULL; 
-		return 0;
-		
-	}else{	
-        
-		
+                             WindowView, WindowName, 
+                             WindowX, WindowY, WindowWidth, WindowHeight,
+                             cwArg9, desktopID, 
+                             (unsigned long) WindowClientAreaColor, 
+                             (unsigned long) WindowColor );
+
+
+    if ( (void *) NewWindow == NULL )
+    { 
+        //?? Mensagem. 
+        return 0;
+
+    }else{
+
 		//se a janela foi criada com sucesso, podemos desativar a flag.
 		//*importante, nesse momento precisamos desativar a flag.
-		
+
 		cwFlag = 0;                  
 		
         // Obs: 
@@ -2236,14 +2244,16 @@ unsigned long serviceCreateWindow ( char *message_buffer ){
 		set_thread_priority ( t, PRIORITY_HIGH4 );
 		
 		NewWindow->control = t;
-		
-		return (unsigned long) NewWindow;
-	};	
+
+
+        return (unsigned long) NewWindow;
+    };
 }
 
 
+
 /*
- ********
+ ***********************
  * servicesPutChar:
  *     Movendo para terminal/output.c 
  *     Coloca um char usando o 'terminal mode' de stdio selecionado 
@@ -2251,33 +2261,32 @@ unsigned long serviceCreateWindow ( char *message_buffer ){
  * stdio_terminalmode_flag = não transparente.
  */
 
-void servicesPutChar ( int c ){
-		
-	terminalPutChar ( (int) c );
+void servicesPutChar ( int c )
+{
+    terminalPutChar ( (int) c );
 }
- 
- 
 
 
-
-
-
+// #obs:
+// Quem chamou essa rotina?
+// Qual interrupção foi usada?
+// Existem duas implementações de fork, cada uma usa uma interrupção.
 
 void *gde_fork ( unsigned long number, 
                  unsigned long arg2, 
-			 	 unsigned long arg3, 
-				 unsigned long arg4 )
+                 unsigned long arg3, 
+                 unsigned long arg4 )
 {
-	
+
 	// #todo:
 	// Tendo o fork uma chamada s'o pra ele
 	// podemos usar um conjunto de argumentos de forma confort'avel.
-	
+
     void *ret;
-	
+
 	//salva
-	save_current_context ();
-	
+    save_current_context ();
+
 	ret = (void *) do_fork_process ();
 		
 	//restaura
@@ -2295,7 +2304,7 @@ void *gde_fork ( unsigned long number,
 		
 		//printf ("*breakpoint\n\n");
 		//refresh_screen();
-		//while(1){}	
+		//while(1){}
 		
     return (void *) ret; 
 }

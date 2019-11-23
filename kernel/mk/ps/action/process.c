@@ -1,5 +1,5 @@
 /*
- * File: pc/action/process.c 
+ * File: ps/action/process.c 
  *
  * Descrição:
  *     Gerenciamento de processos.
@@ -20,7 +20,7 @@
  *    P0 - Processos em ring0.
  *    P1 - Processos em ring1.
  *    P2 - Processos em ring2.
- *    P3 - Processos em ring3, User Mode.	
+ *    P3 - Processos em ring3, User Mode.
  *
  * @todo: 
  * Essas interfaces devem ser padronizadas, obedecendo roteiros de abertura, 
@@ -1418,7 +1418,7 @@ int processCopyMemory ( struct process_d *process ){
 	//#debug
 	//printf ("processCopyMemory: ok\n");
 	//refresh_screen ();
-	
+
     return 0;
 }
 
@@ -1434,119 +1434,122 @@ int processCopyMemory ( struct process_d *process ){
  */
  
 int processCopyProcess ( pid_t p1, pid_t p2 ){
-	
-	int Status = 0;
-	
-    struct process_d *Process1;	
-	struct process_d *Process2;
-	
-	if ( p1 == p2 )
-	{
-		printf ("processCopyProcess: pid igual\n");
-		goto fail;
-	}
-	
+
+    int Status = 0;
+    struct process_d *Process1;
+    struct process_d *Process2;
+
+
+    if ( p1 == p2 )
+    {
+        printf ("processCopyProcess: same PID\n");
+        goto fail;
+    }
+
+
 	//Check limits
 	//if( p1 < 1 ...
 	//if( p2 < 1 ...
-	
-	Process1 = (struct process_d *) processList[p1];
-	Process2 = (struct process_d *) processList[p2];
-	
-	
-	if ( (void *) Process1 == NULL )
-	{
-		printf("processCopyProcess: Process1\n");
-		goto fail;
-		
-	}else{
-		
-		if( Process1->used != 1 || Process1->magic != 1234 )
-		{
-		   printf("processCopyProcess: Process1 used magic \n");
-		   goto fail;			
-		}	
-	};
-	
-	if ( (void *) Process2 == NULL )
-	{
-		printf("processCopyProcess: Process1\n");
-		goto fail;
-	}else{
 
-		if( Process2->used != 1 || Process2->magic != 1234 )
-		{
-		   printf("processCopyProcess: Process2 used magic \n");
-		   goto fail;			
-		}	
-	};
-	
-	
-	//copy
-//copy:	
+    Process1 = (struct process_d *) processList[p1];
+    Process2 = (struct process_d *) processList[p2];
 
-	Process2->objectType = Process1->objectType;
-	Process2->objectClass = Process1->objectClass;	
-		
+
+    if ( (void *) Process1 == NULL )
+    {
+        printf ("processCopyProcess: Process1\n");
+        goto fail;
+
+    }else{
+
+        if ( Process1->used != 1 || Process1->magic != 1234 )
+        {
+           printf ("processCopyProcess: Process1 used magic \n");
+           goto fail;
+        }
+    };
+
+
+    if ( (void *) Process2 == NULL )
+    {
+        printf ("processCopyProcess: Process1\n");
+        goto fail;
+    }else{
+
+        if ( Process2->used != 1 || Process2->magic != 1234 )
+        {
+           printf ("processCopyProcess: Process2 used magic \n");
+           goto fail;
+        }
+    };
+
+
+//copy:
+
+    Process2->objectType = Process1->objectType;
+    Process2->objectClass = Process1->objectClass;
+
+
 	//Identificadores.
-	Process2->pid  = (int) p2;       // PID.
-    Process2->ppid = Process1->ppid; // PPID. 
-	Process2->uid  = Process1->uid;  // UID. 
-    Process2->gid  = Process1->gid;  // GID. 
-	
-	Process2->used = Process1->used;
-	Process2->magic = Process1->magic;				
-	
-	
-	//State of process
-	Process2->state = Process1->state;  
-	
-	//Plano de execução.
-    Process2->plane = Process1->plane;		
-		
+    Process2->pid  = (int) p2;          // PID.
+    Process2->ppid = Process1->ppid;    // PPID. 
+    Process2->uid  = Process1->uid;     // UID. 
+    Process2->gid  = Process1->gid;     // GID. 
 
-		
+    Process2->used = Process1->used;
+    Process2->magic = Process1->magic;
+
+
+	//State of process
+    Process2->state = Process1->state;  
+
+	//Plano de execução.
+    Process2->plane = Process1->plane;
+
+
 	//Process->name_address = NULL;
-	
-	Process2->framepoolListHead = Process1->framepoolListHead;
-	
+
+    Process2->framepoolListHead = Process1->framepoolListHead;
+
 	//
 	// * page directory address
 	//
-	
+
 	// #bugbug
-    // Precisamos clonar o diretório de páginas
+	// Precisamos clonar o diretório de páginas
 	// senão alguma alteração feita na pagetable da imagem pode
 	// corromper o processo que está sendo clonado.
-	
+
     // #importante:
     // Deve retornar o endereço do diretório de páginas criado,
     // que é um clone do diretório de páginas do kernel.
-    // Retornaremos o endereço virtual, para que a função create_process possa usar 
-    // tanto o endereço virtual quanto o físico.
-	
-	//#bugbug
-	//na verdade precisamos clonar o diretório do processo e não o diretório do kernel.
-	
+    // Retornaremos o endereço virtual, para que a função create_process 
+    // possa usar tanto o endereço virtual quanto o físico.
+
+	// #bugbug
+	// Na verdade precisamos clonar o diretório do processo e não o 
+	// diretório do kernel.
+
 	// #importante
 	// Isso clona o diretório de páginas do kernel. Isso facilita as coisas.
 	// Retorna o endereço virtual do novo diretório de páginas.
-	
+
     Process2->DirectoryVA = (unsigned long) CreatePageDirectory ();
-	
-	if ( (void *) Process2->DirectoryVA == NULL )
-	{
+
+    if ( (void *) Process2->DirectoryVA == NULL )
+    {
 		//fail
-	}
-	
+    }
+
+
 	// #importante:
 	// Vamos converter porque precisamos de endereço físico para colocarmos no cr3.
 	// Mas o taskswitch faz isso pegando o endereço que estiver na thread, então
 	// esse endereço precisa ir pra thread.
-	
-	Process2->DirectoryPA = (unsigned long) virtual_to_physical ( Process2->DirectoryVA, 
-											    gKernelPageDirectoryAddress ); 
-		
+
+    Process2->DirectoryPA = (unsigned long) virtual_to_physical ( Process2->DirectoryVA, 
+                                                gKernelPageDirectoryAddress ); 
+
 	// ??
 	// #bugbug
 	// Se o endereço for virtual, ok fazer isso. 
@@ -1555,37 +1558,38 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 	// pode ser diferente para o kernel. Pois no momento
 	// que ele alocar memória para a imagem ele terá o
 	// endereço lógico retornado pelo alocador.
-	
-	
+
+
 	//Process2->Image = Process1->Image;
-	Process2->Image = Process1->childImage;
-	Process2->ImagePA = Process1->childImage_PA;
-	Process2->childImage = 0;
-	Process2->childImage_PA = 0;
-	
+    Process2->Image = Process1->childImage;
+    Process2->ImagePA = Process1->childImage_PA;
+    Process2->childImage = 0;
+    Process2->childImage_PA = 0;
+
     //heap
-	Process2->Heap = Process1->Heap;    
-	Process2->HeapEnd = Process1->HeapEnd; 
-	Process2->HeapSize = Process1->HeapSize;  	
-	
+    Process2->Heap = Process1->Heap;    
+    Process2->HeapEnd = Process1->HeapEnd; 
+    Process2->HeapSize = Process1->HeapSize;
+
 	//stack
-	Process2->Stack = Process1->Stack;   
-	Process2->StackEnd = Process1->StackEnd; 
-	Process2->StackSize = Process1->StackSize;   	
-	Process2->StackOffset = Process1->StackOffset; 	
-	
-	
-	Process2->iopl = Process1->iopl;
-	
-	Process2->base_priority = Process1->base_priority;
-	Process2->priority = Process1->priority;	
-	
-	
+    Process2->Stack = Process1->Stack;   
+    Process2->StackEnd = Process1->StackEnd; 
+    Process2->StackSize = Process1->StackSize;
+    Process2->StackOffset = Process1->StackOffset;
+
+
+    Process2->iopl = Process1->iopl;
+
+    Process2->base_priority = Process1->base_priority;
+    Process2->priority = Process1->priority;
+
+
 	//
 	// ========================
 	// Thread de controle
 	//
-	
+
+
 	// Vamos clonar a thread de controle do processo pai.
 	
 	// obs:
@@ -1603,14 +1607,14 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 	// Ainda não temos um salvamento de contexto apropriado para essa system call.
 	// Só o timer tem esse tipo de salvamento.
 	// Precisamos salvar o contexto antes de chamarmos o serviço fork()
-	// Pois se não iremos retomar a thread clone em um ponto antes de chamarmos o fork,
-	// que é onde está o último ponto de salvamento.
+	// Pois se não iremos retomar a thread clone em um ponto antes de 
+	// chamarmos o fork, que é onde está o último ponto de salvamento.
 	
 	// Clonando a thread de controle.
-	
 
-	Process2->control = (struct thread_d *) threadCopyThread ( Process1->control );
-	
+
+    Process2->control = (struct thread_d *) threadCopyThread ( Process1->control );
+
 	//#todo Checar
 	//if ( (void *) Process2->control == NULL )
 	//{
@@ -1623,41 +1627,42 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 	// do processo.
 	// É importante deixarmos esse endereço na estrutura da thread, pois
 	// é aí que o taskswitch espera encontra-lo.
-    
-	Process2->control->DirectoryPA = Process2->DirectoryPA;	
-	
-	Process2->control->ownerPID = Process2->pid;	
-	
-	
+
+
+    Process2->control->DirectoryPA = Process2->DirectoryPA;
+
+    Process2->control->ownerPID = Process2->pid;
+
+
 	//?? herda a lista de threads ??
-	Process2->threadListHead = Process1->threadListHead;
-	
-	Process2->zombieChildListHead = Process1->zombieChildListHead;
-	
-	Process2->dialog_address = Process1->dialog_address;
-	
+    Process2->threadListHead = Process1->threadListHead;
+
+    Process2->zombieChildListHead = Process1->zombieChildListHead;
+
+    Process2->dialog_address = Process1->dialog_address;
+
 	//message support.
-	Process2->window = Process1->window;  //arg1. 
-	Process2->msg    = Process1->msg;     //arg2.
-	Process2->long1  = Process1->long1;   //arg3.
-	Process2->long2  = Process1->long2;   //arg4.		
+    Process2->window = Process1->window;    //arg1. 
+    Process2->msg    = Process1->msg;       //arg2.
+    Process2->long1  = Process1->long1;     //arg3.
+    Process2->long2  = Process1->long2;     //arg4.
 
-	
-	Process2->exit_code = Process1->exit_code;
-	
-	Process2->prev = Process1->prev; 		
-	Process2->next = Process1->next; 
 
-	Status = 0;
-	goto done;	
-	
+    Process2->exit_code = Process1->exit_code;
+
+    Process2->prev = Process1->prev; 
+    Process2->next = Process1->next; 
+
+    Status = 0;
+    goto done;
+
 //
 //Fail.
 //
-	
+
 fail:
-	
-	Status = 1;
+
+    Status = 1;
     printf ("processCopyProcess: fail:\n");
 
 //
@@ -1666,12 +1671,12 @@ fail:
 
 done:
 
-    return (int) Status;	
+    return (int) Status;
 }
 
 
 /*
- ***********************************************************************
+ ******************************************************
  * create_process:
  *     Cria process para ring 3.
  *     Preenche o PCB (Process Control Block).
@@ -1692,7 +1697,6 @@ done:
  *    P1 - Processos em ring1.
  *    P2 - Processos em ring2.
  *    P3 - Processos em ring3, User Mode.
- *
  *
  * @todo: 
  * Esse função deve chamar uma rotina de criação de diretório. 
@@ -1717,46 +1721,49 @@ struct process_d *create_process ( struct room_d *room,
                                    unsigned long iopl,
                                    unsigned long directory_address )
 {
-  
-	int i=0;
-	
-	pid_t PID;
-	
+
+    int i=0;
+
+    pid_t PID;
+
     struct process_d *Process;
 
     // Para a entrada vazia no array de processos.
-    struct process_d *Empty;      	
+    struct process_d *Empty; 
 
-    // @todo:
-    // Melhorar esse esquema de numeração e 
+	// @todo:
+	// Melhorar esse esquema de numeração e 
 	// contagem de processos criados.
 	// processNewPID é global ?
-	
+
     if ( processNewPID < USER_BASE_PID || processNewPID >= PROCESS_COUNT_MAX )
-	{
-		processNewPID = (int) USER_BASE_PID;	
-	};
-	
-	PID = (int) processNewPID;
-	
-	Process = (void *) malloc ( sizeof(struct process_d) );
-	
-	if ( (void *) Process == NULL )
-	{
-	    printf ("pc-process-create_process: Process");
-		die ();
-		
-		//@todo: Aqui pode retornar NULL.
-	};
+    {
+        processNewPID = (int) USER_BASE_PID;
+    }
 
 
-    // Loop.	
+    PID = (int) processNewPID;
+
+    Process = (void *) malloc ( sizeof(struct process_d) );
+
+    if ( (void *) Process == NULL )
+    {
+        printf ("process-create_process: Process");
+        die ();
+
+		// #todo: 
+		// Aqui pode retornar NULL.
+    }
+
+
+	// Loop.
 	// #BugBug: 
 	// Isso pode virar um loop infinito.
-	
+
 get_next:
-	
-/*	
+
+
+/*
 	i++;
 	
 	if ( i >= PROCESS_COUNT_MAX )
@@ -1772,39 +1779,44 @@ get_next:
 		//while(1){}
 	};
 	
-*/	
-	
+*/
+
+
+
 	// Get empty.
 	// Obtêm um índice para um slot vazio na lista de processos.
-		
-	PID = (int) getNewPID ();
-			
-	if ( PID == -1 || PID == 0 )
-	{	
-		printf ("create_process: getNewPID fail %d \n", PID);
-		refresh_screen ();
-		
-		return NULL;
-	}
-		
-	Empty = (void *) processList[PID];
-	
+
+    PID = (int) getNewPID ();
+
+    if ( PID == -1 || PID == 0 )
+    {
+        printf ("create_process: getNewPID fail %d \n", PID);
+
+        // #todo Slow stuff.
+        refresh_screen ();
+
+        return NULL;
+    }
+
+
+    Empty = (void *) processList[PID];
+
 	//Se o slot estiver ocupado tentaremos o próximo.
 	//Na verdade podemos usar aquela função que procura por um vazio. 
-   	
-	
-    if ( (void *) Empty != NULL )
-	{
-		
-		goto get_next;
-		
-	}else{
-		
-		//Object.
-		Process->objectType = ObjectTypeProcess;
-		Process->objectClass = ObjectClassKernelObjects;
 
-		processNewPID = (int) PID;
+
+    if ( (void *) Empty != NULL )
+    {
+
+        goto get_next;
+
+    }else{
+
+		//Object.
+        Process->objectType = ObjectTypeProcess;
+        Process->objectClass = ObjectClassKernelObjects;
+
+        processNewPID = (int) PID;
 
 		// Identificadores.
 		// PID. PPID. UID. GID.
@@ -1819,19 +1831,19 @@ get_next:
         Process->state = INITIALIZED;  
 
 		//@TODO: ISSO DEVERIA VIR POR ARGUMENTO
-        Process->plane = FOREGROUND;		
+        Process->plane = FOREGROUND;
 
 		//Error.
 		//Process->error = 0;
 
-		Process->used = 1;
-		Process->magic = 1234;
-		
+        Process->used = 1;
+        Process->magic = 1234;
+
 		//Name.
 		//Process->name = name; //@todo: usar esse.
 		//Process->cmd = NULL;  //nome curto que serve de comando.
-		Process->name_address = (unsigned long) name;
-		
+        Process->name_address = (unsigned long) name;
+
 		// Lista de streams...
 		// #todo: 
 		// Temos que zerar essa lista e criarmos 3 streams para o processo.
@@ -1840,17 +1852,17 @@ get_next:
         {
             Process->Streams[i] = 0;
         }
-		
+
 		// #bugbug
 		// #test
 		// Temos que criar esses arquivos.
 		// Mas vamos improvisar e usar os ponteiros do kernel.
-		
-		Process->Streams[0] = (unsigned long) stdin;
-		Process->Streams[1] = (unsigned long) stdout;
-		Process->Streams[2] = (unsigned long) stderr;
 
-		
+        Process->Streams[0] = (unsigned long) stdin;
+        Process->Streams[1] = (unsigned long) stdout;
+        Process->Streams[2] = (unsigned long) stderr;
+
+
 		//Process->terminal =
 
 		//
@@ -1871,10 +1883,9 @@ get_next:
 		// frame pool, o que é equivalente a 4MB. (uma partição)
 		// Obs: Um framepool indica onde é a área de memória fisica
 		// que será usada para mapeamento das páginas usadas pelo processo.
-		
-		Process->framepoolListHead = NULL;
-		
-		
+
+        Process->framepoolListHead = NULL;
+
 		//Thread inicial.
 		//Process->thread =
 		
@@ -1904,18 +1915,19 @@ get_next:
 
 		// #obs:
 		// Variável recebida via argumento.
-		
+
         if (directory_address == 0)
         {
-			printf ("create_process: page directory address fail\n");
-			
-			return NULL;
-		}			
-		
-		Process->DirectoryVA = (unsigned long ) directory_address;
-		Process->DirectoryPA = (unsigned long) virtual_to_physical ( directory_address, gKernelPageDirectoryAddress );
-		
-        // cancelados. 
+            printf ("create_process: page directory address fail\n");
+            return NULL;
+        }
+
+
+        Process->DirectoryVA = (unsigned long ) directory_address;
+        Process->DirectoryPA = (unsigned long) virtual_to_physical ( directory_address, 
+                                                   gKernelPageDirectoryAddress );
+
+		// cancelados. 
 		// Process->mmBlocks[32]
 		// Process->mmblockList[32]
 		
@@ -1925,7 +1937,7 @@ get_next:
 		
 		// #todo: 
 		// Precisa alocar espaço na memória física.
-        // Precisa criar page tables para essas areas de cada processo.		
+		// Precisa criar page tables para essas areas de cada processo.
 		// Os endereços virtuais dessas areas dos processos são sempre os mesmos.
 		// mas os endereços físicos dessas areas variam de processo pra processo.
 
@@ -1951,23 +1963,26 @@ get_next:
 		//pois nem todos processos começam no endereço default.
 		
 		//UPROCESS_IMAGE_BASE;
-		Process->Image = base_address;  
-		Process->ImagePA = (unsigned long) virtual_to_physical ( Process->Image, gKernelPageDirectoryAddress ); 		
-		Process->childImage = 0;
-		Process->childImage_PA = 0;	
-		
-		
+        Process->Image = base_address;  
+        Process->ImagePA = (unsigned long) virtual_to_physical ( Process->Image, 
+                                               gKernelPageDirectoryAddress ); 
+        Process->childImage = 0;
+        Process->childImage_PA = 0;
+
+
 		// Tamanho da imagem do processo.
 		// Temos que chamar a função que pega o tamanho de um arquivo,
 		// #bugbug: Porem, no momento o kernel não consegue ler arquivos
-		// que estão em subdiretórios corretamente e os programas estão em subdiretórios.
+		// que estão em subdiretórios corretamente e os programas estão 
+		// em subdiretórios.
 		// #obs: O tamanho também poderia ser passado por arguemento.
-		// #ou um argumento com ponteiro pra estrutura de informação sobre uma imagem.
-		Process->ImageSize = 0;              	    
-		
+		// #ou um argumento com ponteiro pra estrutura de informação 
+		// sobre uma imagem.
+        Process->ImageSize = 0; 
+
 		//#todo: estrutura com informações sobre a imagem do processo.
-		Process->image_info = NULL;
-		
+        Process->image_info = NULL;
+
 		// Heap e Stack:
 		//
 		// @todo: #BugBug 
@@ -1986,38 +2001,39 @@ get_next:
 		
 		// #### HEAP ####
 		
-        // directory va, index, region pa
+		// directory va, index, region pa
 		//CreatePageTable ( Process->DirectoryVA, 512, 0 );
 		
 		//Process->Heap = (unsigned long) 0x00400000; //funciona
 		//Process->Heap = (unsigned long) 0xC0C00000; //funciona
 		
 		// g_heappool_va
-        // endereço virtual do pool de heaps.
-        // os heaps nessa área serão dados para os processos.
+		// endereço virtual do pool de heaps.
+		// os heaps nessa área serão dados para os processos.
 		// base + (n*size)
-		
-		if ( g_heap_count < 0 || g_heap_count >= g_heap_count_max )
-		{
-			
-			printf ("create_process: g_heap_count limits");
-			die ();
-			
+
+        if ( g_heap_count < 0 || g_heap_count >= g_heap_count_max )
+        {
+
+            printf ("create_process: g_heap_count limits");
+            die ();
+
 			// #debug
 			// refresh_screen();
 			// while(1){ asm ("hlt"); };
-		}
-		
-		Process->Heap = (unsigned long) g_heappool_va + (g_heap_count * g_heap_size);
-		Process->HeapSize = (unsigned long) g_heap_size;
-		Process->HeapEnd = (unsigned long) (Process->Heap + Process->HeapSize); 
-		
-		g_heap_count++;
-		
+        }
+
+
+        Process->Heap = (unsigned long) g_heappool_va + (g_heap_count * g_heap_size);
+        Process->HeapSize = (unsigned long) g_heap_size;
+        Process->HeapEnd = (unsigned long) (Process->Heap + Process->HeapSize); 
+
+        g_heap_count++;
+
 		//Process->Heap = (unsigned long) allocPages (64); 
 
-        //Process->Heap = (unsigned long) malloc (1024*32); //32kb		
-		
+		//Process->Heap = (unsigned long) malloc (1024*32); //32kb
+
 		// Endereço do início do Heap do processo.
 		// #bubug: Endereço do fim do heap.
 		// Tamanho do heap, dado em KB.
@@ -2034,132 +2050,131 @@ get_next:
 		// Tamanho da pilha, dada em KB.
 		// #importante: Deslocamento do endereço do início da pilha em relação 
 		// ao início do processo. 
-		
-		Process->Stack = UPROCESS_DEFAULT_STACK_BASE;   
-	    Process->StackEnd = 0; // @todo: (UPROCESS_DEFAULT_STACK_BASE+UPROCESS_DEFAULT_STACK_SIZE);
-		Process->StackSize = (UPROCESS_DEFAULT_STACK_SIZE/1024);   	
-	    Process->StackOffset = UPROCESS_DEFAULT_STACK_OFFSET; 
-	    
+
+        Process->Stack = UPROCESS_DEFAULT_STACK_BASE;   
+        Process->StackEnd = 0; // @todo: (UPROCESS_DEFAULT_STACK_BASE+UPROCESS_DEFAULT_STACK_SIZE);
+        Process->StackSize = (UPROCESS_DEFAULT_STACK_SIZE/1024);   	
+        Process->StackOffset = UPROCESS_DEFAULT_STACK_OFFSET; 
+
 
 		//ring.
-		Process->iopl = iopl; 
-        
-		
-	    //PPL - (Process Permition Level).(gdef.h)
-        //Determina as camadas de software que um processo terá acesso irrestrito.
-	    //Process->ppl = pplK0;
-		
+        Process->iopl = iopl; 
 
-		
-	    //Process->callerq	   //head of list of procs wishing to send.
-        //Process->sendlink;    //link to next proc wishing to send.
-        //Process->message_bufffer		   //pointer to message buffer.
-        //Process->getfrom_pid		       //from whom does process want to receive.
-        //Process->sendto_pid	               //pra quem.
+		//PPL - (Process Permition Level).(gdef.h)
+		//Determina as camadas de software que um processo terá acesso irrestrito.
+		//Process->ppl = pplK0;
 
-	    //Signal
-	    //Process->signal = 0;
-	    //Process->signalMask = 0;
-		
+
+        //Process->callerq          //head of list of procs wishing to send.
+        //Process->sendlink;        //link to next proc wishing to send.
+        //Process->message_bufffer  //pointer to message buffer.
+        //Process->getfrom_pid      //from whom does process want to receive.
+        //Process->sendto_pid       //pra quem.
+
+        //Signal
+        //Process->signal = 0;
+        //Process->signalMask = 0;
+
 		//cancelada.
 		//Process->process_message_queue[8]
-		
+
 		//Outras coisas.
 		
 		//Prioridade.
-		Process->base_priority = (unsigned long) priority;
-		Process->priority = (unsigned long)  Process->base_priority;
-		
-	    //Que tipo de scheduler o processo utiliza. (rr, realtime ...).
-	    //Process->scheduler_type = ;   		
-		
-		
+        Process->base_priority = (unsigned long) priority;
+        Process->priority = (unsigned long)  Process->base_priority;
+
+        //Que tipo de scheduler o processo utiliza. (rr, realtime ...).
+        //Process->scheduler_type = ; 
+
 		//Process->step
 		//Process->quantum
 		//Process->timeout
 		//Process->ticks_remaining
-		
-		//Process->ThreadQuantum   //As threads do processo iniciam com esse quantum.
-		
-		
+
+		//As threads do processo iniciam com esse quantum.
+		//Process->ThreadQuantum   
+
+
 		//Process->threadCount = 0;    //Número de threads do processo.
 		
 		//Process->tList[32] 
 		
 		//Lista de threads.
-		Process->threadListHead = NULL;
-		
-		Process->control = NULL;
+        Process->threadListHead = NULL;
 
-        //Process->window_id 		
-		
-		
+        Process->control = NULL;
+
+        //Process->window_id 
+
+
 		//Process->event
 		
-	
-        // #importante
+
+		// #importante
 		// user session, room and desktop.
-		
+
 		// #bugbug: 
 		// Não temos informação sobre a user session, 
 		// devemos pegar a estrutura de current user session. 
 		// Para isso ela deve ser configurada na inicialização do gws,
 		// antes da criação dos processo.
 		
-		Process->usession = CurrentUserSession;  // Current.
-		Process->room = room;                    // Passado via argumento.
-		Process->desktop = desktop;              // Passado via argumento.
-		
-		//Process->base_priority
-		
-			
-	    // wait4pid: 
-        // O processo esta esperando um processo filho fechar.
-	    // Esse é o PID do processo que ele está esperando fechar.
-		
-		Process->wait4pid = (pid_t) 0;
-		
-		Process->zombieChildListHead = NULL;
-		
-		Process->exit_code = 0;
-		
-        // ?? 
-		// Procedimento eem ring 0 por enquanto.
-		Process->dialog_address = (unsigned long) &system_procedure;
+        Process->usession = CurrentUserSession;  // Current.
+        Process->room = room;                    // Passado via argumento.
+        Process->desktop = desktop;              // Passado via argumento.
 
-		Process->signal = 0;
-		Process->signal_mask = 0;
-		
+		//Process->base_priority
+
+	
+        // wait4pid: 
+        // O processo esta esperando um processo filho fechar.
+        // Esse é o PID do processo que ele está esperando fechar.
+
+        Process->wait4pid = (pid_t) 0;
+
+        Process->zombieChildListHead = NULL;
+
+        Process->exit_code = 0;
+
+		// ?? 
+		// Procedimento eem ring 0 por enquanto.
+        Process->dialog_address = (unsigned long) &system_procedure;
+
+        Process->signal = 0;
+        Process->signal_mask = 0;
+
 		//
 		// Msg
 		//
-		
+
 		//Msg support.
 		//Argumentos do procedimento de janela.
 		//@todo: Isso pode ser um ponteiro de estrutura,
 		//a fila de mensgens pode ser uma fila de ponteiros.
-		Process->window = NULL;    //arg1. 
-	    Process->msg = 0;          //arg2.
-	    Process->long1 = 0;        //arg3.
-	    Process->long2 = 0;        //arg4.			
-		
-		Process->prev = NULL; 
-		Process->next = NULL; 
+        Process->window = NULL;    //arg1. 
+        Process->msg = 0;          //arg2.
+        Process->long1 = 0;        //arg3.
+        Process->long2 = 0;        //arg4.
+
+        Process->prev = NULL; 
+        Process->next = NULL; 
 
 		// List.
 		// Coloca o processo criado na lista de processos.
-		
-		processList[PID] = (unsigned long) Process;		
-	};	
-	
+
+        processList[PID] = (unsigned long) Process;
+    };
+
+
 	// More ?
-	
+
     return (void *) Process;
 }
 
  
 /*
- *******************************************************
+ ************************************************
  * CloseAllProcesses:
  *     Bloqueia todos os processos da lista de processos.
  *     Menos o processo '0'.
@@ -2167,29 +2182,30 @@ get_next:
  */
 
 void CloseAllProcesses (void){
-	
-	int Index = 0;
+
+    int Index = 0;
     struct process_d *P;
 
 	// #importante:
 	// Menos o 0, pois é o kernel. 
-    
-	for ( Index = 1; Index < PROCESS_COUNT_MAX; Index++ )
-	{
+
+    for ( Index = 1; Index < PROCESS_COUNT_MAX; Index++ )
+    {
 		//Pega, bloqueia e tira da lista.
-		P = (void*) processList[Index];
-		P->state = PROCESS_BLOCKED;
-        
-        processList[Index] = (unsigned long) 0;		
-	};		
-	
+        P = (void *) processList[Index];
+        P->state = PROCESS_BLOCKED;
+
+        processList[Index] = (unsigned long) 0;
+    };
+
+
 	//Check process 0.
-	P = (void *) processList[0];
-	
-	if ( (void *) P == NULL )
-	{
-		panic ("CloseAllProcesses: P\n");
-	};
+    P = (void *) processList[0];
+
+    if ( (void *) P == NULL )
+    {
+        panic ("CloseAllProcesses: P\n");
+    }
 }
 
 
@@ -2227,9 +2243,9 @@ void KeRestoreCurrentContext (void)
  *  * obs: Não usaremos inicial Ke_
  */ 
 
-void KeCpuFaults (unsigned long fault_number){ 
-		
-	KiCpuFaults (fault_number);
+void KeCpuFaults (unsigned long fault_number)
+{ 
+    KiCpuFaults (fault_number);
 }
 
 
@@ -2241,8 +2257,8 @@ void KeCpuFaults (unsigned long fault_number){
  * @todo: deletar.  * obs: Não usaremos inicial Ke_
  */
 
-void KeSpawnTask (int id){
-    
+void KeSpawnTask (int id)
+{
     KiSpawnTask (id);
 	//no return.
 }
@@ -2259,7 +2275,7 @@ int KeSelectNextThread(int current)
 {
     
 	//@todo: analizar o retorno.
-	return (int) KiSelectNextThread(current);
+    return (int) KiSelectNextThread (current);
 }
 
 
@@ -2275,9 +2291,9 @@ int KeCheckTaskContext ( int task_id )
 	//kernel base, não é essa a ideia.
 	// e se alguma rotina dentro do kernel estava chamando essa 
 	// função é bom substituir a chamada por KiCheckTaskContext
-    //@todo: preparação antes de chamar.filtros.
-    
-	return (int) KiCheckTaskContext (task_id);
+	//@todo: preparação antes de chamar.filtros.
+
+    return (int) KiCheckTaskContext (task_id);
 }
 
 
@@ -2431,7 +2447,7 @@ void KeSetCurrentQuantum (unsigned long q)
 unsigned long KeGetCurrentQuantum (void)
 { 
     return 0; 
-};
+}
 
 
 void KeSetNextQuantum (unsigned long q)
@@ -2463,7 +2479,7 @@ void KeSetFocus (int pid)
 
 int KeGetFocus (void)
 { 
-    return (int) 0; 
+    return 0; 
 }
 
 
@@ -2480,49 +2496,52 @@ void KeShowPreemptedTask (void)
 
 
 void show_currentprocess_info (void){
-	
-    struct process_d *Current;		
-	
-	if( current_process < 0 || 
-	    current_process >= PROCESS_COUNT_MAX )
-	{
-		//printf("show_process_information: current_process fail\n");
-		return;
-	};
+
+    struct process_d *Current;
+
+
+    if ( current_process < 0 || current_process >= PROCESS_COUNT_MAX )
+    {
+        //printf("show_process_information: current_process fail\n");
+        return;
+    }
+
 
 	//Struct.
-	Current = (void *) processList[current_process];
-	
-	if ( (void *) Current == NULL )
-	{
-	    printf ("show_process_information: struct \n");
-        return; 		
-	
-	} else {
-		
+    Current = (void *) processList[current_process];
+
+    if ( (void *) Current == NULL )
+    {
+        printf ("show_currentprocess_info: struct \n");
+        return; 
+
+    } else {
+
 		//Index.
-		printf ("PID={%d} PPID={%d} UID={%d} GID={%d} \n",
-		    Current->pid, Current->ppid, Current->uid, Current->gid );
-	    //Name
-		printf("Name={%s} \n", Current->name_address );
-		
+        printf ("PID={%d} PPID={%d} UID={%d} GID={%d} \n",
+            Current->pid, Current->ppid, Current->uid, Current->gid );
+		//Name
+        printf ("Name={%s} \n", Current->name_address );
+
 		//Image Address.
-		printf("ImageAddress={%x} \n", Current->Image );
-		
+        printf ("ImageAddress={%x} \n", Current->Image );
+
 		//Directory Address. *IMPORTANTE.
-		printf (">>DirectoryPA={%x} \n", Current->DirectoryPA );		
-		printf (">>DirectoryVA={%x} \n", Current->DirectoryVA );
+        printf (">>DirectoryPA={%x} \n", Current->DirectoryPA );
+        printf (">>DirectoryVA={%x} \n", Current->DirectoryVA );
+
 		//Heap and stack.
-		printf("Heap={%x}  HeapSize={%d KB}  \n", Current->Heap, 
-		    Current->HeapSize );
-												  
-		printf("Stack={%x} StackSize={%d KB} \n", Current->Stack, 
-		    Current->StackSize );
-		
+        printf("Heap={%x}  HeapSize={%d KB}  \n", Current->Heap, 
+            Current->HeapSize );
+
+        printf("Stack={%x} StackSize={%d KB} \n", Current->Stack, 
+            Current->StackSize );
+
 		//...
-	};
-	
-	refresh_screen ();
+    };
+
+
+    refresh_screen ();
 }
 
 
@@ -2539,22 +2558,22 @@ void show_currentprocess_info (void){
 // pois o kernel é que controla o posicionamento das imagens.
 
 void show_process_information (void){
-	
-	int i=0;
-	
-	struct process_d *p;	
-    
-	printf ("show_process_information: \n");
-	
-	for ( i=0; i<PROCESS_COUNT_MAX; i++ )
+
+    int i=0;
+    struct process_d *p;
+
+
+    printf ("show_process_information: \n");
+
+
+    for ( i=0; i<PROCESS_COUNT_MAX; i++ )
     {
-	    p = (void *) processList[i];
-		
-		if ( (void *) p != NULL && 
-		           p->used == 1 && 
-				   p->magic == 1234 )
-	    { 
-            
+        p = (void *) processList[i];
+
+        if ( (void *) p != NULL && 
+                      p->used == 1 && 
+                      p->magic == 1234 )
+        { 
             // #bugbug
             // #todo Change that thing.
             
@@ -2563,19 +2582,21 @@ void show_process_information (void){
 			    p->ppid,
 				p->state,
 				p->Image,
-				p->ImageSize,	
+				p->ImageSize,
 				p->DirectoryPA,
-				p->DirectoryVA,	
+				p->DirectoryVA,
 				p->iopl,
 				p->priority,
-				p->wait4pid,	
+				p->wait4pid,
 				p->name_address );
-	    }
+        }
+
 		//Nothing.
-    };	
-	
+    };
+
+
     //printf ("done\n");
-	refresh_screen ();
+    refresh_screen ();
 }
 
 
@@ -2588,12 +2609,13 @@ void show_process_information (void){
  * @todo: processSetDirectory(...)
  */
 
-void SetProcessDirectory ( struct process_d *process, unsigned long Address ){
-	
+void 
+SetProcessDirectory ( struct process_d *process, unsigned long Address )
+{
     if ( (void *) process != NULL )
-	{
-        process->DirectoryPA = (unsigned long) Address;        
-	};
+    {
+        process->DirectoryPA = (unsigned long) Address;  
+    }
 }
 
 
@@ -2607,19 +2629,20 @@ void SetProcessDirectory ( struct process_d *process, unsigned long Address ){
  */
 
 unsigned long GetProcessDirectory ( struct process_d *process ){
-	
+
     if( (void *) process != NULL )
-	{
+    {
 		//@todo: checar used e magic.
         return (unsigned long) process->DirectoryPA;
-	};
-	
-	return (unsigned long) 0;
-};
+    }
+
+
+    return (unsigned long) 0;
+}
 
 
 /*
- *********************************************************
+ ****************************************************
  * GetPageDirValue:
  *     Pega o endereço do diretório de páginas do processo.
  *     processGetPageDirValue()
@@ -2644,7 +2667,7 @@ unsigned long GetPageDirValue (void)
 
 int init_task (int id)
 { 
-    //@todo: inicializar uma estrutura para um processo criado.
+	//@todo: inicializar uma estrutura para um processo criado.
 	//obs: ja tem essa rotina feita em aalgum lugar..
 	
     return 0;   
@@ -2670,7 +2693,7 @@ int init_task (int id)
 
 void init_tasks (void)
 {
-    init_processes ();	
+    init_processes ();
 }
 
 
@@ -2693,33 +2716,34 @@ void init_processes (void){
 	kernel_request = 0;    // O que fazer com a tarefa atual.
 	
 	
-	// ?? Contagem de tempo de execução da tarefa atual.	
+	// ?? Contagem de tempo de execução da tarefa atual.
 	//não precisa, isso é atualizado pelo request()
 	//kernel_tick = 0;                                 
-	
-	kernel_switch = 0;     // ?? Ativa o kernel switch do scheduler.
-    
-	current_process = 0;
-	
+
+    kernel_switch = 0;     // ?? Ativa o kernel switch do scheduler.
+
+    current_process = 0;
+
+
 	//
 	// Inicializando a lista de processos.
 	//
-	
-	i=0;
-    
-	while (i < PROCESS_COUNT_MAX)
+
+    i=0;
+
+    while (i < PROCESS_COUNT_MAX)
     {
-	    processList[i] = (unsigned long) 0;
-		
+        processList[i] = (unsigned long) 0;
         i++;
-	};
+    };
 
     // More ?
 }
 
 
+
 /*
- **********************************************************************
+ ***************************************************
  * exit_process:
  *
  *     Exit process.
@@ -2735,90 +2759,94 @@ void init_processes (void){
  */
 
 void exit_process ( pid_t pid, int code ){
-	
-	int i;
+
+    int i;
+
     struct process_d *Process;
-	
     struct thread_d *Threads;
-	struct thread_d *Next;	
+    struct thread_d *Next;
 	//...
 
+
 	// Não fechar o processo 0. Ele é o kernel.
-	
-	if ( pid == 0 )
-	{
-		return;
-	}
-	
+
+    if ( pid == 0 )
+    {
+        return;
+    }
+
+
 	//Limits. 
-	
-	if ( pid < 0 || pid >= PROCESS_COUNT_MAX )
-	{
-	    return;	
-	}
-	
+
+    if ( pid < 0 || pid >= PROCESS_COUNT_MAX )
+    {
+        return;
+    }
+
+
 	// Mais limites ??
 
-#ifdef MK_VERBOSE	
+#ifdef MK_VERBOSE
 	// Debug:
-	printf ("exit_process: Terminating process %d\n", pid );
-	refresh_screen ();
-#endif	
-	
+    printf ("exit_process: Terminating process %d\n", pid );
+    refresh_screen ();
+#endif
+
+
 	// Pega o ponteiro para a estrutura, muda o código de saída 
 	// e o status.
-	
-	Process = (void *) processList[pid];
-	
-	if( (void *) Process == NULL )
-	{
+
+    Process = (void *) processList[pid];
+
+    if ( (void *) Process == NULL )
+    {
 		//printf ("Invalid PID\n");
 		return;
-	
-	}else{	
+    }else{
 
 		// Se estiver corrompida.
-        if( Process->used != 1 || 
-		    Process->magic != PROCESS_MAGIC )
-		{
-			return;
-		};
-		
-		Process->exit_code = (int) code;    
-		Process->state = PROCESS_TERMINATED; 
+        if ( Process->used != 1 || Process->magic != PROCESS_MAGIC )
+        {
+            return;
+        }
+
+
+        Process->exit_code = (int) code; 
+        Process->state = PROCESS_TERMINATED; 
 		//...
-	};
-		
+    };
+
+
 #ifdef MK_VERBOSE
 	//Debug:
 	printf ("exit_process: Terminating threads..\n");
 	refresh_screen ();
-#endif		
+#endif
 
 	// Agora temos que terminar as threads que estão na lista 
 	// de threads do processo.
 	// Pegaremos a primeira da lista.
 	// Se o head da list não foi inicializado corretamente 
 	// dá page fault.
-	
-	Thread = (void *) Process->threadListHead;
-		
-	// Se não há nada na head.	
-	if( Thread == NULL )
-	{
+
+    Thread = (void *) Process->threadListHead;
+
+	// Se não há nada na head.
+    if ( Thread == NULL )
+    {
 		// @todo: Talvez haja mais o que fazer.
-	    goto done;	
-	}else{
-		
+	    goto done;
+    }else{
+
 		//used, magic ??
-	};	
-		
-	
+    };
+
+
 	// Se a primeira thread da lista é válida, então tentaremos
 	// fechar toda a lista.
-	
-	while (1)
-	{
+
+    while (1)
+    {
 		// ?? Qual deve fechar depois. ??
 		
 		printf (".\n");
@@ -2832,7 +2860,7 @@ void exit_process ( pid_t pid, int code ){
 		
         if( Thread == NULL )
 		{
-		    goto done;	
+		    goto done;
 		
 		}else{
     
@@ -2843,8 +2871,8 @@ void exit_process ( pid_t pid, int code ){
 			
 			// Kill !
 			
-			kill_thread ( Thread->tid );  					
-		    
+			kill_thread ( Thread->tid ); 
+
 			// Prepara qual deve fechar agora.
 		    // Havíamos salvo e agora é vez dela.
 		    // Obs: Estamos reusando o ponteiro.
@@ -2852,10 +2880,10 @@ void exit_process ( pid_t pid, int code ){
 			Thread = (void *) Next;
 		 };
         //Nothing.
-	};
-	
+    };
+
 	//nothing
-	
+
 done:
 	
 	//@todo:
@@ -2866,12 +2894,12 @@ done:
 
 	//Zerando por enquanto.
 
-	//?? Analizar essa parte.	
-    //@todo: Select next process (idle)
-	
-	current_process = 0;	
-    current_thread = 0;    //@todo: Deletar isso.	
-	
+	//?? Analizar essa parte.
+	//@todo: Select next process (idle)
+
+    current_process = 0;
+    current_thread = 0;    //@todo: Deletar isso.
+
 
 	//Process->used = 0;
 	//Process->magic = 0;
@@ -2882,22 +2910,23 @@ done:
 	// chamar o scheduler.
 	
 	//scheduler ();
-	
-	return;
+
+
+    return;
 }
 
 
 // ??
 int get_caller_process_id (void)
 {
-	return (int) caller_process_id;
+    return (int) caller_process_id;
 }
 
 
 // ??
 void set_caller_process_id (int pid)
 {
-	caller_process_id = (int) pid;
+    caller_process_id = (int) pid;
 }
 
 
@@ -2909,28 +2938,28 @@ void set_caller_process_id (int pid)
  */
 
 int init_process_manager (void){
-	
-	caller_process_id = (int) 0;
-	
-	processNewPID = (int) USER_BASE_PID;
-	
+
+    caller_process_id = (int) 0;
+
+    processNewPID = (int) USER_BASE_PID;
+
 	//...
-		
-	return 0;
+
+    return 0;
 }
 
 
 /*
- *Constructor.
-int processmanagerProcessmanager(){
-	;
-};
+ Constructor.
+int processmanagerProcessmanager ()
+{
+}
 */
 
 
 /*
-int processmanagerInit(){
-	;
+int processmanagerInit ()
+{
 };
 */
 
@@ -2941,23 +2970,24 @@ int processmanagerInit(){
  */
 
 unsigned long GetProcessHeapStart ( pid_t pid ){
-	
-	struct process_d *process;
-	
+
+    struct process_d *process;
+
 	//Limits.
-	
-	if ( pid < 0 || pid >= PROCESS_COUNT_MAX )
-	{
-		goto fail; 
-	}
-	
-	process = (struct process_d *) processList[pid];
+
+    if ( pid < 0 || pid >= PROCESS_COUNT_MAX )
+    {
+        goto fail; 
+    }
+
+
+    process = (struct process_d *) processList[pid];
     
-	if ( (void *) process == NULL )
-	{
+    if ( (void *) process == NULL )
+    {
 		goto fail;
 		 
-	}else{
+    }else{
 		
 		if ( process->used != 1 || process->magic != 1234 )
 		{
@@ -2966,8 +2996,9 @@ unsigned long GetProcessHeapStart ( pid_t pid ){
 		
 		//Ok.
 		return (unsigned long) process->Heap;
-	};
-	
+    };
+
+
 fail:
 	
     return (unsigned long) 0;
@@ -2980,34 +3011,35 @@ fail:
  */
 
 unsigned long GetProcessPageDirectoryAddress ( pid_t pid ){
-	
-	struct process_d *process;
-	
+
+    struct process_d *process;
+
 	//Limits.
-	
-	if( pid < 0 || pid >= PROCESS_COUNT_MAX )
-	{
-		goto fail; 
-	};
-	
-	
-	process = (struct process_d *) processList[pid];
-    
-	if ( (void *) process == NULL )
-	{
+
+    if( pid < 0 || pid >= PROCESS_COUNT_MAX )
+    {
+        goto fail; 
+    }
+
+
+    process = (struct process_d *) processList[pid];
+
+    if ( (void *) process == NULL )
+    {
 		goto fail;
 		 
-	}else{
+    }else{
 		
 		if ( process->used != 1 || process->magic != 1234 ){
 			goto fail;
 		}
-		
-		return (unsigned long) process->DirectoryPA;
-	};
-	
+
+        return (unsigned long) process->DirectoryPA;
+    };
+
+
 fail:
-	
+
     return (unsigned long) 0;
 }
 
@@ -3071,7 +3103,7 @@ int process_find_empty_stream_slot ( struct process_d *process ){
 		    {
 		        return i;
 		    }
-	    }		
+	    }
 	};  
 	
 	return -1;

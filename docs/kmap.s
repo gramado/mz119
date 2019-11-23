@@ -2335,43 +2335,43 @@ Linker script and memory map
  .rodata        0x00000000c0035e50      0x150 dispatch.o
  .rodata        0x00000000c0035fa0        0x5 pheap.o
  *fill*         0x00000000c0035fa5        0x3 
- .rodata        0x00000000c0035fa8      0x645 process.o
- *fill*         0x00000000c00365ed        0x3 
- .rodata        0x00000000c00365f0      0x175 queue.o
- *fill*         0x00000000c0036765        0x3 
- .rodata        0x00000000c0036768       0xbd spawn.o
- .rodata        0x00000000c0036825        0x5 tasks.o
- .rodata        0x00000000c003682a        0x5 theap.o
- *fill*         0x00000000c003682f        0x1 
- .rodata        0x00000000c0036830      0x135 thread.o
- *fill*         0x00000000c0036965        0x3 
- .rodata        0x00000000c0036968      0x287 threadi.o
- *fill*         0x00000000c0036bef        0x1 
- .rodata        0x00000000c0036bf0      0x22b ts.o
- .rodata        0x00000000c0036e1b        0x5 tstack.o
- .rodata        0x00000000c0036e20        0x5 callout.o
- .rodata        0x00000000c0036e25        0x5 ipc.o
- .rodata        0x00000000c0036e2a       0x47 ipccore.o
- .rodata        0x00000000c0036e71        0x5 sem.o
- *fill*         0x00000000c0036e76        0x2 
- .rodata        0x00000000c0036e78      0x2a3 memory.o
- *fill*         0x00000000c003711b        0x1 
- .rodata        0x00000000c003711c      0x37e mminfo.o
- .rodata        0x00000000c003749a       0x26 mmpool.o
- .rodata        0x00000000c00374c0      0x190 pages.o
- .rodata        0x00000000c0037650        0x5 preempt.o
- .rodata        0x00000000c0037655        0x5 priority.o
- *fill*         0x00000000c003765a        0x2 
- .rodata        0x00000000c003765c       0x4b sched.o
- *fill*         0x00000000c00376a7        0x1 
- .rodata        0x00000000c00376a8       0x28 schedi.o
- .rodata        0x00000000c00376d0      0x199 create.o
- *fill*         0x00000000c0037869        0x3 
- .rodata        0x00000000c003786c       0x58 mk.o
- .rodata        0x00000000c00378c4       0xec request.o
-                0x00000000c00379b0                _rodata_end = .
+ .rodata        0x00000000c0035fa8      0x63d process.o
+ *fill*         0x00000000c00365e5        0x3 
+ .rodata        0x00000000c00365e8      0x175 queue.o
+ *fill*         0x00000000c003675d        0x3 
+ .rodata        0x00000000c0036760       0xbd spawn.o
+ .rodata        0x00000000c003681d        0x5 tasks.o
+ .rodata        0x00000000c0036822        0x5 theap.o
+ *fill*         0x00000000c0036827        0x1 
+ .rodata        0x00000000c0036828      0x135 thread.o
+ *fill*         0x00000000c003695d        0x3 
+ .rodata        0x00000000c0036960      0x287 threadi.o
+ *fill*         0x00000000c0036be7        0x1 
+ .rodata        0x00000000c0036be8      0x22b ts.o
+ .rodata        0x00000000c0036e13        0x5 tstack.o
+ .rodata        0x00000000c0036e18        0x5 callout.o
+ .rodata        0x00000000c0036e1d        0x5 ipc.o
+ .rodata        0x00000000c0036e22       0x47 ipccore.o
+ .rodata        0x00000000c0036e69        0x5 sem.o
+ *fill*         0x00000000c0036e6e        0x2 
+ .rodata        0x00000000c0036e70      0x2a3 memory.o
+ *fill*         0x00000000c0037113        0x1 
+ .rodata        0x00000000c0037114      0x37e mminfo.o
+ .rodata        0x00000000c0037492       0x26 mmpool.o
+ .rodata        0x00000000c00374b8      0x190 pages.o
+ .rodata        0x00000000c0037648        0x5 preempt.o
+ .rodata        0x00000000c003764d        0x5 priority.o
+ *fill*         0x00000000c0037652        0x2 
+ .rodata        0x00000000c0037654       0x4b sched.o
+ *fill*         0x00000000c003769f        0x1 
+ .rodata        0x00000000c00376a0       0x28 schedi.o
+ .rodata        0x00000000c00376c8      0x199 create.o
+ *fill*         0x00000000c0037861        0x3 
+ .rodata        0x00000000c0037864       0x58 mk.o
+ .rodata        0x00000000c00378bc       0xec request.o
+                0x00000000c00379a8                _rodata_end = .
                 0x00000000c0038000                . = ALIGN (0x1000)
- *fill*         0x00000000c00379b0      0x650 
+ *fill*         0x00000000c00379a8      0x658 
 
 .eh_frame       0x00000000c0038000     0x83b8
  .eh_frame      0x00000000c0038000       0x38 main.o
