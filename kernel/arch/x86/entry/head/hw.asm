@@ -69,6 +69,7 @@ extern _KiPciHandler4
 extern _current_process_pagedirectory_address
 ;;...
 
+
 ;;=====================================================
 ;;  ## TIMER ##
 ;;=====================================================
@@ -86,53 +87,53 @@ extern _current_process_pagedirectory_address
 global _irq0
 _irq0:
 
-    cli	
+    cli
 	
 	;
 	;stack
 	pop dword [_contextEIP]         ; eip (DOUBLE).
 	pop dword [_contextCS]          ; cs  (DOUBLE).
 	pop dword [_contextEFLAGS]      ; eflags (DOUBLE).
-	pop dword [_contextESP] 	    ; esp - user mode (DOUBLE).
+	pop dword [_contextESP]         ; esp - user mode (DOUBLE).
 	pop dword [_contextSS]          ; ss  - user mode (DOUBLE).
-    
+
 	;
 	;registers 
-	mov dword [_contextEDX], edx    ; edx.		
-	mov dword [_contextECX], ecx    ; ecx.	 
-	mov dword [_contextEBX], ebx    ; ebx.	 
+	mov dword [_contextEDX], edx    ; edx.
+	mov dword [_contextECX], ecx    ; ecx.
+	mov dword [_contextEBX], ebx    ; ebx.
 	mov dword [_contextEAX], eax    ; eax.
 	
 	;
 	;registers 
 	mov dword [_contextEBP], ebp    ; ebp.
 	mov dword [_contextEDI], edi    ; edi.
-	mov dword [_contextESI], esi    ; esi.	
+	mov dword [_contextESI], esi    ; esi.
 	
 	;
 	;segments
-	xor eax, eax
+    xor eax, eax
     mov ax, gs
-	mov word [_contextGS], ax	
+    mov word [_contextGS], ax	
     mov ax, fs
-	mov word [_contextFS], ax	
+    mov word [_contextFS], ax	
     mov ax, es
-	mov word [_contextES], ax	
+    mov word [_contextES], ax	
     mov ax, ds
-	mov word [_contextDS], ax	
-	
-	
+    mov word [_contextDS], ax	
+
+
 	; @todo:
-    ; Continuar salvamento de contexto dos registradores x86. 	
+	; Continuar salvamento de contexto dos registradores x86. 
 	; Outros registradores. Ex: media, float point, debug.
 
 	; Preparando os registradores, para funcionarem em kernel mode.
 	;
 	; Obs: 
 	; Os registradores fs e gs podem ser configurados com seletor nulo '0',
-    ; ou ignorados para economizar instrução.
+	; ou ignorados para economizar instrução.
 
-;;.setupKernelModeRegisters:		
+;;.setupKernelModeRegisters:
   
 	
 	;; #importante
@@ -157,44 +158,49 @@ _irq0:
 	mov eax, 0x003FFFF0 
 	mov esp, eax 
 	
-	
-    ; Chama as rotinas em C.
+
+	; Chama as rotinas em C.
 	; As rotinas em executarão serviços oferecidos pelo kernel
 	; ou pelos seus modulos ou drivers.
 	; Durante a execução dessas rotinas, as interrupções podem
 	; por um instante serem habilitadas novamente, se isso aacontecer
 	; não queremos que a interrupção de timer irq0 chame essas rotinas
 	; em c novamente. Então desabilitaremos a rechamada dessas funções
-	; enquanto elas estivere em execução e habilitaremos novamnete ao sairmos delas.
-	
-;;.TimerStuff:	           	
+	; enquanto elas estivere em execução e habilitaremos novamnete ao 
+	; sairmos delas.
+
+
+;;.TimerStuff:
 
 	;Chamada ao módulo interno.
 	;Para essa chamada as rotinas do timer estão dentro do kernel base.
 	;Rotinas de timer. #NÃO envolvendo task switch.
-	call _KiTimer             	
-    
-;;.TaskSwitchStuff:	
-    ;Task switch. Troca a tarefa a ser executada.
+    call _KiTimer  
+
+
+;;.TaskSwitchStuff:
+	;Task switch. Troca a tarefa a ser executada.
 	;ts.c
-	call _KiTaskSwitch 	    
+    call _KiTaskSwitch 
 
 
-    ;;
+	;;
 	;; Flush TLB.
 	;;
-	
+
+
     ;Flush TLB.
     jmp dummy_flush
-dummy_flush:	
+dummy_flush:
 	;TLB.
-	mov EAX, CR3  
+    mov EAX, CR3  
     nop
-	nop
-	nop
-	nop
-	nop
-	mov CR3, EAX  
+    nop
+    nop
+    nop
+    nop
+    mov CR3, EAX  
+
 
 	;----------------------------------------------------------------------
 	; ?? Quando chamar a rotina 'request()' ??
@@ -240,10 +246,10 @@ dummy_flush:
 	;; interrupção de TIMER.
 	;;
 	
-;;.RestoreThreadContext:	
+;;.RestoreThreadContext:
 
 	; @todo:
-    ; Outros registradores precisam ser restaurados agora	
+    ; Outros registradores precisam ser restaurados agora
 	; Outros registradores, Ex: media, float point, debug.
 	
 	;
@@ -285,32 +291,32 @@ dummy_flush:
 	push dword [_contextEIP]       ;eip.
 
 	;
-    ;EOI - sinal.
+	;EOI - sinal.
 	;Sinalizamos apenas o primeiro controlador.
     mov al, 20h
     out 20h, al  
- 	
-	mov eax, dword [_contextEAX]    ;eax. (Acumulador).	
-	
+
+	mov eax, dword [_contextEAX]    ;eax. (Acumulador).
+
 	;( Não precisa 'sti', pois as flags da pilha habilitam as interrupções ).
 	;sti
-	
+
 ;;.Fly:
     ;;
-	;; "Hi, my name is 'iretd', I work so hard for your happiness."
+    ;; "Hi, my name is 'iretd', I work so hard for your happiness."
     ;; "So that's why my page has to be always in the TLB."
-    ;; 	
-    iretd	
-	
-	
-	
+    ;;
+    iretd
+
+
+
 ;----------------------------------------------------------
 ; _dispatch_context:
 ;     Despacha o contexto salvo.
 ;     Retorna para a tarefa interrompida através de iret.
-;	
+;
 
-global _dispatch_context	
+global _dispatch_context
 _dispatch_context:
 	
 	;segments
@@ -343,57 +349,58 @@ _dispatch_context:
 	push dword [_contextCS]        ;cs.
 	push dword [_contextEIP]       ;eip.
 
-	;
+    ;
     ;EOI - sinal
     mov al, 20h
     out 20h, al   
 
 	;(Não precisa 'sti', pois as flags da pilha habilitam as interrupções ).
-	;sti	
-	iretd	
+	;sti
+
+    iretd
 
 
 ;-------------------------------------------
 ; _timer_test:
 ;     Timer sem multitarefas. 
 ;     (usado antes de acionar a multitarefa)
-;	
+;
+
 global _timer_test
 _timer_test:
     cli
-	mov al, 20h
-    out 20h, al  	
-	sti
-	iretd
-	
-		
+    mov al, 20h
+    out 20h, al  
+    sti
+    iretd
+
+
 
 ;--------------------------------------- 
 ; timer_interrupt:
 ;    Timer interrupt handler.
 ;    Provisório.
 ;
+
 timer_interrupt:
     jmp unhandled_irq
-	jmp $
-
+    jmp $
 
 
 
 ;;; ????????
-		
+
 _currentTask:
     dd 0
 _nextTask:
     dd 0
 _stackPointers: 
     times 512 dd 0    ;;@todo: Isso é útil ?
-	
 
 
 
 
-	
+
 ;========================================
 ; _irq1:
 ;     IRQ 1 - #teclado.
@@ -408,7 +415,7 @@ _irq1:
 	;;; salvando registradores.
 	;;; e se o handler bagunçar outros registradores.??
 	
-	cli	
+	cli
 	
 	;pushad
 	push dword eax
@@ -609,27 +616,29 @@ _irq10:
 	sti
     iretd
 	
-	
-;;===============================================	
+
+
+;;===============================================
 extern _xxxe1000handler
 
-global _nic_handler	
+global _nic_handler
 _nic_handler:
     cli
-	pushad
-	
-	call _xxxe1000handler
-	
-	mov al, 0x20
+    pushad
+
+    call _xxxe1000handler
+
+    mov al, 0x20
     out 0xA0, al  
     out 0x20, al
-	
-	popad
-	sti
-    iretd	
-	
-	
-;=======================================	
+
+    popad
+    sti
+    iretd
+
+
+
+;=======================================
 ;IRQ 11 – The Interrupt is left open for 
 ;the use of peripherals (open interrupt/available, SCSI or NIC)
 ;audio.

@@ -2267,33 +2267,48 @@ void servicesPutChar ( int c )
 }
 
 
-// #obs:
-// Quem chamou essa rotina?
-// Qual interrupção foi usada?
-// Existem duas implementações de fork, cada uma usa uma interrupção.
+
+/*
+ ***************************************
+ * gde_fork:
+ *     Implementa a função fork() padrão em ring 0.
+ *
+ *     Essa rotina foi chamada pela interrupção 133 
+ *     cujo handler está em: x86/entry/head/sw.inc 
+ *     na função: _int133_fork.
+ *
+ *     Essa funções tem sua própria interrupção. 
+ */
+
+	// #todo:
+	// Tendo a fork() uma chamada só pra ela, então
+	// podemos usar um conjunto de argumentos de forma confortável.
 
 void *gde_fork ( unsigned long number, 
                  unsigned long arg2, 
                  unsigned long arg3, 
                  unsigned long arg4 )
 {
-
-	// #todo:
-	// Tendo o fork uma chamada s'o pra ele
-	// podemos usar um conjunto de argumentos de forma confort'avel.
-
     void *ret;
 
-	//salva
+
+	//Salva contexto dos registradores.
     save_current_context ();
 
-	ret = (void *) do_fork_process ();
-		
-	//restaura
-	//restaura os registradores e o cr3.
-	restore_current_context ();
-	
-	
+	//
+	// Chama a rotina que implementa a função fork() em ring 0.
+	//
+
+    ret = (void *) do_fork_process ();
+
+
+	//Restaura os registradores e o cr3.
+    restore_current_context ();
+
+		// #debug
+		// Mostrando informações.
+
+        /*
 		//#importante
 		//#DEBUG #DEBUG #DEBUG #DEBUG #DEBUG
 		//MOSTRAR AS INFORMAÇÕES DO PROCESSO CLONE.
@@ -2301,11 +2316,11 @@ void *gde_fork ( unsigned long number,
 		//show_process_information ();
 		//mostra_slot (current_thread);
 		//mostra_reg (current_thread);
-		
 		//printf ("*breakpoint\n\n");
 		//refresh_screen();
 		//while(1){}
-		
+        */
+
     return (void *) ret; 
 }
 

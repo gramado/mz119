@@ -1,5 +1,5 @@
 ;
-; File: x86/head/sw.inc 
+; File: x86/entry/head/sw.inc 
 ;
 ; Descrição:
 ;     Interrupções de software.
@@ -13,201 +13,238 @@
 ;
 
 
-extern _new_task_scheduler ;;@todo: deletar.
+;;@todo: deletar.
+extern _new_task_scheduler 
 
 
-;;D
+;;
 global _int48
 _int48:
-    cli		
-	sti
-	iretd
-	
-;;C	
+    cli
+    ;
+    sti
+    iretd
+
+
+;;
 global _int49
-_int49:		
-    cli		
-	sti
-	iretd
+_int49:
+    cli
+    ;
+    sti
+    iretd
 
-;;B
+
+;;
 global _int50
-_int50:		
-    cli		
-	sti
-	iretd
+_int50:
+    cli
+    ;
+    sti
+    iretd
 
-;;A
+
+;;
 global _int51
-_int51:		
-    cli		
-	sti
-	iretd
+_int51:
+    cli
+    ;
+    sti
+    iretd
 
-;;G
+
+;;
 global _int52
-_int52:		
-    cli		
-	sti
-	iretd
+_int52:
+    cli
+    ;
+    sti
+    iretd
 
-;;F
+
+;;
 global _int53
-_int53:		
-    cli		
-	sti
-	iretd
+_int53:
+    cli
+    ;
+    sti
+    iretd
 
-;;E - Error.	
+
+;;
 global _int54
-_int54:		
-    cli		
-	sti
-	iretd
+_int54:
+    cli
+    ;
+    sti
+    iretd
 
-	
-;	
-; ?? Continua ...	
-;	
-	
-	
+
+;
+; ?? Continua ...
+;
+
+
+
 ;------------------------
 ; _int100: 
-;     Interrupção de sistema (opcional, segunda opção).
-; 	
+;     Interrupção de sistema. 
+;     (opcional, segunda opção).
+; 
+
 global _int100
 _int100:
-    cli		
-	sti
-	iretd
+    cli
+    ; Nothing.
+    sti
+    iretd
 
-	
- 
 
-;;int 133
-;; fork
+
+;;=====================================
+;; _int133_fork:
+;;
+;;     Interrupção 133.
+;;     usada exclusivamente para a função fork();
+;;
 
 extern _gde_fork
 
 global _int133_fork
 _int133_fork:  
 
-
     cli 
-	
+
 	;
 	;stack
-	pop dword [_contextEIP]         ; eip (DOUBLE).
-	pop dword [_contextCS]          ; cs  (DOUBLE).
-	pop dword [_contextEFLAGS]      ; eflags (DOUBLE).
-	pop dword [_contextESP] 	    ; esp - user mode (DOUBLE).
-	pop dword [_contextSS]          ; ss  - user mode (DOUBLE).
-	
+    pop dword [_contextEIP]         ; eip (DOUBLE).
+    pop dword [_contextCS]          ; cs  (DOUBLE).
+    pop dword [_contextEFLAGS]      ; eflags (DOUBLE).
+    pop dword [_contextESP]         ; esp - user mode (DOUBLE).
+    pop dword [_contextSS]          ; ss  - user mode (DOUBLE).
+
 	;
 	;registers 
-	mov dword [_contextEDX], edx    ; edx.		
-	mov dword [_contextECX], ecx    ; ecx.	 
-	mov dword [_contextEBX], ebx    ; ebx.	 
-	mov dword [_contextEAX], eax    ; eax.
-	
+    mov dword [_contextEDX], edx    ; edx.
+    mov dword [_contextECX], ecx    ; ecx.
+    mov dword [_contextEBX], ebx    ; ebx.
+    mov dword [_contextEAX], eax    ; eax.
+
 	;
 	;registers 
-	mov dword [_contextEBP], ebp    ; ebp.
-	mov dword [_contextEDI], edi    ; edi.
-	mov dword [_contextESI], esi    ; esi.	
-	
+    mov dword [_contextEBP], ebp    ; ebp.
+    mov dword [_contextEDI], edi    ; edi.
+    mov dword [_contextESI], esi    ; esi.
+
 	;
 	;segments
-	xor eax, eax
+    xor eax, eax
     mov ax, gs
-	mov word [_contextGS], ax	
+    mov word [_contextGS], ax
     mov ax, fs
-	mov word [_contextFS], ax	
+    mov word [_contextFS], ax
     mov ax, es
-	mov word [_contextES], ax	
+    mov word [_contextES], ax
     mov ax, ds
-	mov word [_contextDS], ax	
-	
-	xor eax, eax
-	mov ax, word 0x10
-	mov ds, ax
-	mov es, ax
-	mov fs, ax  ;*   
-	mov gs, ax  ;* 
-	
-	mov ss, ax
-	mov eax, 0x003FFFF0 
-	mov esp, eax 
-	
-	;;call
-	
-    ;Argumentos.	
-    push dword [_contextEDX] ;edx    ;arg4.
-    push dword [_contextECX] ;ecx    ;arg3. 
-    push dword [_contextEBX] ;ebx    ;arg2. 
-    push dword [_contextEAX] ;eax    ;arg1 = {Número do serviço}.
-	
-	;;O handler padrão é gde_services, que é um wrapper para os outros diálogos.
-	call _gde_fork
-	mov dword [__int133Ret], eax    
-	
-	pop eax
-	pop eax
-	pop eax
-	pop eax
-	
-    ;;
+    mov word [_contextDS], ax
+
+    xor eax, eax
+    mov ax, word 0x10
+    mov ds, ax
+    mov es, ax
+    mov fs, ax  ;*   
+    mov gs, ax  ;* 
+
+    mov ss, ax
+    mov eax, 0x003FFFF0 
+    mov esp, eax 
+
+
+	;;
+	;; Call.
+	;;
+
+    ;Argumentos.
+    push dword [_contextEDX]    ;edx ; arg4.
+    push dword [_contextECX]    ;ecx ; arg3. 
+    push dword [_contextEBX]    ;ebx ; arg2. 
+    push dword [_contextEAX]    ;eax ; arg1 = {Número do serviço}.
+
+    ;; Chamando o handler exclusivo para a função fork().
+    ;; Está em: execve/sci/gde/gde_serv.c
+
+    call _gde_fork
+    mov dword [__int133Ret], eax    
+
+    pop eax
+    pop eax
+    pop eax
+    pop eax
+
+	;;
 	;; Flush TLB.
 	;;
-	
+
     ;Flush TLB.
     jmp dummy_flush2
-dummy_flush2:	
+dummy_flush2:
 	;TLB.
-	mov EAX, CR3  
+    mov EAX, CR3  
     nop
-	nop
-	nop
-	nop
-	nop
-	mov CR3, EAX  
-	
+    nop
+    nop
+    nop
+    nop
+    mov CR3, EAX  
+
+
 	;
 	;segments
-	xor eax, eax
-	mov ax, word [_contextDS]
-	mov ds, ax
-	mov ax, word [_contextES]
-	mov es, ax
-	mov ax, word [_contextFS]
-	mov fs, ax
-	mov ax, word [_contextGS]
-	mov gs, ax
-	
+    xor eax, eax
+    mov ax, word [_contextDS]
+    mov ds, ax
+    mov ax, word [_contextES]
+    mov es, ax
+    mov ax, word [_contextFS]
+    mov fs, ax
+    mov ax, word [_contextGS]
+    mov gs, ax
+
 	;
 	;registers 
-	mov esi, dword [_contextESI]    ;esi.
-	mov edi, dword [_contextEDI]    ;edi.
-	mov ebp, dword [_contextEBP]    ;ebp.
+    mov esi, dword [_contextESI]    ;esi.
+    mov edi, dword [_contextEDI]    ;edi.
+    mov ebp, dword [_contextEBP]    ;ebp.
+
 	;
-	mov eax, dword [_contextEAX]    ;eax.
-	mov ebx, dword [_contextEBX]    ;ebx.
-	mov ecx, dword [_contextECX]    ;ecx.
-	mov edx, dword [_contextEDX]    ;edx.
+    mov eax, dword [_contextEAX]    ;eax.
+    mov ebx, dword [_contextEBX]    ;ebx.
+    mov ecx, dword [_contextECX]    ;ecx.
+    mov edx, dword [_contextEDX]    ;edx.
 
+    ;; Stack
 
-	push dword [_contextSS]        ;ss  - user mode.
-	push dword [_contextESP]       ;esp - user mode.
-	push dword [_contextEFLAGS]    ;eflags.
-	push dword [_contextCS]        ;cs.
-	push dword [_contextEIP]       ;eip.
-	
-	;mov eax, dword [_contextEAX]    ;eax. (Acumulador).	
-	mov eax, dword [__int133Ret] 
-	
-	sti	
+    push dword [_contextSS]        ;ss  - user mode.
+    push dword [_contextESP]       ;esp - user mode.
+    push dword [_contextEFLAGS]    ;eflags.
+    push dword [_contextCS]        ;cs.
+    push dword [_contextEIP]       ;eip.
+
+    ;; Return.
+
+    mov eax, dword [__int133Ret] 
+	;mov eax, dword [_contextEAX]    ;eax. (Acumulador).
+
+    sti
+
     iretd
+
+;Variável interna usada na função acima.
 __int133Ret: dd 0
+
+;;============================================
+
+
 
 
 
