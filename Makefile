@@ -512,7 +512,7 @@ vhd-copy-files:
 
 
 # fonts
-	sudo cp bin/NC2.FON /mnt/gramadovhd	
+	sudo cp bin/NC2.FON /mnt/gramadovhd
 
 #Get available apps
 	-sudo cp ../garden/bin/GRAMCODE.BIN  /mnt/gramadovhd 
@@ -542,13 +542,14 @@ vhd-copy-files:
 	-sudo cp ../garden/bin/LAUNCHER.BIN  /mnt/gramadovhd
 	-sudo cp ../garden/bin/TASCII.BIN    /mnt/gramadovhd
 	-sudo cp ../garden/bin/DUMPIT.BIN    /mnt/gramadovhd
+	-sudo cp ../garden/bin/LUA.BIN       /mnt/gramadovhd
 #...
 	
 # c test suite
 	-sudo cp ../garden/gt/tests/TEST1.C    /mnt/gramadovhd
 	-sudo cp ../garden/gt/tests/TEST2.C    /mnt/gramadovhd
 	-sudo cp ../garden/gt/tests/TEST3.C    /mnt/gramadovhd
-	
+	-sudo cp ../garden/gt/tests/*.LUA  /mnt/gramadovhd
 
 	
 #
