@@ -52,10 +52,10 @@ char mouse_packet_scroll = 0;
 #define MOUSE_F_BIT  0x20
 #define MOUSE_V_BIT  0x08 
 
-//contador
+// Contador
 static int count_mouse = 0;
 
-// Buffer.
+// Buffer
 static char buffer_mouse[3];
 
 int flagRefreshMouseOver;
@@ -64,7 +64,7 @@ int flagRefreshMouseOver;
 
 
 
-// Protótipo.
+// Prototype
 
 int MOUSE_BAT_TEST (void);
 
@@ -73,11 +73,8 @@ int MOUSE_BAT_TEST (void);
 /*
  ******************************************
  * MOUSE_SEND_MESSAGE:
- *     Envia uma mensagem de mouse.
+ *     Send a mouse message. 
  */
-
-// #test
-// #todo
 
 // Pegamos os tres char do inout de mouse e transformamos em uma mensagem 
 // que será enviada para uma thread.
