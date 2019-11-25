@@ -533,8 +533,8 @@ vhd-copy-files:
 	-sudo cp ../garden/bin/GLIBCT1.BIN   /mnt/gramadovhd 
 	-sudo cp ../garden/bin/GRAMC.BIN     /mnt/gramadovhd 
 	-sudo cp ../garden/bin/GRAM.BIN      /mnt/gramadovhd 
-	-sudo cp ../garden/bin/CC500.BIN     /mnt/gramadovhd 
-	-sudo cp ../garden/bin/LISP.BIN      /mnt/gramadovhd 
+#	-sudo cp ../garden/bin/CC500.BIN     /mnt/gramadovhd 
+#	-sudo cp ../garden/bin/LISP.BIN      /mnt/gramadovhd 
 	-sudo cp ../garden/bin/NORATERM.BIN  /mnt/gramadovhd
 	-sudo cp ../garden/bin/REBOOT.BIN    /mnt/gramadovhd
 	-sudo cp ../garden/bin/REBOOT2.BIN   /mnt/gramadovhd
@@ -544,6 +544,7 @@ vhd-copy-files:
 	-sudo cp ../garden/bin/DUMPIT.BIN    /mnt/gramadovhd
 	-sudo cp ../garden/bin/LUA.BIN       /mnt/gramadovhd
 	-sudo cp ../garden/bin/SPIN.BIN      /mnt/gramadovhd
+	-sudo cp ../garden/bin/BISON125.BIN      /mnt/gramadovhd
 #...
 	
 # c test suite
