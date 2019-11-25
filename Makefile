@@ -543,6 +543,7 @@ vhd-copy-files:
 	-sudo cp ../garden/bin/TASCII.BIN    /mnt/gramadovhd
 	-sudo cp ../garden/bin/DUMPIT.BIN    /mnt/gramadovhd
 	-sudo cp ../garden/bin/LUA.BIN       /mnt/gramadovhd
+	-sudo cp ../garden/bin/SPIN.BIN      /mnt/gramadovhd
 #...
 	
 # c test suite
