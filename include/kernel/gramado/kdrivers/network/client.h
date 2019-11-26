@@ -31,6 +31,6 @@ FILE *client_stdout;
 FILE *client_stderr;
 
 //
-//Fim.
+// End.
 //
 

@@ -8,8 +8,8 @@
  *
  * Obs: Um canal de comunicação é composto por dois sockets.
  *
- * isso ficara aqui porque estamos lidando com comunicaç~ao cliente servidor.
- * atrav'es da rede, essa 'e a ideia.
+ * Isso ficara aqui porque estamos lidando com comunicação cliente servidor.
+ * através da rede, essa é a ideia.
  *
  * Versão 1.0, 2015, 2016.
  */
@@ -27,26 +27,27 @@
  */
 
 void *CreateChannel ( struct process_d *OwnerProcess,
-				      struct thread_d *SenderThread,
-				      struct thread_d *ReceiverThread )
+                      struct thread_d *SenderThread,
+                      struct thread_d *ReceiverThread )
 {
     struct channel_d *NewChannel;
 
-	NewChannel = (void *) malloc ( sizeof(struct channel_d) );
-    
-	if( (void *) NewChannel == NULL )
-	{
-	    return NULL;
-	}else{
-		
-	    NewChannel->OwnerProcess = (void *) OwnerProcess;
-		
-		NewChannel->SenderThread = (void *) SenderThread;
-		NewChannel->ReceiverThread = (void *) ReceiverThread;
-	    
-		NewChannel->State = 0;
-	};
-	
+    NewChannel = (void *) malloc ( sizeof(struct channel_d) );
+
+    if( (void *) NewChannel == NULL )
+    {
+        return NULL;
+    }else{
+
+        NewChannel->OwnerProcess = (void *) OwnerProcess;
+
+        NewChannel->SenderThread = (void *) SenderThread;
+        NewChannel->ReceiverThread = (void *) ReceiverThread;
+
+        NewChannel->State = 0;
+    };
+
+
     return (void *) NewChannel;
 }
 
@@ -61,16 +62,21 @@ void *CreateChannel ( struct process_d *OwnerProcess,
  */
 
 int DestroyChannel (struct channel_d *channel){
-	
-	if ( (void *) channel == NULL )
-	{
-	    return 0;    //Nothing to do.	    	
-	}
-    
-	
+
+    if ( (void *) channel == NULL )
+    {
+        return 0;   
+    }else{
+
+        //...
+
+    };
+
+
 	//#todo? ...
-		
-    return 0;	
+
+
+    return 0;
 }
 
 
@@ -80,21 +86,23 @@ int DestroyChannel (struct channel_d *channel){
  *     Abrir o canal para uso.
  */
 
-int OpenChannel ( struct channel_d *channel, 
-                  struct process_d *OwnerProcess,
-				  struct thread_d *SenderThread,
-				  struct thread_d *ReceiverThread)
+int 
+OpenChannel ( struct channel_d *channel, 
+              struct process_d *OwnerProcess,
+              struct thread_d *SenderThread,
+              struct thread_d *ReceiverThread )
 {
-	if ( (void*) channel == NULL )
-	{
-	    return (int) 1;    //Fail.
+    if ( (void *) channel == NULL )
+    {
+        return (int) 1;    //Fail.
 
-	}else{
-		
-	    channel->State = 1;
-	};
-	
-    return 0;	
+    }else{
+
+        channel->State = 1;
+    };
+
+
+    return 0;
 }
 
 
@@ -106,16 +114,17 @@ int OpenChannel ( struct channel_d *channel,
  */
 
 int CloseChannel (struct channel_d *channel){
-	
-    if ( (void *) channel == NULL ){
 
-	    return (int) 1;
-	    
-	}else{
-	    channel->State = 0;
-	};
-	
-    return 0;	
+    if ( (void *) channel == NULL )
+    {
+        return (int) 1;
+
+    }else{
+        channel->State = 0;
+    };
+
+
+    return 0;
 }
 
 
