@@ -409,13 +409,15 @@ void xxxe1000handler (void){
 	if ( e1000_interrupt_flag != 1 )
 	{
 		//#debug
-        printf ("xxxe1000handler: *interrrupt\n");
+        printf ("xxxe1000handler: locked\n");
         refresh_screen();
-		return;
+        return;
+
 	}else{
+
 		//#debug
-        printf ("xxxe1000handler: *interrrupt\n");
-        refresh_screen();
+        //printf ("xxxe1000handler: unlocked\n");
+        //refresh_screen ();
 	};
 
 

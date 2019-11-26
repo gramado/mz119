@@ -1300,7 +1300,7 @@ pciHandleDevice ( unsigned char bus,
 		D->next = NULL;   //Next device.
 
 		//
-		// Nic Intel.
+		// NIC Intel.
 		//
 
         if ( (D->Vendor == 0x8086)  && 
@@ -1327,7 +1327,11 @@ pciHandleDevice ( unsigned char bus,
 
                 e1000_setup_irq ();
                 e1000_reset_controller ();
-
+                
+                //testNIC();
+                printf ("pciHandleDevice: Unlocking interrupt handler \n");
+                e1000_interrupt_flag = 1;
+	
                 //printf("8086:100e done\n");
                 //printf("#debug breakpoint");
                 //refresh_screen();
