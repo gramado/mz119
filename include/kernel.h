@@ -143,7 +143,8 @@ extern void do_executa_new_task (void);
 #include <kernel/signal.h>
 #include <kernel/unistd.h>
 #include <kernel/fcntl.h>
-#include <kernel/socket.h>
+
+#include <kernel/sys/socket.h>
 //...
 //--
 
