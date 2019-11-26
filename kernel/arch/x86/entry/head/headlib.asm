@@ -164,14 +164,15 @@ ldt1:
 ;
 	
 	
-;-----------------------------------------------------------------------------	
+
+;;==================================================================
 ; _setup_system_interrupt: 
 ;    Configura um vetor da IDT para a interrupção do sistema. 
 ;    O endereço do ISR e o número do vetor são passados via argumento.
 ;
 ; IN:
-;    eax = endereço. (callback)
-;    ebx = número do vetor (0x80).
+;    eax = endereço. (callback)(endereço do handler)
+;    ebx = número do vetor (0x80).(número da interrupção.)
 ;
 
 global _setup_system_interrupt
@@ -483,38 +484,49 @@ setup_vectors:
 	pop ebx
 	pop eax
 	ret
-		
+
+
 
 
 ;;=================================================
 ;;     # NIC #
-;;	
+;;
 ;; O kernel chma isso provisoriamente para criar uma entrada
 ;; na idt para o nic intel.
 ;;
-;; #bugbug: isso está em intel.c , mas precisa ser global para que todos 
+;; #bugbug: isso está em nicintel.c , mas precisa ser global para que todos 
 ;; possam usar.
 ;; talvez em kernel.h
 ;; isso funcionou, tentar configurar outras interupções com isso.
 ;;
 
+;; Isso foi declarado em nicintel.c
+;;pegaremos o valor 41 e o endereço do handler.
 extern _nic_idt_entry_new_number
 extern _nic_idt_entry_new_address
-
 
 
 global _asm_nic_create_new_idt_entry
 _asm_nic_create_new_idt_entry:
 	
 	pushad
-	
-	mov eax, _nic_handler
-	;mov eax, dword [_nic_idt_entry_new_address]
-	
-	mov ebx, dword [_nic_idt_entry_new_number]	
-	;mov ebx, dword 41	
 
-	call _setup_system_interrupt	
+    ;; Isso é o endereço da rotina de handler, em assembly;
+    ;; está em hw.asm
+    ;; #bugbug: não usaremos o endereço enviado pois temos que configurar 
+    ;; o EOI e a pilha da rotina de handler.
+    mov eax, _nic_handler
+	;mov eax, dword [_nic_idt_entry_new_address]
+
+    ;; Isso é o número da interrupção. (41)
+    mov ebx, dword [_nic_idt_entry_new_number]
+    ;mov ebx, dword 41
+
+	call _setup_system_interrupt
+	
+	;;#test: Não sei se precisa carregar novamente.
+	;;ok, sem problemas.
+	lidt [_IDT_register] 
 	
 	popad
 	ret 

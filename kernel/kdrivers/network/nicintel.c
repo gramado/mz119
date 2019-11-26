@@ -168,14 +168,9 @@ e1000_init_nic ( unsigned char bus,
 
 		if ( pci_device->Vendor != 0x8086 || pci_device->Device != 0x100E )
 		{
-
-			printf ("#debug breakpoint\n");
+			//printf ("#debug breakpoint\n");
 			printf ("e1000_init_nic: 82540EM not found\n");
 			die ();
-
-			//refresh_screen ();
-			//while (1){}
-			//return -1;
 		}
 
 
@@ -242,20 +237,24 @@ e1000_init_nic ( unsigned char bus,
 	//  NIC
 	//
 
-	//#todo: Checar essa estrutura.
+	// #todo: 
+	// Checar essa estrutura.
 
 	currentNIC = (void *) malloc ( sizeof( struct intel_nic_info_d ) );
 	
 	if ( (void *) currentNIC ==  NULL )
 	{
 		printf ("e1000_init_nic: currentNIC struct\n");
-		return (int) -1;
+		die ();
+		//return (int) -1;
 		
 	} else {
 
 
 		currentNIC->used = 1;
 		currentNIC->magic = 1234;
+		
+		currentNIC->interrupt_count = 0;
 		
 		currentNIC->pci = (struct pci_device_d *) pci_device;
 		
@@ -399,12 +398,13 @@ void xxxe1000handler (void){
     int i;
 
 
-
 	// #importante:
 	// #flag 
 	// Essa flag precisa ser acionada para a rotina funcionar.
 	// F6 tem acionado essa flag.
 
+    //printf ("xxxe1000handler: ");
+    //refresh_screen();
 
 	if ( e1000_interrupt_flag != 1 )
 	{
@@ -420,9 +420,15 @@ void xxxe1000handler (void){
 
 
 
-
 	//intel.h
 	e1000_irq_count++;
+
+    //#test
+    if ( (void *) currentNIC != NULL )
+    {
+        currentNIC->interrupt_count++;
+    }
+
 
 
 	// #debug
@@ -671,31 +677,42 @@ void e1000_setup_irq (void){
 	debug_print ("e1000_setup_irq\n");
 
 	
-	// pegando o númeo da irq
+	// pegando o número da irq.
 	
     uint8_t irq = (uint8_t) currentNIC->pci->irq_line;
 	
-	// handler.
-	// test
+	// handler address
 	
     uint32_t handler = (uint32_t) &xxxe1000handler;  
 
-	//#debug 
-	//printf("PCIRegisterIRQHandler: irq={%d}\n",irq);
-	//printf("PCIRegisterIRQHandler: handler={%x}\n", handler);
-	//printf("PCIRegisterIRQHandler: pin={%d}\n",currentNIC->pci->irq_pin);//shared INTA#
-	//refresh_screen();
-	//while(1){}
-
-	// Transformando irq em numero de interrupção.
+	// #importante
+	// Transformando irq em número de interrupção.
+	// 9+32=41.
 	
 	uint8_t idt_num = (irq + 32);
 	
 	// Chamando asm:
 	// número e endereço.
-	
+	// #obs: Essas variáveis são declaradas nesse arquivo
+	// o assembly terá que pegar.
+
 	nic_idt_entry_new_number = (uint8_t) idt_num;   
 	nic_idt_entry_new_address = (unsigned long) handler; 
+
+
+	//#debug OK (irq=9) 
+	printf ("e1000_setup_irq: irq={%d}\n",irq);
+	printf ("e1000_setup_irq: handler={%x}\n", handler);
+	//printf ("PCIRegisterIRQHandler: pin={%d}\n",currentNIC->pci->irq_pin);//shared INTA#
+	//refresh_screen();
+	//while(1){}
+
+
+	//#debug interrupção=41 
+	printf ("e1000_setup_irq: interrupt={%d}\n",nic_idt_entry_new_number);
+	printf ("e1000_setup_irq: handler={%x}\n", nic_idt_entry_new_address);
+	//refresh_screen();
+	//while(1){}
 
 	//
 	// Creating IDT entry.
@@ -1258,119 +1275,6 @@ void nic_i8254x_transmit (void)
 {
     //Cancelada.
 }
-
-
-/*
-void show_current_nic_info (){
-
-	if ( (void *) currentNIC ==  NULL )
-	{
-		printf("show_current_nic_info: struct fail\n");
-	    return;	
-	}else{
-		
-		if ( currentNIC->used != 1 || currentNIC->magic != 1234 )
-		{
-		    printf("show_current_nic_info: validation fail\n");
-	        return;				
-		}
-		
-		if ( (void *) currentNIC->pci == NULL )
-		{
-		    printf("show_current_nic_info: pci struct fail\n");
-	        return;				
-		}
-
-        //messages  		
-		printf("NIC device info:\n");
-		printf("Vendor %x Device %x \n", 
-		    currentNIC->pci->Vendor, currentNIC->pci->Device );
-			
-			
-		//bars	
-		printf("BAR0 %x\n",currentNIC->pci->BAR0);
-		printf("BAR1 %x\n",currentNIC->pci->BAR1);
-		printf("BAR2 %x\n",currentNIC->pci->BAR2);
-		printf("BAR3 %x\n",currentNIC->pci->BAR3);
-		printf("BAR4 %x\n",currentNIC->pci->BAR4);
-		printf("BAR5 %x\n \n",currentNIC->pci->BAR5);
-		
-		//
-		// ## Device status ##
-		//
-		
-		
-        //To test your mapping, try printing out the device status register 
-		//(section 13.4.2). This is a 4 byte register that starts at byte 8 
-		//of the register space. You should get 0x80080783, which indicates 
-		//a full duplex link is up at 1000 MB/s, among other things.		
-		
-		printf("Device status %x \n", currentNIC->DeviceStatus );
-		
-		// Full duplex.0=half,1=full 
-		if (currentNIC->DeviceStatus & 1)
-		{
-			printf("Full duplex \n");
-		}
-
-        // Link up.0=no,1=link  		
-		if (currentNIC->DeviceStatus & 2)
-		{
-			printf("link up \n");
-		}
-		
-		// transmission paused
-		if (currentNIC->DeviceStatus & 0x10)
-		{
-			printf("transmission paused\n");
-		}
-		
-		// TBI mode 
-		if (currentNIC->DeviceStatus & 0x20)
-		{
-			printf("TBI mode\n");
-		}
-		
-		
-		// Speed 1000Mb/s 
-		if (currentNIC->DeviceStatus & 0x80)
-		{
-			//currentNIC->speed #todo
-			printf("1000Mbs\n");
-		}	
-
-		//
-		// ## MAC ##
-		//
-		
-		printf ("MAC %x %x %x %x %x %x \n", 
-		    currentNIC->mac_address[0], 
-			currentNIC->mac_address[1], 
-			currentNIC->mac_address[2],
-            currentNIC->mac_address[3], 
-			currentNIC->mac_address[4], 
-			currentNIC->mac_address[5] );
-
-		//
-		// ## IP ##
-		//
-			
-		printf ("IP %d %d %d %d \n", 
-		    currentNIC->ip_address[0], 
-			currentNIC->ip_address[1], 
-			currentNIC->ip_address[2],
-            currentNIC->ip_address[3] );
-			
-			
-        printf("int_line={%d} int_pin={%d}\n",
-		    currentNIC->pci->irq_line,     //irq
-			currentNIC->pci->irq_pin );    //shared INTA#			
-			
-		//...
-		
-	};	    
-}
-*/
 
 
 uint32_t E1000ReadEEPROM ( struct intel_nic_info_d *d, uint8_t addr ){

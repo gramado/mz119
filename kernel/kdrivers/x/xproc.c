@@ -766,6 +766,7 @@ system_procedure ( struct window_d *window,
                 //Testes diversos.
                 case VK_F6:
 
+                     //See: network.c
                      testNIC ();
 
                     //test_move_window();

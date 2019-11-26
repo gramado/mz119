@@ -240,15 +240,18 @@ struct intel_nic_info_d
 	uint32_t tx_descs_virt[8];
 	
 	uint32_t rx_descs_phys;  //rx ring physical address
-	uint32_t tx_descs_phys;	 //tx ring physical address
+	uint32_t tx_descs_phys;  //tx ring physical address
 	
 	
 
     struct arp_cache_item_d arp_cache[32];
 	
 	//pci device.
-    struct pci_device_d *pci;	
-	
+    struct pci_device_d *pci;
+
+
+    int interrupt_count;
+
 	// rede.
 	//struct network_info_d *network;
 	
@@ -256,6 +259,8 @@ struct intel_nic_info_d
 
     //struct intel_nic_info_d *next;	
 };
+//#bugbug
+//Esse nome genério não deveria ser usdo para o caso específico da intel.
 struct intel_nic_info_d *currentNIC;
 //...
 
@@ -317,7 +322,7 @@ void E1000WriteCommand ( struct intel_nic_info_d *d, uint16_t addr, uint32_t val
 
 uint32_t E1000ReadCommand (struct intel_nic_info_d *d, uint16_t addr) ;	
 
-uint32_t E1000AllocCont ( uint32_t amount, uint32_t *virt );						
+uint32_t E1000AllocCont ( uint32_t amount, uint32_t *virt );	
 
 					
 void nic_i8254x_transmit (void);

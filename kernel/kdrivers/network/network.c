@@ -174,6 +174,14 @@ void show_network_info (void){
 }
 
 
+
+
+/*
+ ********************************************
+ * show_current_nic_info:
+ * 
+ */
+ 
 // #todo:
 // Isso não precisa ficar dentro do kernel base.
 // Algum aplicativo pode pegar essas informações, uma a uma.
@@ -181,6 +189,9 @@ void show_network_info (void){
 void show_current_nic_info (void){
 	
 	printf ("show_current_nic_info:\n");
+
+    // #bugbug
+    // Essa estrutura está falhando.
 
 	if ( (void *) currentNIC ==  NULL )
 	{
@@ -192,16 +203,16 @@ void show_current_nic_info (void){
 		if ( currentNIC->used != 1 || currentNIC->magic != 1234 )
 		{
 		    printf("show_current_nic_info: validation fail\n");
-	        return;				
+	        return;
 		}
 		
 		if ( (void *) currentNIC->pci == NULL )
 		{
 		    printf ("show_current_nic_info: pci struct fail\n");
-	        return;				
+	        return;
 		}
 
-        //messages  		
+        //messages 
 		printf ("NIC device info:\n");
 		printf ("Vendor %x Device %x \n", 
 		    currentNIC->pci->Vendor, currentNIC->pci->Device );
@@ -219,15 +230,13 @@ void show_current_nic_info (void){
 		// ## Device status ##
 		//
 		
-		
-        //To test your mapping, try printing out the device status register 
-		//(section 13.4.2). This is a 4 byte register that starts at byte 8 
-		//of the register space. You should get 0x80080783, which indicates 
-		//a full duplex link is up at 1000 MB/s, among other things.		
-		
-		
- 
-		
+		// Device status.
+		// To test your mapping, try printing out the device status register 
+		// (section 13.4.2). This is a 4 byte register that starts at byte 8 
+		// of the register space. You should get 0x80080783, which indicates 
+		// a full duplex link is up at 1000 MB/s, among other things.
+
+
 		printf ("Device status %x \n", currentNIC->DeviceStatus );
 		
 		// Full duplex.0=half,1=full 
@@ -245,13 +254,13 @@ void show_current_nic_info (void){
 		// transmission paused
 		if (currentNIC->DeviceStatus & 0x10)
 		{
-			printf("transmission paused\n");
+			printf ("transmission paused\n");
 		}
 		
 		// TBI mode 
 		if (currentNIC->DeviceStatus & 0x20)
 		{
-			printf("TBI mode\n");
+			printf ("TBI mode\n");
 		}
 		
 		
@@ -259,7 +268,7 @@ void show_current_nic_info (void){
 		if (currentNIC->DeviceStatus & 0x80)
 		{
 			//currentNIC->speed #todo
-			printf("1000Mbs\n");
+			printf ("1000Mbs\n");
 		}	
 
 		//
@@ -289,6 +298,8 @@ void show_current_nic_info (void){
 		    currentNIC->pci->irq_line,     //irq
 			currentNIC->pci->irq_pin );    //shared INTA#
 			
+		printf ("interrupt_count={%d}\n", currentNIC->interrupt_count );
+			
 		//...
 		
 	};	    
@@ -298,6 +309,7 @@ void show_current_nic_info (void){
 
 
 /*
+ *********************************************
  * handle_ipv6:
  *     Manipular o pacote ipv6 recebido pelo handle do e1000. Ou por qualquer 
  * outro adaptador.
