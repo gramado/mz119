@@ -466,6 +466,9 @@ void testNIC (void){
  *     data. (The data we want to send via ipv4. 32 bytes)
  */
 
+// #todo
+// Change the return type to 'int'. 
+
 void 
 SendIPV4 ( uint8_t source_ip[4], 
            uint8_t target_ip[4], 
@@ -486,12 +489,12 @@ SendIPV4 ( uint8_t source_ip[4],
 	// NIC Intel device structure.
 	//
 
-	if ( currentNIC == NULL )
-	{
-		printf ("SendIPV4: currentNIC\n");
-		return;
+    if ( currentNIC == NULL )
+    {
+        printf ("SendIPV4: currentNIC struct fail\n");
+        return;
 
-	}else{
+    }else{
 
 		// Configurando a estrutura do dispositivo.
 
@@ -501,23 +504,23 @@ SendIPV4 ( uint8_t source_ip[4],
         currentNIC->ip_address[3] = source_ip[3];  //112;
 
 		//...
-	};
+    };
 
 
-	
-	
+
+
+	//==============================================
+	// # ethernet header #
 	//
-	// ====================== ## ETH HEADER ## ====================
-	//
-	
-	eh = (void *) malloc ( sizeof(struct ether_header ) );
-	
-	if ( (void *) eh == NULL)
-	{
-		printf ("struct eh fail");
-		die ();
-		
-	}else{
+
+    eh = (void *) malloc ( sizeof(struct ether_header ) );
+
+    if ( (void *) eh == NULL)
+    {
+        printf ("SendIPV4: eh struct fail");
+        return;
+
+    }else{
 
 		// Coloca na estrutura do ethernet header os seguintes valores: 
 		// > endereço mac da origem.
@@ -531,26 +534,26 @@ SendIPV4 ( uint8_t source_ip[4],
             eh->dst[i] = target_mac[i];                 // dest. 
         };
 
-	    eh->type = (uint16_t) ToNetByteOrder16 (ETH_TYPE_ARP);
-	    
-	    //...
-	};
-	
+        eh->type = (uint16_t) ToNetByteOrder16 (ETH_TYPE_ARP);
 
-	
-	
-    //==============================================
-	// ## ipv4 ##
+		//...
+    };
+
+
+
+
+	//==============================================
+	// # ipv4 header #
 	//
-	
-	ipv4 = (void *) malloc ( sizeof(struct ipv4_header_d) );
-	
-	if ( (void *) ipv4 == NULL)
-	{
-		printf ("ipv4 fail");
-		die ();
-		
-	}else{
+
+    ipv4 = (void *) malloc ( sizeof(struct ipv4_header_d) );
+
+    if ( (void *) ipv4 == NULL)
+    {
+        printf ("SendIPV4: ipv4 struct fail\n");
+        return;
+
+    }else{
 
         // IPv4 common header
         ipv4->Version_IHL = 0x45;
@@ -561,28 +564,30 @@ SendIPV4 ( uint8_t source_ip[4],
 
 		//default protocol: UDP
 		//#define IPV4_PROT_UDP 0x11
-        ipv4->Protocol = 0x11; //IPV4_PROT_UDP;
 
-        memcpy ( (void*) &ipv4->SourceIPAddress[0], 
+        ipv4->Protocol = 0x11;    //IPV4_PROT_UDP;
+
+        memcpy ( (void *) &ipv4->SourceIPAddress[0], 
             (const void *) &source_ip[0], 4 );
 
-        memcpy ( (void*) &ipv4->DestinationIPAddress[0], 
+        memcpy ( (void *) &ipv4->DestinationIPAddress[0], 
             (const void *) &target_ip[0], 4 );
-	};
+    };
+
 
 
 	//==============================================
-	// ## udp ##
+	// # udp header #
 	//
-	
-	udp = (void *) malloc ( sizeof(struct udp_header_d) );
-	
-	if( (void *) udp == NULL)
-	{
-		printf ("udp fail");
-		die ();
-		
-	}else{
+
+    udp = (void *) malloc ( sizeof(struct udp_header_d) );
+
+    if ( (void *) udp == NULL)
+    {
+        printf ("SendIPV4: udp struct fail\n");
+        return;
+
+    }else{
     
         udp->SourcePort = 0;   
         udp->DestinationPort = 0;
@@ -771,8 +776,8 @@ SendARP ( uint8_t source_ip[4],
 
 
 
-	//
-	// ========= # ETHERNET HEADER # ============
+	//==============================================
+	// # ethernet header #
 	//
 
     eh = (void *) malloc ( sizeof(struct ether_header ) );
@@ -804,34 +809,8 @@ SendARP ( uint8_t source_ip[4],
 
 
 
-
-	//==================================
-	//#debug
-	//show ethernet header
-	/*
-	printf("\n\n");
-	printf("[ethernet header]\n\n");
-	
-	printf("src: ");
-    for( i=0; i<6; i++){ printf("%x ",eh->src[i]); }
-	printf("dst: ");
-    for( i=0; i<6; i++){ printf("%x ",eh->dst[i]); }
-	
-	printf("type={%x} ",eh->type);
-	
-	//#debug
-	//printf("debug *hang");
-	//refresh_screen();
-	//while(1){}
-	*/
-	//==================================
-
-
-
-
-
-	//
-	// ========= # ARP struct # ============
+	//==============================================
+	// # arp header #
 	//
 
     h = (void *) malloc ( sizeof(struct  ether_arp) );
