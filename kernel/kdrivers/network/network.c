@@ -457,7 +457,13 @@ void testNIC (void){
 /*
  ***************************************************************
  * SendIPV4: 
- *    Criando e enviando um pacote ipv4.    
+ *    Criando e enviando um pacote ipv4.  
+ * 
+ * IN:
+ *     source_ip. (It's in the layer 2 of the OSI model. network layer)
+ *     target_ip. (It's in the layer 2 of the OSI model. network layer)
+ *     target_mac. (It's in the layer 3 of the OSI model. data link layer)
+ *     data. (The data we want to send via ipv4. 32 bytes)
  */
 
 void 
@@ -469,14 +475,15 @@ SendIPV4 ( uint8_t source_ip[4],
     int i=0;
     int j=0;
 
-	// Ethernet, arp, ipv4, udp.
+	// ethernet, arp, ipv4, udp.
     struct ether_header *eh;
     struct ether_arp *h;
     struct ipv4_header_d *ipv4;
     struct udp_header_d *udp;
 
+
 	//
-	// Nic device structure.
+	// NIC Intel device structure.
 	//
 
 	if ( currentNIC == NULL )
@@ -511,13 +518,19 @@ SendIPV4 ( uint8_t source_ip[4],
 		die ();
 		
 	}else{
-		
-	    for ( i=0; i<6; i++)
-	    {
-		    eh->src[i] = currentNIC->mac_address[i];    //source ok
-		    eh->dst[i] = target_mac[i];                 //dest. (broadcast)
-	    }	
-	
+
+		// Coloca na estrutura do ethernet header os seguintes valores: 
+		// > endereço mac da origem.
+		// > endereço mac do destion.
+		// O endereço mac da origem está na estrutura do controlador nic intel. 
+		// O endereço mac do destino foi passado via argumento.
+
+        for ( i=0; i<6; i++)
+        {
+            eh->src[i] = currentNIC->mac_address[i];    // source 
+            eh->dst[i] = target_mac[i];                 // dest. 
+        };
+
 	    eh->type = (uint16_t) ToNetByteOrder16 (ETH_TYPE_ARP);
 	    
 	    //...
@@ -617,42 +630,78 @@ SendIPV4 ( uint8_t source_ip[4],
 	}
 
 
-	//len;
-	currentNIC->legacy_tx_descs[old].length = (ETHERNET_HEADER_LENGHT + IPV4_HEADER_LENGHT + UDP_HEADER_LENGHT + 32);
+	// lenght:
+	// Vamos configurar na estrutura do nic intel o tamanho do pacote.
+	// Lenght de um pacote ipv4.
+	// ethernet header, ipv4 header, udp header, data.
 
+    currentNIC->legacy_tx_descs[old].length = ( ETHERNET_HEADER_LENGHT + 
+                                                IPV4_HEADER_LENGHT + 
+                                                UDP_HEADER_LENGHT + 
+                                                32 );
 
+	//cmd
     currentNIC->legacy_tx_descs[old].cmd = 0x1B;
+
+	//status
     currentNIC->legacy_tx_descs[old].status = 0;
 
+	// Current TX.
+	// Qual é o buffer atual para transmissão.
     currentNIC->tx_cur = ( currentNIC->tx_cur + 1 ) % 8;
 
 
-	// ?? send ??
 
+	//
+	// ==== # SEND # ======
+	//
+
+
+	// #importante: 
+	// Diga ao controlador qual é o índice do descritor a ser usado para  
+	// transmitir dados.
+	// TDH	= 0x3810,    /* Tx Descriptor Head */
+	// TDT	= 0x3818,    /* Tx Descriptor Tail */
+
+	// *( (volatile unsigned int *)(currentNIC->mem_base + 0x3810)) = 0;
     *( (volatile unsigned int *)(currentNIC->mem_base + 0x3818)) = currentNIC->tx_cur;
 
 
+
 	// #debug
-    printf ("Sending ipv4 (while)\n");
+	// Colocamos essa mensagem antes de entrarmos no while.
+	// Pois precisamos implementar algum contador no while para não
+	// ficarmos preso nele pra sempre.
+
+    printf ("SendIPV4: Sending broadcast ARP. *debug *while\n");
     refresh_screen ();
 
-	// #bugbug: Cuidado.
-	// Checamos o status do old pra ver se ele foi enviado.
-	// fica travado aqui até que seja envido.
-	// Poderia ter um timemout?
+	// #perigo:
+	// Status.
+	// Checamos o status do buffer old pra ver se ele foi enviado.
+	// Fica travado aqui até que seja enviado?
+	// Poderia ter um timemout?.
 
-	while ( !(currentNIC->legacy_tx_descs[old].status & 0xFF) )
-	{
-		//nothing
-	}
+    while ( !(currentNIC->legacy_tx_descs[old].status & 0xFF) )
+    {
+        // Nothing.
+    };
 }
-	
+
 
 /*
  ***************************************************************
  * SendARP:
  *     Enviar um pacote ARP.
+ * 
+ * IN: 
+ *     source_ip. (It's in the layer 2 of the OSI model. network layer)
+ *     target_ip. (It's in the layer 2 of the OSI model. network layer)
+ *     target_mac. (It's in the layer 3 of the OSI model. data link layer)
  */
+
+// #todo
+// Change the return type to 'int'. 
 
 void 
 SendARP ( uint8_t source_ip[4], 
@@ -664,18 +713,20 @@ SendARP ( uint8_t source_ip[4],
     struct ether_header *eh;
     struct ether_arp *h;
 
+
 	//
 	// nic device structure.
 	//
 
-	if ( currentNIC == NULL )
-	{
-		printf ("SendARP: currentNIC\n");
-		return;
+    if ( currentNIC == NULL )
+    {
+        printf ("SendARP: currentNIC fail\n");
+        return;
 
-	}else{
-		
-		//configurando a estrutura do dispositivo,
+    }else{
+
+		// Source IP.
+		// Configurando a estrutura do dispositivo,
 
         currentNIC->ip_address[0] = source_ip[0];  //192;
         currentNIC->ip_address[1] = source_ip[1];  //168;
@@ -683,34 +734,41 @@ SendARP ( uint8_t source_ip[4],
         currentNIC->ip_address[3] = source_ip[3];  //112;
 
 		//...
-	};
-
+    };
 
 
 
 	//
-	// ========= ## ETH HEADER ## ====================
+	// ========= # ETHERNET HEADER # ============
 	//
 
     eh = (void *) malloc ( sizeof(struct ether_header ) );
 
     if ( (void *) eh == NULL)
     {
-		printf ("struct eh fail");
-		die ();
-		
+        printf ("SendARP: eh struct fail\n");
+        return;
+        //die ();
+
     }else{
+
+		// Coloca na estrutura do ethernet header os seguintes valores: 
+		// > endereço mac da origem.
+		// > endereço mac do destion.
+		// O endereço mac da origem está na estrutura do controlador nic intel. 
+		// O endereço mac do destino foi passado via argumento.
 
         for( i=0; i<6; i++)
         {
-		    eh->src[i] = currentNIC->mac_address[i];    //source ok
-		    eh->dst[i] = target_mac[i];                 //dest. (broadcast)
+            eh->src[i] = currentNIC->mac_address[i];    // source
+            eh->dst[i] = target_mac[i];                 // dest. 
         };
 
         eh->type = (uint16_t) ToNetByteOrder16(ETH_TYPE_ARP);
 
 		//...
-	};
+    };
+
 
 
 
@@ -722,57 +780,62 @@ SendARP ( uint8_t source_ip[4],
 	printf("[ethernet header]\n\n");
 	
 	printf("src: ");
-    for( i=0; i<6; i++)
-		printf("%x ",eh->src[i]);
-	
+    for( i=0; i<6; i++){ printf("%x ",eh->src[i]); }
 	printf("dst: ");
-    for( i=0; i<6; i++)
-		printf("%x ",eh->dst[i]);
+    for( i=0; i<6; i++){ printf("%x ",eh->dst[i]); }
 	
 	printf("type={%x} ",eh->type);
-	*/
-	//==================================
-	
-	
-	
 	
 	//#debug
 	//printf("debug *hang");
 	//refresh_screen();
 	//while(1){}
-	
+	*/
+	//==================================
+
+
+
+
+
 	//
-	// ==================== ## ARP ## ==========================
+	// ========= # ARP struct # ============
 	//
 
-	h = (void *) malloc ( sizeof(struct  ether_arp) );
-	
-	if ( (void *) h == NULL)
-	{
-		printf ("struct h fail");
-		die ();
-	
-	}else{
-		
-		
-		// Hardware type (HTYPE) // (00 01)
-		// Protocol type (PTYPE) //(08 00)
+    h = (void *) malloc ( sizeof(struct  ether_arp) );
+
+    if ( (void *) h == NULL)
+    {
+        printf ("SendARP: struct h fail");
+        return;
+        //die ();
+
+    }else{
+
+
+		// Hardware type (HTYPE)   (00 01)
+		// Protocol type (PTYPE)   (08 00)
 		// Hardware address length (MAC)
 		// Protocol address length (IP)
-	
+
         h->type = 0x0100;
         h->proto = 0x0008;
         h->hlen = 6;
         h->plen = 4;
 
-		//Operation (OPER) (dois bytes invertidos)
+
+		// Operation (OPER) (dois bytes invertidos)
 
         //h->op = ToNetByteOrder16(ARP_OPC_REPLY);
         h->op = ToNetByteOrder16(ARP_OPC_REQUEST);
 
+
 		// mac
+		// Configurando na estrutura de arp o endereço mac de origem e destino.
 		// sender mac
 		// target mac
+		// O endereço mac de origem pegamos na estrutura no nic intel.
+		// O endereço mac de destino foi passado via argumento.
+
         for( i=0; i<6; i++)
         {
 		    h->arp_sha[i] = currentNIC->mac_address[i]; 
@@ -780,8 +843,12 @@ SendARP ( uint8_t source_ip[4],
         };
 
 		// ip
+		// Configurando na estrutura de arp o endereço do ip de origem e 
+		// o ip de destino.
 		// sender ip
 		// target ip
+		// Os endereços foram passados via argumento.
+		
         for ( i=0; i<4; i++)
         {
             h->arp_spa[i] = source_ip[i]; 
@@ -793,11 +860,10 @@ SendARP ( uint8_t source_ip[4],
 
 
 
-//debug:
 
 	//==================================
 	//#debug
-    //show arp
+	//show arp
 	/*
 	printf("\n\n");
 	printf("[arp]\n\n");
@@ -805,123 +871,135 @@ SendARP ( uint8_t source_ip[4],
 	    h->type ,h->proto ,h->hlen ,h->plen ,h->op);
 	
 	printf("\n sender: mac ");
-	for( i=0; i<6; i++){
-	    printf("%x ",h->arp_sha[i]);	
-	}
+	for( i=0; i<6; i++){ printf("%x ",h->arp_sha[i]); }
 	printf("\n sender: ip ");
-	for( i=0; i<4; i++){
-	    printf("%d ",h->arp_spa[i]);	
-	}
+	for( i=0; i<4; i++){ printf("%d ",h->arp_spa[i]); }
 	printf("\n target: mac ");
-	for( i=0; i<6; i++){
-	    printf("%x ",h->arp_tha[i]);	
-	}
+	for( i=0; i<6; i++){ printf("%x ",h->arp_tha[i]); }
 	printf("\n target: ip ");
-	for( i=0; i<4; i++){
-	    printf("%d ",h->arp_tpa[i]);	
-	}
+	for( i=0; i<4; i++){ printf("%d ",h->arp_tpa[i]); }
 	*/
 	//==================================
 
-	
-	
-	// ## quem ? ##
-	uint16_t old = currentNIC->tx_cur;
-	
 
-	// ## Copiando o pacote no buffer ##
-	
-	//pegando o endereço virtual do buffer na estrutura do dispositivo.
+
+	//
+	// ===== # BUFFER # =====
+	//
+
+
+	// ??
+	// Quem?
+	// Estamos pegando o offset que nos levará ao endereço do buffer.
+	// Usaremos esse offset logo abaixo.
+	// Pegamos esse offset na estrutura do controlador nic intel.
+
+    uint16_t old = currentNIC->tx_cur;
+
+	//
+	// Copiando o pacote no buffer.
+	//
+
+	// Pegando o endereço virtual do buffer na estrutura do controlador 
+	// nic intel. Para isso usamos o offset obtido logo acima.
+
     unsigned char *buffer = (unsigned char *) currentNIC->tx_descs_virt[old];
+
+	// #importante:
+	// Preparando ponteiros para manipularmos as estruturas usadas no pacote.
 
     unsigned char *src_ethernet = (unsigned char *) eh;
     unsigned char *src_arp = (unsigned char *) h;
 
+	//
+	// Copy.
+	//
 
-	//copiando o header ethernet
-	//copiando o arp logo após do header ethernet
+	// Copiando as estruturas para o buffer.
+	// Copiando o header ethernet
+	// Copiando o arp logo após do header ethernet
 
-    for (i=0; i<14;i++)
-    {
-        buffer[i] = src_ethernet[i];
-    };
-
-    for (i=0; i<28;i++)
-    {
-        buffer[i + 14] = src_arp[i];
-    };
+	// ethernet, arp.
+    for (i=0; i<14;i++){ buffer[i]      = src_ethernet[i]; };
+    for (i=0; i<28;i++){ buffer[i + 14] = src_arp[i]; };
 
 
+	// lenght:
+	// Vamos configurar na estrutura do nic intel o tamanho do pacote.
 	// Ethernet frame length = ethernet header (MAC + MAC + ethernet type) + ethernet data (ARP header)
-	//O comprimento deve ser o tamanho do header etherne + o tamanho do arp.
+	// O comprimento deve ser o tamanho do header ethernet + o tamanho do header arp.
+	// 14 + 28;
 
-	//len;
-    currentNIC->legacy_tx_descs[old].length = (ETHERNET_HEADER_LENGHT + ARP_HEADER_LENGHT);
-	//currentNIC->legacy_tx_descs[old].length = 14 + 28;
+    currentNIC->legacy_tx_descs[old].length = ( ETHERNET_HEADER_LENGHT + 
+                                                ARP_HEADER_LENGHT );
+
 
 	//??
+	//cso
 	//currentNIC->legacy_tx_descs[0].cso
-	
+
+
+	//??
 	//cmd ok
 	//currentNIC->legacy_tx_descs[0].cmd = TDESC_CMD_IFCS | TDESC_CMD_RS | TDESC_CMD_EOP;
 	//currentNIC->legacy_tx_descs[0].cmd = TDESC_EOP | TDESC_RS; //intel code
-	
+
+	//cmd
     currentNIC->legacy_tx_descs[old].cmd = 0x1B;
+
+	//status
     currentNIC->legacy_tx_descs[old].status = 0;
 
+	// Current TX.
+	// Qual é o buffer atual para transmissão.
     currentNIC->tx_cur = ( currentNIC->tx_cur + 1 ) % 8;
 
-	//??
+
+	//css
 	//currentNIC->legacy_tx_descs[0].css
-	
+
+
 	//??
+	//special ?
 	//currentNIC->legacy_tx_descs[0].special
-	
-	
-	//
-	// ## SHOW INFO ##
-	//
-	
-	//#importante #todo
-	
-	//device info
-	//isso pode ficar pra depois.
 
-	//ethernet header 
-	
-	//arp header
-	
+
+
+
 	//
-	// ## SEND ##
+	// ==== # SEND # ======
 	//
 
-	
-	//#importante 
-	//diga ao controlador qual é o índice do descritor a ser usado para  
-	//transmitir dados.,
-	
-	//current
-	//TDH	= 0x3810,	/* Tx Descriptor Head */
-	//*( (volatile unsigned int *)(currentNIC->mem_base + 0x3810)) = 0;
-	//TDT	= 0x3818,	/* Tx Descriptor Tail */
 
+	// #importante: 
+	// Diga ao controlador qual é o índice do descritor a ser usado para  
+	// transmitir dados.
+	// TDH	= 0x3810,    /* Tx Descriptor Head */
+	// TDT	= 0x3818,    /* Tx Descriptor Tail */
+
+	// *( (volatile unsigned int *)(currentNIC->mem_base + 0x3810)) = 0;
     *( (volatile unsigned int *)(currentNIC->mem_base + 0x3818)) = currentNIC->tx_cur;
 
-	//#debug
-    printf ("Sending broadcast arp. (while)\n");
+
+	// #debug
+	// Colocamos essa mensagem antes de entrarmos no while.
+	// Pois precisamos implementar algum contador no while para não
+	// ficarmos preso nele pra sempre.
+
+    printf ("SendARP: Sending broadcast ARP. *debug *while\n");
     refresh_screen ();
 
+	// #perigo:
+	// Status.
+	// Checamos o status do buffer old pra ver se ele foi enviado.
+	// Fica travado aqui até que seja enviado?
+	// Poderia ter um timemout?.
 
-	//checamos o status do old pra ver se ele foi enviado.
-	//fica travado aqui até que seja envidao.
-	//poderia ter um timemout??.
-
-	while ( !(currentNIC->legacy_tx_descs[old].status & 0xFF) )
-	{
-		//nothing
-	}
+    while ( !(currentNIC->legacy_tx_descs[old].status & 0xFF) )
+    {
+        // Nothing.
+    };
 }
-
 
 
 //
