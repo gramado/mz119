@@ -460,9 +460,9 @@ void testNIC (void){
  *    Criando e enviando um pacote ipv4.  
  * 
  * IN:
- *     source_ip. (It's in the layer 2 of the OSI model. network layer)
- *     target_ip. (It's in the layer 2 of the OSI model. network layer)
- *     target_mac. (It's in the layer 3 of the OSI model. data link layer)
+ *     source_ip. (It's in the layer 3 of the OSI model. network layer)
+ *     target_ip. (It's in the layer 3 of the OSI model. network layer)
+ *     target_mac. (It's in the layer 2 of the OSI model. data link layer)
  *     data. (The data we want to send via ipv4. 32 bytes)
  */
 
@@ -733,9 +733,9 @@ SendIPV4 ( uint8_t source_ip[4],
  *     Enviar um pacote ARP.
  * 
  * IN: 
- *     source_ip. (It's in the layer 2 of the OSI model. network layer)
- *     target_ip. (It's in the layer 2 of the OSI model. network layer)
- *     target_mac. (It's in the layer 3 of the OSI model. data link layer)
+ *     source_ip. (It's in the layer 3 of the OSI model. network layer)
+ *     target_ip. (It's in the layer 3 of the OSI model. network layer)
+ *     target_mac. (It's in the layer 2 of the OSI model. data link layer)
  */
 
 // #todo
