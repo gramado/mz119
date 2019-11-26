@@ -591,43 +591,76 @@ SendIPV4 ( uint8_t source_ip[4],
     };
 
 
-	// ## quem ? ##
-	uint16_t old = currentNIC->tx_cur;
-	
+	//
+	// ===== # BUFFER # =====
+	//
 
-	// ## Copiando o pacote no buffer ##
-	
-	//pegando o endereço virtual do buffer na estrutura do dispositivo.	
-	unsigned char *buffer = (unsigned char *) currentNIC->tx_descs_virt[old];
-		
-	unsigned char *src_ethernet = (unsigned char *) eh; 
-	unsigned char *src_ipv4 = (unsigned char *) ipv4; 
-	unsigned char *src_udp = (unsigned char *) udp; 
-	
-	
+
+	// ??
+	// Quem?
+	// Estamos pegando o offset que nos levará ao endereço do buffer.
+	// Usaremos esse offset logo abaixo.
+	// Pegamos esse offset na estrutura do controlador nic intel.
+
+	uint16_t old = currentNIC->tx_cur;
+
+
+
+	//
+	// Copiando o pacote no buffer.
+	//
+
+	// Pegando o endereço virtual do buffer na estrutura do controlador 
+	// nic intel. Para isso usamos o offset obtido logo acima.
+
+    unsigned char *buffer = (unsigned char *) currentNIC->tx_descs_virt[old];
+
+	// #importante:
+	// Preparando ponteiros para manipularmos as estruturas usadas no pacote.
+
+    unsigned char *src_ethernet = (unsigned char *) eh; 
+    unsigned char *src_ipv4 = (unsigned char *) ipv4; 
+    unsigned char *src_udp = (unsigned char *) udp; 
+
+
+	//
+	// Copy.
+	//
+
+	// Copiando as estruturas para o buffer.
+	// >Step1) Copiando o header ethernet.
+	// >Step2) Copiando o heder ipv4.
+	// >Step3) Copiando o header udp.
+	// >Step4) Copiando os dados.
+
+	//Step1
 	//copia o header ethernet
 	for ( j=0; j<ETHERNET_HEADER_LENGHT; j++ )
 	{
 		buffer[j] = src_ethernet[j];
-	}
-		
+	};
+
+	//Step2
 	//copia o ipv4
 	for ( j=0; j<IPV4_HEADER_LENGHT; j++ )
 	{
 		buffer[j + ETHERNET_HEADER_LENGHT] = src_ipv4[j];
-	}
+	};
 
+	//Step3
 	//copia o udp
 	for ( j=0; j<UDP_HEADER_LENGHT; j++ )
 	{
 		buffer[j + ETHERNET_HEADER_LENGHT +IPV4_HEADER_LENGHT] = src_udp[j];
-	}
+	};
 
+	//Step4
 	//copia o xxxdata
 	for ( j=0; j<32; j++ )
 	{
 		buffer[j + ETHERNET_HEADER_LENGHT + IPV4_HEADER_LENGHT + UDP_HEADER_LENGHT] = data[j];
-	}
+	};
+
 
 
 	// lenght:
@@ -916,8 +949,8 @@ SendARP ( uint8_t source_ip[4],
 	//
 
 	// Copiando as estruturas para o buffer.
-	// Copiando o header ethernet
-	// Copiando o arp logo após do header ethernet
+	// >Copiando o header ethernet.
+	// >Copiando o arp logo após do header ethernet.
 
 	// ethernet, arp.
     for (i=0; i<14;i++){ buffer[i]      = src_ethernet[i]; };
