@@ -13,7 +13,8 @@ int socket ( int family, int type, int protocol ){
 	//vai retornar o descritor de uma stream.
 	
 	printf ("klibc: socket: #todo:\n");
-    return -1;	
+	refresh_screen();
+    return -1;
 }
 
 

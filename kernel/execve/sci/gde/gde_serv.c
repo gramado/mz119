@@ -619,6 +619,16 @@ void *gde_services ( unsigned long number,
         __fp = sys_fopen ( (const char *) arg2, "r+" );
         return (void *) __fp->_base;
     }
+    
+    
+    //socket() la libc.
+    //chamaremos a rotina na crts/klibc
+    //family, type, protocol
+    if ( number == 7000 )
+    {
+        return (void *) socket ( (int) arg2, (int) arg3, (int) arg4 );
+    }
+    
  
 	//...
 
