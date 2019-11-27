@@ -19,6 +19,12 @@
 
 
 
+/*
+ *****************************
+ * do_wait:
+ *     espera por qualquer um do processo filho.
+ */
+
 //#todo 
 //vamos apenas lidar com a estrutura de processo.
 //#importante: o kernel terá a obrigação de 
@@ -30,45 +36,51 @@
 //ela precisa retornar valores padronizados e configurar 
 //o status recebido
 
-int do_wait ( int *status ){
+int do_waitpid (pid_t pid, int *status, int options){
 
-    int i;
-    int pid;
-    struct process_d *p;   
+    //int i;
+    //int __pid;
+    struct process_d *p;  
 
-	//#todo
-	//inicializando
 
-    *status = 0;
+    printf ( "do_waitpid: current_process=%d pid=%d \n",current_process ,pid);
 
-    for (i=0; i<PROCESS_COUNT_MAX; i++)
+    // #todo
+    // tem que bloquear o processo atual até que um dos seus processo filhos
+    // seja fechado.
+
+
+    p = (struct process_d *) processList[current_process];
+
+    if ( (void *) p == NULL )
     {
-        p = (struct process_d *) processList[i];
+		printf ("current process struct fail\n");
+    
+    }else{
+        if ( p->used == 1 && p->magic == 1234 )
+        {
+			
+            printf ("blocking process\n");
+            p->state = PROCESS_BLOCKED;
 
-		if ( (void *) p != NULL )
-		{
-			if( p->used == 1 && p->magic == 1234 )
-			{
-				//estado do processo.
-				//os processos possuem sua própria lista de estados,
-				//diferentes dos estados das threads.
-				
-			    if ( p->state == PROCESS_TERMINATED )
-                {
-					//se o seu processo pai for o processo atual.
-					
-					if ( current_process == p->ppid )
-					{
-						//aqui precisamos dar informações sobre o status 
-						//do processo
-						*status = 1; //fake value. 
-						
-					    return (int) p->pid;
-					}
-				}
-			}
-        }
-    };
+
+			//significa que está esperando por qualquer
+			//um dos filhos.
+            p->wait4pid = (pid_t) pid; 
+
+            //checando se a thread atual é a thread de controle. 
+            if (current_thread == p->control->tid )
+            {
+				printf ("the current thread is also the control thread\n");
+            }
+           
+            printf ("blocking control thread\n");
+            //tem que bloquear todas as threads do pai.
+            //Isso pode estar falhando;
+            //block_for_a_reason ( (int) p->control, (int) WAIT_REASON_WAIT4PID );
+            p->control->state = BLOCKED; 
+       }
+   };
 
 
 	//aqui precisamos dar informações sobre o status 
@@ -78,13 +90,17 @@ int do_wait ( int *status ){
     *status = 1; 
 
 
+    printf ("do_waitpid: done. \n");
+    refresh_screen();
+
     return (int) (-1);
 }
 
 
+
 /*
  * block_for_a_reason:
- *     Bloqueia por um motivo.
+ *     Bloqueia thread por um motivo.
  * 
  */
 

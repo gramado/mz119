@@ -189,13 +189,13 @@ struct process_d *xxxClonedProcess;
  */ 
 
 typedef enum {
-	PROCESS_CREATED,
-	PROCESS_INITIALIZED,
-	PROCESS_RUNNING,
-	PROCESS_BLOCKED,
-	PROCESS_TERMINATED,
+    PROCESS_CREATED,
+    PROCESS_INITIALIZED,
+    PROCESS_RUNNING,
+    PROCESS_BLOCKED,
+    PROCESS_TERMINATED,
     PROCESS_IN_MEMORY,        //O processo está carregado na memória.
-	PROCESS_OUT_OF_MEMORY,    //O processo não está carregado na memória.
+    PROCESS_OUT_OF_MEMORY,    //O processo não está carregado na memória.
 	//...
 }process_state_t;
 
@@ -213,9 +213,9 @@ typedef enum {
  */
 
 typedef enum {
-    APPMODE_NULL,      // Isso se aplica ao processo kernel e ao processo idle por exemplo.	
+    APPMODE_NULL,      // Isso se aplica ao processo kernel e ao processo idle por exemplo.
     APPMODE_TERMINAL,  // O kernel cria uma janela de terminal para o aplicativo.
-	APPMODE_WINDOW,    // O kernel não cria janela de terminal para o aplicativo
+    APPMODE_WINDOW,    // O kernel não cria janela de terminal para o aplicativo
 }appmode_t;
 
 
@@ -257,15 +257,15 @@ typedef enum {
 
 struct process_d 
 {
-	object_type_t objectType;
-	object_class_t objectClass;
-	
-	//object control
-	struct object_d *object;
+    object_type_t objectType;
+    object_class_t objectClass;
 
-	int used;     
-	int magic;    	
-	
+	//object control
+    struct object_d *object;
+
+    int used;  
+    int magic; 
+
 	//callback 
 
 	//
@@ -281,24 +281,24 @@ struct process_d
 	//GID, (Group Identification),
 	//Número do grupo do dono do processo.
 
-	pid_t pid;
-	pid_t ppid;
-	
-	uid_t uid;
-	gid_t gid;
+    pid_t pid;
+    pid_t ppid;
+
+    uid_t uid;
+    gid_t gid;
 
 	// #importante
 	// TABELA DE ARQUIVOS ABERTOS PELO PROCESSO.
 	// Tem necessariamente um limite.
 
-	unsigned long Streams[NUMBER_OF_FILES];
+    unsigned long Streams[NUMBER_OF_FILES];
 
 	// State.
 	// flag ?
-	process_state_t state; 
+    process_state_t state; 
 
 	//plano de execução.
-	int plane;
+    int plane;
 
 	// error.
 	//unsigned long error; 	
@@ -361,7 +361,7 @@ struct process_d
 	// BANCOS
 	//
 
-	//Acesso ao banco de dados do kernel. (não é uma lista).	
+	//Acesso ao banco de dados do kernel. (não é uma lista).
 	struct bank_d *kdb;
 
 	//Lista de acessos à bancos de contas conjuntas.
@@ -479,7 +479,7 @@ struct process_d
 	struct page_directory_d *page_directory;  
 
 	//
-	// Image support.	
+	// Image support.
 	//
 	
 	// #IMPORTANTE
@@ -505,9 +505,9 @@ struct process_d
 	unsigned long PagesPerImage; 
 
 	//usado no fork()
-    unsigned long childImage;  	
+    unsigned long childImage; 
     unsigned long childImage_PA;  
-    //unsigned long childImage2; 		
+    //unsigned long childImage2; 
 	
 	//#todo: estrutura com informações sobre a imagem do processo.
 	//see: pc/image.h
@@ -615,15 +615,19 @@ struct process_d
 	//A primeira thead de uma lista linkada.
 	struct thread_d *threadListHead;
 	//struct thread_d *threadReadyListHead;
-	//...	
+	//...
 
-    //#importante:
-	//thread de controle
-	//Usada para input de mensagens e sinais.
 
-	struct thread_d *control;		
-	
-	//isso pode funcionar em parceria com control, quando criarmos novos processos ou clonarmos.	
+    // #importante:
+    // Thread de controle
+    // Usada para input de mensagens e sinais.
+    // Se fechar ela, tem que fechar o processo.
+
+    struct thread_d *control;
+
+
+	// Isso pode funcionar em parceria com control, 
+	// quando criarmos novos processos ou clonarmos.
 	struct thread_d *extra;  
 	
 	
@@ -636,7 +640,7 @@ struct process_d
 	// ??
 	// preempted:
 	//     flag ~ Sinaliza que uma tarefa pode ou não sofrer preempção.
-	//	   Uma tarefa de menor prioridade pode deixar o estado running 
+	//     Uma tarefa de menor prioridade pode deixar o estado running 
 	// para assumir o estado ready em favor de uma tarefa de maior prioridade
 	// que assumirá o estado running.
 
@@ -646,7 +650,7 @@ struct process_d
 	unsigned long saved;
 
 	//??
-	unsigned long PreviousMode;	
+	unsigned long PreviousMode;
 
 	/*
 	 * event: 

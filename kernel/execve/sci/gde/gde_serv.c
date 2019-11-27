@@ -1009,9 +1009,11 @@ void *gde_services ( unsigned long number,
         // ## EXIT ##
         //
 
-		// 70 - Exit. 
-		// Criaremos um request que será atendido somente quando houver uma 
-		// interrupção de timer. Enquanto isso a thread deve esperar em um loop.
+		// 70 - Exit.
+		// Atende a função exit() da libc. 
+		// Criaremos um 'request' que será atendido somente quando houver uma 
+		// interrupção de timer. 
+		// Enquanto isso a thread deve esperar em um loop.
 
         case SYS_EXIT:
             sys_create_request ( (unsigned long) 12, // number 
@@ -1024,6 +1026,7 @@ void *gde_services ( unsigned long number,
                 (unsigned long) arg2,                // long1  
                 (unsigned long) arg3 );              // long2
             break;
+
 
         // 71
 		// #bugbug
@@ -1087,13 +1090,15 @@ void *gde_services ( unsigned long number,
 			
 			
 		// 83
+		// Suporte à chamada da libc waitpid(...).
 		// schedi.c
-		// #todo.	
+		// #todo.
 		// TID, PID 
 		// TID é a thread atual.
 		// PID veio via argumento.
         case SYS_WAIT4PID: 
-			return (void *) sys_do_wait ( (int *) arg2 );
+            //pid, status, option
+			return (void *) sys_do_waitpid ( (pid_t) arg2, (int *) arg3, (int) arg4 );
 			//block_for_a_reason ( (int) current_thread, (int) arg2 ); //suspenso
 			break;
 			

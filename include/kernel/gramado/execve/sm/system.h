@@ -628,7 +628,7 @@ void systemSystem (void);   // Construtor.
 #define sys_create_request create_request
 #define sys_do_fork_process do_fork_process
 #define sys_show_currentprocess_info show_currentprocess_info
-#define sys_do_wait do_wait
+#define sys_do_waitpid do_waitpid
 #define sys_Down Down
 #define sys_Up   Up
 #define sys_processTesting processTesting

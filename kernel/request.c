@@ -126,37 +126,36 @@ int KiRequest (void){
  
 int request (void){
 	
-	//targets	
-	
+	//targets
+
     struct process_d *Process; 
     struct thread_d *Thread;
-	
-	int PID;
-	int TID;
-	
-	unsigned long r;    //Número do request.
-	unsigned long t;    //Tipo de thread. (sistema, periódica...).
-	
 
-	//
+    int PID;
+    int TID;
+
+    unsigned long r;    //Número do request.
+    unsigned long t;    //Tipo de thread. (sistema, periódica...).
+
+
 	// targets.
-	//
-	
-	PID = (int) REQUEST.target_pid;
+
+    PID = (int) REQUEST.target_pid;
     TID = (int) REQUEST.target_tid;
 
-	
+
+
 	//
 	// ## timeout ##
 	//
-	
-	if ( REQUEST.timeout > 0 )
-	{
-	    REQUEST.timeout--;
-		return 1;
-	}
-	
-	
+
+    if ( REQUEST.timeout > 0 )
+    {
+        REQUEST.timeout--;
+        return 1;
+    }
+
+
 	//
 	// Filtro.
 	//
@@ -165,57 +164,65 @@ int request (void){
 	{
 		Process = NULL;
 	}else{
-	    Process = (void *) processList[PID];		
-	}
-		
+	    Process = (void *) processList[PID];
+	};
+
+
 	if ( TID < 0 || TID > THREAD_COUNT_MAX )
 	{
 	    Thread = NULL;
 	}else{
 	
-	    Thread = (void *) threadList[TID];	
-	}
+	    Thread = (void *) threadList[TID];
+	};
 
-	
-    //
+
+
+	//
 	// # Number #
 	//
-	
-	r = kernel_request;
-	
-	if (r >= KERNEL_REQUEST_MAX)
-		return -1;
-	
-	switch (r) 
-	{
-	    //0 - request sem motivo, (a variável foi negligenciada).
-        case KR_NONE:
-	        //nothing for now.       
-	    break;
 
-	    //1 - Tratar o tempo das threads de acordo com o tipo.  
-		//#importante: De acordo com o tipo de thread.
-	    case KR_TIME:		    
+    r = kernel_request;
+
+    if (r >= KERNEL_REQUEST_MAX)
+        return -1;
+
+
+    switch (r) 
+    {
+        //0 - request sem motivo, (a variável foi negligenciada).
+        case KR_NONE:
+            //nothing for now.       
+            break;
+
+
+        //1 - Tratar o tempo das threads de acordo com o tipo.  
+        //#importante: De acordo com o tipo de thread.
+        case KR_TIME:
             panic ("request: KR_TIME\n");
 			//return -1;
-	        break;
-		
+            break;
+
+
 	    //2 - faz a current_thread dormir. 
    	    case KR_SLEEP:   
 		    do_thread_sleeping ( (int) REQUEST.target_tid );
 	        break;
-         
+
+
 	    //3 - acorda a current_thread.
 	    case KR_WAKEUP:
 		    wakeup_thread ( (int) REQUEST.target_tid );
 		    break;
 
-        //	
+
+        //
 	    case KR_ZOMBIE:
             //panic ("request: KR_ZOMBIE\n");
 			do_thread_zombie ( (int) REQUEST.target_tid );
 		    break;
-			
+
+
 		//5 - start new task.
 		//Uma nova thread passa a ser a current, para rodar pela primeira vez.
 		//Não mexer. Pois temos usado isso assim.	
@@ -226,50 +233,61 @@ int request (void){
 		        current_thread = start_new_task_id;
 	        };
 		    break;
-			
+
+
         //6 - torna atual a próxima thread anunciada pela atual.
 		case KR_NEXT:
             panic ("request: KR_NEXT\n");
 			//return -1;
 			break;	
-			
+
+
 		//7 - tick do timer.
 		case KR_TIMER_TICK:
 		    panic ("request: KR_TIMER_TICK\n");
 		    //return -1;
 			break;
-        
+
+
 		//8 - limite de funcionamento do kernel.
         case KR_TIMER_LIMIT:
 		    panic ("request: KR_TIMER_LIMIT\n");
 		    //return -1;
 			break;
-			
+
+
 		// 9 - Checa se ha threads para serem inicializadas e 
 		// inicializa pelo método spawn.
 		// obs: se spawn retornar, continua a rotina de request. sem problemas.	
 		case KR_CHECK_INITIALIZED:
             check_for_standby ();
 		    break;
-			
+
+
 		//#todo
 		//Chama o procedimento do sistema.
         // ?? args ??	
-        // o serviço 124 aciona esse request.		
+        // o serviço 124 aciona esse request.
 		case KR_DEFERED_SYSTEMPROCEDURE:
 		    //system_procedure ( REQUEST.window, REQUEST.msg, REQUEST.long1, REQUEST.long2 );
 			break;
-			
+
+
 	    //exit process
 		case 11:
 			exit_process ( (int) REQUEST.target_pid, (int) REQUEST.long1 );
 			break;
-			
-		//exit thread.	
-		case 12:
-			do_request_12 ( (int) REQUEST.target_tid );
-			break;
-			
+
+
+		// exit thread.
+		// sairemos da thread, mas se for a thread de controle, também 
+		// sairemos do processo.
+        case 12:
+            printf ("request: 12, exiting thread %d\n", REQUEST.target_tid);
+            do_request_12 ( (int) REQUEST.target_tid );
+            break;
+
+
 		//make target porcess current
 		//cuidado.	
 		case 13:	
@@ -330,20 +348,20 @@ create_request ( unsigned long number,
 	}
 	
 	REQUEST.target_pid = target_pid;
-	REQUEST.target_tid = target_tid;	
-	
+	REQUEST.target_tid = target_tid;
+
 	REQUEST.window = (struct window_d *) window;
 	REQUEST.msg = msg;
 	REQUEST.long1 = long1;
 	REQUEST.long2 = long2;
-		
+
 	//extra.
 	//rever isso depois.
 	REQUEST.long3 = 0;
 	REQUEST.long4 = 0;
 	REQUEST.long5 = 0;
 	REQUEST.long6 = 0;
-	
+
 	//OK
 	return 0;
 }
@@ -358,7 +376,7 @@ void clear_request (void){
 	REQUEST.timeout = 0;
 	
 	REQUEST.target_pid = 0;
-	REQUEST.target_tid = 0;	
+	REQUEST.target_tid = 0;
 		
 	REQUEST.window = NULL;
 	REQUEST.msg = 0;
@@ -372,19 +390,36 @@ void clear_request (void){
 }
 
 
-void do_request_12 ( int tid )
-{
-	
-	struct process_d *p;	
-	struct thread_d *t;
-	
+/*
+ **************** 
+ * do_request_12:
+ *     exit thread.
+ */
+
+	// exit thread.
+	// sairemos da thread, mas se for a thread de controle, também 
+	// sairemos do processo.
+
+void do_request_12 ( int tid ){
+
+    //curent process
+    struct process_d *p;
+    struct thread_d *t;
+
+    //parent process
+    struct process_d *parent;
+    int __ppid = 0;
+
+
+
 	//#debug
-	//printf ("do_request_12: code=%d \n", REQUEST.long1);
-	
+    printf ("do_request_12: code=%d \n", REQUEST.long1);
+
+
 	//exit code.
 	switch (REQUEST.long1)
 	{
-		//sem erros.	
+		//sem erros.
 		case 0:
 			goto do_exit;
 			break;
@@ -393,7 +428,7 @@ void do_request_12 ( int tid )
 		//vamos imprimir a mensagem de erro que estiver no
 		//arquivo stderr.
 		//#todo talvez precise de fflush se a mensagem estiver
-		//no buffer em user mode.	
+		//no buffer em user mode.
 		case 1:
 			goto do_printf_error_message;
 			break;
@@ -402,47 +437,71 @@ void do_request_12 ( int tid )
 		default:
 			goto do_exit;
 			break;
-	}
-	
-//#test	
+    };
+
+
+
+//#test
 do_printf_error_message:
-	
+
     printf ("do_request_12: do_printf_error_message\n");
-	refresh_screen ();
-	
+    refresh_screen ();
+
 do_exit:
-	
+
+
+    // #todo
+    // #importante
+    // Nesse momento temos que que ver qual é o processo pai do processo
+    //que saiu, para acordar ele, caso esteja esperando por esse.
+
+   
+
 	//#debug
 	//Se não ha erros, não mostramos mensagem.
-    //printf ("do_request_12: Exit thread, no error\n");	
-	
+    printf ("do_request_12: Exit thread, no error\n");
+
+
     //#importante
 	// Isso está certo. O que importa é exibir
 	// a stream stderr do processo.
 
-	t = (struct thread_d *) threadList[REQUEST.target_tid];
-	p = (struct process_d *) processList[t->ownerPID];
-	
-	
+    t = (struct thread_d *) threadList[REQUEST.target_tid];
+    p = (struct process_d *) processList[t->ownerPID];
+
+    //parent process
+    __ppid = p->ppid;
+    parent = (struct process_d *) processList[__ppid];
+
+    //se o processo pai está esperando pelo processo atual,
+    //então acordamos o processo pai.
+    if (parent->wait4pid == p->pid )
+    {
+		printf("acordando pai e sua thread de controle.\n");
+        parent->state = PROCESS_RUNNING;
+        parent->control->state = RUNNING;
+    }
+
+
 	// #bugbug
 	// Ainda não podemos usar esse tipo de coisa,
 	// estamos nos preparando par usar,
-	
+
 	//stdout = (FILE *) p->Streams[1]; //stdout
 	//stderr = (FILE *) p->Streams[2]; //stderr
 	
 	// #importante
 	// Testando a concatenação.
 	
-	//fprintf (stderr, "Exiting the thread %d ", REQUEST.target_tid );			
-	//fprintf (stderr, " *OK ");	
+	//fprintf (stderr, "Exiting the thread %d ", REQUEST.target_tid );
+	//fprintf (stderr, " *OK ");
 
-	
+
 
     exit_thread ( (int) REQUEST.target_tid );
-	
-		
-	//kprintf ("%s \n", stdout->_base );    	
+
+
+	//kprintf ("%s \n", stdout->_base ); 
 	//kprintf ("%s \n", stderr->_base );
 	
 	// Done.
@@ -450,13 +509,14 @@ do_exit:
 	// #bugbug:
 	// Isso é realmente necessário ?
 	// Queremos apenas exibir a mensagem no terminal.
-	
-	//#debug
-	//kprintf ("done :) \n");
-	//refresh_screen ();
-	
+
+
 	// Clear request structure.
 	clear_request ();
+
+	//#debug
+    kprintf ("do_request_12: done :) \n");
+    refresh_screen ();
 }
 
 

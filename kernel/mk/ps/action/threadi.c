@@ -883,63 +883,64 @@ void release ( int tid ){
  * exit_thread:
  *     Exit a thread.
  *     Torna o estado ZOMBIE mas não destrói a estrutura.
- *     Outra rotina destruirá as informações de uma 
- * estrutura de thread zombie.
+ *     Outra rotina destruirá as informações de uma estrutura de thread zombie.
  */
  
 void exit_thread (int tid){
-	
+
     struct thread_d *Thread;
-	
-	if ( tid < 0 || tid >= THREAD_COUNT_MAX ){
-		
-	    goto fail;
-	}
-	
-	if ( tid == idle ){
-		
-		goto fail;
-	}
-	
-	Thread = (void *) threadList[tid];
-	
-	if ( (void *) Thread == NULL )
-	{
-		goto fail;
-		
-	}else{
-		
-        if ( Thread->magic != THREAD_MAGIC ){
-			
-			goto fail;
-		}
-		
+
+
+    if ( tid < 0 || tid >= THREAD_COUNT_MAX )
+    {
+        goto fail;
+    }
+
+    if ( tid == idle )
+    {
+        goto fail;
+    }
+
+
+    Thread = (void *) threadList[tid];
+
+    if ( (void *) Thread == NULL )
+    {
+        goto fail;
+    }else{
+
+        if ( Thread->magic != THREAD_MAGIC )
+        {
+            goto fail;
+        }
+
 		//#bugbug 
 		//lembrando que se deixarmos no estado ZOMBIE o 
 		//deadthread collector vai destruir a estrutura.
-		
-		Thread->state = ZOMBIE; 
-	};
-		
-	
+
+        Thread->state = ZOMBIE; 
+    };
+
+
 	// # reavaliar isso.
 	// Se a thread fechada é a atual, 
 	// necessitamos de algum escalonamento.	
-    // #obs: Essa rotina de reescalonamento não trás problemas.
-	
-	if ( tid = current_thread )
-	{	
-	    scheduler ();
+	// #obs: Essa rotina de reescalonamento não trás problemas.
+
+    if ( tid = current_thread )
+    {
+        scheduler ();
     }
-	
-	
+
+
 fail:
-//Nothing.		
+    //Nothing.
+
 done:
-	
+
 	// Isso avisa o sistema que ele pode acordar o dead thread collector.
-	dead_thread_collector_flag = 1;
-	
+    dead_thread_collector_flag = 1;
+
 	return;
 }
 
