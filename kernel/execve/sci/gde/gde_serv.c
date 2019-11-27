@@ -436,6 +436,22 @@ void *gde_services ( unsigned long number,
     }
 
 
+    //write
+    //libc ssize_t write (int fd, const void *buf, size_t count)
+    //#todo: essa rotina pode virar write(...) da libc
+    FILE *____stream;
+    struct process_d *____p;
+    if ( number == 614 )
+    {
+		____p = (void *) processList[current_process];
+		____stream = (void *) ____p->Streams[arg2];
+		
+        // coloca no buffer dp fd do processo atual se o arquivo estuiver aberto.
+        // obter um ponteiro de estrutura dado um fd.
+        return (void *) fwrite ( (const void *) arg3, (size_t) 0, (size_t) arg4, (FILE *) ____stream );
+    }
+
+
 	//...
 
 

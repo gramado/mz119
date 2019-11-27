@@ -447,10 +447,10 @@ size_t fwrite (const void *ptr, size_t size, size_t n, FILE *fp){
        //switch (s->node->type) arquivo, dispositivo, etc ... 
 
 		//#debug
-        printf ("fwrite: copiando do buffer\n");
-        printf ("_w=%d \n", fp->_w );
-        printf ("_bf._base=%x \n", fp->_bf._base );
-        refresh_screen ();
+        //printf ("fwrite: copiando do buffer\n");
+        //printf ("_w=%d \n", fp->_w );
+        //printf ("_bf._base=%x \n", fp->_bf._base );
+        //refresh_screen ();
 
 		// #todo: 
 		// _w limits

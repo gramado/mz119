@@ -12,7 +12,7 @@
 VERSION = 1
 PATCHLEVEL = 15
 SUBLEVEL = 0
-EXTRAVERSION = -rc5
+EXTRAVERSION = -rc6
 NAME =  
 
 
@@ -544,7 +544,8 @@ vhd-copy-files:
 	-sudo cp ../garden/bin/DUMPIT.BIN    /mnt/gramadovhd
 	-sudo cp ../garden/bin/LUA.BIN       /mnt/gramadovhd
 	-sudo cp ../garden/bin/SPIN.BIN      /mnt/gramadovhd
-	-sudo cp ../garden/bin/BISON125.BIN      /mnt/gramadovhd
+#	-sudo cp ../garden/bin/BISON125.BIN      /mnt/gramadovhd
+#	-sudo cp ../garden/bin/FASM.BIN      /mnt/gramadovhd
 #...
 	
 # c test suite
