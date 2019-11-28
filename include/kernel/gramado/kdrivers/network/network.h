@@ -81,6 +81,20 @@ void SendARP ( uint8_t source_ip[4], uint8_t target_ip[4], uint8_t target_mac[6]
 void testNIC (void);
 
 
+// dialogo para o servidor de rede.
+unsigned long 
+network_server_dialog ( struct window_d *window, 
+                        int msg, 
+                        unsigned long long1, 
+                        unsigned long long2 );
+
+int network_decode_buffer ( unsigned long buffer_address );
+
+
+int do_ipv4 ( unsigned long buffer );
+int do_ipv6 ( unsigned long buffer );
+int do_arp ( unsigned long buffer );
+
 //
 // End.
 //

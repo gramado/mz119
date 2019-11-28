@@ -1,7 +1,8 @@
 /*
  * File: kdrivers/network/network.c
  *     
- *     Network sopport.
+ *     Network sopport. 
+ *     Ring 0, kernel base.
  *
  * History:
  *     2016 - Created by Fred Nora.
@@ -89,15 +90,13 @@ int networkInit (void){
 	// Host info struct. 
 	// See: host.h
 
-	HostInfo = (struct host_info_d *) malloc ( sizeof( struct host_info_d ) ); 
+    HostInfo = (struct host_info_d *) malloc ( sizeof( struct host_info_d ) ); 
 
-	if ( (void *) HostInfo == NULL )
-	{
-		panic ("networkInit: HostInfo");
-		//die ();
-	
-	}else{
-		
+    if ( (void *) HostInfo == NULL )
+    {
+        panic ("networkInit: HostInfo");
+    }else{
+
 		//#todo object header
 		
 		HostInfo->used = 1;
@@ -1013,6 +1012,289 @@ SendARP ( uint8_t source_ip[4],
     };
 }
 
+
+
+
+/*
+ **************************
+ * network_server_dialog: 
+ * 
+ * Esse é o dialogo principal do servidor de rede.
+ * O loop do servido deve direcionar a mensagem recebida para esse diálogo.
+ */
+ 
+unsigned long 
+network_server_dialog ( struct window_d *window, 
+                        int msg, 
+                        unsigned long long1, 
+                        unsigned long long2 ) 
+{
+	
+	// #debug
+    //printf ("network_server_dialog:\n");
+
+	// Vamos tratar as mensagens recebidas. Entre elas:
+	// MSG_BUFFERFULL  - (O buffer está cheio)
+	//  x     -  Inicializar o servidor de rede.
+	//  x     -  Finalizar o servidor de rede.
+	//...
+
+
+	//Structs.
+    //isso deve ir para a rotina certa.
+    //struct ipv6_header_d *ipv6_h;
+    //struct ether_header *eh;
+    //struct ether_arp *arp_h;
+    //int i;
+
+
+
+
+    switch (msg)
+    {
+		case 0:
+		    return 1;
+		    break;
+
+        // buffer full.
+        case 8000:
+            //printf ("buffer=%x\n", long1);
+            return (unsigned long) network_decode_buffer ( (unsigned long) long1 );
+            break;
+
+        //inicializar 
+        case 8001:
+            return 1;
+            break;
+
+        //finalizar
+        case 8002:
+            return 1;
+            break;
+
+        default:
+            return 1;
+            break;
+    };
+
+    return 1;
+}
+
+
+// O que tem no buffer?
+//decodificando o protocolo encontrado no buffer.
+//vamos sondar o ethernet header para percebermos o tipo
+//e redirecionarmos para a rotina apropriada.
+int network_decode_buffer ( unsigned long buffer_address ){
+
+    //#debug
+    //printf ("network_decode_buffer:\n");
+
+    struct ether_header *eh;
+
+
+    if ( buffer_address == 0 )
+    {
+        printf ("network_decode_buffer: buffer\n");
+        return 1;
+    }
+    
+	//
+	// ## eth header ##
+	//
+	
+	//ethernet header
+	//eh = (void *) &buffer[0];
+	eh = (void *) buffer_address;
+	
+	if ( (void *) eh == NULL )
+	{
+		printf ("network_decode_buffer: eh");
+		die ();
+	}else{
+
+	    //printf("src: ");
+        //for( i=0; i<6; i++)
+	    //	printf("%x ",eh->src[i]);
+	
+	    //printf("dst: ");
+        //for( i=0; i<6; i++)
+	    //	printf("%x ",eh->dst[i]);
+	
+	    printf("type={%x} ",eh->type);
+    };
+
+    uint16_t type = FromNetByteOrder16(eh->type);
+    
+    switch ( (uint16_t) type)
+    {
+
+
+		//::: IPV4
+		//0x0800	Internet Protocol version 4 (IPv4)
+        case 0x0800:
+           // #debug
+           //printf("todo: Internet Protocol version 4 (IPv4)\n");
+           printf("IPv4 ");
+           do_ipv4 ( (unsigned long) buffer_address );
+           refresh_screen();
+           return 0;
+           break;
+
+		//::: ARP
+		//0x0806	Address Resolution Protocol (ARP)
+		//#todo: devemos chamar uma rotina para tratamento de ARP e não
+		//fazermos tudo aqui. kkk.
+        case 0x0806:
+            printf("\nARP ");
+            do_arp ((unsigned long) buffer_address );
+            refresh_screen();
+            return 0;
+            break;
+
+		//::: IPV6
+		//0x86DD	Internet Protocol Version 6 (IPv6)
+        case 0x86DD:
+			printf("IPv6 ");
+			do_ipv6 ( (unsigned long) buffer_address );
+			refresh_screen();
+			return 0;
+			break;
+
+		//::: DEFAULT
+        // Error: Default package type.
+        default:
+            // #debug
+            //printf("default ethernet type\n");
+            //refresh_screen();
+            return 0;
+            break;
+
+    }
+
+    return 1;
+}
+
+
+int do_ipv4 ( unsigned long buffer )
+{
+	printf ("do_ipv4\n");
+	return 0;
+}
+
+int do_ipv6 ( unsigned long buffer )
+{
+	printf ("do_ipv6\n");
+			//printf("IPv6 ");
+            //ipv6_h = (void *) &buffer[14];
+
+            //handle_ipv6 ( (struct intel_nic_info_d *) currentNIC, 
+              //  (struct ipv6_header_d *) ipv6_h );
+	return 0;
+}
+
+int do_arp ( unsigned long buffer )
+{
+    //debug
+    printf ("do_arp: \n");
+
+    struct ether_header *eh;
+    struct ether_arp *arp_h;
+    int i;
+
+   eh = (struct ether_header *) (buffer + 0);
+   arp_h = (struct ether_arp *) (buffer + 14);
+   //arp_h = (struct ether_arp *) &buffer[14];
+
+   
+  //printf("todo: Address Resolution Protocol (ARP) ");
+  
+    if ((void *) arp_h == NULL)
+        return 1;
+
+
+    if ( arp_h->op == ToNetByteOrder16(ARP_OPC_REPLY) )
+    {
+				//#debug
+                //printf("REPLY received\n");
+                //printf("src: ");
+                //for( i=0; i<4; i++)
+                //    printf("%x ",arp_h->arp_spa[i]);
+                //refresh_screen();
+        return 1;
+    }
+
+
+    if ( arp_h->op == ToNetByteOrder16(ARP_OPC_REQUEST) )
+    {
+	    //#debug
+
+        printf ("\n ARP REQUEST received | ");
+        for( i=0; i<6; i++){ printf("%x ",eh->src[i]); };
+
+        printf(" | ");
+        for( i=0; i<6; i++){ printf("%x ",eh->dst[i]); };
+
+        printf(" | ");
+        for( i=0; i<4; i++){ printf("%d ",arp_h->arp_spa[i]); };
+
+        printf(" | ");
+        for( i=0; i<4; i++){ printf("%d ",arp_h->arp_tpa[i]); };
+
+
+		//cache
+		//cada controlador tem seu cache.
+
+        for ( i=0; i<32; i++ )
+        {
+             // livre.
+             if ( currentNIC->arp_cache[i].used == 1 && 
+                  currentNIC->arp_cache[i].magic == 1234 )
+             {
+
+				//compara o ip
+                if ( strncmp ( (char *) &currentNIC->arp_cache[i].ipv4_address[0], 
+                               (char *) &arp_h->arp_spa[0], 
+                                 4 ) == 0 )
+                {
+                     memcpy ( (void *) &currentNIC->arp_cache[i].mac_address[0], 
+                        (const void *) &eh->src[0], 
+                         6 );
+
+					// Sinaliza que está em uso.
+                    currentNIC->arp_cache[i].magic = 4321;
+                 }
+              }
+         };
+
+         // ??
+         // vamos responder.
+         // Pra isso precisamos saber o tamanho do buffer.
+         // vamos rever isso pois não podemos mais consultar o controlador 
+         // por enquanto.
+         
+         uint16_t arp_tx_old = currentNIC->tx_cur;
+         uint32_t arp_tx_len = currentNIC->legacy_tx_descs[arp_tx_old].length;
+
+		//Muda para REPLAY.
+        arp_h->op = ToNetByteOrder16(ARP_OPC_REPLY);
+
+		//reenvia os mesmos dados, mas modificados para replay.
+		//essa rotina vai copiar de um buffer para outro.
+		printf ("\n Sending ARP reply ...\n");
+
+        E1000Send ( (void *) currentNIC, 
+            (uint32_t) arp_tx_len, 
+            (uint8_t *) buffer);
+
+
+        printf ("\n");
+        refresh_screen ();
+        return 0;
+    }
+        
+    return 0;
+}
 
 //
 // End

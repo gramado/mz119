@@ -1,6 +1,8 @@
 /*
  * File: kdrivers/network/nicintel.c   
  *
+ * // Driver para o NIC intel. (8086:100E)
+ * 
  * Descrição:
  *     Network interface controller
  *     Network card driver.
@@ -54,10 +56,10 @@ PCIRegisterIRQHandler ( uint16_t bus,
 {
 	//#debug 
 
-    printf ("nicintel-PCIRegisterIRQHandler:");
+    panic ("nicintel-PCIRegisterIRQHandler:");
 
-    refresh_screen ();
-    while (1){}	
+    //refresh_screen ();
+    //while (1){}
 }
 
 
@@ -384,7 +386,15 @@ e1000_init_nic ( unsigned char bus,
  *    >>>> HANDLER <<<<
  *******************************************
  * xxxe1000handler:
- *     e1000 handler :)
+ *     
+ *     Esse é o handler da interrupção para o NIC intel 8086:100E.
+ *     Esse é o driver do controlador, ele não atua sobre protocolos de rede,
+ * então deve-se enviar uma mensagem para o servidor de rede para ele
+ * analizar o conteúdo do buffer, para assim decidir qual é o protoco e 
+ * redirecionar para a rotina de tratamento do protocolo específico.
+ *     Esse é o driver do controlador, ele deve solicitar ao kernel
+ * qual é o PID do processo que é o servidor de rede, e enviar
+ * a mensagem para ele, contendo o endereço do buffer.
  */
 
 void xxxe1000handler (void){
@@ -496,20 +506,51 @@ void xxxe1000handler (void){
 	// Os tipos são: IPV4, ARP, IPV6 e default.
 
     unsigned char *buffer = (unsigned char *) currentNIC->rx_descs_virt[old];
+    
+
+
+
+    // #importante
+    // Agora que temos o buffer podemos enviar para o servidor de rede.
+    // Pois o driver do controlador não lida com protocolos.
+
+    network_server_dialog ( NULL, 
+        (int) 8000, 
+        (unsigned long) &buffer[0],  
+        (unsigned long) &buffer[0] ); 
+        
+        
+     return;
+     
+     //#importante
+     // vamos mover essas rotinas de tratamento de protocolo
+     //para o servidor de rede, que redirecionará para o tratador apropriado.
+     //pois o driver de controlador não deve mexer com protocolo de rede.
+
+     // #importante
+     // Tudo o que estava aqui em baixo, voi movido para network.c
+
+     //
+     // ========== CUT HERE ========
+     //
 
 	//
 	// ## eth header ##
 	//
 	
+	/*
 	//ethernet header
 	eh = (void *) &buffer[0];
 	
 	if ( (void *) eh == NULL )
 	{
-		printf ("nicintel-xxxe1000handler: eh");
+		printf ("xxxe1000handler: eh");
 		die ();
 	}
+	*/
 	
+	
+	/*
 	//printf("src: ");
     //for( i=0; i<6; i++)
 	//	printf("%x ",eh->src[i]);
@@ -519,6 +560,8 @@ void xxxe1000handler (void){
 	//	printf("%x ",eh->dst[i]);
 	
 	//printf("type={%x} ",eh->type);
+	*/
+	
 	
 	//
 	// ## type ##
@@ -527,9 +570,9 @@ void xxxe1000handler (void){
 	//printf("+");
 	//refresh_screen();
 	
+	
+	/*
 	uint16_t type = FromNetByteOrder16(eh->type);
-
-
     switch ( (uint16_t) type)
     {
 
@@ -647,6 +690,7 @@ void xxxe1000handler (void){
             break;
 
 	};
+     */
 
 
 	//printf("\n");
