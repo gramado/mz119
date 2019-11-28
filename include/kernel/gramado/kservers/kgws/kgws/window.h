@@ -918,8 +918,12 @@ struct window_d
 	// Recomeçaremos com a relação entre janelas.
 	struct window_d *owner;
 	struct window_d *child; 
- 
- 
+
+
+    //Configuramos isso quando efetuamos um raise_window
+    //colocando a janela acima das outras.
+    struct window_d *child_with_focus; 
+
 // 
 //==================================================
 	
@@ -2204,12 +2208,15 @@ int show_window_rect (struct window_d *window);
 int 
 resize_window( struct window_d *window, 
                unsigned long cx, 
-			   unsigned long cy );	
-				   
+			   unsigned long cy );
+
+
 int replace_window ( struct window_d *window, 
                      unsigned long x, 
-			         unsigned long y );			  
+			         unsigned long y ); 
 
+//coloca a janela acima das outras.
+int raise_window ( struct window_d *window );
 
 int redraw_window (struct window_d *window, unsigned long flags );
     
@@ -2337,6 +2344,8 @@ windowSetTimer ( struct window_d *window, //janela
 //escaneia as janelas existentes procurando uma 
 //que contenha o posicionamento do cursor.				
 int windowScan ( unsigned long x, unsigned long y );
+
+int windowOverLappedScan ( unsigned long x, unsigned long y );
 
 //Envia uma mensagem PAINT para o aplicativo atualizar a área de trabalho.
 void windowUpdateWindow ( struct window_d *window );

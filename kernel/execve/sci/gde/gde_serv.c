@@ -644,7 +644,13 @@ void *gde_services ( unsigned long number,
     {
         return (void *) socket ( (int) arg2, (int) arg3, (int) arg4 );
     }
-    
+
+    //test
+    //raise window.
+    if ( number == 9700 )
+    {
+		return (void *) raise_window ( (struct window_d *) arg2 );
+    }
  
 	//...
 

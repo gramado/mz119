@@ -81,9 +81,9 @@ void SendARP ( uint8_t source_ip[4], uint8_t target_ip[4], uint8_t target_mac[6]
 void testNIC (void);
 
 
-// dialogo para o servidor de rede.
+// dialogo para o driver de rede.
 unsigned long 
-network_server_dialog ( struct window_d *window, 
+network_driver_dialog ( struct window_d *window, 
                         int msg, 
                         unsigned long long1, 
                         unsigned long long2 );

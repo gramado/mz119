@@ -514,7 +514,8 @@ void xxxe1000handler (void){
     // Agora que temos o buffer podemos enviar para o servidor de rede.
     // Pois o driver do controlador não lida com protocolos.
 
-    network_server_dialog ( NULL, 
+    //network_server_dialog ( NULL,
+    network_driver_dialog ( NULL, 
         (int) 8000, 
         (unsigned long) &buffer[0],  
         (unsigned long) &buffer[0] ); 

@@ -1017,21 +1017,25 @@ SendARP ( uint8_t source_ip[4],
 
 /*
  **************************
- * network_server_dialog: 
+ * network_driver_dialog: 
  * 
  * Esse é o dialogo principal do servidor de rede.
  * O loop do servido deve direcionar a mensagem recebida para esse diálogo.
  */
- 
+
+// #bugbug
+// Estamos chamando isso de server, então essas rotinas precisam ir para
+// par a pasta kservers?
+
 unsigned long 
-network_server_dialog ( struct window_d *window, 
+network_driver_dialog ( struct window_d *window, 
                         int msg, 
                         unsigned long long1, 
                         unsigned long long2 ) 
 {
 	
 	// #debug
-    //printf ("network_server_dialog:\n");
+    //printf ("network_driver_dialog:\n");
 
 	// Vamos tratar as mensagens recebidas. Entre elas:
 	// MSG_BUFFERFULL  - (O buffer está cheio)
@@ -1052,9 +1056,9 @@ network_server_dialog ( struct window_d *window,
 
     switch (msg)
     {
-		case 0:
-		    return 1;
-		    break;
+        case 0:
+            return 1;
+            break;
 
         // buffer full.
         case 8000:
@@ -1071,6 +1075,12 @@ network_server_dialog ( struct window_d *window,
         case 8002:
             return 1;
             break;
+
+        //send.
+        //enviar um pacote que esta num buffer indicado em long1.
+        //esse buffer pode ter sido enviado por algum processo ou biblioteca.
+        //case 8003:
+           // break;
 
         default:
             return 1;
@@ -1105,24 +1115,25 @@ int network_decode_buffer ( unsigned long buffer_address ){
 	
 	//ethernet header
 	//eh = (void *) &buffer[0];
-	eh = (void *) buffer_address;
-	
-	if ( (void *) eh == NULL )
-	{
-		printf ("network_decode_buffer: eh");
-		die ();
-	}else{
+    eh = (void *) buffer_address;
 
-	    //printf("src: ");
+    if ( (void *) eh == NULL )
+    {
+        printf ("network_decode_buffer: eh");
+        die ();
+    }else{
+
+        //printf("src: ");
         //for( i=0; i<6; i++)
-	    //	printf("%x ",eh->src[i]);
-	
-	    //printf("dst: ");
+        //	printf("%x ",eh->src[i]);
+
+        //printf("dst: ");
         //for( i=0; i<6; i++)
-	    //	printf("%x ",eh->dst[i]);
-	
-	    printf("type={%x} ",eh->type);
+        //	printf("%x ",eh->dst[i]);
+
+        //printf("type={%x} ",eh->type);
     };
+
 
     uint16_t type = FromNetByteOrder16(eh->type);
     
@@ -1135,9 +1146,9 @@ int network_decode_buffer ( unsigned long buffer_address ){
         case 0x0800:
            // #debug
            //printf("todo: Internet Protocol version 4 (IPv4)\n");
-           printf("IPv4 ");
+           //printf("IPv4 ");
            do_ipv4 ( (unsigned long) buffer_address );
-           refresh_screen();
+           //refresh_screen ();
            return 0;
            break;
 
@@ -1146,20 +1157,20 @@ int network_decode_buffer ( unsigned long buffer_address ){
 		//#todo: devemos chamar uma rotina para tratamento de ARP e não
 		//fazermos tudo aqui. kkk.
         case 0x0806:
-            printf("\nARP ");
+            //printf("\nARP ");
             do_arp ((unsigned long) buffer_address );
-            refresh_screen();
+            //refresh_screen ();
             return 0;
             break;
 
 		//::: IPV6
 		//0x86DD	Internet Protocol Version 6 (IPv6)
         case 0x86DD:
-			printf("IPv6 ");
-			do_ipv6 ( (unsigned long) buffer_address );
-			refresh_screen();
-			return 0;
-			break;
+            //printf ("IPv6 ");
+            do_ipv6 ( (unsigned long) buffer_address );
+            //refresh_screen ();
+            return 0;
+            break;
 
 		//::: DEFAULT
         // Error: Default package type.
@@ -1178,36 +1189,38 @@ int network_decode_buffer ( unsigned long buffer_address ){
 
 int do_ipv4 ( unsigned long buffer )
 {
-	printf ("do_ipv4\n");
-	return 0;
+    //printf ("do_ipv4\n");
+    return 0;
 }
 
 int do_ipv6 ( unsigned long buffer )
 {
-	printf ("do_ipv6\n");
-			//printf("IPv6 ");
-            //ipv6_h = (void *) &buffer[14];
+	//printf ("do_ipv6\n");
+    //printf("IPv6 ");
+    //ipv6_h = (void *) &buffer[14];
 
-            //handle_ipv6 ( (struct intel_nic_info_d *) currentNIC, 
-              //  (struct ipv6_header_d *) ipv6_h );
-	return 0;
+    //handle_ipv6 ( (struct intel_nic_info_d *) currentNIC, 
+    //  (struct ipv6_header_d *) ipv6_h );
+
+    return 0;
 }
+
 
 int do_arp ( unsigned long buffer )
 {
     //debug
-    printf ("do_arp: \n");
+   // printf ("do_arp: \n");
 
     struct ether_header *eh;
     struct ether_arp *arp_h;
     int i;
 
-   eh = (struct ether_header *) (buffer + 0);
-   arp_h = (struct ether_arp *) (buffer + 14);
-   //arp_h = (struct ether_arp *) &buffer[14];
+    eh = (struct ether_header *) (buffer + 0);
+    arp_h = (struct ether_arp *) (buffer + 14);
+    //arp_h = (struct ether_arp *) &buffer[14];
 
    
-  //printf("todo: Address Resolution Protocol (ARP) ");
+    //printf("todo: Address Resolution Protocol (ARP) ");
   
     if ((void *) arp_h == NULL)
         return 1;
@@ -1215,12 +1228,12 @@ int do_arp ( unsigned long buffer )
 
     if ( arp_h->op == ToNetByteOrder16(ARP_OPC_REPLY) )
     {
-				//#debug
-                //printf("REPLY received\n");
-                //printf("src: ");
-                //for( i=0; i<4; i++)
-                //    printf("%x ",arp_h->arp_spa[i]);
-                //refresh_screen();
+        //#debug
+        //printf("REPLY received\n");
+        //printf("src: ");
+        //for( i=0; i<4; i++)
+        //    printf("%x ",arp_h->arp_spa[i]);
+        //refresh_screen();
         return 1;
     }
 
@@ -1230,16 +1243,16 @@ int do_arp ( unsigned long buffer )
 	    //#debug
 
         printf ("\n ARP REQUEST received | ");
-        for( i=0; i<6; i++){ printf("%x ",eh->src[i]); };
+        for ( i=0; i<6; i++){ printf("%x ",eh->src[i]); };
 
-        printf(" | ");
-        for( i=0; i<6; i++){ printf("%x ",eh->dst[i]); };
+        printf (" | ");
+        for ( i=0; i<6; i++){ printf("%x ",eh->dst[i]); };
 
-        printf(" | ");
-        for( i=0; i<4; i++){ printf("%d ",arp_h->arp_spa[i]); };
+        printf (" | ");
+        for ( i=0; i<4; i++){ printf("%d ",arp_h->arp_spa[i]); };
 
-        printf(" | ");
-        for( i=0; i<4; i++){ printf("%d ",arp_h->arp_tpa[i]); };
+        printf (" | ");
+        for ( i=0; i<4; i++){ printf("%d ",arp_h->arp_tpa[i]); };
 
 
 		//cache
@@ -1281,20 +1294,22 @@ int do_arp ( unsigned long buffer )
 
 		//reenvia os mesmos dados, mas modificados para replay.
 		//essa rotina vai copiar de um buffer para outro.
-		printf ("\n Sending ARP reply ...\n");
+        printf ("\n Sending ARP reply ...\n");
 
         E1000Send ( (void *) currentNIC, 
             (uint32_t) arp_tx_len, 
-            (uint8_t *) buffer);
+            (uint8_t *) buffer );
 
 
         printf ("\n");
         refresh_screen ();
         return 0;
-    }
-        
+    };
+
+
     return 0;
 }
+
 
 //
 // End

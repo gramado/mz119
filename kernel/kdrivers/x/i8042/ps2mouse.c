@@ -760,7 +760,6 @@ void mouseHandler (void){
 	// (capture) - On mouse over. 
 	//
 
-
 	// wID = ID da janela.
 	// Escaneamos para achar qual janela bate com os valores indicados.
 	// Ou seja. Sobre qual janela o mouse está passando.
@@ -779,7 +778,19 @@ void mouseHandler (void){
 	
 	wID = (int) windowScan ( mouse_x, mouse_y );
 
-	//se houve problema no escaneamento de janela
+    
+	//#importante:
+	//Ja que não passamos em cima de um botão ou editbox,
+	//então vamos ver se estamos em cima de uma janela overlapped.
+    //#obs: isso ficou bom ... estamos testando
+    
+    if ( wID == -1 )
+    {
+        wID = (int) windowOverLappedScan ( mouse_x, mouse_y );
+    }
+
+
+	//Se houve problema no escaneamento de janela do tipo botão ou editbox.
     if ( wID == -1 )
     { 
 
