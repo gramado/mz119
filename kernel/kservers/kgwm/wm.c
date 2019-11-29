@@ -2842,17 +2842,9 @@ void SetFocus ( struct window_d *window ){
 
 	        //set wwf id.
 			window_with_focus = (int) window->id;
-            
             window->focus = 1; 
-		    
-			//set wwf pointer.
 			WindowWithFocus = (void *) window;
 
-		    //Procedure.
-		    //?? Não sei se é o ideal.
-		    //SetProcedure ((unsigned long) window->procedure);
-			
-			//set_top_window( (int) window->id );
 			
 			//#todo
 			//pintar todos os filhos e não somente esse com o foco.
