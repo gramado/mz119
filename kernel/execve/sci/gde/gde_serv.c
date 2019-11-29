@@ -248,17 +248,16 @@ void *gde_services ( unsigned long number,
 
     if ( (void *) CurrentColorScheme == NULL )
     {
-		printf ("gde_services: CurrentColorScheme");
-		die ();
-	
+		panic ("gde_services: CurrentColorScheme");
+		//die ();
     }else{
 
 		if ( CurrentColorScheme->used != 1 || 
 		     CurrentColorScheme->magic != 1234 )
 		{
-		    printf ("gde_services: CurrentColorScheme validation");
-		    die ();
-		};
+		    panic ("gde_services: CurrentColorScheme validation");
+		    //die ();
+		}
 		//Nothing.
     };
 
@@ -391,7 +390,10 @@ void *gde_services ( unsigned long number,
     if ( number == 608 )
     {
         //size_t fwrite (const void *ptr, size_t size, size_t n, FILE *fp) 
-        return (void *) fwrite ( (const void *) arg2, (size_t) 1, (size_t) arg3, (FILE *) arg4 );
+        return (void *) fwrite ( (const void *) arg2, 
+                            (size_t) 1, 
+                            (size_t) arg3, 
+                            (FILE *) arg4 );
     }
 
 	//609
@@ -448,7 +450,10 @@ void *gde_services ( unsigned long number,
 		
         // coloca no buffer dp fd do processo atual se o arquivo estuiver aberto.
         // obter um ponteiro de estrutura dado um fd.
-        return (void *) fwrite ( (const void *) arg3, (size_t) 0, (size_t) arg4, (FILE *) ____stream );
+        return (void *) fwrite ( (const void *) arg3, 
+                            (size_t) 0, 
+                            (size_t) arg4, 
+                            (FILE *) ____stream );
     }
 
 
@@ -519,9 +524,6 @@ void *gde_services ( unsigned long number,
 		
 		CurrentTTY->stdout = (FILE *) arg2;
 		stdout = (FILE *) arg2;
-		
-		//#provisório
-        //return (void *) NULL;
         return NULL;
     }
 

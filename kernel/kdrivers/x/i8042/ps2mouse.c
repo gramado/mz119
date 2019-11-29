@@ -673,7 +673,7 @@ void mouseHandler (void){
 	// quem recebe a mensagem é o first responder, ou seja, a janela com o 
 	// foco de entrada.
 	// Se clicarmos com o botão da direita, quem recebe a mensagem é 
-	// a janela que o mouse está passando por cima.	
+	// a janela que o mouse está passando por cima.
 
 
 	//
@@ -769,7 +769,7 @@ void mouseHandler (void){
 	// e depois tem a mensagem para 'descapturar'.
 	
 	
-    //##### sem escaneamento de janelas por enquanto, apenas mostre e mova o ponteiro #####
+    // ## Sem escaneamento de janelas por enquanto, apenas mostre e mova o ponteiro ##
 	
 	//## então não enviaremos mensagens para a thread ###
 	
@@ -811,11 +811,21 @@ void mouseHandler (void){
     //Podemos tentar desabilitar o mouse quando entrarmos em fullscreen
     // no gdeshell(teste)?
     
+    //#todo: 
+    //Não há porque sondar janelas se tivermos em full screen.
+    //pois somente teremos a área de cliente de uma das janelas.
+
+    //============
     if ( wID == -1 )
     {
-        wID = (int) windowOverLappedScan ( mouse_x, mouse_y );
+        //if ( full_screen == 0 )
+        //{
+            wID = (int) windowOverLappedScan ( mouse_x, mouse_y );
+	    //}
     }
 
+
+    //================
 	//Se houve problema no escaneamento de janela do tipo botão ou editbox.
     if ( wID == -1 )
     { 
@@ -834,7 +844,7 @@ void mouseHandler (void){
 
             if ( (void *) Window != NULL )
             {
-                refresh_rectangle ( Window->left, Window->top, 20, 20 );
+                //refresh_rectangle ( Window->left, Window->top, 20, 20 );
                 //refresh_rectangle ( savedmouseoverwindowX, savedmouseoverwindowY, 20, 20 );
 
             }
@@ -847,28 +857,28 @@ void mouseHandler (void){
 			//inicializa.
             mouseover_window = 0;
         }
+     }
+
+
+    if ( wID == -1 )
+    {
+		return;
+    }
 
 	// Se não houve problema no escaneamento de janela ou seja, se encontramos 
 	// uma janela. Então essa janela deve estar associada à uma thread para qual 
 	// mandaremos a mensagem. Caso a thread for null ... apenas não enviamos.
 	// A janela tem uma thread de controle, igual ao processo.
 
-
-    }else{
+     //============================ 
+     //Se estamos sobre uma janela válida.
+     if ( wID > -1 )
+     {
 
         Window = (struct window_d *) windowList[wID];
 
-        if ( (void *) Window == NULL )
-        {
-			//fail
-            return;
-        }
-
-        if ( Window->used != 1 || Window->magic != 1234)
-        {
-			//fail
-            return;
-        }
+        if ( (void *) Window == NULL ) { return; }
+        if ( Window->used != 1 || Window->magic != 1234){ return; }
 
 
 		//#importante:
@@ -879,19 +889,8 @@ void mouseHandler (void){
 
         t = (void *) Window->control;
 
-		//se a estrutura da thread for inválida.
-        if ( (void *) t == NULL )
-        {
-			//fail
-            return;
-        }
-
-		//se a estrutura estiver corrompida.
-        if ( t->used != 1 || t->magic != 1234 )
-        {
-			//fail
-            return;
-        }
+        if ( (void *) t == NULL ){ return; }
+        if ( t->used != 1 || t->magic != 1234 ){ return; }
 
 		//#bugbug 
 		//#todo:
@@ -908,7 +907,7 @@ void mouseHandler (void){
 		//Qual botão mudou seu estado??
 		//Checaremos um por um.
 
-		//#importante
+		//===============================================
 		// Se houve mudança em relação ao estado anterior.
         if ( mouse_button_action == 1 )
         {
@@ -1054,12 +1053,16 @@ void mouseHandler (void){
 
 			// Ação concluída.
             mouse_button_action = 0;
+        };
 
-            // Se NÃO ouve alteração no estado dos botões, então apenas 
-            // enviaremos a mensagem de movimento do mouse e sinalizamos 
-            // qual é a janela que o mouse está em cima.
 
-        }else{
+        // Se NÃO ouve alteração no estado dos botões, então apenas 
+        // enviaremos a mensagem de movimento do mouse e sinalizamos 
+        // qual é a janela que o mouse está em cima.
+        
+		//===============================================
+        if ( mouse_button_action == 0 )
+        {
 
 			// #importante
 			// Lembrando que estamos dentro de uma janela ...
@@ -1164,8 +1167,9 @@ void mouseHandler (void){
 			// Ação concluída.
 			// Para o caso de um valor incostante na flag.
             mouse_button_action = 0;
- 
         };
+
+
 
 
 		//if ( wScan->isButton == 1 )
@@ -1183,9 +1187,6 @@ void mouseHandler (void){
 		//    draw_text ( wScan, 0, 0, COLOR_YELLOW, "+" );
 		//    refresh_rectangle ( wScan->left, wScan->top, 8, 8 );
 		//}
-
-
-
     };
 }
 

@@ -32,20 +32,19 @@ int BAT_TEST (void);
 // para assim usar o array certo. ke0 indica o teclado estendido.
 
 int KEYBOARD_SEND_MESSAGE ( unsigned char SC ){
-	
-	struct thread_d *t;		
-	struct window_d *w;  	
-	
-    //
-    // Step 0  
-	// Declarações de variáveis.
-    //
+
+    struct thread_d *t;
+    struct window_d *w;
+
+
+    // Step 0 
+    // Declarações de variáveis.
 
     //Variáveis para tecla digitada.
     unsigned char scancode;
     unsigned char key;         //Tecla (uma parte do scancode).  
-	
-	int message;               //arg2.
+
+    int message;               //arg2.
     unsigned long ch;          //arg3 - (O caractere convertido para ascii).
     unsigned long status;      //arg4.  
 
@@ -59,18 +58,19 @@ int KEYBOARD_SEND_MESSAGE ( unsigned char SC ){
 	scancode = SC;
 	
 
-	//Obs: Observe que daqui pra frente todas as rotinas poderiam estar
-	//     em user mode.
+	// Obs: 
+	// Observe que daqui pra frente todas as rotinas poderiam 
+	// estar em user mode.
 
 
-	//Debug stuff.
-    //Show the scancode if the flag is enabled.	
-	
-	if (scStatus == 1){
-		
-	    kprintf ("{%d,%x} ", scancode, scancode );
-	}
-	
+    //Debug stuff.
+    //Show the scancode if the flag is enabled.
+
+    if (scStatus == 1)
+    {
+        kprintf ("{%d,%x} ", scancode, scancode );
+    }
+
     //
     // Step 2 - Tratar as mensagens.
     //
@@ -78,12 +78,12 @@ int KEYBOARD_SEND_MESSAGE ( unsigned char SC ){
     //Se a tecla for (liberada).
 	//Dá '0' se o bit de paridade for '0'.
 	
-    if( (scancode & LDISC_KEY_RELEASED) == 0 )
-	{
+    if ( (scancode & LDISC_KEY_RELEASED) == 0 )
+    {
 		//Desativando o bit de paridade caso esteja ligado.
 		
-	    key = scancode;
-		key &= LDISC_KEY_MASK;    
+        key = scancode;
+        key &= LDISC_KEY_MASK;    
 
 		//Configurando se é do sistema ou não.
 		//@todo: Aqui podemos chamar uma rotina interna que faça essa checagem.
@@ -99,7 +99,7 @@ int KEYBOARD_SEND_MESSAGE ( unsigned char SC ){
 				message = MSG_SYSKEYUP;
 			    break;
 
-			//Left Control liberado.			
+			//Left Control liberado.
 			case VK_LCONTROL:
 				ctrl_status = 0;
 				message = MSG_SYSKEYUP;
@@ -189,7 +189,7 @@ int KEYBOARD_SEND_MESSAGE ( unsigned char SC ){
 	
 	
 	// * Tecla (pressionada) ...........	
-	if( (scancode & LDISC_KEY_RELEASED) != 0 )
+	if ( (scancode & LDISC_KEY_RELEASED) != 0 )
 	{ 
 		key = scancode;
 		key &= LDISC_KEY_MASK; //Desativando o bit de paridade caso esteja ligado.
@@ -315,7 +315,7 @@ int KEYBOARD_SEND_MESSAGE ( unsigned char SC ){
 				};
 				if(scrolllock_status == 1){ 
 				    scrolllock_status = 0;
-                    message = MSG_SYSKEYDOWN; 					
+                    message = MSG_SYSKEYDOWN; 
 					break; 
 				};
 			    break;
@@ -331,7 +331,7 @@ int KEYBOARD_SEND_MESSAGE ( unsigned char SC ){
 		};
 
 		//uma tecla normal foi pressionada.
-		//mensagem de digitação.				
+		//mensagem de digitação.	
 		if (message == MSG_KEYDOWN)
 		{
             //maiúsculas.			
@@ -388,7 +388,8 @@ done:
 		//Opções:
 		//@todo: Chamar a interface do sistema para reboot.
 		//@todo: Opção chamar utilitário para gerenciador de tarefas.
-		//@todo: Abre um desktop para operações com usuário, senha, logoff, gerenciador de tarefas.
+		//@todo: Abre um desktop para operações com usuário, senha, logoff, 
+		// gerenciador de tarefas.
 
 		//Chamando o módulo /sm diretamente.
 		//mas não é o driver de teclado que deve chamar o reboot.
@@ -410,17 +411,17 @@ done:
 		
 		//system_procedure ...
 		// @todo: Chamar o aplicativo REBOOT.BIN.
-	
-	if ( (ctrl_status == 1) && (alt_status == 1) && (ch == KEY_DELETE) )
-	{
+
 		// #todo: 
 		// Chamar outra rotina de reboot.
 		// Se o driver estiver em user mode, tem que fazer uma chamada ao sistema.
-		
-		//gde_services ( SYS_REBOOT, 0, 0, 0 );
-	}
 
-	
+    if ( (ctrl_status == 1) && (alt_status == 1) && (ch == KEY_DELETE) )
+    {
+        //gde_services ( SYS_REBOOT, 0, 0, 0 );
+    }
+
+
 	// Nesse momento temos duas opções:
 	// Devemos saber se a janela com o foco de entrada é um terminal ou não ...
 	// se ela for um terminal chamaremos o porcedimento de janelas de terminal 
@@ -467,31 +468,31 @@ done:
 	//{
 	//	t = x_server_thread;
 	//}
-	
-	
-check_WindowWithFocus:	
+
+
+
+check_WindowWithFocus:
 	
 	// #importante
 	// Mas como o wm já está presente aqui no kernel, então
 	// já podemos enviar para o window manager. Ou melhor
 	// para a thread de input associada a janela com o foco.
 	
-	
-	w = (void *) windowList[window_with_focus];
-	
-	if ( (void *) w == NULL )
-	{
-		printf ("KEYBOARD_LINE_DISCIPLINE: w");
-		die ();
-		
-	}else{
-			
-		if ( w->used != 1 || w->magic != 1234 )
-		{
-			printf ("KEYBOARD_LINE_DISCIPLINE: w validation");
-			die ();
-		}		
-		
+
+    w = (void *) windowList[window_with_focus];
+
+    if ( (void *) w == NULL )
+    {
+        panic ("KEYBOARD_LINE_DISCIPLINE: w");
+
+    }else{
+
+        if ( w->used != 1 || w->magic != 1234 )
+        {
+            panic ("KEYBOARD_LINE_DISCIPLINE: w validation");
+        }
+
+
 		// #importante:
 		// Aqui significa que temos uma janela com o foco de entrada válida.
 		
@@ -510,19 +511,18 @@ check_WindowWithFocus:
 		// talvez utilizando a janela do terminal
 		// sem terminal, sem input.
 		
-		t = (void *) w->control;
-		
-		if ( (void *) t == NULL )
-		{
-		    printf ("KEYBOARD_LINE_DISCIPLINE: t \n");
-		    die ();			
-		}
-		
-		if ( t->used != 1 || t->magic != 1234 )
-		{
-			printf ("KEYBOARD_LINE_DISCIPLINE: t validation \n");
-			die ();			
-		}        
+        t = (void *) w->control;
+
+        if ( (void *) t == NULL )
+        {
+            panic ("KEYBOARD_LINE_DISCIPLINE: t \n");
+        }
+
+        if ( t->used != 1 || t->magic != 1234 )
+        {
+            panic ("KEYBOARD_LINE_DISCIPLINE: t validation \n");
+        }        
+
 
 		//
 		//  ## Message ##
@@ -532,11 +532,11 @@ check_WindowWithFocus:
 		// #importante:
 		// A janela com o foco de entrada deve receber input de teclado.
 		// Então a mensagem vai para a thread associada com a janela que tem 
-		// o foco de entrada.		
+		// o foco de entrada.
 		// Como o scancode é um char, precisamos converte-lo em unsigned long.
-		
-		unsigned long tmp;
-				
+
+        unsigned long tmp;
+
 		tmp = (unsigned long) scancode;
 		tmp = (unsigned long) ( tmp & 0x000000FF );
 		
@@ -544,48 +544,49 @@ check_WindowWithFocus:
 		t->msg = message;
 		t->long1 = ch;     // Key.
 		t->long2 = tmp;    // Scan code.
-			
+
 		t->newmessageFlag = 1;
 
-		// F5 F6 F7 F8		
+		// F5 F6 F7 F8
 		// Teclas para teste.
 		// Teclas usadas exclusivamente pelo 
 		// procedimento de janelas do sistema.
 		// Os aplicativos não devem usar essas teclas por enquanto.
-		// Então Essas teclas funcionarão mesmo que os aplicativos estejam com problema.
-		
-	    switch (message)
-		{		
-			case MSG_SYSKEYDOWN:  
+		// Então Essas teclas funcionarão mesmo que os aplicativos 
+		// estejam com problema.
+
+        switch (message)
+        {
+			case MSG_SYSKEYDOWN: 
 			    switch (ch){
-					case VK_F5:	
-					case VK_F6:	
-					case VK_F7:	
-					case VK_F8:	
-						system_procedure (  w, (int) message, 
-					        (unsigned long) ch, (unsigned long) tmp );					
+					case VK_F5:
+					case VK_F6:
+					case VK_F7:
+					case VK_F8:
+						system_procedure (  w, 
+						    (int) message, 
+					        (unsigned long) ch, 
+					        (unsigned long) tmp );
 						break;
 				}
 			    break;
 		};
-	};	
- 
+    };
+
+
     return 0;
 }
 
 
 
 
+/*
+ *************************************** 
+ * keyboard_read: 
+ * 
+ */
 
-
-
-
-
-
-
- 
-
-// Esta função será usada para ler dados do teclado na porta 0x60, fora do IRQ1
+// Esta função será usada para ler dados do teclado na porta 0x60, fora do IRQ1.
 uint8_t keyboard_read (void){
  
 	kbdc_wait (0);
@@ -598,6 +599,12 @@ uint8_t keyboard_read (void){
 }
 
 
+/*
+ *************************************** 
+ * keyboard_write: 
+ * 
+ */
+ 
 // Esta função será usada para escrever dados do teclado na porta 0x60, fora do IRQ1.
 void keyboard_write (uint8_t write){
 
@@ -613,21 +620,20 @@ void keyboard_write (uint8_t write){
 // Credits: Nelson Cole.
 
 int BAT_TEST (void){
-	
+
     int val = -1;
-	
-	int i;
+    int i;
 
 	// #todo:
 	// Cuidado.
 	// Diminuir isso se for possivel.
 	// Nao funciona na maquina reala sem esse delay.
-	
-	for (i=0; i<99000; i++)
-	{
-		wait_ns(200);
-	}	
-	
+
+    for (i=0; i<99000; i++)
+    {
+        wait_ns (200);
+    };
+
 
 	for ( i=0; i<999; i++ )
 	{
@@ -655,52 +661,55 @@ int BAT_TEST (void){
 		//printf ("ps2kbd.c: BAT_TEST %d\n", i);
 		keyboard_write (0xFE);       
     };
-	
+
+
 	//fail
 	printf ("ps2kbd.c: BAT_TEST %d times\n",i);
-    return (int) -1; 	
+    return (int) -1; 
 }
 
 
 /*
  **********************************
- * init_keyboard:
+ * ps2_keyboard_initialize
  *     Inicializa o driver de teclado.
  *
- *  @todo: enviar para o driver de teclado o que for de lá.
- *         criar a variável keyboard_type ;;; ABNT2 
+ * #todo: 
+ * Enviar para o driver de teclado o que for de lá.
+ * Criar a variável keyboard_type ;;; ABNT2 
  * 2018 - Fred Nora.
  */
 
 void ps2_keyboard_initialize (void){
-	
-	int i;
-	
+
+    int i;
+
+
 	//user.h
-	ioControl_keyboard = (struct ioControl_d *) malloc ( sizeof(struct ioControl_d) );
-	
-	if ( (void *) ioControl_keyboard == NULL )
-	{
-		printf ("ps2_keyboard_initialize: ioControl_keyboard fail");
-		die ();
-		
-	} else {
-	    
+    ioControl_keyboard = (struct ioControl_d *) malloc ( sizeof(struct ioControl_d) );
+
+    if ( (void *) ioControl_keyboard == NULL )
+    {
+        panic ("ps2_keyboard_initialize: ioControl_keyboard fail");
+
+    } else {
+
 	    ioControl_keyboard->id = 0;
 	    ioControl_keyboard->used = 1;
 	    ioControl_keyboard->magic = 1234;
-	    
+
 		//qual thread está usando o dispositivo.
 		ioControl_keyboard->tid = 0;  
 	    //ioControl_keyboard->
-	};
-	
+    };
+
+
     //int Type = 0;
 
-    // @todo: 
-	//     Checar se o teclado é do tipo abnt2.   
-	//     É necessário sondar parâmetros de hardware,
-	//     como fabricante, modelo para configirar estruturas e variáveis.
+	// #todo: 
+	// Checar se o teclado é do tipo abnt2.   
+	// É necessário sondar parâmetros de hardware,
+	// como fabricante, modelo para configirar estruturas e variáveis.
 
 
 /*
@@ -740,46 +749,47 @@ void ps2_keyboard_initialize (void){
 	
 
 	
-	for ( i=0; i< current_stdin->_cnt; i++ )
-	{
-		current_stdin->_base[i] = (char) 0;
-	}
-	
-	for ( i=0; i<128; i++ )
-	{
-	    keybuffer[i] = 0;
-	}
-	
-	keybuffer_head = 0;
-	keybuffer_tail = 0;
-	
+    for ( i=0; i< current_stdin->_cnt; i++ )
+    {
+        current_stdin->_base[i] = (char) 0;
+    };
+
+    for ( i=0; i<128; i++ )
+    {
+        keybuffer[i] = 0;
+    };
+
+    keybuffer_head = 0;
+    keybuffer_tail = 0;
+
+
 	//
 	// Set abnt2.
 	//
 
-	abnt2 = (int) 1;
+    abnt2 = (int) 1;
 
     //Checar quem está tentando inicializar o módulo.    
 
 	//model.
 	
 	//handler.
-	
-	//...
+
 
     //Key status.
-	key_status = 0;
+    key_status = 0;
     escape_status = 0;
     tab_status = 0;
     winkey_status = 0;
     ctrl_status = 0;
     alt_status = 0;
     shift_status = 0;
-	capslock_status = 0;
-	scrolllock_status = 0;
-	numlock_status = 0;
+    capslock_status = 0;
+    scrolllock_status = 0;
+    numlock_status = 0;
 	//...
-	
+
+
 	//test
 	//0xAB	Test first PS/2 port
 	//0x00 test passed
@@ -792,7 +802,7 @@ void ps2_keyboard_initialize (void){
 	//Leds.
 	//LED_SCROLLLOCK 
 	//LED_NUMLOCK 
-	//LED_CAPSLOCK  	
+	//LED_CAPSLOCK 
 	//keyboard_set_leds(LED_NUMLOCK);
 	
  	
@@ -855,6 +865,12 @@ void ps2_keyboard_initialize (void){
 }
 
 
+/*
+ ************************ 
+ * keyboardGetKeyState: 
+ * 
+ */
+
 //Pega o status das teclas de modificação.
 unsigned long keyboardGetKeyState ( unsigned char key ){
 	
@@ -905,11 +921,19 @@ unsigned long keyboardGetKeyState ( unsigned char key ){
 		//...
 	};
 
-	//Nothing.
 
-    return (unsigned long) State;		
+    return (unsigned long) State;
 }
 
+
+/*
+ ************* 
+ * ldisc_init_modifier_keys: 
+ * 
+ */
+
+// #todo
+// Rever esse nome. 
 
 // Inicializa o status das teclas de modificação.
 // são usadas em comjunto com outras teclas para criar atalhos.
@@ -936,6 +960,16 @@ void ldisc_init_modifier_keys (void){
 }
 
 
+
+/*
+ ************* 
+ * ldisc_init_lock_keys: 
+ * 
+ */
+
+// #todo
+// Rever esse nome. 
+
 // modificam permanentemente a função de outra tecla.
 //ativa as teclas extendidas.
 
@@ -953,19 +987,20 @@ void ldisc_init_lock_keys (void){
 
 
 /*
+ **********************************
  * keyboardEnable:
  *     Enable keyboard.
  */
 
 void keyboardEnable (void){
-	
-	//Wait for bit 1 of status reg to be zero.
-    
-	while ( (inportb(0x64) & 2) != 0 )
-	{
+
+	// Wait for bit 1 of status reg to be zero.
+
+    while ( (inportb(0x64) & 2) != 0 )
+    {
 		//Nothing.
-	};
-	
+    };
+
 	//Send code for setting Enable command.
     outportb (0x60,0xF4);
     //sleep(100);
@@ -981,11 +1016,11 @@ void keyboardDisable (void){
 	
 	//Wait for bit 1 of status reg to be zero.
     
-	while ( (inportb(0x64) & 2) != 0 )
-	{
+    while ( (inportb(0x64) & 2) != 0 )
+    {
 		//Nothing.
-	};
-	
+    };
+
 	//Send code for setting disable command.
     outportb (0x60,0xF5);
     //sleep(100);
@@ -993,36 +1028,41 @@ void keyboardDisable (void){
 
 
 /*
+ ***************************************
  * keyboard_set_leds:
  *     Set keyboard flags.
  *     ED = Set led.
  */
+
 void keyboard_set_leds (char flag){
 	
 	//@todo: filtro.
 
 	//Wait for bit 1 of status reg to be zero.
-    while( (inportb(0x64) & 2) != 0 ){
+    while ( (inportb(0x64) & 2) != 0 )
+    {
 		//Nothing.
 	};
 	//Send code for setting the flag.
-    outportb(0x60,0xED);            
-    sleep(100);
+    outportb (0x60,0xED); 
+    sleep (100);
+
 
 	//Wait for bit 1 of status reg to be zero.
-	while( (inportb(0x64) & 2) != 0 ){
-	    //Nothing.	
+	while ( (inportb(0x64) & 2) != 0 )
+	{
+	    //Nothing.
 	};
     //Send flag. 
-	outportb(0x60,flag);
-	sleep(100);
-	
+	outportb (0x60,flag);
+	sleep (100);
+
+
 	//@todo mudar o status.
     //switch(flag)
     //{
-		
-	//}	
-};
+	//}
+}
 
 
 
@@ -1032,6 +1072,9 @@ void keyboard_set_leds (char flag){
  *     Dado o id de uma thread, retorna o ponteiro de estrutura da janela 
  * à qual a thread pertence.
  */
+
+// #todo
+// Um driver de teclado não tem essa relação com janela.
 
 void *KdGetWindowPointer (int tid){
 	
@@ -1050,9 +1093,10 @@ void *KdGetWindowPointer (int tid){
 	{
         return NULL;        
 	};
-	
-	return (void *) t->window;
-};
+
+
+    return (void *) t->window;
+}
 
 
 /*
@@ -1086,7 +1130,7 @@ int KbGetMessage (int tid){
 
 	WindowProcedure->msgStatus = 0;    //Muda o status.
 	return (int) ret_val;              //Retorna a mensagem.
-};
+}
 
 
 /*
@@ -1106,8 +1150,9 @@ unsigned long KbGetLongParam1 (int tid){
         return (unsigned long) 0;    //@todo: fail;
 	};
 
+
     return (unsigned long) t->long1;
-};
+}
 
 
 /*
@@ -1126,8 +1171,9 @@ unsigned long KbGetLongParam2 (int tid){
         return (unsigned long) 0;    //@todo: fail;
 	};
 
+
     return (unsigned long) t->long2;
-};
+}
 
 
 
@@ -1215,21 +1261,23 @@ void reboot (void){
     // Done.
 
     hal_reboot ();
-	die ();
+    die ();
 }
 
 
 //Get alt Status.
 int get_alt_status (void)
-{	
+{
     return (int) alt_status;
 }
 
+
 //Get control status.
 int get_ctrl_status (void)
-{	
+{
     return (int) ctrl_status;
 }
+ 
  
 //Get shift status.
 int get_shift_status (void)
@@ -1239,47 +1287,49 @@ int get_shift_status (void)
 
 
 /*
+ *********************
  * kbdc_wait:
  *     Espera por flag de autorização para ler ou escrever.
  */
 
 void kbdc_wait (unsigned char type){
-	
-	if (type==0)
-	{
+
+    if (type==0)
+    {
 		//#bugbug rever
         while ( !inportb(0x64) & 1 )
-		{
+        {
 			outanyb (0x80);
 			outanyb (0x80);
 			outanyb (0x80);
 			outanyb (0x80);
-		};
+        };
 		
     }else{
-		
+
         while ( inportb(0x64) & 2 )
-		{
+        {
 			outanyb (0x80);
 			outanyb (0x80);
 			outanyb (0x80);
 			outanyb (0x80);
-		};
-	};
+        };
+    };
 }
+
 
 
 //events.h
 void set_current_keyboard_responder ( int i ){
 	
-	current_keyboard_responder = i;
+    current_keyboard_responder = i;
 }
 
 
 //events.h
 int get_current_keyboard_responder (void){
-	
-	return (int) current_keyboard_responder;
+
+    return (int) current_keyboard_responder;
 }
 
 
@@ -1309,6 +1359,41 @@ void keyboard()
 	}
 	//...
 	return;
+}
+*/
+
+
+/*
+unsigned long 
+ps2_keyboard_dialog ( int msg,
+                      unsigned long long1,
+                      unsigned long long2 );
+unsigned long 
+ps2_keyboard_dialog ( int msg,
+                      unsigned long long1,
+                      unsigned long long2 )
+{
+    switch (msg)
+    {
+		//habilitar
+        case 4000:
+            break;
+
+        //desabilitar.
+        case 4001:
+            break;
+
+        //#test
+        // reinicializar ??
+        case 4002:
+            break;
+            
+        default:
+            break;
+    };
+
+
+    return 0;
 }
 */
 

@@ -687,19 +687,21 @@ system_procedure ( struct window_d *window,
 				//Vamos usar F5 para testar as funcionalidades dos drivers apenas.
 				FILE *bmfp;
 				case VK_F5:
+				
+				    testNIC ();
 
-					printf("F5:\n");
+					//printf("F5:\n");
 					
 					// load and show bmp
 					//sys_fopen ( (const char *) arg2, (const char *) arg3 );
-					bmfp = sys_fopen ( "folder.bmp", "r+" );
+					//bmfp = sys_fopen ( "folder.bmp", "r+" );
 					
 					//decodificando no backbuffer.
-					bmpDisplayBMP ( bmfp->_base, 100, 100 );
+					//bmpDisplayBMP ( bmfp->_base, 100, 100 );
 					
 					//bmp_change_color_flag = BMP_CHANGE_COLOR_TRANSPARENT;
 					//bmp_selected_color = COLOR_WHITE;
-					bmpDirectDisplayBMP ( bmfp->_base, 100, 100 );
+					//bmpDirectDisplayBMP ( bmfp->_base, 100, 100 );
 					//bmp_change_color_flag = 0;
 					//bmp_selected_color = 0;
 					
@@ -767,9 +769,9 @@ system_procedure ( struct window_d *window,
                 case VK_F6:
 
                      //See: network.c
-                     testNIC ();
+                     //testNIC ();
 
-                    //test_move_window();
+                    test_move_window();
                     //hal_test_speaker();
 
 					//#test

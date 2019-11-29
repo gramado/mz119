@@ -52,6 +52,8 @@
 //
 
 
+
+
 /*
  * *******************************************************
  * abnt2_keyboard_handler: 
@@ -91,28 +93,38 @@
 // PUT SCANCODE
 
 void abnt2_keyboard_handler (void){
-	
-	
+
 	//não precisamos perguntar para o controlador se
 	//podemos ler, porque foi uma interrupção que nos trouxe aqui.
-	
-    unsigned char scancode = inportb (0x60);	
-	
-	//#todo: Aqui podemos retornar.
-	if ( (void *) current_stdin == NULL )
-	{
-	    panic ("i8042-abnt2_keyboard_handler: current_stdin \n");
-	}
-	
-	current_stdin->_base[keybuffer_tail++] = (char) scancode;
 
-	if ( keybuffer_tail >= current_stdin->_lbfsize )			
-	{
-		keybuffer_tail = 0;
-	}
+    unsigned char scancode = inportb (0x60);
+
+
+	// #todo: 
+	// Aqui podemos retornar.
+
+    if ( (void *) current_stdin == NULL )
+    {
+        panic ("abnt2_keyboard_handler: current_stdin \n");
+    }
+
+    current_stdin->_base[keybuffer_tail++] = (char) scancode;
+
+    if ( keybuffer_tail >= current_stdin->_lbfsize )
+    {
+        keybuffer_tail = 0;
+    }
 }
 
 
+
+
+/*
+ *************************** 
+ * get_scancode:
+ * 
+ * 
+ */
 
 // Low level keyboard reader.
 // Isso poderia usar uma rotina de tty
@@ -124,56 +136,61 @@ void abnt2_keyboard_handler (void){
 // O teclado esta lidando no momento com um buffer pequeno, 128 bytes.
 
 unsigned long get_scancode (void){
-	
-	unsigned long SC = 0;
-	
-	SC = (unsigned char) current_stdin->_base[keybuffer_head];
-					
-	current_stdin->_base[keybuffer_head] = 0;
-	
-	keybuffer_head++;
-	
-    if ( keybuffer_head >= current_stdin->_lbfsize )	
-	{ 
-	    keybuffer_head = 0; 
-	};	
-	
-	return (unsigned long) SC; 	
+
+    unsigned long SC = 0;
+
+
+
+    SC = (unsigned char) current_stdin->_base[keybuffer_head];
+
+
+    current_stdin->_base[keybuffer_head] = 0;
+
+    keybuffer_head++;
+
+    if ( keybuffer_head >= current_stdin->_lbfsize )
+    { 
+        keybuffer_head = 0; 
+    }
+
+
+    return (unsigned long) SC; 
 }
 
 
+
 /*
- **************
+ *********************
  * KiKeyboard:
- *     Interface pra chamar o driver de teclado
- *     atual.
+ *     Interface pra chamar o driver de teclado atual.
  *     Essa é a rotina chamada na hora da interrupção de teclado.
  *     IRQ1.
  *     Essa rotina deve selecionar o handler a ser chamado de acordo
  *     com o driver instalado.
  */
- 
-void KiKeyboard (void){
-	
-    //@todo: sondar o driver instalado.	
-	//       um estrutura de dispositivo
-	//       indica informações sobre o driver de teclado.
-	//       como nome, pathname, entrypoint, versão.
 
-	
-	//@todo: Criar a variável keyboard_type no kernel base.
-    //Não aqui ... pois cada driver deve ser para um tipo de teclado.
-	
+	//#todo: 
+	// Sondar o driver instalado.
+	// um estrutura de dispositivo indica informações sobre o 
+	// driver de teclado. como nome, pathname, entrypoint, versão.
+
+	// #todo: 
+	// Criar a variável keyboard_type no kernel base.
+	// Não aqui ... pois cada driver deve ser para um tipo de teclado.
+
+void KiKeyboard (void){
+
+    // pt-br keyboard.
     if (abnt2 == 1)
-	{
-	    abnt2_keyboard_handler ();
-		return;
-	};
+    {
+        abnt2_keyboard_handler ();
+        return;
+    }
 
     if (abnt2 != 1)
-	{
-	    panic ("i8042-KiKeyboard: not abnt2\n");
-	};
+    {
+        panic ("KiKeyboard: not abnt2\n");
+    };
 }
 
 
