@@ -50,10 +50,10 @@ struct channel_d
     int Used;
 	int Magic;
 	
-	int Type;
+	int Type; //??
 	
     int State;    //Aberto ou fechado.
-    int InUse;    //Em uso ou não.	
+    int InUse;    //Em uso ou não.
 		
     struct process_d *OwnerProcess;
 	
@@ -67,7 +67,7 @@ struct channel_d
 	//a mensagem.
 	
 	struct process_d *SenderProcess;
-	struct process_d *ReceiverProcess;	
+	struct process_d *ReceiverProcess;
 	
 	//Os dois soquetes do canal de comunicação.
 	struct socket_d *clientSocket;
@@ -93,25 +93,30 @@ struct channel_d *CurrentChannel;
 
 unsigned long channelList[32];
 
+
+
+
 //
 // Prototypes.
 //
 
 void *CreateChannel ( struct process_d *OwnerProcess,
-				      struct thread_d *SenderThread,
-				      struct thread_d *ReceiverThread );
+                      struct thread_d *SenderThread,
+                      struct thread_d *ReceiverThread );
 
-					
 int DestroyChannel (struct channel_d *channel);
 
 
-int OpenChannel ( struct channel_d *channel, 
-                  struct process_d *OwnerProcess,
-				  struct thread_d *SenderThread,
-				  struct thread_d *ReceiverThread );
-				
+int 
+OpenChannel ( struct channel_d *channel, 
+              struct process_d *OwnerProcess,
+              struct thread_d *SenderThread,
+              struct thread_d *ReceiverThread );
 
-int CloseChannel (struct channel_d *channel);
+
+int 
+CloseChannel (struct channel_d *channel);
+
 
 
 //

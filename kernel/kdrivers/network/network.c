@@ -456,7 +456,7 @@ void testNIC (void){
 /*
  ***************************************************************
  * SendIPV4: 
- *    Criando e enviando um pacote ipv4.  
+ *    Criando e enviando um pacote ipv4.  (UDP)
  * 
  * IN:
  *     source_ip. (It's in the layer 3 of the OSI model. network layer)
@@ -467,6 +467,10 @@ void testNIC (void){
 
 // #todo
 // Change the return type to 'int'. 
+
+// #obs:
+// UDP/IP
+// UDP = 0x11 (ip protocol)
 
 void 
 SendIPV4 ( uint8_t source_ip[4], 
@@ -561,10 +565,16 @@ SendIPV4 ( uint8_t source_ip[4],
         ipv4->Flags_FragmentOffset = 0x0000;
         ipv4->TimeToLive = 0x40;
 
+		// #importante
+		// Existem vários protocolos para ip.
+		// TCP=0x6 UDP=0x11
+		
 		//default protocol: UDP
 		//#define IPV4_PROT_UDP 0x11
 
+
         ipv4->Protocol = 0x11;    //IPV4_PROT_UDP;
+        
 
         memcpy ( (void *) &ipv4->SourceIPAddress[0], 
             (const void *) &source_ip[0], 4 );
@@ -588,10 +598,32 @@ SendIPV4 ( uint8_t source_ip[4],
 
     }else{
     
-        udp->SourcePort = 0;   
-        udp->DestinationPort = 0;
-        udp->Length = 0;
-        udp->Checksum = 0; 
+        // #todo
+        // Essas portas podem ser passadas via argumento.
+        // A porta de origem representa o processo cliente
+        // A porta de destino representa o processo servidor.
+        // Se o argumento passado for a estrutura (channel)
+        // então teremos muita informação.
+ 
+        //20 FTP-DATA File Transfer [Default Data]
+        //21 FTP File Transfer [Control]
+        //23 TELNET Telnet
+        //25 SMTP Simple Mail Transfer
+        //37 TIME Time
+        //69 TFTP Trivial File Transfer
+        //79 FINGER Finger
+        //110 POP3 Post Office Protocol v 3
+        //123 NTP Network Time Protocol
+        //143 IMAP2 Interim Mail Access Prot. v2
+        //161 SNMP Simple Network Man. Prot.
+
+    
+        udp->SourcePort = 8000;   
+        udp->DestinationPort = 20; //FTP-DATA File Transfer
+        //This field specifies the length in bytes of the UDP header and UDP data. 
+        //The minimum length is 8 bytes, the length of the header. 
+        udp->Length = (UDP_HEADER_LENGHT + 32); 
+        udp->Checksum = 0; //#todo
     };
 
 
