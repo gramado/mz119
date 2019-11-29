@@ -2729,10 +2729,11 @@ void windowUnblockFocus (void){
 // wm.
  
 void SetFocus ( struct window_d *window ){
-	
-	int i=0;
-	int WindowID;
-	
+
+    int i=0;
+    int WindowID;
+
+
 	//Impossível mudar o focus.
 	//Isso manterá o foco na janela do desenvolvedor
 	//durante a fase de criação da interface gráfica.
@@ -2770,7 +2771,7 @@ void SetFocus ( struct window_d *window ){
         {
 			if ( window->used != 1 || window->magic != 1234 ){
 				
-			    window->control = NULL;	
+			    window->control = NULL;
 			}
 		}			
 		
@@ -2784,7 +2785,7 @@ void SetFocus ( struct window_d *window ){
 			
 			goto setup_wwf;
 		}
-			
+
 		//Se a janela é a janela ativa.
 		//Então atribuimos o foco e configuramos o procedimento de janela.
 		if ( window->id == active_window )
@@ -2795,7 +2796,7 @@ void SetFocus ( struct window_d *window ){
 		    //set wwf pointer.
 		    WindowWithFocus = (void *) window;
 			
-			window->focus = 1; 	
+			window->focus = 1; 
 		    
 			// bugbug
             // Não estamos mais usando isso.
@@ -2815,41 +2816,49 @@ void SetFocus ( struct window_d *window ){
 			// janela mãe, então ativamos a janela filha.
             // ?? #bugbug talvez não seja essa ideia certa.			
 		    
-			//if( (void*) window->parent == NULL ){
-		    //    set_active_window(window);				
-		    //}else{
+			if( (void*) window->parent == NULL )
+			{
+		    //    set_active_window(window);
+		    }else{
 
 				// Testando a validade da janela mãe
 				// Ativar a janela mãe se ela tem um ponteiro válido
 				// Pois janela filha nunca é a janela ativa, mesmo tendo o foco.
 			    
-			//	if ( window->parent->used == 1 && window->parent->magic == 1234 )
-			//	{
-			//        set_active_window(window->parent);	
-			//    };				
-			//};
+				if ( window->parent->used == 1 && window->parent->magic == 1234 )
+				{
+			        set_active_window (window->parent);
+			        
+			        //#obs: Isso deu certo.
+			        redraw_window (window->parent, 1);
+			    };
+			};
 
             //Obs: Nesse momento a janela ativa está configurada.
 			// a janela ativa é a própria janela ou a sua janela mãe.
                 	
             // Já podemos setar o foco de entrada e configurarmos o 
-			// procedimento de janela.				
+			// procedimento de janela.	
 
 	        //set wwf id.
 			window_with_focus = (int) window->id;
             
-            window->focus = 1;   			
+            window->focus = 1; 
 		    
 			//set wwf pointer.
 			WindowWithFocus = (void *) window;
 
 		    //Procedure.
 		    //?? Não sei se é o ideal.
-		    SetProcedure ((unsigned long) window->procedure);
+		    //SetProcedure ((unsigned long) window->procedure);
 			
-			set_top_window( (int) window->id );
+			//set_top_window( (int) window->id );
+			
+			//#todo
+			//pintar todos os filhos e não somente esse com o foco.
+			redraw_window (window, 1);
 
-            goto setup_wwf;				
+            goto setup_wwf;
 		};
 			
 			
@@ -4040,12 +4049,19 @@ int windowOverLappedScan ( unsigned long x, unsigned long y ){
                         panic ("windowScan: parent\n");
                     }
 
-                    if ( x > (w->parent->left + w->left)  && 
-                         x < (w->parent->left + w->left + w->width)  && 
-                         y > (w->parent->top + w->top)  &&
-                         y < (w->parent->top + w->top + w->height)  )
+                    //drawDataRectangle ( w->left, w->top, 
+			        //    w->width, w->height, COLOR_RED );
+			        //refresh_rectangle ( w->left, w->top, w->width, w->height );     
+			        
+			       // printf ("X=%d Y=%d l=%d t=%d w=%d h=%d \n",
+			          //  x, y, w->left, w->top, w->width, w->height);
+			    
+                    if ( x > (w->left)  && 
+                         x < (w->left + w->width)  && 
+                         y > (w->top)  &&
+                         y < (w->top + w->height)  )
                     {
-
+                        //printf ("o ");
                         WID = w->id;
                         window_mouse_over = w->id;
 

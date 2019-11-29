@@ -513,6 +513,9 @@ void mouseHandler (void){
 
     struct window_d *Window;
     int wID; 
+    
+    //#test
+    int last_wID;
 
 
 
@@ -797,7 +800,7 @@ void mouseHandler (void){
 	// estamos dentro de uma janela.
 	// -1 significa que ouve algum problema no escaneamento.
 	
-	wID = (int) windowScan ( mouse_x, mouse_y );
+	//wID = (int) windowScan ( mouse_x, mouse_y );
 
     
 	//#importante:
@@ -816,14 +819,23 @@ void mouseHandler (void){
     //pois somente teremos a área de cliente de uma das janelas.
 
     //============
-    if ( wID == -1 )
-    {
-        //if ( full_screen == 0 )
-        //{
-            wID = (int) windowOverLappedScan ( mouse_x, mouse_y );
-	    //}
-    }
+    //if ( wID == -1 )
+    //{
+         //wID = (int) windowOverLappedScan ( mouse_x, mouse_y );
+   // }
 
+
+    //wID = (int) windowOverLappedScan ( mouse_x, mouse_y );
+    
+    //se pegamos uma overlapped.
+    //vamos testar os botoes
+    //if ( wID != -1 )
+    //{
+        //printf ("o ");
+		//wID = (int) windowScan ( mouse_x, mouse_y );
+    //}
+    
+    wID = (int) windowScan ( mouse_x, mouse_y );
 
     //================
 	//Se houve problema no escaneamento de janela do tipo botão ou editbox.

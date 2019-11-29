@@ -86,6 +86,8 @@ void test_move_window (void)
 
 
     w = (struct window_d *) windowList[window_with_focus];
+    //w = (struct window_d *) windowList[active_window];
+
 
    //___xxx = ___xxx + 5;
    //___yyy = ___yyy + 5;
