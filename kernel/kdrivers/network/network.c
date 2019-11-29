@@ -1274,17 +1274,17 @@ int do_arp ( unsigned long buffer )
     {
 	    //#debug
 
-        printf ("\n ARP REQUEST received | ");
-        for ( i=0; i<6; i++){ printf("%x ",eh->src[i]); };
+        //printf ("\n ARP REQUEST received | ");
+        //for ( i=0; i<6; i++){ printf("%x ",eh->src[i]); };
 
-        printf (" | ");
-        for ( i=0; i<6; i++){ printf("%x ",eh->dst[i]); };
+        //printf (" | ");
+        //for ( i=0; i<6; i++){ printf("%x ",eh->dst[i]); };
 
-        printf (" | ");
-        for ( i=0; i<4; i++){ printf("%d ",arp_h->arp_spa[i]); };
+        //printf (" | ");
+        //for ( i=0; i<4; i++){ printf("%d ",arp_h->arp_spa[i]); };
 
-        printf (" | ");
-        for ( i=0; i<4; i++){ printf("%d ",arp_h->arp_tpa[i]); };
+        //printf (" | ");
+        //for ( i=0; i<4; i++){ printf("%d ",arp_h->arp_tpa[i]); };
 
 
 		//cache
@@ -1326,15 +1326,15 @@ int do_arp ( unsigned long buffer )
 
 		//reenvia os mesmos dados, mas modificados para replay.
 		//essa rotina vai copiar de um buffer para outro.
-        printf ("\n Sending ARP reply ...\n");
+        //printf ("\n Sending ARP reply ...\n");
 
         E1000Send ( (void *) currentNIC, 
             (uint32_t) arp_tx_len, 
             (uint8_t *) buffer );
 
 
-        printf ("\n");
-        refresh_screen ();
+        //printf ("\n");
+        //refresh_screen ();
         return 0;
     };
 

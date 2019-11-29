@@ -651,6 +651,18 @@ void *gde_services ( unsigned long number,
     {
 		return (void *) raise_window ( (struct window_d *) arg2 );
     }
+
+    //ps2 mouse controller dialog
+    // msg, long1, long2
+    if ( number == 9800 )
+    {
+		return (void *) ps2_mouse_dialog ( (int) arg2, 
+		                    (unsigned long) arg3, 
+		                    (unsigned long) arg4 );
+    }
+ 
+     //#todo
+     //Criar diálogos com outros drivers. igual fizemos ocm o mouse logo acima.
  
 	//...
 

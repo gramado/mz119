@@ -11,6 +11,8 @@
  *     2018 - Created by Fred Nora.
  */
 
+// #todo
+// talvez fazer estruturas para controlar as configurações de mouse.
  
 #include <kernel.h>
 
@@ -20,6 +22,13 @@
 extern unsigned long SavedX; 
 extern unsigned long SavedY; 
 
+
+//=============================
+//mouse control
+
+// habilitar e desabilitar o mouse.
+// usada pelos aplicativos.
+int ps2_mouse_status;
 
 
 //====================================================================
@@ -519,6 +528,18 @@ void mouseHandler (void){
     char *_byte;
 
 
+    //#todo: Isso é um teste.
+    // O mouse ps2 está desabilitado porém recebendo as interupções
+    // Os aplicativos podem reabilitá-lo a qualquer momento.
+    // Atribuindo foco por exemplo.
+    
+    //#bugbug
+    //Isso realmente paraliza o mouse. Mas reabilitar não está funcionando.
+    //if ( ps2_mouse_status == 0 )
+    //{
+    //      return;
+    // }
+
 
 	//Char para o cursor provisório.
 	//#todo: Isso foi subtituido por uma bmp. Podemos deletar.
@@ -784,11 +805,16 @@ void mouseHandler (void){
 	//então vamos ver se estamos em cima de uma janela overlapped.
     //#obs: isso ficou bom ... estamos testando
     
+    // #bugbug
+    // Com isso o sistema trava quando tentamos mover o mouse
+    // no programa gdeshell, que é fullscreen.
+    //Podemos tentar desabilitar o mouse quando entrarmos em fullscreen
+    // no gdeshell(teste)?
+    
     if ( wID == -1 )
     {
         wID = (int) windowOverLappedScan ( mouse_x, mouse_y );
     }
-
 
 	//Se houve problema no escaneamento de janela do tipo botão ou editbox.
     if ( wID == -1 )
@@ -1371,6 +1397,9 @@ int ps2_mouse_globals_initialize (void){
 	//printf("ps2_mouse_globals_initialize: inicializando variaveis\n");
 	//refresh_screen ();
 
+    // #importante
+    // habilitando o mouse ps2.
+    ps2_mouse_status = 1;
 
 
 	// Estamos espaço para o buffer de mensagens de mouse.
@@ -1380,16 +1409,14 @@ int ps2_mouse_globals_initialize (void){
 	//Inicializando as variáveis usadas na rotina em Assemly
 	//em hardwarelib.inc
 
+    //#todo:
+    //Podemos inicialziar com o mouse no centro da tela.
 
 	//Coordenadas do cursor.
     g_mousepointer_x = (unsigned long) 0;
     g_mousepointer_y = (unsigned long) 0;
     mouse_x = 0;
     mouse_y = 0;
-
-
-	//mouse_x = 0;
-	//mouse_y = 0;
 
 
 	// #bugbug: 
@@ -1440,6 +1467,50 @@ int ps2_mouse_globals_initialize (void){
 }
 
 
+void set_ps2_mouse_status(int status)
+{
+	ps2_mouse_status = status;
+}
+
+int get_ps2_mouse_status(void)
+{
+	return (int) ps2_mouse_status;
+}
+
+
+unsigned long 
+ps2_mouse_dialog ( int msg,
+                   unsigned long long1,
+                   unsigned long long2 )
+{
+    switch (msg)
+    {
+		//habilitar
+        case 4000:
+            printf ("ps2_mouse_dialog: 4000\n");
+            refresh_screen();
+            ps2_mouse_status = 1;
+            break;
+
+        //desabilitar.
+        case 4001:
+            printf ("ps2_mouse_dialog: 4001\n");
+            refresh_screen();
+            ps2_mouse_status = 0;
+            break;
+
+        //#test
+        // reinicializar ??
+        case 4002:
+            break;
+            
+        default:
+            break;
+    };
+
+
+    return 0;
+}
 
 
 //

@@ -30,8 +30,24 @@
 
 void mouse_handler (void)
 {
-    mouseHandler ();
+	
+	 mouseHandler ();
+	 
+	 
+	 //#bugbug
+	 /*
+	//int status;
+
+    //status = get_ps2_mouse_status ();
+    
+    //if ( status == 1 )
+    //   mouseHandler ();
+    */
+
 }
+
+
+
 
 
 //

@@ -83,22 +83,13 @@ int mouse_button_action;
 
 
 
-//?? usado pelo mouse
+//?? usado pelo mouse ??
 #define outanyb(p) __asm__ __volatile__( "outb %%al,%0" : : "dN"((p)) : "eax" )
 
 
 //
 // Mouse support
 //
-
-//bytes do controlador.
-char mouse_status;
-char delta_x;
-char delta_y;
-
-//coordenadas.
-int mouse_pos_x;
-int mouse_pos_y;
 
 
 unsigned long g_mousepointer_width;
@@ -111,9 +102,6 @@ unsigned long g_mousepointer_height;
 // uma mensagem que será enviada para uma thread.
 
 int MOUSE_SEND_MESSAGE ( void *buffer );
-
-
-void mouse_handler (void);
 
 
 void mouse_write (unsigned char write);
@@ -129,7 +117,12 @@ void kernelPS2MouseDriverReadData (void);
 void *mouseBMPBuffer; 
 int load_mouse_bmp (void);
 
+//ps2mouse.c
 void mouseHandler (void); 
+
+//mouse.c
+//(real handler)
+void mouse_handler (void);
 
 void ps2_mouse_initialize (void);
 
@@ -137,7 +130,16 @@ int ps2_mouse_globals_initialize (void);
 
 void mouse_install (void);   
 
-		  	  
+
+void set_ps2_mouse_status(int status);
+int get_ps2_mouse_status(void);
+
+// Conversando com o driver para fazer configurações.
+unsigned long 
+ps2_mouse_dialog ( int msg,
+                   unsigned long long1,
+                   unsigned long long2 );
+
 //
 // End.
 //
