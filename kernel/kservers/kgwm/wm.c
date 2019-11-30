@@ -3931,10 +3931,13 @@ int windowScan ( unsigned long x, unsigned long y ){
                         panic ("windowScan: parent\n");
                     }
 
-                    if ( x > (w->parent->left + w->left)  && 
-                         x < (w->parent->left + w->left + w->width)  && 
-                         y > (w->parent->top + w->top)  &&
-                         y < (w->parent->top + w->top + w->height)  )
+			        //printf ("X=%d Y=%d l=%d t=%d w=%d h=%d \n",
+			            //x, y, w->left, w->top, w->width, w->height);
+
+                    if ( x > (w->left)  && 
+                         x < (w->left + w->width)  && 
+                         y > (w->top)  &&
+                         y < (w->top + w->height)  )
                     {
 
                         WID = w->id;

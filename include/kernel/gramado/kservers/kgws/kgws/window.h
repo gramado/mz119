@@ -1878,8 +1878,7 @@ update_button (  struct button_d *button,
 
 
 //Button.
-void *draw_button ( struct window_d *window,
-                    unsigned char *string,
+void *draw_button ( unsigned char *string,
                     int style,
                     int state,
                     int type, 

@@ -71,7 +71,9 @@ update_button ( struct button_d *button,
 }
 
 
+
 /*
+ *****************************************
  * draw_button:
  *     Desenha um botão dado um tipo.
  *     
@@ -88,8 +90,7 @@ update_button ( struct button_d *button,
 //#todo
 //Precisamos usar o esquema de cores.
 
-void *draw_button ( struct window_d *window,
-                    unsigned char *string,
+void *draw_button ( unsigned char *string,
                     int style,
                     int state,
                     int type, 
@@ -111,10 +112,10 @@ void *draw_button ( struct window_d *window,
 	// Validade da janela onde o botão está.
 	// #todo: cheacr used, magic.
 	
-	if ( (void *) window == NULL )
-	{
-	    return NULL;
-	}
+	//if ( (void *) window == NULL )
+	//{
+	//    return NULL;
+	//}
 	
 	// Alocando memória para a estrutura do botão.
 	// Inicializando a estrutura.
@@ -143,7 +144,7 @@ void *draw_button ( struct window_d *window,
 
 		b->state = (int) state;
 
-		b->window = (void *) window; 
+		//b->window = (void *) window; 
 		b->string = string; 
 
         b->x = x;
@@ -249,7 +250,7 @@ void *draw_button ( struct window_d *window,
 	// ## bg ##
 	//
 	
-	drawDataRectangle ( window->left +x, window->top +y, 
+	drawDataRectangle ( x, y, 
 	    width, height, color );
     
 	//
@@ -260,15 +261,15 @@ void *draw_button ( struct window_d *window,
 	// As cores das bordas deve estar no esquema de cores.
 	
 	//board1, borda de cima e esquerda.
-	drawDataRectangle ( window->left +x, window->top +y, 
+	drawDataRectangle ( x, y, 
 	    width, 1, border1 );
-	drawDataRectangle ( window->left +x, window->top +y, 
+	drawDataRectangle ( x, y, 
 	    1, height, border1 );
 
 	//board2, borda direita e baixo.
-	drawDataRectangle ( window->left +x +width -1, window->top +y, 
+	drawDataRectangle ( x +width -1, y, 
 		1, height, border2 );
-	drawDataRectangle ( window->left +x, window->top +y +height -1, 
+	drawDataRectangle ( x, y +height -1, 
 		width, 1, border2 );
 
 	
@@ -293,7 +294,7 @@ void *draw_button ( struct window_d *window,
 	//button label
     if (Selected == 1)
     {
-        draw_string ( window->left +x +offset, window->top +y +8, 
+        draw_string ( x +offset,y +8, 
             COLOR_WHITE, string );
 
     }else{
@@ -304,7 +305,7 @@ void *draw_button ( struct window_d *window,
 		// (window->left +x) left 
 		// (largura do botão, menos a largura da string)/2
 
-        draw_string ( window->left +x +offset, window->top +y +8, 
+        draw_string ( x +offset, y +8, 
             COLOR_TERMINALTEXT, string );
 
     };

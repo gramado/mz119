@@ -1094,9 +1094,10 @@ void *CreateWindow ( unsigned long type,
 			//na posição determinada agora.
 			
 			windowButton1 = CreateWindow ( WT_BUTTON, 1, 1, "V", 
-                               (window->width -32 -32 -1 -32 -1), 2, 32, 32,
+                               (window->left + window->width -32 -32 -1 -32 -1), window->top +2, 
+                                32, 32,
                                 window, 0, 
-                                (unsigned long) COLOR_TERMINAL2, (unsigned long) COLOR_TERMINAL2);
+                               (unsigned long) COLOR_TERMINAL2, (unsigned long) COLOR_TERMINAL2);
 
 			//#test OK ISSO FUNCIONOU
 			//registrar o posicionamento do botão na tela.
@@ -1117,7 +1118,8 @@ void *CreateWindow ( unsigned long type,
 
             // Create button.
             windowButton2 = CreateWindow ( WT_BUTTON, 1, 1, "^", 
-                               (window->width -32 -32 -1), 2, 32, 32,
+                               (window->left + window->width -32 -32 -1), window->top +2, 
+                               32, 32,
                                window, 0, 
                                (unsigned long) COLOR_TERMINAL2, (unsigned long) COLOR_TERMINAL2);
 
@@ -1136,7 +1138,8 @@ void *CreateWindow ( unsigned long type,
 			
 			// Create button.
 			windowButton3 = CreateWindow ( WT_BUTTON, 1, 1, "X", 
-                                (window->width -32), 2, 32, 32,
+                                (window->left + window->width -32), window->top +2, 
+                                 32, 32,
                                  window, 0, 
                                  (unsigned long) COLOR_TERMINAL2, (unsigned long) COLOR_TERMINAL2 );
 
@@ -1516,13 +1519,14 @@ void *CreateWindow ( unsigned long type,
 		
 		// Criar.
 		windowButton4 = CreateWindow ( WT_BUTTON, 1, 1, "^", 
-	                        1, 1, 32, 32, //(window->width -2), 32,
+	                        window->left +1, window->top +1, 
+	                        32, 32, 
 		                    window, 0, 
 		                    (unsigned long) COLOR_TERMINAL2, 
 		                    (unsigned long) COLOR_TERMINAL2);
         
 		// Registrar.
-		RegisterWindow (windowButton4);  		
+		RegisterWindow (windowButton4); 
         window->scrollbar_button1 = windowButton4; 
 		
 		//#test	
@@ -1536,7 +1540,8 @@ void *CreateWindow ( unsigned long type,
 		
 		// Criar.
 		windowButton5 = CreateWindow ( WT_BUTTON, 1, 1, "=", 
-	                        1, (window->height/2), 32, 32, //(window->width -2), 32,
+	                        window->left + 1, window->top +(window->height/2), 
+	                        32, 32,
 		                    window, 0, 
 		                    (unsigned long) COLOR_TERMINAL2, 
 		                    (unsigned long) COLOR_TERMINAL2);
@@ -1550,7 +1555,8 @@ void *CreateWindow ( unsigned long type,
 	    
 		// Criar.
 		windowButton6 = CreateWindow ( WT_BUTTON, 1, 1, "v", 
-	                        1, (window->height -32 -1), 32, 32, //(window->width -2), 32,
+	                        window->left +1, window->top +(window->height -32 -1), 
+	                        32, 32, 
 		                    window, 0, 
 		                    (unsigned long) COLOR_TERMINAL2, 
 		                    (unsigned long) COLOR_TERMINAL2 );
@@ -1578,11 +1584,11 @@ void *CreateWindow ( unsigned long type,
 	// JANELA DO TIPO BOTÃO.
     // NÃO TEMOS INFORMAÇÕES SOBRE O TIPO DE BOTÃO QUE DEVEMOS CRIAR. 
     // SÓ SABEMOS QUE A JANELA É DO TIPO BOTÃO.
-	// As posições de left e right são da janela do botão.	
+	// As posições de left e right são da janela do botão.
     // #obs: 
-    // Essa função retorna uma estrutura de botão.	
+    // Essa função retorna uma estrutura de botão.
     // Então, uma janela, quando acianoada sua flag que indica que ela é um botão,
-    // podemos usar a estrutura de botão para acessar as características do botão.		
+    // podemos usar a estrutura de botão para acessar as características do botão.
 	// #obs
 	// As cores das bordas dependem do status.
 	
@@ -1598,7 +1604,7 @@ void *CreateWindow ( unsigned long type,
 
     if ( (unsigned long) type == WT_BUTTON )
     {
-        window->button = (struct button_d *) draw_button ( Parent, windowname, 
+        window->button = (struct button_d *) draw_button ( windowname, 
                                                  0, BS_DEFAULT, 0,
                                                  window->left, window->top, 
                                                  window->width, window->height, 
