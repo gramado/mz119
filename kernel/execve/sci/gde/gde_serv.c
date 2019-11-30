@@ -1605,27 +1605,30 @@ void *gde_services ( unsigned long number,
 			
 		//147	
 		//#bugbug: isso não parece seguro, precismos checar a validade da estrutura antes,
-        //mas vai ficar assim por enquanto.		
+        //mas vai ficar assim por enquanto.
         case 147:
 		    //return (void *) gwsMainWindow(); //#todo
 			return (void *) gui->main;
 			break;
-			
+
+
 		// 148 - Create grid and itens.
 		// window, n, view. 
-		case 148:
-		    return (void *) sys_grid ( (struct window_d *) arg2, (int) arg3, 
-		                        (int) arg4 );
+        case 148:
+           return (void *) sys_grid ( (struct window_d *) arg2, 
+                               (int) arg3, (int) arg4 );
             break;
 
-        // 149
-        // test. menu.
-        // essa é uma rotina de teste, qua chama várias funções.
-		case 149:
-			sys_MainMenu ( (struct window_d *) arg2 );	
+
+
+        // 149 - Testing system menu.
+        // Essa é uma rotina de teste, qua chama várias funções.
+        case 149:
+            sys_MainMenu ( (struct window_d *) arg2 );
             break;
-			
-		//152 - get user id	
+
+
+		//152 - get user id
 		case SYS_GETCURRENTUSERID:
 		    return (void *) current_user;
 			break;
