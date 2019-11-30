@@ -2161,86 +2161,105 @@ done:
  *     Essa rotina é o serviço 118.
  */
 
+// #todo
+// Esse serviço deve ir para o módulo /kgws
+
 unsigned long serviceCreateWindow ( char *message_buffer ){
-	
-	unsigned long *message_address = (unsigned long *) message_buffer;
-	
+
+    unsigned long *message_address = (unsigned long *) message_buffer;
+
 	//Ponteiro para a janela criada pelo serviço.
     struct window_d *NewWindow;  
+    struct window_d *ParentWindow;  
 
-	cwArg1 = message_address[0];             // Type. 
-	cwArg2 = message_address[1];             // WindowStatus 
-	cwArg3 = message_address[2];             // view
-	cwArg4 = (char *) message_address[3];    // a4 Window name.
-	cwArg5 = message_address[4];             // x
-	cwArg6 = message_address[5];             // y
-	cwArg7 = message_address[6];             // width
-	cwArg8 = message_address[7];             // height
-		
+    cwArg1 = message_address[0];             // Type. 
+    cwArg2 = message_address[1];             // WindowStatus 
+    cwArg3 = message_address[2];             // view
+    cwArg4 = (char *) message_address[3];    // a4 Window name.
+    cwArg5 = message_address[4];             // x
+    cwArg6 = message_address[5];             // y
+    cwArg7 = message_address[6];             // width
+    cwArg8 = message_address[7];             // height
+
 	//parent window.
 	//message_address[8];
 	//cwArg9 = gui->screen;  //@todo: O argumento arg4 está enviando parent window. 
-	cwArg9 = (struct window_d *) message_address[8];  //parent
-		
+    cwArg9 = (struct window_d *) message_address[8];    //parent
+    ParentWindow = (struct window_d *) message_address[8];    //parent
+
 	//onde?
 	//message_address[9];
 	//cwArg10 = arg4;  //desktop ID 
-		
-	cwArg11 = message_address[10];    //cor da area de cliente.
-	cwArg12 = message_address[11];    //cor da janela.
-	
-	   //==========
-	
+
+    cwArg11 = message_address[10];    //cor da area de cliente.
+    cwArg12 = message_address[11];    //cor da janela.
+
+    //==========
+
 	//Window.
-	unsigned long WindowType;      //Tipo de janela.
-	unsigned long WindowStatus;    //Status, ativa ou não.
+    unsigned long WindowType;      //Tipo de janela.
+    unsigned long WindowStatus;    //Status, ativa ou não.
 	//unsigned long WindowRect;
-	unsigned long WindowView;      //Min, max.
-	char *WindowName;  
-	
-	unsigned long WindowX = (2*(800/20));  //100;   >          
-	unsigned long WindowWidth  = 320;               
-	
-	unsigned long WindowY = (2*(600/20)); //100;   V                
-	unsigned long WindowHeight = 480;  
-	
-	unsigned long WindowClientAreaColor = COLOR_WINDOW;  
-	unsigned long WindowColor = COLOR_WINDOW;  
-	
-	
+    unsigned long WindowView;      //Min, max.
+    char *WindowName;  
+
+    unsigned long WindowX = (2*(800/20));    //100;   >          
+    unsigned long WindowWidth  = 320;               
+    unsigned long WindowY = (2*(600/20));    //100;   V                
+    unsigned long WindowHeight = 480;  
+
+    unsigned long WindowClientAreaColor = COLOR_WINDOW;  
+    unsigned long WindowColor = COLOR_WINDOW;  
+
+
 	//#todo: Checar a validade da esturtura,
 	//WindowClientAreaColor = CurrentColorScheme->elements[csiWindow];  
 	//WindowColor = CurrentColorScheme->elements[csiWindowBackground];  
-	
-	WindowType = cwArg1; 
-	WindowStatus = cwArg2; 
-	WindowView = cwArg3; 
-	WindowName = (char *) cwArg4; 
 
-	WindowX = cwArg5; 
-	WindowY = cwArg6; 
 
-	WindowWidth = cwArg7; 
-	WindowHeight = cwArg8;
+    WindowType = cwArg1; 
+    WindowStatus = cwArg2; 
+    WindowView = cwArg3; 
+    WindowName = (char *) cwArg4; 
+
+    WindowX = cwArg5; 
+    WindowY = cwArg6; 
+    WindowWidth = cwArg7; 
+    WindowHeight = cwArg8;
+
 
 	//#todo
 	//gui->screen  = cwArg9; 
 	//desktopID = cwArg10; 
 
 	//Obs: 11 - A cor da área de cliente será escolhida pelo app.   
-	WindowClientAreaColor = (unsigned long) cwArg11;  
-	WindowColor = (unsigned long) cwArg12;     
+    WindowClientAreaColor = (unsigned long) cwArg11;  
+    WindowColor = (unsigned long) cwArg12;     
 
 
-	struct thread_d *t;
-	int desktopID;
-	
-	
-	desktopID = (int) get_current_desktop_id ();
-	
+    struct thread_d *t;
+    int desktopID;
+
+
+    desktopID = (int) get_current_desktop_id ();
+
+
+    //
+    // Create.
+    //
+    
+    
+    // #test
+    // Ok isso funcionou.
+    if ( (void *) ParentWindow != NULL )
+    {
+        WindowX = ParentWindow->left + WindowX;
+        WindowY = ParentWindow->top + WindowY;
+    }
+
     // Importante:
-	// Nesse momento é fundamental saber qual é a parent window da janela que vamos criar 
-	// pois a parent window terá as margens que nos guiam.
+	// Nesse momento é fundamental saber qual é a parent window da janela que 
+	// vamos criar pois a parent window terá as margens que nos guiam.
 	// Essa parent window pode ser uma aba de navegador por exemplo.
 	// >> O aplicativo deve enviar o ponteiro da janela mãe.
 	
@@ -2276,7 +2295,7 @@ unsigned long serviceCreateWindow ( char *message_buffer ){
 		// pode enviar diversas chamadas, Se não enviar, serão considerados
 		// os valores padrão referentes ao tipo de janela criada.
 		// Cada tipo tem suas características e mesmo que o solicitante
-		// não seja específico nos detalhes ele terá a janela do tipo que deseja.	
+		// não seja específico nos detalhes ele terá a janela do tipo que deseja.
 		
         //  
         //@todo: Pode-se refinar os parâmetros da janela na estrutura.

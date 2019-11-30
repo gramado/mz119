@@ -666,26 +666,25 @@ void *CreateWindow ( unsigned long type,
 
     switch (type)
     {
-		case WT_NULL:
-		    return NULL; 
-		    break;
+        case WT_NULL:
+            return NULL; 
+            break;
 
-		
 		// Simple window. (Sem barra de títulos).
-		case WT_SIMPLE:
-	        Background = 1;
-			window->backgroundUsed = 1;
-		    break;
+        case WT_SIMPLE:
+            Background = 1;
+            window->backgroundUsed = 1;
+            break;
 
 
 		// Edit box. (Simples + borda preta).
-        // editbox não tem sombra, tem bordas. 
-		case WT_EDITBOX:
+		// editbox não tem sombra, tem bordas. 
+        case WT_EDITBOX:
             Background = 1;
-	        window->backgroundUsed = 1;
+            window->backgroundUsed = 1;
             Border = 1;
-		    //window->borderUsed = 1;
-		    break;
+            //window->borderUsed = 1;
+            break;
 
 
 		// Overlapped. (completa, para aplicativos).
@@ -753,8 +752,8 @@ void *CreateWindow ( unsigned long type,
         
         //Nothing for now ...
         //Deixaremos a rotina de desenhar o botão fazer tudo por enquanto.          
-		case WT_BUTTON:
-			break;
+        case WT_BUTTON:
+            break;
 
 
 		//Status bar.
@@ -986,43 +985,55 @@ void *CreateWindow ( unsigned long type,
 		
 		//...
 	}
-	
+
+
+
 	// ## Background ##
 	//    Background para todo o espaço ocupado pela janela e pelo seu frame.
-			
+
+    // O posicionamento do background depende do tipo de janela.
+    // Um controlador ou um editbox deve ter um posicionamento relativo
+    // à sua janela mãe. Já uma overlapped pode ser relativo a janela gui->main
+    // ou relativo à janela mãe.
+
 	// Background.
-	if ( Background == 1 )
-	{
+    if ( Background == 1 )
+    {
 		// Flag.
         window->backgroundUsed = 1;
-		
-		window->bg_color = CurrentColorScheme->elements[csiWindowBackground]; 
-	    
+
+        window->bg_color = CurrentColorScheme->elements[csiWindowBackground]; 
+
 		// O argumento 'color' será a cor do bg para alguns tipos.
 		// Talvez não deva ser assim. Talvez tenha que se respeitar o tema instalado.
-		if( (unsigned long) type == WT_SIMPLE ){ window->bg_color = color; };
-		if( (unsigned long) type == WT_POPUP ){ window->bg_color = color; };
-		if( (unsigned long) type == WT_EDITBOX){ window->bg_color = color; }
-		if( (unsigned long) type == WT_CHECKBOX){ window->bg_color = color; }
-		//if( (unsigned long) type == WT_SCROLLBAR){ window->bg_color = color; }
-		//...
-		
-		//Pintar o retângulo.
+        if ( (unsigned long) type == WT_SIMPLE ){ window->bg_color = color; }
+        if ( (unsigned long) type == WT_POPUP ){ window->bg_color = color; }
+        if ( (unsigned long) type == WT_EDITBOX){ window->bg_color = color; }
+        if ( (unsigned long) type == WT_CHECKBOX){ window->bg_color = color; }
+        //if ( (unsigned long) type == WT_SCROLLBAR){ window->bg_color = color; }
+        //...
+
+
+		// Pintar o retângulo.
 		// @todo: ?? width Adicionar a largura da bordas bordas verticais.
 		// @todo: ?? height Adicionar as larguras das bordas horizontais e da barra de títulos.
 		
-		if ( (unsigned long) type == WT_STATUSBAR )
-		{
+        if ( (unsigned long) type == WT_STATUSBAR )
+        {
             drawDataRectangle ( window->left, window->top, 
                 window->width -1, window->height, window->bg_color ); 
 
-            draw_string ( window->left +8, window->top +8, COLOR_TEXT,  
-                window->name ); 
-			goto done;
-		}
-		
-		drawDataRectangle ( window->left, window->top, 
-			window->width, window->height, window->bg_color ); 
+            draw_string ( window->left +8, window->top +8, 
+                COLOR_TEXT, window->name ); 
+            goto done;
+        }
+
+        // 
+        // * Draw!
+        //
+         
+        drawDataRectangle ( window->left, window->top, 
+            window->width, window->height, window->bg_color ); 
 
         //?? More ...
 	}
@@ -1039,9 +1050,9 @@ void *CreateWindow ( unsigned long type,
     // as bordas.	
     
     //parametros 16=icone 8=paddings
-	
-	if ( TitleBar == 1 )
-	{ 
+
+    if ( TitleBar == 1 )
+    { 
         //flag.
         window->titlebarUsed = 1;
         
@@ -1139,7 +1150,8 @@ void *CreateWindow ( unsigned long type,
          }
 
 		//...
-	};
+    }
+
 
 	//#debug
     //if ( (unsigned long) type == WT_OVERLAPPED )
@@ -1180,23 +1192,25 @@ void *CreateWindow ( unsigned long type,
 			}else{
 			    border_color = COLOR_INACTIVEBORDER;
 			    border_size = 1;
-			}
-		};
-		
-		//editbox
-		if ( window->type == WT_EDITBOX )
-		{
-			//se tiver o foco.
-			if ( window->focus == 1 )
-			{
-				border_color = COLOR_BLUE;
-			    border_size = 2;
-			}else{
-			    border_color = COLOR_INACTIVEBORDER;	
-			    border_size = 1;
-			}
-		};		
-		
+			};
+		}
+
+
+		// Editbox
+        if ( window->type == WT_EDITBOX )
+        {
+			// Se tiver o foco.
+            if ( window->focus == 1 )
+            {
+                border_color = COLOR_BLUE;
+                border_size = 2;
+            }else{
+                border_color = COLOR_INACTIVEBORDER;
+                border_size = 1;
+            };
+         }
+
+
 		//overlapped (app)
 		if ( window->type == WT_OVERLAPPED )
 		{
@@ -1390,12 +1404,15 @@ void *CreateWindow ( unsigned long type,
 				//window->rcClient->bottom = window->rcClient->top + window->rcClient->height;
                 
 			};
-			
+
+
 			// ## EDITBOX ##
 
-			if( window->type == WT_EDITBOX || 
-			    window->type == WT_EDITBOX_MULTIPLE_LINES )
-			{	
+            // Estamos posicionando e dimensionando a área de cliente do
+            // editbox.
+            if ( window->type == WT_EDITBOX || 
+                 window->type == WT_EDITBOX_MULTIPLE_LINES )
+            {
                 //left top
                 window->rcClient->left = (unsigned long) (window->left +1);
                 window->rcClient->top = (unsigned long) (window->top  +1);
@@ -1405,18 +1422,19 @@ void *CreateWindow ( unsigned long type,
                 // height = windows height - as bordas horizontais - a barra de títulos.
                 window->rcClient->width = (unsigned long) (window->width -1 -1);
                 window->rcClient->height = (unsigned long) (window->height -1 -1);
-				
-				//window->rcClient->right = window->rcClient->left + window->rcClient->width;
-				//window->rcClient->bottom = window->rcClient->top + window->rcClient->height;
-			};
-			
+
+                //window->rcClient->right = window->rcClient->left + window->rcClient->width;
+                //window->rcClient->bottom = window->rcClient->top + window->rcClient->height;
+            }
+
+
 			//right bottom.
 			//válido para todos os tipos de janela.
   			window->rcClient->right = (unsigned long) (window->rcClient->left + window->rcClient->width);
 			window->rcClient->bottom = (unsigned long) (window->rcClient->top + window->rcClient->height);
 			
 			
-            // #bugbug Isso pode dar problemas.		
+            // #bugbug Isso pode dar problemas.
 		    // Deslocamento dentro da área de cliente.
             // Zerando o deslocamento.
 		    window->rcClient->x = 0;
@@ -1577,9 +1595,9 @@ void *CreateWindow ( unsigned long type,
 	// janela mãe. Isso depois de pintarmos.
 	// #bugbug: provavelmente isso dará problemas na hora de repintar,
 	//tentaremos corrigir depois.
-	
-	if ( (unsigned long) type == WT_BUTTON )
-	{
+
+    if ( (unsigned long) type == WT_BUTTON )
+    {
         window->button = (struct button_d *) draw_button ( Parent, windowname, 
                                                  0, BS_DEFAULT, 0,
                                                  window->left, window->top, 
@@ -1591,23 +1609,23 @@ void *CreateWindow ( unsigned long type,
         
         //#test
         window->parent = Parent;
-        
-		window->isButton = 1;
-	}	
+        window->isButton = 1;
+    }
 
-    if ( (unsigned long) type == WT_EDITBOX )	
-	{
-		
-        //#test
+
+
+    // editbox
+    if ( (unsigned long) type == WT_EDITBOX )
+    {
         window->parent = Parent;
-        		
-		window->isEditBox = 1;
-	}
-	
-	
-    if ( (unsigned long) type == WT_SIMPLE )	
-	{	
-	    //#test
+        window->isEditBox = 1;
+        //...
+    }
+
+
+    if ( (unsigned long) type == WT_SIMPLE )
+    {
+       //#test
         window->parent = Parent;
     }
 

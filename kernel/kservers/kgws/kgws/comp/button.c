@@ -99,13 +99,15 @@ void *draw_button ( struct window_d *window,
                     unsigned long height, 
                     unsigned long color )
 {
-	int Focus;    //(precisa de borda)
-	int Selected;
-	unsigned long border1;
+
+    int Focus;    //(precisa de borda)
+    int Selected;
+    unsigned long border1;
     unsigned long border2;
-	
-	struct button_d *b;
-	
+
+    struct button_d *b;
+
+
 	// Validade da janela onde o botão está.
 	// #todo: cheacr used, magic.
 	

@@ -1874,18 +1874,21 @@ update_button (  struct button_d *button,
                unsigned long width, 
                unsigned long height, 
                unsigned long color );
-				 
+
+
+
 //Button.
 void *draw_button ( struct window_d *window,
                     unsigned char *string,
-					int style,
+                    int style,
                     int state,
-                    int type,  	 
+                    int type, 
                     unsigned long x, 
                     unsigned long y, 
                     unsigned long width, 
                     unsigned long height, 
                     unsigned long color );
+
 
 int redraw_button ( struct button_d *button );
 
