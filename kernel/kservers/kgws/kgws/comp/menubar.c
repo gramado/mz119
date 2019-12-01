@@ -417,11 +417,11 @@ int get_menubar_selected_item (void){
  *     Usanda para teste de criação de menubars.
  */
 
-int menubarX (void){
+//int menubarX (void){
+int kgws_create_menubar ( struct window_d *window){
 
 
-    // Target window
-    struct window_d *window;
+    // Target window in the args.
     
     
     // #todo:
@@ -431,7 +431,7 @@ int menubarX (void){
     //window = (struct window_d *) gui->screen;
     //window = (struct window_d *) gui->main;
     //window = (struct window_d *) windowList[active_window];
-    window = (struct window_d *) windowList[window_with_focus];
+    //window = (struct window_d *) windowList[window_with_focus];
 
 
 	//Usando a janela screen anteriormente criada.

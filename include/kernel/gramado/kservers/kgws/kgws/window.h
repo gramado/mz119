@@ -1850,8 +1850,9 @@ int draw_menubar_item ( struct window_d *window, unsigned char *string);
 
 //int select_menubar_item(struct menuitem_d *menuitem);
 
-int menubarX (void);
 
+//int menubarX (void);
+int kgws_create_menubar ( struct window_d *window);
 
 
 //Color.
