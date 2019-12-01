@@ -770,10 +770,12 @@ system_procedure ( struct window_d *window,
                 //Testes diversos.
                 case VK_F6:
 
+                      menubarX ();
+           
                      //See: network.c
                      //testNIC ();
 
-                    test_move_window();
+                    //test_move_window();
                     //hal_test_speaker();
 
 					//#test
@@ -924,8 +926,8 @@ system_procedure ( struct window_d *window,
                     break;
 					
                 default:
-                    break;				
-            };          
+                    break;
+            }; 
             break;
 		
 
@@ -934,10 +936,10 @@ system_procedure ( struct window_d *window,
         //como desligamentos, inicializações, reboot ...		
         //case MSG_CONSOLE:
 		//case MSG_CONSOLE_COMMAND:
-            //goto do_terminal;		
+            //goto do_terminal;
 		//	break;
 		 
-        //Continua ... Create ... Close ...		
+        //Continua ... Create ... Close ...
         //case MSG_CREATE:
 		//    break;
 		//case MSG_DESTROY:

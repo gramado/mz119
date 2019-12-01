@@ -411,33 +411,51 @@ int get_menubar_selected_item (void){
 
 
 /*
+ ************************************
  * menubarX:
  *     Cria uma menubar na janela screen.
  *     Usanda para teste de criação de menubars.
  */
 
 int menubarX (void){
-	
+
+
+    // Target window
+    struct window_d *window;
+    
+    
+    // #todo:
+    // Vamos colocar um argumento window na função.
+
+    //#test
+    //window = (struct window_d *) gui->screen;
+    //window = (struct window_d *) gui->main;
+    //window = (struct window_d *) windowList[active_window];
+    window = (struct window_d *) windowList[window_with_focus];
+
+
 	//Usando a janela screen anteriormente criada.
-    // Cria a janela e o menu. 
+	// Cria a janela e o menu. 
 	// (o argumento é a janela mãe)
 	// (retorna a janela da menubar)
 	// O handle da menubar window.
-	    
-	if ( (void *) gui->screen == NULL )
+
+	//if ( (void *) gui->screen == NULL )
+	if ( (void *) window == NULL )
 	{
         return (int) 1;
     
     }else{
-		
-        gui->mbhWindow = (void *) create_menubar (gui->screen);	
 
+        //gui->mbhWindow = (void *) create_menubar (gui->screen);
+        gui->mbhWindow = (void *) create_menubar (window);
+        
 	    if ( (void *) gui->mbhWindow == NULL )
 	    {
 	        panic ("menubar-menubarX:");
 	    }
 
-	    initmenuArray( gui->mbhWindow->barMenu, 4);
+	    initmenuArray ( gui->mbhWindow->barMenu, 4);
 	
 	    // Cria um menuitem, dado um menu da janela.
 	    create_menubar_item(gui->mbhWindow->barMenu,"Control Panel",1); //painel
@@ -449,8 +467,9 @@ int menubarX (void){
 	//More ?!
 
     //Suspenso. 
-    //SetProcedure ( (unsigned long) &MenuBarProcedure);	 
-    
+    //SetProcedure ( (unsigned long) &MenuBarProcedure);
+ 
+    refresh_screen();
 	return 0;
 }
 
@@ -460,7 +479,7 @@ int menubarX (void){
  *     O procedimento de janela da menu bar do desktop.
  *     seleciona os ítens da menubar. 
  */
-																
+
 unsigned long 
 MenuBarProcedure ( struct window_d *window, 
                    int msg, 
