@@ -92,15 +92,19 @@ void test_move_window (void)
    //___xxx = ___xxx + 5;
    //___yyy = ___yyy + 5;
 
-   //___xxx = w->left + 5;
-   //___yyy = w->top + 5;
+   ___xxx = w->left + 5;
+   ___yyy = w->top + 5;
 
-    //w->left = ___xxx;
-    //w->top = ___yyy;
+    w->left = ___xxx;
+    w->top = ___yyy;
 
     save_window ( (struct window_d *) w );
 
-    //replace_window ( (struct window_d *) w, ___xxx, ___yyy);
+    replace_window ( (struct window_d *) w, ___xxx, ___yyy);
+    
+    refresh_rectangle2 ( w->left +5, w->top +5, w->width, w->height, 
+        (unsigned long) FRONTBUFFER_ADDRESS, 
+        (unsigned long) BACKBUFFER_ADDRESS);
 
     show_saved_window ( (struct window_d *) w );
 
@@ -108,9 +112,9 @@ void test_move_window (void)
     
     //coloca uma parte grande do buffer de salvamento no lfb.
     //refresh_rectangle2 ( 0, 0, 800, 600, FRONTBUFFER_ADDRESS, SavedRect->buffer_address);
-    refresh_rectangle2 ( w->left +5, w->top +5, w->width, w->height, 
-        (unsigned long) FRONTBUFFER_ADDRESS, 
-        (unsigned long) SavedRect->buffer_address);
+    //refresh_rectangle2 ( w->left +5, w->top +5, w->width, w->height, 
+      //  (unsigned long) FRONTBUFFER_ADDRESS, 
+       // (unsigned long) SavedRect->buffer_address);
 
 
     //#debug
@@ -118,8 +122,12 @@ void test_move_window (void)
 }
 
 
-
-
+void test_move_window_2 (void)
+{
+	int i;
+	for (i=0; i<10; i++)
+	    test_move_window ();
+}
 
 /*
  * XPROC_SEND_MESSAGE
@@ -776,6 +784,8 @@ system_procedure ( struct window_d *window,
                      //testNIC ();
 
                     //test_move_window();
+                    //test_move_window_2();
+                    
                     //hal_test_speaker();
 
 					//#test

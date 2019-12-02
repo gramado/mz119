@@ -2266,26 +2266,25 @@ resize_window ( struct window_d *window,
  ****************************************************
  * replace_window:
  *     Muda os valores do posicionamento da janela.
- */	
+ */
  
 // wm. 
  
 int 
 replace_window ( struct window_d *window, 
-				 unsigned long x, 
-				 unsigned long y )
+                 unsigned long x, 
+                 unsigned long y )
 {
     if ( (void *) window == NULL )
     {
-		return 1;
-	
-	} else {
+        return 1;
+    } else {
 		
         //@todo: Checar limites.
 	
         window->left = (unsigned long) x;
         window->top = (unsigned long) y;
-	};
+    };
 
     return 0;
 }
