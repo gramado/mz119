@@ -1124,28 +1124,27 @@ void mouseHandler (void){
 					//Isso é um sinalizador quando mouse passa por cima.
 					//#test: Vamos tentar modificar as características do botão.
 
-                    if ( Window->isButton == 1 )
-                    {
+                    //#ok isso funciona, vamos deixar oapp fazer isso.
+                    //faremos isso somente para os botões do sistema.  
+                    //if ( Window->isButton == 1 )
+                    //{
 						//isso funciona.
                         //bmpDisplayCursorBMP ( fileIconBuffer, Window->left, Window->top );
-
 						//#test
-
-                        update_button ( (struct button_d *) Window->button,
-                            (unsigned char *) Window->button->string,
-                            (int) Window->button->style,
-                            (int) BS_HOVER,
-                            (int) Window->button->type,
-                            (unsigned long) Window->button->x, 
-                            (unsigned long) Window->button->y, 
-                            (unsigned long) Window->button->width, 
-                            (unsigned long) Window->button->height, 
-                            (unsigned long) Window->button->color );
-
-						redraw_button ( (struct button_d *) Window->button );
-						show_window_rect (Window);
-
-					};
+                        //update_button ( (struct button_d *) Window->button,
+                            //(unsigned char *) Window->button->string,
+                            //(int) Window->button->style,
+                            //(int) BS_HOVER,
+                            //(int) Window->button->type,
+                            //(unsigned long) Window->button->x, 
+                            //(unsigned long) Window->button->y, 
+                            //(unsigned long) Window->button->width, 
+                            //(unsigned long) Window->button->height, 
+                            //(unsigned long) Window->button->color );
+						//redraw_button ( (struct button_d *) Window->button );
+						//show_window_rect (Window);
+					//};
+					
 
 				    //não botão.
 				    //if ( Window->isButton == 0 )

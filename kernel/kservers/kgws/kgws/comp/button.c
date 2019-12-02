@@ -68,6 +68,66 @@ update_button ( struct button_d *button,
 
 		button->color = (unsigned long) color;
 	};
+	
+    //
+	//  ## State ##
+	//
+
+	// #todo: 
+	// Usar esquema padrão de cores.
+	
+    //button states:
+    //0. NULL.
+	//1. Default 
+    //2. Focus
+    //3. Expanded/Toggled/Selected
+    //4. Disabled
+    //5. Hover and Active
+
+    switch (state)
+    {
+        case BS_NULL:
+            break;
+
+        //Não pressionado.
+		case BS_DEFAULT:
+			button->selected = 0;
+            button->border1 = COLOR_BUTTONHIGHLIGHT3;
+			button->border2 = COLOR_BUTTONSHADOW3;
+			break;
+
+		case BS_FOCUS:
+            button->border1 = COLOR_BLUE;
+			button->border2 = COLOR_BLUE;
+			break;
+ 
+         // Pressionado.
+        case BS_PRESS:
+			button->selected = 1;
+			button->border1 = COLOR_BUTTONSHADOW3;
+			button->border2 = COLOR_BUTTONHIGHLIGHT3;
+            break;
+			
+		case BS_HOVER:
+            button->color = (button->color + 20);
+			break;
+        
+		case BS_DISABLED:
+			//b->selected = 0;
+            button->border1 = COLOR_GRAY;
+			button->border2 = COLOR_GRAY;
+            button->color = COLOR_GRAY; 
+			break;
+
+        case BS_PROGRESS:
+            break;
+
+		// Valor inválido.
+		default:  
+		    return;
+		    //return NULL; 
+            break;    
+    };  
 }
 
 
@@ -208,8 +268,8 @@ void *draw_button ( unsigned char *string,
 			b->selected = 1;
 		    border1 = COLOR_BUTTONHIGHLIGHT3;
 			border2 = COLOR_BUTTONSHADOW3;
-            b->border1 = COLOR_BUTTONHIGHLIGHT3;
-			b->border2 = COLOR_BUTTONSHADOW3;
+			b->border1 = COLOR_BUTTONSHADOW3;
+			b->border2 = COLOR_BUTTONHIGHLIGHT3;
             break;
 			
 		case BS_HOVER:
@@ -234,6 +294,12 @@ void *draw_button ( unsigned char *string,
 		    return NULL; 
             break;    
     };  
+    
+    
+    
+    
+    
+    
 
 //
 // Do draw the button.
@@ -342,24 +408,24 @@ int redraw_button ( struct button_d *button ){
 
 
 	//bg
-    drawDataRectangle ( w->left + button->x, w->top + button->y, 
+    drawDataRectangle ( button->x, button->y, 
         button->width, button->height, button->color );
 
+
 	//board1, borda de cima e esquerda.
-    drawDataRectangle ( w->left + button->x, w->top + button->y, 
+    drawDataRectangle ( button->x, button->y, 
         button->width, 1, button->border1 );
 
-    drawDataRectangle ( w->left + button->x, w->top + button->y, 
+    drawDataRectangle ( button->x, button->y, 
         1, button->height, button->border1 );
 
 	//board2, borda direita e baixo.
-    drawDataRectangle ( w->left + button->x + button->width -1, 
-        w->top + button->y, 
+    drawDataRectangle ( button->x + button->width -1, button->y, 
         1, button->height, button->border2 );
 
-    drawDataRectangle ( w->left + button->x, 
-        w->top + button->y + button->height -1, 
+    drawDataRectangle (button->x,  button->y + button->height -1, 
         button->width, 1, button->border2 );
+
 
 
     //usado para calcular o tamanho de uma string.
@@ -417,8 +483,8 @@ int button_down ( struct window_d *window ){
 		// caso a janela for um botão.
 		//window->button
 
-		printf ("update button struct \n");
-		refresh_screen();
+		//printf ("update button struct \n");
+		//refresh_screen();
 		
         update_button ( (struct button_d *) window->button,
              (unsigned char *) window->button->string,
@@ -429,15 +495,15 @@ int button_down ( struct window_d *window ){
              (unsigned long) window->button->y, 
              (unsigned long) window->button->width, 
              (unsigned long) window->button->height, 
-             (unsigned long) COLOR_RED); //window->button->color );
+             (unsigned long) window->button->color );
 
-		printf ("redraw it x=%d y=%d \n", window->button->x, window->button->y);
-		refresh_screen();
+		//printf ("redraw it x=%d y=%d \n", window->button->x, window->button->y);
+		//refresh_screen();
 		
 		redraw_button ( (struct button_d *) window->button );
 
-		printf ("show it \n");
-		refresh_screen();
+		//printf ("show it \n");
+		//refresh_screen();
 		
 		show_window_rect (window);
 	};
