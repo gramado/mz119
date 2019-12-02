@@ -662,6 +662,20 @@ void *gde_services ( unsigned long number,
 		                    (unsigned long) arg3, 
 		                    (unsigned long) arg4 );
     }
+    
+    //button down
+    //quando um botão é clicado ou pressionado,
+    //ele será repintado com a aparência de botão apertado.
+    if ( number == 9900 )
+    {
+		return (void *) button_down ( (struct window_d *) arg2 );
+    }
+
+    //#todo button_up
+    if ( number == 9901 )
+    {
+		return (void *) button_up ( (struct window_d *) arg2 );
+    }
  
      //#todo
      //Criar diálogos com outros drivers. igual fizemos ocm o mouse logo acima.

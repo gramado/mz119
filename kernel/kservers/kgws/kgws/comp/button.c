@@ -250,8 +250,7 @@ void *draw_button ( unsigned char *string,
 	// ## bg ##
 	//
 	
-	drawDataRectangle ( x, y, 
-	    width, height, color );
+	drawDataRectangle ( x, y, width, height, color );
     
 	//
 	// ## 4 bordas ##
@@ -261,16 +260,12 @@ void *draw_button ( unsigned char *string,
 	// As cores das bordas deve estar no esquema de cores.
 	
 	//board1, borda de cima e esquerda.
-	drawDataRectangle ( x, y, 
-	    width, 1, border1 );
-	drawDataRectangle ( x, y, 
-	    1, height, border1 );
+	drawDataRectangle ( x, y, width, 1, border1 );
+	drawDataRectangle ( x, y, 1, height, border1 );
 
 	//board2, borda direita e baixo.
-	drawDataRectangle ( x +width -1, y, 
-		1, height, border2 );
-	drawDataRectangle ( x, y +height -1, 
-		width, 1, border2 );
+	drawDataRectangle ( x +width -1, y, 1, height, border2 );
+	drawDataRectangle ( x, y +height -1, width, 1, border2 );
 
 	
     //
@@ -294,8 +289,7 @@ void *draw_button ( unsigned char *string,
 	//button label
     if (Selected == 1)
     {
-        draw_string ( x +offset,y +8, 
-            COLOR_WHITE, string );
+        draw_string ( x +offset,y +8, COLOR_WHITE, string );
 
     }else{
 
@@ -305,8 +299,7 @@ void *draw_button ( unsigned char *string,
 		// (window->left +x) left 
 		// (largura do botão, menos a largura da string)/2
 
-        draw_string ( x +offset, y +8, 
-            COLOR_TERMINALTEXT, string );
+        draw_string ( x +offset, y +8, COLOR_TERMINALTEXT, string );
 
     };
 
@@ -336,6 +329,7 @@ int redraw_button ( struct button_d *button ){
 			
 		if ( (void *) w == NULL )
 		{
+            printf ("redraw_button: window\n");
 			return 1;
 		}else{
 		
@@ -400,6 +394,92 @@ int redraw_button ( struct button_d *button ){
 
 	return 0;
 }
+
+
+
+int button_down ( struct window_d *window ){
+
+    if ( (void *) window == NULL )
+    {
+		printf ("window\n");
+		refresh_screen();
+	    return -1;
+	}else{
+
+	    if ( window->isButton != 1 )
+	    {
+			printf ("isbutton?\n");
+			refresh_screen();
+			return -1;
+		}
+		
+		// window->button aqui fica a estrutura de botão
+		// caso a janela for um botão.
+		//window->button
+
+		printf ("update button struct \n");
+		refresh_screen();
+		
+        update_button ( (struct button_d *) window->button,
+             (unsigned char *) window->button->string,
+             (int) window->button->style,
+             (int) BS_PRESS,
+             (int) window->button->type,
+             (unsigned long) window->button->x, 
+             (unsigned long) window->button->y, 
+             (unsigned long) window->button->width, 
+             (unsigned long) window->button->height, 
+             (unsigned long) COLOR_RED); //window->button->color );
+
+		printf ("redraw it x=%d y=%d \n", window->button->x, window->button->y);
+		refresh_screen();
+		
+		redraw_button ( (struct button_d *) window->button );
+
+		printf ("show it \n");
+		refresh_screen();
+		
+		show_window_rect (window);
+	};
+
+    return 0;
+}
+
+
+int button_up ( struct window_d *window ){
+
+    if ( (void *) window == NULL )
+    {
+	    return -1;
+	}else{
+	    if ( window->isButton != 1 )
+	    {
+			return -1;
+		}
+		
+		// window->button aqui fica a estrutura de botão
+		// caso a janela for um botão.
+		//window->button
+
+        update_button ( (struct button_d *) window->button,
+             (unsigned char *) window->button->string,
+             (int) window->button->style,
+             (int) BS_DEFAULT,
+             (int) window->button->type,
+             (unsigned long) window->button->x, 
+             (unsigned long) window->button->y, 
+             (unsigned long) window->button->width, 
+             (unsigned long) window->button->height, 
+             (unsigned long) window->button->color );
+
+			redraw_button ( (struct button_d *) window->button );
+
+			show_window_rect (window);
+	};
+
+    return 0;
+}
+
 
 
 //

@@ -309,7 +309,8 @@ void xxxtestlibcSTDOUT (void){
 //para testar recursos da libc.
 
 void xxxtestlibc (void){
-	
+
+    /*
 	FILE *f1;
 	int ch_test;
 	
@@ -362,6 +363,7 @@ void xxxtestlibc (void){
 			    printf ("%c", ch_test);
 			};
 		};
+    */
 }
 //====================================
 

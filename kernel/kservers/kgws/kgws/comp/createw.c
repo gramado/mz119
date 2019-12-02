@@ -1604,11 +1604,18 @@ void *CreateWindow ( unsigned long type,
 
     if ( (unsigned long) type == WT_BUTTON )
     {
+		// window->button aqui fica a estrutura de botão
+		// caso a janela for um botão.
         window->button = (struct button_d *) draw_button ( windowname, 
                                                  0, BS_DEFAULT, 0,
                                                  window->left, window->top, 
                                                  window->width, window->height, 
                                                  window->bg_color );
+        
+        //para repintar precisamos olhar na estrutura de botão
+        //e encontrarmos a janela.
+        window->button->window = window;
+        
         // #bugbug
         // E se retornar NULL ?
         //if ( (void *) window->button == NULL ){} 
