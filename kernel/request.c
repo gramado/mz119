@@ -413,7 +413,7 @@ void do_request_12 ( int tid ){
 
 
 	//#debug
-    printf ("do_request_12: code=%d \n", REQUEST.long1);
+    //printf ("do_request_12: code=%d \n", REQUEST.long1);
 
 
 	//exit code.
@@ -459,7 +459,7 @@ do_exit:
 
 	//#debug
 	//Se não ha erros, não mostramos mensagem.
-    printf ("do_request_12: Exit thread, no error\n");
+   // printf ("do_request_12: Exit thread, no error\n");
 
 
     //#importante
@@ -515,8 +515,8 @@ do_exit:
 	clear_request ();
 
 	//#debug
-    kprintf ("do_request_12: done :) \n");
-    refresh_screen ();
+    //kprintf ("do_request_12: done :) \n");
+    //refresh_screen ();
 }
 
 

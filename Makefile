@@ -541,9 +541,10 @@ vhd-copy-files:
 	-sudo cp ../garden/bin/WINTEST.BIN   /mnt/gramadovhd 
 	-sudo cp ../garden/bin/LAUNCHER.BIN  /mnt/gramadovhd
 	-sudo cp ../garden/bin/TASCII.BIN    /mnt/gramadovhd
-	-sudo cp ../garden/bin/DUMPIT.BIN    /mnt/gramadovhd
+#	-sudo cp ../garden/bin/DUMPIT.BIN    /mnt/gramadovhd
 	-sudo cp ../garden/bin/LUA.BIN       /mnt/gramadovhd
-	-sudo cp ../garden/bin/SPIN.BIN      /mnt/gramadovhd
+#	-sudo cp ../garden/bin/SPIN.BIN      /mnt/gramadovhd
+	-sudo cp ../garden/bin/SYSMON.BIN    /mnt/gramadovhd
 #	-sudo cp ../garden/bin/BISON125.BIN      /mnt/gramadovhd
 #	-sudo cp ../garden/bin/FASM.BIN      /mnt/gramadovhd
 #...
