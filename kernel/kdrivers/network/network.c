@@ -101,8 +101,14 @@ int networkInit (void){
 		
 		HostInfo->used = 1;
 		HostInfo->magic = 1234;
+
+        //host name.
+		HostInfo->hostName = (char *) malloc ( HOSTNAME_BUFFER_SIZE );
+		HostInfo->hostName_len = (size_t) HOSTNAME_BUFFER_SIZE;
 		
-		HostInfo->hostName = NULL;
+		//see: klibc
+		__sethostname ( (char *) HOST_DEFAULTNAME);
+
 		HostInfo->hostVersion = NULL;
 		
 	    HostInfo->hostVersionMajor = 0;
@@ -138,6 +144,11 @@ int networkInit (void){
 	
 	return 0;
 }
+
+
+
+
+
 
 
 // #todo:

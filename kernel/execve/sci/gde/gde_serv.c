@@ -69,6 +69,429 @@ unsigned long cwArg12;     // WindowColor
 
 
 
+void *gde_extra_services ( unsigned long number, 
+                     unsigned long arg2, 
+                     unsigned long arg3, 
+                     unsigned long arg4 );
+void *gde_extra_services ( unsigned long number, 
+                     unsigned long arg2, 
+                     unsigned long arg3, 
+                     unsigned long arg4 )
+{
+	
+	//generic file pointer
+    FILE *__fp;
+
+	//bmp file pointer.
+    FILE *__bmfp;	
+	
+
+    if ( number == 300 )
+    {
+        return (void *) UpdateStatusBar ( (struct window_d *) arg2, 
+                            (unsigned char *) arg3, 
+                            (unsigned char *) arg4 );
+    }
+
+
+	// 512 - get x server PID
+    if ( number == SYS_GET_X_SERVER )
+    {
+        return (void *) g_xserver_pid;
+    }
+    
+
+	// 513 - set x server PID
+    if ( number == SYS_SET_X_SERVER )
+    {
+		g_xserver_pid = (int) arg2;
+		return NULL;
+    }
+
+	// 514 - get wm PID
+    if ( number == SYS_GET_WM_PID )
+    {
+        return (void *) g_wm_pid;
+    }
+
+	// 515 - set wm PID
+    if ( number == SYS_SET_WM_PID )
+    {
+        g_wm_pid = (int) arg2;
+        return NULL;
+    }
+
+
+
+    // 516 - show x server info	
+    if ( number == SYS_SHOW_X_SERVER_INFO )
+    {
+        kprintf ("x server info: PID=%d \n", g_xserver_pid);
+        refresh_screen ();
+        return NULL;
+    }
+
+    // 517 - show wm info
+    if ( number == SYS_SHOW_WM_INFO )
+    {
+        kprintf ("window manager info: PID=%d \n", g_wm_pid);
+        refresh_screen ();
+        return NULL;
+    }
+    
+
+
+	// 600 - dup
+    if ( number == 600 )
+    {
+        return (void *) sys_dup ( (int) arg2 );
+    }
+
+	// 601 - dup2
+    if ( number == 601 )
+    {
+        return (void *) sys_dup2 ( (int) arg2, (int) arg3 );
+    }
+
+	// 602 - dup3
+    if ( number == 602 )
+    {
+        return (void *) sys_dup3 ( (int) arg2, (int) arg3, (int) arg4 );
+    }
+
+	// 605 - fileno
+    if ( number == 605 )
+    {
+        return (void *) fileno ( (FILE *) arg2 );
+    }
+
+    // 606 - ungetc
+    if ( number == 606 )
+    {
+        return (void *) ungetc ( (int) arg2, (FILE *) arg3 );
+    }
+
+	// 607 - fread
+    if ( number == 607 )
+    {
+		//return (void *) fread ( (void *) ptr, (size_t) 1, (size_t) n, (FILE *) fp );
+        return (void *) fread ( (void *) arg2, (size_t) 1, (size_t) arg3, (FILE *) arg4 );
+    }
+
+
+	//608 - fwrite
+    if ( number == 608 )
+    {
+        //size_t fwrite (const void *ptr, size_t size, size_t n, FILE *fp) 
+        return (void *) fwrite ( (const void *) arg2, 
+                            (size_t) 1, 
+                            (size_t) arg3, 
+                            (FILE *) arg4 );
+    }
+
+	//609
+    if ( number == 609 )
+    {
+        rewind ( (FILE *) arg2 );
+        return NULL;
+    }
+
+
+	//610 - setbuf
+    if ( number == 610 )
+    {
+		//void setbuf(FILE *stream, char *buf);
+        setbuf ( (FILE *) arg2, (char *) arg3 );
+        return NULL;
+    }
+
+	//611 - setbuffer
+    if ( number == 611 )
+    {
+		//void setbuffer(FILE *stream, char *buf, size_t size);
+        setbuffer ( (FILE *) arg2, (char *) arg3, (size_t) arg4 );
+        return NULL;
+    }
+
+	//612 - setlinebuf
+    if ( number == 612 )
+    {
+		//void setlinebuf(FILE *stream);
+        setlinebuf ( (FILE *) arg2 );
+        return NULL;
+    }
+
+
+	//613 - setvbuf
+	//#todo: precisamos do argumento size.
+    if ( number == 613 )
+    {
+		//int setvbuf(FILE *stream, char *buf, int mode, size_t size);
+        return (void *) setvbuf ( (FILE *) arg2, (char *) arg3, (int) arg4, (size_t) 512 );
+    }
+
+
+     //write
+    //libc ssize_t write (int fd, const void *buf, size_t count)
+    //#todo: essa rotina pode virar write(...) da libc
+    FILE *____stream;
+    struct process_d *____p;
+    if ( number == 614 )
+    {
+		____p = (void *) processList[current_process];
+		____stream = (void *) ____p->Streams[arg2];
+		
+        // coloca no buffer dp fd do processo atual se o arquivo estuiver aberto.
+        // obter um ponteiro de estrutura dado um fd.
+        return (void *) fwrite ( (const void *) arg3, 
+                            (size_t) 0, 
+                            (size_t) arg4, 
+                            (FILE *) ____stream );
+    }
+    
+    
+    
+	// 700 - atualiza o fluxo padrão do processo atual
+    if ( number == 700 )
+    {
+		//stdio.c
+        return (void *) update_standard_stream ( (int) current_process, 
+                            (FILE *) arg2, 
+                            (FILE *) arg3, 
+                            (FILE *) arg4 );
+    }
+    
+ 
+ 
+    /*
+    //arp request test.
+    if ( number == 800 )
+    {   
+		return (void *) 0;
+    }
+    */
+
+    
+    //get host name
+    if ( number == 801 )
+    {
+		return (void *) __gethostname ( (char *) arg2);
+    }
+    
+    
+
+    //set host name
+    if ( number == 802 )
+    {
+		return (void *) __sethostname ( (char *) arg2); 
+    }
+ 
+ 
+ 
+	// t900
+	//clona e executa o filho dado o nome do filho.
+	//do_clone_execute_process ("noraterm.bin");
+	//process.c
+	
+    if ( number == 900 )
+    { 
+        return (void *) do_clone_execute_process ( (char *) arg2 );
+    }
+
+
+	// t901
+	//clona um processo, retorna par ao pai e inicializa o processo
+	//filho do seu entrypoint. (#test)
+	//process.c
+
+    if ( number == 901 )
+    {
+        return (void *) do_fork_process2 ();
+    }
+
+
+
+
+	// t18
+	// O arg2 é o PID.
+	// devemos retornar o ponteiro para o stdout do terminal
+	// associado com o aplicativo.
+    if ( number == 1000 )
+    {
+		// #provisório
+		// Isso é o mesmo que current_stdout usado pelo teclado.
+        return (void *) CurrentTTY->ring0_stdout;
+    }
+
+
+	//
+    if ( number == 1001 )
+    {
+		printf ("service1001: configurando tty stream \n",arg2);
+		
+		CurrentTTY->stdout = (FILE *) arg2;
+		stdout = (FILE *) arg2;
+        return NULL;
+    }
+
+
+	// pega um char na stream, o último que foi pego,
+	// não o último que foi colocado.
+	// #importante: uma no terminal deve chamar isso.
+	// mas o terminal precisa ser alertado de que tem mensagens
+	//para ele o tty, então modemos enviar uma MSG_TTY?? vaisando que
+	//o terminal pode pegar sua mensagem na tty através dessa chamada aqui.
+
+    int xxx_ch;
+    if ( number == 1002 )
+    {
+		//pega
+		xxx_ch = (int) *CurrentTTY->ring0_stdout_last_ptr;
+		
+		//apaga.
+		*CurrentTTY->ring0_stdout_last_ptr = 0;
+		
+		//incrementa e circula
+	    CurrentTTY->ring0_stdout_last_ptr++;	
+		if ( CurrentTTY->ring0_stdout_last_ptr >= CurrentTTY->ring0_stdout_limit )
+		{
+			CurrentTTY->ring0_stdout_last_ptr = CurrentTTY->ring0_stdout->_base;
+		}
+		
+		//retorna o que pegou.
+        return (void *) xxx_ch;
+    } 
+
+
+	// Set terminal PID.
+    if ( number == 1003 )
+    {
+        CurrentTTY->terminal_pid = (int) arg2;
+        return NULL;
+    }
+
+	//get terminal pid.
+    if ( number == 1004 )
+    {
+        return (void *) CurrentTTY->terminal_pid;
+    }
+
+
+    if ( number == 1005 )
+    {
+        CurrentTTY->stdout = stdout;
+        fprintf (stdout, "dirty\n");
+        return NULL;
+    }
+
+	 //get sdtout
+    if ( number == 1006 )
+    {
+        return (void *) stdout;
+    }
+
+
+
+	
+	 // bmp:
+	 // Carrega o bmp na memória e decodifica no backbuffer.
+	 // Isso não mostra na tela.
+    if ( number == 4000 )
+    {
+		// load and show bmp
+		//sys_fopen ( (const char *) arg2, (const char *) arg3 );
+		//__bmfp = sys_fopen ( "folder.bmp", "r+" );
+        __bmfp = sys_fopen ( (const char *) arg2, "r+" );
+
+		 //decodificando no backbuffer.
+		 bmpDisplayBMP ( __bmfp->_base, arg3, arg4 );
+
+		//refresh_rectangle ( 100, 100, 200, 200 ); 
+        return NULL;
+    }
+
+	// bmp:
+	// Carrega o bmp na memória e decodifica diretamente no frontbuffer.
+	// Isso mostra na tela.
+    if ( number == 4001 )
+    {
+		// load and show bmp
+		//sys_fopen ( (const char *) arg2, (const char *) arg3 );
+		//__bmfp = sys_fopen ( "folder.bmp", "r+" );
+        __bmfp = sys_fopen ( (const char *) arg2, "r+" );
+
+		//bmp_change_color_flag = BMP_CHANGE_COLOR_TRANSPARENT;
+		//bmp_selected_color = COLOR_WHITE;
+        bmpDirectDisplayBMP ( __bmfp->_base, arg3, arg4 );
+		//bmp_change_color_flag = 0;
+		//bmp_selected_color = 0;
+
+        return NULL;
+    }
+
+     //api - load file
+     //#todo: Tem que retornar algum identificador para a api.
+     //poderia ser um indice na tabela de arquivos abertos pelo processo.
+    if ( number == 4002 )
+    {
+        return (void *) sys_fopen ( (const char *) arg2, "r+" );
+    }
+
+
+    //api - load file
+    //#todo: Tem que retornar algum identificador para a api.
+    //#bugbug: Podemos retornar o endereço base. Isso pode dar problemas?
+    if ( number == 4003 )
+    {
+        __fp = sys_fopen ( (const char *) arg2, "r+" );
+        return (void *) __fp->_base;
+    }
+    
+
+
+    
+    //socket() la libc.
+    //chamaremos a rotina na crts/klibc
+    //family, type, protocol
+    if ( number == 7000 )
+    {
+        return (void *) socket ( (int) arg2, (int) arg3, (int) arg4 );
+    }
+
+    //test
+    //raise window.
+    if ( number == 9700 )
+    {
+		return (void *) raise_window ( (struct window_d *) arg2 );
+    }
+
+    //ps2 mouse controller dialog
+    // msg, long1, long2
+    if ( number == 9800 )
+    {
+		return (void *) ps2_mouse_dialog ( (int) arg2, 
+		                    (unsigned long) arg3, 
+		                    (unsigned long) arg4 );
+    }
+    
+    //button down
+    //quando um botão é clicado ou pressionado,
+    //ele será repintado com a aparência de botão apertado.
+    if ( number == 9900 )
+    {
+		return (void *) button_down ( (struct window_d *) arg2 );
+    }
+
+    //#todo button_up
+    if ( number == 9901 )
+    {
+		return (void *) button_up ( (struct window_d *) arg2 );
+    }
+ 
+
+
+    return NULL;  
+}
 
 /*
  * gde_services:
@@ -281,411 +704,16 @@ void *gde_services ( unsigned long number,
 
 
 
-	//
-	// ## Create Window ##
-	//
-
-	// Serviço especial. Antes dos outros.
-    if ( number == SYS_118 )
-    {
-        return (void *) serviceCreateWindow ( (char *)  arg2 );
-    }
-
-	//atualiza as strings de uma statusbar de uma janela.
-    if ( number == 300 )
-    {
-        return (void *) UpdateStatusBar ( (struct window_d *) arg2, 
-                            (unsigned char *) arg3, 
-                            (unsigned char *) arg4 );
-    }
-
-
-	//
-	// x server and wm support
-	//
-
-
-
-	// 512 - get x server PID
-    if ( number == SYS_GET_X_SERVER )
-    {
-        return (void *) g_xserver_pid;
-    }
-
-	// 513 - set x server PID
-    if ( number == SYS_SET_X_SERVER )
-    {
-		g_xserver_pid = (int) arg2;
-		return NULL;
-    }
-
-	// 514 - get wm PID
-    if ( number == SYS_GET_WM_PID )
-    {
-        return (void *) g_wm_pid;
-    }
-
-	// 515 - set wm PID
-    if ( number == SYS_SET_WM_PID )
-    {
-        g_wm_pid = (int) arg2;
-        return NULL;
-    }
-
-    // 516 - show x server info	
-    if ( number == SYS_SHOW_X_SERVER_INFO )
-    {
-        kprintf ("x server info: PID=%d \n", g_xserver_pid);
-        refresh_screen ();
-        return NULL;
-    }
-
-    // 517 - show wm info
-    if ( number == SYS_SHOW_WM_INFO )
-    {
-        kprintf ("window manager info: PID=%d \n", g_wm_pid);
-        refresh_screen ();
-        return NULL;
-    }
-
-	// 600 - dup
-    if ( number == 600 )
-    {
-        return (void *) sys_dup ( (int) arg2 );
-    }
-
-	// 601 - dup2
-    if ( number == 601 )
-    {
-        return (void *) sys_dup2 ( (int) arg2, (int) arg3 );
-    }
-
-	// 602 - dup3
-    if ( number == 602 )
-    {
-        return (void *) sys_dup3 ( (int) arg2, (int) arg3, (int) arg4 );
-    }
-
-	// 605 - fileno
-    if ( number == 605 )
-    {
-        return (void *) fileno ( (FILE *) arg2 );
-    }
-
-    // 606 - ungetc
-    if ( number == 606 )
-    {
-        return (void *) ungetc ( (int) arg2, (FILE *) arg3 );
-    }
-
-	// 607 - fread
-    if ( number == 607 )
-    {
-		//return (void *) fread ( (void *) ptr, (size_t) 1, (size_t) n, (FILE *) fp );
-        return (void *) fread ( (void *) arg2, (size_t) 1, (size_t) arg3, (FILE *) arg4 );
-    }
-
-
-	//608 - fwrite
-    if ( number == 608 )
-    {
-        //size_t fwrite (const void *ptr, size_t size, size_t n, FILE *fp) 
-        return (void *) fwrite ( (const void *) arg2, 
-                            (size_t) 1, 
-                            (size_t) arg3, 
-                            (FILE *) arg4 );
-    }
-
-	//609
-    if ( number == 609 )
-    {
-        rewind ( (FILE *) arg2 );
-        return NULL;
-    }
-
-
-	//610 - setbuf
-    if ( number == 610 )
-    {
-		//void setbuf(FILE *stream, char *buf);
-        setbuf ( (FILE *) arg2, (char *) arg3 );
-        return NULL;
-    }
-
-	//611 - setbuffer
-    if ( number == 611 )
-    {
-		//void setbuffer(FILE *stream, char *buf, size_t size);
-        setbuffer ( (FILE *) arg2, (char *) arg3, (size_t) arg4 );
-        return NULL;
-    }
-
-	//612 - setlinebuf
-    if ( number == 612 )
-    {
-		//void setlinebuf(FILE *stream);
-        setlinebuf ( (FILE *) arg2 );
-        return NULL;
-    }
-
-
-	//613 - setvbuf
-	//#todo: precisamos do argumento size.
-    if ( number == 613 )
-    {
-		//int setvbuf(FILE *stream, char *buf, int mode, size_t size);
-        return (void *) setvbuf ( (FILE *) arg2, (char *) arg3, (int) arg4, (size_t) 512 );
-    }
-
-
-    //write
-    //libc ssize_t write (int fd, const void *buf, size_t count)
-    //#todo: essa rotina pode virar write(...) da libc
-    FILE *____stream;
-    struct process_d *____p;
-    if ( number == 614 )
-    {
-		____p = (void *) processList[current_process];
-		____stream = (void *) ____p->Streams[arg2];
-		
-        // coloca no buffer dp fd do processo atual se o arquivo estuiver aberto.
-        // obter um ponteiro de estrutura dado um fd.
-        return (void *) fwrite ( (const void *) arg3, 
-                            (size_t) 0, 
-                            (size_t) arg4, 
-                            (FILE *) ____stream );
-    }
-
-
-	//...
-
-
-	// 700 - atualiza o fluxo padrão do processo atual
-    if ( number == 700 )
-    {
-		//stdio.c
-        return (void *) update_standard_stream ( (int) current_process, 
-                            (FILE *) arg2, 
-                            (FILE *) arg3, 
-                            (FILE *) arg4 );
-    }
-
-
     //
-    // network stuff
+    // ===============  Switch ============
     //
- 
-    /*
-    //arp request test.
-    if ( number == 800 )
-    {   
-		return (void *) 0;
-    }
-    */
 
-	
-	// t900
-	//clona e executa o filho dado o nome do filho.
-	//do_clone_execute_process ("noraterm.bin");
-	//process.c
-	
-    if ( number == 900 )
-    { 
-        return (void *) do_clone_execute_process ( (char *) arg2 );
-    }
-
-
-	// t901
-	//clona um processo, retorna par ao pai e inicializa o processo
-	//filho do seu entrypoint. (#test)
-	//process.c
-
-    if ( number == 901 )
+    if ( number > 256 )
     {
-        return (void *) do_fork_process2 ();
+        return (void *) gde_extra_services ( number, arg2, arg3, arg4 );
     }
 
-	// t18
-	// O arg2 é o PID.
-	// devemos retornar o ponteiro para o stdout do terminal
-	// associado com o aplicativo.
-    if ( number == 1000 )
-    {
-		// #provisório
-		// Isso é o mesmo que current_stdout usado pelo teclado.
-        return (void *) CurrentTTY->ring0_stdout;
-    }
-
-
-	//
-    if ( number == 1001 )
-    {
-		printf ("service1001: configurando tty stream \n",arg2);
-		
-		CurrentTTY->stdout = (FILE *) arg2;
-		stdout = (FILE *) arg2;
-        return NULL;
-    }
-
-
-	// pega um char na stream, o último que foi pego,
-	// não o último que foi colocado.
-	// #importante: uma no terminal deve chamar isso.
-	// mas o terminal precisa ser alertado de que tem mensagens
-	//para ele o tty, então modemos enviar uma MSG_TTY?? vaisando que
-	//o terminal pode pegar sua mensagem na tty através dessa chamada aqui.
-
-    int xxx_ch;
-    if ( number == 1002 )
-    {
-		//pega
-		xxx_ch = (int) *CurrentTTY->ring0_stdout_last_ptr;
-		
-		//apaga.
-		*CurrentTTY->ring0_stdout_last_ptr = 0;
-		
-		//incrementa e circula
-	    CurrentTTY->ring0_stdout_last_ptr++;	
-		if ( CurrentTTY->ring0_stdout_last_ptr >= CurrentTTY->ring0_stdout_limit )
-		{
-			CurrentTTY->ring0_stdout_last_ptr = CurrentTTY->ring0_stdout->_base;
-		}
-		
-		//retorna o que pegou.
-        return (void *) xxx_ch;
-    } 
-
-
-	// Set terminal PID.
-    if ( number == 1003 )
-    {
-        CurrentTTY->terminal_pid = (int) arg2;
-        return NULL;
-    }
-
-	//get terminal pid.
-    if ( number == 1004 )
-    {
-        return (void *) CurrentTTY->terminal_pid;
-    }
-
-
-    if ( number == 1005 )
-    {
-        CurrentTTY->stdout = stdout;
-        fprintf (stdout, "dirty\n");
-        return NULL;
-    }
-
-	 //get sdtout
-    if ( number == 1006 )
-    {
-        return (void *) stdout;
-    }
-
-	
-	 // bmp:
-	 // Carrega o bmp na memória e decodifica no backbuffer.
-	 // Isso não mostra na tela.
-    if ( number == 4000 )
-    {
-		// load and show bmp
-		//sys_fopen ( (const char *) arg2, (const char *) arg3 );
-		//__bmfp = sys_fopen ( "folder.bmp", "r+" );
-        __bmfp = sys_fopen ( (const char *) arg2, "r+" );
-
-		 //decodificando no backbuffer.
-		 bmpDisplayBMP ( __bmfp->_base, arg3, arg4 );
-
-		//refresh_rectangle ( 100, 100, 200, 200 ); 
-        return NULL;
-    }
-
-	// bmp:
-	// Carrega o bmp na memória e decodifica diretamente no frontbuffer.
-	// Isso mostra na tela.
-    if ( number == 4001 )
-    {
-		// load and show bmp
-		//sys_fopen ( (const char *) arg2, (const char *) arg3 );
-		//__bmfp = sys_fopen ( "folder.bmp", "r+" );
-        __bmfp = sys_fopen ( (const char *) arg2, "r+" );
-
-		//bmp_change_color_flag = BMP_CHANGE_COLOR_TRANSPARENT;
-		//bmp_selected_color = COLOR_WHITE;
-        bmpDirectDisplayBMP ( __bmfp->_base, arg3, arg4 );
-		//bmp_change_color_flag = 0;
-		//bmp_selected_color = 0;
-
-        return NULL;
-    }
-
-     //api - load file
-     //#todo: Tem que retornar algum identificador para a api.
-     //poderia ser um indice na tabela de arquivos abertos pelo processo.
-    if ( number == 4002 )
-    {
-        return (void *) sys_fopen ( (const char *) arg2, "r+" );
-    }
-
-
-    //api - load file
-    //#todo: Tem que retornar algum identificador para a api.
-    //#bugbug: Podemos retornar o endereço base. Isso pode dar problemas?
-    if ( number == 4003 )
-    {
-        __fp = sys_fopen ( (const char *) arg2, "r+" );
-        return (void *) __fp->_base;
-    }
-    
-    
-    //socket() la libc.
-    //chamaremos a rotina na crts/klibc
-    //family, type, protocol
-    if ( number == 7000 )
-    {
-        return (void *) socket ( (int) arg2, (int) arg3, (int) arg4 );
-    }
-
-    //test
-    //raise window.
-    if ( number == 9700 )
-    {
-		return (void *) raise_window ( (struct window_d *) arg2 );
-    }
-
-    //ps2 mouse controller dialog
-    // msg, long1, long2
-    if ( number == 9800 )
-    {
-		return (void *) ps2_mouse_dialog ( (int) arg2, 
-		                    (unsigned long) arg3, 
-		                    (unsigned long) arg4 );
-    }
-    
-    //button down
-    //quando um botão é clicado ou pressionado,
-    //ele será repintado com a aparência de botão apertado.
-    if ( number == 9900 )
-    {
-		return (void *) button_down ( (struct window_d *) arg2 );
-    }
-
-    //#todo button_up
-    if ( number == 9901 )
-    {
-		return (void *) button_up ( (struct window_d *) arg2 );
-    }
- 
-     //#todo
-     //Criar diálogos com outros drivers. igual fizemos ocm o mouse logo acima.
- 
-	//...
-
-	//
-	// ## Switch ##
-	//
-
+	// 0-256
     switch (number)
     {
 	    //0 - Null, O processo pode ser malicioso.
@@ -1416,9 +1444,11 @@ void *gde_services ( unsigned long number,
 			    (int) arg3 );	
 			break;
 			
-        // #importante
-		// 118 - Essa especialmente foi criada no início da função.
-			
+        // CREATE WINDOW
+		case SYS_118:
+		    return (void *) serviceCreateWindow ( (char *)  arg2 );
+		    break;
+		    
 		//119
 		case SYS_SELECTCOLORSCHEME:
 		    return (void *) sys_windowSelectColorScheme ( (int) arg2 );

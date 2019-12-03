@@ -127,8 +127,56 @@ long fpathconf (int fildes, int name){
 }
 
 long pathconf (const char *pathname, int name){
-    return -1;	
+    return -1;
 } 
+
+
+//suporte a rotina da libc.
+int __gethostname (char *buffer)
+{
+	//Estrutura default para informações sobre o host.
+	//host.h
+
+    if ( (void *) HostInfo == NULL )
+    {
+        printf ("gethostname: HostInfo\n");
+        return -1;
+    }else{
+
+        memcpy (buffer, HostInfo->hostName, HostInfo->hostName_len);
+        return (int) HostInfo->hostName_len;
+    };
+
+    return -1;
+}
+
+
+
+int __sethostname (char *new_hostname)
+{
+
+	size_t len = strlen (new_hostname) + 1;
+	
+	if (len >= HOSTNAME_BUFFER_SIZE)
+	{
+		return (int) -1;
+	}	
+		
+
+    if ( (void *) HostInfo == NULL )
+    {
+        printf ("sethostname: HostInfo\n");
+        return -1;
+    }else{
+
+        HostInfo->hostName_len = (size_t) len;
+		memcpy (HostInfo->hostName, new_hostname, HostInfo->hostName_len);
+		return 0;
+	};
+
+    return (int) -1;
+}
+
 
 
 

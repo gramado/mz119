@@ -718,7 +718,8 @@ done:
 /*
  *******************************************************
  * systemReboot:
- *     Interface de inicialização da parte de sistema para o processo de reboot.
+ *     Interface de inicialização da parte de sistema para o 
+ * processo de reboot.
  *     realiza rotinas de desligamento de sistema antes de chamar 
  * o reiniciamento de hardware.
  *     *IMPORTANTE: Um processo em user mode deve realizar as rotinas 
@@ -726,8 +727,8 @@ done:
  *     passar para o kernel somente depois de fechar todos os processos.
  *     Quando essa rotina checar os processos verá que não há mais nada 
  * pra fechar.
- *     se ainda tiver algum processo pra fechar, então essa rotina fecha, 
- * senão termina a rotina. 
+ *     se ainda tiver algum processo pra fechar, então essa rotina 
+ * fecha, senão termina a rotina. 
  */
 
 void systemReboot (void){
@@ -744,10 +745,12 @@ void systemReboot (void){
 	//struct window_d *hWnd;
 	//struct window_d *hWindow;
 
+    //x86 ?
+    debug_print ("systemReboot: [?] ...\n");
 
     asm ("cli");
 
-	//No graphics.	
+	//No graphics.
     if ( VideoBlock.useGui != 1 )
     {
         hal_reboot ();

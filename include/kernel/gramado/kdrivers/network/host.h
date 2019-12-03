@@ -81,8 +81,12 @@ struct sockaddr_in {
 };	  
 */
 
-
+//#test
 #define HOST_DEFAULTNAME  "admin" 
+////#define HOST_NAME_MAX 64   //klibc
+#define HOSTNAME_BUFFER_SIZE 80
+//static char hostname_buffer[HOSTNAME_BUFFER_SIZE];
+
 
 typedef struct host_info_d host_info_t;
 struct host_info_d
@@ -97,7 +101,11 @@ struct host_info_d
     int magic;
 	
 	int hostIdentifier;  // Número identificador dentro da rede interna.
-	char *hostName;      // Nome.
+
+
+    char *hostName;         // Nome.
+    size_t hostName_len;    // len
+
     char *hostVersion;   // string mostrando a versão. ex: (1.1.1234)
 	unsigned short hostVersionMajor;
 	unsigned short hostVersionMinor; 
@@ -120,7 +128,6 @@ struct host_info_d *HostInfo;
 //...
 
 
-//char * get_host_name();
 
 
 //
