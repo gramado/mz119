@@ -689,5 +689,7 @@ clean2:
 	-rm *.ISO
 	-rm *.VHD
 	
-	
+
+serial-debug:
+	cat ./docs/sdebug.txt
 	

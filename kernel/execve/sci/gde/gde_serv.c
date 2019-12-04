@@ -28,10 +28,6 @@
 #include <kernel.h>
 
 
-
-
-
-
 //
 // Constantes internas.
 //
@@ -277,16 +273,25 @@ void *gde_extra_services ( unsigned long number,
     {
 		return (void *) __gethostname ( (char *) arg2);
     }
-    
-    
 
     //set host name
     if ( number == 802 )
     {
 		return (void *) __sethostname ( (char *) arg2); 
     }
- 
- 
+
+    //get user name
+    if ( number == 803 )
+    {
+		return (void *) __getusername ( (char *) arg2);
+    }
+
+    //set user name
+    if ( number == 804 )
+    {
+		return (void *) __setusername ( (char *) arg2); 
+    }
+
  
 	// t900
 	//clona e executa o filho dado o nome do filho.

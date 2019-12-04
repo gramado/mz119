@@ -82,7 +82,7 @@ struct sockaddr_in {
 */
 
 //#test
-#define HOST_DEFAULTNAME  "admin" 
+#define HOST_DEFAULTNAME  "gramado" 
 ////#define HOST_NAME_MAX 64   //klibc
 #define HOSTNAME_BUFFER_SIZE 80
 //static char hostname_buffer[HOSTNAME_BUFFER_SIZE];

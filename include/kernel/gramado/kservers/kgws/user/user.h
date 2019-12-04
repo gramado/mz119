@@ -37,6 +37,8 @@
 #define USER_COUNT_MAX 16  //User count.
 #define GROUP_COUNT_MAX 4  //Group count.
   
+  
+#define USER_DEFAULTNAME  "admin" 
  
 //Strings.
 #define USER_SYSTEM            "system" 
@@ -400,9 +402,13 @@ struct user_info_d
     
 	char *path;  // '/root/user/(name)'
 	
-	//Name.
+	//Name. deletar.
 	char *name;
-    unsigned long name_address; 	 
+    unsigned long name_address;
+
+    //usar esse
+    char *userName;         // Nome.
+    size_t userName_len;    // len 
 	
     //Id. 
 	int userId;
@@ -477,6 +483,9 @@ unsigned long userList[USER_COUNT_MAX];
 
 //@todo: Mudar os nomes para uma forma mais organizada.
 
+
+int __getusername (char *buffer);
+int __setusername (char *new_username);
 
 int startUserEnvironment(int argc, char* argv[]); 
 

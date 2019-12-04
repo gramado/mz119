@@ -164,7 +164,7 @@ void close_user_session (void){
 void init_user_session (void){
 	
     int i = 0;
-	int CurrentUser = 0;
+	int CurrentUser_ID = 0;
 	
 	debug_print ("init_user_session:\n");
  	
@@ -181,14 +181,13 @@ void init_user_session (void){
 	// User.
 	//
 	
-	CurrentUser = (int) GetCurrentUserId ();
+	CurrentUser_ID = (int) GetCurrentUserId ();
 	
-	if ( CurrentUser < 0 || CurrentUser >= USER_COUNT_MAX )
+	if ( CurrentUser_ID < 0 || CurrentUser_ID >= USER_COUNT_MAX )
 	{
-	    DefaultUserSession = NULL;	
+	    DefaultUserSession = NULL;
 		CurrentUserSession = NULL;
-		
-		//panic ("init_user_session: CurrentUser");
+		//panic ("init_user_session: CurrentUser_ID");
 		return;
 	}
 	
@@ -199,7 +198,7 @@ void init_user_session (void){
 	
 	//Struct.
 	
-    DefaultUserSession = (void *) CreateUserSession (CurrentUser);
+    DefaultUserSession = (void *) CreateUserSession (CurrentUser_ID);
 	
 	if ( (void *) DefaultUserSession == NULL )
 	{

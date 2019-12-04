@@ -101,9 +101,9 @@ int startUserEnvironment ( int argc, char* argv[] ){
 	//
 
     SetProcedure ( (unsigned long) &system_procedure);
-    
+  
 	return (int) Status;
-};
+}
 
 
 /*
@@ -124,18 +124,17 @@ void ShowUserInfo (int user_id){
 	
 	if ( (void *) User == NULL )
 	{
-	    printf("ShowUserInfo: Error\n");
-        return;		
-	
+	    printf ("ShowUserInfo: Error\n");
+        return;
 	}else{
 	    
-		printf ("Name={%s} Id={%d} Type={%d} \n", User->name_address,
-		    User->userId, User->userType );		
+		printf ("Name={%s} Id={%d} Type={%d} \n", 
+		    User->name_address,
+		    User->userId, 
+		    User->userType );
 	    return;
 	};
-	
-	//...
-};
+}
 
 
 /*
@@ -171,8 +170,8 @@ void *CreateUser ( char *name, int type ){
 	
 	if ( (void *) New == NULL )
 	{
-	    printf("user-userenv-CreateUser:");
-	    die();
+	    panic ("CreateUser: New");
+	    //die();
 		
 	} else {
 	    
@@ -378,7 +377,7 @@ void init_user_info (void){
     
 	//Configurando a estrutura global.
 	// Create default user. (default,interactive)
-    
+
 	DefaultUser = (void *) CreateUser (default_user_name, USER_TYPE_INTERACTIVE);
 	
 	if ( (void *) DefaultUser == NULL )
@@ -411,6 +410,8 @@ void init_user_info (void){
 		//Configura o grupo atual ao qual o usuário pertence.
 		SetCurrentGroupId(0);
 		
+		__setusername ( (char *) USER_DEFAULTNAME);
+		
 		//...
 		
 		//g_logged = (int) 1;
@@ -418,6 +419,54 @@ void init_user_info (void){
 	
     // Continua...??!!
 }
+
+
+
+int __getusername (char *buffer)
+{
+	//Estrutura default para informações sobre o host.
+	//host.h
+
+    if ( (void *) CurrentUser== NULL )
+    {
+        printf ("__getusername: CurrentUser\n");
+        return -1;
+    }else{
+
+        memcpy (buffer, CurrentUser->userName, CurrentUser->userName_len);
+        return (int) CurrentUser->userName_len;
+    };
+
+    return -1;
+}
+
+
+int __setusername (char *new_username)
+{
+
+	size_t __len = strlen (new_username) + 1;
+	
+	//#todo: criar uma definição para user name buffer
+	if (__len >= HOSTNAME_BUFFER_SIZE)
+	{
+		return (int) -1;
+	}	
+		
+
+    if ( (void *) CurrentUser == NULL )
+    {
+        printf ("__setusername: CurrentUser\n");
+        return -1;
+    }else{
+
+        CurrentUser->userName_len = (size_t) __len;
+		memcpy (CurrentUser->userName, new_username, CurrentUser->userName_len);
+		return 0;
+	};
+
+    return (int) -1;
+}
+
 
 
 /*
