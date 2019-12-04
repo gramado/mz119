@@ -1619,6 +1619,33 @@ sys_write_file ( char *file_name,
 }
 
 
+//#todo
+//credits: Chicago OS.
+/*
+int fs_count_separations (char *path)
+int fs_count_separations (char *path){
+
+    int count = 0;
+
+    int i;
+    int __len = 0;
+
+
+    __len = (int) strlen ( (const char *) path );
+    
+    for ( i=0; i < __len; i++ )
+    {
+		if (path[i] == '/')
+		{
+			count++;
+		}
+    };
+
+
+    return (int) count;
+}
+*/
+
 //
 // End.
 //

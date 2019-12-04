@@ -43,17 +43,18 @@ void read_fntos ( char *name ){
 
     int  i, ns = 0;
     char ext[4];
-	
-	ext[0] = 0;
-	ext[1] = 0;
-	ext[2] = 0;
-	ext[3] = 0;		
-		
+
+    ext[0] = 0;
+    ext[1] = 0;
+    ext[2] = 0;
+    ext[3] = 0;
+
+
     // Transforma em maiúscula enquanto não achar um ponto.
     // #bugbug: E se a string já vier maiúscula teremos problemas.
-	
-	while ( *name && *name != '.' )
-	{
+
+    while ( *name && *name != '.' )
+    {
         if ( *name >= 'a' && *name <= 'z' )
             *name -= 0x20;
 
@@ -61,40 +62,43 @@ void read_fntos ( char *name ){
         ns++;
     };
 
+
     // Aqui name[0] é o ponto.
-	// Então constrói a extensão colocando
-	// as letras na extensão.
-	
-	for ( i=0; i < 3 && name[i+1]; i++ )
-	{
+    // Então constrói a extensão colocando
+    // as letras na extensão.
+
+    for ( i=0; i < 3 && name[i+1]; i++ )
+    {
 		//Transforma uma letra da extensão em maiúscula.
-        
-		//if (name[i+1] >= 'a' && name[i+1] <= 'z')
+ 
+        //if (name[i+1] >= 'a' && name[i+1] <= 'z')
         //    name[i+1] -= 0x20;
 
         //ext[i] = name[i+1];
     
-	
-	    //#testando
-	    //Se não for letra então não colocamos no buffer de extensão;
-		if ( name[i+1] >= 'a' && name[i+1] <= 'z' )
-		{
-			name[i+1] -= 0x20;
-		    
-		    ext[i] = name[i+1];
-		}
-	};
+
+        //#testando
+        //Se não for letra então não colocamos no buffer de extensão;
+        if ( name[i+1] >= 'a' && name[i+1] <= 'z' )
+        {
+            name[i+1] -= 0x20;
+
+            ext[i] = name[i+1];
+        }
+    };
+
 
 	//Acrescentamos ' ' até completarmos as oito letras do nome.
-	
+
     while (ns < 8)
-	{	
+    {
         *name++ = ' ';
         ns++;
     };
 
+
 	//Acrescentamos a extensão
-	
+
     for (i=0; i < 3; i++)
         *name++ = ext[i];
 
@@ -102,7 +106,7 @@ void read_fntos ( char *name ){
 }
 
 
-	
+
 /*
  ************************************************
  * read_fntos2:
@@ -198,7 +202,7 @@ char *read_fntos2 ( char *name ){
     return (char *) __name;
 }
 */
-		
+
 	
 	
 	
@@ -210,25 +214,26 @@ char *read_fntos2 ( char *name ){
  *     ~ Número do cluster.
  *     ~ Número de setores por cluster.
  *     ~ Lba inicial da area de dados.
- */	
+ */
  
 unsigned long 
 fatClustToSect ( unsigned short cluster, 
                  unsigned long spc, 
-				 unsigned long first_data_sector )
+                 unsigned long first_data_sector )
 {
     unsigned long C = (unsigned long) cluster;
 
-	C -= 2;
-	
-	//@todo: Check limits.
-	
-	return (unsigned long) (C * spc) + first_data_sector;
+    C -= 2;
+
+	// #todo: 
+	// Check limits.
+
+    return (unsigned long) (C * spc) + first_data_sector;
 }
 
 
 /*
- *************************************************************
+ ******************************************
  * fatLoadCluster:
  *     Carrega um cluster.
  *     Argumentos:
@@ -241,16 +246,17 @@ fatClustToSect ( unsigned short cluster,
 void 
 fatLoadCluster ( unsigned long sector, 
                  unsigned long address, 
-				 unsigned long spc )
+                 unsigned long spc )
 {
-	unsigned long i;
-	
-	for ( i=0; i < spc; i++ )
-	{	
+    unsigned long i;
+
+
+    for ( i=0; i < spc; i++ )
+    {
         read_lba ( address, sector + i );
-        
-		address = address + 512; 
-	}
+
+        address = address + 512; 
+    };
 }
 
 
@@ -262,25 +268,25 @@ fatLoadCluster ( unsigned long sector,
  */
  
 void read_lba ( unsigned long address, unsigned long lba ){
-	
- 	//taskswitch_lock();
-	//scheduler_lock();	          	
-	
+
+	//taskswitch_lock();
+	//scheduler_lock();
+
     switch (fatbits){
-		
+
 	    case 32:
-	        //Nothing.	    
+	        //Nothing.
             return;
-			break;		
-			
+			break;
+
 	    case 16:
 		    //hdd.c
-	        my_read_hd_sector ( address, lba, 0, 0 );	    
+	        my_read_hd_sector ( address, lba, 0, 0 );
             return;
-			break;		
+			break;
 			
 	    case 12:
-	        //Nothing.	    
+	        //Nothing.
             return;
 			break;
 
@@ -289,8 +295,8 @@ void read_lba ( unsigned long address, unsigned long lba ){
 			// Precisamos fazer alguma coisa se essa variável for 
 			// um valor inválido.
 		    //return;
-            break;		
-	};	
+            break;
+	};
 	
 	//scheduler_unlock();
 	//taskswitch_unlock();
@@ -332,61 +338,72 @@ void read_lba ( unsigned long address, unsigned long lba ){
 
 unsigned long 
 fsLoadFile ( unsigned long fat_address,
-			 unsigned long dir_address,
+             unsigned long dir_address,
              unsigned char *file_name, 
-             unsigned long file_address )			 
+             unsigned long file_address )
 {
-    int Status;		
-	int i;
+    int Status;
+
+    int i;
     unsigned short next;
 
     unsigned long max = 64;    //?? @todo: rever. Número máximo de entradas.
     unsigned long z = 0;       //Deslocamento do rootdir 
     unsigned long n = 0;       //Deslocamento no nome.
-	
-	
+
+
     // #bugbug:
     // Problemas na string do nome.
-	// ??Nome.
-	char NameX[13];	            
+    // ??Nome.
+
+    char NameX[13];
 
     //Cluster inicial
-	unsigned short cluster;    
+    unsigned short cluster;    
 
 	//?? Primeiro setor do cluster.
-	unsigned long S;  
-	
-	int Spc;
-	
+    unsigned long S;  
+
+    int Spc;
+
+
+
+
 	// Updating fat address and root address.
-	
-	unsigned short *fat = (unsigned short *) fat_address;   
-	unsigned short *root = (unsigned short *) dir_address;
-	
-	
+
+    // #todo
+    // Checar a validade dos endereços.
+    // Mudar de 'root' para '__dir',
+
+    unsigned short *fat = (unsigned short *) fat_address;   
+    unsigned short *root = (unsigned short *) dir_address;
+    unsigned short *__dir = (unsigned short *) dir_address;
+
+
+
+
 	// Lock ??.
 	
 	//taskswitch_lock();
-	//scheduler_lock();	
+	//scheduler_lock();
 	
 	// Root dir.
+	//Carrega o diretório raiz na memória.
 
 //loadRoot:
-	
-	//Carrega o diretório raiz na memória.
-	
-#ifdef KERNEL_VERBOSE	
-	debug_print ("fsLoadFile:\n");
-#endif	
-	
+
+#ifdef KERNEL_VERBOSE
+    debug_print ("fsLoadFile:\n");
+#endif
+
 	//#importante
-	//N~ao carregaremos mais um diret'orio nesse momento,
+	//Não carregaremos mais um diretório nesse momento,
 	//usaremos o endereço passado por argumento.
-	//esperamos que nesse endereço tenha um diret'orio carregado.
-	//Na inicializaç~ao 'e preciso carregar o diret'orio raiz
-	//antes de chamar essa funç~ao. E para caregar o diret'orio raiz
+	//esperamos que nesse endereço tenha um diretório carregado.
+	//Na inicialização é preciso carregar o diretório raiz
+	//antes de chamar essa função. E para caregar o diretório raiz
 	//precisa inicializar o sistema de arquivos e o controlador IDE.
-	
+
 	//#test
 	//funcionou
 	//carregando o diretório 
@@ -424,7 +441,7 @@ fsLoadFile ( unsigned long fat_address,
 	
 	    //Max entries ~ Número de entradas no rootdir.
 		//#bugbug: Devemos ver o número de entradas no diretório corrente.
-	    max = filesystem->rootdir_entries;	
+	    max = filesystem->rootdir_entries;
 		
 	    if (max <= 0)
 		{
@@ -458,7 +475,7 @@ fsLoadFile ( unsigned long fat_address,
     //#debug
     //vamos mostrar a string.
     
-    printf ("fsLoadFile: file_name={%s}\n", file_name);	
+    printf ("fsLoadFile: file_name={%s}\n", file_name);
 		
     size_t size = (size_t) strlen (file_name); 
     
@@ -468,23 +485,28 @@ fsLoadFile ( unsigned long fat_address,
     if ( size > 11 )
     {
 	     printf ("fsLoadFile: size fail %d\n",size );   
-	     size = 11;	
+	     size = 11;
 	}
 	
 	//
 	// Compare.
-	//    
-    
-	
-	// Procura o arquivo no diretório raiz.	
+	//
+
+    // #bugbug
+    // #todo:
+    // Para a variável 'max' estamos considerando o número de
+    // entradas no diretório raiz. Mas precisamos considerar
+    // o número de entradas no diretório atual.
+
+	// Procura o arquivo no diretório raiz.
 	
 	while ( i < max )
 	{
 		//Se a entrada não for vazia.
-		if ( root[z] != 0 )
+		if ( __dir[z] != 0 )
         {
 			// Copia o nome e termina incluindo o char 0.
-			memcpy ( NameX, &root[z], size );
+			memcpy ( NameX, &__dir[z], size );
 			NameX[size] = 0;
 			
             // Compara 11 caracteres do nome desejado, 
@@ -528,7 +550,7 @@ found:
 	// while(1){}
 	
     //Pega o cluster inicial. (word)
-	cluster = root[ z+13 ];    //(0x1A/2) = 13.	
+	cluster = __dir[ z+13 ];    //(0x1A/2) = 13.
 	
 	
 	// Cluster Limits.
@@ -608,14 +630,14 @@ next_entry:
 	
 	//Incrementa o buffer. +512;
 	//SECTOR_SIZE;
-	file_address = (unsigned long) file_address + 512;    	
+	file_address = (unsigned long) file_address + 512; 
 	
 	
 	//Pega o próximo cluster na FAT.
-	next = (unsigned short) fat[cluster];		
+	next = (unsigned short) fat[cluster];
 	
 	//Configura o cluster atual.
-	cluster = (unsigned short) next;	
+	cluster = (unsigned short) next;
 	
 	//Ver se o cluster carregado era o último cluster do arquivo.
 	
@@ -634,7 +656,7 @@ next_entry:
 //Falha ao carregar o arquivo.
 fail:
     
-	printf ("fsLoadFile fail: file={%s}\n", file_name );	
+	printf ("fsLoadFile fail: file={%s}\n", file_name );
     refresh_screen ();
 	
 	return (unsigned long) 1;
