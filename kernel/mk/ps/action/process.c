@@ -1842,9 +1842,9 @@ get_next:
         Process->magic = 1234;
 
 		//Name.
-		//Process->name = name; //@todo: usar esse.
+		Process->name = (char *) name; //@todo: usar esse.
 		//Process->cmd = NULL;  //nome curto que serve de comando.
-        Process->name_address = (unsigned long) name;
+        //Process->pathname = NULL;
 
 		// Lista de streams...
 		// #todo: 
@@ -2523,8 +2523,9 @@ void show_currentprocess_info (void){
         printf ("PID={%d} PPID={%d} UID={%d} GID={%d} \n",
             Current->pid, Current->ppid, Current->uid, Current->gid );
 		//Name
-        printf ("Name={%s} \n", Current->name_address );
-
+        //printf ("Name={%s} \n", Current->name_address );
+        printf ("Name={%s} \n", Current->name );
+        
 		//Image Address.
         printf ("ImageAddress={%x} \n", Current->Image );
 
@@ -2590,7 +2591,7 @@ void show_process_information (void){
 				p->iopl,
 				p->priority,
 				p->wait4pid,
-				p->name_address );
+				p->name ); //p->name_address );
         }
 
 		//Nothing.

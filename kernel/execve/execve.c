@@ -662,6 +662,7 @@ do_execve ( int i,
 
     //memcpy (process->name_address, arg1, 11);
     //memcpy (process->name, arg1, 11);
+    //process->name = (char *) arg1; 
 
     Status = (int) fsLoadFile ( VOLUME1_FAT_ADDRESS, 
                        VOLUME1_ROOTDIR_ADDRESS, 

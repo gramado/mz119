@@ -225,6 +225,26 @@ typedef enum {
 
   
 /*
+ #todo: Pensando nisso
+ o kernel vai armazenar todas essas informações sobre process?  
+struct process_info_d
+{
+    //#todo object header
+    
+	// @todo:
+	// +name     (Nome=EXEMPLO.BIN)
+	// +pathname (Caminho=/root/boot/EXEMPLO.BIN)
+	// +cmd      (linha de comando ex:EXEM ) 
+	
+    // process name
+    char name[32];      // (PROCESS-NAME-1)
+    char pathname[32];  // (Caminho=/root/boot/EXEMPLO.BIN)
+    char cmd[32];       // (linha de comando ex:EXEM )
+    //env variables?
+};  
+*/
+  
+/*
  * process_d: 
  *
  *    PCB - Process Control Block.
@@ -311,7 +331,7 @@ struct process_d
 	//char *pathname;              //@todo: Incluir.	
 	char *cmd;                     //Nome curto que serve de comando.
 	char *name;                    //Nome do processo. 
-	unsigned long name_address;    //@todo: não usar isso.
+	//unsigned long name_address;    //@todo: não usar isso.
 
 
 	//Se o processo é ou não um processo de terminal.

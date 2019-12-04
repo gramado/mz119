@@ -1,5 +1,5 @@
 /*
- * File: mk/pc/action/ts.c
+ * File: mk/ps/action/ts.c
  *
  *     Task Switching.
  *
@@ -544,7 +544,8 @@ done:
 	
 	if ( (void *) P == NULL )
 	{
-		printf("action-ts-task_switch: Process %s struct fail \n", P->name_address );
+		//printf ("action-ts-task_switch: Process %s struct fail \n", P->name_address );
+		printf ("action-ts-task_switch: Process %s struct fail \n", P->name );
 		die();
 	}
 	
@@ -552,8 +553,8 @@ done:
 	{
 		if ( P->used != 1 || P->magic != 1234 )
 		{
-			printf("action-ts-task_switch: Process %s corrompido \n", 
-				P->name_address );
+			//printf("action-ts-task_switch: Process %s corrompido \n", P->name_address );
+			printf("action-ts-task_switch: Process %s corrompido \n", P->name );
 			die();
 		}
 
@@ -563,8 +564,8 @@ done:
 
 			if ( (unsigned long) P->DirectoryPA == 0 )
 			{	
-				printf ("action-ts-task_switch: Process %s directory fail\n", 
-					P->name_address );
+				//printf ("action-ts-task_switch: Process %s directory fail\n", P->name_address );
+				printf ("action-ts-task_switch: Process %s directory fail\n", P->name );
 				die();
 			}
 			
