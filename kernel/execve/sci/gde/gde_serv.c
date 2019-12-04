@@ -1738,7 +1738,7 @@ void *gde_services ( unsigned long number,
 		//158 - get window station id		
 		case SYS_GETCURRENTWINDOWSTATION:	
 		    return (void *) current_room; 
-			break;	
+			break;
 			
 		//159 - get desktop id
         case SYS_GETCURRENTDESKTOP:
@@ -1754,7 +1754,7 @@ void *gde_services ( unsigned long number,
 			
 		// 161
         // get socket IP
-		// Gramado API socket support. (not libc)		
+		// Gramado API socket support. (not libc)
 		case 161:
 		    return (void *) sys_getSocketIP ( (struct socket_d *) arg2 );
             break;		
@@ -1772,8 +1772,8 @@ void *gde_services ( unsigned long number,
         // Gramado API socket support. (not libc)	
 		case 163:
             return (void *) sys_update_socket ( (struct socket_d *) arg2, 
-								(unsigned long) arg3, (unsigned short) arg4 );
-			break;		
+                                (unsigned long) arg3, (unsigned short) arg4 );
+			break;
 
 		//#todo: a chamada está no shell em net.c
 		//netStream
@@ -1857,12 +1857,12 @@ void *gde_services ( unsigned long number,
             scheduler_lock ();
 			//name , address.
             Ret = (void *) sys_fsGetFileSize ( (unsigned char *) arg2 ); 
-			scheduler_unlock ();
-	        taskswitch_unlock ();
-			return (void *) Ret; 
+            scheduler_unlock ();
+            taskswitch_unlock ();
+            return (void *) Ret; 
             break;
 
-			
+
 		//179
 		//#bugbug: isso é um teste
 		//isso faz o programa rodar na thread clone ClonedThread e não n a IdleThread,
@@ -2393,7 +2393,7 @@ void servicesPutChar ( int c )
 /*
  ***************************************
  * gde_fork:
- *     Implementa a função fork() padrão em ring 0.
+ *     Implementa a função fork() da libc padrão.
  *
  *     Essa rotina foi chamada pela interrupção 133 
  *     cujo handler está em: x86/entry/head/sw.inc 

@@ -780,7 +780,8 @@ system_procedure ( struct window_d *window,
                 //Testes diversos.
                 case VK_F6:
 
-                      kgws_create_menubar ( (struct window_d *) windowList[window_with_focus]  );
+                    show_process_information ();
+                    //kgws_create_menubar ( (struct window_d *) windowList[window_with_focus]  );
            
                      //See: network.c
                      //testNIC ();

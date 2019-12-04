@@ -354,13 +354,15 @@ do_clone:
 		//#hackhack
 
 		// [pai]
-		Current->control->quantum = 100;		
+		Current->control->quantum = 50;
+		//Current->control->quantum = 100;		
 		//block_for_a_reason ( Current->control->tid, WAIT_REASON_BLOCKED );	
 		Current->control->state = READY;
 
 			
 		// [filho]
-		Clone->control->quantum = 200;		
+		Clone->control->quantum = 50;		
+		//Clone->control->quantum = 200;		
 		Clone->control->saved = 0;
 		SelectForExecution (Clone->control);
 
@@ -755,13 +757,15 @@ os processo anteriores deram certo pois os endereçamentos eram iguais, todos clo
 		//#hackhack
 
 		// [pai]
-		Current->control->quantum = 100;		
+		Current->control->quantum = 50;
+		//Current->control->quantum = 100;
 		//Current->control->saved = 0;
 		Current->control->state = READY;
         //SelectForExecution (Current->control);
 			
 		// [filho]
-		Clone->control->quantum = 200;		
+		Clone->control->quantum = 50;
+		//Clone->control->quantum = 200;
 		Clone->control->saved = 0;
 		Clone->control->state = READY;
 		SelectForExecution (Clone->control);
@@ -798,59 +802,63 @@ fail:
 
 /*
  ***************************************
- * do_fork_process
- *     (Função em desenvolvimento)
+ * do_fork_process 
  *     Isso está clonando o processo atual e executando o processo filho.
+ *     Essa é a rotina que implementa a função fork() padrão da libc. 
  *     O Processo pai continua rodando.
- *     #todo: A intenção é modificar essa rotina para ela ser um fork();
+ *      
  */
  
 // #todo
 // Criar um fork() usando essa rotina.
-// Falta pouco.
+// Estamos testando com o aplicativo gdeshell, usando o comando fork.
+// * Falta pouco. :)
 
 pid_t do_fork_process (void){
 
-	int PID;	
-	int Ret = -1;	
+    int PID;
 
-	struct process_d *Current;	
-	struct process_d *Clone;
-	
-	unsigned long *dir;
-	unsigned long old_dir_entry1; 
-	
- 
+    struct process_d *Current;
+    struct process_d *Clone;
+
+    unsigned long *dir;
+    unsigned long old_dir_entry1; 
 	//unsigned long old_image_pa; //usado para salvamento.
-	
-    //#debug message.	
-	printf ("do_fork_process: Cloning the current process..\n");
-	
-	
+
+    int Ret = -1;
+
+
+
+    // #debug: 
+    // Message.
+    //printf ("do_fork_process: Cloning the current process..\n");
+
+
 	// ## Current ##
 	// Checando a validade do processo atual.
 	
 	//if ( current_process < 0 )
 	//    return 0;
-	
+
+
 	Current = (struct process_d *) processList[current_process];
 	
 	if ( (void *) Current == NULL )
 	{
-		printf("do_fork_process: current, struct \n");
+		printf ("do_fork_process: Current struct \n");
 		goto fail;
 	
 	}else{
 		
 		if ( Current->used != 1 || Current->magic != 1234 )
 		{    
-			printf ("do_fork_process: current, validation \n");
-			goto fail;		
+			printf ("do_fork_process: Current validation \n");
+			goto fail;
 		}
 		
 		//#test
-        dir = (unsigned long *) Current->DirectoryVA;	
-		old_dir_entry1 = dir[1]; //salvando
+        dir = (unsigned long *) Current->DirectoryVA;
+		old_dir_entry1 = dir[1];    //salvando
 		
 		//salvando o endereço físico da imagem que existe no processo.
 		//old_image_pa = (unsigned long) virtual_to_physical ( Current->Image, gKernelPageDirectoryAddress ); 		
@@ -860,48 +868,44 @@ pid_t do_fork_process (void){
 		goto do_clone;
 		//...
 	};
-	
-	
+
+
 	//
-	// ## Clone ##
+	// # Clone #
 	//
+
+	// Cria uma estrutura do tipo processo, mas não inicializada.
 	
 do_clone:
-	
-	//Cria uma estrutura do tipo processo, mas não inicializada.
-	
-	Clone = (struct process_d *) processObject ();
-	
-	if ( (void *) Clone == NULL )
-	{
+
+    Clone = (struct process_d *) processObject ();
+
+    if ( (void *) Clone == NULL )
+    {
 		printf ("do_fork_process: Clone struct fail \n");
-		
 		goto fail;
-	
-	} else {
-		
+    } else {
 		
 		// Obtêm um índice para um slot vazio na lista de processos.
 		
 	    PID = (int) getNewPID ();
 		
 		//if ( PID <= 0 ){
-			
 		if ( PID == -1 || PID == 0 )
 		{	
 			printf ("do_fork_process: getNewPID fail %d \n", PID );
 			goto fail;
 		}
-		
+
 		Clone->pid = PID;
-		
 		Clone->used = 1;
 		Clone->magic = 1234;
-		
-		//#obs: Na hora de copiar o processo, a estrutura do clone 
-		//receberá os valores da estrutura do processo atual,
-		//até mesmo o endereço do diretório de páginas.
-		
+
+		// #obs: 
+		// Na hora de copiar o processo, a estrutura do clone 
+		// receberá os valores da estrutura do processo atual,
+		// até mesmo o endereço do diretório de páginas.
+
 		//...
 		
 		//Salvando na lista.
@@ -909,13 +913,13 @@ do_clone:
 		processList[PID] = (unsigned long) Clone;
 		
 		//
-		// ## clone  ##
+		// # clone #
 		//
-		
+
 		// Copia a memória usada pela imagem do processo.
 		
-		processCopyMemory ( Current );	
-		
+		processCopyMemory ( Current );
+
 		//
 		// Debug messages.
 		//
@@ -941,17 +945,18 @@ do_clone:
 		
 		// Isso cria um diretório de páginas para o processo clone;
 		
-	    Ret = processCopyProcess ( Current->pid, Clone->pid );
-		
-	    if ( Ret != 0 )
-	    {
-		    panic ("do_fork_process: processCopyProcess fail\n");
-		    //goto fail;	
-	    }
-		
-        CreatePageTable ( (unsigned long) Clone->DirectoryVA, ENTRY_USERMODE_PAGES, 
-		    Current->childImage_PA );		
-		
+        Ret = processCopyProcess ( Current->pid, Clone->pid );
+
+        if ( Ret != 0 )
+        {
+            panic ("do_fork_process: processCopyProcess fail\n");
+           //goto fail;
+        }
+
+        CreatePageTable ( (unsigned long) Clone->DirectoryVA, 
+            ENTRY_USERMODE_PAGES, 
+            Current->childImage_PA );
+
 		
 		//#test
 		// recuperamos a informação que o pai perdeu quando 
@@ -1006,15 +1011,18 @@ do_clone:
 		    //Thread->tty_id = 0; //-1
         } 
 		*/
-		
+
+
 		/*
-#bug: Quando o kernel salta 
-para eip do novo processo ele está usando o seu próprio endereçamento. Mas o kernel
-deve considerar o endereçamento do novo processo, pois isso aponta para
-um nodo eip fisico.
-os processo anteriores deram certo pois os endereçamentos eram iguais, todos clones do endereçamento do kernel.		
+        #bug: 
+        Quando o kernel salta para eip do novo processo ele está 
+        usando o seu próprio endereçamento. Mas o kernel deve 
+        considerar o endereçamento do novo processo, pois isso 
+        aponta paraum nodo eip físico.
+        Os processo anteriores deram certo pois os endereçamentos 
+        eram iguais, todos clones do endereçamento do kernel.
 		*/
-		
+
 		
 		//
 		// Debug messages.
@@ -1071,16 +1079,13 @@ os processo anteriores deram certo pois os endereçamentos eram iguais, todos clo
 		
 		
         //fsLoadFile ( VOLUME1_FAT_ADDRESS, VOLUME1_ROOTDIR_ADDRESS, 
-	     //   "GDESHELL BIN", (unsigned long) Clone->Image );		
+	     //   "GDESHELL BIN", (unsigned long) Clone->Image );
+		
+
 		
 		
-		//
-		// ## TEST ##
-		//
-		
-		
-		//#test - Clonando manualmente a thread de controle.
-		//só a imagem ... falta a pilha.
+		// Clonando manualmente a thread de controle.
+		// Só a imagem ... falta a pilha.
 		memcpy ( (void *) Clone->Image, (const void *) Current->Image, ( 0x50000 ) ); 
 		//====
 		Clone->control->type  = Current->control->type; 
@@ -1146,20 +1151,22 @@ os processo anteriores deram certo pois os endereçamentos eram iguais, todos clo
 		//printf ("Current: %s\n", Current->Image + 0x1000);
 		//printf ("Clone: %s\n", Clone->Image + 0x1000);
 
-        //mostra_reg (Clone->control->tid);		
+        //mostra_reg (Clone->control->tid);
 		//refresh_screen();
 		//while(1){}
 		
 		//#hackhack
 
 		// [pai]
-		Current->control->quantum = 100;		
+		Current->control->quantum = 30;
+		//Current->control->quantum = 100;
 		//Current->control->saved = 0;
 		Current->control->state = READY;
         //SelectForExecution (Current->control);
 			
 		// [filho]
-		Clone->control->quantum = 200;		
+		Clone->control->quantum = 30;
+		//Clone->control->quantum = 200;
 		Clone->control->saved = 0;
 		Clone->control->state = READY;
 		SelectForExecution (Clone->control);
@@ -1181,14 +1188,13 @@ os processo anteriores deram certo pois os endereçamentos eram iguais, todos clo
 		//current_process = Clone->pid;
         //return (pid_t) 0;
 
-		
-	};
+    };
 
-    // Fail.	
-    	
+    // Fail.
+
 fail:
 	
-    return (pid_t) -1;	
+    return (pid_t) -1;
 }
 
 
@@ -1248,7 +1254,7 @@ pid_t getNewPID (void){
 	
 	// Fail.
 	
-    return (pid_t) -1;	
+    return (pid_t) -1;
 }
 
 
@@ -1274,8 +1280,7 @@ int processTesting (int pid){
 		if ( P->used == 1 && P->magic == 1234 )
 		{
 			// magic.
-			
-	        return (int) 1234;			
+	        return (int) 1234;
 		}
 	};
 	
@@ -1409,11 +1414,8 @@ int processCopyMemory ( struct process_d *process ){
 	process->childImage_PA = (unsigned long) new_base_PA;	
 	
 
-//
+
 // Done.
-//
-	
-//done:
 	
 	//#debug
 	//printf ("processCopyMemory: ok\n");
@@ -1657,13 +1659,13 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
     goto done;
 
 //
-//Fail.
+// Fail.
 //
 
 fail:
 
     Status = 1;
-    printf ("processCopyProcess: fail:\n");
+    printf ("processCopyProcess: fail\n");
 
 //
 // Done.
@@ -2707,7 +2709,7 @@ void init_tasks (void)
  
 void init_processes (void){
 	
-    int i;	
+    int i;
 	
 	//
 	// Iniciando variáveis globais.
@@ -2910,7 +2912,6 @@ done:
 	// chamar o scheduler.
 	
 	//scheduler ();
-
 
     return;
 }

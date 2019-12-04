@@ -1,5 +1,5 @@
 /*
- * File: action/threadi.c 
+ * File: ps/action/threadi.c 
  *
  * Descrição:
  *      Thread internal.    
@@ -76,19 +76,20 @@ Loop:
 	// Vamos apenas sinalizar que queremos que ele durma.
 	
 	dead_thread_collector_flag = 0;
-	
-	asm ("hlt");
+
+
+    asm ("hlt");
     goto Loop;
-	
 }
 
 
 
 /*
- ***************************************************************
+ ******************************************************
  * KiCreateRing0Idle:
  *    Criando manualmente uma thread em ring 0.
- *    Para o processador ficar em hlt quando não tiver outra thread rodando.
+ *    Para o processador ficar em hlt quando não tiver outra 
+ * thread rodando.
  */
 
 void *KiCreateRing0Idle (void){
@@ -148,7 +149,7 @@ void *KiCreateRing0Idle (void){
 	
 	t->ownerPID = (int) KernelProcess->pid;         
 	t->used = 1;
-	t->magic = 1234;	
+	t->magic = 1234;
 	t->name_address = (unsigned long) ThreadName;   //Funciona.
 	
 	t->process = (void *) KernelProcess;
@@ -165,12 +166,12 @@ void *KiCreateRing0Idle (void){
 	
 	//Procedimento de janela.
     
-	t->procedure = (unsigned long) &system_procedure;	
+	t->procedure = (unsigned long) &system_procedure;
 	
 	t->window = NULL;      // arg1.
 	t->msg = 0;            // arg2.
 	t->long1 = 0;          // arg3.
-	t->long2 = 0;          // arg4.	
+	t->long2 = 0;          // arg4.
 
     //Características.	
 	t->type = TYPE_SYSTEM;  
@@ -438,7 +439,7 @@ unsigned long KiGetNextQuantum (void)
 void KiSetFocus (int pid){
 	
 	//return;
-};
+}
 
 
 /* 
@@ -486,14 +487,14 @@ void KiMostraSlots (void)
 void KiMostraSlot (int id){
 	
 	mostra_slot(id);
-};
+}
 
 
 /* #todo: mudar nomes */
 void KiMostraReg (int id){
 	
 	//mostra_reg(id);
-};
+}
 
 
 /*
@@ -526,10 +527,11 @@ void KiShowThreadList (void){
 //void threadiShowSlots(){ 
 
 void mostra_slots(){
-	
-    int i; 	
-	struct process_d *p;    
-    struct thread_d  *t;   
+
+    int i;
+
+    struct process_d *p;  
+    struct thread_d  *t; 
 
 
 	//
@@ -623,7 +625,6 @@ void mostra_slot (int id){
 			t->total_time_ms,
 			t->initial_eip,
 			t->name_address );
-			
 	};
 	
     goto done;
@@ -633,7 +634,7 @@ fail:
     printf("fail\n");	
 done:
     return; 
-};
+}
 
 
 /*
@@ -686,11 +687,9 @@ void mostra_reg (int id){
 	    printf("\n a=[%x] b=[%x] c=[%x] d=[%x]\n",
 	        t->eax, t->ebx, t->ecx, t->edx );
 			
-			
 		//...	
 	};
-	
-};
+}
 
 
 /* 
@@ -754,7 +753,7 @@ void set_thread_priority ( struct thread_d *t, unsigned long priority ){
 		*/
 		
     };
-};
+}
 
 
 /*
@@ -778,7 +777,7 @@ void SetThreadDirectory ( struct thread_d *thread, unsigned long Address ){
 		
 		thread->DirectoryPA = (unsigned long) Address;	
 	};
-};
+}
 
 
 /*
@@ -801,7 +800,8 @@ unsigned long GetThreadDirectory ( struct thread_d *thread ){
 		
 	    return (unsigned long) thread->DirectoryPA;		
 	};
-	
+
+
 	return (unsigned long) 0;
 }
 
@@ -1087,11 +1087,11 @@ void dead_thread_collector (void){
 
 
 void kill_all_threads (void){
-	
-	register int i = 0;
-    
-	for ( i=0; i < THREAD_COUNT_MAX; i++ )
-		kill_thread (i);	
+
+    register int i = 0;
+
+    for ( i=0; i < THREAD_COUNT_MAX; i++ )
+        kill_thread (i);
 }
 
 
@@ -1104,24 +1104,23 @@ void check_for_dead_thread_collector (void){
 	
 	switch (dead_thread_collector_flag)
 	{
-		// waik up	
+		// waik up
 		case 1:
 			
 			// Liberamos a thread.
-			// O próprio dead thread collector vai sinalizar que quer dormir,
-			// dai o case default faz isso.
+			// O próprio dead thread collector vai sinalizar que 
+			// quer dormir, dai o case default faz isso.
 			
 		    release ( RING0IDLEThread->tid );
 			break;
 			
-		// sleep	
+		// sleep
 		default:
-			block_for_a_reason ( RING0IDLEThread->tid, WAIT_REASON_BLOCKED );
+			block_for_a_reason ( RING0IDLEThread->tid, 
+			    WAIT_REASON_BLOCKED );
 			dead_thread_collector_flag = 0;
 			break;
-	}
-	
-	
+	};
 }
 
 //

@@ -19,18 +19,23 @@
  *****************************************************************
  * do_gexecve:
  *
- *     Executa um programa no processo INIT dentro do ambiente Gramado Core. 
+ *     Executa um programa no processo INIT dentro do ambiente 
+ * Gramado Core. 
+ *
  *     Ou seja, na thread primária do processo INIT.
- *     Ou seja, a aplicação tem que ser compilada no mesmo endereço do INIT.
+ *     Ou seja, a aplicação tem que ser compilada no mesmo endereço 
+ * do INIT.
  *     #obs: Isso funcionou.
  *    
  *     >> Na verdade a thread fica em standby.
  *
  * #bugbug:
- * E se o aplicativo fechar a thread, como usaremos a thread do processo init? 
+ * E se o aplicativo fechar a thread, como usaremos a thread do 
+ * processo init? 
  * Talvez a solução para isso seria criar outra. 
- * Nos casos em que o aplicativo chama o exit, não está retornando para o 
- * shell. O fato é que quando chama o exit o estado da thread muda.
+ * Nos casos em que o aplicativo chama o exit, não está retornando 
+ * para o shell. O fato é que quando chama o exit o estado da 
+ * thread muda.
  *
  * Obs: É dever dessa rotina colocar a thread em estado standby,
  * onde ela fica selecionada para execussão, 
@@ -40,6 +45,9 @@
  * IN:
  * serviço, file name, arg, env.
  */
+
+// #todo
+// Atualizar o nome do processo na estrutura de processo.
 
 int 
 do_gexecve ( int i,
@@ -121,7 +129,8 @@ do_gexecve ( int i,
     {
 		// #fail 
         printf ("do_gexecve: l fail\n");
-		// Obs: Não sairemos da função pois isso é um teste ainda.
+		// Obs: 
+		// Não sairemos da função pois isso é um teste ainda.
 		// goto fail;
 		
     }else{
@@ -180,10 +189,10 @@ do_gexecve ( int i,
 	// diretório de páginas do processo na posição 0x400000.
 
 
-      Status = (int) fsLoadFile ( VOLUME1_FAT_ADDRESS, VOLUME1_ROOTDIR_ADDRESS, 
-                         (unsigned char *) arg1, (unsigned long) 0x00400000 );
-
-
+    Status = (int) fsLoadFile ( VOLUME1_FAT_ADDRESS, 
+                       VOLUME1_ROOTDIR_ADDRESS, 
+                       (unsigned char *) arg1, 
+                       (unsigned long) 0x00400000 );
 
     if ( Status == 1 )
     {
@@ -192,13 +201,9 @@ do_gexecve ( int i,
     }
 
 
-	//
 	// Check ELF signature.
-	//
-
 	// OK. O comando existe e o arquivo foi carregado, mas 
 	// precisamos saber se a assinatura de ELF é válida.
-
 
     Status = (int) fsCheckELFFile ( (unsigned long) 0x00400000 );
 
@@ -208,9 +213,7 @@ do_gexecve ( int i,
     }else{
 
 		// #debug
-
-        printf ("do_gexecve: It's not a valid ELF file\n");
-        die ();
+        panic ("do_gexecve: It's not a valid ELF file\n");
         //goto fail;
     };
 
@@ -284,13 +287,13 @@ format_ok:
 	//printf(">>>shared_p0={%s}\n"     ,shared_p[0]);
 	//printf(">>>shared_p1={%s}\n"     ,shared_p[1]);
 	//printf(">>>shared_p2={%s}\n\n"   ,shared_p[2]);
-	//printf(">>>shared_p3={%s}\n\n"   ,shared_p[3]);	
+	//printf(">>>shared_p3={%s}\n\n"   ,shared_p[3]);
 	
  
 	//#debug
 	//ok. isso funcionou.
 	//printf("Showpipe={%s}\n",pipe);
-	//printf("Showsharedmemory={%s}\n",shared_memory);	 
+	//printf("Showsharedmemory={%s}\n",shared_memory);
 	
 	
 	// Pegar o ponteiro da thread primária do processo INIT.
@@ -315,7 +318,7 @@ format_ok:
 	// Isso é trabalho do exit e do deadthread collector.
 	
 	// #bugbug
-	// Esse ponteiro ode dar problemas.
+	// Esse ponteiro pode dar problemas.
 
 
     if ( i == 216 )
@@ -332,15 +335,8 @@ format_ok:
 
     if ( (void *) Thread == NULL )
     {
-		// #imporante:
-		// Vamos tornar um erro fatal por enquanto, para podermos refletir sobre 
-		// esse assunto;
-
-        printf ("do_gexecve: Thread Fail \n");
-        die ();
-
+        panic ("do_gexecve: Thread Fail \n");
 		//goto fail;
-
     }else{
 
 		// #importante:
@@ -406,16 +402,12 @@ format_ok:
 			//Thread->tty_id = 0; //-1
         };
 
-
-		//
 		// Context.
-		//
-
 		// #todo: 
 		// Isso deve ser uma estrutura de contexto.
 
+
 		// Stack frame.
-		// #obs: Isso pertence a Idle thread.
 
         Thread->ss = 0x23; 
         Thread->esp = (unsigned long) 0x0044FFF0; 
@@ -423,7 +415,8 @@ format_ok:
         Thread->cs = 0x1B; 
         Thread->eip = (unsigned long) 0x00401000; 
 
-		// Registradores de segmento.
+
+		// Segment registers.
 
         Thread->ds = 0x23; 
         Thread->es = 0x23; 
@@ -445,9 +438,12 @@ format_ok:
 
         Thread->Next = NULL;
 
+		// ?
 		// Thread queue.
 
-        queue_insert_data ( queue, (unsigned long) Thread, QUEUE_INITIALIZED );
+        queue_insert_data ( queue, 
+            (unsigned long) Thread, 
+            QUEUE_INITIALIZED );
 
 
 		// #importante:
@@ -499,10 +495,15 @@ done:
 /*
  *******************************************
  * do_execve:
- *     #todo: Melhorar a descrição do objetivo dessa rotina.
- *     Efetua o serviço execve, rodando um novo programa no processo atual.
- *     Tá usando a thread atual e transformando ela em thread de controle.
- *     args:  ?, name, arg, env.
+ *     Efetua o serviço execve, rodando um novo programa no 
+ * processo atual.
+ *     Tá usando a thread atual e transformando ela em 
+ * thread de controle.
+ * 
+ *     #todo: 
+ *     Melhorar a descrição do objetivo dessa rotina.
+ * 
+ *     args:  ?(serviço), name, arg, env.
  */
 
 int 
@@ -513,12 +514,14 @@ do_execve ( int i,
 {
     int Status = 1;    // fail.
 
+    struct process_d *process;
+    struct thread_d *Thread;
+
 	//??
 	//Esse é o primeiro argumento.
     int Plane = 0;
 
     char *s;
-    struct thread_d *Thread;
 
 	// Usados gerenciamento de arquivo.
 
@@ -581,11 +584,10 @@ do_execve ( int i,
 
     if ( l > 11 )
     {
-		// #fail 
-        printf ("do_execve: l fail\n");	
-		// Obs: Não sairemos da função pois isso é um teste ainda.
+        printf ("do_execve: l fail\n");
+		// #obs: 
+		// Não sairemos da função pois isso é um teste ainda.
 		// goto fail;
-
     }else{
 
 		// Se não existe um ponto entre os oito primeiros chars,
@@ -604,7 +606,6 @@ do_execve ( int i,
                 if ( l > 8 )
                 {
                     printf ("do_execve: File without ext is too long\n");
-
 					// Obs: 
 					// Não sairemos da função pois isso é um teste ainda.
 					// goto fail;
@@ -622,8 +623,8 @@ do_execve ( int i,
 
 
 	// #importante
-	// Transformando o nome do arquivo em maiúscula, pois estamos usando FAT16, 
-	// que exige isso.
+	// Transformando o nome do arquivo em maiúscula, pois estamos 
+	// usando FAT16, que exige isso.
 
     read_fntos ( (char *) arg1 );
 
@@ -649,16 +650,23 @@ do_execve ( int i,
 	// Essa rotina de carregamento tem que usar o endereço lógico
 	// referente ao endereço físico desejado e esse endereço lógico
 	// deve pertencer ao diretório de páginas do kernel.
-	
 
-    unsigned long base;
-
-    struct process_d *process;
     process = (struct process_d *) processList[current_process];
 
+    // #todo
+    // Precisamos checar a validade da estrutura.
 
-    Status = (int) fsLoadFile ( VOLUME1_FAT_ADDRESS, VOLUME1_ROOTDIR_ADDRESS, 
-                       (unsigned char *) arg1, (unsigned long) process->Image );
+    // #todo
+    // Vamos tentar atualizar o nome do processo na estrutura
+    // de processo.
+
+    //memcpy (process->name_address, arg1, 11);
+    //memcpy (process->name, arg1, 11);
+
+    Status = (int) fsLoadFile ( VOLUME1_FAT_ADDRESS, 
+                       VOLUME1_ROOTDIR_ADDRESS, 
+                       (unsigned char *) arg1, 
+                       (unsigned long) process->Image );
 
     if ( Status == 1 )
     {
@@ -666,9 +674,9 @@ do_execve ( int i,
         goto fail;
     }
 
-		// Check ELF signature.
-		// OK. O comando existe e o arquivo foi carregado, mas 
-		// precisamos saber se a assinatura de ELF é válida.
+	// Check ELF signature.
+	// OK. O comando existe e o arquivo foi carregado, mas 
+	// precisamos saber se a assinatura de ELF é válida.
 
     Status = (int) fsCheckELFFile ( (unsigned long) process->Image );
 
@@ -678,10 +686,10 @@ do_execve ( int i,
     }else{
 
 		// #debug
-		printf ("do_execve: It's not a valid ELF file\n");
-		die ();
+		panic ("do_execve: It's not a valid ELF file\n");
 		//goto fail;
     };
+
 
 	//
 	// ELF Signature OK
@@ -805,26 +813,21 @@ format_ok:
 	//
 
 	// #obs
-	// A thread que chamou essa rotina deve ser a current_thread. Certo ?
+	// A thread que chamou essa rotina deve ser a current_thread. 
+	// Certo ?
 	// +Não podemos retornar para ela após essa chamada. 
 	// +Devemos reinicializar a thread ou fazermos um spawn.
 	// #bugbug: Perderemos a pilha salva na chamada.
-	// #bugbug: Se retornarmos teremos problema pois a thread foi alterada.
+	// #bugbug: Se retornarmos teremos problema pois a thread foi 
+	// alterada.
 	// Só nos resta reinicializarmos a thread atual e rodarmos ela.
 
     Thread = (struct thread_d *) threadList[current_thread];
 
     if ( (void *) Thread == NULL )
     {
-		// #imporante:
-		// Vamos tornar um erro fatal por enquanto, para podermos 
-		// refletir sobre esse assunto;
-
-        printf ("do_execve: Thread Fail \n");
-        die ();
-
+        panic ("do_execve: Thread fail\n");
 		//goto fail;
-
     }else{
 
 		// #importante:
@@ -893,16 +896,11 @@ format_ok:
             //Thread->tty_id = 0; //-1
         };
 
-
-		//
 		// Context.
-		//
-
 		// #todo: 
 		// Isso deve ser uma estrutura de contexto.
 
 		// Stack frame.
-		// #obs: Isso pertence a Idle thread.
 
         Thread->ss = 0x23; 
         //Thread->esp = (unsigned long) 0x0044FFF0; 
@@ -913,7 +911,7 @@ format_ok:
         Thread->eip = (unsigned long) process->Image + 0x1000;
 
 
-		// Registradores de segmento.
+		// Segment registers.
         Thread->ds = 0x23; 
         Thread->es = 0x23; 
         Thread->fs = 0x23; 
@@ -933,7 +931,9 @@ format_ok:
         Thread->Next = NULL;
 
 		// Thread queue.
-        queue_insert_data ( queue, (unsigned long) Thread, QUEUE_INITIALIZED );
+        queue_insert_data ( queue, 
+            (unsigned long) Thread, 
+            QUEUE_INITIALIZED );
 
 
 		// #importante:
@@ -981,9 +981,8 @@ done:
 }
 
 
-
-
 /* 
+ **********************************
  * sys_showkernelinfo:
  *     Show kernel info. 
  */
@@ -996,6 +995,7 @@ void sys_showkernelinfo (void)
 
  
 /*
+ ************************************
  * sys_reboot:
  *     Reboot, Serviço do sistema.
  *     Chamando uma rotina interna de reboot do sistema.
@@ -1008,6 +1008,7 @@ void sys_reboot (void)
 
 
 /*
+ **********************************
  * sys_shutdown:
  *     Chama uma rotina interna para desligar a máquina.
  */
@@ -1031,7 +1032,6 @@ int init_executive (void){
     int Status = 0;
 
 
-	//#debug
 #ifdef KERNEL_VERBOSE
     printf ("EXECUTIVE:\n");
 #endif
@@ -1052,14 +1052,16 @@ int init_executive (void){
 
 
 	// #importante: 
-	// Só depois de inicializarmos o ata 'e que podemos carregar alguma coisa.
+	// Só depois de inicializarmos o ata 'e que podemos carregar 
+	// alguma coisa.
 
     debug_print ("init_executive: diskATADialog\n");
     diskATADialog ( 1, FORCEPIO, FORCEPIO );
 
 	// ??
 	// configura a tabela do kernel de funções exportadas
-	// e tabela de ponteiros para tabelas dos outros programas em kernel mode.
+	// e tabela de ponteiros para tabelas dos outros programas em 
+	// kernel mode.
     // Status = (int) executive_config_exported_functions();
 
 	//Continua ...

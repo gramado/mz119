@@ -1,5 +1,5 @@
 /*
- * File: pc/action/thread.c
+ * File: ps/action/thread.c
  *
  * Descrição:
  *     TM - Thread Manager (Parte fundamental do Kernel Base).
@@ -39,13 +39,12 @@ struct thread_d *threadCopyThread ( struct thread_d *thread ){
 	
 	
 	// A que vai ser copiada.
-	
-	if ( (void *) thread == NULL )
-	{
-		printf ("threadCopyThread: thread\n");
-	    die ();
-	}	
-		
+
+    if ( (void *) thread == NULL )
+    {
+        panic ("threadCopyThread: thread\n");
+    }
+
 
     clone = (struct thread_d *) sys_create_thread ( NULL,  // w. station
                                     NULL,                  // desktop
@@ -57,13 +56,12 @@ struct thread_d *threadCopyThread ( struct thread_d *thread ){
 
 	// A cópia.
 
-	if ( (void *) clone == NULL )
-	{
-		printf ("threadCopyThread: clone\n");
-	    die ();
-	}
+    if ( (void *) clone == NULL )
+    {
+        panic ("threadCopyThread: clone\n");
+    }
 
-	// salvando.
+	// Salvando.
 
 	ClonedThread = clone;
 
@@ -73,90 +71,95 @@ struct thread_d *threadCopyThread ( struct thread_d *thread ){
 
     clone->type = thread->type; 
 
-	    // #importante
-	    // Esse momento é critico.
-	    // dependendo do estado da thread ele pode não rodar.
-	    // ou ela pode rodar e falhar por não esta pronta,
-	    // vamos testar opções.
-	
-    //clone->state = thread->state;  
-    //clone->state = READY;  	
+	// #importante
+	// Esse momento é critico.
+	// dependendo do estado da thread ele pode não rodar.
+	// ou ela pode rodar e falhar por não esta pronta,
+	// vamos testar opções.
+
+
     clone->state = BLOCKED;  //isso funcionou.
-			
+    //clone->state = thread->state;  
+    //clone->state = READY;  
+
+
 		//Apenas Initialized, pois a função SelectForExecution
 		//seleciona uma thread para a execução colocando ela no
 		//state Standby.	
 		
-		//@TODO: ISSO DEVERIA VIR POR ARGUMENTO
-    clone->plane = thread->plane;	
-		
-		// A prioridade básica da thread é igual a prioridade básica do processo.
-		// Process->base_priority;
-		// priority; A prioridade dinâmica da thread foi passada por argumento.
+	// #todo: 
+	// ISSO DEVERIA VIR POR ARGUMENTO
+    clone->plane = thread->plane;
+
+	// A prioridade básica da thread é igual a prioridade básica 
+	// do processo.
+	// Process->base_priority;
+	// priority; A prioridade dinâmica da thread foi 
+	// passada por argumento.
 	
     clone->base_priority = thread->base_priority; 
-	
     clone->priority = thread->priority;
 		
-		//IOPL.
-		//Se ela vai rodar em kernel mode ou user mode.
-		//@todo: herdar o mesmo do processo.
-	
-    clone->iopl = thread->iopl;            // Process->iopl;
-    clone->saved = thread->saved;          // Saved flag.	
-    clone->preempted = thread->preempted;  // Se pode ou não sofrer preempção.
-		
-		//Heap and Stack.
-	    //Thread->Heap;
-	    //Thread->HeapSize;
-	    //Thread->Stack;
-	    //Thread->StackSize;
+	// IOPL.
+	// Se ela vai rodar em kernel mode ou user mode.
+	// #todo: 
+	// Herdar o mesmo do processo.
 
-        // Temporizadores. 
-        // step - Quantas vezes ela usou o processador no total.
-	    // quantum_limit - (9*2);  O boost não deve ultrapassar o limite. 
-	
-    clone->step = thread->step;                           
-    clone->quantum = thread->quantum;    
-    clone->quantum_limit = thread->quantum_limit; 			
+    clone->iopl = thread->iopl;            // Process->iopl;
+    clone->saved = thread->saved;          // Saved flag.
+    clone->preempted = thread->preempted;  // Se pode ou não sofrer preempção.
+
+
+	//Heap and Stack.
+	//Thread->Heap;
+	//Thread->HeapSize;
+	//Thread->Stack;
+	//Thread->StackSize;
+
+    // Temporizadores. 
+    // step - Quantas vezes ela usou o processador no total.
+    // quantum_limit - (9*2);  O boost não deve ultrapassar o limite. 
+
+    clone->step = thread->step; 
+    clone->quantum = thread->quantum; 
+    clone->quantum_limit = thread->quantum_limit;
+
 		
-		
-		// runningCount - Tempo rodando antes de parar.
-		// readyCount - Tempo de espera para retomar a execução.
-		// blockedCount - Tempo bloqueada.
+	// runningCount - Tempo rodando antes de parar.
+	// readyCount - Tempo de espera para retomar a execução.
+	// blockedCount - Tempo bloqueada.
 	
     clone->standbyCount = thread->standbyCount;
-	    
     clone->runningCount = thread->runningCount;   
 		
     clone->initial_time_ms = thread->initial_time_ms;
     clone->total_time_ms = thread->total_time_ms;
-			
-	    //quantidade de tempo rodadndo dado em ms.
+	
+    //quantidade de tempo rodadndo dado em ms.
     clone->runningCount_ms = thread->runningCount_ms;
-		
+
     clone->readyCount = thread->readyCount; 
     clone->ready_limit = thread->ready_limit;
     clone->waitingCount = thread->waitingCount;
     clone->waiting_limit = thread->waiting_limit;
     clone->blockedCount = thread->blockedCount; 
     clone->blocked_limit = thread->blocked_limit;
-		
-	    // Not used now. But it works fine.
-	
+
+    // Not used now. But it works fine.
+
     clone->ticks_remaining = thread->ticks_remaining; 
 
-	    // Signal
-	    // Sinais para threads.
-	
+    // Signal
+    // Sinais para threads.
+
     clone->signal = thread->signal;
-    clone->signalMask = thread->signalMask;	
+    clone->signalMask = thread->signalMask;
 
 
-	// @todo: 
+	// #todo: 
 	// Essa parte é dependente da arquitetura i386.
 	// Poderá ir pra outro arquivo.
-		
+
 	// init_stack:
 	// O endereço de início da pilha é passado via argumento.
 	// Então quem chama precisa alocar memória para a pilha.
@@ -204,7 +207,7 @@ struct thread_d *threadCopyThread ( struct thread_d *thread ){
     clone->edx = thread->edx;
     clone->esi = thread->esi;
     clone->edi = thread->edi;
-    clone->ebp = thread->ebp;	
+    clone->ebp = thread->ebp;
 		
 	//TSS
     
@@ -348,15 +351,15 @@ struct thread_d *create_thread ( struct room_d *room,
                                  unsigned long init_stack, 
                                  int pid, 
                                  char *name)
-{	
-    //Structures.	
+{
+    //Structures.
 	struct process_d *Process;    //Process.
 	
 	struct thread_d *Thread;      //Thread.
 	struct thread_d *Empty;       //Empty slot.
 
 	//Identificadores.
-	int ProcessID;	
+	int ProcessID;
 	int i = USER_BASE_TID;
 	
 	//wait reasons
@@ -400,10 +403,10 @@ struct thread_d *create_thread ( struct room_d *room,
 	
 	// Já temos um PID para o processo que é dono da thread.
 
-	Process = (void *) processList[ProcessID]; 		
+	Process = (void *) processList[ProcessID]; 
 	if( (void *) Process == NULL )
 	{
-		printf("pc-action-thread-create_thread: Process\n");
+		printf ("create_thread: Process\n");
 		die();
 	}
 	
@@ -414,7 +417,7 @@ struct thread_d *create_thread ( struct room_d *room,
 	
 	if ( (void *) Thread == NULL )
 	{
-	    printf("pc-action-thread-create_thread: Thread\n");
+	    printf ("create_thread: Thread\n");
 		die();
 		
 	}else{  
@@ -534,11 +537,11 @@ get_next:
 	    Thread->ready_limit = READY_LIMIT;
 	    Thread->waitingCount = 0;
 	    Thread->waiting_limit = WAITING_LIMIT;
-	    Thread->blockedCount = 0;    		
+	    Thread->blockedCount = 0; 
 	    Thread->blocked_limit = BLOCKED_LIMIT;
 		
 	    // Not used now. But it works fine.
-		Thread->ticks_remaining = 1000;    	
+		Thread->ticks_remaining = 1000; 
 
 	    // Signal
 	    // Sinais para threads.
@@ -592,7 +595,7 @@ get_next:
 	    Thread->edx = 0;
 	    Thread->esi = 0;
 	    Thread->edi = 0;
-	    Thread->ebp = 0;	
+	    Thread->ebp = 0;
 		
 		//TSS
 		Thread->tss = current_tss;
@@ -679,7 +682,7 @@ get_next:
 	if ( ProcessorBlock.threads_counter >= THREAD_COUNT_MAX )
 	{
 	    printf ("create_thread: counter fail, cant create thread\n");
-        die();	
+        die();
 	};
 
 		
@@ -692,7 +695,7 @@ done:
 	
     //SelectForExecution(t);  //***MOVEMENT 1 (Initialized ---> Standby)
     return (void *) Thread;
-};
+}
 
 
 /*
@@ -727,7 +730,8 @@ void *GetCurrentThread (void){
 	if ( (void *) Current == NULL ){
         return NULL;
 	}
-	
+
+
 	return (void *) Current;
 }
 
@@ -807,28 +811,33 @@ void SelectForExecution ( struct thread_d *Thread ){
 	//*MOVIMENTO 1, (Initialized --> Standby).
     
 	Thread->state = (int) STANDBY;
-	queue_insert_data ( queue, (unsigned long) Thread, QUEUE_STANDBY );	
-};
+	queue_insert_data ( queue, (unsigned long) Thread, QUEUE_STANDBY );
+}
 
 
 //Get State. (Zero é tipo NULL?).
 int GetThreadState (struct thread_d *Thread){
-	
-	if ( (void *) Thread == NULL ){
+
+    if ( (void *) Thread == NULL )
+    {
         return (int) 0;
-	}
-	return (int) Thread->state;
-};
+    }
+
+
+    return (int) Thread->state;
+}
 
 
 //Get Type. (Zero é tipo NULL?).
 int GetThreadType (struct thread_d *Thread){
-	
-	if( (void *) Thread == NULL ){
+
+    if ( (void *) Thread == NULL )
+    {
         return (int) 0;
-	}  
+    }
+  
     return (int) Thread->type;
-};
+}
 
 
 
