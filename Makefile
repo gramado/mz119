@@ -12,7 +12,7 @@
 VERSION = 1
 PATCHLEVEL = 15
 SUBLEVEL = 0
-EXTRAVERSION = -rc11
+EXTRAVERSION = -rc12
 NAME =  
 
 #
@@ -164,7 +164,7 @@ ifeq ($(ARCH),x86)
 	logon.o \
 	input.o output.o terminal.o \
 	desktop.o room.o userenv.o usession.o \
-	kgwm.o \
+	kgwm.o kgws.o \
 	vfs.o 
 	
 	
@@ -420,7 +420,7 @@ compile-kernel:
 	gcc -c kernel/kservers/kgws/user/room.c      -I include/ $(CFLAGS) -o room.o
 	gcc -c kernel/kservers/kgws/user/usession.c  -I include/ $(CFLAGS) -o usession.o
 	
-
+	gcc -c kernel/kservers/kgws/kgws.c  -I include/ $(CFLAGS) -o kgws.o
 
 	#system
 	gcc -c kernel/system/create.c  -I include/  $(CFLAGS) -o create.o

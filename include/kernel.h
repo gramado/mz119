@@ -312,6 +312,13 @@ extern void do_executa_new_task (void);
 //--
 
 
+
+//
+// GRAMADO (KGWM) Kernel gramado window manager
+//
+
+#include <kernel/gramado/kservers/kgwm/kgwm.h>
+
 //
 // GRAMADO (KGWS) Kernel gramado window server
 //

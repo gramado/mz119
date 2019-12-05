@@ -7,6 +7,7 @@
  *     2017 -  Created by fred Nora.
  */
  
+// Window manager into the kernel base.
  
 // #obs:
 // Aplicativo poderão se conectar com o servidor de recusros
@@ -25,14 +26,19 @@
 // unsigned char  gws_bame[] = "GWS - Gramado Window Server";
 // unsigned char  GramadoName[] = "GRAMADO LAYER";
 
-//Status do gws.
-int gws_status;
-
+//Status do gwm.
 //Qual é o id do processo que é o atual window manager.
 //o oficial é o Gramado Window Manager, hoje 
 //chamado de shell.bin
-int gws_wm_PID;
-int gws_wm_status;
+//int gws_status;
+//int gws_wm_PID;
+//int gws_wm_status;
+
+
+int kgwm_status;
+int kgwm_wm_PID;
+int kgwm_wm_status;
+
 
 
 //
@@ -75,7 +81,7 @@ void gwsDisableTextCursor ()
 int gwsOpen (void){
 	
 	//Aberto.
-	gws_status = 1;
+	kgwm_status = 1;
 	//..
 
     return 0;
@@ -85,32 +91,32 @@ int gwsOpen (void){
 //fechar o servidor de janelas
 int gwsClose (void){
 	
-	gws_status = 0;
+	kgwm_status = 0;
 
     return 0;
 }
 
 
 // Registrar um window manager.
-int gwsRegisterWindowManager ( int pid ){
+int kgwmRegisterWindowManager ( int pid ){
 
     int Status = 0;
 
 
-    if ( gws_status != 1 )
+    if ( kgwm_status != 1 )
     {
 		Status = 1;
 		goto fail;
     }else{
 		
-	    gws_wm_PID = (int) pid;	
-	    gws_wm_status = 1;
+	    kgwm_wm_PID = (int) pid;
+	    kgwm_wm_status = 1;
 		goto done;
     };
 
 
 fail:
-    printf("gwsRegisterWindowManager: fail\n");
+    printf("kgwmRegisterWindowManager: fail\n");
 
 done:
     return 0;
