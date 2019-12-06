@@ -93,9 +93,15 @@ network_procedure ( struct window_d *window,
            __process->control->long1 = (unsigned long) 0;    //0;
            __process->control->long2 = (unsigned long) 0;    //0;
            __process->control->newmessageFlag = 1;
+            // pty_send_message_to_thread ( (unsigned long) msg_buffer, (int) t->tid );  
+            //network_status = ; //apto a
 		   break;
 		
 		case 2000:
+		    
+		    if ( (void *) network__stream == NULL )
+		    { printf("network_procedure: stream fail"); break;   }
+		    
 		    sprintf( (char *) network__stream->_base, "Hello friend!\n");
 		    //memcpy ( (void *), (const void *), (size_t) );
            __process->control->window = NULL;
@@ -104,6 +110,25 @@ network_procedure ( struct window_d *window,
            __process->control->long2 = (unsigned long) network__stream;    //stream;
            __process->control->newmessageFlag = 1;
 		    break;
+
+		//send ARP packet
+		//O processo controi um pacote e envia o buffer em long1.
+		//copiamos o conteúdo do buffer par ao buffer usado pelo driver.    
+		//case 2001:
+		    //break;
+		    
+		//send UDP/IP packet
+		//O processo controi um pacote e envia o buffer em long1.
+		//copiamos o conteúdo do buffer par ao buffer usado pelo driver.    
+		//case 2001:
+		    //break;
+
+		//send TCP/IP packet
+		//O processo controi um pacote e envia o buffer em long1.
+		//copiamos o conteúdo do buffer par ao buffer usado pelo driver.    
+		//case 2001:
+		    //break;
+		    
 		//...
     } 
     
