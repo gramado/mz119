@@ -181,6 +181,10 @@ int window_getch (void);
 //...
 
 
+//o servidor de rede se comunica com o processo.
+#define MSG_AF_INET 54
+#define MSG_NET_DATA_IN 55
+
 //
 //  terminal commands
 //

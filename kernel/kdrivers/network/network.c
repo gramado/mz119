@@ -58,6 +58,65 @@
 
 int network_status;
 
+
+//usada para enviar mensagens para os processo.
+//isso é um ponteiro.
+FILE *network__stream;
+
+
+unsigned long 
+network_procedure ( struct window_d *window,
+                    int msg,
+                    unsigned long long1,
+                    unsigned long long2 )
+{
+    struct process_d *__process;
+
+	printf ("network_procedure:\n");
+	
+	//
+	// #todo
+	//
+	
+	//Testar a validade dos ponteiros.
+	
+
+    __process = (struct process_d *) processList[current_process];
+    
+    switch (msg)
+    {
+		//long1 tem o descritor na lista de arquivos abertos do processo.
+		case 1000:
+	       network__stream = (FILE *) __process->Streams[long1]; 
+           __process->control->window = NULL;
+           __process->control->msg = (int) MSG_AF_INET;          //temos uma mensagem. 
+           __process->control->long1 = (unsigned long) 0;    //0;
+           __process->control->long2 = (unsigned long) 0;    //0;
+           __process->control->newmessageFlag = 1;
+		   break;
+		
+		case 2000:
+		    sprintf( (char *) network__stream->_base, "Hello friend!\n");
+		    //memcpy ( (void *), (const void *), (size_t) );
+           __process->control->window = NULL;
+           __process->control->msg = (int) MSG_NET_DATA_IN ;  //temos uma mensagem. 
+           __process->control->long1 = (unsigned long) network__stream;    //stream;
+           __process->control->long2 = (unsigned long) network__stream;    //stream;
+           __process->control->newmessageFlag = 1;
+		    break;
+		//...
+    } 
+    
+	printf ("network_procedure: done\n");
+	refresh_screen();
+    return (unsigned long ) 0;
+}
+
+
+
+
+
+
  
 void networkSetstatus (int status){
 

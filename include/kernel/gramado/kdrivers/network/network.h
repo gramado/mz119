@@ -60,7 +60,17 @@ struct network_info_d
 
 
 
+
+
+
 int networkInit (void);
+
+
+unsigned long 
+network_procedure ( struct window_d *window,
+                    int msg,
+                    unsigned long long1,
+                    unsigned long long2 );
 
 
 void networkSetstatus (int status);
@@ -94,6 +104,9 @@ int network_decode_buffer ( unsigned long buffer_address );
 int do_ipv4 ( unsigned long buffer );
 int do_ipv6 ( unsigned long buffer );
 int do_arp ( unsigned long buffer );
+
+
+
 
 //
 // End.

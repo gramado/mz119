@@ -314,7 +314,24 @@ void *gde_extra_services ( unsigned long number,
         return (void *) do_fork_process2 ();
     }
 
+    //o processo está se comunicando com o driver de rede.
+    if ( number == 966 )
+    {
+        return (void *) network_procedure ( NULL,
+                        (int) 1000,//enviando descritor para atualizar a stream
+                        (unsigned long) arg2,   //fd
+                        (unsigned long) arg3 );  //fd
+    }
 
+
+    //o processo está se comunicando com o driver de rede.
+    if ( number == 967 )
+    {
+        return (void *) network_procedure ( NULL,
+                        (int) 2000, //envie dados para o processo.
+                        (unsigned long) arg2,   //fd
+                        (unsigned long) arg3 );  //fd
+    }
 
 
 	// t18
@@ -1356,6 +1373,7 @@ void *gde_services ( unsigned long number,
 		// Enviar uma mensagem para a thread de controle de um processo.
 		// arg2, arg3
 		// endereço do buffer da mensagem, pid
+		// #bugbug: O processo pode ler esse buffer ?
 		case SYS_SENDMESSAGETOPROCESS:
 			//printf ("112: PID=%d\n", arg3 );
 			pty_send_message_to_process ( (unsigned long) &message_address[0], 
