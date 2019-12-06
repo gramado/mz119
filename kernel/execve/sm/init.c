@@ -62,6 +62,7 @@ void save_kernel_args (void){
 
 
 /*
+ ***********************************
  * init_architecture_dependent:
  *     Rotina de inicialização dependente da arquitetura atual da máquina.
  *     A fase 1 identificou o tipo de processador. Aqui chamaremos a rotina 
@@ -81,7 +82,7 @@ int init_architecture_dependent (void){
 	unsigned char Type;
 	
 	
-	debug_print("init_architecture_dependent\n");
+	debug_print ("init_architecture_dependent\n");
 	
 	//
 	// Fase. (Verificar se essa rotina foi chamada na fase certa de inicialização.)
@@ -115,10 +116,11 @@ int init_architecture_dependent (void){
 	//
 	
 	// Check structure.
-	if ( (void *) processor == NULL ){
-	    panic("sm-init-init_architecture_dependent: processor\n");
+	if ( (void *) processor == NULL )
+	{
+	    panic ("sm-init-init_architecture_dependent: processor\n");
     }
-	
+
 	// Sonda pra ver qual é a marca do processador.
 	// @todo: É a segunda vez que fazemos a sondagem ?!
 	
@@ -139,7 +141,7 @@ int init_architecture_dependent (void){
 		    init_intel(); 
 			break;
 
-        //AMD. (pega os parâmetros do processador amd e coloca na estrutura).			
+        //AMD. (pega os parâmetros do processador amd e coloca na estrutura).
 	    case Processor_AMD: 
 		    init_amd(); 
 			break;
@@ -159,7 +161,7 @@ int init_architecture_dependent (void){
 	
 	
 	//Inicializando o Process manager.
-	init_process_manager();
+	init_process_manager ();
 	
  //
  // Continua ...
@@ -396,9 +398,7 @@ int init_architecture_independent (void){
 		printf ("init-init_architecture_independent: init_window_manager\n");
 #endif
 		
-		init_window_manager ();	
-		
-		
+		init_window_manager ();
 	};
 	
 	
@@ -425,7 +425,7 @@ done:
 	
 #ifdef EXECVE_VERBOSE
     //debug
-    printf("Done\n");	
+    printf ("init_architecture_independent: Done\n");
 	refresh_screen();
     //while(1){}
 #endif	
@@ -595,7 +595,7 @@ int init (void){
 	if ( KeInitPhase != 0 )
 	{
 		debug_print ("init: KeInitPhase fail\n");
-		panic ("sm-init-init: KeInitPhase\n");		
+		panic ("sm-init-init: KeInitPhase\n");
 	}
 	
 	
@@ -770,20 +770,26 @@ int init (void){
 	
 	//Fase 1: Inicia a parte independente da arquitetura.
 	Status = (int) init_architecture_independent ();
-	if(Status != 0){
-	   //Nothing for now.
-	};
+	if (Status != 0)
+	{
+        printf ("init: init_architecture_independent fail\n"); 
+        die ();
+	}
 	KeInitPhase = 1;
     
 	//Fase 2: Inicia a parte de arquitetura especifica da máquina atual.
 	//        Ou seja, considera a marca do processador.
-    Status = (int) init_architecture_dependent ();	 
-    if(Status != 0){
-	    //Nothing for now.
-	};	
+    Status = (int) init_architecture_dependent ();
+    if (Status != 0)
+    {
+        printf ("init: init_architecture_dependent fail\n"); 
+        die ();
+    }
 
-	
-	
+    //#debug
+   // printf ("init: *breakpoint\n"); 
+   // refresh_screen();
+   // while(1){}
 	
 	
 	// #importante
@@ -796,8 +802,12 @@ int init (void){
 	KeInitPhase = 2;
 	
 	
+    //#debug
+   // printf ("init: *breakpoint\n"); 
+   // refresh_screen();
+   // while(1){}	
 	
-    //
+	//
 	//  ==============  #### LOGON #### ===============
 	//
 	
@@ -823,21 +833,27 @@ int init (void){
 
 	if ( g_useGUI == 1 )
 	{
-		
-#ifdef EXECVE_VERBOSE		
-	printf ("sm-init-init: Logon\n");
-#endif	    
-		
+
+#ifdef EXECVE_VERBOSE
+	printf ("sm-init-init: calling create_logon ...\n");
+#endif
 		create_logon ();
-		
+
+#ifdef EXECVE_VERBOSE
+	printf ("sm-init-init: calling init_logon ...\n");
+#endif
 		//Libera. (Aceita argumentos).
 		init_logon (0,0);    
 
-        //Obs: *IMPORTANTE Usa-se o procedimento de janela do Logon.		
+        //Obs: *IMPORTANTE Usa-se o procedimento de janela do Logon.
 	};	
 	KeInitPhase = 3; 
 	
-	
+
+    //#debug
+    //printf ("init: *breakpoint :) \n"); 
+    //refresh_screen();
+    //while(1){}
 	
 	
 	// Continua ...

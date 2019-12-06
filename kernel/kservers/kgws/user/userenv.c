@@ -1,5 +1,5 @@
 /*
- * File: gws\user\userenv.c 
+ * File: user/userenv.c 
  *
  * Descrição:
  *
@@ -151,6 +151,7 @@ void config_user (void){
 
 
 /*
+ ***************
  * CreateUser:
  *     Cria um usuário do computador.
  *     #importante: Quando criar um usuário tem que 
@@ -171,7 +172,6 @@ void *CreateUser ( char *name, int type ){
 	if ( (void *) New == NULL )
 	{
 	    panic ("CreateUser: New");
-	    //die();
 		
 	} else {
 	    
@@ -213,7 +213,7 @@ void *CreateUser ( char *name, int type ){
 		    userList[Index] = (unsigned long) New;
 
             //printf("CreateUser: Done.\n"); 
-	        return (void *) New;			
+	        return (void *) New;
 		};
         
 		Index++;
@@ -372,7 +372,7 @@ void init_user_info (void){
     {	
 	    userList[Index] = (unsigned long) 0;
         Index++;
-	};	
+	};
 	
     
 	//Configurando a estrutura global.
@@ -410,7 +410,9 @@ void init_user_info (void){
 		//Configura o grupo atual ao qual o usuário pertence.
 		SetCurrentGroupId(0);
 		
-		__setusername ( (char *) USER_DEFAULTNAME);
+		//#bugbug: falha na máquina real.
+		//interna
+		//__setusername ( (char *) USER_DEFAULTNAME);
 		
 		//...
 		
@@ -424,6 +426,11 @@ void init_user_info (void){
 
 int __getusername (char *buffer)
 {
+	// #cancelando
+	// Isso tá falhando na máquina real.
+	// Provavelmente problemas com ponteiro.
+	
+ /* 
 	//Estrutura default para informações sobre o host.
 	//host.h
 
@@ -436,6 +443,7 @@ int __getusername (char *buffer)
         memcpy (buffer, CurrentUser->userName, CurrentUser->userName_len);
         return (int) CurrentUser->userName_len;
     };
+*/
 
     return -1;
 }
@@ -443,7 +451,12 @@ int __getusername (char *buffer)
 
 int __setusername (char *new_username)
 {
-
+	
+	// #cancelando
+	// Isso tá falhando na máquina real.
+	// Provavelmente problemas com ponteiro.
+		
+/*
 	size_t __len = strlen (new_username) + 1;
 	
 	//#todo: criar uma definição para user name buffer
@@ -463,6 +476,7 @@ int __setusername (char *new_username)
 		memcpy (CurrentUser->userName, new_username, CurrentUser->userName_len);
 		return 0;
 	};
+*/
 
     return (int) -1;
 }

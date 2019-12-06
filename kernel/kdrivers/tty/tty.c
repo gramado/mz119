@@ -270,7 +270,7 @@ int ttyInit (int tty_id){
 	    CurrentTTY->ring0_stdout_last_ptr = CurrentTTY->ring0_stdout->_p;
 	
 	    //limite
-	    CurrentTTY->ring0_stdout_limit = (CurrentTTY->ring0_stdout->_p + CurrentTTY->ring0_stdout->_lbfsize);		
+	    CurrentTTY->ring0_stdout_limit = (CurrentTTY->ring0_stdout->_p + CurrentTTY->ring0_stdout->_lbfsize);
 	
 	    //fazer o mesmo para os outros dois arquivos.
 	    //...	    

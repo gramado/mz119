@@ -109,7 +109,7 @@ void create_logon (void){
 	// Disable interrupts, lock task switch and scheduler.
 	
 	asm ("cli");
-	set_task_status(LOCKED); 	
+	set_task_status(LOCKED); 
 	scheduler_lock();
 
 	//
@@ -120,7 +120,7 @@ void create_logon (void){
     
 	if ( (void *) gui == NULL)
 	{
-	    panic ("gws-create_logon: gui struct");
+	    panic ("create_logon: gui struct");
 		
 	}else{
 		
@@ -142,7 +142,8 @@ void create_logon (void){
 	
 	    //iniciar a tty 0.
 	
-	    ttyInit (0);	
+	    printf ("create_logon: ttyInit\n");
+	    ttyInit (0);
 		
 		
 		
@@ -159,9 +160,10 @@ void create_logon (void){
     //printf ("init_user_info\n");
 //#endif
 	
-	    //initialize user info structure.
+	    //initialize user info structure
+	    printf ("create_logon: init_user_info\n");
         init_user_info ();   
-		
+
 		
 	    
         //Set session, room (Window Station), desktop, window and menu.
@@ -175,49 +177,56 @@ void create_logon (void){
 		
 		// Initialize Session, WindowStation, Desktop, Windows and Menus.
 		  
-		//user section.		
-		init_user_session ();
+		//user section.
 #ifdef KERNEL_VERBOSE		
-		printf ("gws-create_logon: user ession ok\n");
-#endif		
-		
-		//initialize window station default.	
+		printf ("create_logon: initializing user session\n");
+#endif
+		init_user_session ();
+
+		//initialize window station default.
+#ifdef KERNEL_VERBOSE
+		printf ("create_logon: initializing room\n");   
+#endif
 		init_room_manager ();	
-#ifdef KERNEL_VERBOSE			    
-		printf ("gws-create_logon: room manage ok\n");   
-#endif	    		
-	
+
 	    //initialize desktop default.
-		init_desktop (); 	    
-#ifdef KERNEL_VERBOSE			    
-		printf ("gws-create_logon: init desktop ok\n");   
-#endif	    		
+#ifdef KERNEL_VERBOSE
+		printf ("create_logon: initializing desktop\n");   
+#endif
+		init_desktop ();
 
 				
-	    //Inicia estrutura.	
+	    //Inicia estrutura.
 		//window.c
-		
-		init_windows (); 
-#ifdef KERNEL_VERBOSE			    
-		printf ("gws-create_logon: init windows ok\n");   
-#endif	    		
 
-				
+#ifdef KERNEL_VERBOSE
+		printf ("create_logon: initializing windows\n");   
+#endif
+		init_windows (); 
+
+
 		//menus.
+#ifdef KERNEL_VERBOSE
+		printf("create_logon: initializing menus\n");
+#endif
 		init_menus();        
-#ifdef KERNEL_VERBOSE				
-		printf("gws-create_logon: init menus ok\n");
-#endif	    	    
 
 	    //...
 	};
-	
+
+
+    //#debug
+   // printf ("create_logon: *breakpoint\n"); 
+   // refresh_screen();
+    //while(1){}
+
+
 	
 	// Configura elementos da tela de login.
     
 	if ( g_guiMinimal == 1 )
 	{
-        SetLogonParameters (0,1,1,0,0,1,0,0,0,0,0,0); 	
+        SetLogonParameters (0,1,1,0,0,1,0,0,0,0,0,0);
 	
 	}else{
 		
@@ -247,20 +256,14 @@ draw_logon_stuff:
 	//Screen, Background and Logo. 
 	if(gui->screenStatus == 1)
 	{ 
-	    //isso falhou.
-		//vamos testar create window,
 		logon_create_screen (); 
-		
 	};
 	
-
-	
-	if(gui->backgroundStatus == 1){	
+	if(gui->backgroundStatus == 1)
+	{
 	    logon_create_background(); 
 	};
 
-	
-	
 	if(gui->logoStatus == 1){ 
 	    logon_create_logo(); 
 	};	
@@ -346,6 +349,12 @@ draw_logon_stuff:
 	    };
 		//Nothing.
 	};
+	
+	
+    //#debug
+   // printf ("create_logon: *breakpoint\n"); 
+   // refresh_screen();
+   // while(1){}
 	
 	//
 	// # Done # 
@@ -650,9 +659,9 @@ void logon_create_mainwindow (void){
 	// Mas ela precisa ter todos os elementos da estrutura,
 	// pois ela server de referência.
 	
-	hWindow = (void *) CreateWindow ( 1, 0, VIEW_MINIMIZED, "logon desktop window", 
-	                       Left, Top, Width, Height,           
-						   gui->screen, 0, 0, COLOR_WINDOW  );
+    hWindow = (void *) CreateWindow ( 1, 0, VIEW_MINIMIZED, "logon desktop window", 
+                           Left, Top, Width, Height,           
+                           gui->screen, 0, 0, COLOR_WINDOW  );
 	
 	if ( (void *) hWindow == NULL)
 	{
@@ -715,11 +724,10 @@ void logon_create_mainwindow (void){
 	// RegisterWindow(gui->desktop);
 	
 done:
-	
-    SetFocus (hWindow);
+    // SetFocus (hWindow);
     
-	return;	
-};
+	return;
+}
 
 
 /*
@@ -1061,9 +1069,11 @@ done:
 	    refresh_screen();
 	};
 	return (unsigned long) 0;
-};
+}
 
-						
+
+
+
 /*
  **********************************************
  * init_logon:
@@ -1145,7 +1155,7 @@ int init_logon (int argc, char *argv[]){
 	
 done:
 	//printf("init_logon: Initializing..\n");
-    SetProcedure ( (unsigned long) &LogonProcedure);	
+    SetProcedure ( (unsigned long) &LogonProcedure);
     logonStatus = 1;	
 	//g_logged = (int) 0;
 	

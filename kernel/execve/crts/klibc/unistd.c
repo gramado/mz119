@@ -134,9 +134,15 @@ long pathconf (const char *pathname, int name){
 //suporte a rotina da libc.
 int __gethostname (char *buffer)
 {
+
+    //#suspensa
+    //está dando problemas na máquina real.
+    //provavelmente problemas com ponteiro.	
+	
 	//Estrutura default para informações sobre o host.
 	//host.h
 
+/*
     if ( (void *) HostInfo == NULL )
     {
         printf ("gethostname: HostInfo\n");
@@ -146,6 +152,7 @@ int __gethostname (char *buffer)
         memcpy (buffer, HostInfo->hostName, HostInfo->hostName_len);
         return (int) HostInfo->hostName_len;
     };
+*/
 
     return -1;
 }
@@ -154,7 +161,11 @@ int __gethostname (char *buffer)
 
 int __sethostname (char *new_hostname)
 {
+    //#suspensa
+    //está dando problemas na máquina real.
+    //provavelmente problemas com ponteiro.
 
+/*
 	size_t len = strlen (new_hostname) + 1;
 	
 	if (len >= HOSTNAME_BUFFER_SIZE)
@@ -173,6 +184,7 @@ int __sethostname (char *new_hostname)
 		memcpy (HostInfo->hostName, new_hostname, HostInfo->hostName_len);
 		return 0;
 	};
+*/
 
     return (int) -1;
 }

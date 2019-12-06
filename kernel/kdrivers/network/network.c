@@ -106,8 +106,11 @@ int networkInit (void){
 		HostInfo->hostName = (char *) malloc ( HOSTNAME_BUFFER_SIZE );
 		HostInfo->hostName_len = (size_t) HOSTNAME_BUFFER_SIZE;
 		
+		
+		//#bugbug
+		//falha na máquina real... acho que está falhando.
 		//see: klibc
-		__sethostname ( (char *) HOST_DEFAULTNAME);
+		//__sethostname ( (char *) HOST_DEFAULTNAME);
 
 		HostInfo->hostVersion = NULL;
 		
