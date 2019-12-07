@@ -31,6 +31,13 @@ extern unsigned long SavedY;
 int ps2_mouse_status;
 
 
+//salvaremos aqui o último total ticks pra
+//pegarmos um delta, se o delta for menor que o limite
+//então temos um duploclick.
+unsigned long ps2mouse_current_totalticks;
+unsigned long ps2mouse_last_totalticks;
+unsigned long ps2mouse_delta_totalticks;
+
 //====================================================================
 // update_mouse support
 
@@ -943,8 +950,20 @@ void mouseHandler (void){
 						// Enviaremos a mensagem para a thread atual.
                         if ( (void *) Window != NULL )
                         {
+							//pegamos o total tick
+							ps2mouse_current_totalticks = (unsigned long) get_systime_totalticks();
+                            ps2mouse_delta_totalticks = (ps2mouse_current_totalticks - ps2mouse_last_totalticks); 
+                            //printf ( "x=%d l=%d d=%d \n",
+                              // ps2mouse_current_totalticks,ps2mouse_last_totalticks,ps2mouse_delta_totalticks ); 
+                            //refresh_screen();
+                            ps2mouse_last_totalticks = ps2mouse_current_totalticks;
                             t->window = Window;
                             t->msg = MSG_MOUSEKEYDOWN;
+                            if (ps2mouse_delta_totalticks < 1000) //2000
+                            {
+								t->msg = MSG_MOUSE_DOUBLECLICKED; 
+								ps2mouse_delta_totalticks=8000; // delta inválido.
+							}
                             t->long1 = 1;
                             t->long2 = 0;
                             t->newmessageFlag = 1;

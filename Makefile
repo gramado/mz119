@@ -675,8 +675,12 @@ oracle-virtual-box-test:
 # ======== qemu ======== 
 #
 qemu-test:
-	qemu-system-x86_64 -hda GRAMADO.VHD
-	
+#	-debugcon stdio
+	qemu-system-x86_64 -hda GRAMADO.VHD -m 128 -device e1000 -show-cursor
+
+#install-kvm-qemu:
+#	sudo pacman -S virt-manager qemu vde2 ebtables dnsmasq bridge-utils openbsd-netcat
+
 #
 # ======== Clean ======== 
 #

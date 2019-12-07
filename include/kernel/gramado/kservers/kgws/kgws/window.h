@@ -190,6 +190,12 @@ int window_getch (void);
 
 
 //
+// mouse support: continuação ...
+//
+#define MSG_MOUSE_DOUBLECLICKED	  60
+//...
+
+//
 //  terminal commands
 //
 

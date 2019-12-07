@@ -780,7 +780,11 @@ system_procedure ( struct window_d *window,
                 //Testes diversos.
                 case VK_F6:
 
-                    show_process_information ();
+                    //printf("%d Hz | sys time %d ms | ticks %d \n", 
+	                //     sys_time_hz, sys_time_ms, sys_time_ticks_total );
+	                //refresh_screen();
+	                 
+                    //show_process_information ();
                     //kgws_create_menubar ( (struct window_d *) windowList[window_with_focus]  );
            
                      //See: network.c
