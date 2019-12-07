@@ -7,6 +7,10 @@
  *
  */
  
+// See: https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers
+ 
+// Application services can subscribe to one or more port(s) 
+// to be notified if a UDP message is sent to that port  
  
 #define FTPDATA_PORT     20    //FTP Data. 
 #define FTPCONTROL_PORT  21    //FTP Control.

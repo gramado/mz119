@@ -352,6 +352,8 @@ extern void do_executa_new_task (void);
 #include <kernel/gramado/kdrivers/x/i8042/ps2mouse.h>
 #include <kernel/gramado/kdrivers/x/i8042/ps2kbd.h>
 
+
+#include <kernel/gramado/kdrivers/network/connect.h> 
 #include <kernel/gramado/kdrivers/network/host.h>        //host info.
 #include <kernel/gramado/kdrivers/network/ethernet.h>
 #include <kernel/gramado/kdrivers/network/arp.h>

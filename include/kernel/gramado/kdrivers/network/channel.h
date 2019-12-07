@@ -54,25 +54,35 @@ struct channel_d
 	
     int State;    //Aberto ou fechado.
     int InUse;    //Em uso ou não.
-		
+
+
+    // Quem é o dono do canal?
+    // Quem está enviando?
+    // Quem está recebendo.
     struct process_d *OwnerProcess;
-	
+    struct process_d *SenderProcess;
+    struct process_d *ReceiverProcess;
+
 	// usado para comunição entre threads.
-    struct thread_d *SenderThread;
-    struct thread_d *ReceiverThread;
-	
 	//#importante
 	//Quando a comunicação for entre processos,
-	//temos que usar a thread de controle do processo que está recebendo
-	//a mensagem.
-	
-	struct process_d *SenderProcess;
-	struct process_d *ReceiverProcess;
-	
-	//Os dois soquetes do canal de comunicação.
-	struct socket_d *clientSocket;
-	struct socket_d *serverSocket;
-	
+	//podemos que usar a thread de controle do processo que 
+	//está recebendoa mensagem.
+    struct thread_d *SenderThread;
+    struct thread_d *ReceiverThread;
+
+
+    //Os dois soquetes do canal de comunicação.
+    // acho que soquete tem stream.
+    struct socket_d *clientSocket;
+    struct socket_d *serverSocket;
+
+	// pipe ?
+	// lembrando que os aplicativos criarão streams
+	// coma  achamada pipe(...) e soquetes com a chamada socket(...).
+    FILE *stream;
+
+
 	//#importante:
 	//context ??
 	//me parece que um ponteiro pra uma estrutura do 
@@ -86,7 +96,6 @@ struct channel_d
 	//me parece que é necessário.
 	//struct channel_d *serverchannel;
 };
-
 struct channel_d *CurrentChannel;
 //...
 

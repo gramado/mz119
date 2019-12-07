@@ -7,7 +7,19 @@
  * History:
  *     2016 - Created by Fred Nora.
  */
-
+ 
+ /*
+uint16_t switch_endian16(uint16_t nb) {
+       return (nb>>8) | (nb<<8);
+   }
+   
+   uint_t switch_endian32(uint_t nb) {
+       return ((nb>>24)&0xff)      |
+              ((nb<<8)&0xff0000)   |
+              ((nb>>8)&0xff00)     |
+              ((nb<<24)&0xff000000);
+   }  
+  */
 
 /*
  @todo:
@@ -56,12 +68,22 @@
 //0 - uninitialized
 //1 - initialized
 
-int network_status;
+//status do driver de network
+int network_status;   
+
+//status para notificações.
+//podemos ou não notificar os processo sobre os eventos de rede.
+//o shell vai habilitar essa notificação no momento em que
+//envia um stream para mensagens de texto.
+int notification_status; 
 
 
 //usada para enviar mensagens para os processo.
 //isso é um ponteiro.
 FILE *network__stream;
+
+
+//FILE *___default_network__stream;
 
 
 unsigned long 
@@ -72,21 +94,23 @@ network_procedure ( struct window_d *window,
 {
     struct process_d *__process;
 
-	printf ("network_procedure:\n");
+	//printf ("network_procedure:\n");
 	
 	//
 	// #todo
 	//
 	
 	//Testar a validade dos ponteiros.
-	
 
     __process = (struct process_d *) processList[current_process];
     
     switch (msg)
     {
+		//o processo em ring3 envia a stream para mensagens de texto
+		//nesse momento vamos habilitar a notificação de processos.
 		//long1 tem o descritor na lista de arquivos abertos do processo.
 		case 1000:
+		   notification_status = 1;
 	       network__stream = (FILE *) __process->Streams[long1]; 
            __process->control->window = NULL;
            __process->control->msg = (int) MSG_AF_INET;          //temos uma mensagem. 
@@ -98,7 +122,7 @@ network_procedure ( struct window_d *window,
 		   break;
 		
 		case 2000:
-		    
+		    if ( notification_status != 1 ){ break; }
 		    if ( (void *) network__stream == NULL )
 		    { printf("network_procedure: stream fail"); break;   }
 		    
@@ -129,11 +153,29 @@ network_procedure ( struct window_d *window,
 		//case 2001:
 		    //break;
 		    
+		//notificando o processo atual de que recebemos um ipv4
+		////notificando ...(ok funcionou.)
+		case 3000:
+		    if ( notification_status != 1 ){ break; }
+		    if ( (void *) network__stream == NULL )
+		    { printf("network_procedure: stream fail"); break;   }
+
+		    ftell (network__stream); //network__stream->_p = network__stream->_base;
+		    //rewind(network__stream); //network__stream->_p = network__stream->_base;
+		    
+		    sprintf( (char *) network__stream->_base, "Hello process. We've got your ipv4 packet!\n");
+		    //memcpy ( (void *), (const void *), (size_t) );
+           __process->control->window = NULL;
+           __process->control->msg = (int) MSG_NETWORK_NOTIFY_PROCESS;  // 
+           __process->control->long1 = (unsigned long) network__stream;    //stream;
+           __process->control->long2 = (unsigned long) network__stream;    //stream;
+           __process->control->newmessageFlag = 1;
+		    break;   
 		//...
     } 
     
-	printf ("network_procedure: done\n");
-	refresh_screen();
+	//printf ("network_procedure: done\n");
+	//refresh_screen();
     return (unsigned long ) 0;
 }
 
@@ -342,7 +384,7 @@ void show_current_nic_info (void){
 			printf ("Full duplex \n");
 		}
 
-        // Link up.0=no,1=link  		
+        // Link up.0=no,1=link 
 		if (currentNIC->DeviceStatus & 2)
 		{
 			printf ("link up \n");
@@ -476,7 +518,7 @@ handle_ipv6 ( struct intel_nic_info_d *nic,
 
 void testNIC (void){
 
-    printf ("\n\n ============ TEST NIC ================= \n\n"); 
+    printf ("\n\n ==== TEST NIC ==== \n\n"); 
 
     //
     // Flag. (UNLOCK)
@@ -528,8 +570,8 @@ void testNIC (void){
 	// #todo: 
 	// testar isso;
 	printf ("testNIC: Sending IPV4 \n");
-    SendIPV4 ( source_ip_address, target_ip_address, 
-        target_mac_address, xxxdata );
+    network_SendIPV4_UDP ( source_ip_address, target_ip_address, 
+        target_mac_address, xxxdata, 20 );
 
 
 	//se tivermos informações para mostrar é sinal que a inicialização do kernel 
@@ -542,7 +584,7 @@ void testNIC (void){
 	//printf("\n\n");
 	show_current_nic_info ();
 
-    printf ("\n\n ============ TEST DONE ================= \n\n"); 
+    printf ("\n\n ====TEST DONE ==== \n\n"); 
 
     refresh_screen ();
 }
@@ -570,11 +612,12 @@ void testNIC (void){
 // UDP/IP
 // UDP = 0x11 (ip protocol)
 
-void 
-SendIPV4 ( uint8_t source_ip[4], 
+int
+network_SendIPV4_UDP ( uint8_t source_ip[4], 
            uint8_t target_ip[4], 
            uint8_t target_mac[6], 
-           uint8_t data[32] )
+           uint8_t data[32],
+           unsigned short port )
 {
     int i=0;
     int j=0;
@@ -592,8 +635,8 @@ SendIPV4 ( uint8_t source_ip[4],
 
     if ( currentNIC == NULL )
     {
-        printf ("SendIPV4: currentNIC struct fail\n");
-        return;
+        printf ("network_SendIPV4_UDP: currentNIC fail\n");
+        return -1;
 
     }else{
 
@@ -618,8 +661,8 @@ SendIPV4 ( uint8_t source_ip[4],
 
     if ( (void *) eh == NULL)
     {
-        printf ("SendIPV4: eh struct fail");
-        return;
+        printf ("network_SendIPV4_UDP: eh fail");
+        return -1;
 
     }else{
 
@@ -651,8 +694,8 @@ SendIPV4 ( uint8_t source_ip[4],
 
     if ( (void *) ipv4 == NULL)
     {
-        printf ("SendIPV4: ipv4 struct fail\n");
-        return;
+        printf ("network_SendIPV4_UDP: ipv4 fail\n");
+        return -1;
 
     }else{
 
@@ -691,10 +734,14 @@ SendIPV4 ( uint8_t source_ip[4],
 
     if ( (void *) udp == NULL)
     {
-        printf ("SendIPV4: udp struct fail\n");
-        return;
+        printf ("network_SendIPV4_UDP: udp fail\n");
+        return -1;
 
     }else{
+		
+		//
+		// UDP ports;
+		//
     
         // #todo
         // Essas portas podem ser passadas via argumento.
@@ -716,7 +763,7 @@ SendIPV4 ( uint8_t source_ip[4],
         //161 SNMP Simple Network Man. Prot.
 
     
-        udp->SourcePort = 8000;   
+        udp->SourcePort = 20;   //FTP-DATA File Transfer
         udp->DestinationPort = 20; //FTP-DATA File Transfer
         //This field specifies the length in bytes of the UDP header and UDP data. 
         //The minimum length is 8 bytes, the length of the header. 
@@ -840,7 +887,7 @@ SendIPV4 ( uint8_t source_ip[4],
 	// Pois precisamos implementar algum contador no while para não
 	// ficarmos preso nele pra sempre.
 
-    printf ("SendIPV4: Sending broadcast ARP. *debug *while\n");
+    printf ("network_SendIPV4_UDP: Sending UDP/IP. *debug *while\n");
     refresh_screen ();
 
 	// #perigo:
@@ -853,6 +900,9 @@ SendIPV4 ( uint8_t source_ip[4],
     {
         // Nothing.
     };
+    
+    
+    return 0;
 }
 
 
@@ -915,8 +965,6 @@ SendARP ( uint8_t source_ip[4],
     {
         printf ("SendARP: eh struct fail\n");
         return;
-        //die ();
-
     }else{
 
 		// Coloca na estrutura do ethernet header os seguintes valores: 
@@ -948,8 +996,6 @@ SendARP ( uint8_t source_ip[4],
     {
         printf ("SendARP: struct h fail");
         return;
-        //die ();
-
     }else{
 
 
@@ -1250,7 +1296,8 @@ int network_decode_buffer ( unsigned long buffer_address ){
     if ( (void *) eh == NULL )
     {
         printf ("network_decode_buffer: eh");
-        die ();
+        return 1;
+        //die ();
     }else{
 
         //printf("src: ");
@@ -1273,7 +1320,14 @@ int network_decode_buffer ( unsigned long buffer_address ){
 
 		//::: IPV4
 		//0x0800	Internet Protocol version 4 (IPv4)
+		//Ok como test vamos notificar o processo atual
+		//de que recebemos um pacote ipv4
         case 0x0800:
+           
+           //#test
+           //notificando ...(ok funcionou.)
+           network_procedure ( NULL, 3000, 0,0 ); 
+           
            // #debug
            //printf("todo: Internet Protocol version 4 (IPv4)\n");
            //printf("IPv4 ");
@@ -1317,6 +1371,9 @@ int network_decode_buffer ( unsigned long buffer_address ){
 }
 
 
+// decodificando um pacote ipv4.
+// Precisamos olhar no pacote para sabermos qual é a porta
+// para assim reenviarmos o pacote ao processo conectado a essa porta.
 int do_ipv4 ( unsigned long buffer )
 {
     //printf ("do_ipv4\n");
@@ -1336,14 +1393,17 @@ int do_ipv6 ( unsigned long buffer )
 }
 
 
-int do_arp ( unsigned long buffer )
-{
-    //debug
+// decodifica um pacote arp.
+int do_arp ( unsigned long buffer ){
+
+   //debug
    // printf ("do_arp: \n");
+
+    int i;
 
     struct ether_header *eh;
     struct ether_arp *arp_h;
-    int i;
+
 
     eh = (struct ether_header *) (buffer + 0);
     arp_h = (struct ether_arp *) (buffer + 14);
@@ -1355,9 +1415,16 @@ int do_arp ( unsigned long buffer )
     if ((void *) arp_h == NULL)
         return 1;
 
-
+    // Recebemos um reply.
+    // Não faremos nada por enquanto.
+    // Mas provavelmente nesse momento recebemos
+    // alguma informação que solicitamos, como o MAC de um dispositivo.
     if ( arp_h->op == ToNetByteOrder16(ARP_OPC_REPLY) )
     {
+        //#debug
+        //printf ("\n ARP REPLY received \n");
+        //refresh_screen();
+        
         //#debug
         //printf("REPLY received\n");
         //printf("src: ");
@@ -1367,10 +1434,13 @@ int do_arp ( unsigned long buffer )
         return 1;
     }
 
-
+    // Recebemos um request.
+    // Vamos responter.
     if ( arp_h->op == ToNetByteOrder16(ARP_OPC_REQUEST) )
     {
-	    //#debug
+        //#debug
+        //printf ("\n ARP REQUEST received \n");
+        //refresh_screen();
 
         //printf ("\n ARP REQUEST received | ");
         //for ( i=0; i<6; i++){ printf("%x ",eh->src[i]); };

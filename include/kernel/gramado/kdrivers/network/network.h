@@ -85,8 +85,16 @@ void show_current_nic_info (void);
 //manipular o pacote ipv6 recebido pelo handle do e1000.
 int handle_ipv6 ( struct intel_nic_info_d *nic, struct ipv6_header_d *header );
 
-void SendIPV4 ( uint8_t source_ip[4], uint8_t target_ip[4], uint8_t target_mac[6], uint8_t data[32] );
 void SendARP ( uint8_t source_ip[4], uint8_t target_ip[4], uint8_t target_mac[6] );
+
+
+
+int
+network_SendIPV4_UDP ( uint8_t source_ip[4], 
+                       uint8_t target_ip[4], 
+                       uint8_t target_mac[6], 
+                       uint8_t data[32],
+                       unsigned short port );
 
 void testNIC (void);
 

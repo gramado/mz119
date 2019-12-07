@@ -185,6 +185,10 @@ int window_getch (void);
 #define MSG_AF_INET 54
 #define MSG_NET_DATA_IN 55
 
+//o driver de network está notificando um processo em ring3.
+#define MSG_NETWORK_NOTIFY_PROCESS 56
+
+
 //
 //  terminal commands
 //
