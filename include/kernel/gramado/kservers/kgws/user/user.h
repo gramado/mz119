@@ -406,8 +406,12 @@ struct user_info_d
 	char *name;
     unsigned long name_address;
 
-    //usar esse
+    //deletar
     char *userName;         // Nome.
+    
+    //usar esse.
+    //char __username[32];    //
+    char __username[64];    // HOSTNAME_BUFFER_SIZE
     size_t userName_len;    // len 
 	
     //Id. 
@@ -485,7 +489,8 @@ unsigned long userList[USER_COUNT_MAX];
 
 
 int __getusername (char *buffer);
-int __setusername (char *new_username);
+
+int __setusername (const char *new_username);
 
 int startUserEnvironment(int argc, char* argv[]); 
 

@@ -289,7 +289,7 @@ void *gde_extra_services ( unsigned long number,
     //set user name
     if ( number == 804 )
     {
-		return (void *) __setusername ( (char *) arg2); 
+		return (void *) __setusername ( (const char *) arg2); 
     }
 
  
