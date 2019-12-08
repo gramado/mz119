@@ -315,6 +315,7 @@ void *gde_extra_services ( unsigned long number,
     }
 
     //o processo está se comunicando com o driver de rede.
+    //um descritor de soquete é enviado via argumento.
     if ( number == 966 )
     {
         return (void *) network_procedure ( NULL,
@@ -325,6 +326,7 @@ void *gde_extra_services ( unsigned long number,
 
 
     //o processo está se comunicando com o driver de rede.
+     //um descritor de soquete é enviado via argumento.
     if ( number == 967 )
     {
         return (void *) network_procedure ( NULL,

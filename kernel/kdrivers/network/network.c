@@ -86,6 +86,7 @@ FILE *network__stream;
 //FILE *___default_network__stream;
 
 
+//diálogo com o driver de rede.
 unsigned long 
 network_procedure ( struct window_d *window,
                     int msg,
@@ -108,10 +109,13 @@ network_procedure ( struct window_d *window,
     {
 		//o processo em ring3 envia a stream para mensagens de texto
 		//nesse momento vamos habilitar a notificação de processos.
-		//long1 tem o descritor na lista de arquivos abertos do processo.
+		//>long1 tem o descritor na lista de arquivos abertos do processo.
 		case 1000:
-		   notification_status = 1;
-	       network__stream = (FILE *) __process->Streams[long1]; 
+	        network__stream = (FILE *) __process->Streams[long1];
+		    notification_status = 1;
+		    if ( notification_status != 1 ){ break; }		     
+		    if ( (void *) network__stream == NULL )
+		    { printf("network_procedure: stream fail"); break; }
            __process->control->window = NULL;
            __process->control->msg = (int) MSG_AF_INET;          //temos uma mensagem. 
            __process->control->long1 = (unsigned long) 0;    //0;
@@ -121,11 +125,15 @@ network_procedure ( struct window_d *window,
             //network_status = ; //apto a
 		   break;
 		
+		//>long1 tem o descritor na lista de arquivos abertos do processo.
 		case 2000:
-		    if ( notification_status != 1 ){ break; }
+		    network__stream = (FILE *) __process->Streams[long1]; 
+		    notification_status = 1;
+		    if ( notification_status != 1 ){ break; }		    
 		    if ( (void *) network__stream == NULL )
 		    { printf("network_procedure: stream fail"); break;   }
 		    
+		    ftell (network__stream);
 		    sprintf( (char *) network__stream->_base, "Hello friend!\n");
 		    //memcpy ( (void *), (const void *), (size_t) );
            __process->control->window = NULL;
@@ -155,8 +163,10 @@ network_procedure ( struct window_d *window,
 		    
 		//notificando o processo atual de que recebemos um ipv4
 		////notificando ...(ok funcionou.)
+		//reaproveitando um soquete se a conecção está estabelecida.
 		case 3000:
 		    if ( notification_status != 1 ){ break; }
+		    //network__stream = (FILE *) __process->Streams[long1]; 
 		    if ( (void *) network__stream == NULL )
 		    { printf("network_procedure: stream fail"); break;   }
 

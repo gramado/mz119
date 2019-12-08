@@ -7,8 +7,22 @@
 #include <kernel.h>
 
 
+
+/*
+ ********************** 
+ *  socket:
+ *       Essa é função oferece suporte à função socket da libc.
+ *       Estamos na klibc dentro do kernel base.
+ */
+ 
 //libc socket interface.
 //See: https://www.gnu.org/software/libc/manual/html_node/Sockets.html
+
+// #todo
+// Fazer um switch para tratar os vários tipos.
+// Se o protocolo for '0', então precisamos encontrar o 
+// protocolo adequado.
+
 int socket ( int family, int type, int protocol ){
 	
 	//#todo:
@@ -22,8 +36,32 @@ int socket ( int family, int type, int protocol ){
     FILE *stream1;
 
 	struct process_d *Process;
-
 	
+	
+	//
+	// Filtros
+	//
+	
+	//if (family < 0)
+	   //return -1;
+	
+	//if (type < 0)
+	   //return -1;
+	
+	//if (protocol < 0)
+	   //return -1;
+
+
+    //switch (family)
+    //{}
+
+    //switch (type)
+    //{}
+
+    //switch (protocol)
+    //{}
+
+
 	Process = (void *) processList[current_process];
 	
 	if ( (void *) Process == NULL )
