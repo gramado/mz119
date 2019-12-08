@@ -424,13 +424,13 @@ void init_user_info (void){
 
 
 
-int __getusername (char *buffer)
-{
+int __getusername (char *buffer){
+
 	// #cancelando
 	// Isso tá falhando na máquina real.
 	// Provavelmente problemas com ponteiro.
 	
- /* 
+
 	//Estrutura default para informações sobre o host.
 	//host.h
 
@@ -443,28 +443,57 @@ int __getusername (char *buffer)
         memcpy (buffer, CurrentUser->userName, CurrentUser->userName_len);
         return (int) CurrentUser->userName_len;
     };
-*/
+
 
     return -1;
 }
 
 
-int __setusername (char *new_username)
-{
+/*
+ ************************************* 
+ * __setusername: 
+ *  
+ * 
+ */
+
+// O novo nome está no buffer passado via argumento.
+// Ele tem o limite de 64 bytes.
+// Vamos colocar ele na estrutura de usuário.
+
+int __setusername (char *new_username){
+	
 	
 	// #cancelando
 	// Isso tá falhando na máquina real.
 	// Provavelmente problemas com ponteiro.
 		
-/*
+
 	size_t __len = strlen (new_username) + 1;
 	
-	//#todo: criar uma definição para user name buffer
-	if (__len >= HOSTNAME_BUFFER_SIZE)
+	// #todo: 
+	// Criar uma definição para user name buffer
+	
+	//
+	// Limites.
+	//
+	
+	if ( __len >= HOSTNAME_BUFFER_SIZE )
 	{
+		printf ("__setusername: __len\n");
 		return (int) -1;
-	}	
-		
+	}
+	
+	// #test
+	// Buffer inválido.
+	if ( (char *) new_username == NULL )
+	{
+		printf ("__setusername: buffer\n");
+		return (int) -1;	
+    }
+    
+    //
+    // Estrutura de usuário.
+    //
 
     if ( (void *) CurrentUser == NULL )
     {
@@ -476,7 +505,7 @@ int __setusername (char *new_username)
 		memcpy (CurrentUser->userName, new_username, CurrentUser->userName_len);
 		return 0;
 	};
-*/
+
 
     return (int) -1;
 }
