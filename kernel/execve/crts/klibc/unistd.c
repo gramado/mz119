@@ -131,60 +131,60 @@ long pathconf (const char *pathname, int name){
 } 
 
 
+//pegando host name
+//faremos igual fizemos com usuário.
 //suporte a rotina da libc.
-int __gethostname (char *buffer)
-{
+int __gethostname (char *buffer){
 
-    //#suspensa
-    //está dando problemas na máquina real.
-    //provavelmente problemas com ponteiro.	
-	
+
+    char *hostname_buffer = (char *) buffer;
+ 
+
 	//Estrutura default para informações sobre o host.
 	//host.h
 
-/*
     if ( (void *) HostInfo == NULL )
     {
-        printf ("gethostname: HostInfo\n");
-        return -1;
+        printf ("__gethostname: HostInfo\n");
+        return (int) -1;
     }else{
 
-        memcpy (buffer, HostInfo->hostName, HostInfo->hostName_len);
+                 //64 bytes
+        strcpy ( hostname_buffer, (const char *) HostInfo->__hostname );
+        
         return (int) HostInfo->hostName_len;
     };
-*/
 
-    return -1;
+
+    return (int) -1;
 }
 
 
+//#todo
+// configurando o hostname.
+//do mesmo jeito que configuramos o username,
+//só que em estruturas diferentes
+int __sethostname (const char *new_hostname){
 
-int __sethostname (char *new_hostname)
-{
-    //#suspensa
-    //está dando problemas na máquina real.
-    //provavelmente problemas com ponteiro.
+    //
+    // Estrtutura HostInfo em host.h (network)
+    //
 
-/*
-	size_t len = strlen (new_hostname) + 1;
-	
-	if (len >= HOSTNAME_BUFFER_SIZE)
-	{
-		return (int) -1;
-	}	
-		
 
     if ( (void *) HostInfo == NULL )
     {
-        printf ("sethostname: HostInfo\n");
-        return -1;
+        printf ("__sethostname: HostInfo\n");
+        return (int) -1;
     }else{
 
-        HostInfo->hostName_len = (size_t) len;
-		memcpy (HostInfo->hostName, new_hostname, HostInfo->hostName_len);
+        HostInfo->hostName_len = (size_t) strlen (new_hostname) + 1;
+        
+        //64 bytes
+        strcpy ( HostInfo->__hostname, (const char *) new_hostname);
+
 		return 0;
 	};
-*/
+
 
     return (int) -1;
 }

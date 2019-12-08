@@ -59,7 +59,7 @@ long pathconf (const char *pathname, int name);
 
 
 //See: network.c
-int __sethostname (char *new_hostname);
+int __sethostname (const char *new_hostname);
 int __gethostname (char * buffer);
 
 

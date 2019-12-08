@@ -441,19 +441,18 @@ int __getusername (char *buffer){
     if ( (void *) CurrentUser== NULL )
     {
         printf ("__getusername: CurrentUser\n");
-        return -1;
+        return (int) -1;
     }else{
 
         
         //64 bytes
         strcpy ( login_buffer, (const char *) CurrentUser->__username );
                 
-        //memcpy (buffer, CurrentUser->userName, CurrentUser->userName_len);
         return (int) CurrentUser->userName_len;
     };
 
 
-    return -1;
+    return (int) -1;
 }
 
 
@@ -475,10 +474,10 @@ int __setusername ( const char *new_username){
     if ( (void *) CurrentUser == NULL )
     {
         printf ("__setusername: CurrentUser\n");
-        return -1;
+        return (int) -1;
     }else{
 
-        CurrentUser->userName_len = strlen (new_username) + 1;
+        CurrentUser->userName_len = (size_t) strlen (new_username) + 1;
             
         //64 bytes
         strcpy ( CurrentUser->__username, (const char *) new_username);

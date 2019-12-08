@@ -16,7 +16,7 @@ The real canonical host name.
 
 char **h_aliases
 
-A list of aliases that can be accessed with arrays—the last element is NULL
+A list of aliases that can be accessed with arrays the last element is NULL
 
 int h_addrtype
 
@@ -103,7 +103,8 @@ struct host_info_d
 	int hostIdentifier;  // Número identificador dentro da rede interna.
 
 
-    char *hostName;         // Nome.
+    char *hostName;         // Nome. deletar
+    char __hostname[64];    // HOSTNAME_BUFFER_SIZE
     size_t hostName_len;    // len
 
     char *hostVersion;   // string mostrando a versão. ex: (1.1.1234)

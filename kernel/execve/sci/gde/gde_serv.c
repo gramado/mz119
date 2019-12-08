@@ -277,7 +277,7 @@ void *gde_extra_services ( unsigned long number,
     //set host name
     if ( number == 802 )
     {
-		return (void *) __sethostname ( (char *) arg2); 
+		return (void *) __sethostname ( (const char *) arg2); 
     }
 
     //get user name
