@@ -192,7 +192,9 @@ int window_getch (void);
 //
 // mouse support: continuação ...
 //
-#define MSG_MOUSE_DOUBLECLICKED	  60
+#define MSG_MOUSE_DOUBLECLICKED   60
+#define MSG_MOUSE_DRAG            61
+#define MSG_MOUSE_DROP            62
 //...
 
 //

@@ -1996,6 +1996,26 @@ static unsigned long vga_256colors_palette[256] = {
 #define MSG_DEVELOPER 52
 //...
 
+//UM TIMER SE ESGOTOU,
+#define MSG_TIMER 53   
+//...
+
+
+//o servidor de rede se comunica com o processo.
+#define MSG_AF_INET 54
+#define MSG_NET_DATA_IN 55
+
+//o driver de network está notificando um processo em ring3.
+#define MSG_NETWORK_NOTIFY_PROCESS 56
+
+//
+// mouse support: continuação ...
+//
+#define MSG_MOUSE_DOUBLECLICKED   60
+#define MSG_MOUSE_DRAG            61
+#define MSG_MOUSE_DROP            62
+//...
+ 
  
  
 // # Window Type #
