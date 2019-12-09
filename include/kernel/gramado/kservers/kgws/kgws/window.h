@@ -1130,106 +1130,98 @@ struct window_d
 
 //==================================================    
 
-
-    //#importante:
 	//thread de controle
 	//Usada para input de mensagens e sinais.
-	
     struct thread_d *control;
-		
-    //
-    //  Process support.
+
+//==================================================    
+
     //  A que processo a janela pertence??
-    //
     struct process_d *process;	
-	
+
+//==================================================    
+
 	//
 	// Menus support.
 	//
-	
+
 	//?? Qual janela o menu usará.
-	struct window_d *menu_window;   //Menu Window.
-	
-	struct menu_d *sysMenu;         //menu de sistema.(control menu)
-	struct menu_d *barMenu;         //menu da barra de menu.
-	struct menu_d *defaultMenu;     //menu da janela (*importante)
+    struct window_d *menu_window;   //Menu Window.
+
+    struct menu_d *sysMenu;         //menu de sistema.(control menu)
+    struct menu_d *barMenu;         //menu da barra de menu.
+    struct menu_d *defaultMenu;     //menu da janela (*importante)
 	//...
-	
-    // Flag par indicar se a janela é um item de menu.	
-	//ou um botão.
-	int isMenu;   
-	int isButton;  //#importante: Indica que a janela é um botão.
-	int isEditBox; //#importante: Indica que a janela é um editbox.
-	//int isIcon; 
+
+    int selected;     //seleção  de item de menu.
+
+//==================================================    
+
+    // Flag par indicar se a janela é um item de menu ou um botão.
+    int isMenu;   
+    int isButton;  //#importante: Indica que a janela é um botão.
+    int isEditBox; //#importante: Indica que a janela é um editbox.
+    int isIcon; 
 	//...
-	
-    // #importante
-	// Se a janela for do tipo botão, então essa será a estrutura para o 
-	// gerenciamento do botão.
-	
-	struct button_d *button;
-	
-	
-	int selected;     //seleção  de item de menu.
-    const char *text; //@todo usar unsigned char.
+
+//==================================================    
+
+	// Se a janela for do tipo botão, então essa será a 
+	// estrutura para o gerenciamento do botão.
+    struct button_d *button;
+    
+//==================================================    
+
+    // ??
+    const char *text; 
+
+//==================================================    
 
     struct window_d *minimize;
     struct window_d *maximize;
     struct window_d *close;
 
+//==================================================    
 
     // Qual janela é um ícone para essa janela.
     // Por exemplo, o ícone que fica na área de trabalho.
-    //struct window_d *icon;
+    struct window_d *icon;
 
-	//
-    // Ações.
+//==================================================    
+
+    //
+    // Actions.
     //
 
     int draw; 
     int redraw;
     int show;   //se precisa ou não mostrar a janela.	
     // Continua ...
-	
-	
-	//Continua...
-	
- 	
-	//
-	// Text Cursor support.
-	//
 
-	//fica para uma versão estendida da estrutura.
-	//Estrutura de cursor para a janela.
-    struct cursor_d	*cursor;
-	
+//==================================================    
+
+	// Text Cursor support.
+	// fica para uma versão estendida da estrutura.
+	// Estrutura de cursor para a janela.
+    struct cursor_d *cursor;
+
+//==================================================    
+
 	//unsigned long bgcolor;		// Background color.
 	//unsigned long fgcolor;		// Foreground color. 
-	
-	struct button_d *current_button;  //Botão atual.      
+
+//==================================================    
+
+    struct button_d *current_button;  //Botão atual.      
     struct button_d *buttonList;      //Lista encadeada de botões em uma janela.
-	
-	
-	
-	
-	//
-	// Mouse cursor support ???
-	//
-	
-	//
-	// Abaixo ficam os elementos referenciados com menor frequência.
-	//
-	
-    //
-	// ?? rever isso 
+
+//==================================================    
+
+	// ??
 	// Status do puxador da janela.
 	// Se está aberta ou não.
 	// HANDLE_STATUS_OPEN ou HANDLE_STATUS_CLOSE
-	//
-	
 	int handle_status;
-
-
 
 //==================================================
 
@@ -1237,6 +1229,8 @@ struct window_d
 	// Enables or disables mouse and keyboard input to the 
 	// specified window or control.
     int locked; 
+
+//==================================================
 
 	// Navegation.
     struct window_d *prev; 
