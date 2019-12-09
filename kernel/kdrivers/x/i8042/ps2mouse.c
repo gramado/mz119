@@ -31,13 +31,6 @@ extern unsigned long SavedY;
 int ps2_mouse_status;
 
 
-//salvaremos aqui o último total ticks pra
-//pegarmos um delta, se o delta for menor que o limite
-//então temos um duploclick.
-unsigned long ps2mouse_current_totalticks;
-unsigned long ps2mouse_last_totalticks;
-unsigned long ps2mouse_delta_totalticks;
-
 
 int ps2_button_pressed;
 int ps2_mouse_moving;
@@ -80,7 +73,7 @@ static int count_mouse = 0;
 // Buffer
 static char buffer_mouse[3];
 
-int flagRefreshMouseOver;
+
 //=====================================================================
 
 
@@ -495,8 +488,75 @@ quit:
 }
 
 
+// o driver de mouse entrega informações sobre o evento atual
+// para quem pedir. Como o servidor de janelas atual.
+unsigned long ps2_mouse_get_info ( int i )
+{
+    switch (i)
+    {
+        case 1:
+            return (unsigned long) saved_mouse_x;
+            break;
+
+        case 2:
+            return (unsigned long) saved_mouse_y;
+            break;
+            
+        case 3:
+            return (unsigned long) mouse_x;
+            break;
+            
+        case 4:
+            return (unsigned long) mouse_y;
+            break;
+            
+        case 5:
+            return (unsigned long) ps2_mouse_moving;
+            break;
+
+        case 6:
+            return (unsigned long) ps2_mouse_drag_status;
+            break;
+            
+        case 7:
+            return (unsigned long) mouse_button_action;
+            break;            
 
 
+        case 8:
+            return (unsigned long) mouse_buttom_1;
+            break;
+            
+        case 9:
+            return (unsigned long) mouse_buttom_2;
+            break;
+            
+        case 10:
+            return (unsigned long) mouse_buttom_3;
+            break;
+
+
+
+        case 11:
+            return (unsigned long) old_mouse_buttom_1;
+            break;
+            
+        case 12:
+            return (unsigned long) old_mouse_buttom_2;
+            break;
+            
+        case 13:
+            return (unsigned long) old_mouse_buttom_3;
+            break;
+            
+            
+        case 14:
+            return (unsigned long) ps2_button_pressed;
+            break;
+
+          //...
+    }	
+}
 
 /*
  ********************************************************
@@ -511,24 +571,24 @@ quit:
  * Temos externs no início desse arquivo.
  */
 
+int __do_scan;
 
 void mouseHandler (void){
 
 	// #importante:
 	// Essa será a thread que receberá a mensagem.
-
-	struct thread_d *t;
+	//struct thread_d *t;
 
 
 	// #importante:
 	// Essa será a janela afetada por qualquer evento de mouse.
 	// ID de janela.
 
-    struct window_d *Window;
-    int wID; 
+    //struct window_d *Window;
+    //int wID; 
     
     //#test
-    int last_wID;
+    //int last_wID;
 
 
 
@@ -588,6 +648,8 @@ void mouseHandler (void){
             buffer_mouse[0] = (char) *_byte;
             if (*_byte & MOUSE_V_BIT)
                 count_mouse++;
+            
+            __do_scan = 0; //não escaneie ainda.
             break;
 
 
@@ -596,6 +658,8 @@ void mouseHandler (void){
             //Pegamos o segundo char.
             buffer_mouse[1] = (char) *_byte;
             count_mouse++;
+            
+            __do_scan = 0; //não escaneie ainda.
             break;
 
 
@@ -636,8 +700,10 @@ void mouseHandler (void){
             if ( mouse_y < 1 ){ mouse_y = 1; }
             if ( mouse_x > (SavedX-16) ){ mouse_x = (SavedX-16); }
             if ( mouse_y > (SavedY-16) ){ mouse_y = (SavedY-16); }
-
-
+            
+            
+     
+           
             // Comparando o novo com o antigo, pra saber se o mouse se moveu.
             // #obs: Pra quem mandaremos a mensagem de moving ??
             if ( saved_mouse_x != mouse_x || saved_mouse_y != mouse_y )
@@ -650,12 +716,15 @@ void mouseHandler (void){
 				
 				ps2_mouse_moving = 1;
 				
-				if ( ps2_button_pressed == 1 )
-				{ 
-				    ps2_mouse_drag_status = 1;
-                }else{
-				    ps2_mouse_drag_status = 0;
-				}
+				
+				//#todo: drag support
+				//if ( ps2_button_pressed == 1 )
+				//{ 
+				//    ps2_mouse_drag_status = 1;
+                //}else{
+				//    ps2_mouse_drag_status = 0;
+				//}
+
                    
                 //
                 // draw
@@ -673,15 +742,19 @@ void mouseHandler (void){
                 bmpDisplayMousePointerBMP ( mouseBMPBuffer, mouse_x, mouse_y );            
             }else{
 				
+				
 				// Não redesenhamos quando o evento for um click, sem movimento.
 			    ps2_mouse_moving = 0;
 			} 
+			__do_scan = 1; //agora pode escanear
             break;
 
 
         // Problemas na contagem de interrupções.
         default:
             count_mouse = 0;
+            __do_scan = 0; //não escaneie ainda.
+            return;
             break;
     };
 
@@ -742,11 +815,9 @@ void mouseHandler (void){
         {
 		    //pressionada.
 		    //Não tem como pressionar mais de um botão por vez.
-
             mouse_buttom_1 = 0;
             mouse_buttom_2 = 1;
             mouse_buttom_3 = 0;
-
         };
 
 
@@ -765,7 +836,6 @@ void mouseHandler (void){
 	        mouse_buttom_1 = 0;
 	        mouse_buttom_2 = 0;
 	        mouse_buttom_3 = 1;
-
         };
 
 
@@ -779,490 +849,31 @@ void mouseHandler (void){
          mouse_buttom_3 != old_mouse_buttom_3 )
     {
         mouse_button_action = 1;
+
     }else{
         mouse_button_action = 0;
     };
 
 
+    // >> Daqui pra frente é operação envolvendo janelas.
+    // Passremos o comando para o servidor de janelas,
+    // pois o driver de mouse ps2 não entende de janelas.  
+    // >> Mas antes ja passamos informações sobre o evento.
 
-	// #refletindo: 
-	// ?? E no caso de apenas considerarmos que o mouse está se movendo, 
-	// mandaremos para janela over. ???
-	
-	// #refletindo:
-	// Obs: A mensagem over pode ser enviada apenas uma vez. 
-	// será usada para 'capturar' o mouse ... 
-	// e depois tem a mensagem para 'descapturar'.
-	
-	
-    // ## Sem escaneamento de janelas por enquanto, apenas mostre e mova o ponteiro ##
-	
-	//## então não enviaremos mensagens para a thread ###
-	
-	//
-	//  ## Scan ##
-	//
-	
-	//===========
-	// (capture) - On mouse over. 
-	//
-
-	// wID = ID da janela.
-	// Escaneamos para achar qual janela bate com os valores indicados.
-	// Ou seja. Sobre qual janela o mouse está passando.
-	
-	// #BUGBUG
-	// O problema nessa técnica são as sobreposição de janelas.
-	// Quando uma janela está dentro da outr, então duas janelas
-	// estão áptas a serem selecionadas.
-	// Talvez devamos filtrar e só aceitarmos sondar procurando 
-	// por controles.
-
-	// #IMPORTANTE
-	// Se for válido e diferente da atual, significa que 
-	// estamos dentro de uma janela.
-	// -1 significa que ouve algum problema no escaneamento.
-	
-	//wID = (int) windowScan ( mouse_x, mouse_y );
-
-    
-	//#importante:
-	//Ja que não passamos em cima de um botão ou editbox,
-	//então vamos ver se estamos em cima de uma janela overlapped.
-    //#obs: isso ficou bom ... estamos testando
+    //
+    // Scan 
+    //
     
     // #bugbug
-    // Com isso o sistema trava quando tentamos mover o mouse
-    // no programa gdeshell, que é fullscreen.
-    //Podemos tentar desabilitar o mouse quando entrarmos em fullscreen
-    // no gdeshell(teste)?
+    // Estamos chamando o scan.
+    // Mas isso deveria ser o trabalho do servidor de janelas
+    // que faria isso num loop pegando os eventod de uma fila de eventos.
     
-    //#todo: 
-    //Não há porque sondar janelas se tivermos em full screen.
-    //pois somente teremos a área de cliente de uma das janelas.
-
-    //============
-    //if ( wID == -1 )
-    //{
-         //wID = (int) windowOverLappedScan ( mouse_x, mouse_y );
-   // }
-
-
-    //wID = (int) windowOverLappedScan ( mouse_x, mouse_y );
-    
-    //se pegamos uma overlapped.
-    //vamos testar os botoes
-    //if ( wID != -1 )
-    //{
-        //printf ("o ");
-		//wID = (int) windowScan ( mouse_x, mouse_y );
-    //}
-    
-    wID = (int) windowScan ( mouse_x, mouse_y );
-
-    //================
-	//Se houve problema no escaneamento de janela do tipo botão ou editbox.
-    if ( wID == -1 )
-    { 
-
-		// Essa flag indica que podemos fazer o refresh da mouse ouver,
-		// mas somente uma vez.
-        if ( flagRefreshMouseOver == 1 )
-        {
-            Window = (struct window_d *) windowList[mouseover_window];
-
-			//#bugbug:
-			//precisamos checar a validade da estrutura antes de usa-la.
-
-			//#importante:
-			//isso apaga o que pintamos na janela, o valor foi salvo logo abaixo.
-
-            if ( (void *) Window != NULL )
-            {
-                //refresh_rectangle ( Window->left, Window->top, 20, 20 );
-                //refresh_rectangle ( savedmouseoverwindowX, savedmouseoverwindowY, 20, 20 );
-
-            }
-
-			// Não podemos mais fazer refresh.
-            flagRefreshMouseOver = 0;
-
-			//#importante inicializa.
-            mouseover_window = 0;
-        }
-     }
-
-
-    if ( wID == -1 )
+    if (__do_scan == 1)
     {
-		return;
-    }
-
-	// Se não houve problema no escaneamento de janela ou seja, se encontramos 
-	// uma janela. Então essa janela deve estar associada à uma thread para qual 
-	// mandaremos a mensagem. Caso a thread for null ... apenas não enviamos.
-	// A janela tem uma thread de controle, igual ao processo.
-
-     //============================ 
-     //Se estamos sobre uma janela válida.
-     if ( wID > -1 )
-     {
-
-        Window = (struct window_d *) windowList[wID];
-
-        if ( (void *) Window == NULL ) { return; }
-        if ( Window->used != 1 || Window->magic != 1234){ return; }
-
-
-		//#importante:
-		//Nesse momento temos uma janela válida, então devemos 
-		//pegar a thread associada à essa janela, dessa forma 
-		//enviaremos a mensagem para a thread do aplicativo ao qual 
-		//a janela pertence.
-
-        t = (void *) Window->control;
-
-        if ( (void *) t == NULL ){ return; }
-        if ( t->used != 1 || t->magic != 1234 ){ return; }
-
-		//#bugbug 
-		//#todo:
-		// Deveriamos aqui checarmos a validade da estrutura ??
-
-		//redraw_window(wScan);
-
-
-        //
-        // ==== Button events ====
-        //
- 
-		// #importante
-		// Se um botão foi pressionado ou liberado, então enviaremos uma 
-		// mensagem relativa ao estado do botão, caso contrário, enviaremos 
-		// uma mensagem sobre a movimentação do mouse.
-
-		//Qual botão mudou seu estado??
-		//Checaremos um por um.
-
-
-		//===============================================
-		// ***Se houve mudança em relação ao estado anterior.
-		// Nesse momento um drag pode terminar
-        if ( mouse_button_action == 1 )
-        {
-
-			// >> BOTÃO 1 ==================
-			//Igual ao estado anterior
-            if ( mouse_buttom_1 == old_mouse_buttom_1 )
-            {
-				//...
-			
-			//Diferente do estado anterior.
-            }else{
-				
-				// down - O botão 1 foi pressionado.
-                if ( mouse_buttom_1 == 1 )
-                { 
-					//clicou
-                    if ( old_mouse_buttom_1 == 0 )
-                    {
-						// flag: um botão foi pressionado.
-						ps2_button_pressed = 1;
-						
-						// Enviaremos a mensagem para a thread atual.
-						// houve alteração no estado do botão 1 e estamos em cima de uma janela.
-                        if ( (void *) Window != NULL )
-                        {
-							//pegamos o total tick
-							ps2mouse_current_totalticks = (unsigned long) get_systime_totalticks();
-                            ps2mouse_delta_totalticks = (ps2mouse_current_totalticks - ps2mouse_last_totalticks); 
-                            //printf ( "x=%d l=%d d=%d \n",
-                              // ps2mouse_current_totalticks,ps2mouse_last_totalticks,ps2mouse_delta_totalticks ); 
-                            //refresh_screen();
-                            ps2mouse_last_totalticks = ps2mouse_current_totalticks;
-                            t->window = Window;
-                            t->msg = MSG_MOUSEKEYDOWN;
-                            if (ps2mouse_delta_totalticks < 1000) //2000
-                            {
-								t->msg = MSG_MOUSE_DOUBLECLICKED; 
-								ps2mouse_delta_totalticks=8000; // delta inválido.
-							}
-                            t->long1 = 1;
-                            t->long2 = 0;
-                            t->newmessageFlag = 1;
-                        }
-                        //else: // houve alteração no estado do botão 1 mas não estamos em cima de uma janela.
-                        
-                        
-						//Atualiza o estado anterior.
-                        old_mouse_buttom_1 = 1;
-                    }
-
-				// up - O botão 1 foi liberado.
-                }else{
-
-				    // flag: um botão foi liberado.
-				    ps2_button_pressed = 0;
-						
-					// #importante 
-					// Enviaremos a mensagem para a thread atual.
-                    if ( (void *) Window != NULL )
-                    {
-						// Não estamos mais carregando um objeto.
-						ps2_mouse_drag_status = 0;
-                        
-                        t->window = Window;
-                        t->msg = MSG_MOUSEKEYUP;
-                        t->long1 = 1;
-                        t->long2 = 0;
-                        t->newmessageFlag = 1;
-                    }
-
-                    old_mouse_buttom_1 = 0;
-                }
-            }; 
-
-
-			// >> BOTÃO 2 ==================
-			// Igual ao estado anterior
-            if ( mouse_buttom_2 == old_mouse_buttom_2 )
-            {
-				//...
-
-			// Diferente do estado anterior.
-            }else{
-
-				// down - O botão 2 foi pressionado.
-                if ( mouse_buttom_2 == 1 )
-                {
-
-					//clicou
-                    if ( old_mouse_buttom_2 == 0 )
-                    {
-						// flag: um botão foi pressionado.
-						ps2_button_pressed = 1;
-						
-						// houve alteração no estado do botão 2 e estamos em cima de uma janela.
-                        if ( (void *) Window != NULL )
-                        {
-                            t->window = Window;
-                            t->msg = MSG_MOUSEKEYDOWN;
-                            t->long1 = 2;
-                            t->long2 = 0;
-                            t->newmessageFlag = 1;
-                        }
-                        //else: // houve alteração no estado do botão 2 mas não estamos em cima de uma janela.
-
-						// atualiza o estado anterior.
-                        old_mouse_buttom_2 = 1;
-                    }
-
-				// up - O botão 2 foi liberado.
-                }else{
-
-				    // flag: um botão foi liberado.
-				    ps2_button_pressed = 0;
-				    
-                   if ( (void *) Window != NULL )
-                   {
-						// Não estamos mais carregando um objeto.
-						ps2_mouse_drag_status = 0;
-
-                        t->window = Window;
-                        t->msg = MSG_MOUSEKEYUP;
-                        t->long1 = 2;
-                        t->long2 = 0;
-                        t->newmessageFlag = 1;
-                    }
-
-                    old_mouse_buttom_2 = 0;
-                }
-            }; 
-
-
-			// >> BOTÃO 3 ==================
-			// Igual ao estado anterior
-            if ( mouse_buttom_3 == old_mouse_buttom_3 )
-            {
-				//...
-
-			// Diferente do estado anterior.
-            }else{
-
-				// down - O botão 3 foi pressionado.
-                if ( mouse_buttom_3 == 1 )
-                {
-					//clicou
-                    if ( old_mouse_buttom_3 == 0 )
-                    {
-						// flag: um botão foi pressionado.
-						ps2_button_pressed = 1;
-						
-                        // houve alteração no estado do botão 3 e estamos em cima de uma janela.
-                        if ( (void *) Window != NULL )
-                        {
-                            t->window = Window;
-                            t->msg = MSG_MOUSEKEYDOWN;
-                            t->long1 = 3;
-                            t->long2 = 0;
-                            t->newmessageFlag = 1;
-                        }
-                        //else: // houve alteração no estado do botão 1 mas não estamos em cima de uma janela.
-
-						// Atualiza o estado anterior.
-                        old_mouse_buttom_3 = 1;
-                    }
-
-				// up - O botão 3 foi liberado.
-                }else{
-
-				    // flag: um botão foi liberado.
-				    ps2_button_pressed = 0;
-				    
-                    if ( (void *) Window != NULL )
-                    {
-						// Não estamos mais carregando um objeto.
-						ps2_mouse_drag_status = 0;
-
-                        t->window = Window;
-                        t->msg = MSG_MOUSEKEYUP;
-                        t->long1 = 3;
-                        t->long2 = 0;
-                        t->newmessageFlag = 1;
-                    }
-
-                    old_mouse_buttom_3 = 0;
-                }
-            }; 
-
-			// Ação concluída.
-            mouse_button_action = 0;
-        };
-
-
-        
-        //===============================================
-        // *** Se NÃO ouve alteração no estado dos botões, então apenas 
-        // enviaremos a mensagem de movimento do mouse e sinalizamos 
-        // qual é a janela que o mouse está em cima.
-        // Não houve alteração no estado dos botões, mas o mouse
-        // pode estar se movendo com o botão pressionado.
-        //a não ser que quando pressionamos o botão ele envie várias
-        //interrupções, igual no teclado.
-
-        if ( mouse_button_action == 0 )
-        {
-
-			// #importante
-			// Lembrando que estamos dentro de uma janela ...
-			// por isso a mensagem é over e não move.
-
-			//Obs: Se a janela for a mesma que capturou o mouse,
-			//então não precisamos reenviar a mensagem.
-			//Mas se o mouse estiver em cima de uma janela diferente da 
-			//que ele estava anteriormente, então precisamos enviar uma 
-			//mensagem pra essa nova janela.
-
-			//#bugbug:
-			//estamos acessando a estrutura, mas precisamos antes saber se ela é válida.
-
-            //estamos em cima de uma janela e não houve alteração no estado dos botões
-            if ( (void *) Window != NULL )
-            {
-                // diferente de mouseover window.
-                if ( Window->id != mouseover_window )
-                {
-
-                    if ( mouseover_window != 0 )
-                    {
-
-                       //if ( (void *) Window != NULL ){
-                        t->window = (struct window_d *) windowList[mouseover_window];
-                        t->msg = MSG_MOUSEEXITED;
-                        t->long1 = 0;
-                        t->long2 = 0;
-                        t->newmessageFlag = 1;
-                        //}
-                    };
-
-					// Agora enviamos uma mensagem pra a nova janela que 
-					// o mouse está passando por cima.
-                    //#todo: reagir a isso lá nos apps.
-                    
-                    t->window = Window;
-                    t->msg = MSG_MOUSEOVER;
-                    t->long1 = 0;
-                    t->long2 = 0;
-                    t->newmessageFlag = 1;
-                    
-                    //estamos carregando a janela
-                    if ( ps2_mouse_drag_status == 1 )
-                    {
-                        t->window = Window;
-                        t->msg = MSG_MOUSE_DRAG;
-                        t->long1 = 0;
-                        t->long2 = 0;
-                        t->newmessageFlag = 1;
-                    }
-
-					// Já que entramos em uma nova janela, vamos mostra isso.
-
-					//botão.
-					//#provisório ...
-					//Isso é um sinalizador quando mouse passa por cima.
-					//#test: Vamos tentar modificar as características do botão.
-
-                    //#ok isso funciona, vamos deixar oapp fazer isso.
-                    //faremos isso somente para os botões do sistema.  
-                    //if ( Window->isButton == 1 )
-                    //{
-						//isso funciona.
-                        //bmpDisplayCursorBMP ( fileIconBuffer, Window->left, Window->top );
-						//#test
-                        //update_button ( (struct button_d *) Window->button,
-                            //(unsigned char *) Window->button->string,
-                            //(int) Window->button->style,
-                            //(int) BS_HOVER,
-                            //(int) Window->button->type,
-                            //(unsigned long) Window->button->x, 
-                            //(unsigned long) Window->button->y, 
-                            //(unsigned long) Window->button->width, 
-                            //(unsigned long) Window->button->height, 
-                            //(unsigned long) Window->button->color );
-						//redraw_button ( (struct button_d *) Window->button );
-						//show_window_rect (Window);
-					//};
-					
-
-				    //não botão.
-				    //if ( Window->isButton == 0 )
-				    //{
-				    //    bmpDisplayCursorBMP ( folderIconBuffer, Window->left, Window->top );
-				    //};
-
-
-				    //nova mouse over
-                    mouseover_window = Window->id;
-
-					//#importante:
-					//flag que ativa o refresh do mouseover somente uma vez.
-                    flagRefreshMouseOver = 1;
-
-                //É mouse over window.
-                // não estamos em cima de uma janela e não houve alteração no estado dos botões
-                }else{ 
-
-				    //nothing ...
-                };
-            };
-
-			// Ação concluída.
-			// Para o caso de um valor incostante na flag.
-            mouse_button_action = 0;
-        };
-
-
-    };
+		kgws_mouse_scan_windows ();
+	    __do_scan = 0;
+	}
 }
 
 

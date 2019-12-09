@@ -35,6 +35,15 @@ struct screen_d {
 */
 
 
+// aqui o servidor de janelas escaneia as janelas para saber 
+// se o mouse está sobre alguma ... durante a rotina
+// são solicitadas informações diretamente no driver de mouse ps2.
+int kgws_mouse_scan_windows (void);
+
+
+ 
+
+
 
 int kgwsRegisterWindowServer ( int pid );
 

@@ -139,6 +139,9 @@ unsigned long
 ps2_mouse_dialog ( int msg,
                    unsigned long long1,
                    unsigned long long2 );
+                   
+                   
+unsigned long ps2_mouse_get_info ( int i );
 
 //
 // End.
