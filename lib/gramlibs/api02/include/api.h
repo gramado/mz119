@@ -2384,6 +2384,8 @@ struct window_d
     unsigned long long2List[32];
 
 
+    //struct msg_d *msg;
+
 	// procedure support. 
 	//(poderia ser um argumento ou elemento da classe.)
     unsigned long procedure;               //procedimento da janela
@@ -2527,33 +2529,37 @@ struct window_d
 
 //==================================================
 
+	// ID da tty usada.
+    int tty_id;
+
+//==================================================
+
 
 	//
 	// TERMINAL SUPPORT
 	//
-	
-	// Obs: 
-	// Essas variáveis só serão inicializadas se o 
-	// aplicativo decidir que conterá um terminal em sua 
-	// janela.
-	// Um aplicativo só poderá ter um terminal dentro de cada janela.
-	// Ou seja, se um aplicativo quiser ter mais de um terminal virtual, 
-	// vai precisar de uma janela para cada terminal dentro do aplicativo.
+
+    // Obs: 
+    // Essas variáveis só serão inicializadas se o 
+    // aplicativo decidir que conterá um terminal em sua janela.
+    // Um aplicativo só poderá ter um terminal dentro de cada janela.
+    // Ou seja, se um aplicativo quiser ter mais de um terminal virtual, 
+    // vai precisar de uma janela para cada terminal dentro do aplicativo.
     // isso permite facilmente que um mesmo aplicativo rode vários
     // programas, um em cada aba.
     // Ao invés de criar um frame para cada aplicativo que rode em terminal,
     // é só criar uma nova aba no gerenciador de terminais virtuais ...
-    // esse gerenciador de terminais virtuais poderia ser o shell.bin	
-	//
-	
+    // esse gerenciador de terminais virtuais poderia ser o shell.bin
+
+
 	//flags
 	
 	//configura o status do terminal dentro da janela
-	int terminal_used;     //Se é um terminal ou não.
+    int terminal_used;     //Se é um terminal ou não.
 	
 	//validade e reusabilidade das variáveis de terminal 
-	//dentro da estrutura de janela.	
-	int terminal_magic;
+	//dentro da estrutura de janela.
+    int terminal_magic;
 	
 	//tab
 	//número da tab.
@@ -2561,54 +2567,52 @@ struct window_d
 	//@todo:
 	// Criar uma forma de contar as tabs de terminal 
 	// dentro do gerenciador de terminais.
-	int terminal_tab; // em qual tab do gerenciador de terminais está o terminal.
+    int terminal_tab; // em qual tab do gerenciador de terminais está o terminal.
 	
 	//rect
-	unsigned long teminal_left;
-	unsigned long teminal_top;
-	unsigned long teminal_width;
-	unsigned long teminal_height;
-	
-	unsigned long teminal_right;
-	unsigned long teminal_bottom;		
+    unsigned long terminal_left;
+    unsigned long terminal_top;
+    unsigned long terminal_width;
+    unsigned long terminal_height;
+
+    unsigned long terminal_right;
+    unsigned long terminal_bottom;
 	
 	//...
 	
 	//@todo: isso deve pertencer a uma janela.
 	//se uma janela tiver o foco de entrada e for um terminal 
 	//a disciplica de linhas poderá usar essas carcterística do terminal.
-	struct terminal_d *wTerminal; //dd\uitm\terminal.h
-	struct console_d *console;   //dd\uitm\console.h	
-	
-	/*
-     Número da aba do navegador que a janela está.
-     Se for 0, então a janela está no desktop.
-    */
-	int tab;
-	
-	
-	
-    //
-	// style: isso poderia ser estilo de design ...
-	//        Qualquer janela pode ter vários estilos de design 
-    //        ex: um editbox poderá ser de vários estilos.	
-	
+    struct terminal_d *wTerminal; //terminal.h
+
+//==================================================
+ 
+    // ??
+    int tab;
+
+//==================================================
+
+    // style: 
+    // Isso poderia ser estilo de design ...
+    // Qualquer janela pode ter vários estilos de design 
+    // ex: um editbox poderá ser de vários estilos.	
+
 	//window style:
 	//WINDOW_STYLE_FLOATING (flutuante) 
 	//WINDOW_STYLE_DOCKING   (atracada em algum canto)
-	int style;   
-	
-	
-//struct msg_d *msg;
+    int style;   
 
-	
-	//unsigned long Background;
-	//int instance; //???	
-	
-	
-    //
-	// Características dessa janela..
-	//
+//==================================================
+
+    //unsigned long Background;
+
+//==================================================
+
+    //int instance; 
+
+//==================================================
+
+
 
 	//*full screen mode = modo tela cheia. 
 	//( utiliza a resolução atual do dispositivo )
@@ -2618,54 +2622,64 @@ struct window_d
 	//uma janela em modo full screen pode conter barras de rolagem.
 	//*embedded mode = dentro de uma janela ou de um navegador. 
 
-
+    //unsigned long status;              //ATIVA OU NÃO.
     
-    //unsigned long status;                //ATIVA OU NÃO.
-    unsigned long relationship_status;   //seu estatus de relacionamento com outras janelas.
-	
+//==================================================    
+
+    // Seu estatus de relacionamento com outras janelas.
+    unsigned long relationship_status;   
+
+//==================================================    
+
 	//ordem na pilha de janelas do eixo z.
 	//A janela mais ao topo é a janela foreground.
-	
-	int zIndex;    
+    int zIndex;    
 
 	//z-order global.
 	//Sua ordem em relação a janela gui->main.    
-	struct zorder_d *zorder;
+    struct zorder_d *zorder;
 
-     
-    //void *buffer;        //Qual buffer dedicado a janela usa.
+//==================================================    
 
+    //Qual buffer dedicado a janela usa.
+    //void *buffer;        
 
-    //...definir mais cores.
-
+//==================================================    
 
 	//?? Se mudar para Rect pode deletar alguns elementos acima
 	//como x, y, width ...
-	struct rect_d *rcWindow;
-	
+    struct rect_d *rcWindow;
+
 	//Lista encadeada dos retângulos que pertencem a essa janela.
 	//Quando uma janela for deletada, devemos desalocar toda a memória 
 	//uada por esses recursos.
-	struct rect_d *rectList;
+    struct rect_d *rectList;
 
+//==================================================    
 
 	//
-	// Buffers support.
+	// CLists
 	//
 
 	// Um ponteiro para um array de ponteiros de estruturas de linhas
-	// Explicando: Nesse endereço teremos um array. Cada ponteiro armazenado
+	// Explicando: 
+	// Nesse endereço teremos um array. Cada ponteiro armazenado
 	// nesse array é um ponteiro para uma estrutura de linha.
-	//Obs: @todo: Todos esses elementos podem formar uma estrutura e ficaria aqui 
-	//apenas um ponteiro para ela.
-	void *LineArray;
-	int LineArrayIndexTotal;    //Total de índices presentes nesse array.
+	// Obs: 
+	// #todo: 
+	// Todos esses elementos podem formar uma estrutura e ficaria aqui 
+	// apenas um ponteiro para ela.
+
+    void *LineArray;
+    int LineArrayIndexTotal;    //Total de índices presentes nesse array.
     int LineArrayIndexMax;      //Número máximo de índices permitidos no array de linhas.
     int LineArrayTopLineIndex;  //Indice para a linha que ficará no topo da página.
     int LineArrayPointerX;      //Em qual linha o ponteiro está. 	
-	int LineArrayPointerY;      //em qual coluna o ponteiro está.
+    int LineArrayPointerY;      //em qual coluna o ponteiro está.
 	//...
-	
+
+//==================================================    
+
 
     //
     //  Process support.

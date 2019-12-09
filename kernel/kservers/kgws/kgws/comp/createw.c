@@ -589,10 +589,11 @@ void *CreateWindow ( unsigned long type,
 		window->terminal_used = (int) 0;
 		window->terminal_magic = (int) 0;
 		window->terminal_tab = (int) 0;
-		window->teminal_left = (unsigned long) 0;
-		window->teminal_top = (unsigned long) 0;
-		window->teminal_width = (unsigned long) 0;
-		window->teminal_height = (unsigned long) 0;
+		
+		window->terminal_left = (unsigned long) 0;
+		window->terminal_top = (unsigned long) 0;
+		window->terminal_width = (unsigned long) 0;
+		window->terminal_height = (unsigned long) 0;
 		
 		//Desktop support.
 		//window->desktop = (void*) Desktop; //configurado anteriormente.

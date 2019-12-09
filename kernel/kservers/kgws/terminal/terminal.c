@@ -104,10 +104,10 @@ void systemSetTerminalWindow ( struct window_d *window ){
 
 	//rect
 	//configura por último
-    window->teminal_left = 0;
-    window->teminal_top = 0;
-    window->teminal_width = 0;
-    window->teminal_height = 0;
+    window->terminal_left = 0;
+    window->terminal_top = 0;
+    window->terminal_width = 0;
+    window->terminal_height = 0;
 	//..
 
 	//
@@ -133,7 +133,7 @@ void systemSetTerminalWindow ( struct window_d *window ){
             g_cursor_x = (window->rcClient->left/8 ); 
             g_cursor_left = g_cursor_x;
 
-            window->teminal_left = window->rcClient->left; 
+            window->terminal_left = window->rcClient->left; 
         }
 
 		//y inicial
@@ -142,18 +142,18 @@ void systemSetTerminalWindow ( struct window_d *window ){
             g_cursor_y = (window->rcClient->top/8 ); 
             g_cursor_top = g_cursor_y;
 
-            window->teminal_top = window->rcClient->top; 
+            window->terminal_top = window->rcClient->top; 
         }
     };
 
     if ( window->rcClient->width > 0 )
     {
-        window->teminal_width = window->rcClient->width; 
+        window->terminal_width = window->rcClient->width; 
     }
 
     if ( window->rcClient->height > 0 )
     {
-        window->teminal_height = window->rcClient->height;
+        window->terminal_height = window->rcClient->height;
     }
 
     if ( window->rcClient->right > 0 )
@@ -161,7 +161,7 @@ void systemSetTerminalWindow ( struct window_d *window ){
 	    // margem direita dada em linhas
         g_cursor_right = window->rcClient->right /8;
 
-        window->teminal_right = window->rcClient->right; 
+        window->terminal_right = window->rcClient->right; 
     }
 
     if ( window->rcClient->bottom > 0 )
@@ -169,7 +169,7 @@ void systemSetTerminalWindow ( struct window_d *window ){
 	    // margem inferior dada em linhas
         g_cursor_bottom = window->rcClient->bottom /8;
 
-        window->teminal_bottom = window->rcClient->bottom; 
+        window->terminal_bottom = window->rcClient->bottom; 
     }
 
 	//limits
@@ -243,10 +243,10 @@ void systemSetTerminalWindow ( struct window_d *window ){
             CurrentTTY->cursor_width = g_cursor_width;    //??
             CurrentTTY->cursor_height = g_cursor_height;   //??
             CurrentTTY->cursor_color = g_cursor_color;
-            CurrentTTY->cursor_left = g_cursor_left;     // margem esquerda dada em linhas
-            CurrentTTY->cursor_top = g_cursor_top;      // margem superior dada em linhas
+            CurrentTTY->cursor_left = g_cursor_left;      // margem esquerda dada em linhas
+            CurrentTTY->cursor_top = g_cursor_top;        // margem superior dada em linhas
             CurrentTTY->cursor_right = g_cursor_right;    // margem direita dada em linhas
-            CurrentTTY->cursor_bottom = g_cursor_bottom; // margem inferior dada em linhas			
+            CurrentTTY->cursor_bottom = g_cursor_bottom;  // margem inferior dada em linhas
 			
 		}
 	}
