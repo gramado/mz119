@@ -416,7 +416,7 @@ void *CreateWindow ( unsigned long type,
 		//if ( g_useGUI == 0 )
 		//{ 
 		 //   window->view = (int) VIEW_MINIMIZED;
-            //#bugbug: Abortar.			
+            //#bugbug: Abortar.
 		//};
 
         //Se não foi oferecido um modo de exibição, então temos um problema.
@@ -641,7 +641,7 @@ void *CreateWindow ( unsigned long type,
     //Pop-up Windows
     //Child Windows
     //Layered Windows
-    //Message-Only Windows	
+    //Message-Only Windows
 
 	//
 	// Preparando os parametros da pintura de acordo com o tipo.
@@ -693,11 +693,11 @@ void *CreateWindow ( unsigned long type,
 		// #obs: Teremos recursividade para desenhar outras partes.
 		case WT_OVERLAPPED:
 	        Shadow = 1;
-		    window->shadowUsed = 1;	        
+		    window->shadowUsed = 1;
 	        Background = 1;
 		    window->backgroundUsed = 1;
 	        TitleBar = 1;
-		    window->titlebarUsed = 1;	        
+		    window->titlebarUsed = 1;
 		    ClientArea = 1;
 		    window->clientAreaUsed = 1;
 
@@ -758,12 +758,17 @@ void *CreateWindow ( unsigned long type,
 
 
 		//Status bar.
-		case WT_STATUSBAR:
-	        Background = 1;
-			window->backgroundUsed = 1;
-		    break;
-		    
-			
+        case WT_STATUSBAR:
+            Background = 1;
+            window->backgroundUsed = 1;
+            break;
+
+        // Ícone da área de trabalho.
+        case WT_ICON:
+            Background = 1;
+            window->backgroundUsed = 1;
+            break;
+
 		//barra de rolagem
 		//botões de radio .. 
 		//...
@@ -777,10 +782,9 @@ void *CreateWindow ( unsigned long type,
 	};
 
 
-	// Continua...
 	
 	//
-	// Draw
+	// ==== Draw ====
 	//
 	
 	// Hora de pintar. 
@@ -788,9 +792,10 @@ void *CreateWindow ( unsigned long type,
 	
 //drawBegin:
 
-	// Obs: Se for uma janela, pintaremos apenas a janela.
-	//      Se for um frame, pintaremos todos os elementos
-	//      presentes nesse frame de acordo com as flags.
+	// Obs: 
+	// Se for uma janela, pintaremos apenas a janela.
+	// Se for um frame, pintaremos todos os elementos
+	// presentes nesse frame de acordo com as flags.
 	// Obs:
 	// A janela precisa ser pintada em seu buffer dedicado.
 	// Nesse momento o buffer dedicado da janela já está na estutura
@@ -799,22 +804,24 @@ void *CreateWindow ( unsigned long type,
 	// Para que seja possível pintar uma janela em seu buffer dedicado,
 	// devemos passar um ponteiro para a estrutura da janela em todas
 	// as rotinas de pintura chamadas daqui pra baixo.
-	//
-	// @todo: Passar estrutura de janela via argumento, para a rotina
+	// #todo: 
+	// Passar estrutura de janela via argumento, para a rotina
 	// de pintura ter acesso ao buffer dedicado.
-	
+
+
 	//if(DedicatedBuffer == 1){};
-	
-	
-	// se o view for igual NULL talvez signifique 
-	if ( window->view == VIEW_NULL )
-	{
+
+
+	// Se o view for igual NULL talvez signifique 
+    if ( window->view == VIEW_NULL )
+    {
 		//#bugbug: fail.
 		//window->show = 0;
 		//window->redraw = 0;
 		//return (void*) window;
-	}
-	
+    }
+
+
 	// Minimized ? 
 	// Se tiver minimizada, não precisa mostrar a janela, porém
 	// é necessário pintar a janela no buffer dedicado, se essa técnica 
@@ -831,12 +838,12 @@ void *CreateWindow ( unsigned long type,
 	// Pois retornaremos no caso de janelas minimizadas.
 	// Provavelmente isso foi usado quando criamos janelas 
 	// de referência na inicialização da GUI.(root)
-	
-	Minimized = 0;
-	Minimized = (int) is_window_minimized (window);
-	
+
+    Minimized = 0;
+    Minimized = (int) is_window_minimized (window);
+
     if ( Minimized == 1 )
-	{
+    {
 		//window->draw = 1; //Devemos pintála no buffer dedicado.
 		window->show = 0;
 		window->redraw = 0;
@@ -847,10 +854,12 @@ void *CreateWindow ( unsigned long type,
 		
 		goto done;
 	    //return (void *) window;
-	}
-	
-	
-	// @todo: Maximized ?
+    }
+
+
+
+	// #todo: 
+	// Maximized ?
 	// Para maximizar devemos considerar as dimensões da área de cliente
 	// da janela mãe.
 	// Se a jenela estiver maximizada, então deve ter o tamanho da área de 
@@ -866,12 +875,11 @@ void *CreateWindow ( unsigned long type,
 	// para janelas overlapped funciona.
 	
 	
-	Maximized = 0;
-	Maximized = (int) is_window_maximized (window);
-	
+    Maximized = 0;
+    Maximized = (int) is_window_maximized (window);
+
     if ( Maximized == 1 )
-	{
-		
+    {
 		//#debug
 		printf("file: createw.c: #debug\n");
 		printf ("original: l=%d t=%d w=%d h=%d \n", 
@@ -904,6 +912,7 @@ void *CreateWindow ( unsigned long type,
 		while (1){}
 	}
 
+
 	//
 	// == ## draw ## ===========================
 	//
@@ -918,7 +927,7 @@ void *CreateWindow ( unsigned long type,
 	//View = (int) is_window_full(window);
     //if(View == 1){
 	//	//...
-	//}		
+	//}
 	
 	//Se estivermos em full screen, mudaremos algumas caracteríticas.
 	// Não usaremos frame: nem borda nem barra de títulos.
@@ -945,16 +954,17 @@ void *CreateWindow ( unsigned long type,
 	// depois deletaremos essa definição aqui.
 	//*Importante: Devemos utilizar a cor que foi passada via argumento?!
 	// senão todas as janelas terão a mesma cor.
-	
+
+
+	//  ## Shadow ##
+	//
 	// Sombra:
 	//     A sombra pertence à janela e ao frame.
 	//     A sombra é maior que a própria janela.
 	//     ?? Se estivermos em full screen não tem sombra ??
-	
-	//  ## Shadow ##
-	
-	if ( Shadow == 1 )
-	{
+
+    if ( Shadow == 1 )
+    {
 		//flag.
 		window->shadowUsed = 1;
 		
@@ -985,19 +995,17 @@ void *CreateWindow ( unsigned long type,
 		// foi pressionado ou não.
 		
 		//...
-	}
+    }
 
 
 
 	// ## Background ##
-	//    Background para todo o espaço ocupado pela janela e pelo seu frame.
-
+	// Background para todo o espaço ocupado pela janela e pelo seu frame.
     // O posicionamento do background depende do tipo de janela.
     // Um controlador ou um editbox deve ter um posicionamento relativo
-    // à sua janela mãe. Já uma overlapped pode ser relativo a janela gui->main
-    // ou relativo à janela mãe.
+    // à sua janela mãe. Já uma overlapped pode ser relativo a janela 
+    // gui->main ou relativo à janela mãe.
 
-	// Background.
     if ( Background == 1 )
     {
 		// Flag.
@@ -1012,13 +1020,15 @@ void *CreateWindow ( unsigned long type,
         if ( (unsigned long) type == WT_EDITBOX){ window->bg_color = color; }
         if ( (unsigned long) type == WT_CHECKBOX){ window->bg_color = color; }
         //if ( (unsigned long) type == WT_SCROLLBAR){ window->bg_color = color; }
+        if ( (unsigned long) type == WT_ICON ){ window->bg_color = color; }
         //...
 
-
 		// Pintar o retângulo.
-		// @todo: ?? width Adicionar a largura da bordas bordas verticais.
-		// @todo: ?? height Adicionar as larguras das bordas horizontais e da barra de títulos.
-		
+		// #todo: 
+		// ?? width Adicionar a largura da bordas bordas verticais.
+		// #todo: 
+		// ?? height Adicionar as larguras das bordas horizontais e da barra de títulos.
+
         if ( (unsigned long) type == WT_STATUSBAR )
         {
             drawDataRectangle ( window->left, window->top, 
@@ -1034,12 +1044,14 @@ void *CreateWindow ( unsigned long type,
         //
          
         drawDataRectangle ( window->left, window->top, 
-            window->width, window->height, window->bg_color ); 
+            window->width, window->height, window->bg_color );
 
         //?? More ...
-	}
-	
-	// ## Title bar ##
+    }
+
+
+
+    // ## Title bar ##
     // Título + borda(frame).
     
     // #importante: 
@@ -1073,14 +1085,14 @@ void *CreateWindow ( unsigned long type,
 		//??width  @todo: Adicionando a largura da bordas bordas verticais.
 		//??height @todo: Adicionando as larguras das bordas horizontais e da barra de títulos.
 
-		drawDataRectangle ( window->left, window->top, 
-			window->width +1 +1, window->height +1 +1, window->bg_color );
+        drawDataRectangle ( window->left, window->top, 
+            window->width +1 +1, window->height +1 +1, window->bg_color );
         
 		// String
-		draw_string ( window->left +16 +8 +8, window->top +(32/3), 
-			COLOR_TERMINALTEXT2, window->name );  
+        draw_string ( window->left +16 +8 +8, window->top +(32/3), 
+            COLOR_TERMINALTEXT2, window->name );  
 
-	    // ??
+		// ??
 		// Só criamos o botão na barra de títulos se tivermos uma barra de títulos.
 		// Então esse é o lugar certo para essa rotina.
 		// @todo: Se estivermos em full screen, não teremos botão.	
@@ -1157,13 +1169,6 @@ void *CreateWindow ( unsigned long type,
     }
 
 
-	//#debug
-    //if ( (unsigned long) type == WT_OVERLAPPED )
-	//{
-	//    printf("CreateWindow: #debug");
-	//	refresh_screen();
-	//	while(1){}
-	//}
 	
 	// ## Border ##
 	// BORDA COLOR_INACTIVEBORDER 
@@ -1279,20 +1284,14 @@ void *CreateWindow ( unsigned long type,
         drawDataRectangle ( window->left, window->top +window->height -1, 
             window->width, border_size, border_color );
 
-	};
+	}
 
-	//#debug
-	//if ( (unsigned long) type == WT_OVERLAPPED )
-	//{
-	//    printf("CreateWindow: #debug");
-	//    refresh_screen();
-	//    while(1){}
-	//}
 
-	// # Client Area #
-	// #importante
-    // @todo: 
-    //     RESPEITAR A IMPORTÂNCIA DESSE ELEMENTO.	
+
+    // # Client Area #
+    // #importante
+    // #todo: 
+    //     RESPEITAR A IMPORTÂNCIA DESSE ELEMENTO.
     //     PERMITIR QUE MAIS TIPOS DE JANELA TENHAM CLIENT AREA.
     // Nesse caso deveremos considerar o tipo de janela na hora de  
     // criarmos a client area, pois tem janela que tem barra de títulos 
@@ -1466,18 +1465,9 @@ void *CreateWindow ( unsigned long type,
             // Done.
 		};
 		//Nothing.
-	};
+	}
 
-	//#debug
-    //if ( (unsigned long) type == WT_OVERLAPPED )
-	//{
-	//    printf("CreateWindow: #debug clientarea ok");
-	//	refresh_screen();
-	//	while(1){}
-	//}
 
-	//@todo: janela com scroll bar padrão.
-	//if( ScrollBar == 1 ){}
 
 	//MenuBar (teste)
     /*   
@@ -1489,18 +1479,22 @@ void *CreateWindow ( unsigned long type,
         create_menubar_item(window->barMenu,"Item2",0); 
 	};
 	*/
-	
-	
+
+
 	//
 	// SCROLL BAR
 	//
-	
+
+	// #todo: 
+	// janela com scroll bar padrão.
+	//if( ScrollBar == 1 ){}
+
+
 	// Se create window foi usada para criar uma janela filha 
 	// do tipo scroll bar. Completaremos.
 	 
-	if ( (unsigned long) type == WT_SCROLLBAR )
-	{
-		
+    if ( (unsigned long) type == WT_SCROLLBAR )
+    {
         //#test
         window->parent = Parent;
 
@@ -1565,18 +1559,19 @@ void *CreateWindow ( unsigned long type,
 		// Registrar.
 		RegisterWindow (windowButton6);
 		window->scrollbar_button2 = windowButton6;
-	};	
+	}
 
-	
-	
-	
-	if ( (unsigned long) type == WT_STATUSBAR )
-	{
+
+
+    // # Status bar #
+    if ( (unsigned long) type == WT_STATUSBAR )
+    {
         //#test
         window->parent = Parent;
-	}
-	
-	
+    }
+
+
+
 	//
 	//  ## Create button ##
 	//
@@ -1628,7 +1623,7 @@ void *CreateWindow ( unsigned long type,
 
 
 
-    // editbox
+    // # editbox #
     if ( (unsigned long) type == WT_EDITBOX )
     {
         window->parent = Parent;
@@ -1637,14 +1632,17 @@ void *CreateWindow ( unsigned long type,
     }
 
 
+    // #simple #
     if ( (unsigned long) type == WT_SIMPLE )
     {
        //#test
         window->parent = Parent;
     }
 
+
 	//
-	// Continua ... ( Pinta detalhes da janela, caso ouver )
+	// Continua ... 
+	// ( Pinta detalhes da janela, caso ouver )
 	//
 	
 	//Barras de rolagem ...
@@ -1656,21 +1654,21 @@ void *CreateWindow ( unsigned long type,
 	
 	
 	// Message: 
-	// @todo: Enviar uma mensagem de CREATE pra janela.
-	//        Assim o procedimento cria os elementos
-	//        restantes.
-		
+	// #todo: 
+	// Enviar uma mensagem de CREATE pra janela.
+	// Assim o procedimento cria os elementos restantes.
 	
-	// @todo: Atualizar a linkedlist da parent window.
+	// #todo: 
+	// Atualizar a linkedlist da parent window.
 	
 	
-	// Overlapped.
-	if (window->type == WT_OVERLAPPED)
-	{
 
-	    //#test
-        window->parent = Parent;		
-		
+	// ## Overlapped. ##
+    if (window->type == WT_OVERLAPPED)
+    {
+        //#test
+        window->parent = Parent;
+
 		active_window = window->id;
 		window->active = 1;
 		
@@ -1687,52 +1685,56 @@ void *CreateWindow ( unsigned long type,
 		// #test
 		// No momento vamos criar a scrool bar apenas para testar e implementar.
 		
-		window->scrollbar = CreateWindow ( WT_SCROLLBAR, 1, 1, "scrollbar-test", 
-	                            window->right -37, window->top +2 +32 +2, 
-								35, (window->height -2 -35 -2 -24 -2),									  
-					            window, 0, 
-								(unsigned long) CurrentColorScheme->elements[csiScrollBar], 
-								(unsigned long) CurrentColorScheme->elements[csiScrollBar]);
-								
-		RegisterWindow (window->scrollbar);
+        window->scrollbar = CreateWindow ( WT_SCROLLBAR, 1, 1, "scrollbar-test", 
+                                window->right -37, window->top +2 +32 +2, 
+                                35, (window->height -2 -35 -2 -24 -2),
+                                window, 0, 
+                                (unsigned long) CurrentColorScheme->elements[csiScrollBar], 
+                                (unsigned long) CurrentColorScheme->elements[csiScrollBar] );
 
+        RegisterWindow (window->scrollbar);
 
-		
-        // ## status bar ##
-		//Esses valores precisam ser melhor declarados.
+        // status bar
+        //Esses valores precisam ser melhor declarados.
 		
 		//#BUGBUG
 		//SÓ CRIAREMOS STATUS BAR NUMA OVERLAPPED SE A FLAG INDICAR ISSO;
 		//ISSO VALE PRA OUTROS TIPOS DE JANELA NÃO SOMENTE ESSE TIPO.		
-		
-		window->statusbar = CreateWindow ( WT_STATUSBAR, 1, 1, "Status: ...", 
-	                              window->left+1, window->bottom-25-1, 
-								  window->width, 25, window, 0, 
-								  COLOR_BLUE, COLOR_GRAY );
-        
-		// Registrar.
-		RegisterWindow (window->statusbar);
-		
+
+        window->statusbar = CreateWindow ( WT_STATUSBAR, 1, 1, "Status: ...", 
+                                window->left+1, window->bottom-25-1, 
+                                window->width, 25, window, 0, 
+                                COLOR_BLUE, COLOR_GRAY );
+
+        RegisterWindow (window->statusbar);
+
 		window->statusbarUsed = 1;
 		window->statusbar = window->statusbar;
-        
-        // # icon #
-		// Os ícones já estão carregados, 
-		// vamos apenas decodificá-lo no backbuffer 
-		
-	    bmpDisplayBMP ( appIconBuffer, window->left +8, window->top +8 );
-	};
-	
-	
-	//#debug
-    //if ( (unsigned long) type == WT_OVERLAPPED )
-	//{
-	//    printf("CreateWindow: #debug scroll status and *icon ok");
-	//	refresh_screen();
-	//	while(1){}
-	//}
 
-	
+        // # icon #
+        // Os ícones já estão carregados, 
+        // vamos apenas decodificá-lo no backbuffer 
+        bmpDisplayBMP ( appIconBuffer, window->left +8, window->top +8 );
+    }
+
+
+
+    // ## Icon. ##
+    // #todo
+    // Planejar o posicionamento centralizado do bmp dentro da 
+    // janela ícone.
+    if (window->type == WT_ICON)
+    {
+        bmpDisplayBMP ( appIconBuffer, window->left +8, window->top +8 );
+        //bmpDisplayBMP ( appIconBuffer, window->left +8, window->top +8 );
+
+		// String
+        draw_string ( window->left +8, window->top +16 +8 +8, 
+            COLOR_TERMINALTEXT2, window->name );  
+    }
+
+
+
 	//Ex: if( sendMessage(.,.,.,.) == 0 )
 	//{
 	//	//apaga tudo, notifica o erro e retorna null.
@@ -1789,16 +1791,18 @@ void *CreateWindow ( unsigned long type,
     //z-order global de overlapped windows.
 	//@todo: Colocar essa definição no início da função.
     int z;
-	z = (int) z_order_get_free_slot();	
+	z = (int) z_order_get_free_slot();
     
-	if( z >= 0 && z < ZORDER_COUNT_MAX )
+	if ( z >= 0 && z < ZORDER_COUNT_MAX )
 	{
 	    zorderList[z] = (unsigned long) window;
-	};
+	}
 	
-	//@todo: z-order de elementos gráficos dentro da janela mãe.
+	// #todo: 
+	// z-order de elementos gráficos dentro da janela mãe.
  
 // done.
+
 done:
 
     //Testando se a rotina modificou algum desses.
