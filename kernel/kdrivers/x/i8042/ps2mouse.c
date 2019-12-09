@@ -558,6 +558,179 @@ unsigned long ps2_mouse_get_info ( int i )
     }	
 }
 
+
+// #todo: 
+// Isso aqui deveria colocar um pacote na fila
+// para o window server pegar depois.
+void ps2mouse_parse_data_packet (void)
+{
+
+			// A partir de agora já temos os três chars.
+			// Colocando os três chars em variáveis globais.
+			// Isso ficará assim caso não haja overflow.
+
+            mouse_packet_data = buffer_mouse[0];    // Primeiro char
+            mouse_packet_x    = buffer_mouse[1];    // Segundo char.
+            mouse_packet_y    = buffer_mouse[2];    // Terceiro char.
+            
+            
+    //
+    // ==== Posicionamento ====
+    //            
+            
+            
+
+			// Salvando o antigo antes de atualizar.
+			// Para poder apagar daqui a pouco.
+			// Atualizando.
+            saved_mouse_x = mouse_x;
+            saved_mouse_y = mouse_y;
+            update_mouse (); 
+ 
+            // Agora vamos manipular os valores obtidos através da 
+            // função de atualização dos valores.
+            // A função de atualização atualizou os valores de
+            // mouse_x e mouse_y.
+            mouse_x = (mouse_x & 0x000003FF );
+            mouse_y = (mouse_y & 0x000003FF );
+
+			// #importante:
+			// Checando limites.
+			// Isso é provisório.
+
+            if ( mouse_x < 1 ){ mouse_x = 1; }
+            if ( mouse_y < 1 ){ mouse_y = 1; }
+            if ( mouse_x > (SavedX-16) ){ mouse_x = (SavedX-16); }
+            if ( mouse_y > (SavedY-16) ){ mouse_y = (SavedY-16); }
+
+
+            // Comparando o novo com o antigo, pra saber se o mouse se moveu.
+            // #obs: Pra quem mandaremos a mensagem de moving ??
+            if ( saved_mouse_x != mouse_x || saved_mouse_y != mouse_y )
+            {
+				// flag: o mouse está se movendo.
+				// usaremos isso no keydown.
+				// >> na hora de enviarmos uma mensagem de mouse se movendo
+				// se o botão estiver pressionado então temos um drag (carregar.)
+				// um release cancela o carregar.
+				
+				ps2_mouse_moving = 1;
+				
+				
+				//#todo: drag support
+				//if ( ps2_button_pressed == 1 )
+				//{ 
+				//    ps2_mouse_drag_status = 1;
+                //}else{
+				//    ps2_mouse_drag_status = 0;
+				//}
+
+                   
+                //
+                // draw
+                //
+
+                // Apaga o antigo.
+                // + Copia no LFB um retângulo do backbuffer 
+                // para apagar o ponteiro antigo.
+                refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
+                
+                // Acende o novo.
+                //+ Decodifica o mouse diretamente no LFB.
+                // Copiar para o LFB o antigo retângulo  
+                // para apagar o ponteiro que está no LFB.
+                bmpDisplayMousePointerBMP ( mouseBMPBuffer, mouse_x, mouse_y );   
+                         
+            }else{
+				
+				
+				// Não redesenhamos quando o evento for um click, sem movimento.
+			    ps2_mouse_moving = 0;
+			} 
+			
+		
+    //
+    // ==== Botão ====
+    //            
+
+
+	//Apenas obtendo o estado dos botões.
+    mouse_buttom_1 = 0;
+    mouse_buttom_2 = 0;
+    mouse_buttom_3 = 0;
+
+
+
+	// ## LEFT ##
+    if ( ( mouse_packet_data & MOUSE_LEFT_BUTTON ) == 0 )
+    {
+		//liberada.
+        mouse_buttom_1 = 0;
+
+    }else if( ( mouse_packet_data & MOUSE_LEFT_BUTTON ) != 0 )
+        {
+		    //pressionada.
+		    //Não tem como pressionar mais de um botão por vez.
+
+            mouse_buttom_1 = 1;
+            mouse_buttom_2 = 0;
+            mouse_buttom_3 = 0;
+        };
+
+
+
+	// ## RIGHT ##
+    if ( ( mouse_packet_data & MOUSE_RIGHT_BUTTON ) == 0 )
+    {
+	    //liberada.
+        mouse_buttom_2 = 0;
+
+    }else if( ( mouse_packet_data & MOUSE_RIGHT_BUTTON ) != 0 )
+        {
+		    //pressionada.
+		    //Não tem como pressionar mais de um botão por vez.
+            mouse_buttom_1 = 0;
+            mouse_buttom_2 = 1;
+            mouse_buttom_3 = 0;
+        };
+
+
+
+	// ## MIDDLE ##
+    if ( ( mouse_packet_data & MOUSE_MIDDLE_BUTTON ) == 0 )
+    {
+	    //liberada.
+        mouse_buttom_3 = 0;
+
+    }else if( ( mouse_packet_data & MOUSE_MIDDLE_BUTTON ) != 0 )
+        {
+	        //pressionada.
+	        //Não tem como pressionar mais de um botão por vez.
+
+	        mouse_buttom_1 = 0;
+	        mouse_buttom_2 = 0;
+	        mouse_buttom_3 = 1;
+        };
+
+
+	// ===
+	// Confrontando o estado atual com o estado anterior para saber se ouve 
+	// alguma alteração ou não.
+	// 1 = ouve alteração.
+
+    if ( mouse_buttom_1 != old_mouse_buttom_1 ||
+         mouse_buttom_2 != old_mouse_buttom_2 ||
+         mouse_buttom_3 != old_mouse_buttom_3 )
+    {
+        mouse_button_action = 1;
+
+    }else{
+        mouse_button_action = 0;
+    };
+}
+
+
+
 /*
  ********************************************************
  * mouseHandler:
@@ -570,8 +743,6 @@ unsigned long ps2_mouse_get_info ( int i )
  * Obs: 
  * Temos externs no início desse arquivo.
  */
-
-int __do_scan;
 
 void mouseHandler (void){
 
@@ -648,8 +819,6 @@ void mouseHandler (void){
             buffer_mouse[0] = (char) *_byte;
             if (*_byte & MOUSE_V_BIT)
                 count_mouse++;
-            
-            __do_scan = 0; //não escaneie ainda.
             break;
 
 
@@ -658,8 +827,6 @@ void mouseHandler (void){
             //Pegamos o segundo char.
             buffer_mouse[1] = (char) *_byte;
             count_mouse++;
-            
-            __do_scan = 0; //não escaneie ainda.
             break;
 
 
@@ -668,212 +835,28 @@ void mouseHandler (void){
             //Pegamos o terceiro char.
             buffer_mouse[2] = (char) *_byte;
             count_mouse = 0;
-
-			// A partir de agora já temos os três chars.
-			// Colocando os três chars em variáveis globais.
-			// Isso ficará assim caso não haja overflow.
-
-            mouse_packet_data = buffer_mouse[0];    // Primeiro char
-            mouse_packet_x    = buffer_mouse[1];    // Segundo char.
-            mouse_packet_y    = buffer_mouse[2];    // Terceiro char.
-
-    
-			// Salvando o antigo antes de atualizar.
-			// Para poder apagar daqui a pouco.
-			// Atualizando.
-            saved_mouse_x = mouse_x;
-            saved_mouse_y = mouse_y;
-            update_mouse (); 
- 
-            // Agora vamos manipular os valores obtidos através da 
-            // função de atualização dos valores.
-            // A função de atualização atualizou os valores de
-            // mouse_x e mouse_y.
-            mouse_x = (mouse_x & 0x000003FF );
-            mouse_y = (mouse_y & 0x000003FF );
-
-			// #importante:
-			// Checando limites.
-			// Isso é provisório.
-
-            if ( mouse_x < 1 ){ mouse_x = 1; }
-            if ( mouse_y < 1 ){ mouse_y = 1; }
-            if ( mouse_x > (SavedX-16) ){ mouse_x = (SavedX-16); }
-            if ( mouse_y > (SavedY-16) ){ mouse_y = (SavedY-16); }
             
+            ps2mouse_parse_data_packet();
             
-     
-           
-            // Comparando o novo com o antigo, pra saber se o mouse se moveu.
-            // #obs: Pra quem mandaremos a mensagem de moving ??
-            if ( saved_mouse_x != mouse_x || saved_mouse_y != mouse_y )
-            {
-				// flag: o mouse está se movendo.
-				// usaremos isso no keydown.
-				// >> na hora de enviarmos uma mensagem de mouse se movendo
-				// se o botão estiver pressionado então temos um drag (carregar.)
-				// um release cancela o carregar.
-				
-				ps2_mouse_moving = 1;
-				
-				
-				//#todo: drag support
-				//if ( ps2_button_pressed == 1 )
-				//{ 
-				//    ps2_mouse_drag_status = 1;
-                //}else{
-				//    ps2_mouse_drag_status = 0;
-				//}
-
-                   
-                //
-                // draw
-                //
-
-                // Apaga o antigo.
-                // + Copia no LFB um retângulo do backbuffer 
-                // para apagar o ponteiro antigo.
-                refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
-                
-                // Acende o novo.
-                //+ Decodifica o mouse diretamente no LFB.
-                // Copiar para o LFB o antigo retângulo  
-                // para apagar o ponteiro que está no LFB.
-                bmpDisplayMousePointerBMP ( mouseBMPBuffer, mouse_x, mouse_y );            
-            }else{
-				
-				
-				// Não redesenhamos quando o evento for um click, sem movimento.
-			    ps2_mouse_moving = 0;
-			} 
-			__do_scan = 1; //agora pode escanear
+            //#bugbug
+            // escaneando janelas.
+            // O window server deveria fazer isso.
+            kgws_mouse_scan_windows ();
+            
+            // O driver precisa do old pra configurar a variável de ação.
+            // #todo Talvez precise de outras
+            old_mouse_buttom_1 = mouse_buttom_1;
+            old_mouse_buttom_2 = mouse_buttom_2;
+            old_mouse_buttom_3 = mouse_buttom_3;
             break;
 
 
         // Problemas na contagem de interrupções.
         default:
             count_mouse = 0;
-            __do_scan = 0; //não escaneie ainda.
             return;
             break;
     };
-
-
-
-	// #importante 
-	// Por outro lado o mouse deve confrontar seu posicionamento com 
-	// todas as janelas, para saber se as coordenadas atuais estão passando 
-	// por alguma das janelas. Se estiver, então enviaremos mensagens para essa 
-	// janela que o mouse passou por cima. Ela deve ser sinalizada como hover,
-	// 
-	// #importante:
-	// Se houver um click, o elemento com mousehover será afetado, e 
-	// enviaremos mesagens para ele, se apertarem enter ou application key, 
-	// quem recebe a mensagem é o first responder, ou seja, a janela com o 
-	// foco de entrada.
-	// Se clicarmos com o botão da direita, quem recebe a mensagem é 
-	// a janela que o mouse está passando por cima.
-
-
-	//
-	//  ## Button ##
-	//
-
-
-	//Apenas obtendo o estado dos botões.
-    mouse_buttom_1 = 0;
-    mouse_buttom_2 = 0;
-    mouse_buttom_3 = 0;
-
-
-
-	// ## LEFT ##
-    if ( ( mouse_packet_data & MOUSE_LEFT_BUTTON ) == 0 )
-    {
-		//liberada.
-        mouse_buttom_1 = 0;
-
-    }else if( ( mouse_packet_data & MOUSE_LEFT_BUTTON ) != 0 )
-        {
-		    //pressionada.
-		    //Não tem como pressionar mais de um botão por vez.
-
-            mouse_buttom_1 = 1;
-            mouse_buttom_2 = 0;
-            mouse_buttom_3 = 0;
-        };
-
-
-
-	// ## RIGHT ##
-    if ( ( mouse_packet_data & MOUSE_RIGHT_BUTTON ) == 0 )
-    {
-	    //liberada.
-        mouse_buttom_2 = 0;
-
-    }else if( ( mouse_packet_data & MOUSE_RIGHT_BUTTON ) != 0 )
-        {
-		    //pressionada.
-		    //Não tem como pressionar mais de um botão por vez.
-            mouse_buttom_1 = 0;
-            mouse_buttom_2 = 1;
-            mouse_buttom_3 = 0;
-        };
-
-
-
-	// ## MIDDLE ##
-    if ( ( mouse_packet_data & MOUSE_MIDDLE_BUTTON ) == 0 )
-    {
-	    //liberada.
-        mouse_buttom_3 = 0;
-
-    }else if( ( mouse_packet_data & MOUSE_MIDDLE_BUTTON ) != 0 )
-        {
-	        //pressionada.
-	        //Não tem como pressionar mais de um botão por vez.
-
-	        mouse_buttom_1 = 0;
-	        mouse_buttom_2 = 0;
-	        mouse_buttom_3 = 1;
-        };
-
-
-	// ===
-	// Confrontando o estado atual com o estado anterior para saber se ouve 
-	// alguma alteração ou não.
-	// 1 = ouve alteração.
-
-    if ( mouse_buttom_1 != old_mouse_buttom_1 ||
-         mouse_buttom_2 != old_mouse_buttom_2 ||
-         mouse_buttom_3 != old_mouse_buttom_3 )
-    {
-        mouse_button_action = 1;
-
-    }else{
-        mouse_button_action = 0;
-    };
-
-
-    // >> Daqui pra frente é operação envolvendo janelas.
-    // Passremos o comando para o servidor de janelas,
-    // pois o driver de mouse ps2 não entende de janelas.  
-    // >> Mas antes ja passamos informações sobre o evento.
-
-    //
-    // Scan 
-    //
-    
-    // #bugbug
-    // Estamos chamando o scan.
-    // Mas isso deveria ser o trabalho do servidor de janelas
-    // que faria isso num loop pegando os eventod de uma fila de eventos.
-    
-    if (__do_scan == 1)
-    {
-		kgws_mouse_scan_windows ();
-	    __do_scan = 0;
-	}
 }
 
 

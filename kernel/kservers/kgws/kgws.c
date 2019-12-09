@@ -80,6 +80,9 @@ int kgws_mouse_scan_windows (void)
     // Chamar o driver de mouse ps2 pra pegar as informações
     // sobre o mouse;
     //
+    
+    // #todo
+    // Temos que pegar um pacote com todas as informações de uma vez.
 
     //ok
 	kgws_mouse_event_saved_mouse_x = ps2_mouse_get_info (1);
@@ -105,8 +108,9 @@ int kgws_mouse_scan_windows (void)
     
     kgws_mouse_event_button_pressed =  ps2_mouse_get_info (14);
     
-    
-	
+
+    //printf ("b=%d ",kgws_mouse_event_mouse_buttom_1);
+
 	// #refletindo: 
 	// ?? E no caso de apenas considerarmos que o mouse está se movendo, 
 	// mandaremos para janela over. ???
@@ -277,6 +281,7 @@ int kgws_mouse_scan_windows (void)
 		// Nesse momento um drag pode terminar
         if ( kgws_mouse_event_button_action == 1 )
         {
+			printf ("[Action ");
 
 			// >> BOTÃO 1 ==================
 			//Igual ao estado anterior
@@ -287,10 +292,15 @@ int kgws_mouse_scan_windows (void)
 			//Diferente do estado anterior.
             }else{
 				
+				printf ("Dif ");
+				
 				// down - O botão 1 foi pressionado.
                 if ( kgws_mouse_event_mouse_buttom_1 == 1 )
-                { 
+                {
+					printf ("Press\n");
+					 
 					//clicou
+					// se o old estava em 0 então o atual está em um.
                     if ( kgws_mouse_event_old_mouse_buttom_1 == 0 )
                     {
 						// flag: um botão foi pressionado.
@@ -316,19 +326,20 @@ int kgws_mouse_scan_windows (void)
 							}
                             t->long1 = 1;
                             t->long2 = 0;
-                            t->newmessageFlag = 1;
-                            
-                            return 0;
+                            t->newmessageFlag = 1;   
                         }
                         //else: // houve alteração no estado do botão 1 mas não estamos em cima de uma janela.
                         
                         
 						//Atualiza o estado anterior.
-                        kgws_mouse_event_old_mouse_buttom_1 = 1;
+                        //kgws_mouse_event_old_mouse_buttom_1 = 1;
+                        kgws_mouse_event_old_mouse_buttom_1 = kgws_mouse_event_mouse_buttom_1;
                     }
 
 				// up - O botão 1 foi liberado.
                 }else{
+					
+					printf ("Rel\n");
 
 				    // flag: um botão foi liberado.
 				    kgws_mouse_event_button_pressed = 0;
@@ -345,15 +356,14 @@ int kgws_mouse_scan_windows (void)
                         t->long1 = 1;
                         t->long2 = 0;
                         t->newmessageFlag = 1;
-                        
-                        return 0;
                     }
 
-                    kgws_mouse_event_old_mouse_buttom_1 = 0;
-                }
+                    //kgws_mouse_event_old_mouse_buttom_1 = 0;
+                    kgws_mouse_event_old_mouse_buttom_1 = kgws_mouse_event_mouse_buttom_1;
+                };
             }; 
 
-
+            /*
 			// >> BOTÃO 2 ==================
 			// Igual ao estado anterior
             if ( kgws_mouse_event_mouse_buttom_2 == kgws_mouse_event_old_mouse_buttom_2 )
@@ -381,12 +391,13 @@ int kgws_mouse_scan_windows (void)
                             t->long1 = 2;
                             t->long2 = 0;
                             t->newmessageFlag = 1;
-                            return 0;
+                            
                         }
                         //else: // houve alteração no estado do botão 2 mas não estamos em cima de uma janela.
 
 						// atualiza o estado anterior.
-                        kgws_mouse_event_old_mouse_buttom_2 = 1;
+                        //kgws_mouse_event_old_mouse_buttom_2 = 1;
+                        kgws_mouse_event_old_mouse_buttom_2 = kgws_mouse_event_mouse_buttom_2;
                     }
 
 				// up - O botão 2 foi liberado.
@@ -405,14 +416,16 @@ int kgws_mouse_scan_windows (void)
                         t->long1 = 2;
                         t->long2 = 0;
                         t->newmessageFlag = 1;
-                        return 0;
+                        
                     }
 
-                    kgws_mouse_event_old_mouse_buttom_2 = 0;
+                    //kgws_mouse_event_old_mouse_buttom_2 = 0;
+                    kgws_mouse_event_old_mouse_buttom_2 = kgws_mouse_event_mouse_buttom_2;
                 }
             }; 
+            */
 
-
+            /* 
 			// >> BOTÃO 3 ==================
 			// Igual ao estado anterior
             if ( kgws_mouse_event_mouse_buttom_3 == kgws_mouse_event_old_mouse_buttom_3 )
@@ -439,12 +452,13 @@ int kgws_mouse_scan_windows (void)
                             t->long1 = 3;
                             t->long2 = 0;
                             t->newmessageFlag = 1;
-                            return 0;
+                            
                         }
                         //else: // houve alteração no estado do botão 1 mas não estamos em cima de uma janela.
 
 						// Atualiza o estado anterior.
-                        kgws_mouse_event_old_mouse_buttom_3 = 1;
+                        //kgws_mouse_event_old_mouse_buttom_3 = 1;
+                        kgws_mouse_event_old_mouse_buttom_3 = kgws_mouse_event_mouse_buttom_3;
                     }
 
 				// up - O botão 3 foi liberado.
@@ -463,19 +477,22 @@ int kgws_mouse_scan_windows (void)
                         t->long1 = 3;
                         t->long2 = 0;
                         t->newmessageFlag = 1;
-                        return 0;
+                        
                     }
 
-                    kgws_mouse_event_old_mouse_buttom_3 = 0;
+                    //kgws_mouse_event_old_mouse_buttom_3 = 0;
+                    kgws_mouse_event_old_mouse_buttom_3 = kgws_mouse_event_mouse_buttom_3;
                 }
             }; 
+            */ 
 
 			// Ação concluída.
             kgws_mouse_event_button_action = 0;
+            return 0;
         };
 
 
-        
+        /*
         //===============================================
         // *** Se NÃO ouve alteração no estado dos botões, então apenas 
         // enviaremos a mensagem de movimento do mouse e sinalizamos 
@@ -487,6 +504,7 @@ int kgws_mouse_scan_windows (void)
 
         if ( kgws_mouse_event_button_action == 0 )
         {
+			//printf ("[ No Action \n");
 
 			// #importante
 			// Lembrando que estamos dentro de uma janela ...
@@ -517,7 +535,7 @@ int kgws_mouse_scan_windows (void)
                         t->long1 = 0;
                         t->long2 = 0;
                         t->newmessageFlag = 1;
-                        return 0;
+                        //return 0;
                         //}
                     };
 
@@ -576,7 +594,7 @@ int kgws_mouse_scan_windows (void)
                     t->long2 = 0;
                     t->newmessageFlag = 1;
                     
-                    return 0;
+                    //return 0;
 
                 //É mouse over window.
                 // não estamos em cima de uma janela e não houve alteração no estado dos botões
@@ -589,7 +607,11 @@ int kgws_mouse_scan_windows (void)
 			// Ação concluída.
 			// Para o caso de um valor incostante na flag.
             kgws_mouse_event_button_action = 0;
+            return 0;
         };
+        */
+
+
 
 
     };
