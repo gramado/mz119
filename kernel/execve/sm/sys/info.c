@@ -91,33 +91,34 @@ void KiInformation (void){
 	
 	//screen 
 	
-	printf ("\n Screen Resolution: W=%d H=%d \n",
-	    g_device_screen_width, g_device_screen_height );
-	
+    printf ("\n Screen Resolution: W=%d H=%d \n",
+        g_device_screen_width, g_device_screen_height );
+
 	//timing
 	
-	printf("%d Hz | sys time %d ms | ticks %d \n", 
-	    sys_time_hz, sys_time_ms, sys_time_ticks_total );	
+    printf ("%d Hz | sys time %d ms | ticks %d \n", 
+        sys_time_hz, sys_time_ms, sys_time_ticks_total );
 	
 	//
 	// ## User ##
 	//
 	
 	//Group and user.
-	printf("User Info: Group={%d} User={%d}\n", current_group, current_user );
-	
+    printf ("User Info: Group={%d} User={%d}\n", 
+        current_group, current_user );
+
 	//user session, room (window station), desktop.
-	printf("UserSession={%d} Room={%d} Desktop={%d}\n",
-		current_usersession, current_room, current_desktop );
-	
+    printf ("UserSession={%d} Room={%d} Desktop={%d}\n",
+        current_usersession, current_room, current_desktop );
+
 	//#bugbug Rever isso.
-	ShowUserInfo(0);  
-	
+    ShowUserInfo (0);  
+
 
     // ## Status ##
 
 	// Status do mecanismo de task switch.
-	switch( task_switch_status )
+	switch ( task_switch_status )
 	{
 	    case LOCKED:
 		    printf("Task switch is LOCKED\n");
@@ -125,11 +126,12 @@ void KiInformation (void){
 	    
 		case UNLOCKED:
 		    printf("Task switch is UNLOCKED\n");
-		    break; 	
+		    break; 
 	};
 
+
 	// Status do Scheduler.
-	switch( g_scheduler_status )
+	switch ( g_scheduler_status )
 	{
 	    case LOCKED:
 		    printf("Scheduler is LOCKED\n");
@@ -140,43 +142,47 @@ void KiInformation (void){
 		    break; 
 	};
 
+
 	//
 	// ## Process and thread ##
 	//
 	
-	printf("[Process Info:]\n");	
-    
+    printf ("[Process Info:]\n");
+
 	//Current process and current thread.
-	printf("CurrentProcess={%d} CurrentThread={%d}\n", 
-	    current_process, current_thread );
+    printf ("CurrentProcess={%d} CurrentThread={%d}\n", 
+        current_process, current_thread );
 
-	printf("# thread info #\n");	
-	printf("{ %d } threads_counter\n\n", ProcessorBlock.threads_counter );	
-    
-	show_thread_information ();		
+    printf ("# thread info #\n");
+    printf ("{ %d } threads_counter\n\n", 
+        ProcessorBlock.threads_counter );
 
-		
+
+    show_thread_information ();
+
+
 	// Critério de dispatch.
 	// Mostra o número de vezes que um critério de seleção 
 	// de thread foi usado pelo dispatcher.
-	
-	printf("\n");
-    printf("[Dispatch criteria:]\n");
-	printf("cIdle={%d} cInit={%d} cNext={%d} cCur={%d} "
-	       "cAny={%d} cIdeal={%d} cDisp={%d}\n\n",
-		DispatchCountBlock->SelectIdleCount,
-		DispatchCountBlock->SelectInitializedCount,
-		DispatchCountBlock->SelectNextCount,
-		DispatchCountBlock->SelectCurrentCount,
-		DispatchCountBlock->SelectAnyCount,
-		DispatchCountBlock->SelectIdealCount,
-		DispatchCountBlock->SelectDispatcherQueueCount );
-		
-		
-    //
+
+    printf ("\n");
+    printf ("[Dispatch criteria:]\n");
+    printf ("cIdle={%d} cInit={%d} cNext={%d} cCur={%d} "
+            "cAny={%d} cIdeal={%d} cDisp={%d}\n\n",
+        DispatchCountBlock->SelectIdleCount,
+        DispatchCountBlock->SelectInitializedCount,
+        DispatchCountBlock->SelectNextCount,
+        DispatchCountBlock->SelectCurrentCount,
+        DispatchCountBlock->SelectAnyCount,
+        DispatchCountBlock->SelectIdealCount,
+        DispatchCountBlock->SelectDispatcherQueueCount );
+
+
+
+	//
 	// ## Heap and Stack ##
 	//
-	
+
     //Obs: Estou revendo isso.
 	//printf("\n[Kernel Heap and Stack info:]\n");
 	//printf("HEAP: Start={%x} | End={%x} | Total={%d KB} \n",
@@ -212,21 +218,23 @@ void KiInformation (void){
     //  ## Memory ##
     //	
 	
-	memoryShowMemoryInfo();
+	memoryShowMemoryInfo ();
 	
-	//Nothing.   	
-    goto done;	
-	
+	//Nothing. 
+    goto done;
+
+
 fail:
-    printf("fail\n");	
+    printf ("fail\n");
+
 done:
-    //SetFocus(hWindow);
-	
+
 	// Talvez possamos da refresh apenas da janela 
-	// onde as strings aparecem.	
+	// onde as strings aparecem.
+
     refresh_screen();
-	return;	
-};
+    return;
+}
 
 
 /*
@@ -250,6 +258,6 @@ void infoShowKernelInfo()
 
 
 //
-// Fim.
+// End.
 //
 

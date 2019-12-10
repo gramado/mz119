@@ -86,36 +86,38 @@ void KiTaskSwitch (void){
 	
 	//Limits.
 	
-	if ( current_thread < 0 || current_thread >= THREAD_COUNT_MAX )
-	{	
-	    printf ("KiTaskSwitch: current_thread %d", current_thread );										   
+    if ( current_thread < 0 || current_thread >= THREAD_COUNT_MAX )
+    {
+        printf ("KiTaskSwitch: current_thread %d", current_thread ); 
         die ();
-	}
-	
-	if ( current_process < 0 || current_process >= PROCESS_COUNT_MAX )
-	{
-		
-	    printf ("KiTaskSwitch: current_thread %d",current_process );										   
+    }
+
+    if ( current_process < 0 || current_process >= PROCESS_COUNT_MAX )
+    {
+        printf ("KiTaskSwitch: current_thread %d", current_process );
         die ();
-	}
-	
+    }
+
+
 #ifdef SERIAL_DEBUG_VERBOSE
 	debug_print ("ts ");
-#endif	
-	
+#endif
+
 
 	// ## Task switch ##
-	
-	task_switch ();
-	
+
+    task_switch ();
+
     // obs: 
-	// Nessa hora ja temos um thread atual e um processo atual selecionados.
-    // podemos checar as variáveis para conferir se não está fora dos limites.
-    // Se estiverem fora dos limites, podemos usar algum etodo para selecioanrmos 
-    // outro processo ou outra thread com limites válidos.
-	
-	//Retornando para _irq0 em head\x86\hw.inc.
-};
+    // Nessa hora já temos um thread atual e um processo atual 
+    // selecionados. Podemos checar as variáveis para conferir se 
+    // não está fora dos limites. Se estiverem fora dos limites, 
+    // podemos usar algum método para selecionarmos outro processo 
+    // ou outra thread com limites válidos.
+ 
+    // #importante:   
+    // Retornando para _irq0 em head/x86/hw.inc.
+}
 
 
 /*
@@ -131,41 +133,45 @@ void KiTaskSwitch (void){
  
 void task_switch (void){
 
-	int New;
-	int Max;
+    int New;
+    int Max;
 
-	struct process_d *P;	
-	struct thread_d *Current;
+    struct process_d *P;
+    struct thread_d *Current;
 
-	Max = PRIORITY_MAX;
-	
+
+
+    Max = PRIORITY_MAX;
+
 	// #importante
 	// Checar no tty atual se tem que atualizar a tela,
 	// a linha ou o char.
 	
 	//check_CurrentTTY ();
-		
+
+
 	
 	// Current thread. 
 	
-	Current = (void *) threadList[current_thread]; 
-	
-	if ( (void *) Current == NULL )
-	{
-		panic ("ts-task_switch: struct Current");
-	}
+    Current = (void *) threadList[current_thread]; 
+
+    if ( (void *) Current == NULL )
+    {
+        panic ("ts-task_switch: Current");
+    }
+
 
 	// Current process. 
 
-	P = (void *) Current->process;
+    P = (void *) Current->process;
 
-	if ( (void *) P == NULL )
-	{
-        panic ("ts-task_switch: struct C");
-	}
-	
-	if ( (void *) P != NULL )
-	{
+    if ( (void *) P == NULL )
+    {
+        panic ("ts-task_switch: P");
+    }
+
+    if ( (void *) P != NULL )
+    {
 		if ( P->used == 1 && P->magic == 1234 )
 		{	
 			current_process = (int) P->pid;
@@ -173,12 +179,11 @@ void task_switch (void){
 		
 		    //??
 			//? fail ??
-		}
-		
+		};
 		//...
-	};
+    }
 
-	
+
 	//...
 
     //
@@ -214,18 +219,21 @@ void task_switch (void){
 	}; //FI LOCKED
 
 	
-    //
+	//
 	// ======== ## unlocked ## ========
 	//
-	
-	if ( task_switch_status == UNLOCKED )
-	{
+
+    // Nesse momento a thread atual sofre preempção por tempo
+    // Em seguida tentamos selecionar outra thread.
+
+    if ( task_switch_status == UNLOCKED )
+    {
 		//
 		// ## SAVE CONTEXT ##
 		//
 		
 		save_current_context ();
-		Current->saved = 1;	
+		Current->saved = 1;
 		
 		// #importante:
 		// Se a thread ainda não esgotou seu quantum, 
@@ -254,6 +262,11 @@ void task_switch (void){
 				// Preempt.
 				// MOVEMENT 3 (running >> ready)  
 				
+				// sofrendo preempção por tempo.
+				// #todo: Mas isso só poderia acontecer se a flag
+				// ->preempted permitisse. 
+				// talvez o certo seja ->preenptable.
+
 				Current->state = READY;    
 
 				if ( Current->preempted == PREEMPTABLE )
@@ -279,26 +292,26 @@ void task_switch (void){
 			
 			// #importante:
 			// Checaremos por atividades extras que foram agendadas pelo 
-			// mecanismo de request. Isso depois do contexto ter sido salvo e 
-			// antes de selecionarmos a próxima thread.
+			// mecanismo de request. Isso depois do contexto ter sido 
+			// salvo e antes de selecionarmos a próxima thread.
 
 			if (extra == 1)
 			{
 				KiRequest ();
 				
-				// #todo: Talvez possamos incluir mais atividades extras.
+				// #todo: 
+				// Talvez possamos incluir mais atividades extras.
 				// Continua ...
 				
 				extra = 0;
 			}
 			
-			//
+
 			// Dead thread collector
 			// Avalia se é necessário acordar a thread do dead thread collector.
 			// É uma thread em ring 0.
-			//
 			
-			// So' chamamos se ele ja estiver inicializado e rodando.
+			// Só chamamos se ele ja estiver inicializado e rodando.
 			if (dead_thread_collector_status == 1)
 			{
 				check_for_dead_thread_collector ();
@@ -321,9 +334,10 @@ void task_switch (void){
 
 		};
 		
-	}; //FI UNLOCKED
+    }; //FI UNLOCKED
 
-    //	
+
+    //
     // ==== Crazy Fail ====
     //
 	
@@ -333,25 +347,26 @@ void task_switch (void){
 	
 	//panic ("ts.c: crazy fail");
 	
-	goto dispatch_current;      	
+	goto dispatch_current; 
 	
 	
 	
 	
 	//
-	// ======== ####  NEXT #### ========
+	// ======== ##  NEXT ## ========
 	//
-	
+
 try_next: 
-	
-	
+
+
 #ifdef SERIAL_DEBUG_VERBOSE	
 	debug_print(" N ");
-#endif	
-	
+#endif
+
+
 	// #critério:
 	// Se tivermos apenas uma thread rodando.
-	
+
 	if (ProcessorBlock.threads_counter == 1)
 	{		
 		//debug_print(" JUSTONE ");
@@ -359,10 +374,12 @@ try_next:
 
 		goto go_ahead;
 	}
-	
-	
 
-	
+
+    //
+    // ==== Reescalonar se chegamos ao fim do round. ====
+    //
+
 	// #bugbug
 	// Ao fim do round estamos tendo problemas ao reescalonar 
 	// Podemos tentar repedir o round só para teste...
@@ -377,36 +394,41 @@ try_next:
 	// Se alcançamos o fim da lista encadeada cujo ponteiro é 'Conductor'.
 	// Então chamamos o scheduler para reescalonar as threads.
 
-	
-	if ( (void *) Conductor->Next == NULL )
-	{
-		
-#ifdef SERIAL_DEBUG_VERBOSE		
+
+    if ( (void *) Conductor->Next == NULL )
+    {
+
+#ifdef SERIAL_DEBUG_VERBOSE
 		debug_print(" LAST ");
-#endif		
-		
+#endif
+
 		//printf ("ts: scheduler 1\n");
 		KiScheduler ();
 		
 		goto go_ahead;
-	
-	
-	}
-	
+    }
+
+
+
 	// #critério
-	// Se ainda temos threads na lisca encadeada, então selecionaremos
+	// Se ainda temos threads na lista encadeada, então selecionaremos
 	// a próxima da lista.
 	// #BUGBUG: ISSO PODE SER UM >>> ELSE <<< DO IF ACIMA.
 	
-	if ( (void *) Conductor->Next != NULL )
-	{		
-		Conductor = (void *) Conductor->Next;	
+    if ( (void *) Conductor->Next != NULL )
+    {
+		Conductor = (void *) Conductor->Next;
 		
 		goto go_ahead;
-		
-	}
-	
-	
+    }
+
+
+    //
+    // # bugbug
+    //
+
+    panic ("ts-task_switch: Unspected");
+
 	//
 	//    ======== # Go ahead ## ========
 	//
@@ -423,11 +445,11 @@ try_next:
 	
 go_ahead:
 
-	//##############################################//
-	//                                              //
-	//    #### We have a thread now ####            //
-	//                                              //
-	//##############################################//
+	//###########################################//
+	//                                           //
+	//    #### We have a thread now ####         //
+	//                                           //
+	//###########################################//
 
 	Current = (void *) Conductor;
 		
@@ -479,10 +501,10 @@ go_ahead:
 //superCrazyFail:
 	
 	goto dispatch_current; 
-	
+
 	//
 	//    ####  Dispatch current ####
-	//	
+	//
 
 dispatch_current:
 	
@@ -490,10 +512,10 @@ dispatch_current:
 #ifdef SERIAL_DEBUG_VERBOSE	
 	debug_print(" DISPATCH_CURRENT \n");
 #endif
-	
+
 	//
 	//    ####  Validation ####
-	//	
+	//
 
 	Current = (void *) threadList[current_thread];
 	
@@ -521,7 +543,7 @@ dispatch_current:
 	// * MOVEMENT 4 (Ready --> Running).
 	//
 	
-	dispatcher (DISPATCHER_CURRENT);    	
+	dispatcher (DISPATCHER_CURRENT); 
 
 	//
 	//  #### DONE ####
@@ -531,7 +553,7 @@ done:
 
 	if ( Current->ownerPID < 0 || Current->ownerPID >= THREAD_COUNT_MAX )
 	{
-		printf ("action-ts-task_switch: ownerPID ERROR \n", Current->ownerPID );
+		printf ("ts-task_switch: ownerPID ERROR \n", Current->ownerPID );
 		die();
 	}
 	
@@ -545,7 +567,7 @@ done:
 	if ( (void *) P == NULL )
 	{
 		//printf ("action-ts-task_switch: Process %s struct fail \n", P->name_address );
-		printf ("action-ts-task_switch: Process %s struct fail \n", P->name );
+		printf ("ts-task_switch: Process %s struct fail \n", P->name );
 		die();
 	}
 	
@@ -565,7 +587,7 @@ done:
 			if ( (unsigned long) P->DirectoryPA == 0 )
 			{	
 				//printf ("action-ts-task_switch: Process %s directory fail\n", P->name_address );
-				printf ("action-ts-task_switch: Process %s directory fail\n", P->name );
+				printf ("ts-task_switch: Process %s directory fail\n", P->name );
 				die();
 			}
 			
@@ -573,10 +595,10 @@ done:
 			goto doneRET;
 		}
 		
-		panic ("action-ts-task_switch: * Struct * \n");
+		panic ("ts-task_switch: * Struct * \n");
 	}
 
-	panic ("action-ts-task_switch: bug sinistro kkk \n");
+	panic ("ts-task_switch: bug sinistro kkk \n");
 
 doneRET:
 	return; 

@@ -1,4 +1,6 @@
 /*
+ * File: sm/system.c
+ * 
  * sm - System Management - 
  * Seu objetivo principal é receber os comandos de gerenciamento,
  * enviados por usuários atráves de dispositivos de interface humana. 
@@ -24,7 +26,7 @@
  * things.o - Classe .Things.
  *
  * Ambiente:
- *     /executive/sm/sys/system.c
+ *     sm/system.c
  *     Kernel base. Ring0.
  *
  * Descrição:
@@ -94,12 +96,14 @@ extern unsigned long SavedBPP;
 /*
     Sobre os diretórios e arquivos do sistema:
     Os nomes dos diretórios e arquivos do sistema ficarão aqui
-	como forma de registro oficial. os módulos poderão reproduzir
-	o nome presente aqui ou poderão solicitar um ponteiro para o nome.
-	@todo: funções aqui nesse arquivo retornarão o ponteiro para o nome de arquivo
-	desejado.
+    como forma de registro oficial. os módulos poderão reproduzir
+    o nome presente aqui ou poderão solicitar um ponteiro para o nome.
+    #todo: 
+    Funções aqui nesse arquivo retornarão o ponteiro para o 
+    nome de arquivo desejado.
 	...
  */
+ 
  
 /*
  *     **** Diretórios do sistema. ****  obs:(8.3)
@@ -175,7 +179,7 @@ static char *systemSwapFilePathName      = "/root/swap";  //'Arquivo' de paginaç
 
 void set_up_color ( unsigned long color ){  
  
-	g_system_color = (unsigned long) color;	
+	g_system_color = (unsigned long) color;
 }
 
 
@@ -190,7 +194,7 @@ void set_up_color ( unsigned long color ){
 
 void set_up_text_color ( unsigned char forecolor, unsigned char backcolor ){
 	
-    g_char_attrib = (backcolor << 4) | (forecolor & 0x0F);	
+    g_char_attrib = (backcolor << 4) | (forecolor & 0x0F);
 }
 
 
@@ -1175,12 +1179,13 @@ void die (void){
  ***************************************
  * systemGetSystemMetrics:
  *     Retorna informações sobre o sistema.
- *     @todo: Criam um enum para essa função, aqui mesmo nesse arquivo.
+ *     #todo: 
+ *     Criam um enum para essa função, aqui mesmo nesse arquivo.
  */
 
 unsigned long systemGetSystemMetrics ( int index ){
 
-	//print("#debug: systemGetSystemMetrics: i={%d} \n",index)
+	//print ("#debug: systemGetSystemMetrics: i={%d} \n",index)
 
     if ( index <= 0 )
         return (unsigned long) 0;
@@ -1196,38 +1201,38 @@ unsigned long systemGetSystemMetrics ( int index ){
 		//screen height.	
 		case 2:
 		    return (unsigned long) screenGetHeight();
-            break;		
+            break;
 			
-		//cursor width.	
+		//cursor width.
 		case 3:
 		    return (unsigned long) g_cursor_width;
-            break;		
+            break;
 
-		//cursor hight.	
+		//cursor hight.
 		case 4:
 		    return (unsigned long) g_cursor_height;
-            break;		
+            break;
 			
 			
 		//mouse pointer width.	
 		case 5:
 		    return (unsigned long) g_mousepointer_width;
-            break;		
+            break;
          
 		//mouse pointer height. 
 		case 6:
 		    return (unsigned long) g_mousepointer_height;
             break;
 
-		//char width.	
+		//char width.
         case 7:
 		    return (unsigned long) get_char_width();
-            break;		
+            break;
 
-		//char height.	
+		//char height.
         case 8:
 		    return (unsigned long) get_char_height();
-            break;		
+            break;
 
 		//...
 		

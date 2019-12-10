@@ -34,10 +34,10 @@
 
 int init_runtime (void){
 	
-	// Init Memory Manager:	
+	// Init Memory Manager:
 	// Heap, Stack, Pages, mmblocks, memory sizes, memory zones ...
 	// ?? onde fica ??
-	
+
 	init_mm ();
 	
 	
@@ -59,24 +59,26 @@ int init_runtime (void){
 	//Cria o diretório de páginas do processo kernel, page tables e 
 	//area para pageframes de memória paginada.
 	//pages.c
-	
-	SetUpPaging ();	
-	
+
+    SetUpPaging ();
+
 	
     //printf ("init_runtime: 2 debug breakpoint, real machine, gigabyte/intel ..\n");
     //refresh_screen (); 
-    //while(1){}		
+    //while(1){}
 
 	
     // Continua ...
 	
     g_module_runtime_initialized = 1;
-	
-    return (int) 0;    
+
+
+    return 0; 
 }
 
 
 /*
+ ********************************
  * KiInitRuntime: 
  *     Init runtime.
  *     +Clear bss segment.
@@ -88,18 +90,19 @@ int init_runtime (void){
  */
 
 int KiInitRuntime (void){
-	
-	int Status = 0;
-	
-	debug_print("KiInitRuntime\n");
-	
-	
+
+    int Status = 0;
+
+    debug_print("KiInitRuntime\n");
+
+
 	//#todo 
 	//preparar a tela para as mesagens;
 	//mas somente se a flag de debug estiver acionada.
-	
+
     Status = (int) init_runtime ();
-	
+
+
 	// #### importante ####
 	// provavelmente aqui é o primeiro lugar onde as mensagens funcionam.
 	
@@ -109,8 +112,9 @@ int KiInitRuntime (void){
 	//#bugbug
 #ifdef EXECVE_VERBOSE
 	backgroundDraw ( (unsigned long) COLOR_BLUE ); 
-#endif		
-	
+#endif
+
+
 	//#todo:
 	//podemos analisar o status aqui.
 	
@@ -118,12 +122,13 @@ int KiInitRuntime (void){
     //#debug 
 	//a primeira mensagem só aparece após a inicialização da runtime.
 	//por isso não deu pra limpar a tela antes.
-	printf(">>>debug hang: after runtime initialization");
+	printf (">>>debug hang: after runtime initialization");
 	refresh_screen(); 
 	while (1){ asm ("hlt"); };
-#endif	
-	
-    return (int) Status;	
+#endif
+
+
+    return (int) Status;
 }
 
 

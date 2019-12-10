@@ -1,5 +1,5 @@
 /*
- * File: sm\sys\sm.c  
+ * File: sm/sys/sm.c  
  *
  *     Server Manager 
  *
@@ -67,11 +67,12 @@ int init_systemserver (void)
 int serverInit();
 int serverInit()
 {
-	return (int) 0;
-};
+	return 0;
+}
 */
 
+
 //
-// Fim.
+// End.
 //
 

@@ -41,7 +41,7 @@ void modulesModules()
 	//modulesError = 0;
 	//...
 	return;
-};
+}
 */
 
 /*
@@ -49,13 +49,13 @@ int modulesInit();
 int modulesInit()
 {
 	//...
-	return (int) 0;
-};
+	return 0;
+}
 */
 
 
 
 //
-// Fim.
+// End.
 //
 

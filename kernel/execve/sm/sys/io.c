@@ -29,35 +29,32 @@
 
 /*
  * ioServices:
- *     Serviços de i/o oferecidos pelo kernel base.
- *     Quando o módulo 'service.c' receber chamadas para serviços de i/o ele 
- * pode desviar as chamadas para serem atendidas por essa rotina.
- *
- */				  
+ * Serviços de i/o oferecidos pelo kernel base.
+ * Quando o módulo 'service.c' receber chamadas para serviços de i/o 
+ * ele pode desviar as chamadas para serem atendidas por essa rotina.
+ */
+
 void *ioServices ( unsigned long number, 
                    unsigned long arg2, 
-		    	   unsigned long arg3, 
-				   unsigned long arg4 )
+                   unsigned long arg3, 
+                   unsigned long arg4 )
 {
-    int Caller_Process_ID;
-	struct process_d *P;
 
-    //
-	// @todo: 
+    struct process_d *P;
+    int Caller_Process_ID;
+
+	// #todo: 
 	// O subsistema em user mode deve fazer algum tipo de filtragem
 	// pra autorizar ou não um processo à usar o sistema de i/o.
 	// Porém aqui também é feito alguma filtragem pra conferir autorização.
-	//
 	// @todo:
 	// Checar a token do processo, se a token do tipo HAL está habilitada
-    // para o processo que chama a rotina.	
-	//
-	
-	
+	// para o processo que chama a rotina.	
+
 	//
 	// Id do processo que está chamando a rotina de i/o.
 	//
-	
+
 
 	//@todo: Filtrar argumentos.
 	
@@ -89,21 +86,23 @@ void *ioServices ( unsigned long number,
             break;
 			
         case 1:
-            //Nothing.		
+            //Nothing.
             break; 
         //...
 		
 		default:
 		    //Nothing.
 		    break;
-	};	
-	
+	};
+
+
 	//...
 
-    return NULL;	
-};
-					   
-	
+
+    return NULL;
+}
+   
+
 
 /*
  * ioInit:

@@ -1,5 +1,5 @@
 /*
- * File: device\device.c 
+ * File: devmgr/devmgr.c 
  *
  * Descrição: 
  *     Arquivo principal do device manager. 
@@ -74,10 +74,11 @@ int devicemanagerInit()
 */
 
 //int deveiceInit(){
-//	
+//
 //}
 
+
 //
-//fim
+// End.
 //
 

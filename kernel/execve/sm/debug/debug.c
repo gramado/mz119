@@ -50,7 +50,7 @@
 //
 
 typedef enum {
-   MYTHIC,  	
+   MYTHIC, 
    ROMANTIC,   
    REALIST,   
    NATURALIST,   
@@ -60,9 +60,9 @@ typedef enum {
 struct Mind_d
 {
     unsigned long Mythic;
-	unsigned long Romantic;
-	unsigned long Realist;
-	unsigned long Naturalist;	
+    unsigned long Romantic;
+    unsigned long Realist;
+    unsigned long Naturalist;
 };
 struct Mind_d Mind;
 
@@ -184,7 +184,7 @@ int debug_check_drivers (void){
 	
 
     return (int) Status;
-};
+}
 
 
 /*
@@ -215,8 +215,9 @@ debug_compute_checksum ( unsigned char *Buffer,
 	    
 		Lenght--;	
 	};
+
 	return (unsigned long) CheckSum;
-};
+}
 
 
 
@@ -234,14 +235,16 @@ int debug (void){
 	// Checa inicialização. Fases, variáveis e estruturas.
 	
 	Status = (int) debug_check_inicialization();
-	if(Status == 1){
+	if(Status == 1)
+	{
 	   printf("sm-debug-debug: debug_check_inicialization\n");
 	   die();
 	};
 	
-    // 'processor' struct.	
-	if( (void *) processor == NULL ){
-	    printf("sm-debug-debug: processor\n");
+    // 'processor' struct.
+	if( (void *) processor == NULL )
+	{
+	    printf ("sm-debug-debug: processor\n");
 		die();
 	};
 
@@ -282,10 +285,11 @@ int debug (void){
 	//...
 
     //printf("debug:OK!\n");
-    //printf("debug: Done.\n");	
-	
-	return (int) 0; 
-};
+    //printf("debug: Done.\n");
+
+
+    return 0; 
+}
 
 
 
@@ -294,11 +298,11 @@ void debug_print ( char *data ){
 	
 	uint32_t i;
 	
-	for ( i=0; data[i] != '\0'; i++ ){
-		
+	for ( i=0; data[i] != '\0'; i++ )
+	{
 		serial_write_char (data[i]);
 	}
-};
+}
 
 
 //

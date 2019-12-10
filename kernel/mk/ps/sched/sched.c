@@ -373,9 +373,12 @@ int scheduler (void){
 	//finaliza a lista
     Conductor2 = (void *) Conductor2->Next; 
     Conductor2->Next = NULL;
-
-
+    
     return (int) Conductor2->tid;
+
+    // #option:
+    //Conductor2->Next = (void *) rootConductor; //circular infinita. 
+    //return (int) rootConductor->tid; //começando do início da lista.
 }
 
 

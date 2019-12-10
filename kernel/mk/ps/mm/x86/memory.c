@@ -854,8 +854,8 @@ fail:
 	                                  kernel_heap_end,
 									  kernel_stack_start,
 									  kernel_stack_end);	
-	refresh_screen();	 
-    while(1){}		
+	refresh_screen();	
+    while(1){}
 	*/
 
 
