@@ -13,6 +13,21 @@
 #include <kernel.h>
 
 
+/*
+  //Credits: serenity os
+#define IRQ_KEYBOARD 1
+#define I8042_BUFFER 0x60
+#define I8042_STATUS 0x64
+#define I8042_ACK 0xFA
+#define I8042_BUFFER_FULL 0x01
+#define I8042_WHICH_BUFFER 0x20
+#define I8042_MOUSE_BUFFER 0x20
+#define I8042_KEYBOARD_BUFFER 0x00
+ */
+
+
+
+
 int BAT_TEST (void);
 
 
@@ -671,7 +686,7 @@ int BAT_TEST (void){
 
 /*
  **********************************
- * ps2_keyboard_initialize
+ * ps2kbd_initialize_device
  *     Inicializa o driver de teclado.
  *
  * #todo: 
@@ -680,7 +695,7 @@ int BAT_TEST (void){
  * 2018 - Fred Nora.
  */
 
-void ps2_keyboard_initialize (void){
+void ps2kbd_initialize_device (void){
 
     int i;
 

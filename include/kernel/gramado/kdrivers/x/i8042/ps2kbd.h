@@ -225,7 +225,7 @@ int ke0;
 int KEYBOARD_SEND_MESSAGE ( unsigned char SC );
 
 
-void  ps2_keyboard_initialize (void);
+void ps2kbd_initialize_device (void);
 
 void ldisc_init_modifier_keys (void);
 

@@ -54,6 +54,46 @@
 
 
 
+
+/*
+ *************************** 
+ * get_scancode:
+ */
+
+// Low level keyboard reader.
+// Isso poderia usar uma rotina de tty
+
+// #importante
+// Isso é usado pelo serviço que pega mensagens de input. (111).
+// Pega o scancode.
+// Renova a fila do teclado
+// O teclado esta lidando no momento com um buffer pequeno, 128 bytes.
+
+unsigned long get_scancode (void){
+
+    unsigned long SC = 0;
+
+
+
+    SC = (unsigned char) current_stdin->_base[keybuffer_head];
+
+
+    current_stdin->_base[keybuffer_head] = 0;
+
+    keybuffer_head++;
+
+    if ( keybuffer_head >= current_stdin->_lbfsize )
+    { 
+        keybuffer_head = 0; 
+    }
+
+
+    return (unsigned long) SC; 
+}
+
+
+
+
 /*
  * *******************************************************
  * abnt2_keyboard_handler: 
@@ -117,51 +157,12 @@ void abnt2_keyboard_handler (void){
 }
 
 
-
-
-/*
- *************************** 
- * get_scancode:
- * 
- * 
- */
-
-// Low level keyboard reader.
-// Isso poderia usar uma rotina de tty
-
-// #importante
-// Isso é usado pelo serviço que pega mensagens de input. (111).
-// Pega o scancode.
-// Renova a fila do teclado
-// O teclado esta lidando no momento com um buffer pequeno, 128 bytes.
-
-unsigned long get_scancode (void){
-
-    unsigned long SC = 0;
-
-
-
-    SC = (unsigned char) current_stdin->_base[keybuffer_head];
-
-
-    current_stdin->_base[keybuffer_head] = 0;
-
-    keybuffer_head++;
-
-    if ( keybuffer_head >= current_stdin->_lbfsize )
-    { 
-        keybuffer_head = 0; 
-    }
-
-
-    return (unsigned long) SC; 
-}
-
-
-
 /*
  *********************
  * KiKeyboard:
+ * 
+ *     # Keyboard handler #
+ * 
  *     Interface pra chamar o driver de teclado atual.
  *     Essa é a rotina chamada na hora da interrupção de teclado.
  *     IRQ1.

@@ -244,11 +244,24 @@ int MOUSE_BAT_TEST (void){
 
 /*
  ******************************************************
- * mouse_install:
+ * ps2mouse_initialize_device
  * ...
  */
 
-void mouse_install (void){
+void ps2mouse_initialize_device (void){
+	
+	
+	    unsigned char status;
+    // Enable interrupts
+    wait_then_write (0x64,I8042_READ);  //0x20
+    
+ 
+     // Enable the PS/2 mouse IRQ (12).
+    // NOTE: The keyboard uses IRQ 1 (and is enabled by bit 0 in this register).
+    status = wait_then_read(0x60) | 2;
+    wait_then_write (0x64,I8042_WRITE);
+    wait_then_write (0x60,status);   
+    
 
 	// 0xFF
 	// Espera o dados descer (ACK)
@@ -972,202 +985,15 @@ void prepare_for_output (void){
 
 unsigned char wait_then_read (int port){
 
-    //kbdc_wait(0);
     prepare_for_input();
     return (unsigned char) inportb (port);
 }
 
 void wait_then_write ( int port, int data ){
 
-    //kbdc_wait (1);
     prepare_for_output();
     outportb ( port, data );
 }
-
-
-
-/* 
- *******************************************************************
- * ps2_mouse_initialize :
- *     Configurando o controlador PS/2, 
- *     e activar a segunda porta PS/2 (mouse).
- *     É uma rotina de inicialização do controlador i8042 para 
- *     habilitar o segundo dispositivo, o mouse.
- *     Essa rotina deve rodar somente uma vez, durante inicialização.
- *
- * Credits:
- *     2018 - Fred Nora.
- *     2018 - Nelson Cole.
- */
- 
-void ps2_mouse_initialize (void){
-
-    int error_code = 0;
-    unsigned char status;
-    
-    
-    /*
-    //
-    // Resetamos e conferimos se o reset funcionou.
-    // #todo: talvez possamos não fazer isso.
-    //
-    mouse_write (0xFF);
-    while ( mouse_read() != 0xFA);
-    if ( MOUSE_BAT_TEST() != 0) 
-    {
-        printf ("mouse_install: [WARMING] MOUSE_BAT_TEST ignored\n");
-    }
-    */
-
-
-	// Flush the output buffer
-	//while ((inportb(0x64) & 1))
-	//{
-	//    inportb(0x60);
-	//}
-
-
-	//printf("ps2_mouse_initialize: enable second port\n");
-	//refresh_screen();
-
-
-	// Ativar a segunda porta PS/2.
-	//kbdc_wait(1);
-	//outportb(0x64,I8042_WRITE);    
-	//kbdc_wait(1);
-	//outportb(0x64,I8042_ENABLE_SECOND_PORT); //0xA8
-
-
-	//printf("ps2_mouse_initialize: enable second device\n");
-	//refresh_screen();
-
-	// Activar o segundo despositivo PS/2, modificando o status de 
-	// configuração do controlador PS/2. 
-	// Lembrando que o bit 1 é o responsável por habilitar, desabilitar o 
-	// segundo despositivo PS/2  ( o rato). 
-	// Só para constar se vedes aqui fizemos duas coisas lemos ao mesmo tempo 
-	// modificamos o byte de configuração do controlador PS/2 
-	
-	// Defina a leitura do byte actual de configuração do controlador PS/2.
-	//0x20 Read "byte 0" from internal RAM
-
-	
-	
-	//kbdc_wait(1);
-	//outportb(0x64,I8042_READ);
-
-    // Enable interrupts
-    wait_then_write (0x64,I8042_READ);  //0x20
-
-
-	//kbdc_wait(0);
-	//status = inportb(0x60)|2;  
-	//status = inportb(0x60)| 3;  
-
-	// defina, a escrita  de byte de configuração do controlador PS/2.
-	//kbdc_wait(1);
-	//outportb(0x64,I8042_WRITE);  //0x60
-	// devolvemos o byte de configuração modificado.
-	//kbdc_wait(1);
-	//outportb(0x60,status);
-
-    // Enable the PS/2 mouse IRQ (12).
-    // NOTE: The keyboard uses IRQ 1 (and is enabled by bit 0 in this register).
-    status = wait_then_read(0x60) | 2;
-    wait_then_write (0x64,I8042_WRITE);
-    wait_then_write (0x60,status);
-
-
-	//Agora temos dois dispositivos sereais teclado e mouse (PS/2).
-
-	//Activar a primeira porta PS/2
-	kbdc_wait(1);
-	outportb(0x64,0xAE);  
-
-	// activar a segunda porta PS/2
-	kbdc_wait(1);
-	outportb(0x64,0xA8);
-
-
-	// espera 
-	kbdc_wait(1);
-
-
-	//## step 2 ##
-	//checar se o mouse é de rolar ou não.
-	
-	//## step 3 ##
-	//detectar a quantidade de botões.
-
-	//## step 4 ##
-	//configurar o sampling rate.
-	//ativa o modo escrita,
-	//envia o comando seguido de parâmetros.
-	//0xF3 ...
-
-	//## step 5 ##
-	//configura a resolução do mouse
-	//0xE8 ...
-
-	//## step 6 ##	
-
-
-	//printf("ps2_mouse_initialize: restores defaults\n");
-	//refresh_screen();
-
-	//Restaura defaults do PS/2 mouse.
-	//kbdc_wait(1);
-	//outportb(0x64,I8042_WRITE);    
-	//kbdc_wait(1);
-	//mouse_write(MOUSE_SET_DEFAULTS);  //0xf6
-	//while ( mouse_read() != I8042_ACKNOWLEDGE );
-
-
-	//printf("ps2_mouse_initialize: enable transmission\n");
-	//refresh_screen();	
-
-   // TODO: Pode ser interessante diminuir a sensibilidade do mouse
-   // aqui!!!
-  //( 0xF4 = Habilita o mouse streaming, Enable Data Reporting,ENABLE MOUSE TRANSMISSION )
-  // Habilita o mouse streaming
-  // Interessante notar que, no modo streaming,
-  // 1 byte recebido do PS/2 mouse gerar  uma IRQ...
-  // Talvez valha a pena DESABILITAR o modo streaming
-  // para colher os 3 dados de uma s¢ vez na IRQ!
-	//kbdc_wait(1);
-	//outportb(0x64,I8042_WRITE);      
-    //kbdc_wait(1);
-    //mouse_write(MOUSE_ENABLE_DATA_REPORTING);  //0xf4
-    //while ( mouse_read() != I8042_ACKNOWLEDGE );        
-
-
-	//uint8_t tmp = inportb(0x61);
-	//outportb(0x61, tmp | 0x80);
-	//outportb(0x61, tmp & 0x7F);
-	//inportb(0x60);	//mouse port
-
-	// Flush the output buffer
-	//while ((inportb(0x64) & 1)) {
-	//	inportb(0x60);
-	//}
-
-
-init_mouse_exit:
-
-	// Se ouve um erro, então analisamos e exibimos mensagem sobre ele.
-    if ( error_code != 0 )
-    {
-        //
-    }
-
-	//printf("ps2_mouse_initialize: done\n");
-	//refresh_screen ();
-
-	//#imporante:
-	//não habilitaremos e não resetaremos o dispositivo.
-	//habilitar e resetar fica para a inicialização do ps2.
-}
-
 
 
 

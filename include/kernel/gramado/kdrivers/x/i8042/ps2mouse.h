@@ -137,11 +137,10 @@ void mouseHandler (void);
 //(real handler)
 void mouse_handler (void);
 
-void ps2_mouse_initialize (void);
 
 int ps2_mouse_globals_initialize (void);
+void ps2mouse_initialize_device (void);   
 
-void mouse_install (void);   
 
 
 void set_ps2_mouse_status(int status);
