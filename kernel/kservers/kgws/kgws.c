@@ -281,7 +281,7 @@ int kgws_mouse_scan_windows (void)
 		// Nesse momento um drag pode terminar
         if ( kgws_mouse_event_button_action == 1 )
         {
-			printf ("[Action ");
+			//printf ("[Action ");
 
 			// >> BOTÃO 1 ==================
 			//Igual ao estado anterior
@@ -292,12 +292,12 @@ int kgws_mouse_scan_windows (void)
 			//Diferente do estado anterior.
             }else{
 				
-				printf ("Dif ");
+				//printf ("Dif ");
 				
 				// down - O botão 1 foi pressionado.
                 if ( kgws_mouse_event_mouse_buttom_1 == 1 )
                 {
-					printf ("Press\n");
+					//printf ("Press\n");
 					 
 					//clicou
 					// se o old estava em 0 então o atual está em um.
@@ -339,7 +339,7 @@ int kgws_mouse_scan_windows (void)
 				// up - O botão 1 foi liberado.
                 }else{
 					
-					printf ("Rel\n");
+					//printf ("Rel\n");
 
 				    // flag: um botão foi liberado.
 				    kgws_mouse_event_button_pressed = 0;
