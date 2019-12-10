@@ -112,7 +112,7 @@ void ps2 (void){
 	//printf ("ps2: 4\n");
 	//refresh_screen();
 	
-	ps2_mouse_globals_initialize();	
+	ps2_mouse_globals_initialize();
 
 	
 	

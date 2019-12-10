@@ -17,6 +17,32 @@
 #include <kernel.h>
 
 
+//++
+// ===================
+// Defines
+// Credits: serenity OS
+#define IRQ_MOUSE 1
+#define I8042_BUFFER 0x60
+#define I8042_STATUS 0x64
+#define I8042_ACK 0xFA
+#define I8042_BUFFER_FULL 0x01
+#define I8042_WHICH_BUFFER 0x20
+#define I8042_MOUSE_BUFFER 0x20
+#define I8042_KEYBOARD_BUFFER 0x00
+#define PS2MOUSE_SET_RESOLUTION 0xE8
+#define PS2MOUSE_STATUS_REQUEST 0xE9
+#define PS2MOUSE_REQUEST_SINGLE_PACKET 0xEB
+#define PS2MOUSE_GET_DEVICE_ID 0xF2
+#define PS2MOUSE_SET_SAMPLE_RATE 0xF3
+#define PS2MOUSE_ENABLE_PACKET_STREAMING 0xF4
+#define PS2MOUSE_DISABLE_PACKET_STREAMING 0xF5
+#define PS2MOUSE_SET_DEFAULTS 0xF6
+#define PS2MOUSE_RESEND 0xFE
+#define PS2MOUSE_RESET 0xFF
+#define PS2MOUSE_INTELLIMOUSE_ID 0x03
+//--
+
+
 // Screen width and height
 
 extern unsigned long SavedX; 
@@ -30,7 +56,7 @@ extern unsigned long SavedY;
 // usada pelos aplicativos.
 int ps2_mouse_status;
 
-
+int ps2_mouse_has_wheel;
 
 int ps2_button_pressed;
 int ps2_mouse_moving;
@@ -78,9 +104,11 @@ static char buffer_mouse[3];
 
 
 
-
+//
 // Prototype
+//
 
+// Protótipos de funções internas.
 int MOUSE_BAT_TEST (void);
 
 
@@ -125,14 +153,23 @@ int MOUSE_SEND_MESSAGE (void *buffer) {
  *     Envia um byte para a porta 0x60.
  */
 
+//mudar o arg para data;
 void mouse_write (unsigned char write){
 
-    kbdc_wait (1);
-    outportb (0x64,0xD4);
+    //kbdc_wait (1);
+    //outportb (0x64,0xD4);
 
-    kbdc_wait (1);
-    outportb (0x60,write);
+    //kbdc_wait (1);
+    //outportb (0x60,write);
+
+    prepare_for_output();
+    outportb(I8042_STATUS, 0xd4);
+
+    prepare_for_output();
+    outportb(I8042_BUFFER, write);
 }
+
+
 
 
 /*
@@ -143,8 +180,10 @@ void mouse_write (unsigned char write){
 
 unsigned char mouse_read (void){
 
-    kbdc_wait (0);
+    //kbdc_wait (0);
+    //return (unsigned char) inportb (0x60);
 
+    prepare_for_input();
     return (unsigned char) inportb (0x60);
 }
 
@@ -216,38 +255,94 @@ void mouse_install (void){
 	// Basic Assurance Test (BAT)
 
 
+    /*
+    //
+    // Resetamos e conferimos se o reset funcionou.
+    // #todo: talvez possamos não fazer isso.
+    //
     mouse_write (0xFF);
     while ( mouse_read() != 0xFA);
-
-
-	//printf ("mouse_install: 2\n");
-	//refresh_screen();
-
-
     if ( MOUSE_BAT_TEST() != 0) 
     {
-        //printf("\n Mouse error!");
         printf ("mouse_install: [WARMING] MOUSE_BAT_TEST ignored\n");
     }
+    */
+    
+    //
+    // Set default
+    //
 
 
 	// Use mouse default
 	//Espera o dados descer (ACK)
 
-    mouse_write (0xF6);
-    while( mouse_read() != 0xFA);
+    //mouse_write (0xF6); //PS2MOUSE_SET_DEFAULTS
+    //while( mouse_read() != 0xFA);
+
+    // Set default settings.
+    mouse_write(PS2MOUSE_SET_DEFAULTS);
+    expect_ack();
 
 
-	//printf ("mouse_install: 3\n");
-	//refresh_screen();
+
+    //
+    // Streaming
+    //
 
 
 	// habilita o mouse. (streaming)
-	//Espera o dados descer (ACK)
+	// Espera o dados descer (ACK)
+    //mouse_write (0xF4);
+    //while( mouse_read() != 0xFA);
+
+   // Enable.
+    mouse_write(PS2MOUSE_ENABLE_PACKET_STREAMING);
+    expect_ack();
+    
+    //test++ =================
+    
+    //
+    // Pega o device id e faz configurações de wheel.
+    //
+    
+    mouse_write(PS2MOUSE_GET_DEVICE_ID);
+    expect_ack();
+    unsigned char device_id = mouse_read(); 
+    
+    if (device_id != PS2MOUSE_INTELLIMOUSE_ID){
+		
+        // Send magical wheel initiation sequence.
+        mouse_write(PS2MOUSE_SET_SAMPLE_RATE);
+        expect_ack();
+        mouse_write(200);
+        expect_ack();
+        mouse_write(PS2MOUSE_SET_SAMPLE_RATE);
+        expect_ack();
+        mouse_write(100);
+        expect_ack();
+        mouse_write(PS2MOUSE_SET_SAMPLE_RATE);
+        expect_ack();
+        mouse_write(80);
+        expect_ack();
+
+        mouse_write(PS2MOUSE_GET_DEVICE_ID);
+        expect_ack();
+        device_id = mouse_read();
+    }
+
+    if (device_id == PS2MOUSE_INTELLIMOUSE_ID) {
+		
+        //m_has_wheel = true;
+        ps2_mouse_has_wheel = 1;
+        kprintf ("mouse_install: Mouse wheel enabled!\n");
+        
+    } else {
+        kprintf ("mouse_install: No mouse wheel detected!\n");
+    }
+
+    //test-- ================
 
 
-    mouse_write (0xF4);
-    while( mouse_read() != 0xFA);
 
 	// Espera nossa controladora terminar.
 	//printf ("mouse_install: 4\n");
@@ -859,11 +954,40 @@ void mouseHandler (void){
     };
 }
 
+void expect_ack  (void){
+
+    while ( mouse_read() != 0xFA);
+}
+
+
+void prepare_for_input (void){
+
+    kbdc_wait(0);
+}
+
+void prepare_for_output (void){
+
+    kbdc_wait (1);
+}
+
+unsigned char wait_then_read (int port){
+
+    //kbdc_wait(0);
+    prepare_for_input();
+    return (unsigned char) inportb (port);
+}
+
+void wait_then_write ( int port, int data ){
+
+    //kbdc_wait (1);
+    prepare_for_output();
+    outportb ( port, data );
+}
 
 
 
 /* 
- * *******************************************************************
+ *******************************************************************
  * ps2_mouse_initialize :
  *     Configurando o controlador PS/2, 
  *     e activar a segunda porta PS/2 (mouse).
@@ -880,6 +1004,20 @@ void ps2_mouse_initialize (void){
 
     int error_code = 0;
     unsigned char status;
+    
+    
+    /*
+    //
+    // Resetamos e conferimos se o reset funcionou.
+    // #todo: talvez possamos não fazer isso.
+    //
+    mouse_write (0xFF);
+    while ( mouse_read() != 0xFA);
+    if ( MOUSE_BAT_TEST() != 0) 
+    {
+        printf ("mouse_install: [WARMING] MOUSE_BAT_TEST ignored\n");
+    }
+    */
 
 
 	// Flush the output buffer
@@ -913,19 +1051,31 @@ void ps2_mouse_initialize (void){
 	// Defina a leitura do byte actual de configuração do controlador PS/2.
 	//0x20 Read "byte 0" from internal RAM
 
-	kbdc_wait(1);
-	outportb(0x64,I8042_READ);
-	kbdc_wait(0);
-	status = inportb(0x60)|2;  
+	
+	
+	//kbdc_wait(1);
+	//outportb(0x64,I8042_READ);
+
+    // Enable interrupts
+    wait_then_write (0x64,I8042_READ);  //0x20
+
+
+	//kbdc_wait(0);
+	//status = inportb(0x60)|2;  
 	//status = inportb(0x60)| 3;  
 
-
 	// defina, a escrita  de byte de configuração do controlador PS/2.
-	kbdc_wait(1);
-	outportb(0x64,I8042_WRITE);  
+	//kbdc_wait(1);
+	//outportb(0x64,I8042_WRITE);  //0x60
 	// devolvemos o byte de configuração modificado.
-	kbdc_wait(1);
-	outportb(0x60,status);
+	//kbdc_wait(1);
+	//outportb(0x60,status);
+
+    // Enable the PS/2 mouse IRQ (12).
+    // NOTE: The keyboard uses IRQ 1 (and is enabled by bit 0 in this register).
+    status = wait_then_read(0x60) | 2;
+    wait_then_write (0x64,I8042_WRITE);
+    wait_then_write (0x60,status);
 
 
 	//Agora temos dois dispositivos sereais teclado e mouse (PS/2).
