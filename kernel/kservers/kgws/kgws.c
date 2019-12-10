@@ -50,6 +50,19 @@ unsigned long kgws_last_totalticks;
 unsigned long kgws_delta_totalticks;
 
 
+
+
+/*
+ ****************************** 
+ * kgws_mouse_scan_windows:
+ *     Com essa função o window server pega uma mensagem vinda do
+ * driver de mouse e escaneia as janelas pra comparar com o 
+ * posicionamento do ponteiro do mouse.
+ * 
+ * #todo
+ * Por enquando o próprio handler do mouse está chamando essa rotina.
+ */
+
 // #bugbug
 // Algumas variáveis usadas aqui estão no driver de mouse ps2
 // Precisamos delas aqui, pois não possuem utilidade lá.
@@ -57,9 +70,8 @@ unsigned long kgws_delta_totalticks;
 // se o mouse está sobre alguma ... durante a rotina
 // são solicitadas informações diretamente no driver de mouse ps2.
 
-int kgws_mouse_scan_windows (void)
-{
-	
+int kgws_mouse_scan_windows (void){
+
 	// #importante:
 	// Essa será a thread que receberá a mensagem.
 	struct thread_d *t;
@@ -70,10 +82,8 @@ int kgws_mouse_scan_windows (void)
 	// ID de janela.
 
     struct window_d *Window;
-	int wID;
+    int wID;
 
-    //#test
-    int last_wID; 
     
     
     //
@@ -84,30 +94,25 @@ int kgws_mouse_scan_windows (void)
     // #todo
     // Temos que pegar um pacote com todas as informações de uma vez.
 
-    //ok
-	kgws_mouse_event_saved_mouse_x = ps2_mouse_get_info (1);
-	kgws_mouse_event_saved_mouse_y = ps2_mouse_get_info (2);
-	kgws_mouse_event_mouse_x = ps2_mouse_get_info (3);
-	kgws_mouse_event_mouse_y = ps2_mouse_get_info (4);
-
-
+    // Pegando as informações.
+    kgws_mouse_event_saved_mouse_x = ps2_mouse_get_info (1);
+    kgws_mouse_event_saved_mouse_y = ps2_mouse_get_info (2);
+    kgws_mouse_event_mouse_x = ps2_mouse_get_info (3);
+    kgws_mouse_event_mouse_y = ps2_mouse_get_info (4);
     kgws_mouse_event_moving = ps2_mouse_get_info (5);
-    
     kgws_mouse_event_drag_status = ps2_mouse_get_info (6);
-    
     kgws_mouse_event_button_action = ps2_mouse_get_info (7);
-
-
-	kgws_mouse_event_mouse_buttom_1 = ps2_mouse_get_info (8);
-	kgws_mouse_event_mouse_buttom_2 = ps2_mouse_get_info (9);
-	kgws_mouse_event_mouse_buttom_3 =  ps2_mouse_get_info (10);
-
-	kgws_mouse_event_old_mouse_buttom_1 = ps2_mouse_get_info (11);
-	kgws_mouse_event_old_mouse_buttom_2 =  ps2_mouse_get_info (12);
-	kgws_mouse_event_old_mouse_buttom_3 =  ps2_mouse_get_info (13);
-    
+    kgws_mouse_event_mouse_buttom_1 = ps2_mouse_get_info (8);
+    kgws_mouse_event_mouse_buttom_2 = ps2_mouse_get_info (9);
+    kgws_mouse_event_mouse_buttom_3 =  ps2_mouse_get_info (10);
+    kgws_mouse_event_old_mouse_buttom_1 = ps2_mouse_get_info (11);
+    kgws_mouse_event_old_mouse_buttom_2 =  ps2_mouse_get_info (12);
+    kgws_mouse_event_old_mouse_buttom_3 =  ps2_mouse_get_info (13);
     kgws_mouse_event_button_pressed =  ps2_mouse_get_info (14);
-    
+    //...
+
+
+
 
     //printf ("b=%d ",kgws_mouse_event_mouse_buttom_1);
 
@@ -235,9 +240,9 @@ int kgws_mouse_scan_windows (void)
 	// A janela tem uma thread de controle, igual ao processo.
 
      //============================ 
-     //Se estamos sobre uma janela válida.
-     if ( wID > -1 )
-     {
+    //Se estamos sobre uma janela válida.
+    if ( wID > -1 )
+    {
 
         Window = (struct window_d *) windowList[wID];
 
@@ -363,7 +368,7 @@ int kgws_mouse_scan_windows (void)
                 };
             }; 
 
-            /*
+            
 			// >> BOTÃO 2 ==================
 			// Igual ao estado anterior
             if ( kgws_mouse_event_mouse_buttom_2 == kgws_mouse_event_old_mouse_buttom_2 )
@@ -386,12 +391,23 @@ int kgws_mouse_scan_windows (void)
 						// houve alteração no estado do botão 2 e estamos em cima de uma janela.
                         if ( (void *) Window != NULL )
                         {
+							//pegamos o total tick
+							kgws_current_totalticks = (unsigned long) get_systime_totalticks();
+                            kgws_delta_totalticks = (kgws_current_totalticks - kgws_last_totalticks); 
+                            //printf ( "x=%d l=%d d=%d \n",
+                               //kgws_current_totalticks, kgws_last_totalticks, kgws_delta_totalticks ); 
+                               //refresh_screen();
+                            kgws_last_totalticks = kgws_current_totalticks;
                             t->window = Window;
                             t->msg = MSG_MOUSEKEYDOWN;
+                            if (kgws_delta_totalticks < 1000) //2000
+                            {
+								t->msg = MSG_MOUSE_DOUBLECLICKED; 
+								kgws_delta_totalticks=8000; // delta inválido.
+							}
                             t->long1 = 2;
                             t->long2 = 0;
                             t->newmessageFlag = 1;
-                            
                         }
                         //else: // houve alteração no estado do botão 2 mas não estamos em cima de uma janela.
 
@@ -423,9 +439,9 @@ int kgws_mouse_scan_windows (void)
                     kgws_mouse_event_old_mouse_buttom_2 = kgws_mouse_event_mouse_buttom_2;
                 }
             }; 
-            */
+            
 
-            /* 
+
 			// >> BOTÃO 3 ==================
 			// Igual ao estado anterior
             if ( kgws_mouse_event_mouse_buttom_3 == kgws_mouse_event_old_mouse_buttom_3 )
@@ -447,12 +463,23 @@ int kgws_mouse_scan_windows (void)
                         // houve alteração no estado do botão 3 e estamos em cima de uma janela.
                         if ( (void *) Window != NULL )
                         {
+							//pegamos o total tick
+							kgws_current_totalticks = (unsigned long) get_systime_totalticks();
+                            kgws_delta_totalticks = (kgws_current_totalticks - kgws_last_totalticks); 
+                            //printf ( "x=%d l=%d d=%d \n",
+                               //kgws_current_totalticks, kgws_last_totalticks, kgws_delta_totalticks ); 
+                               //refresh_screen();
+                            kgws_last_totalticks = kgws_current_totalticks;
                             t->window = Window;
                             t->msg = MSG_MOUSEKEYDOWN;
+                            if (kgws_delta_totalticks < 1000) //2000
+                            {
+								t->msg = MSG_MOUSE_DOUBLECLICKED; 
+								kgws_delta_totalticks=8000; // delta inválido.
+							}
                             t->long1 = 3;
                             t->long2 = 0;
                             t->newmessageFlag = 1;
-                            
                         }
                         //else: // houve alteração no estado do botão 1 mas não estamos em cima de uma janela.
 
@@ -484,7 +511,7 @@ int kgws_mouse_scan_windows (void)
                     kgws_mouse_event_old_mouse_buttom_3 = kgws_mouse_event_mouse_buttom_3;
                 }
             }; 
-            */ 
+
 
 			// Ação concluída.
             kgws_mouse_event_button_action = 0;
@@ -492,7 +519,7 @@ int kgws_mouse_scan_windows (void)
         };
 
 
-        /*
+
         //===============================================
         // *** Se NÃO ouve alteração no estado dos botões, então apenas 
         // enviaremos a mensagem de movimento do mouse e sinalizamos 
@@ -609,7 +636,7 @@ int kgws_mouse_scan_windows (void)
             kgws_mouse_event_button_action = 0;
             return 0;
         };
-        */
+        
 
 
 

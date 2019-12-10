@@ -1949,318 +1949,318 @@ Linker script and memory map
                 0x00000000c00242a2                _init_gui
                 0x00000000c00242fe                _kgws_mouse_dialog
                 0x00000000c0024435                _init_gramado
- .text          0x00000000c002443f      0x380 kgws.o
+ .text          0x00000000c002443f      0x6ce kgws.o
                 0x00000000c002443f                _kgws_mouse_scan_windows
-                0x00000000c0024774                _kgwsRegisterWindowServer
- .text          0x00000000c00247bf      0x25b vfs.o
-                0x00000000c00247bf                _vfsInit
-                0x00000000c0024958                _vfs_show_handle_list
-                0x00000000c00249a8                _vfsShowVFSInfo
-                0x00000000c00249ae                _vfsListFiles
- .text          0x00000000c0024a1a      0x4a6 x86cont.o
-                0x00000000c0024a26                _save_current_context
-                0x00000000c0024bdf                _restore_current_context
-                0x00000000c0024d78                _contextCheckThreadRing0Context
-                0x00000000c0024d82                _contextCheckThreadRing3Context
-                0x00000000c0024e88                _KiCheckTaskContext
-                0x00000000c0024e9e                _KiSaveCurrentContext
-                0x00000000c0024eac                _KiRestoreCurrentContext
-                0x00000000c0024eba                _save_context_of_new_task
- .text          0x00000000c0024ec0      0x236 x86fault.o
-                0x00000000c0024ec0                _faults
-                0x00000000c0025095                _KiCpuFaults
-                0x00000000c00250ac                _do_pagefault
- .text          0x00000000c00250f6      0x16a x86start.o
-                0x00000000c00250f6                _start_task
-                0x00000000c0025116                _switch_to_user_mode
-                0x00000000c002512f                _executa_tarefa
-                0x00000000c0025217                _KiSwitchToUserMode
-                0x00000000c0025225                _KiExecutaTarefa
-                0x00000000c002522f                _KiInitTask
-                0x00000000c0025252                _KiInitTasks
- .text          0x00000000c0025260      0x86e dispatch.o
-                0x00000000c0025260                _dispatcher
-                0x00000000c0025373                _readyDispatcher
-                0x00000000c00253e4                _syscoopDispatcher
-                0x00000000c0025481                _usercoopDispatcher
-                0x00000000c002551e                _sysconcDispatcher
-                0x00000000c00255bb                _userconcDispatcher
-                0x00000000c0025658                _systemDispatcher
-                0x00000000c0025662                _idleDispatcher
-                0x00000000c002566c                _periodicDispatcher
-                0x00000000c0025676                _rrDispatcher
-                0x00000000c0025680                _realtimeDispatcher
-                0x00000000c00256ed                _dispatch_Default
-                0x00000000c00258ab                _dispatch_thread2
-                0x00000000c00258f0                _dispatch_thread
-                0x00000000c0025971                _init_dispatcher
-                0x00000000c0025a1a                _IncrementDispatcherCount
- .text          0x00000000c0025ace        0x0 pheap.o
- .text          0x00000000c0025ace     0x1f5f process.o
-                0x00000000c0025ace                _do_clone_execute_process
-                0x00000000c0025cf8                _do_fork_process2
-                0x00000000c00263b3                _do_fork_process
-                0x00000000c0026a5e                _processObject
-                0x00000000c0026a97                _getNewPID
-                0x00000000c0026ad2                _processTesting
-                0x00000000c0026b18                _processSendSignal
-                0x00000000c0026b48                _processCopyMemory
-                0x00000000c0026be1                _processCopyProcess
-                0x00000000c0026f8b                _create_process
-                0x00000000c0027392                _CloseAllProcesses
-                0x00000000c00273fe                _KeSaveCurrentContext
-                0x00000000c0027404                _KeRestoreCurrentContext
-                0x00000000c002740a                _KeCpuFaults
-                0x00000000c0027421                _KeSpawnTask
-                0x00000000c0027438                _KeSelectNextThread
-                0x00000000c002744e                _KeCheckTaskContext
-                0x00000000c0027464                _KeExecProcess
-                0x00000000c002746e                _KeDispatchProcess
-                0x00000000c0027474                _KeDoProcessReady
-                0x00000000c002747a                _KeDoProcessRunning
-                0x00000000c0027480                _KeDoProcessSleeping
-                0x00000000c0027486                _KeDoProcessZombie
-                0x00000000c002748c                _KeDoProcessDead
-                0x00000000c0027492                _KeStartProcess
-                0x00000000c0027498                _KeWakeupProcess
-                0x00000000c002749e                _KeProcessExit
-                0x00000000c00274a4                _KeKillProcess
-                0x00000000c00274aa                _KeNewProcessScheduler
-                0x00000000c00274b0                _KeSetPriority
-                0x00000000c00274ba                _KeIncreasePriority
-                0x00000000c00274c4                _KeSaveContextOfNewTask
-                0x00000000c00274ca                _KeSetQuantum
-                0x00000000c00274d0                _KeGetQuantum
-                0x00000000c00274da                _KeSetCurrentQuantum
-                0x00000000c00274e0                _KeGetCurrentQuantum
-                0x00000000c00274ea                _KeSetNextQuantum
-                0x00000000c00274f0                _KeGetNextQuantum
-                0x00000000c00274fa                _KeSetFocus
-                0x00000000c0027500                _KeGetFocus
-                0x00000000c002750a                _KeShowTasksParameters
-                0x00000000c0027510                _KeShowPreemptedTask
-                0x00000000c0027516                _show_currentprocess_info
-                0x00000000c002764d                _show_process_information
-                0x00000000c002775d                _SetProcessDirectory
-                0x00000000c0027775                _GetProcessDirectory
-                0x00000000c0027790                _GetPageDirValue
-                0x00000000c002779d                _init_task
-                0x00000000c00277a7                _init_tasks
-                0x00000000c00277b5                _init_processes
-                0x00000000c0027801                _exit_process
-                0x00000000c0027945                _get_caller_process_id
-                0x00000000c002794f                _set_caller_process_id
-                0x00000000c002795d                _init_process_manager
-                0x00000000c002797b                _GetProcessHeapStart
-                0x00000000c00279d4                _GetProcessPageDirectoryAddress
- .text          0x00000000c0027a2d     0x1065 queue.o
-                0x00000000c0027a2d                _init_queue
-                0x00000000c0027e82                _queue_insert_data
-                0x00000000c002831a                _queue_insert_head
-                0x00000000c00284ba                _queue_get_data
-                0x00000000c002878d                _show_queue_information
-                0x00000000c0028821                _ScanReadyQueue
-                0x00000000c00288da                _feed_ready_queue
- .text          0x00000000c0028a92      0x202 spawn.o
-                0x00000000c0028a9e                _KiSpawnTask
-                0x00000000c0028ae3                _spawn_thread
- .text          0x00000000c0028c94        0xc tasks.o
-                0x00000000c0028c94                _task0
-                0x00000000c0028c9a                _task1
- .text          0x00000000c0028ca0       0x1b theap.o
-                0x00000000c0028ca0                _GetThreadHeapStart
- .text          0x00000000c0028cbb      0xab7 thread.o
-                0x00000000c0028cbb                _threadCopyThread
-                0x00000000c0029042                _create_thread
-                0x00000000c002944c                _GetCurrentThreadId
-                0x00000000c0029456                _GetCurrentThread
-                0x00000000c0029499                _FindReadyThread
-                0x00000000c00294f7                _SelectForExecution
-                0x00000000c0029529                _GetThreadState
-                0x00000000c0029541                _GetThreadType
-                0x00000000c0029559                _show_thread_information
-                0x00000000c00295f6                _init_threads
-                0x00000000c0029677                _thread_getchar
- .text          0x00000000c0029772      0xa6d threadi.o
-                0x00000000c0029772                _xxxRing0Idle
-                0x00000000c0029796                _KiCreateRing0Idle
-                0x00000000c0029b37                _fork
-                0x00000000c0029b41                _KiFork
-                0x00000000c0029b4b                _KiShowPreemptedTask
-                0x00000000c0029b51                _KiSetTaskStatus
-                0x00000000c0029b68                _KiGetTaskStatus
-                0x00000000c0029b75                _KiSaveContextOfNewTask
-                0x00000000c0029b7b                _KiSetQuantum
-                0x00000000c0029b81                _KiGetQuantum
-                0x00000000c0029b8b                _KiSetCurrentQuantum
-                0x00000000c0029b91                _KiGetCurrentQuantum
-                0x00000000c0029b9b                _KiSetNextQuantum
-                0x00000000c0029ba1                _KiGetNextQuantum
-                0x00000000c0029bab                _KiSetFocus
-                0x00000000c0029bb1                _KiGetFocus
-                0x00000000c0029bbb                _KiDebugBreakpoint
-                0x00000000c0029bc1                _KiShowTasksParameters
-                0x00000000c0029bc7                _KiMostraSlots
-                0x00000000c0029bd5                _KiMostraSlot
-                0x00000000c0029bec                _KiMostraReg
-                0x00000000c0029bf2                _KiShowThreadList
-                0x00000000c0029c00                _mostra_slots
-                0x00000000c0029c6d                _mostra_slot
-                0x00000000c0029d77                _mostra_reg
-                0x00000000c0029e85                _set_thread_priority
-                0x00000000c0029edc                _SetThreadDirectory
-                0x00000000c0029ef3                _GetThreadDirectory
-                0x00000000c0029f0b                _show_preempted_task
-                0x00000000c0029f11                _show_tasks_parameters
-                0x00000000c0029f17                _release
-                0x00000000c0029f61                _exit_thread
-                0x00000000c0029fd9                _kill_thread
-                0x00000000c002a098                _dead_thread_collector
-                0x00000000c002a167                _kill_all_threads
-                0x00000000c002a198                _check_for_dead_thread_collector
- .text          0x00000000c002a1df      0x668 ts.o
-                0x00000000c002a1df                _KiTaskSwitch
-                0x00000000c002a24d                _task_switch
-                0x00000000c002a6cc                _taskswitchRR
-                0x00000000c002a80f                _set_task_status
-                0x00000000c002a81d                _get_task_status
-                0x00000000c002a827                _taskswitch_lock
-                0x00000000c002a837                _taskswitch_unlock
- .text          0x00000000c002a847       0x1b tstack.o
-                0x00000000c002a847                _GetThreadStackStart
- .text          0x00000000c002a862        0x0 callout.o
- .text          0x00000000c002a862        0x0 callfar.o
- .text          0x00000000c002a862       0x24 ipc.o
-                0x00000000c002a862                _ipcProcedure
-                0x00000000c002a86c                _ipcProcedureEx
-                0x00000000c002a876                _ipc_dispatch_message
-                0x00000000c002a880                _init_ipc
- .text          0x00000000c002a886      0x364 ipccore.o
-                0x00000000c002a886                _ipcore_services
-                0x00000000c002a8fc                _ipccore_open
-                0x00000000c002a9eb                _ipccore_close
-                0x00000000c002ab2c                _ipccore_register
- .text          0x00000000c002abea       0xe0 sem.o
-                0x00000000c002abea                _init_semaphore
-                0x00000000c002ac0a                _Down
-                0x00000000c002ac52                _Up
-                0x00000000c002ac8c                _semaphore_down
-                0x00000000c002ac9d                _semaphore_up
-                0x00000000c002acae                _create_semaphore
-                0x00000000c002acb8                _delete_semaphore
-                0x00000000c002acbe                _open_semaphore
-                0x00000000c002acc4                _close_semaphore
- .text          0x00000000c002acca      0x851 memory.o
-                0x00000000c002acca                _get_process_heap_pointer
-                0x00000000c002ad6c                _SetKernelHeap
-                0x00000000c002ae06                _heapAllocateMemory
-                0x00000000c002afe1                _FreeHeap
-                0x00000000c002b0a1                _init_heap
-                0x00000000c002b1e8                _init_stack
-                0x00000000c002b252                _init_mm
-                0x00000000c002b377                _gcGRAMADO
-                0x00000000c002b381                _gcEXECUTIVE
-                0x00000000c002b4a6                _gcMICROKERNEL
-                0x00000000c002b4b0                _gcHAL
-                0x00000000c002b4ba                _gc
- .text          0x00000000c002b51b      0x562 mminfo.o
-                0x00000000c002b51b                _mmShowPDE
-                0x00000000c002b5b6                _mmShowPDEForAllProcesses
-                0x00000000c002b632                _memoryShowMemoryInfo
-                0x00000000c002b84f                _show_memory_structs
-                0x00000000c002b8d9                _testingPageAlloc
-                0x00000000c002ba07                _showFreepagedMemory
- .text          0x00000000c002ba7d      0x199 mmpool.o
-                0x00000000c002ba7d                _page
-                0x00000000c002bb25                _newPage
- .text          0x00000000c002bc16     0x10ed pages.o
-                0x00000000c002bc16                _get_table_pointer
-                0x00000000c002bc2f                _CreatePageDirectory
-                0x00000000c002bc9e                _CreatePageTable
-                0x00000000c002bdb8                _SetCR3
-                0x00000000c002bdd1                _mapping_ahci1_device_address
-                0x00000000c002be46                _mapping_nic1_device_address
-                0x00000000c002bebb                _SetUpPaging
-                0x00000000c002c943                _initializeFramesAlloc
-                0x00000000c002c9d0                _allocPages
-                0x00000000c002cbb7                _pEmpty
-                0x00000000c002cbc6                _freePage
-                0x00000000c002cbf6                _notfreePage
-                0x00000000c002cc26                _firstSlotForAList
-                0x00000000c002cc8d                _virtual_to_physical
- .text          0x00000000c002cd03       0xbe preempt.o
-                0x00000000c002cd03                _preempt
- .text          0x00000000c002cdc1      0x15a priority.o
-                0x00000000c002cdc1                _set_priority
-                0x00000000c002cdfa                _KiSetPriority
-                0x00000000c002ce07                _KiIncreasePriority
-                0x00000000c002ce11                _find_higher_priority
-                0x00000000c002cf11                _KiFindHigherPriority
- .text          0x00000000c002cf1b      0x226 sched.o
-                0x00000000c002cf1b                _pick_next_thread
-                0x00000000c002d026                _scheduler
-                0x00000000c002d0f0                _scheduler_start
-                0x00000000c002d10b                _scheduler_lock
-                0x00000000c002d11b                _scheduler_unlock
-                0x00000000c002d12b                _scheduler_get_status
-                0x00000000c002d135                _new_task_scheduler
-                0x00000000c002d13b                _init_scheduler
- .text          0x00000000c002d141      0x7be schedi.o
-                0x00000000c002d141                _do_waitpid
-                0x00000000c002d235                _block_for_a_reason
-                0x00000000c002d2ab                _wakeup_thread_reason
-                0x00000000c002d3d3                _wakeup_scan_thread_reason
-                0x00000000c002d440                _KiScheduler
-                0x00000000c002d478                _KiSelectNextThread
-                0x00000000c002d49c                _KiDoThreadReady
-                0x00000000c002d4b3                _KiDoThreadRunning
-                0x00000000c002d4ca                _KiDoThreadSleeping
-                0x00000000c002d4e1                _KiDoThreadZombie
-                0x00000000c002d4f8                _KiDoThreadDead
-                0x00000000c002d50f                _KiNewTaskScheduler
-                0x00000000c002d515                _KiDispatchTask
-                0x00000000c002d51b                _KiSetCurrent
-                0x00000000c002d532                _KiGetCurrent
-                0x00000000c002d53f                _KiGetCurrentTask
-                0x00000000c002d54c                _get_current
-                0x00000000c002d556                _get_current_task
-                0x00000000c002d560                _set_current
-                0x00000000c002d58c                _do_thread_initialized
-                0x00000000c002d5c3                _do_thread_ready
-                0x00000000c002d5fa                _do_thread_running
-                0x00000000c002d649                _do_thread_sleeping
-                0x00000000c002d680                _do_thread_zombie
-                0x00000000c002d6c0                _do_thread_dead
-                0x00000000c002d6f7                _wakeup_thread
-                0x00000000c002d750                _SelectNextThread
-                0x00000000c002d806                _check_for_standby
-                0x00000000c002d890                _check_quantum
- .text          0x00000000c002d8ff      0xb67 create.o
-                0x00000000c002d8ff                _KiCreateIdle
-                0x00000000c002dd32                _KiCreateShell
-                0x00000000c002e0cc                _KiCreateTaskManager
- .text          0x00000000c002e466      0x41c mk.o
-                0x00000000c002e466                _jobcontrol
-                0x00000000c002e56e                _jobcheck
-                0x00000000c002e63e                _microkernelTestLimit
-                0x00000000c002e644                _sys_dead_thread_collector
-                0x00000000c002e652                _sys_exit_process
-                0x00000000c002e66c                _sys_exit_thread
-                0x00000000c002e683                _sys_create_process
-                0x00000000c002e6b1                _sys_create_thread
-                0x00000000c002e6d9                _sys_fork
-                0x00000000c002e6e6                _sys_getpid
-                0x00000000c002e6f0                _sys_getppid
-                0x00000000c002e755                _init_microkernel
- .text          0x00000000c002e882      0x41d request.o
-                0x00000000c002e882                _KiRequest
-                0x00000000c002e8b6                _request
-                0x00000000c002eaac                _create_request
-                0x00000000c002eb53                _clear_request
-                0x00000000c002ebdb                _do_request_12
-                0x00000000c002ec9f                _code_end = .
+                0x00000000c0024ac2                _kgwsRegisterWindowServer
+ .text          0x00000000c0024b0d      0x25b vfs.o
+                0x00000000c0024b0d                _vfsInit
+                0x00000000c0024ca6                _vfs_show_handle_list
+                0x00000000c0024cf6                _vfsShowVFSInfo
+                0x00000000c0024cfc                _vfsListFiles
+ .text          0x00000000c0024d68      0x4a6 x86cont.o
+                0x00000000c0024d74                _save_current_context
+                0x00000000c0024f2d                _restore_current_context
+                0x00000000c00250c6                _contextCheckThreadRing0Context
+                0x00000000c00250d0                _contextCheckThreadRing3Context
+                0x00000000c00251d6                _KiCheckTaskContext
+                0x00000000c00251ec                _KiSaveCurrentContext
+                0x00000000c00251fa                _KiRestoreCurrentContext
+                0x00000000c0025208                _save_context_of_new_task
+ .text          0x00000000c002520e      0x236 x86fault.o
+                0x00000000c002520e                _faults
+                0x00000000c00253e3                _KiCpuFaults
+                0x00000000c00253fa                _do_pagefault
+ .text          0x00000000c0025444      0x16a x86start.o
+                0x00000000c0025444                _start_task
+                0x00000000c0025464                _switch_to_user_mode
+                0x00000000c002547d                _executa_tarefa
+                0x00000000c0025565                _KiSwitchToUserMode
+                0x00000000c0025573                _KiExecutaTarefa
+                0x00000000c002557d                _KiInitTask
+                0x00000000c00255a0                _KiInitTasks
+ .text          0x00000000c00255ae      0x86e dispatch.o
+                0x00000000c00255ae                _dispatcher
+                0x00000000c00256c1                _readyDispatcher
+                0x00000000c0025732                _syscoopDispatcher
+                0x00000000c00257cf                _usercoopDispatcher
+                0x00000000c002586c                _sysconcDispatcher
+                0x00000000c0025909                _userconcDispatcher
+                0x00000000c00259a6                _systemDispatcher
+                0x00000000c00259b0                _idleDispatcher
+                0x00000000c00259ba                _periodicDispatcher
+                0x00000000c00259c4                _rrDispatcher
+                0x00000000c00259ce                _realtimeDispatcher
+                0x00000000c0025a3b                _dispatch_Default
+                0x00000000c0025bf9                _dispatch_thread2
+                0x00000000c0025c3e                _dispatch_thread
+                0x00000000c0025cbf                _init_dispatcher
+                0x00000000c0025d68                _IncrementDispatcherCount
+ .text          0x00000000c0025e1c        0x0 pheap.o
+ .text          0x00000000c0025e1c     0x1f5f process.o
+                0x00000000c0025e1c                _do_clone_execute_process
+                0x00000000c0026046                _do_fork_process2
+                0x00000000c0026701                _do_fork_process
+                0x00000000c0026dac                _processObject
+                0x00000000c0026de5                _getNewPID
+                0x00000000c0026e20                _processTesting
+                0x00000000c0026e66                _processSendSignal
+                0x00000000c0026e96                _processCopyMemory
+                0x00000000c0026f2f                _processCopyProcess
+                0x00000000c00272d9                _create_process
+                0x00000000c00276e0                _CloseAllProcesses
+                0x00000000c002774c                _KeSaveCurrentContext
+                0x00000000c0027752                _KeRestoreCurrentContext
+                0x00000000c0027758                _KeCpuFaults
+                0x00000000c002776f                _KeSpawnTask
+                0x00000000c0027786                _KeSelectNextThread
+                0x00000000c002779c                _KeCheckTaskContext
+                0x00000000c00277b2                _KeExecProcess
+                0x00000000c00277bc                _KeDispatchProcess
+                0x00000000c00277c2                _KeDoProcessReady
+                0x00000000c00277c8                _KeDoProcessRunning
+                0x00000000c00277ce                _KeDoProcessSleeping
+                0x00000000c00277d4                _KeDoProcessZombie
+                0x00000000c00277da                _KeDoProcessDead
+                0x00000000c00277e0                _KeStartProcess
+                0x00000000c00277e6                _KeWakeupProcess
+                0x00000000c00277ec                _KeProcessExit
+                0x00000000c00277f2                _KeKillProcess
+                0x00000000c00277f8                _KeNewProcessScheduler
+                0x00000000c00277fe                _KeSetPriority
+                0x00000000c0027808                _KeIncreasePriority
+                0x00000000c0027812                _KeSaveContextOfNewTask
+                0x00000000c0027818                _KeSetQuantum
+                0x00000000c002781e                _KeGetQuantum
+                0x00000000c0027828                _KeSetCurrentQuantum
+                0x00000000c002782e                _KeGetCurrentQuantum
+                0x00000000c0027838                _KeSetNextQuantum
+                0x00000000c002783e                _KeGetNextQuantum
+                0x00000000c0027848                _KeSetFocus
+                0x00000000c002784e                _KeGetFocus
+                0x00000000c0027858                _KeShowTasksParameters
+                0x00000000c002785e                _KeShowPreemptedTask
+                0x00000000c0027864                _show_currentprocess_info
+                0x00000000c002799b                _show_process_information
+                0x00000000c0027aab                _SetProcessDirectory
+                0x00000000c0027ac3                _GetProcessDirectory
+                0x00000000c0027ade                _GetPageDirValue
+                0x00000000c0027aeb                _init_task
+                0x00000000c0027af5                _init_tasks
+                0x00000000c0027b03                _init_processes
+                0x00000000c0027b4f                _exit_process
+                0x00000000c0027c93                _get_caller_process_id
+                0x00000000c0027c9d                _set_caller_process_id
+                0x00000000c0027cab                _init_process_manager
+                0x00000000c0027cc9                _GetProcessHeapStart
+                0x00000000c0027d22                _GetProcessPageDirectoryAddress
+ .text          0x00000000c0027d7b     0x1065 queue.o
+                0x00000000c0027d7b                _init_queue
+                0x00000000c00281d0                _queue_insert_data
+                0x00000000c0028668                _queue_insert_head
+                0x00000000c0028808                _queue_get_data
+                0x00000000c0028adb                _show_queue_information
+                0x00000000c0028b6f                _ScanReadyQueue
+                0x00000000c0028c28                _feed_ready_queue
+ .text          0x00000000c0028de0      0x202 spawn.o
+                0x00000000c0028dec                _KiSpawnTask
+                0x00000000c0028e31                _spawn_thread
+ .text          0x00000000c0028fe2        0xc tasks.o
+                0x00000000c0028fe2                _task0
+                0x00000000c0028fe8                _task1
+ .text          0x00000000c0028fee       0x1b theap.o
+                0x00000000c0028fee                _GetThreadHeapStart
+ .text          0x00000000c0029009      0xab7 thread.o
+                0x00000000c0029009                _threadCopyThread
+                0x00000000c0029390                _create_thread
+                0x00000000c002979a                _GetCurrentThreadId
+                0x00000000c00297a4                _GetCurrentThread
+                0x00000000c00297e7                _FindReadyThread
+                0x00000000c0029845                _SelectForExecution
+                0x00000000c0029877                _GetThreadState
+                0x00000000c002988f                _GetThreadType
+                0x00000000c00298a7                _show_thread_information
+                0x00000000c0029944                _init_threads
+                0x00000000c00299c5                _thread_getchar
+ .text          0x00000000c0029ac0      0xa6d threadi.o
+                0x00000000c0029ac0                _xxxRing0Idle
+                0x00000000c0029ae4                _KiCreateRing0Idle
+                0x00000000c0029e85                _fork
+                0x00000000c0029e8f                _KiFork
+                0x00000000c0029e99                _KiShowPreemptedTask
+                0x00000000c0029e9f                _KiSetTaskStatus
+                0x00000000c0029eb6                _KiGetTaskStatus
+                0x00000000c0029ec3                _KiSaveContextOfNewTask
+                0x00000000c0029ec9                _KiSetQuantum
+                0x00000000c0029ecf                _KiGetQuantum
+                0x00000000c0029ed9                _KiSetCurrentQuantum
+                0x00000000c0029edf                _KiGetCurrentQuantum
+                0x00000000c0029ee9                _KiSetNextQuantum
+                0x00000000c0029eef                _KiGetNextQuantum
+                0x00000000c0029ef9                _KiSetFocus
+                0x00000000c0029eff                _KiGetFocus
+                0x00000000c0029f09                _KiDebugBreakpoint
+                0x00000000c0029f0f                _KiShowTasksParameters
+                0x00000000c0029f15                _KiMostraSlots
+                0x00000000c0029f23                _KiMostraSlot
+                0x00000000c0029f3a                _KiMostraReg
+                0x00000000c0029f40                _KiShowThreadList
+                0x00000000c0029f4e                _mostra_slots
+                0x00000000c0029fbb                _mostra_slot
+                0x00000000c002a0c5                _mostra_reg
+                0x00000000c002a1d3                _set_thread_priority
+                0x00000000c002a22a                _SetThreadDirectory
+                0x00000000c002a241                _GetThreadDirectory
+                0x00000000c002a259                _show_preempted_task
+                0x00000000c002a25f                _show_tasks_parameters
+                0x00000000c002a265                _release
+                0x00000000c002a2af                _exit_thread
+                0x00000000c002a327                _kill_thread
+                0x00000000c002a3e6                _dead_thread_collector
+                0x00000000c002a4b5                _kill_all_threads
+                0x00000000c002a4e6                _check_for_dead_thread_collector
+ .text          0x00000000c002a52d      0x668 ts.o
+                0x00000000c002a52d                _KiTaskSwitch
+                0x00000000c002a59b                _task_switch
+                0x00000000c002aa1a                _taskswitchRR
+                0x00000000c002ab5d                _set_task_status
+                0x00000000c002ab6b                _get_task_status
+                0x00000000c002ab75                _taskswitch_lock
+                0x00000000c002ab85                _taskswitch_unlock
+ .text          0x00000000c002ab95       0x1b tstack.o
+                0x00000000c002ab95                _GetThreadStackStart
+ .text          0x00000000c002abb0        0x0 callout.o
+ .text          0x00000000c002abb0        0x0 callfar.o
+ .text          0x00000000c002abb0       0x24 ipc.o
+                0x00000000c002abb0                _ipcProcedure
+                0x00000000c002abba                _ipcProcedureEx
+                0x00000000c002abc4                _ipc_dispatch_message
+                0x00000000c002abce                _init_ipc
+ .text          0x00000000c002abd4      0x364 ipccore.o
+                0x00000000c002abd4                _ipcore_services
+                0x00000000c002ac4a                _ipccore_open
+                0x00000000c002ad39                _ipccore_close
+                0x00000000c002ae7a                _ipccore_register
+ .text          0x00000000c002af38       0xe0 sem.o
+                0x00000000c002af38                _init_semaphore
+                0x00000000c002af58                _Down
+                0x00000000c002afa0                _Up
+                0x00000000c002afda                _semaphore_down
+                0x00000000c002afeb                _semaphore_up
+                0x00000000c002affc                _create_semaphore
+                0x00000000c002b006                _delete_semaphore
+                0x00000000c002b00c                _open_semaphore
+                0x00000000c002b012                _close_semaphore
+ .text          0x00000000c002b018      0x851 memory.o
+                0x00000000c002b018                _get_process_heap_pointer
+                0x00000000c002b0ba                _SetKernelHeap
+                0x00000000c002b154                _heapAllocateMemory
+                0x00000000c002b32f                _FreeHeap
+                0x00000000c002b3ef                _init_heap
+                0x00000000c002b536                _init_stack
+                0x00000000c002b5a0                _init_mm
+                0x00000000c002b6c5                _gcGRAMADO
+                0x00000000c002b6cf                _gcEXECUTIVE
+                0x00000000c002b7f4                _gcMICROKERNEL
+                0x00000000c002b7fe                _gcHAL
+                0x00000000c002b808                _gc
+ .text          0x00000000c002b869      0x562 mminfo.o
+                0x00000000c002b869                _mmShowPDE
+                0x00000000c002b904                _mmShowPDEForAllProcesses
+                0x00000000c002b980                _memoryShowMemoryInfo
+                0x00000000c002bb9d                _show_memory_structs
+                0x00000000c002bc27                _testingPageAlloc
+                0x00000000c002bd55                _showFreepagedMemory
+ .text          0x00000000c002bdcb      0x199 mmpool.o
+                0x00000000c002bdcb                _page
+                0x00000000c002be73                _newPage
+ .text          0x00000000c002bf64     0x10ed pages.o
+                0x00000000c002bf64                _get_table_pointer
+                0x00000000c002bf7d                _CreatePageDirectory
+                0x00000000c002bfec                _CreatePageTable
+                0x00000000c002c106                _SetCR3
+                0x00000000c002c11f                _mapping_ahci1_device_address
+                0x00000000c002c194                _mapping_nic1_device_address
+                0x00000000c002c209                _SetUpPaging
+                0x00000000c002cc91                _initializeFramesAlloc
+                0x00000000c002cd1e                _allocPages
+                0x00000000c002cf05                _pEmpty
+                0x00000000c002cf14                _freePage
+                0x00000000c002cf44                _notfreePage
+                0x00000000c002cf74                _firstSlotForAList
+                0x00000000c002cfdb                _virtual_to_physical
+ .text          0x00000000c002d051       0xbe preempt.o
+                0x00000000c002d051                _preempt
+ .text          0x00000000c002d10f      0x15a priority.o
+                0x00000000c002d10f                _set_priority
+                0x00000000c002d148                _KiSetPriority
+                0x00000000c002d155                _KiIncreasePriority
+                0x00000000c002d15f                _find_higher_priority
+                0x00000000c002d25f                _KiFindHigherPriority
+ .text          0x00000000c002d269      0x226 sched.o
+                0x00000000c002d269                _pick_next_thread
+                0x00000000c002d374                _scheduler
+                0x00000000c002d43e                _scheduler_start
+                0x00000000c002d459                _scheduler_lock
+                0x00000000c002d469                _scheduler_unlock
+                0x00000000c002d479                _scheduler_get_status
+                0x00000000c002d483                _new_task_scheduler
+                0x00000000c002d489                _init_scheduler
+ .text          0x00000000c002d48f      0x7be schedi.o
+                0x00000000c002d48f                _do_waitpid
+                0x00000000c002d583                _block_for_a_reason
+                0x00000000c002d5f9                _wakeup_thread_reason
+                0x00000000c002d721                _wakeup_scan_thread_reason
+                0x00000000c002d78e                _KiScheduler
+                0x00000000c002d7c6                _KiSelectNextThread
+                0x00000000c002d7ea                _KiDoThreadReady
+                0x00000000c002d801                _KiDoThreadRunning
+                0x00000000c002d818                _KiDoThreadSleeping
+                0x00000000c002d82f                _KiDoThreadZombie
+                0x00000000c002d846                _KiDoThreadDead
+                0x00000000c002d85d                _KiNewTaskScheduler
+                0x00000000c002d863                _KiDispatchTask
+                0x00000000c002d869                _KiSetCurrent
+                0x00000000c002d880                _KiGetCurrent
+                0x00000000c002d88d                _KiGetCurrentTask
+                0x00000000c002d89a                _get_current
+                0x00000000c002d8a4                _get_current_task
+                0x00000000c002d8ae                _set_current
+                0x00000000c002d8da                _do_thread_initialized
+                0x00000000c002d911                _do_thread_ready
+                0x00000000c002d948                _do_thread_running
+                0x00000000c002d997                _do_thread_sleeping
+                0x00000000c002d9ce                _do_thread_zombie
+                0x00000000c002da0e                _do_thread_dead
+                0x00000000c002da45                _wakeup_thread
+                0x00000000c002da9e                _SelectNextThread
+                0x00000000c002db54                _check_for_standby
+                0x00000000c002dbde                _check_quantum
+ .text          0x00000000c002dc4d      0xb67 create.o
+                0x00000000c002dc4d                _KiCreateIdle
+                0x00000000c002e080                _KiCreateShell
+                0x00000000c002e41a                _KiCreateTaskManager
+ .text          0x00000000c002e7b4      0x41c mk.o
+                0x00000000c002e7b4                _jobcontrol
+                0x00000000c002e8bc                _jobcheck
+                0x00000000c002e98c                _microkernelTestLimit
+                0x00000000c002e992                _sys_dead_thread_collector
+                0x00000000c002e9a0                _sys_exit_process
+                0x00000000c002e9ba                _sys_exit_thread
+                0x00000000c002e9d1                _sys_create_process
+                0x00000000c002e9ff                _sys_create_thread
+                0x00000000c002ea27                _sys_fork
+                0x00000000c002ea34                _sys_getpid
+                0x00000000c002ea3e                _sys_getppid
+                0x00000000c002eaa3                _init_microkernel
+ .text          0x00000000c002ebd0      0x41d request.o
+                0x00000000c002ebd0                _KiRequest
+                0x00000000c002ec04                _request
+                0x00000000c002edfa                _create_request
+                0x00000000c002eea1                _clear_request
+                0x00000000c002ef29                _do_request_12
+                0x00000000c002efed                _code_end = .
                 0x00000000c002f000                . = ALIGN (0x1000)
- *fill*         0x00000000c002ec9f      0x361 
+ *fill*         0x00000000c002efed       0x13 
 
 .iplt           0x00000000c002f000        0x0
  .iplt          0x00000000c002f000        0x0 head.o
