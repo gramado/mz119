@@ -7,8 +7,9 @@
 // enquando os canais usam os termos server/client os pty
 // usam os termos master/slave.
 
-//#importante
-//não existe estrutura de pty. pty usa a estrutura de tty.
+// #importante
+// não existe estrutura de pty. 
+// pty usa a estrutura de tty.
 
 //ex: terminal=slave  shell=master.
 
@@ -23,8 +24,13 @@
 The role of the terminal emulator process is:
 
     to interact with the user.
-    to feed text input to the master pseudo-device for use by the shell (such as bash), which is connected to the slave pseudo-device.
-    to read text output from the master pseudo-device and show it to the user.
+    
+    to feed text input to the master pseudo-device for use by 
+    the shell (such as bash), which is connected to the slave 
+    pseudo-device (virtual terminal).
+    
+    to read text output from the master pseudo-device (shell) and show 
+    it to the user.
 */
 
 

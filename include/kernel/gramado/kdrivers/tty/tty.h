@@ -23,6 +23,22 @@ int ttyCurrentY;
 
 
 
+struct ttybuffer_d
+{
+    int used;
+    int magic;
+
+    // #importante:
+    // Usaremos um stream sem  nome para gerenciar a 
+    // área de memória que a tty precisa como buffer.
+ 
+    FILE *stream;
+
+    struct ttybuffer_d *next;
+};
+struct ttybuffer_d *CurrentTTYBUFFER;
+
+
 
 struct tty_line_d
 {
@@ -47,13 +63,23 @@ struct tty_line_d
 
 struct tty_d
 {
-	int index;
-	
-	int used;
-	int magic;
-		
-	char name[64];
-	
+	//#todo: object header.
+
+    int index;
+
+    int used;
+    int magic;
+
+    char name[64];
+    
+    // linux-like
+    short type;       // type of tty
+    short subtype;    // subtype of tty 
+    int flags;        // tty flags.   
+    
+    //status
+    int stopped;
+
 	// #importante: #TODO
 	//see: termios.h
 	//struct termios *termios;
@@ -63,40 +89,44 @@ struct tty_d
 	//isso será tratado em tty.c
 	//struct termios termios;   
 	
+	
 	//
-	// user, user session, room, desktop;
+	// User
 	//
 	
-	struct user_info_d *user_info;
+    struct user_info_d *user_info;	
 	
-	struct usession_d *user_session;
-	
-	struct room_d *room;
-	
-	struct desktop_d *desktop;
+	//
+	// user session, room, desktop;
+	//
+
+    struct usession_d *user_session;
+    struct room_d *room;
+    struct desktop_d *desktop;
 
 	//
-	// Janela.
+	// Window.
 	//
-	
-	struct window_d *window;
-		
+
+    struct window_d *window;
+
 	// Quantas objetos associados a essa tty?
-	int count;
-	
-	// id do terminal associado a essa tty.
-	int terminal_id;  //tdo deletar.
-	int terminal_pid;  //todo: usar esse
+    int count;
 
-	
+	// id do terminal associado a essa tty.
+    int terminal_id;  //tdo deletar.
+    int terminal_pid;  //todo: usar esse
+
+
    //#todo: buffer?
-	
-    // Owner.
+
+    // Owner process.
     struct process_d *process;
-	
+
+
 	// Thread de input.
-	struct thread_d *thread;
-   
+    struct thread_d *thread;
+ 
 	//
 	// FILE
 	//
@@ -126,10 +156,10 @@ struct tty_d
 	
 	
 	unsigned char *ring0_stdout_last_ptr;
-	unsigned char *ring0_stderr_last_ptr;	
+	unsigned char *ring0_stderr_last_ptr;
 	
 	unsigned char *ring0_stdout_limit;
-	unsigned char *ring0_stderr_limit;		
+	unsigned char *ring0_stderr_limit;
 	
 	// status
 	// 0 = não repinte stdout no tty atual
@@ -139,19 +169,17 @@ struct tty_d
 
 	int print_pending;
 	
-	
-    int	LinMax;
-	int	ColMax;
-	int FullScreen;    //flag.
-	
 
-	
+    int LinMax;
+    int ColMax;
+    int FullScreen;    //flag.
+
+
 	//informações básicas sobre o retângulo
     unsigned long left; 
-	unsigned long top;
-	unsigned long width;
-	unsigned long height;
-		
+    unsigned long top;
+    unsigned long width;
+    unsigned long height;
  
     //cursor support.
     unsigned long cursor_x;
@@ -162,20 +190,20 @@ struct tty_d
     unsigned long cursor_left;     // margem esquerda dada em linhas
     unsigned long cursor_top;      // margem superior dada em linhas
     unsigned long cursor_right;    // margem direita dada em linhas
-    unsigned long cursor_bottom; // margem inferior dada em linhas
+    unsigned long cursor_bottom;   // margem inferior dada em linhas
 	
 	
 	//linha atual da lista abaixo.
-	int current_line;
-	
+    int current_line;
+
 	// Organizando as linhas dentro do TTY.	
 	//Lista de ponteiros de estrutura de linha (tty_line_d)
-	unsigned long lines[32];
+    unsigned long lines[32];
 	
     //in support
-	//unsigned long IN[320];
+    //unsigned long IN[320];
     //int head; //coloca.
-	//int tail; //pega.
+    //int tail; //pega.
 	
 	//out support	
 	//unsigned long OUT[320];
@@ -186,24 +214,46 @@ struct tty_d
 	
 	//Id da janela do terminal virtual associado
 	//ao tty
-    //int windowID;	
-	
+    //int windowID;
+    
+    
+    // qual disciplina de linhas será usada.
+    // cada disciplina de linhas tem um conjunto de operações.
+    struct ttyldisc_d *ldisc;
+    
+    // com qual driver essa tty está trabalhando.
+    struct ttydrv_d *driver;
+    
+    // pty associa a tty 'to' com a tty 'from'
+    // master/slave.
+    struct tty_d *link;
+
 };
 struct tty_d *CurrentTTY;
 
-    //usar esse
-    unsigned long ttyList[8];
+
+// Lista de TTYs.
+unsigned long ttyList[8];
 
 
 
 /* tty magic number */
 //#define TTY_MAGIC	0x0771
 
+
 void check_CurrentTTY (void);
 
 //void *createTTYLine (void); 
 
+
 int ttyInit (int tty_id);
+
+
+/*
+int pty_write(struct tty_d *tty, const char *buf, int c);
+int pty_write(struct tty_d *tty, const char *buf, int c)
+{}
+*/
 
 //
 // End.

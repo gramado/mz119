@@ -345,6 +345,12 @@ extern void do_executa_new_task (void);
 #include <kernel/gramado/execve/sm/init.h>
 
 
+//
+// tty
+//
+
+#include <kernel/gramado/kdrivers/tty/ttyldisc.h>
+#include <kernel/gramado/kdrivers/tty/ttydrv.h>
 #include <kernel/gramado/kdrivers/tty/tty.h>
 #include <kernel/gramado/kdrivers/tty/pty.h>
 
