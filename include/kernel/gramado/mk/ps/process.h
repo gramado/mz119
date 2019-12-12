@@ -1,5 +1,5 @@
 /*
- * File: mk/pc/process.h
+ * File: mk/ps/process.h
  *
  * Descrição:
  *     Header principal para as rotinas de gerenciamento de processos.
@@ -334,29 +334,34 @@ struct process_d
 	//unsigned long name_address;    //@todo: não usar isso.
 
 
-	//Se o processo é ou não um processo de terminal.
-	//que aparece no terminal.
-
-	int terminal;
-	
-	//#importante
-	//Em qual terminal o processo vai atual.
-	//a estrutura está em terminal.h
-	
-	int terminal_id;   //deletar esse.
-	int terminal_tid;  //usar esse.
-	
-		
+    //
+    // Standard input.
+    //
+    
+    // #importante
+    // De onde vem o o input do processo. (stdin)
+    // O stdin pode vim de um terminal. Pois um terminal
+    // pode estar gerenciando o input de teclado ou mouse e
+    // transferindo os dados para o processo através de uma 
+    // disciplina de linhas.
+    // ex: #todo INPUTTYPE_TTY INPUTTYPE_RAW ...
+    int input_type;
+    
 	//
 	// tty support
 	//
-	
-	// ID da tty usada.
-	int tty_id;
-	
-	
-	int personality;	
-	
+    
+    // Essa é a tty do processo.
+    // Ela será master se o processo for um shell e
+    // Será slave se o processo for um terminal.
+    // O terminal(slave) encontrará o shell(master) em tty->link.
+    struct tty_d *tty;
+
+ 
+    // Qual é apersonalidade do processo.
+    // Ele deve agir como unix-like, gramado-like, etc ?
+    int personality;
+
 	//Importante:
 	//isso substituirá a flag 'terminal'
 	//APPMODE_TERMINAL = O kernel cria uma estrutura de terminal 
@@ -755,7 +760,7 @@ struct process_d
 	struct window_d *window;    //arg1.
 	int msg;                    //arg2.
 	unsigned long long1;        //arg3.
-	unsigned long long2;        //arg4.		
+	unsigned long long2;        //arg4.
 
 	// diálogo com o processo.
 	// importante no caso de servidores e drivers
@@ -764,7 +769,7 @@ struct process_d
 	// Navigation:
 	// Prev and Next.
 
-	struct process_d *prev;	
+	struct process_d *prev;
 	struct process_d *next;
 };
 
