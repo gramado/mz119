@@ -359,7 +359,7 @@ void *gde_extra_services ( unsigned long number,
     }
 
 
-	// pega um char na stream, o último que foi pego,
+	// Pega um char na stream, o último que foi pego,
 	// não o último que foi colocado.
 	// #importante: uma no terminal deve chamar isso.
 	// mas o terminal precisa ser alertado de que tem mensagens
@@ -370,18 +370,18 @@ void *gde_extra_services ( unsigned long number,
     if ( number == 1002 )
     {
 		//pega
-		xxx_ch = (int) *CurrentTTY->ring0_stdout_last_ptr;
-		
+        xxx_ch = (int) *CurrentTTY->ring0_stdout_last_ptr;
+
 		//apaga.
-		*CurrentTTY->ring0_stdout_last_ptr = 0;
-		
+        *CurrentTTY->ring0_stdout_last_ptr = 0;
+
 		//incrementa e circula
-	    CurrentTTY->ring0_stdout_last_ptr++;	
-		if ( CurrentTTY->ring0_stdout_last_ptr >= CurrentTTY->ring0_stdout_limit )
-		{
-			CurrentTTY->ring0_stdout_last_ptr = CurrentTTY->ring0_stdout->_base;
-		}
-		
+        CurrentTTY->ring0_stdout_last_ptr++;
+        if ( CurrentTTY->ring0_stdout_last_ptr >= CurrentTTY->ring0_stdout_limit )
+        {
+            CurrentTTY->ring0_stdout_last_ptr = CurrentTTY->ring0_stdout->_base;
+        }
+
 		//retorna o que pegou.
         return (void *) xxx_ch;
     } 
@@ -512,8 +512,14 @@ void *gde_extra_services ( unsigned long number,
 		return (void *) button_up ( (struct window_d *) arg2 );
     }
  
+    // chamado por gde_get_pid na api.
+    // See: system.c
+    if ( number == 9999 )
+    {
+        return (void *) system_get_pid ( (int) arg2 );
+    }
 
-
+//fail
     return NULL;  
 }
 
@@ -1373,9 +1379,11 @@ void *gde_services ( unsigned long number,
 
 		// 112
 		// Enviar uma mensagem para a thread de controle de um processo.
-		// arg2, arg3
-		// endereço do buffer da mensagem, pid
-		// #bugbug: O processo pode ler esse buffer ?
+		// arg2 = endereço do buffer da mensagem, pid
+		// arg3 = pid
+		// #importante: 
+		// O kernel lê o buffer e dentro do buffer tem uma mensagem 
+		// que será colocada na thread de cotrole do processo;
 		case SYS_SENDMESSAGETOPROCESS:
 			//printf ("112: PID=%d\n", arg3 );
 			pty_send_message_to_process ( (unsigned long) &message_address[0], 

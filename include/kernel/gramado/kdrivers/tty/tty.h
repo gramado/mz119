@@ -54,9 +54,11 @@ struct tty_d
 		
 	char name[64];
 	
+	// #importante: #TODO
 	//see: termios.h
 	//struct termios *termios;
-	
+
+
 	//devemos colocar sem ponteiro,
 	//isso será tratado em tty.c
 	//struct termios termios;   

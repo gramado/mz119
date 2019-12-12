@@ -22,15 +22,22 @@
  */
 
 
+//
+// getpid_t:
+//     Índices usados pela função gde_get_pid(x)
+//     Usada para obter o pid de alguns drivers e servidores
+// do sistema. Aqueles servidores que só podem ter um do tipo 
+// rodando ao mesmo tempo.
+//
 
+typedef enum {
 
+    GETPID_NULL,
+    GETPID_WS,
+    GETPID_WM
+    //...
 
-void servicesPutChar ( int c );
-
-
-
-
-unsigned long serviceCreateWindow ( char * message_buffer );
+}getpid_t;
 
 
 //
@@ -414,13 +421,11 @@ struct system_d *System;
 
 
 
+void servicesPutChar ( int c );
 
- 
+unsigned long serviceCreateWindow ( char * message_buffer );
  
 
-			   
-												
-												  
 /*
  * systemcall:
  *     @todo: Essa função deve ser chamada via kernel request quando em kernel mode.
@@ -547,16 +552,31 @@ int system_dispatch_to_procedure( struct window_d *window,
 
 int SystemMenu (void);
 
- 
-//isso será um serviço disponível para a api, 
-unsigned long systemGetSystemMetrics( int index );
+
+
+/*
+ ************************************* 
+ * system_get_pid: 
+ *     A api solicita o pid de alguns servidores e drivers.
+ * 
+ */ 
+int system_get_pid (int index);
+
+
+/*
+ ************************************* 
+ * systemGetSystemMetrics: 
+ *     A api solicita algumas informações de métrica de sistema.
+ * 
+ */ 
+unsigned long systemGetSystemMetrics ( int index );
  
 
 /*
  * SystemMenuProcedure:
  *     O procedimento do Control Menu principal.
  *     Menu do sistema, manipula a janela ativa.
- */																
+ */
 unsigned long SystemMenuProcedure( struct window_d *window, 
                                    int msg, 
 								   unsigned long long1, 

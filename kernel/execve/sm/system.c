@@ -1176,9 +1176,50 @@ void die (void){
 
 
 /*
+ * system_get_pid:
+ * 
+ */
+// Usada para obter o pid de alguns drivers e servidores
+// do sistema. Aqueles servidores que só podem ter um do tipo 
+// rodando ao mesmo tempo.
+// É o serviço 9999.
+// See: kernel.h, system.h
+
+int system_get_pid (int index){
+
+    if ( index < 0 )
+        return -1;
+
+
+    switch (index)
+    {
+        case GETPID_NULL:
+            return -1;
+            break;
+
+        case GETPID_WS:
+            return (int) current_ws;
+            break;
+
+        case GETPID_WM:
+            return (int) current_wm;
+            break;
+
+        default:
+            return -1;
+            break;
+    };
+
+
+    return (int) -1;
+}
+
+
+/*
  ***************************************
  * systemGetSystemMetrics:
  *     Retorna informações sobre o sistema.
+ * 
  *     #todo: 
  *     Criam um enum para essa função, aqui mesmo nesse arquivo.
  */
@@ -1482,7 +1523,7 @@ int systemStartUp (void){
 	// Define um tipo de destinação para a versão do sistema operacional.
 	//
 	
-    switch(SYSTEM_EDITION)
+    switch (SYSTEM_EDITION)
 	{
 		case SYSTEM_DEVELOPER_EDITION:
 		    gSystemEdition = SYSTEM_DEVELOPER_EDITION; 

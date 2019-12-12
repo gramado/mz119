@@ -454,33 +454,58 @@ typedef enum {
 }PlatformType_t;
 
 
+//
+// ==== current ====
+//
+
+
+// Organização de usuários.
+int current_user; 
+int current_group; 
+
+// Organização dos ambientes.
+//int current_user_session;
+//int current_room;
+//int current_desktop;
+
+// Organização dos processos
+int current_process;
+int current_thread;
+int idle; //true ring 0 idle tread id.
+int next_thread; //next user mode thread.
+
+
+// Organização dos discos.
+int current_disk;
+int current_volume;
+
+// Organização dos arquivos.
+int current_directory;
+int current_file;
+int current_dead_process;
+int current_dead_thread;
+
+// Organização dos terminais
+int current_tty;
+int current_terminal;
+//int current_pty;
+//int current_pts;
+
+
+int current_ws;  //window server.
+int current_wm;  //window manager. 
+
+//...
+
+// ==== ====
+
+
 //size of processor word.
 int g_platform_type;
 
 
-int current_user;    //gramado ?
-int current_group;   //gramado ?
 
 
-//true ring 0 idle tread id.
-//can't be destroied.
-//stay blocked if we have more then one thread.
-int idle;
-
-//next user mode thread.
-int next_thread;
-
-int current_process;
-int current_thread;
-int current_disk;
-int current_volume;
-int current_directory;
-int current_file;
-int current_tty;
-int current_terminal;
-int current_dead_process;
-int current_dead_thread;
-//...
 
 
 //se ele est'a inicializado ou nao

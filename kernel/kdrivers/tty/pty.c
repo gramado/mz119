@@ -17,10 +17,10 @@
  */
 
 void pty_send_message_to_process ( unsigned long msg_buffer, int pid ){
-	
-	struct process_d *p;
-	struct thread_d *t;
-	
+
+    struct process_d *p;
+    struct thread_d *t;
+
 	//#debug
 	//printf ("pty_send_message_to_process: PID=%d \n", pid );
 	//refresh_screen ();	
@@ -146,7 +146,7 @@ void pty_send_message_to_thread ( unsigned long msg_buffer, int tid ){
 			t->long1 = (unsigned long) buffer[2];
 			t->long2 = (unsigned long) buffer[3];
 				
-			//sinalizando que temos uma mensagem.
+			// Sinalizando que temos uma mensagem.
 			t->newmessageFlag = 1; 
 		};
 	};
