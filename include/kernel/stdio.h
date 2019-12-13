@@ -289,6 +289,32 @@
   Prints a descriptive error message to stderr. 
   First the string str is printed followed by a colon and then a space.
 */ 
+
+
+
+
+//
+// * Kernel streams.
+//
+
+// Essas são as primeiras streams na estrutura Streams[]
+// São padronizadas e pertencem ao kernel.
+
+// Configuradas em stdio.c
+#define __KERNEL_STREAM_STDIN   0
+#define __KERNEL_STREAM_STDOUT  1
+#define __KERNEL_STREAM_STDERR  2
+
+// Configuradas em vfs.c.c
+#define __KERNEL_STREAM_VFS     3
+
+// Configuradas em fs.c
+#define __KERNEL_STREAM_VOL1_ROOTDIR   4
+#define __KERNEL_STREAM_VOL2_ROOTDIR   5
+
+// ...
+ 
+ 
  
  
 //#ifdef  _POSIX_

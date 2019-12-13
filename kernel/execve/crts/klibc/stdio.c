@@ -258,6 +258,10 @@ FILE *fopen ( const char *filename, const char *mode ){
         // Quanto falta para acabar o arquivo.
         stream->_cnt = s;
 
+
+        // #todo
+        // Talvez tenhamos que colocar o ponteiro em Streams[i]
+         
 		//...
 
     };
@@ -2187,27 +2191,27 @@ int stdioInitialize (void){
     // Configurando a estrutura de stdin. 
 	stdin->used = 1;
 	stdin->magic = 1234;
-	stdin->_base = &prompt[0];
+	stdin->_base = &prompt[0];    //See: include/kernel/stdio.h
 	stdin->_p =  &prompt[0];
 	stdin->_bf._base = stdin->_base;
-	stdin->_lbfsize = 128; //#todo
+	stdin->_lbfsize = PROMPT_SIZE; //128; //#todo
 	stdin->_r = 0;
-	stdin->_w = 0;	
-	stdin->_cnt = PROMPT_MAX_DEFAULT;
+	stdin->_w = 0;
+	stdin->_cnt = PROMPT_SIZE;
 	stdin->_file = 0;
 	stdin->_tmpfname = "k-stdin";
 	//...
 
     // Configurando a estrutura de stdout.
 	stdout->used = 1;
-	stdout->magic = 1234;	
-	stdout->_base = &prompt_out[0];
+	stdout->magic = 1234;
+	stdout->_base = &prompt_out[0];  //See: include/kernel/stdio.h
 	stdout->_p = &prompt_out[0];
 	stdout->_bf._base = stdout->_base;
-	stdout->_lbfsize = 128; //#todo
+	stdout->_lbfsize = PROMPT_SIZE; //128; //#todo
 	stdout->_r = 0;
-	stdout->_w = 0;		
-	stdout->_cnt = PROMPT_MAX_DEFAULT;
+	stdout->_w = 0;
+	stdout->_cnt = PROMPT_SIZE;
 	stdout->_file = 1;
 	stdout->_tmpfname = "k-stdout";
 	//...
@@ -2215,13 +2219,13 @@ int stdioInitialize (void){
     // Configurando a estrutura de stderr.
 	stderr->used = 1;
 	stderr->magic = 1234;
-	stderr->_base = &prompt_err[0];
+	stderr->_base = &prompt_err[0];  //See: include/kernel/stdio.h
 	stderr->_p =  &prompt_err[0];
 	stderr->_bf._base = stderr->_base;
-	stderr->_lbfsize = 128; //#todo
+	stderr->_lbfsize = PROMPT_SIZE; //128; //#todo
 	stderr->_r = 0;
-	stderr->_w = 0;	
-	stderr->_cnt = PROMPT_MAX_DEFAULT;
+	stderr->_w = 0;
+	stderr->_cnt = PROMPT_SIZE;
 	stderr->_file = 2;
 	stderr->_tmpfname = "k-stderr";
 	//...
@@ -2230,9 +2234,9 @@ int stdioInitialize (void){
     // #importante
     // Salvando os ponteiros na lista de arquivos.
 
-    Streams[0] = (unsigned long) stdin;
-    Streams[1] = (unsigned long) stdout;
-    Streams[2] = (unsigned long) stderr;
+    Streams[__KERNEL_STREAM_STDIN] = (unsigned long) stdin;
+    Streams[__KERNEL_STREAM_STDOUT] = (unsigned long) stdout;
+    Streams[__KERNEL_STREAM_STDERR] = (unsigned long) stderr;
 
 	//Os próximos são inicializados em fs.c
 	//Streams[3] volume0 root dir (vfs) 
@@ -2306,7 +2310,10 @@ int stdioInitialize (void){
 	// Preenche os arquivos do fluxo padrão do kernel base
 	// com 'zeros'.
 
-    for ( i=0; i<PROMPT_MAX_DEFAULT; i++ )
+    //See: include/kernel/stdio.h
+    
+    //for ( i=0; i<PROMPT_MAX_DEFAULT; i++ )
+    for ( i=0; i<PROMPT_SIZE; i++ )
     {
 		prompt[i] = (char) '\0';
 		prompt_out[i] = (char) '\0';
@@ -2319,7 +2326,7 @@ int stdioInitialize (void){
 	// dos 3 arquivos. Mas isso reflete apenas o posicionamento 
 	// dentro de stdin por enquanto.
 	
-    prompt_pos = 0;	
+    prompt_pos = 0;
 	
 	
 	//
@@ -2354,6 +2361,7 @@ int stdioInitialize (void){
 	current_stdin->_p = (unsigned char *) &current_stdin_data_buffer[0];
 	current_stdin->_cnt = 128;  //Limitando. na verdade e' 4KB.
 	current_stdin->_lbfsize = 128;
+	//#todo: Colocar em Streams[i]
 	
 	//
 	// ## stdout
@@ -2376,6 +2384,7 @@ int stdioInitialize (void){
 	current_stdout->_p  = (unsigned char *) &current_stdout_data_buffer[0];
 	current_stdout->_cnt = 128;  //Limitando. na verdade e' 4KB.
 	current_stdout->_lbfsize = 128;
+	//#todo: Colocar em Streams[i]
 	
 	//
 	// ## stderr
@@ -2398,11 +2407,12 @@ int stdioInitialize (void){
 	current_stderr->_p  = (unsigned char *) &current_stderr_data_buffer[0];
 	current_stderr->_cnt = 128;  //Limitando. na verdade e' 4KB.
 	current_stderr->_lbfsize = 128;
-
+    //#todo: Colocar em Streams[i]
+    
+    
 	// Done !
 
     return 0;
-
 
 fail:
     panic ("stdio-stdioInitialize: fail\n");

@@ -848,7 +848,7 @@ int fsInit (void){
 
 	// Agora inicialzamos as stream 4 e 5.
 	// As anteriores foram inicializadas em stdio,
-	// pois são o fluxo padrão.	
+	// pois são o fluxo padrão.
 	
 	
 	//
@@ -867,13 +867,16 @@ int fsInit (void){
 
     } else {
 
-	    volume1_rootdir->_base = (unsigned char *) VOLUME1_ROOTDIR_ADDRESS;
-	    volume1_rootdir->_p = (unsigned char *) VOLUME1_ROOTDIR_ADDRESS;
-	    volume1_rootdir->_cnt = (32 * 512) ;
-	    volume1_rootdir->_file = 0; //?
-	    volume1_rootdir->_tmpfname = "volume1-stream";
+        volume1_rootdir->used = 1;
+        volume1_rootdir->magic = 1234;
 
-        Streams[4] = (unsigned long) volume1_rootdir;
+        volume1_rootdir->_base = (unsigned char *) VOLUME1_ROOTDIR_ADDRESS;
+        volume1_rootdir->_p = (unsigned char *) VOLUME1_ROOTDIR_ADDRESS;
+        volume1_rootdir->_cnt = (32 * 512) ;
+        volume1_rootdir->_file = 0; //?
+        volume1_rootdir->_tmpfname = "volume1-stream";
+
+        Streams[__KERNEL_STREAM_VOL1_ROOTDIR] = (unsigned long) volume1_rootdir;
 
         //#bugbug: Validade da estrutura.
         storage->stream = volume1_rootdir; 
@@ -896,13 +899,16 @@ int fsInit (void){
 
     }else{
 
-	    volume2_rootdir->_base = (unsigned char *) VOLUME2_ROOTDIR_ADDRESS;
-	    volume2_rootdir->_p = (unsigned char *) VOLUME2_ROOTDIR_ADDRESS;
-	    volume2_rootdir->_cnt = (32 * 512) ;
-	    volume2_rootdir->_file = 0; //?
-	    volume2_rootdir->_tmpfname = "volume2-stream";
+        volume2_rootdir->used = 1;
+        volume2_rootdir->magic = 1234;
 
-        Streams[5] = (unsigned long) volume2_rootdir;
+        volume2_rootdir->_base = (unsigned char *) VOLUME2_ROOTDIR_ADDRESS;
+        volume2_rootdir->_p = (unsigned char *) VOLUME2_ROOTDIR_ADDRESS;
+        volume2_rootdir->_cnt = (32 * 512) ;
+        volume2_rootdir->_file = 0; //?
+        volume2_rootdir->_tmpfname = "volume2-stream";
+
+        Streams[__KERNEL_STREAM_VOL2_ROOTDIR] = (unsigned long) volume2_rootdir;
     };
 
 
@@ -922,7 +928,7 @@ int fsInit (void){
 
     }else{
 
-	    //aloca memória para o buffer.
+        //aloca memória para o buffer.
         unsigned long pipe0base = (unsigned long) malloc (512);
 
         if ( (void *) pipe0base == NULL )
@@ -930,11 +936,18 @@ int fsInit (void){
             panic ("fsInit: pipe0base\n");
         }
 
-	    pipe_gramadocore_init_execve->_base = (unsigned char *) pipe0base;
-	    pipe_gramadocore_init_execve->_p = (unsigned char *) pipe0base;
-	    pipe_gramadocore_init_execve->_cnt  = 512;
-	    pipe_gramadocore_init_execve->_file = 0; //??
-	    pipe_gramadocore_init_execve->_tmpfname = "pipe0";
+        pipe_gramadocore_init_execve->used = 1;
+        pipe_gramadocore_init_execve->magic = 1234;
+
+        pipe_gramadocore_init_execve->_base = (unsigned char *) pipe0base;
+        pipe_gramadocore_init_execve->_p = (unsigned char *) pipe0base;
+        pipe_gramadocore_init_execve->_cnt  = 512;
+        pipe_gramadocore_init_execve->_file = 0; //??
+        pipe_gramadocore_init_execve->_tmpfname = "pipe0";
+        
+        
+        // #todo
+        //Streams[ ? ] = (unsigned long) pipe_gramadocore_init_execve;
 
 	    //0
         Pipes[0] = (unsigned long) pipe_gramadocore_init_execve;

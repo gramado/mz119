@@ -197,6 +197,10 @@ sys_ioctl ( int fd, unsigned long request, char *arg )
                       goto fail; //return -1;
                   }
                   
+                  printf ("sys_ioctl: device OK");
+                  refresh_screen();
+                  return 0;
+                  
                   // #todo
                   // Continuar daqui ...
                   // ...
@@ -212,7 +216,7 @@ sys_ioctl ( int fd, unsigned long request, char *arg )
     //#debug
 
 fail:    
-    printf ("#debug fail\n");
+    printf ("#debug fail\n\n");
     refresh_screen();
 
     return 0;

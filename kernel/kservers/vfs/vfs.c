@@ -35,26 +35,26 @@ void vfsInit (void){
 	{
 		panic ("vfsInit: storage->vfs");
 	}else{
-		
-		
-	    storage->vfs->used = 1;
-	    storage->vfs->magic = 1234;
-	
-	    storage->vfs->status = VFSStatusInitialized;
-	    storage->vfs->name = "VFS NAME";
-	    storage->vfs->description = "VIRTUAL FILE SYSTEM";
-	    storage->vfs->help_string = "Virtual File System help string @todo";
-	
+
+
+        storage->vfs->used = 1;
+        storage->vfs->magic = 1234;
+
+        storage->vfs->status = VFSStatusInitialized;
+        storage->vfs->name = "VFS NAME";
+        storage->vfs->description = "VIRTUAL FILE SYSTEM";
+        storage->vfs->help_string = "Virtual File System help string @todo";
+
 	    // ## root dir address  ##
 	    storage->vfs->rootdir_address = (unsigned long) malloc ( VFS_ROOTDIR_NUMBER_OF_ENTRIES * VFS_ROOTDIR_ENTRY_SIZE );
 	
-	    if ( storage->vfs->rootdir_address = 0 ){
-		
+	    if ( storage->vfs->rootdir_address = 0 )
+	    {
 	        panic ("vfsInit: storage->vfs->rootdir_address\n");	
 	    }
-		
-	
-	};	
+	    
+		//...
+	};
 	
 	//
 	// ## STREAM ##
@@ -70,19 +70,17 @@ void vfsInit (void){
 		panic ("vfsInit: vfs fail");
 	}else{
 		
-        storage->vfs->stream = vfs;			
-		
-	    //#bugbug:
-	    //#todo:
-	    //Checar antes a validade dessa estrutura.
-	
-	    vfs->_base = (unsigned char *) storage->vfs->rootdir_address;
-	    vfs->_p = stdin->_base;
-	    vfs->_cnt = ( VFS_ROOTDIR_NUMBER_OF_ENTRIES * VFS_ROOTDIR_ENTRY_SIZE );
-	    vfs->_file = 0; //?
-	    vfs->_tmpfname = "vfs-stream";
-	
-	    Streams[3] = (unsigned long) vfs;
+        storage->vfs->stream = vfs;
+
+        vfs->used = 1;
+        vfs->magic = 1234;
+        vfs->_base = (unsigned char *) storage->vfs->rootdir_address;
+        vfs->_p = stdin->_base;
+        vfs->_cnt = ( VFS_ROOTDIR_NUMBER_OF_ENTRIES * VFS_ROOTDIR_ENTRY_SIZE );
+        vfs->_file = 0; //?
+        vfs->_tmpfname = "vfs-stream";
+
+        Streams[__KERNEL_STREAM_VFS] = (unsigned long) vfs;
 	};
 	
 
