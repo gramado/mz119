@@ -180,14 +180,13 @@ void *draw_button ( unsigned char *string,
 	// Alocando memória para a estrutura do botão.
 	// Inicializando a estrutura.
 
-	b = (void *) malloc ( sizeof(struct button_d) );
+    b = (void *) malloc ( sizeof(struct button_d) );
 
-	if ( (void *) b == NULL )
-	{
+    if ( (void *) b == NULL )
+    {
 		return NULL;
-		
-	}else{
-		
+    }else{
+
 		// Object.
         b->objectType = ObjectTypeButton;
         b->objectClass = ObjectClassGuiObjects;
@@ -216,7 +215,8 @@ void *draw_button ( unsigned char *string,
  
 		b->Next = NULL; 
 		//...
-	};
+    };
+
 
 	//Devemos colocar o ponteiro na lista encadeada de botões 
 	//dentro da estrutura da janela.
@@ -296,10 +296,7 @@ void *draw_button ( unsigned char *string,
     };  
     
     
-    
-    
-    
-    
+
 
 //
 // Do draw the button.
@@ -350,8 +347,8 @@ void *draw_button ( unsigned char *string,
 	//}
 	
 	//(a largura do botão menos a largura da string)/2
-	unsigned long offset = ( ( (unsigned long) width - ( (unsigned long) tmp_size * (unsigned long) gcharWidth) ) / 2 );
-	
+    unsigned long offset = ( ( (unsigned long) width - ( (unsigned long) tmp_size * (unsigned long) gcharWidth) ) / 2 );
+
 	//button label
     if (Selected == 1)
     {
@@ -374,25 +371,36 @@ void *draw_button ( unsigned char *string,
 }
 
 
-// Repintar o botão com base nas características encontradas na estrutura.
+/*
+ ********************************* 
+ * redraw_button: 
+ * 
+ */
+ 
+// Repintar o botão com base nas características 
+// encontradas na estrutura.
 
 int redraw_button ( struct button_d *button ){
+
+
+    struct window_d *w;
 
 	//int Focus; //(precisa de borda)
 	//int Selected;
 	//unsigned long border1;
 	//unsigned long border2;
 
-	struct window_d *w;
 
-	if ( (void *) button == NULL )
-	{
+
+    if ( (void *) button == NULL )
+    {
 		return 1;
-	}else{
+
+    }else{
 
 		//pega a janela.
-	    w = button->window;
-			
+        w = button->window;
+
 		if ( (void *) w == NULL )
 		{
             printf ("redraw_button: window\n");
@@ -403,8 +411,10 @@ int redraw_button ( struct button_d *button ){
 			{
 				return 1;
 			}
-		}	
-	}
+		}
+		
+		//...
+    };
 
 
 	//bg
@@ -442,7 +452,10 @@ int redraw_button ( struct button_d *button ){
 	//button label
     if (button->selected == 1)
     {
-        draw_string ( w->left + button->x +offset, w->top + button->y +8, 
+        //draw_string ( w->left + button->x +offset, w->top + button->y +8, 
+            //COLOR_WHITE, button->string );
+
+        draw_string ( button->x +offset, button->y +8, 
             COLOR_WHITE, button->string );
 
     }else{
@@ -453,12 +466,15 @@ int redraw_button ( struct button_d *button ){
 		// (window->left +x) left 
 		// (largura do botão, menos a largura da string)/2
 
-        draw_string ( w->left + button->x +offset, w->top  + button->y +8, 
+        //draw_string ( w->left + button->x +offset, w->top  + button->y +8, 
+            //COLOR_TERMINALTEXT, button->string );
+
+        draw_string ( button->x +offset, button->y +8, 
             COLOR_TERMINALTEXT, button->string );
+    };
 
-	};
 
-	return 0;
+    return 0;
 }
 
 
