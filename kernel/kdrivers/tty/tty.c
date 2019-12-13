@@ -286,9 +286,12 @@ int ttyInit (int tty_id){
 	       
 	    // More ?    
     };
-	
-	return 0;
+
+
+    return 0;
 }
+
+
 
 
 //

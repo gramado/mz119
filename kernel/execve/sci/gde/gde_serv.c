@@ -482,6 +482,20 @@ void *gde_extra_services ( unsigned long number,
         return (void *) socket ( (int) arg2, (int) arg3, (int) arg4 );
     }
 
+    //See: execve/sm/sys/io.c
+    //#bugbug: rever os arguentos, principalmente o último.
+    // O primeiro argumento seleciona um dispositivo.
+    // Já que é um descritor de arquivos e os dispositivos
+    // são representados por arquivos.
+    if ( number == 8000 )
+    {
+		//fd, request, arg
+		return (void *) sys_ioctl ( (int) arg2, 
+		                            (unsigned long) arg3, 
+		                            (char *) arg4 );
+    }
+
+
     //test
     //raise window.
     if ( number == 9700 )

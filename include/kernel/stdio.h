@@ -587,6 +587,12 @@ struct _iobuf
 	fpos_t	_offset;	// current lseek offset 		
 	
 
+    // 1= is a device; 0= is a file.
+    // Se é um dispositivo ou não.
+    // Se for um dispositivo então o dispositivo terá
+    // na lista deviceList o mesmo offset da stream na list Streams.
+    int isDevice;
+
 	// old stuff
 	// isso pertence a estrutura no formato antigo
 	// e os elementos ainda estão presentes em várias rotinas.

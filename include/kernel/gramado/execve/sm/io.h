@@ -42,9 +42,15 @@ void *ioServices( unsigned long number,
 				  unsigned long arg3, 
 				  unsigned long arg4 );
 
+
+// #bugbug
+// Precisamos rever os argumentos, principalmente o último.
+int 
+sys_ioctl ( int fd, unsigned long request, char *arg );
+
+
 int ioInit (void);
 
-				   
 //
 // End.
 //

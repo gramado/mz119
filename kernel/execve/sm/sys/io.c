@@ -101,7 +101,123 @@ void *ioServices ( unsigned long number,
 
     return NULL;
 }
-   
+
+
+
+// #bugbug
+// Precisamos rever os argumentos, principalmente o último.
+// >> O primeiro argumento seleciona um dispositivo.
+// Já que é um descritor de arquivos e os dispositivos
+// são representados por arquivos.
+// O segundo representa o tipo de operação.    
+
+// #importante
+// Cada dispositivo terá seu conjunto de operações.
+
+// See: hal/device.h
+
+int 
+sys_ioctl ( int fd, unsigned long request, char *arg )
+{
+	
+	//
+	// EVERYTHING IS A FILE!
+	//
+	
+	FILE *dev_stream;
+	
+	struct device_d  *dev;
+    
+
+	printf ("sys_ioctl: #todo\n");
+    //printf ("device=%d request=%d \n", fd, request);
+    printf ("request=%d on device=%d\n", request, fd);
+      
+      
+     // deviceList[256] - Essa deve ser a lista geral.
+     // Lembrando que também temos uma lista de dispositivos pci.
+     // Os dipositivos pci poderão serem listados aí também
+     // usando a estrutura global para apontar para a estrutura
+     // de dispositivo pci.
+     //pcideviceList[32];
+     //if ( ? < 0 || ? >= 256 ) 
+         //return -1; 
+      
+     
+     //
+     // Get device file ( stream )
+     //
+     
+     //See: kernel/stdio.h
+     //Streams[NUMBER_OF_FILES]; 
+     
+     if ( fd < 0 || fd >= NUMBER_OF_FILES )
+     {
+          printf ("sys_ioctl: invalid fd\n");
+          goto fail; //return -1;
+     }    
+         
+     dev_stream = ( FILE *) Streams[fd];
+     
+     if ( (void *) dev_stream == NULL )
+     {
+          printf ("sys_ioctl: invalid file struct\n");
+          goto fail; //return -1;
+     }else{
+
+         if ( dev_stream->used != 1 || dev_stream->magic != 1234 )
+         {
+              printf ("sys_ioctl: invalid file struct validation\n");
+              goto fail; //return -1;
+         }
+         
+         //...
+         
+         //não é um dispositivo
+         if ( dev_stream->isDevice != 1 )
+         {
+              printf ("sys_ioctl: it's not a device!\n");
+              goto fail; //return -1;
+         } 
+         
+         //é um dispositivo
+         if ( dev_stream->isDevice == 1 )
+         {
+              dev = ( struct device_d *) deviceList[fd];
+              
+              if ( (void *) dev == NULL )
+              {
+                  printf ("sys_ioctl: invalid dev struct\n");
+                  goto fail; //return -1;  
+              }else{
+                  
+                  if ( dev->deviceUsed != 1 || dev->deviceMagic != 1234 )
+                  {
+                      printf ("sys_ioctl: invalid dev struct validation\n");
+                      goto fail; //return -1;
+                  }
+                  
+                  // #todo
+                  // Continuar daqui ...
+                  // ...
+                  
+              }
+         }
+
+         //...
+     };
+
+
+
+    //#debug
+
+fail:    
+    printf ("#debug fail\n");
+    refresh_screen();
+
+    return 0;
+}
+
 
 
 /*

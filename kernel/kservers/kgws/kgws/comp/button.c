@@ -462,7 +462,8 @@ int redraw_button ( struct button_d *button ){
 }
 
 
-
+    //quando um botão é clicado ou pressionado,
+    //ele será repintado com a aparência de botão apertado.
 int button_down ( struct window_d *window ){
 
     if ( (void *) window == NULL )
@@ -501,10 +502,6 @@ int button_down ( struct window_d *window ){
 		//refresh_screen();
 		
 		redraw_button ( (struct button_d *) window->button );
-
-		//printf ("show it \n");
-		//refresh_screen();
-		
 		show_window_rect (window);
 	};
 
@@ -539,7 +536,6 @@ int button_up ( struct window_d *window ){
              (unsigned long) window->button->color );
 
 			redraw_button ( (struct button_d *) window->button );
-
 			show_window_rect (window);
 	};
 

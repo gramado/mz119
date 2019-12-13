@@ -29,20 +29,40 @@
 // @todo: 
 //     Trocar para device. 
 //
-typedef struct devices_d devices_t;
-struct devices_d 
+
+//#todo: deletar esse typedef
+//typedef struct device_d devices_t;
+
+struct device_d 
 {
 	object_type_t objectType;
-	object_class_t objectClass;	
+	object_class_t objectClass;
 	
 	//
     // @todo
 	//
 	
 	int deviceId;
+
 	int deviceUsed;
 	int deviceMagic;
+
     char *name;
+
+    int type;
+    
+    // se o tipo for pci.
+    struct pci_device_d *pci_device;
+    
+    // se o dispositivo for do tipo legado,
+    // como PIC, PIT, ps2, etc ...
+    // Qualquer coisa que não esteja na interface pci.
+    //struct legacy_device_d *legacy_device;
+
+    //#todo: 
+    //estruturas para outros grupos de dispositivos.
+
+
 
 	//Se o dispositivo petence ao grupo dos prioritários.
     int Light;
@@ -55,25 +75,32 @@ struct devices_d
 	//int pid;
 	//unsigned long queue[8];
 	//struct process_d *list;
+
+
+    struct ttydrv_d *driver;
+
+	//struct device_d *next;
 	
-	
-	
-	//struct devices_d *next;
 	//
 	// Continua ...
 	//
 	
 };
-devices_t *devices;
-//devices_t *Devices;
-//devices_t *CurrentDevice;
+struct device_d *devices;
+//struct device_d *CurrentDevice;
 //...
 
-//
-// @todo: Parece uma lista muito grande para o número de dispositivos.
-//        mas se estamos falando de dispositivos PCI a lista é grande mesmo.
-//
-unsigned long deviceList[256];    
+
+// #todo: 
+// Parece uma lista muito grande para o número de dispositivos.
+// mas se estamos falando de dispositivos PCI a lista é grande mesmo.
+
+// #importante
+// O número de dispositivos será o mesmo número de arquivos
+// na lista Streams.
+// Se o arquivo for um dispositivo então teremos
+// um ponteiro na lista deviceList.
+unsigned long deviceList[NUMBER_OF_FILES];    
 
 
 //

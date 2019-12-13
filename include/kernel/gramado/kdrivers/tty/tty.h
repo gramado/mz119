@@ -94,7 +94,7 @@ struct tty_d
 	// User
 	//
 	
-    struct user_info_d *user_info;	
+    struct user_info_d *user_info;
 	
 	//
 	// user session, room, desktop;

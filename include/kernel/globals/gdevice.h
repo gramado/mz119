@@ -2,7 +2,7 @@
  *  File: gdevice.h
  *
  * Definição:
- * Informações globais sobre a gerênciacia de dispositivos.
+ * Informações globais sobre a gerência de dispositivos.
  * 
  * + Informações globais sobre o dispositivo onde o sistema operacional 
  * foi instalado.

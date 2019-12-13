@@ -145,6 +145,9 @@ extern void do_executa_new_task (void);
 #include <kernel/fcntl.h>
 
 #include <kernel/sys/socket.h>
+
+#include <kernel/sys/ioctl.h>
+#include <kernel/sys/ioctls.h>
 //...
 //--
 
