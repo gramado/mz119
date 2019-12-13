@@ -812,7 +812,7 @@ void *CreateWindow ( unsigned long type,
 	//if(DedicatedBuffer == 1){};
 
 
-	// Se o view for igual NULL talvez signifique 
+	// Se o view for igual NULL talvez signifique não pintar.
     if ( window->view == VIEW_NULL )
     {
 		//#bugbug: fail.

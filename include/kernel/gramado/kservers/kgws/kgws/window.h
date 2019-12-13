@@ -232,6 +232,7 @@ int window_getch (void);
 #define WT_STATUSBAR     9
 // Pequeno retângulo com uma imagem bmp e talvez texto.
 #define WT_ICON          10
+#define WT_TITLEBAR 11
 //... 
 
 

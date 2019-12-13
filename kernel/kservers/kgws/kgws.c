@@ -172,25 +172,27 @@ int kgws_mouse_scan_windows (void){
     //Não há porque sondar janelas se tivermos em full screen.
     //pois somente teremos a área de cliente de uma das janelas.
 
-    //============
-    //if ( wID == -1 )
-    //{
-         //wID = (int) windowOverLappedScan ( mouse_x, mouse_y );
-   // }
-
-
-    //wID = (int) windowOverLappedScan ( mouse_x, mouse_y );
+    int __saved;
     
-    //se pegamos uma overlapped.
-    //vamos testar os botoes
-    //if ( wID != -1 )
-    //{
-        //printf ("o ");
-		//wID = (int) windowScan ( mouse_x, mouse_y );
-    //}
+    wID = (int) windowOverLappedScan ( kgws_mouse_event_mouse_x, kgws_mouse_event_mouse_y );
+    __saved = wID;
+    
+    //se pegamos uma overlapped, vamos tentar pegar um botão ou editbox.
+    if ( wID != -1 )
+    {
+        wID = (int) windowScan ( kgws_mouse_event_mouse_x, kgws_mouse_event_mouse_y );
+    
+        //Se não pegamos um botão ou editbox.
+        // então ficaremos com a janela overlapped salva.
+        if ( wID == -1)
+        {
+            wID = __saved;
+        }
+    }
     
     
-    wID = (int) windowScan ( kgws_mouse_event_mouse_x, kgws_mouse_event_mouse_y );
+    // Editbox and button.
+    //wID = (int) windowScan ( kgws_mouse_event_mouse_x, kgws_mouse_event_mouse_y );
 
 
     //================
@@ -255,6 +257,8 @@ int kgws_mouse_scan_windows (void){
 		//pegar a thread associada à essa janela, dessa forma 
 		//enviaremos a mensagem para a thread do aplicativo ao qual 
 		//a janela pertence.
+		//E se a janela for um botão? será a mesma thread de controle
+		//da janela overlapped ao qual ela é filha?
 
         t = (void *) Window->control;
 
