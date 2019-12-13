@@ -58,7 +58,9 @@ int ps2_mouse_status;
 
 int ps2_mouse_has_wheel;
 
+//1= pressionado 0=liberado
 int ps2_button_pressed;
+
 int ps2_mouse_moving;
 int ps2_mouse_drag_status;
 //int ps2_mouse_drop_status;
@@ -725,13 +727,26 @@ void ps2mouse_parse_data_packet (void)
 				ps2_mouse_moving = 1;
 				
 				
-				//#todo: drag support
-				//if ( ps2_button_pressed == 1 )
-				//{ 
-				//    ps2_mouse_drag_status = 1;
-                //}else{
-				//    ps2_mouse_drag_status = 0;
-				//}
+				// #todo: 
+				// drag support
+				// Como o bitmap é tratado aqui, então talvez seja a melhor hora
+				// para lidar com movimento.
+				// Mas existe tratamento semelhante no ws. (cuidado.)
+				
+				//#bugbug
+				//Esse if não faz sentido. trataremos isso em kgws.
+				//deletar.
+				
+				if ( ps2_button_pressed == 1 )
+				{ 
+				    //ps2_mouse_drag_status = 1;
+				    //refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
+				    //bmpDisplayMousePointerBMP ( appIconBuffer, mouse_x, mouse_y ); 
+                }else{
+				    //ps2_mouse_drag_status = 0;
+				    refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
+				    bmpDisplayMousePointerBMP ( mouseBMPBuffer, mouse_x, mouse_y ); 
+				}
 
                    
                 //
@@ -741,13 +756,13 @@ void ps2mouse_parse_data_packet (void)
                 // Apaga o antigo.
                 // + Copia no LFB um retângulo do backbuffer 
                 // para apagar o ponteiro antigo.
-                refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
+                //refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
                 
                 // Acende o novo.
                 //+ Decodifica o mouse diretamente no LFB.
                 // Copiar para o LFB o antigo retângulo  
                 // para apagar o ponteiro que está no LFB.
-                bmpDisplayMousePointerBMP ( mouseBMPBuffer, mouse_x, mouse_y );   
+                //bmpDisplayMousePointerBMP ( mouseBMPBuffer, mouse_x, mouse_y );   
                          
             }else{
 				
@@ -774,15 +789,16 @@ void ps2mouse_parse_data_packet (void)
     {
 		//liberada.
         mouse_buttom_1 = 0;
+        ps2_button_pressed = 0;
 
     }else if( ( mouse_packet_data & MOUSE_LEFT_BUTTON ) != 0 )
         {
 		    //pressionada.
 		    //Não tem como pressionar mais de um botão por vez.
-
             mouse_buttom_1 = 1;
             mouse_buttom_2 = 0;
             mouse_buttom_3 = 0;
+            ps2_button_pressed = 1;
         };
 
 
@@ -792,6 +808,7 @@ void ps2mouse_parse_data_packet (void)
     {
 	    //liberada.
         mouse_buttom_2 = 0;
+        ps2_button_pressed = 0;
 
     }else if( ( mouse_packet_data & MOUSE_RIGHT_BUTTON ) != 0 )
         {
@@ -800,6 +817,7 @@ void ps2mouse_parse_data_packet (void)
             mouse_buttom_1 = 0;
             mouse_buttom_2 = 1;
             mouse_buttom_3 = 0;
+            ps2_button_pressed = 1;
         };
 
 
@@ -809,15 +827,16 @@ void ps2mouse_parse_data_packet (void)
     {
 	    //liberada.
         mouse_buttom_3 = 0;
+        ps2_button_pressed = 0;
 
     }else if( ( mouse_packet_data & MOUSE_MIDDLE_BUTTON ) != 0 )
         {
 	        //pressionada.
 	        //Não tem como pressionar mais de um botão por vez.
-
 	        mouse_buttom_1 = 0;
 	        mouse_buttom_2 = 0;
 	        mouse_buttom_3 = 1;
+	        ps2_button_pressed = 1;
         };
 
 

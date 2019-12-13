@@ -1255,7 +1255,7 @@ unsigned long systemGetSystemMetrics ( int index ){
             break;
 			
 			
-		//mouse pointer width.	
+		//mouse pointer width.
 		case 5:
 		    return (unsigned long) g_mousepointer_width;
             break;
@@ -1274,7 +1274,22 @@ unsigned long systemGetSystemMetrics ( int index ){
         case 8:
 		    return (unsigned long) get_char_height();
             break;
+            
 
+        //20   
+        // mouse x    
+        case SM_GETMOUSEX:
+            //#bugbug: Pegando informações com o driver de mouse.
+            return (unsigned long) ps2_mouse_get_info (3); 
+            break;
+        
+        //21
+        //mouse y
+        case SM_GETMOUSEY:
+           //#bugbug: Pegando informações com o driver de mouse.
+            return (unsigned long) ps2_mouse_get_info (4); 
+            break;
+            
 		//...
 		
 		default:

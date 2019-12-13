@@ -319,6 +319,9 @@ int kgws_mouse_scan_windows (void){
 						// houve alteração no estado do botão 1 e estamos em cima de uma janela.
                         if ( (void *) Window != NULL )
                         {
+							//estamos carregando o objeto
+							kgws_mouse_event_drag_status = 1;
+							
 							//pegamos o total tick
 							kgws_current_totalticks = (unsigned long) get_systime_totalticks();
                             kgws_delta_totalticks = (kgws_current_totalticks - kgws_last_totalticks); 
@@ -358,7 +361,7 @@ int kgws_mouse_scan_windows (void){
                     if ( (void *) Window != NULL )
                     {
 						// Não estamos mais carregando um objeto.
-						//kgws_mouse_event_drag_status = 0;
+						kgws_mouse_event_drag_status = 0;
                         
                         t->window = Window;
                         t->msg = MSG_MOUSEKEYUP;
@@ -395,6 +398,9 @@ int kgws_mouse_scan_windows (void){
 						// houve alteração no estado do botão 2 e estamos em cima de uma janela.
                         if ( (void *) Window != NULL )
                         {
+							//estamos carregando o objeto
+							kgws_mouse_event_drag_status = 1;
+							
 							//pegamos o total tick
 							kgws_current_totalticks = (unsigned long) get_systime_totalticks();
                             kgws_delta_totalticks = (kgws_current_totalticks - kgws_last_totalticks); 
@@ -429,7 +435,7 @@ int kgws_mouse_scan_windows (void){
                    if ( (void *) Window != NULL )
                    {
 						// Não estamos mais carregando um objeto.
-						//kgws_mouse_event_drag_status = 0;
+						kgws_mouse_event_drag_status = 0;
 
                         t->window = Window;
                         t->msg = MSG_MOUSEKEYUP;
@@ -467,6 +473,9 @@ int kgws_mouse_scan_windows (void){
                         // houve alteração no estado do botão 3 e estamos em cima de uma janela.
                         if ( (void *) Window != NULL )
                         {
+							//estamos carregando o objeto
+							kgws_mouse_event_drag_status = 1;
+							
 							//pegamos o total tick
 							kgws_current_totalticks = (unsigned long) get_systime_totalticks();
                             kgws_delta_totalticks = (kgws_current_totalticks - kgws_last_totalticks); 
@@ -501,7 +510,7 @@ int kgws_mouse_scan_windows (void){
                     if ( (void *) Window != NULL )
                     {
 						// Não estamos mais carregando um objeto.
-						//kgws_mouse_event_drag_status = 0;
+						kgws_mouse_event_drag_status = 0;
 
                         t->window = Window;
                         t->msg = MSG_MOUSEKEYUP;
@@ -553,23 +562,43 @@ int kgws_mouse_scan_windows (void){
             //estamos em cima de uma janela e não houve alteração no estado dos botões
             if ( (void *) Window != NULL )
             {
-                // diferente de mouseover window.
+				//estamos em cima da janela que estávamos antes.
+                //então estamos apenas se movendo
+				if ( Window->id == mouseover_window )
+				{
+                    t->window = Window;
+                    t->msg = MSG_MOUSEMOVE;
+                    t->long1 = 0;
+                    t->long2 = 0;
+                    t->newmessageFlag = 1;
+				}
+
+                // Não estamos em cima da janela que estávamos antes.
+                // Então estamos em cima de outra janela.
+                // OU seja, um mouse over novo.
+                // devemos enviar mensagem de mouse over somente nessa
+                //situação.
                 if ( Window->id != mouseover_window )
                 {
+					//Temos então uma nova mouse over.
+                    mouseover_window = Window->id;
+                   
+                   //if ( (void *) Window != NULL ){
+                   t->window = (struct window_d *) windowList[mouseover_window];
+                   t->msg = MSG_MOUSEOVER; 
+                   t->long1 = 0;
+                   t->long2 = 0;
+                   t->newmessageFlag = 1;
+                   //}
+                    
+                   //#bugbug
+                   //aqui entraria a fila de mensagens.
+                   //onde diríamos que também saímos de uma janela.
+                   //MSG_MOUSEEXITED;
 
-                    if ( mouseover_window != 0 )
-                    {
-
-                       //if ( (void *) Window != NULL ){
-                        t->window = (struct window_d *) windowList[mouseover_window];
-                        t->msg = MSG_MOUSEEXITED;
-                        t->long1 = 0;
-                        t->long2 = 0;
-                        t->newmessageFlag = 1;
-                        //return 0;
-                        //}
-                    };
-
+					//#importante:
+					//flag que ativa o refresh do mouseover somente uma vez.
+                    flagRefreshMouseOver = 1;
 
 					// Já que entramos em uma nova janela, vamos mostra isso.
 
@@ -608,31 +637,29 @@ int kgws_mouse_scan_windows (void){
 
 
 				    //nova mouse over
-                    mouseover_window = Window->id;
+                    //mouseover_window = Window->id;
 
 					//#importante:
 					//flag que ativa o refresh do mouseover somente uma vez.
-                    flagRefreshMouseOver = 1;
+                    //flagRefreshMouseOver = 1;
                     
 
 					// Agora enviamos uma mensagem pra a nova janela que 
 					// o mouse está passando por cima.
                     //#todo: reagir a isso lá nos apps.
                     
-                    t->window = Window;
-                    t->msg = MSG_MOUSEOVER;
-                    t->long1 = 0;
-                    t->long2 = 0;
-                    t->newmessageFlag = 1;
+                    //t->window = Window;
+                    //t->msg = MSG_MOUSEOVER;
+                    //t->long1 = 0;
+                    //t->long2 = 0;
+                    //t->newmessageFlag = 1;
                     
                     //return 0;
 
-                //É mouse over window.
+                // É mouse over window.
                 // não estamos em cima de uma janela e não houve alteração no estado dos botões
-                }else{ 
-
-				    //nothing ...
-                };
+                }
+                
             };
 
 			// Ação concluída.

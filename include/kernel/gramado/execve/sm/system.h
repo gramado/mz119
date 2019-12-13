@@ -229,6 +229,9 @@ int gLogoffPID;
 #define SM_CHARHEIGHT 12
 #define SM_DEVELOPER_EDITION 13
 
+#define SM_GETMOUSEX 20
+#define SM_GETMOUSEY 21
+
 //Continua ...
 //@todo.
 
