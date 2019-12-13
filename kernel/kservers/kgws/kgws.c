@@ -248,8 +248,8 @@ int kgws_mouse_scan_windows (void){
 
         Window = (struct window_d *) windowList[wID];
 
-        if ( (void *) Window == NULL ) { return; }
-        if ( Window->used != 1 || Window->magic != 1234){ return; }
+        if ( (void *) Window == NULL ) { return -1; }
+        if ( Window->used != 1 || Window->magic != 1234){ return -1; }
 
 
 		//#importante:
@@ -262,8 +262,8 @@ int kgws_mouse_scan_windows (void){
 
         t = (void *) Window->control;
 
-        if ( (void *) t == NULL ){ return; }
-        if ( t->used != 1 || t->magic != 1234 ){ return; }
+        if ( (void *) t == NULL ){ return -1; }
+        if ( t->used != 1 || t->magic != 1234 ){ return -1; }
 
 		//#bugbug 
 		//#todo:
@@ -647,6 +647,8 @@ int kgws_mouse_scan_windows (void){
 
     };
     //--
+    
+    //return -1;
 }
 
 
