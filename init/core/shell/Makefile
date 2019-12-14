@@ -1,4 +1,6 @@
-# shell para o gde
+
+# Gramado Core - SHELL
+# It's a mini shell for Gramado Core environment.
 
 #history:
 #2019 - Created by Fred Nora and Luciano Gonçalez.
@@ -38,20 +40,17 @@ CFLAGS = -m32 \
 
 
  
-
-LIBC    = ../../../lib/gramlibs/libc02/include/
-LIBCOBJ = ../../../lib/gramlibs/libc02/obj
 API01   = ../../../lib/gramlibs/api02/include/
 APIOBJ  = ../../../lib/gramlibs/api02/obj
+LIBC    = ../../../lib/gramlibs/libc02/include/
+LIBCOBJ = ../../../lib/gramlibs/libc02/obj
 
 
+	#
+	# Objects
+	#
 
-	##
-	## Objects
-	##
-
-myObjects = crt0.o \
-main.o \
+myObjects = crt0.o main.o \
 shellui.o \
 api.o \
 ctype.o \
@@ -72,9 +71,6 @@ stubs.o
 all: crt0.o main.o all-c shell-link finalize clean
 	@echo "Ok?"
 
-#head.o:
-#	nasm  head.s  -felf -o head.o
-
 crt0.o:
 	gcc  -c  crt0.c  $(CFLAGS) -I $(LIBC) -I $(API01) -o crt0.o
 
@@ -92,7 +88,6 @@ all-c:
 #	gcc  -c  terminal.c  -I ../../lib/libc01/include/ -I ../../lib/api01/include/ $(CFLAGS) -o terminal.o
 
 	cp $(APIOBJ)/api.o      .
-	
 	cp $(LIBCOBJ)/ctype.o   .
 	cp $(LIBCOBJ)/stdio.o .
 	cp $(LIBCOBJ)/stdlib.o .
@@ -101,7 +96,7 @@ all-c:
 	cp $(LIBCOBJ)/wait.o .
 	cp $(LIBCOBJ)/unistd.o .
 	cp $(LIBCOBJ)/stubs.o .	
-	
+
 
 shell-link:
 	ld -m elf_i386 -T link.ld -o SHELL.BIN $(myObjects) -Map shell_map.s

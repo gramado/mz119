@@ -1,6 +1,14 @@
 /*
  * File: main.c 
  *
+ * Environment:
+ *     Gramado Core - INIT
+ *     ring 3.
+ * 
+ * Purpose:
+ *     + To call interrupt 129 to enable maskable interrupts.
+ *     + Hang forever. Some new process will reuse this process.
+ * 
  * Descrição: 
  *     Arquivo principal de IDLE.BIN.
  *     IDLE.BIN é um processo com apenas uma thread.
@@ -75,7 +83,14 @@ void driverInitialize();      // processo sendo considerado um driver servidor.
 void driverUninitialize();    // desinicializa.
 int idleInit();               // processo sendo consideredo cliente.
 unsigned long idleServices(unsigned long number);  //Principal.
+
 //...
+void enable_maskable_interrupts();
+
+
+//
+// ==========
+//
 
 
 
@@ -247,21 +262,65 @@ int idleInit (){
 }
 
 
+// interna
+// Uma interrupção para habilitar as interrupções mascaráveis.
+// Só depois disso a interrupção de timer vai funcionar.
+void enable_maskable_interrupts()
+{
+    asm ("int $129 \n");
+}
+
+/*
+ ********************** 
+ * main:
+ * 
+ */
+
+// See: /home/nora/gramado/kernel/arch/x86/entry/head/sw.asm 
+ 
+// O objetivo é chamar a interrupção 129.
+// Uma interrupção para habilitar as interrupções mascaráveis.
+// Só depois disso a interrupção de timer vai funcionar.
+ 
 int main ( int argc, char *argv[] ){
 
 	//printf ("INIT.BIN is alive!");
 
+    //
+    // Chamando a interrupção 129.
+    //
+
 	//window, x, y, color, string.
-    apiDrawText ( NULL, 0, 0, COLOR_RED, "Gramado Core Init is alive! Calling int 129" );
-	refresh_screen ();
-	
-	
-	asm ("int $129 \n");
-	
+    apiDrawText ( NULL, 
+        0, 0, COLOR_RED, 
+        "Gramado Core: Init is alive! Calling int 129" );
+
+    refresh_screen ();
+
+    //
+    // Habilita as interrupções mascaraveis.
+    //
+    
+    enable_maskable_interrupts ();
+    //asm ("int $129 \n");
+
+
+    // Não sairemos, ficaremos no loop.
+    // Isso porque o gramado core executará um novo processo
+    // usando o processo INIT.
+
 loop:
-	while (1){}
-	
-    return 0;
+
+    while (1)
+    {
+        asm ("pause");
+    }
+
+    //
+    // Not reached!
+    //
+    
+    return (int) -1;
 }
 
 

@@ -1,4 +1,13 @@
 /*
+ * File: main.c 
+ *
+ * Environment:
+ *     Gramado Core - SHELL
+ *     ring 3.
+ * 
+ * Purpose:  
+ *     It's a mini shell for Gramado Core environment.
+ * 
  * File: main.c - gdeshell - bash 1.05 clone. (baseado no bash)
  * #todo Para esse aplicativo vou usar o prompt: [username@hostname] $
  * #todo: precisamos deletar a parte referente ao terminal e outros... deve ficar apenas 
@@ -1366,16 +1375,15 @@ noArgs:
 	// ?? Show Window !!
 	// Precisamos mostrar a janela e não repintar 
 	// a tela toda.
-	
+
+
+
+    // Registrando e mostrando a janela principal.
     APIRegisterWindow (hWindow);
-    //APISetActiveWindow (hWindow);	
-    //APISetFocus (hWindow);
-	
-	//#test
-	//vamos mostrar a janela do shell antes de criarmos a janela 
-	//da área de cliente
-	apiShowWindow (hWindow);
-	
+    apiShowWindow (hWindow);
+
+
+
 	//#test 
 	//Criando um timer.
 	
@@ -1556,11 +1564,8 @@ noArgs:
 	//
 	// @todo: Apenas registrar o procedimento dessa janela na sua estrutura no kernel..
     // 
-	
 
-	//printf("HOLAMBRA KERNEL SHELL\n");
-	//printf("#debug breakpoint");
-	//while(1){}
+
 
 
 	//===========================
@@ -1571,16 +1576,16 @@ noArgs:
 	// #BUGBUG
 	// Estamos passando um ponteiro que é uma variável local.
 
+    //++
     enterCriticalSection ();
-
     Status = (int) shellInit (hWindow); 
-
     if ( Status != 0 )
     {
-        die ("gdeshell: main: shellInit fail");
+        die ("Gramado Core shell: shellInit fail");
     };
-
     exitCriticalSection (); 
+    //--
+
 
 
 	// #importante:
@@ -1592,18 +1597,11 @@ noArgs:
     if ( interactive != 1 ){
 
 		//#debug
-        printf("shell is not interactive\n");
-
+        printf("Gramado Core shell: It' is not interactive\n");
         goto skip_input;
     };
 
 
-	//@todo: Isso é um teste.
-	//system("reboot");
-	
-	//
-	// Podemos tentar criar um processo.
-	//
 
     //
 	// Get message.
@@ -1677,44 +1675,49 @@ read_and_execute:
 	   elementos da mensagem e depois zerar o buffer */
 	
 Mainloop:
-	
-	while (_running)
-	{
+
+
+    while (_running)
+    {
+
+        //++
+        enterCriticalSection(); 
+        system_call ( 111,
+            (unsigned long) &message_buffer[0],
+            (unsigned long) &message_buffer[0],
+            (unsigned long) &message_buffer[0] );
+        exitCriticalSection(); 
+        //--
+
 		// #obs: 
 		// O retorno será 1 se tiver mensagem e 0 se não tiver.
-		
-		enterCriticalSection(); 
-		system_call ( 111,
-		    (unsigned long) &message_buffer[0],
-			(unsigned long) &message_buffer[0],
-			(unsigned long) &message_buffer[0] );
-		exitCriticalSection(); 
-			
-		if ( message_buffer[1] != 0 )
+
+        if ( message_buffer[1] != 0 )
         {
-            //printf(".");			
-		}	
-		
-		if ( message_buffer[1] != 0 )
-		{
-	        shellProcedure ( (struct window_d *) message_buffer[0], 
-		        (int) message_buffer[1], 
-		        (unsigned long) message_buffer[2], 
-		        (unsigned long) message_buffer[3] );
-			
-			message_buffer[0] = 0;
+            //printf(".");
+        }
+
+        if ( message_buffer[1] != 0 )
+        {
+            shellProcedure ( (struct window_d *) message_buffer[0], 
+                (int) message_buffer[1], 
+                (unsigned long) message_buffer[2], 
+                (unsigned long) message_buffer[3] );
+
+            message_buffer[0] = 0;
             message_buffer[1] = 0;
             message_buffer[3] = 0;
-            message_buffer[4] = 0;	
-        };				
-	};
-	
+            message_buffer[4] = 0;
+        };
+    };
+
+
 	//
 	// Entramos aqui se running for igual a 0.
 	//
-	
-	switch (ShellFlag)
-	{
+
+    switch (ShellFlag)
+    {
 	    // Sai do shell.
 		case SHELLFLAG_EXIT:
 		    goto end;
@@ -1727,7 +1730,9 @@ Mainloop:
         default:
             goto end;
 			break;		
-	};
+    };
+
+
 
 	
 	//
@@ -1743,144 +1748,32 @@ skip_input:
 
     shellExecuteThisScript ( argv[3] );
 
-	
+
 	//
 	// Exit process.
 	//
-	
+
 end:
 
     // Desabilitando o cursor de texto.
     // Quando outro aplicativo precisar ele clica em uma janela, 
-	// ela ganha o foco e habilita o cursor piscante.	
-	
-    system_call ( 245, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);
+    // ela ganha o foco e habilita o cursor piscante.	
 
-	
-    /* Do trap[0] if defined. */
-    //run_exit_trap ();	
-	
-	//
-	//    ## History ##
-	//
-	
-    /* Save the history of executed commands. */
-    /*
-	if (interactive)
-    {
-        char *hf = get_string_value ("HISTFILE");
-        
-		if (hf)
-	        write_history (hf);
-    }	
-	*/
-	
-	
-	
-//#ifdef SHELL_VERBOSE		
-    printf ("SHELL.BIN: exiting code '0' ...\n");
+    system_call ( 245, 
+        (unsigned long) 0, 
+        (unsigned long) 0, 
+        (unsigned long) 0 );
+
+
+
+//#ifdef SHELL_VERBOSE
+    printf ("gramado Core shell: Exiting, exit_code '0' ...\n");
 //#endif 
-	
-	//
-	// ## Exit ##
-	//
-	
-	// Sair do shell.
-    /* Always return the exit status of the last command to our parent. */
-	//exit (last_command_exit_value);	
-	
-	// Retornar para o crt0.
-	return 0;
+
+
+    // Retornar para o crt0.
+    return 0;
 }
-
-
-/*
-void reader_loop ();
-void reader_loop ()
-{
-    extern int indirection_level;
-    
-	int our_indirection_level;
-    
-	COMMAND *current_command = (COMMAND *) NULL;
-
-    our_indirection_level = ++indirection_level;
-
-    while (!EOF_Reached)
-    {
-        sighandler sigint_sighandler ();
-        
-		int code = setjmp (top_level);
-
-        signal (SIGINT, sigint_sighandler);
-
-        if (code != NOT_JUMPED)
- 	    {
-	        indirection_level = our_indirection_level;
-
-	        switch (code)
-	        {
-	            //Some kind of throw to top_level has occured. 
-	            case FORCE_EOF:
-	            case EXITPROG:
-	                current_command = (COMMAND *) NULL;
-	                EOF_Reached = EOF;
-	                goto exec_done;
-
-	            case DISCARD:
-	                //Obstack free command elements, etc. 
-	                break;
-					
-	            default:
-	                programming_error ("Bad jump %d", code);
-	        }
-	   }
-
-      executing = 0;
-		
-      dispose_used_env_vars ();
-
-      if (read_command () == 0)
-	  {
-	      if (global_command) 
-		  {
-	          current_command = global_command;
-
-	          current_command_number++;
-
-	          //POSIX spec: "-n  The shell reads commands but does
-	          //not execute them; this can be used to check for shell
-	          //script syntax errors.  The shell ignores the -n option
-	          //for interactive shells. " 
-
-	          if (interactive || !read_but_dont_execute)
-	          {
-		          executing = 1;
-		          execute_command (current_command);
-	          }
-
-	         exec_done:
-	         
-			  if (current_command)
-	             dispose_command (current_command);
-	             QUIT;
-	      }
-		  
-	  }else{
-		  
-	      // Parse error, maybe discard rest of stream if not interactive. 
-	      if (!interactive)
-	          EOF_Reached = EOF;
-	  };
-		
-      if (just_one_command)
-	      EOF_Reached = EOF;
-    
-	}; //while
-	
-    indirection_level--;
-}
-*/
 
 
 
@@ -1890,31 +1783,25 @@ void reader_loop ()
  *     Procedimento de janela.
  *     LOCAL
  */
+ 
 unsigned long 
 shellProcedure( struct window_d *window, 
                 int msg, 
-				unsigned long long1, 
-				unsigned long long2 )
+                unsigned long long1, 
+                unsigned long long2 )
 {
-	unsigned long input_ret;
-    unsigned long compare_return;	
-    int q;	
-	
-	//if( msg == COMMAND_INITIALIZE_SHELL ){
-		//...
-	//}
-	
+
+    unsigned long input_ret;
+    unsigned long compare_return;
+    int q;
+
+
+
+
     switch (msg)
     {
-		//Faz algumas inicializações de posicionamento e dimensões.
-        //case MSG_INITDIALOG:
-        //    break;
-
-		//Torna a janela visível.
-        //case MSG_SHOWWINDOW:
-		//    break; 
-		 
-		case MSG_KEYDOWN:
+ 
+        case MSG_KEYDOWN:
             switch (long1)
             {
 				//EOF
@@ -1997,58 +1884,39 @@ shellProcedure( struct window_d *window,
 					//ASSIM ELA PODE CHAMAR O SCROLL SE PRECISAR.
 					
 					//shellRefreshCurrentChar();
-					//printf ("%c", (char) long1 ); 	//deletar.				
+					//printf ("%c", (char) long1 ); 	//deletar.
 					
 					goto done;
                     break;               
             };
         break;
-		
-		case MSG_KEYUP: 
-		    // printf("%c", (char) 'u');
-            // printf("%c", (char) long1);  			
-		    break;
-		
-		//Não interceptaremos mensagens do sistema por enquanto.
-		//As mensagens do sistema são interceptadas primeiro pelo procedimento 
-		//do sistema.
-		
-		case MSG_SYSKEYDOWN:
-		    switch (long1)
-			{
-		        
-				case VK_F1:
-                    
 
-					//shellTestLoadFile ();
-					
-					//inicializa a área visível.
-					//textTopRow = 0;
-	                //textBottomRow = 0 + 24;
-						
+
+       case MSG_KEYUP: 
+           // printf("%c", (char) 'u');
+           // printf("%c", (char) long1); 
+           break;
+
+
+
+		// Não interceptaremos mensagens do sistema por enquanto.
+		// As mensagens do sistema são interceptadas primeiro pelo 
+		// procedimento do sistema.
+		// #todo
+		// Usar apenas f1 e f2.
+		case MSG_SYSKEYDOWN:
+
+            switch (long1)
+            {
+				case VK_F1:
 					break;
 					
 				case VK_F2:
-				    //testChangeVisibleArea();
 					break;
-					
-				case VK_F3:
-				    //shellRefreshVisibleArea();
-					break;
-					
-				//...
-				
-                //full screen
-                //colocar em full screen somente a área de cliente. 				
-		        case VK_F11:
-				    
-					break;
-					
-				//...
-
 			};
 			break;
-		
+
+
 		//Obs:
 		//essas teclas são tratadas pelo procedimento do sistema.
 		//mas alguma tecla personalizada pode ser  tratada pelo aplicativo,
@@ -2056,265 +1924,137 @@ shellProcedure( struct window_d *window,
 		case MSG_SYSKEYUP:
             switch (long1)
 			{
-				
 				//O MENU APPLICATION É O CONTEXT MENU.
-				//
 				case VK_APPS:
 				    MessageBox ( 1, "Gramado Core Shell:", "VK_APPS Context Menu" );
 					break;
-			}		
+			}
 		    break;
-		
 
-        // Commands.		
+
+        // Commands.
 		case MSG_COMMAND:
             switch (long1)
 			{
 				// Null.
 				case 0:
-				    MessageBox( 1, "Shell test", "Testing MSG_COMMAND.NULL." );
+				    MessageBox ( 1, 
+				        "Gramado Core - shell", 
+				        "Testing MSG_COMMAND.NULL." );
 				    break;
 				
 				// About.
-				// Abre uma janela e oferece informações sobre o aplicativo.
+				// Abre uma janela e oferece informações 
+				// sobre o aplicativo.
 				case CMD_ABOUT:
-				    // Test.
-				    MessageBox( 1, "Shell test", "Testing MSG_COMMAND.CMD_ABOUT." );
+				    MessageBox ( 1, 
+				        "Gramado Core - shell", 
+				        "Testing MSG_COMMAND.CMD_ABOUT." );
 				    break;
-				
-				//clicaram no botão
-				case BN_CLICKED:
-				    //if(window == i1Window){
-					     //@todo: abre o menu de aplicativos
-					//}
-				    //if(window == i2Window){
-					   //@todo: abre o interpretador de comandos.
-					//}
-					//#debug
-					printf(" * BN_CLICKED * \n");
-				break;
-				//...
-				
-				//default:
-				//break;
 			}
-		    break; 		
-		
-		//Essa mensagem pode ser acionada clidando um botão.
+		    break; 
+
+
+		// Essa mensagem pode ser acionada clidando um botão.
 		case MSG_CLOSE:
-		    //??
-		    //isso deve fechar qualquer janela que esteja usando esse procedimento.
-			//pode ser uma janela filha ou ainda uma janela de dialogo criada pelo sistema.
-			//??
-		    printf("SHELL.BIN: MSG_CLOSE\n");
-			
-			//@todo: Criar essa função na api.
-			//apiExitProcess(0);
+		    printf ("Gramado Core - shell: MSG_CLOSE\n");
 			break;
-		
+
+
 		//Essa mensagem pode ser acionada clidando um botão.
 		case MSG_DESTROY:
-		    printf("SHELL.BIN: MSG_DESTROY\n");
-		    break;
-			
-		// MSG_MOUSEKEYDOWN	
-		case 30:
-		    switch (long1)
-			{
-				case 1:
-				
-				    //#obs: No keydown a gente só abaixa o botão.
-					
-				    //#debug
-					//printf("button 1\n");     
-					
-                    //cima
-					if ( window == app1_button )
-                    {
-						updateVisibleArea( 0 );
-						shellRefreshVisibleArea(); 
-                        //shellScroll();
-						break;
-					}
-
-					//baixo
-					if ( window == app2_button )
-                    {
-                        updateVisibleArea( 1 );
-						shellRefreshVisibleArea();
-					    break;
-					}
-					
-					if ( window == editboxWindow )
-					{
-					    APISetFocus (editboxWindow);
-					    //APIredraw_window (editboxWindow,1);
-						break;
-					}					
-					
-					APISetActiveWindow (window);
-					//APIredraw_window ( window, 1 );
-					
-					//botão de close
-					//if ( window == close_button )
-				    //{
-					    //APIresize_window ( window, 200, 200 );
-					    //APIredraw_window ( window, 1 );
-					    //refresh_screen (); //não precisa isso	
-
-					//	_running = 0;
-                    //    ShellFlag = SHELLFLAG_EXIT;						
-					//}    
-					break;
-					
-				case 2:
-				    //#debug
-				    printf("button 2\n");
-				    break;
-					
-				case 3:
-				    //#debug
-				    printf("button 3\n");
-				    break;
-			};			
-            break;
-
-		// MSG_MOUSEKEYUP	
-		case 31:
-		    switch (long1)
-			{		
-				case 1:
-				    //printf("up button 1\n");
-					if (window == menu_button)
-					{
-	                    shellTestButtons ();	
-		                refresh_screen ();						
-					}
-					
-					
-					//botão de reboot;
-					if ( window == reboot_button )
-                    {
-					    printf("Rebooting...\n");
-		                system("reboot"); 	
-					}
-					
-					//botão de close
-					if ( window == close_button )
-				    {
-					    //APIresize_window ( window, 200, 200 );
-					    //APIredraw_window ( window, 1 );
-					    //refresh_screen (); //não precisa isso	
-
-						_running = 0;
-                        
-						ShellFlag = SHELLFLAG_EXIT;						
-					}  
-					
-					break;
-					
-				case 2:
-				    printf("up button 2\n");
-				    break;
-					
-				case 3:
-				    printf("up button 3\n");
-				    break;
-			};		
-            break;	
-
-		// MSG_MOUSEMOVE	
-		case 32:
-            //APISetFocus(window);
-			//printf("m");
-            break;	
-
-		// MSG_MOUSEOVER	
-		case 33:
-		    
-			//se tiver passando em cima do botão de close.
-			if ( window == close_button )
-			{
-				//printf(".");
-			    //APIresize_window ( window, 200, 200 );
-				//APIredraw_window ( window, 1 );	
-			}
-            
+		    printf ("Gramado Core - shell: MSG_DESTROY\n");
 		    break;
 
-		//entered	
+
+
+		// No mouse!
+		// MSG_MOUSEKEYDOWN
+		// MSG_MOUSEKEYUP
+        //case 30:
+        //case 31:
+            //break;
+
+
+		// ??
+		// entered	
         case 38:
 		    if ( window == close_button )
 			{
 			    //printf("entered\n");	
 			}
-            break;		
+            break;
 
-		//exited	
+
+		// ??
+		// exited	
         case 39:
 		    if ( window == close_button )
 		    {
 			    //printf("exited\n");
 		    }
             break;
-			
+
+
+
 		//Quando a aplicativo em user mode chama o kernel para 
 		//que o kernel crie uma janela, depois que o kernel criar a janela,
 		//ele faz uma chamada ao procedimento de janela do aplicativo com a mensagem 
         //MSG_CREATE, se o aplicativo retornar -1, então a rotina em kernel mode que 
         //esta criando a janela, cancela a janela que está criando e retorn NULL.		
 		case MSG_CREATE:
-		    printf("SHELL.BIN: MSG_CREATE\n");
+		    printf ("Gramado Core - shell: MSG_CREATE\n");
 		    break;
-			
+
+
+
 		//MSG_TIMER ;;#TODO INCLUIR ISS0 NA API.	
 		case 53:
 		    //printf("shell tick\n");
 			updateObject(); //interna
             break; 		
-		
+
+
 		case MSG_SETFOCUS:
 		    APISetFocus(window);
 			break;
-			
+
+
 		case MSG_KILLFOCUS:
             break;
+
 
 		//isso pinta os elementos da área de cliente.
         //essa mensagem é enviada para o aplicativo quando 
         //a função 'update window'	é chamada.	
         case MSG_PAINT:
-            printf("SHELL.BIN: MSG_PAINT\n");
-			break;
-			
+            printf ("Gramado Core - shell: MSG_PAINT\n");
+            break;
 
-		//@todo: isso ainda não existe na biblioteca. criar.	
+
+        //@todo: isso ainda não existe na biblioteca. criar.	
         //case MSG_CLS:
             //limparemos o retãngulo da área de cliente,
 			//mesmo que estejamos em full screen. 
 		//	break;		
-		
+
+
 		//mudaremos o curso usando long1 e long2.
 		//case MSG_SETCURSOR:
 		//    break;
-		
+
+
 		//case MSG_HSCROLL:
 		//    break;
+
 		//case MSG_VSCROLL:
 		//    break;
 		
 		
 		//case MSG_FULLSCREEN:
 		//    break;
-		
-		
-		//case COMMAND_SET_WINDOW_SIZE:
-		//    break;
-		
-		//case COMMAND_HIDE_WINDOW:
-        //    break; 
 
-		
+
 		//#importante
 		// os caracteres de controle encontrados na tabela ascii.
 		//@todo: Essa mensagem precis ser criada, tanto no kernel 
@@ -2347,7 +2087,7 @@ shellProcedure( struct window_d *window,
 		        //^E ENQ
                 //case 5:
 		        //    printf("^E");
-                //    break;  								
+                //    break;  
 			
 		        //^F ACK
                 //case 6:
@@ -2363,7 +2103,7 @@ shellProcedure( struct window_d *window,
 			
 		        //^H BS
                 //case 8:
-                //    break;  								
+                //    break; 
 			
 		        //^I HT horizontal tab
                 //case 9:
@@ -2485,20 +2225,29 @@ shellProcedure( struct window_d *window,
 		    break;	  
     };
 
+
+
     // Nothing for now !
+
 done:
-	return (unsigned long) apiDefDialog ( window, msg, long1, long2 );
-};
+
+    return (unsigned long) apiDefDialog ( window, 
+                               msg, 
+                               long1, 
+                               long2 );
+}
+
 
 
 /*
  ******************************
  * shellWaitCmd:
- *     Espera completar o comando 
- * com um [ENTER]. ##suspensa
+ *     Espera completar o comando com um [ENTER]. 
+ *     #suspensa
  */
+
 void shellWaitCmd (){
-		
+
 	// @todo: Cuidado com loop infinito.
 
 	
@@ -2532,11 +2281,11 @@ void shellWaitCmd (){
 	} while (1);
 
     prompt_status = 0;	
-};
+}
 
 
 /*
- ****************
+ *******************************************
  * shellCompare:
  *     Compara comandos digitados com palavras chave.
  *     Compara a palavra em 'prompt[]' com outras e chama o serviço.
@@ -2555,41 +2304,49 @@ void shellWaitCmd (){
 #define TOKENLIST_MAX_DEFAULT 80
  
 unsigned long shellCompare (struct window_d *window){
-	
-    //char **stringarray1;
-	char *tokenList[TOKENLIST_MAX_DEFAULT];
-	char *token;
-	int token_count;	
-	int i = 0;
+
+    char *tokenList[TOKENLIST_MAX_DEFAULT];
+    char *token;
+    int token_count;
+    int i = 0;
+
 
     unsigned long ret_value;
-	int q;    //diálogo
-	char *c;
-	
-    //?? é um pathname absoluto ou não. ??
-	//Ok. isso funcionou.
-    int absolute; 
-	
-	//#importante:
-	//Transferir toda alinha de comando para a memória 
-	//compartilhada.
-	//obs: Possivelmente isso não continuaá assim, pas por enquanto tá bom.
+    int q;    //diálogo
+    char *c;
 
-	unsigned char *shared_memory = (unsigned char *) (0xC0800000 -0x100);
-	
+
+    //?? é um pathname absoluto ou não. ??
+    //Ok. isso funcionou.
+    int absolute; 
+
+    //
+    // Shared memory
+    //
+
+	// #importante:
+	// Transfere toda a linha de comando para a memória compartilhada.
+	// obs: 
+	// Possivelmente isso não continuaá assim, pas por enquanto tá bom.
+
+    unsigned char *shared_memory = (unsigned char *) (0xC0800000 -0x100);
+
+
 	//linha de 80 chars no máx.
-	for ( i=0; i<80; i++ ){
-		shared_memory[i] = prompt[i];
-	}
-	
-	
+    for ( i=0; i<80; i++ )
+    {
+        shared_memory[i] = prompt[i];
+    };
+
+
     // Temos uma linha de comando em prompt[]
     // que é o stdin.  
-NewCmdLine:	
 
-    //#debug
-	//printf("prompt:{%s}\n",prompt);
-	
+NewCmdLine:
+
+    // #debug
+    //printf("prompt:{%s}\n",prompt);
+
 	c = prompt;
 	
 	//Se alguem pressiona [ENTER] com prompt vazio
@@ -2598,10 +2355,12 @@ NewCmdLine:
 	
 	//>(NULL)
 	//[ENTER] finalizou a atring antes de ter digitado alguma coisa.
-	if ( *c == '\0' ){
+	if ( *c == '\0' )
+	{
 	    goto exit_cmp;	
 	}
-	
+
+
 	//>' '
 	//Só faz o tratamento com while se for igual a ' '.
     if ( *c == ' ' || *c == '\t' )
@@ -2627,11 +2386,9 @@ NewCmdLine:
 			   //ou algum problema no while anterior.
 			   //printf("#debug \n");				
 			   printf("shellCompare: *hang while1\n");	
-			   while (1){
-				   asm ("pause");
-			   }
+			   while (1){ asm ("pause"); };
 			}
-			
+
 			//desrepeitamos o limite imposto pelo fim da string.
 			//por isso temos que fazer a marcação exata do início 
 			//da linha de comando e do fim da linha de comando.
@@ -2662,12 +2419,13 @@ NewCmdLine:
 			//não precisamos copiar mais nada.
 			if ( *c == '\0' ){
 				goto commandlineok;
-			}				
+			}
 		}
         
 		//#bugbug
-        //se estamos aqui é porque copiamos quase 80 chars.		
+        //se estamos aqui é porque copiamos quase 80 chars.
     };
+
 
 commandlineok:	
     //#debug
@@ -2690,11 +2448,13 @@ commandlineok:
 	// $/ é o diretório raiz do volume do sistema.
 	// $v/ é o diretório raiz do vfs.	
  
+    // #bugbug
+    // Absoluto é quando começa do diretório raiz.
 
     absolute = absolute_pathname ( (char *) prompt );
-	
+
     switch (absolute)
-	{
+    {
 		//Não é absoluto ou falhar
 		case 0:
 		    goto this_directory;
@@ -2709,7 +2469,8 @@ commandlineok:
 		default:
 		    goto this_directory;
 			break;
-	};
+    };
+
 
 //precisamos checar em que diretório 
 //o programa está.
@@ -2986,12 +2747,16 @@ do_compare:
 		
 		goto exit_cmp;
 	};
-    
 
     //
-    // Início dos comandos.
+    //  ==== Commands ====
     //
-	
+
+    // #todo
+    // Usar um conjunto pequeno de comandos internos.
+ 
+    // Início dos comandos.
+ 
 	// about 
 	// isso é um teste.
 	// mostra informações sobre o aplicativo usando 
@@ -3000,66 +2765,31 @@ do_compare:
     if ( strncmp( prompt, "about", 5 ) == 0 )
     {
         shellSendMessage ( NULL, MSG_COMMAND, CMD_ABOUT, 0);
-
         goto exit_cmp;
-    };
-
-	
-	// Imprime a tabela ascii usando a fonte atual.
-    // 128 chars.	
-    //if( strncmp( prompt, "ascii", 5 ) == 0 )
-    //{
-		//shellASCII();
-	//	goto exit_cmp;
-	//}
+    }
 
 
-	// bmp
-	// bmp exemplo.bmp
-	
-    if ( strncmp( prompt, "bmp", 3 ) == 0 )
-	{
-		i++;
-		token = (char *) tokenList[i];
-		
-		if( token == NULL )
-		{
-			printf("Error: No name!\n");
-		}else{
-		   
-		   // test. aloca 200 KB
-		   printf ("test 200 KB\n");
-		   shellDisplayBMPEx ( (char *) tokenList[i], (int) (200) );		
-			
-			//@todo: podemos checar se o pathname é absoluto,
-			//e onde se encontra o arquivo que queremos.
-			//shellDisplayBMP ( (char *) tokenList[i] );
-		
-		   //test 2MB
-		   //o argumento tamanho é dado  em kb.
-		   //printf("test 2mb\n");
-		   //shellDisplayBMPEx ( (char *) tokenList[i], (int) (1024*2) );
-		};
-		goto exit_cmp;
-    };	
-	
-	
-	// boot
-    // ??
-	
-	if ( strncmp( prompt, "boot", 4 ) == 0 )
-	{
-	    printf ("~boot\n");
+
+    // boot
+    // Realizar alguma operação de boot.
+    // Isso pode ser bom para trabalhar o boot loader.
+
+    if ( strncmp( prompt, "boot", 4 ) == 0 )
+    {
+        printf ("~boot: #todo\n");
         goto exit_cmp;
-    };
-	
+    }
+
+
 
 	// cd - Change dir.
-	if ( strncmp( prompt, "cd", 2 ) == 0 )
-	{	
+	// isso pode ser importante para rodar aplicações em
+	// subdiretórios.
+    if ( strncmp( prompt, "cd", 2 ) == 0 )
+    {
 		i++;
 		token = (char *) tokenList[i];
-		
+
 		if( token == NULL )
 		{
 			printf("cd error: no arg\n");
@@ -3091,144 +2821,98 @@ do_compare:
 		//e onde se encontra o arquivo que queremos.
 		//cd_buitins();
 	    goto exit_cmp;
-	};	
+	}
 
-	
-	// clear-screen-buffer
-	if ( strncmp( prompt, "clear-screen-buffer", 19 ) == 0 )
-	{
-		shellClearBuffer ();
-		goto exit_cmp;
-	}	
-	
-	
-	//close
-	if ( strncmp( prompt, "close", 5 ) == 0 )
-	{
-		shellSendMessage ( NULL, MSG_CLOSE, 0, 0 );
-	    goto exit_cmp;
-	}		
+
+
+    //close
+    if ( strncmp( prompt, "close", 5 ) == 0 )
+    {
+        shellSendMessage ( NULL, MSG_CLOSE, 0, 0 );
+        goto exit_cmp;
+    }
+
+
 
     // cls - Clear the screen.
-	if ( strncmp( prompt, "CLS", 3 ) == 0 || 
-	     strncmp( prompt, "cls", 3 ) == 0 )
-	{
+    if ( strncmp( prompt, "CLS", 3 ) == 0 || 
+         strncmp( prompt, "cls", 3 ) == 0 )
+    {
         cls_builtins ();
         goto exit_cmp;
-	};
-	
-	
-	// color
-	// color-scheme
-	// Seleciona um dos 2 modos de cores padrão do sistema.
-	
-    if ( strncmp( prompt, "color", 5 ) == 0 || 
-	     strncmp( prompt, "color-scheme", 12 ) == 0 )
-	{
-		i++;
-		token = (char *) tokenList[i];
-		
-		if( token == NULL )
-		{
-			printf ("No args\n");
-			goto exit_cmp;
-		}else{
-            
-			//humility
-			if ( strncmp( (char *) tokenList[i], "--humility", 10 ) == 0 )
-			{ 
-		        printf("Selecting Humility color scheme\n"); 
-                system_call(119, (unsigned long)1, (unsigned long)1, (unsigned long)1);
-				printf("done\n");
-                goto exit_cmp;				
-			}
-			
-			//pride
-			if ( strncmp( (char *) tokenList[i], "--pride", 7 ) == 0 )
-			{
-				printf("Selecting Pride color scheme\n");
-                system_call(119, (unsigned long)2, (unsigned long)2, (unsigned long)2);
-                printf("done\n");
-				goto exit_cmp;				
-			}
-			
-			// Talvez haverão mais esquemas ...
-			//...
-		};
-		goto exit_cmp;
-    };		
-	
-	
+    }
+
+
+
 	// copy
-	if ( strncmp( prompt, "copy", 4 ) == 0 )
-	{	
+	// Isso pode ser importante para executar algum arquivo 
+	// que falte no diretório.
+    if ( strncmp( prompt, "copy", 4 ) == 0 )
+    {
 		// o que segue o comando copy são dois pathname.
-		//@todo: podemos checar se o pathname é absoluto,
-		//e onde se encontra o arquivo que queremos.		
-		
+		// @todo: podemos checar se o pathname é absoluto,
+		// e onde se encontra o arquivo que queremos.		
 		copy_builtins ();
 	    goto exit_cmp;
-	}
-	
-			
-	// date
-	if ( strncmp( prompt, "date", 4 ) == 0 )
-	{
-		date_builtins();
-        goto exit_cmp;
-    };	
+    }
 
-	
+
+	// date
+    if ( strncmp( prompt, "date", 4 ) == 0 )
+    {
+        date_builtins ();
+        goto exit_cmp;
+    }
+
+
 	// del
-	if ( strncmp( prompt, "del", 3 ) == 0 )
-	{	
+	// Isso pode ser importante para a inicialização.
+    if ( strncmp( prompt, "del", 3 ) == 0 )
+    {
 		// o que segue o comando del é um pathname.
 		//@todo: podemos checar se o pathname é absoluto,
-		//e onde se encontra o arquivo que queremos.		
-		del_builtins();
-	    goto exit_cmp;
-	};	
+		//e onde se encontra o arquivo que queremos.
+        del_builtins();
+        goto exit_cmp;
+    }
 
-	
+
+    // ??
     // desktop.
-	if ( strncmp( prompt, "desktop", 7 ) == 0 )
-	{
+    // #todo: deletar isso se puder.
+    if ( strncmp( prompt, "desktop", 7 ) == 0 )
+    {
         desktopInitialize ();
         goto exit_cmp;
-	};	
-	
+    }
 
-    // dialog-box
-	//Testing dialog box.
-	if ( strncmp( prompt, "dialog-box", 10 ) == 0 )
-	{
-		//@todo:testar os 4 tipos 
-	    MessageBox( 1, "Shell dialog box","Testing dialog box...");
-        goto exit_cmp;
-    };		
-	
-	
+
+
 	// dir - Lista os arquivos no estilo DOS.
-	if ( strncmp ( prompt, "dir", 3 ) == 0 )
-	{
-		char dir_name[] = "volume1";
-		
+	// Isso é importante para inicialização.
+    if ( strncmp ( prompt, "dir", 3 ) == 0 )
+    {
+        char dir_name[] = "volume1";
+
 		i++;
 		token = (char *) tokenList[i];
 		
 		if ( token == NULL )
 		{
-			
-		    //listar os arquivos em um diretório dado o nome do diretório.
+
+            //++
+			//listar os arquivos em um diretório dado o nome do diretório.
 			enterCriticalSection ();
 		    system_call ( 177,
-		             (unsigned long) dir_name,   //nome do diretório.
-                     (unsigned long) dir_name,   
-                     (unsigned long) dir_name ); 
-		    exitCriticalSection ();				
-			
+                (unsigned long) dir_name,   //nome do diretório.
+                (unsigned long) dir_name,   
+                (unsigned long) dir_name ); 
+		    exitCriticalSection ();
+            //--
+            
 		}else{
 
+		    //++
 		    //listar os arquivos em um diretório dado o nome do diretório.
 			enterCriticalSection();
 		    system_call ( 177,
@@ -3236,178 +2920,133 @@ do_compare:
                      (unsigned long) tokenList[i],   
                      (unsigned long) tokenList[i] ); 
 		    exitCriticalSection();		
-			
-			//...
-		};		
-				
+			//--
+		};
+	
 		// o que segue o comando dir é um pathname.
 		//@todo: podemos checar se o pathname é absoluto,
 		//e onde se encontra o arquivo que queremos.
         //se o pathname for null então o comando atua sobre o pwd		
 		//dir_builtins();
         goto exit_cmp;
-    };
-	
-    // disk-info
-	if ( strncmp( prompt, "disk-info", 9 ) == 0 )
-	{	
-	    shellShowDiskInfo ();
-        goto exit_cmp;
-    };	
-	
-	
-	// echo - Echo de terminal.
-    if ( strncmp( prompt, "echo", 4 ) == 0 )
-	{
-		echo_builtins (tokenList);
-		goto exit_cmp;
-    };
+    }
 
-	
-	// editbox
-	// Cria uma edibox.
-    // #teste: deletar.
-	
-	if ( strncmp( prompt, "editbox", 7 ) == 0 )
-	{
-	    enterCriticalSection();    
-	    shellCreateEditBox ();
-	    exitCriticalSection();    
-		
-		goto exit_cmp;
-    };		
-	
-	
-	// exec - Executa um programa fechando o shell.
+
+
+
+    // disk-info
+    if ( strncmp( prompt, "disk-info", 9 ) == 0 )
+    {
+        shellShowDiskInfo ();
+        goto exit_cmp;
+    }
+
+
+
+    // echo - Echo de terminal.
+    if ( strncmp( prompt, "echo", 4 ) == 0 )
+    {
+        echo_builtins (tokenList);
+        goto exit_cmp;
+    }
+
+
+
+    // exec - Executa um programa fechando o shell.
     if ( strncmp( prompt, "exec", 4 ) == 0 )
-	{
+    {
 		// o que segue o comando exec é um pathname.
 		//@todo: podemos checar se o pathname é absoluto,
 		//e onde se encontra o arquivo que queremos.		
 		exec_builtins();
 		ShellFlag = SHELLFLAG_EXIT;
 		goto exit_cmp;
-    };	
-	
-	
+    }
+
+
+
 	// exit - Exit the application.
     if ( strncmp( prompt, "exit", 4 ) == 0 )
-	{
-		exit_builtins();
-		ShellFlag = SHELLFLAG_EXIT;
-		goto exit_cmp;
-    };
-	
-    // fork - Testando a função fork.
-	// Apenas obtendo o retorno na rotina de clonagem.
-	if ( strncmp ( prompt, "fork", 4 ) == 0 )
-	{
-		printf("fork: Tentando clonar o processo atual ...\n");
-		
-		int pidFORK = (int) fork ();
+    {
+        exit_builtins();
+        ShellFlag = SHELLFLAG_EXIT;
+        goto exit_cmp;
+    }
 
-		//estamos no filho
-		if ( pidFORK == 0 )
-		{
-		    //Mostra o ID do processo clone.
-		    printf ("Estamos no filho. PID = {%d}\n", pidFORK );		
-		    //printf("fork: done *breakpoint\n");
-            //while(1){}			
-		}else{
-		    //Mostra o ID do processo clone.
-		    printf ("Estamos no pai.  PID do filho = {%d}\n", pidFORK );		
-		   // printf("fork: done *breakpoint\n");
-            //while(1){}					
-		}
-		
-		//mostra o id do processo atual.
-		shellShowPID ();
-		
-		//#test
-		//isso é um teste
-		//testando executar no processo novo.
-		//printf("execve\n");
-		//shell_gramado_core_init_execve2 ( 
-	    //                   (const char *) "gramcode.bin", //nome
-	    //                   (const char *) 0,            //NULL
-		//				   (const char *) 0);           //NULL
-		
-		
-		//printf("fork: done *breakpoint\n");
-        //while(1){}	
-		
-		printf ("fork: done\n");
-		goto exit_cmp;
-	};		
-	
-	
+
     // getpid
-	if ( strncmp( prompt, "getpid", 6 ) == 0 )
-	{
-	    getpid_builtins ();
+    if ( strncmp( prompt, "getpid", 6 ) == 0 )
+    {
+        getpid_builtins ();
         goto exit_cmp;
-    };
-	
-    // getppid
-	if ( strncmp( prompt, "getppid", 7 ) == 0 )
-	{
-	    getppid_builtins();
-        goto exit_cmp;
-    };
-	
-	
-    // getuid - get user id
-	if ( strncmp( prompt, "getuid", 6 ) == 0 )
-	{
-	    getuid_builtins();
-        goto exit_cmp;
-    };
-	
-	
-    // getgid - get group id
-	if ( strncmp( prompt, "getgid", 6 ) == 0 )
-	{
-	    getgid_builtins();
-        goto exit_cmp;
-    };
-	
-    //get-usersession
-	if ( strncmp( prompt, "get-usersession", 15 ) == 0 )
-	{
-	    shellShowUserSessionID();
-        goto exit_cmp;
-    };
-	
-	
-    //get-windowstation
-	if ( strncmp( prompt, "get-windowstation", 17 ) == 0 )
-	{
-	    shellShowWindowStationID();
-        goto exit_cmp;
-    };
-	
-    //get-desktop
-	if ( strncmp( prompt, "get-desktop", 11 ) == 0 )
-	{
-	    shellShowDesktopID();
-        goto exit_cmp;
-    };
+    }
 
-	
+
+    // getppid
+    if ( strncmp( prompt, "getppid", 7 ) == 0 )
+    {
+        getppid_builtins();
+        goto exit_cmp;
+    }
+
+
+    // getuid - get user id
+    if ( strncmp( prompt, "getuid", 6 ) == 0 )
+    {
+        getuid_builtins();
+        goto exit_cmp;
+    }
+
+
+    // getgid - get group id
+    if ( strncmp( prompt, "getgid", 6 ) == 0 )
+    {
+        getgid_builtins();
+        goto exit_cmp;
+    }
+
+
+    //get-usersession
+    if ( strncmp( prompt, "get-usersession", 15 ) == 0 )
+    {
+        shellShowUserSessionID();
+        goto exit_cmp;
+    }
+
+
+    //get-windowstation
+    if ( strncmp( prompt, "get-windowstation", 17 ) == 0 )
+    {
+        shellShowWindowStationID();
+        goto exit_cmp;
+    }
+
+
+    //get-desktop
+    if ( strncmp( prompt, "get-desktop", 11 ) == 0 )
+    {
+        shellShowDesktopID();
+        goto exit_cmp;
+    }
+
+    //
+    // Command to test the heap of this process.
+    //
+
 	//unsigned char *hBuffer = (unsigned char *) 0xC1000000;
-	void *hBuffer;
-	
+    void *hBuffer;
+
 	//int thisprocess_id = (int) system_call ( 85, 0, 0, 0); 
 	//unsigned char *heaptest = (unsigned char *) system_call ( 184, thisprocess_id, 0, 0 );		
-	
+
     // heap
-	if ( strncmp( prompt, "heap", 4 ) == 0 )
-	{
-		printf ("Testando heap\n");
+    if ( strncmp( prompt, "heap", 4 ) == 0 )
+    {
+		printf ("Testing process heap\n");
 				
 		hBuffer = (void *) malloc ( 1024*100 ); //100kb
-        //hBuffer = (void *) malloc ( 1024*1024*3 ); //3mb		
-		
+        //hBuffer = (void *) malloc ( 1024*1024*3 ); //3mb
+
 		if ( (void *) hBuffer == NULL )
 		{
 			printf("malloc fail 100kb\n");
@@ -3417,26 +3056,17 @@ do_compare:
 		
 		printf("done\n");
         goto exit_cmp;
-    };		
-	
-	
-	// hd ??
-	// hd info maybe.
-    if ( strncmp( prompt, "hd", 2 ) == 0 )
-	{
-	    printf ("~hd\n");
-        goto exit_cmp;
-    };	
-	
-	
-	// help
-	// ?
-	// Mostra ajuda.
-    if ( strncmp( prompt, "HELP", 4 ) == 0 ||  
-	     strncmp( prompt, "help", 4 ) == 0 || 
-	     strncmp( prompt, "?", 1 ) == 0 )
-	{
+    };
 
+
+
+
+
+	// help
+    if ( strncmp( prompt, "HELP", 4 ) == 0 ||  
+         strncmp( prompt, "help", 4 ) == 0 || 
+         strncmp( prompt, "?", 1 ) == 0 )
+    {
 		i++;
 		token = (char *) tokenList[i];
 		
@@ -3447,282 +3077,247 @@ do_compare:
             
 			if( strncmp( (char*) tokenList[i], "-all", 4 ) == 0 )
 			{ 
-                help_builtins(1); 		
+                help_builtins(1);
 			}
 			
 			if( strncmp( (char*) tokenList[i], "-min", 4 ) == 0 )
 			{
-                help_builtins(2);				
+                help_builtins(2);
 			}
-			
 			//...
 		};
 		goto exit_cmp;
-    };	
-		
-	
-	// install	
-    // ?? 
-	
-	if ( strncmp( prompt, "install", 7 ) == 0 )
-	{
-	    printf ("~install\n");
+    }
+
+
+
+    // install
+    // Isso pode ser usado na inicialização pra instalar 
+    // alguma coisa faltante. 
+
+    if ( strncmp( prompt, "install", 7 ) == 0 )
+    {
+        printf ("~install #todo\n");
         goto exit_cmp;
-    };
-	
-	
+    }
+
+
+
     // kernel-info
-	if ( strncmp( prompt, "kernel-info", 11 ) == 0 )
-	{
-	    shellShowKernelInfo ();
+    // Exibir informações gerais.
+    if ( strncmp( prompt, "kernel-info", 11 ) == 0 )
+    {
+        shellShowKernelInfo ();
         goto exit_cmp;
-    };	
-	
-	
-    // ls
-	// lista arquivos no estilo unix.
-	//isso será um programa.
-	//if( strncmp( prompt, "ls", 2 ) == 0 )
-	//{
-		//@todo: Isso deve ser um aplicativo.
-	//	printf("~ls\n");
-    //    goto exit_cmp;
-	//};
+    }
 
-
-    // message-box
-	// Testing message box.
-	// #todo:testar os 4 tipos 
-	
-	if ( strncmp( prompt, "message-box", 11 ) == 0 )
-	{
-	    MessageBox ( 1, "gdeshell", "Testing message box..." );
-        goto exit_cmp;
-    };	
-	
 
     // mm-info
-	if ( strncmp( prompt, "mm-info", 7 ) == 0 )
-	{
-	    shellShowMemoryInfo ();
+    // Exibir informações gerais sobre memória.
+    if ( strncmp( prompt, "mm-info", 7 ) == 0 )
+    {
+        shellShowMemoryInfo ();
         goto exit_cmp;
-    };	
-	
-	
+    }
+
+
+
     // mm-kernelheap
-	if ( strncmp( prompt, "mm-kernelheap", 13 ) == 0 )
-	{
-	    shellShowKernelHeapPointer ();
+    // Informações sobre o heap do kernel.
+    if ( strncmp( prompt, "mm-kernelheap", 13 ) == 0 )
+    {
+       shellShowKernelHeapPointer ();
         goto exit_cmp;
-    };
+    }
+
+
 
     // mm-processheap
-	if ( strncmp( prompt, "mm-processheap", 14 ) == 0 )
-	{
-	    shellShowProcessHeapPointer ();
+    // Informações sobre o heap do processo.
+    if ( strncmp( prompt, "mm-processheap", 14 ) == 0 )
+    {
+        shellShowProcessHeapPointer ();
         goto exit_cmp;
-    };
+    }
+
+
 
 	// mov
-	if ( strncmp( prompt, "mov", 3 ) == 0 )
-	{
+	// Isso pode ser útil para arquivos faltantes.
+    if ( strncmp( prompt, "mov", 3 ) == 0 )
+    {
 		// o que segue o comando mov são dois pathnames.
 		//@todo: podemos checar se o pathname é absoluto,
-		//e onde se encontra o arquivo que queremos.		
+		//e onde se encontra o arquivo que queremos.
 	    goto exit_cmp;
-	}		
+    }
+
 
 
     // metrics
-	// Mostra algumas informações de métrica do sistema.
-	if ( strncmp( prompt, "metrics", 7 ) == 0 )
-	{
-		shellShowMetrics();
+    // Mostra algumas informações de métrica do sistema.
+    if ( strncmp( prompt, "metrics", 7 ) == 0 )
+    {
+        shellShowMetrics();
         goto exit_cmp;
-	};	
+    }
+
 
 	// new
-	if ( strncmp( prompt, "new", 3 ) == 0 )
-	{		
-	    printf("~new - New file or directory\n");		
-	    goto exit_cmp;
-	}		
-	
+	// Isso pode ser ýutil para arquivos faltantes.
+    if ( strncmp( prompt, "new", 3 ) == 0 )
+    {
+        printf ("~new - New file or directory\n");
+        goto exit_cmp;
+    }
+
+   
     
 	// mbr
-	// ?? Talvez mostrar informações sobre o mbr ou realizar testes.
+	// Isso pode ser útil para trabalhar a inicialização do sistema.
     if ( strncmp( prompt, "mbr", 3 ) == 0 )
-	{
-	    printf("~mbr\n");
+    {
+	    printf ("~mbr\n");
 		
 		//#bugbug pagefault
-		
 		shellTestMBR();
 		printf("done\n");
 		goto exit_cmp;
-    }; 
-	
+    }
+
+
+
     // pci-info
-	if ( strncmp( prompt, "pci-info", 8 ) == 0 )
-	{
-	    shellShowPCIInfo();
+    // exibe informações sobre os dispositivos pci.
+    if ( strncmp( prompt, "pci-info", 8 ) == 0 )
+    {
+        shellShowPCIInfo();
         goto exit_cmp;
-    };	
-	
-	
-    // puts - testing puts, from libc.
-	if ( strncmp( prompt, "puts", 4 ) == 0 )
-	{
-		// puts(" # puts Ok# \n");
-        goto exit_cmp;
-	};	
-	
-	
-	if ( strncmp ( prompt, "current-process", 15 ) == 0 )
-	{
-		system_call ( SYSTEMCALL_CURRENTPROCESSINFO, 0, 0, 0 );
-		goto exit_cmp; 
-	}
-	
+    }
+
+
+
+    // Exibe informações sobre o processo atual.
+    if ( strncmp ( prompt, "current-process", 15 ) == 0 )
+    {
+        system_call ( SYSTEMCALL_CURRENTPROCESSINFO, 0, 0, 0 );
+        goto exit_cmp; 
+    }
+
+
 	// pwd - print working directory
-	
-	if ( strncmp( prompt, "pwd", 3 ) == 0 )
-	{
-		pwd_builtins ();
-	    goto exit_cmp;
-	};		
+    if ( strncmp( prompt, "pwd", 3 ) == 0 )
+    {
+        pwd_builtins ();
+        goto exit_cmp;
+    }
 
-	
+
+
     // reboot
-    // @todo: Isso será um aplicativo. reboot.bin
-	
     if ( strncmp( prompt, "REBOOT", 6 ) == 0 || 
-	     strncmp( prompt, "reboot", 6 ) == 0 )
-	{
-	    //printf("~reboot\n");
-		
-		printf ("Tem certeza que deseja reiniciar o sistema?\n");
-		
-		q = (int) apiDialog ("Pressione 'y' para Yes ou 'n' para No.\n");
-					
-		if( q == 1 )
-		{ 
-		    printf ("Rebooting...\n");
-		    system ("reboot"); 
-		};
+         strncmp( prompt, "reboot", 6 ) == 0 )
+    {
 
-		goto exit_cmp;
-    };
+        printf ("Reboot, Yes ou No?\n");
 
-	
-	// rename - reneme directory or file.
-	if ( strncmp( prompt, "rename", 6 ) == 0 )
-	{
+        q = (int) apiDialog ("Press 'y' for Yes or 'n' for No.\n");
+
+        if ( q == 1 )
+        { 
+            printf ("shell: Rebooting the system ...\n");
+            system ("reboot"); 
+        }
+        goto exit_cmp;
+    }
+
+
+
+	// rename 
+	// rename directory or file.
+	// Isso pode ser útil para trabalhar a inicialização do sistema.
+    if ( strncmp( prompt, "rename", 6 ) == 0 )
+    {
 		// o que segue o comando rename são dois pathnames.
 		//@todo: podemos checar se o pathname é absoluto,
-		//e onde se encontra o arquivo que queremos.		
+		//e onde se encontra o arquivo que queremos.
         goto exit_cmp;
-    };	
-	
-	
-    // root
-	// ??
-	
-    if ( strncmp( prompt, "root", 4 ) == 0 )
-	{
-	    printf("~/root\n");
-		//testa_root();
-		goto exit_cmp;
-    }; 
+    }
 
-	
+
+
     // save
-	if ( strncmp( prompt, "save", 4 ) == 0 )
-	{
+    // Isso pode ser útil para trabalhar a inicialização do sistema.
+    if ( strncmp( prompt, "save", 4 ) == 0 )
+    {
 		// o que segue o comando save é um pathname.
 		//@todo: podemos checar se o pathname é absoluto,
 		//e onde se encontra o arquivo que queremos.		
-	    printf("~save root\n");
+        printf("~save root\n");
         goto exit_cmp;
-    };
-	
-	
-	//scroll1
-	if ( strncmp( prompt, "scroll1", 7 ) == 0 )
-	{
-	    testScrollChar((int) '1');
-        goto exit_cmp;		
-	}
-	
-	
-	//scroll2
-	if ( strncmp( prompt, "scroll2", 7 ) == 0 )
-	{
-	     testScrollChar((int) '2');
-        goto exit_cmp;		
-	}	
-	
-	
-	
-	// service
-	//podemos tertar serviços do kernel 
-	//enviando argumentos nulos.
-	if ( strncmp( prompt, "service", 7 ) == 0 )
-	{
-	    printf("~service - testa servicos do kernel:\n");
-		//test_services();
-        goto exit_cmp;
-    };
-	
-	
-	// show-screen-buffer
-	
-	if ( strncmp( prompt, "show-screen-buffer", 18 ) == 0 )
-	{
-		shellShowScreenBuffer ();
-		goto exit_cmp;
-	}
+    }
 
-	
-	
+
+
+	//scroll1
+    if ( strncmp( prompt, "scroll1", 7 ) == 0 )
+    {
+        testScrollChar((int) '1');
+        goto exit_cmp;
+    }
+
+
+	//scroll2
+    if ( strncmp( prompt, "scroll2", 7 ) == 0 )
+    {
+        testScrollChar((int) '2');
+        goto exit_cmp;
+    }
+
+
+
+	// service
+	// podemos tertar serviços do kernel 
+	// enviando argumentos nulos.
+    if ( strncmp( prompt, "service", 7 ) == 0 )
+    {
+        printf("~service - testa servicos do kernel:\n");
+        //test_services();
+        goto exit_cmp;
+    }
+
+
+
     // shellinfo
-	// informações sobre o aplicativo.
-	
-	if ( strncmp( prompt, "shell-info", 10 ) == 0 )
-	{
-	    printf ("#todo: shell info.\n");
-		shellShowInfo();
-		
+    // informações sobre esse aplicativo.
+    if ( strncmp( prompt, "shell-info", 10 ) == 0 )
+    {
+        printf ("#todo: shell info.\n");
+        shellShowInfo();
         goto exit_cmp;
-    };	
-	
-	
-	//socket-test
-	//rotina de teste de soquetes.
-	if ( strncmp( prompt, "socket-test", 11 ) == 0 )
-	{
-		//printf("~socket \n");        
-		shellSocketTest();
-		goto exit_cmp;
-    };		
-	
-	
+    }
+
+
+
+
     // shutdown - isso será um programa. shutdown.bin
-	if ( strncmp( prompt, "shutdown", 8 ) == 0 )
-	{
-	    printf("~shutdown \n");
+    if ( strncmp( prompt, "shutdown", 8 ) == 0 )
+    {
+        printf("~shutdown \n");
         goto exit_cmp;
-    };	
+    }
+
 
 	// slots
-	if ( strncmp( prompt, "slots", 5 ) == 0 )
-	{
-	    printf("~slots - mostra slots \n");
+	// Mostra informações sobre as threads.
+    if ( strncmp( prompt, "slots", 5 ) == 0 )
+    {
+         printf("~slots - mostra slots \n");
 		//mostra_slots();
         goto exit_cmp;
-    };
-	
-	
+    }
+
+
 	// start
 	// Inicia uma nova janela(instancia ??) para executar 
 	// um programa ou comando desejado.
@@ -3740,18 +3335,20 @@ do_compare:
 		printf("~start\n");
 		
 		goto exit_cmp;
-    };
+    }
+
 
     // systeminfo
 	// informações sobre o sistema.
-	if ( strncmp( prompt, "system-info", 11 ) == 0 )
-	{
+    if ( strncmp( prompt, "system-info", 11 ) == 0 )
+    {
 	    printf("~@todo: system info.\n");
 		shellShowSystemInfo();
         goto exit_cmp;
-    };	
-	
-	
+    }
+
+
+
     // t1 - Test file
 	// Carrega um arquivo no buffer de words 
 	// depois exibe todo o buffer mantendo o posicionamento 
@@ -3761,16 +3358,8 @@ do_compare:
 		shellTestLoadFile();		
         goto exit_cmp;
     };
-	
-	
-	// t2 - Test bmp
-	if ( strncmp( prompt, "t2", 2 ) == 0 )
-	{
-		shellTestDisplayBMP();
-        goto exit_cmp;
-    };	
-	
-	
+
+
 	// t3 - Test thread
 	if ( strncmp( prompt, "t3", 2 ) == 0 ||
         strncmp( prompt, "test-thread", 11 ) == 0	)
@@ -3839,13 +3428,6 @@ do_compare:
     };	
 
 
-	// t6 - testando a api. rotina que salva arquivo. 
-	// ok, isso funcionou.
-	if ( strncmp( prompt, "t6", 2 ) == 0 )	
-	{
-        printf("t6: todo\n");
-        goto exit_cmp;					 
-	};
 	
 	//t7
 	//#test
@@ -3864,29 +3446,10 @@ do_compare:
 		//...
 		goto exit_cmp;
 	};
-	
-	//testando a criação de botão e a interação com ele através do mouse.
-	if ( strncmp( prompt, "t8", 2 ) == 0 )
-    {
-	    shellTestButtons ();	
-		refresh_screen ();
-		goto exit_cmp;
-	};	
 
-	if ( strncmp( prompt, "t9", 2 ) == 0 )
-    {    
-        testShowLines();	
-		goto exit_cmp;
-	};
-	
 
-	if ( strncmp( prompt, "t10", 3 ) == 0 )
-    {    
-	    testChangeVisibleArea();
 
-		goto exit_cmp;
-	};
-	
+
 	//t11 - testando o envio de mensagens para o procedimento,
 	//usando o kernel.
 	if ( strncmp( prompt, "t11", 3 ) == 0 )
@@ -3896,10 +3459,10 @@ do_compare:
 		                 (int) MSG_COMMAND, 
 						 (unsigned long) CMD_ABOUT, 
 						 (unsigned long) 0 );
-		
 		goto exit_cmp;
 	};
-	
+
+
 	//buffer de test;
 	unsigned long message_buffer[11];
 	
@@ -3930,34 +3493,12 @@ do_compare:
 			(unsigned long) &message_buffer[0] );
 		exitCriticalSection(); 
 		
-        goto exit_cmp;					 
-	};	
-	
-	
-	if ( strncmp( prompt, "t13", 3 ) == 0 )
-    {    
-        //#obs 
-        //#lembrando: podemos ter problemas com o buffer do arquivo.		
-
-	    //coloca no stdout.
-		stdout_printf("Escrevendo no stdout com stdout_printf \n");
-		
-		//mostra o arquivo desde o começo.
-		printf(stdout->_base);
-
-		goto exit_cmp;
-	};	
-	
-	if ( strncmp( prompt, "t14", 3 ) == 0 )
-	{
-	    testCreateWindow ();
-
-		printf("t14: debug *hang");
-		while(1){}
-		
-		goto exit_cmp;
+        goto exit_cmp;
 	}
-	
+
+
+
+
 	// t15
 	// exit(1) test
 	// imprimir o output para exit(1). stderr
@@ -3969,20 +3510,22 @@ do_compare:
 		exit (1);
 		goto exit_cmp;
 	}	
-	
+
+
+
 	// t16
 	// Testando execve da libc
 	// isso funcionou usando o processo (init).
 	if ( strncmp( prompt, "t16", 3 ) == 0 )
 	{
 		printf ("Testando gexecve da gramlibs libc02. *hang\n" );
-		
 		gexecve ("gramcode.bin", NULL, NULL );
 		while (1){}
 		//exit (1);
 		goto exit_cmp;
 	}		
-	
+
+
 	
 	//flush stdout
 	if ( strncmp( prompt, "flush-stdout", 12 ) == 0 )
@@ -3991,121 +3534,57 @@ do_compare:
 		goto exit_cmp;
 	}
 
-	
-	// tasklist - Lista informações sobre os processos.
-	//isso será um programa tasklist.bin
-	if ( strncmp( prompt, "tasklist", 8 ) == 0 ){
-		shellTaskList();
-        goto exit_cmp;
-    };	
-	
-	
-    //test-taskman-server - testando servidor taskman
-	if ( strncmp( prompt, "test-taskman-server", 19 ) == 0 )
-	{
-		//só podemos enviar a próxima mensagem depois que a primeira for atendida.
-		//pois ainda não temos fila de mensagens e o servidor demora para receber 
-		//tempo de processamento.
-        system_call ( 116, 123, 0, 0 );
-		//system_call ( 116, 1000, 0, 0 );
-		//system_call ( 116, 2000, 0, 0 );
-		//system_call ( 116, 3000, 0, 0 );
-		//system_call ( 116, 4000, 0, 0 );
-        goto exit_cmp;
-	};	
-	
+
+
 	// time
-	if ( strncmp( prompt, "time", 4 ) == 0 ){
+    if ( strncmp( prompt, "time", 4 ) == 0 )
+    {
+        printf ("~time\n");
         goto exit_cmp;
-    };
-	
-	// timer-test
-	// Essa rotina cria um objeto timer que gera um interrupção 
-	// de tempos em tempos e é tratado pelo procedimento de janelas.
-	if ( strncmp( prompt, "timer-test", 10 ) == 0 ){
-
-		printf("timer-test: Creating timer\n");
-		
-	    printf("%d Hz | sys time %d ms | ticks %d \n", 
-		    apiGetSysTimeInfo(1), 
-			apiGetSysTimeInfo(2), 
-			apiGetSysTimeInfo(3) );		
-					
-		//janela, 100 ms, tipo 2= intermitente.
-		//system_call ( 222, (unsigned long) window, 100, 2);	
-			
-        apiCreateTimer ( (struct window_d *) window, 
-            (unsigned long) 50, (int) 2 );			
-		
-		//inicializando.
-        objectX = 0;
-        objectY = 0;
-        deltaX = deltaValue;
-        deltaY = deltaValue;
-          
-        printf("timer-test: done\n");		  
-					
-        goto exit_cmp;
-    };
-	
+    }
 
 
-	
-	
-	// taskbar
-	// Cria uma top bar.
-    if ( strncmp( prompt, "taskbar", 7 ) == 0 )
-	{
-	    enterCriticalSection();    
-	    
-		//Apenas inicialize. Continuaremos com o procedimento 
-		//do shell e não o da barra,
-		//shellCreateTaskBar (1);
-	    
-		exitCriticalSection();    
-		
-		goto exit_cmp;
-    };			
-	
-	
 	// tree
-	// Desenha uma pequena árvore.
+	// #todo: listar arquivos.
     if ( strncmp( prompt, "tree", 4 ) == 0 )
 	{
 		shellTree();
 		goto exit_cmp;
-    };			
-	
-	
+    }
+
+
 	// version
-	//?? isso pode ser um programa
     if ( strncmp( prompt, "version", 7 ) == 0 )
-	{
-		show_shell_version();
-	    //printf("\n Gramado version %s \n", OS_VERSION );
+    {
+        show_shell_version();
+        //printf("\n Gramado version %s \n", OS_VERSION );
         goto exit_cmp;
-    };
-	
+    }
+
+
     // volume-info
-	if ( strncmp( prompt, "volume-info", 11 ) == 0 )
-	{
-	    shellShowVolumeInfo();
+    if ( strncmp( prompt, "volume-info", 11 ) == 0 )
+    {
+        shellShowVolumeInfo();
         goto exit_cmp;
-    };	
-	
+    }
+
 
 	// window
     if ( strncmp( prompt, "window", 6 ) == 0 )
-	{
-		shellShowWindowInfo();
+    {
+        shellShowWindowInfo();
         goto exit_cmp;
-    };
+    }
 
+    //
+    // ==== FIM dos comandos ====
+    //
 
     // Se apertamos o enter e não encontramos um comando válido
-    // então damos um aviso de comando inválido e reiniciamos o prompt 
-    // na próxima linha.
-	
+    // então damos um aviso de comando inválido e reiniciamos o 
+    // prompt na próxima linha.
+
 	//fail.
 	int Execve_Ret = 1;
 	
@@ -4123,9 +3602,9 @@ doexec_first_command:
 
 	// #importante:
 	// Se estamos aqui é porque o comando não corresponde a nenhuma das 
-	// palavras reservadas acima, então executaremos, presumindo ser um nome 
-	// de aplicativo no formato 'test.bin'. 
-	
+	// palavras reservadas acima, então executaremos, presumindo ser 
+	// um nome  de aplicativo no formato 'test.bin'. 
+
 	// #importante:
 	// Vamos checar se o pathname é absoluto ou relativo.
 	// +Se tiver barra, significa que o pathname é absoluto e 
@@ -4687,10 +4166,11 @@ void shellShell (){
     //...
 	
 	
-	for ( i=0; i<WORKINGDIRECTORY_STRING_MAX; i++ ){
+	for ( i=0; i<WORKINGDIRECTORY_STRING_MAX; i++ )
+	{
 		current_workingdiretory_string[i] = (char) '\0';
 	};
-	
+
     sprintf ( current_workingdiretory_string, 
 	    SHELL_UNKNOWNWORKINGDIRECTORY_STRING );    
 	
@@ -4929,7 +4409,8 @@ int shellInit ( struct window_d *window ){
 	};
 */	
 	
-	
+
+/*
 #ifdef SHELL_VERBOSE
     
     printf("Creating processes ...\n");	
@@ -4958,7 +4439,7 @@ int shellInit ( struct window_d *window ){
 	printf("Created!\n");
 	//...
 #endif	
-	
+*/
 	
 	//
 	//@todo: 
@@ -5036,6 +4517,7 @@ int shellInit ( struct window_d *window ){
 	//
 	// Testing commands.
 	//
+/*
 #ifdef SHELL_VERBOSE		
 	//Lib C.
 	//libC. (stdlib.c)
@@ -5045,8 +4527,9 @@ int shellInit ( struct window_d *window ){
 	//system("xxfailxx");
 	//...
 #endif
-	
-	
+*/
+
+/*
 #ifdef SHELL_VERBOSE			
 	//API.
 	apiSystem("test");    
@@ -5055,7 +4538,8 @@ int shellInit ( struct window_d *window ){
 	//apiSystem("xxfailxx");
 	//...
 #endif
-	
+*/
+
 	//Ok funcionando ...
 	//@todo: Testar outros comandos.
 	//...
@@ -5152,7 +4636,8 @@ done:
 	//a rotina de printf mostra as strings.
 	//>>vamos tentar sem isso e confiarmos na função printf.
 	//apiShowWindow(window);
-	
+
+
     return 0;
 }
 
@@ -5201,7 +4686,7 @@ int shellCheckPassword (){
 		printf("\n");
 	
 #ifdef SHELL_VERBOSE	
-        //@todo colocar o ponteiro na variável no início do arquivo.	
+        //@todo colocar o ponteiro na variável no início do arquivo.
 	    printf("username={%s} password={%s} \n", username, password );
 		//printf("\n");
 #endif
@@ -5372,9 +4857,7 @@ void shellThread (){
 	printf("\n");
 	printf("$\n");
 	printf("$$\n");
-	//printf("$$$\n");
-    printf("#### This is a thread ####\n");
-	//printf("$$$\n");
+    printf ("#### This is a thread ####\n");
 	printf("$$\n");
 	printf("$\n");
     printf("\n");
@@ -5386,16 +4869,16 @@ void shellThread (){
 
 
 //help message
-void shellHelp (){
-	
-    printf (help_banner);	
+void shellHelp ()
+{
+    printf (help_banner);
 }
 
 
 //drawing a tree
-void shellTree (){
-	
-    printf (tree_banner);	
+void shellTree ()
+{
+    printf (tree_banner);
 }
 
 
@@ -5431,7 +4914,7 @@ void shellPrompt (){
     printf ("\n");
     printf ("[%s", current_user_name );
 	printf ("@%s]", current_host_name );
-	printf ("%s ", SHELL_PROMPT );	
+	printf ("%s ", SHELL_PROMPT );
 }
 
 
@@ -5533,17 +5016,18 @@ void shellTestLoadFile (){
 		
 		} else {   			
 		    
-			shellInsertNextChar ( (char) ch_test ); 		
+			shellInsertNextChar ( (char) ch_test ); 
 	    };
-	};	
+	};
 	
 
  
 done:
-    //
+    // Nothing.
+
 fail:
-    return;	
-};
+    return;
+}
 
 
 /*
@@ -5551,7 +5035,8 @@ fail:
  * shellTestThreads:
  *     Cria um thread e executa.
  *     #bugbug ...já funcionou uma vez, mas agora está com problemas.
- *     @todo: na hora de criar a thread precisamos passar o PID desse processo.
+ *  @todo: na hora de criar a thread precisamos passar 
+ *  o PID desse processo.
  */
  
 void shellTestThreads (){
@@ -5621,17 +5106,18 @@ void shellTestThreads (){
 //creating:
 
     printf ("shellTestThreads: Tentando executar uma thread..\n");	
-	
-	ThreadTest1  = (void *) apiCreateThread ( (unsigned long) &shellThread, 
-	                            (unsigned long) (&threadstack1[0] + (2*1024) - 4), 
-							    "ThreadTest1" );
-	
-	if ( (void *) ThreadTest1 == NULL )
-	{	
-	    printf("shellTestThreads: apiCreateThread fail \n");	
-	    die("ThreadTest1");
-	}
-	
+
+    ThreadTest1  = (void *) apiCreateThread ( (unsigned long) &shellThread, 
+                                (unsigned long) (&threadstack1[0] + (2*1024) - 4), 
+                                "ThreadTest1" );
+
+    if ( (void *) ThreadTest1 == NULL )
+    {
+        printf ("shellTestThreads: apiCreateThread fail \n");	
+        die ("ThreadTest1");
+    }
+
+
 	// # executando #
 	
 	// #importante:
@@ -5643,10 +5129,11 @@ void shellTestThreads (){
 	exitCriticalSection();
 	
 	
-	printf("shell: Tentando executar um thread [ok]..\n");
+	printf ("shell: Tentando executar um thread [ok]..\n");
 	
 	//permitir que o shell continue.
-};
+}
+
 
 
 /*
@@ -5692,8 +5179,11 @@ void shellClearScreen (){
 	//shellRefreshVisibleArea();
 	
 	//reabilita o cursor
-	system_call ( 244, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);	
-};
+    system_call ( 244, 
+        (unsigned long) 0, 
+        (unsigned long) 0, 
+        (unsigned long) 0 );
+}
 
 
 /*
@@ -5733,9 +5223,12 @@ void shellRefreshScreen (){
 	};
 
 	//reabilita o cursor
-	system_call ( 244, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);	
-	
-};
+    system_call ( 244, 
+        (unsigned long) 0, 
+        (unsigned long) 0, 
+        (unsigned long) 0 );
+}
+
 
 
 // a intenção aqui é fazer o refresh de apenas uma linha do arquivo.
@@ -5784,15 +5277,16 @@ void shellRefreshChar ( int line_number, int col_number ){
 	shellSetCursor ( col_number, line_number );
 
 	//Mostra um char do screen buffer.
-	printf( "%c", LINES[line_number].CHARS[col_number] );	
-};
+    printf ( "%c", LINES[line_number].CHARS[col_number] );
+}
+
 
 
 //refresh do char que está na posição usada pelo input.
-void shellRefreshCurrentChar (){
-	
-	printf ("%c", LINES[textCurrentRow].CHARS[textCurrentCol] );
-};
+void shellRefreshCurrentChar ()
+{
+    printf ("%c", LINES[textCurrentRow].CHARS[textCurrentCol] );
+}
 
 
 
@@ -5824,15 +5318,15 @@ void shellScroll (){
 }
 
 
-static void save_cur (void){
-	
+static void save_cur (void)
+{
 	textSavedCol = textCurrentCol;
 	textSavedRow = textCurrentRow;
 }
 
 
-static void restore_cur (void){
-	
+static void restore_cur (void)
+{
 	textCurrentCol = textSavedCol;
 	textCurrentRow = textSavedRow;
 }
@@ -5877,8 +5371,8 @@ static void cr (void){
 }
 
 
-static void del (void){
-	
+static void del (void)
+{
 	LINES[textCurrentRow].CHARS[textCurrentCol] = (char) '\0';
 	LINES[textCurrentRow].ATTRIBUTES[textCurrentCol] = 7;
 }
@@ -5888,13 +5382,14 @@ static void del (void){
 void 
 shellInsertCharXY ( unsigned long x, 
                     unsigned long y, 
-				    char c )
+                    char c )
 {
-	
-	if ( x >= wlMaxColumns || y >= wlMaxRows ){
-		
+
+	if ( x >= wlMaxColumns || y >= wlMaxRows )
+	{
 		return;
 	}
+
 
 	LINES[y].CHARS[x] = (char) c;
 	LINES[y].ATTRIBUTES[x] = 7;
@@ -5906,13 +5401,14 @@ char
 shellGetCharXY ( unsigned long x, 
                  unsigned long y )
 {
-	
-	if ( x >= wlMaxColumns || y >= wlMaxRows ){
-		
+
+	if ( x >= wlMaxColumns || y >= wlMaxRows )
+	{
 		return;
 	}
 
-	return (char) LINES[y].CHARS[x];
+
+    return (char) LINES[y].CHARS[x];
 }
 
 
@@ -5946,7 +5442,7 @@ void testScrollChar ( int c ){
 	    //se chegamos no limite do screen_buffer
 		//...
 		shellInsertNextChar ((char) c);	
-	}		
+	}
 }
 
 
@@ -5987,21 +5483,21 @@ void shellInsertNextChar (char c){
 }
 
 
-void shellInsertCR (){
-    
-	shellInsertNextChar ( (char) '\r' );		
+void shellInsertCR ()
+{
+    shellInsertNextChar ( (char) '\r' );
 }
 
 
-void shellInsertLF (){
-	
-	shellInsertNextChar ( (char) '\n' );
+void shellInsertLF ()
+{
+    shellInsertNextChar ( (char) '\n' );
 }
 
 
-void shellInsertNullTerminator (){
-	
-	shellInsertNextChar ( (char) '\0' );	
+void shellInsertNullTerminator ()
+{
+    shellInsertNextChar ( (char) '\0' );
 }
 
 
@@ -6042,12 +5538,8 @@ void shellTestMBR (){
 	// @todo: Sondar cada elemento do MBR para 
 	// confirmar a presença.
 	//
-	
-//done:
-	//printf("done");
-	//refresh_screen(); //??deletar.
-	//return;
 }
+
 
 
 /*
@@ -6189,48 +5681,37 @@ void shellShowWindowInfo (){
 	    wpWindowLeft, wpWindowTop,
 		wsWindowWidth, wsWindowHeight );
 
-													  
+
 	//Obs: isso funcionou. setando o cursor.
 	//if( terminal_rect.left > 0 && terminal_rect.top > 0 )
-	//{											  
-    //    shellSetCursor( (terminal_rect.left/8), (terminal_rect.top/8) );													  
+	//{
+    //    shellSetCursor( (terminal_rect.left/8), (terminal_rect.top/8) ); 
 	//};
-		
-		
+
+
 	wID = (int) system_call ( SYSTEMCALL_GETTERMINALWINDOW, 0, 0, 0 ); 
 	
 	printf("\n current terminal: \n");
 	printf("Windows ID for current terminal = {%d} \n", wID);
-	
+
 	//...
 }
 
 
 
-//??
-//void shellSetScreenColors( ... ){}
-
-//??
-//void *shellGetTerminalWindow(){}
-
-//void shellSetTerminalRectangle(....){}
-
-//void *shellOpenTerminal(.){}
-
-
-
-				  
+ 
 unsigned long 
 shellSendMessage ( struct window_d *window, 
                    int msg, 
-				   unsigned long long1, 
-				   unsigned long long2 )
+                   unsigned long long1, 
+                   unsigned long long2 )
 {
-	return (unsigned long) shellProcedure ( window, msg, long1, long2 );
+    return (unsigned long) shellProcedure ( window, 
+                               msg, long1, long2 );
 }
 
 
-//copia bytes	
+//copia bytes
 void 
 shell_memcpy_bytes ( unsigned char *Dest, 
                      unsigned char *Source,
@@ -6255,9 +5736,9 @@ void shell_write_to_screen( struct shell_screen_d *screen,
 
  
 
-void shellExit (int code){
-
-	exit (code);
+void shellExit (int code)
+{
+    exit (code);
 }
  
 
@@ -6291,17 +5772,19 @@ void shellUpdateWorkingDiretoryString ( char *string ){
 		    strcat ( current_workingdiretory_string, string );	
 
 		    strcat( current_workingdiretory_string, 
-			    SHELL_PATHNAME_SEPARATOR );				
-		
+			    SHELL_PATHNAME_SEPARATOR );
+
             //Atualizar no gerenciamento feito pelo kernel.
-	        system_call( 175, (unsigned long) string,
-		        (unsigned long) string, (unsigned long) string );		
+            system_call ( 175, 
+                (unsigned long) string,
+                (unsigned long) string, 
+                (unsigned long) string );
 		};
 	};
 	
 	//...
 	
-fail:	
+fail:
 
 done:
     return;
@@ -6359,10 +5842,11 @@ void shellInitializeWorkingDiretoryString (){
 
 
 // atualiza a variável global para id de diretório atual de trabalho.
-void shellUpdateCurrentDirectoryID ( int id ){
-	
-	g_current_workingdirectory_id = (id);
-};
+void shellUpdateCurrentDirectoryID ( int id )
+{
+    g_current_workingdirectory_id = (id);
+}
+
 
 
 //lista informações sobre os processos.
@@ -6583,9 +6067,9 @@ void shell_fntos (char *name){
  *******************************************************
  * shell_gramado_core_init_execve:
  *
- *     Essa é uma rotina alternativa que roda um processo usando os recursos 
- * do processo init.
- */									 
+ *     Essa é uma rotina alternativa que roda um processo 
+ * usando os recursos do processo init.
+ */
 
 int 
 shell_gramado_core_init_execve ( const char *arg1,     // nome
@@ -6738,12 +6222,12 @@ done:
  *******************************************************
  * shell_gramado_core_init_execve:
  *
- *     Essa é uma rotina alternativa que roda um processo usando os recursos 
- * do processo init.
- */									 
+ *     Essa é uma rotina alternativa que roda um processo 
+ * usando os recursos do processo init.
+ */
 
 int 
-shell_gramado_core_init_execve2 ( const char *arg1,     // nome
+shell_gramado_core_init_execve2 ( const char *arg1,    // nome
                                  const char *arg2,     // arg (endereço da linha de comando)
                                  const char *arg3 )    // env
 {
@@ -6937,7 +6421,7 @@ feedterminalDialog ( struct window_d *window,
 					break;
 				
                 //full screen
-                //colocar em full screen somente a área de cliente. 				
+                //colocar em full screen somente a área de cliente. 
 		        case VK_F2:
 				    //APISetFocus(i2Window);
 					//APIredraw_window(i2Window);				
@@ -6958,35 +6442,23 @@ feedterminalDialog ( struct window_d *window,
 		    break;
 	
     };
-	
+
+
     return 0;
 }
 
 
-void die (char *str){
-	
+void die (char *str)
+{
 	printf ("die: %s",str);
-	
 	fprintf ( stderr, "%s\n", str );
-	
 	exit (1);
 }
 
 
-/*
-//isso foi para stdlib.c
-void *xmalloc( int size){
-	
-    register int value = (int) malloc(size);
-    if(value == 0)
-        die ("xmalloc fail.\n");
-//done:  
-    return (void *) value;
-};
-*/
 
 char *concat ( char *s1, char *s2, char *s3 ){
-	
+
     int len1 = (int) strlen(s1);
     int len2 = (int) strlen(s2);
     int len3 = (int) strlen(s3);
@@ -6999,24 +6471,24 @@ char *concat ( char *s1, char *s2, char *s3 ){
   
     *( result +len1 +len2 +len3 ) = 0;
 
+
     return (void *) result;
 }
 
 
 /* error */
-
-void error ( char *msg, char *arg1, char *arg2 ){
-	
+void error ( char *msg, char *arg1, char *arg2 )
+{
     fprintf (stderr, "shell: ");
-    fprintf ( stderr, "%s %s %s", msg, arg1, arg2 );
+    fprintf (stderr, "%s %s %s", msg, arg1, arg2 );
     fprintf (stderr, "\n");
 }
 
 
-void fatal ( char *msg, char *arg1, char *arg2 ){
-	
+void fatal ( char *msg, char *arg1, char *arg2 )
+{
     error ( msg, arg1, arg2 );
-	
+
     //delete_temp_files ();
   
     exit (1);
@@ -7035,20 +6507,7 @@ char *save_string ( char *s, int len ){
 }
 
 
-/*
-void 
-reader_loop()
-{
-	while( !EOF_Reached )
-	{
-		//...
-		
-	};
-	
-};
-*/
 
- 
 
 /*
  **********************************************************
@@ -7123,53 +6582,9 @@ int shellExecuteThisScript ( char *script_name ){
 	
 	//EOF_Reached = EOF;
 
-    return 0;		
+    return 0;
 }
 
-
-/*
-char **
-array_of_strings()
-{
-	char **a;
-	
-	a[0] = "test0";
-	a[1] = "test1";
-	a[2] = NULL;
-	
-	return (a);
-};
-*/
-
-
-/*
-//retorna o pool de strings contendo os nomes dos arquivos
-//em um diretório que está no buffer.
-char **
-get_dir_files( char *buffer )
-{
-    char **poll;	
-	
-	// ...
-	
-	
-    return (poll);	
-}
-*/
-
-/*
-//coloca no pool de strings passado por argumento 
-//as strings que correspondem  aos nomes 
-// dos arquivos encontrados no diretório 
-//indicado pelo buffer.
-int set_dir_files( char **poll, char *buffer )
-{
-	
-	//...
-	
-    return (0);
-};
-*/
 
 
 /*
@@ -7249,8 +6664,6 @@ int absolute_pathname ( char *string ){
 	    {
 		    return (1);		 
 		}
-
-
         return (2);		
 	};
 	
@@ -7275,13 +6688,14 @@ int absolute_pathname ( char *string ){
 	    {
 		    return (1);		 
 		}
-
         return (2);		
-	};	
-	
+	};
+
+
 //fail:
 //Não é absoluto.
-	
+
+
     return 0;
 }
 
@@ -7306,11 +6720,11 @@ int shellInitPathname (){
 	
 	//...
 	
-//done:	
+//done:
 
     pathname_initilized = 1;
     
-	return 0;
+    return 0;
 }
 
  

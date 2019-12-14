@@ -1,14 +1,14 @@
 /*
- * \o/
- * Gramado Operating System - The main file for the shell.
- * (c) Copyright 2015~2018 - Fred Nora.
- *
- * File: apps\shell\crt0.c
- *
- * Environment: Gramado Core.
- * Usado para inicializar a rt na libc99
+ * File: crt0.c
+ * 
+ * Environment:
+ *     Gramado Core - INIT
+ *     ring 3.
+ * 
+ * Purpose:
+ *     Initialize gramlibc and call main() function.
  */
-
+ 
 
 #include "init.h" 
 
@@ -23,6 +23,7 @@ extern int main ( int argc, char *argv[] );
 /*
  ****************************
  * crt0:
+ * 
  *     #importante:
  *     Esse é o ponto de entrada em user mode, pois é a primeira
  *     thread se o kernel passar o comando para o init.
@@ -36,55 +37,51 @@ extern int main ( int argc, char *argv[] );
  */
 
 void crt0 (){
-	
-    int ExitCode;	
-	
-	
+
+    int ExitCode;
+
+
 	// #debug
-	// Para certificarmos que o primeiro salto ocorreu, vamos
-	// pedir para o kernel imprimir uma mensagem.
-	system_call ( 69,0,0,0);
+	// Para certificarmos que o primeiro salto ocorreu, 
+	// vamos pedir para o kernel imprimir uma mensagem.
+
+    // ??
+    system_call ( 69, 0, 0, 0 );
 
 	// Inicializando o suporte a alocação dinâmica de memória.
 	// Inicializando o suporte ao fluxo padrão.
-    // Call main().	
-	
-	libcInitRT ();
-	stdioInitialize ();	
 
-	
-	ExitCode = (int) main ( 1, argv );
-	
-	// Chama kill ou exit de acordo com o problema ocorrido em main.
-	// O erro pode vir no retorno ou implementa-se uma forma de pegar a execessão 
-	// ocorrida durante a execussão de main.
-	
-	switch (ExitCode)
-	{
-	    case 0:
-		    exit (0);
-            break;
- 
-        default:
-		    //exit(app_response);
-			//exit(1);
-			//die ("crt0: EXIT ERROR! \n");
-            break;		
-	};
-	
-	//
-	// ## ERROR ##
-	//
-	
-hang:	
-    printf("crt0: EXIT ERROR! \n");
-    printf("crt0: *Hang!\n");
-	while(1)
-	{
-		asm("pause");
-		asm("pause");
-		asm("pause");
-		asm("pause");
-	};
+	libcInitRT ();
+	stdioInitialize ();
+
+    //
+    // Calling main().
+    //
+
+    ExitCode = (int) main ( 1, argv );
+
+
+    //
+    // Exit error.
+    //
+
+    // #importante
+    // O processo init não pode retornar.
+    // Qualquer tipo de retorno é inaceitável.
+
+__fatal_error:
+
+    printf ("Gramado Core: INIT\n");
+    printf ("crt0: exit_code=%d *hang!\n", ExitCode );
+
+    while (1)
+    {
+        asm ("pause");
+    };
+    goto __fatal_error;
 }
+
+//
+// End.
+//
 

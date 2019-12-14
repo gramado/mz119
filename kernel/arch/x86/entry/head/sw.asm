@@ -345,6 +345,14 @@ _int128:
 ;--  
   
 
+;;==========================
+;; _int129:
+;;
+;; Isso é chamado pelo processo INIT do Gramado Core.
+;; Uma interrupção para habilitar as interrupções mascaráveis.
+;; quem usará isso será a thread primária do processo init.
+;; apenas uma vez.
+
 global _int129
 _int129:
     pop dword [.frameEIP]

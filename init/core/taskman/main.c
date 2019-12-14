@@ -1,8 +1,12 @@
 /*
- * TASKMAN - Task manager application for Gramado 0.3.
- * (c) Copyright 2015-2017 - Fred Nora.
- *
  * File: main.c 
+ *
+ * Environment:
+ *     Gramado Core - TASKMAN
+ *     ring 3.
+ * 
+ * Purpose:  
+ *     It's a taskman process for Gramado Core environment.
  *
  * Descrição:
  *     Arquivo principal do aplicativo Task Manager em user mode. 

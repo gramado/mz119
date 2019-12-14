@@ -1,5 +1,6 @@
 
-#taskman
+# Gramado Core - INIT
+# It's a taskman process for Gramado Core environment.
 
 #history:
 #2019 - Created by Fred Nora and Luciano Gonçalez.
@@ -36,18 +37,16 @@ CFLAGS = -m32 \
 #	-fleading-underscore \
 
 
-LIBC    = ../../../lib/gramlibs/libc01/include/
-LIBCOBJ = ../../../lib/gramlibs/libc01/obj
 API01   = ../../../lib/gramlibs/api01/include/
 APIOBJ  = ../../../lib/gramlibs/api01/obj
+LIBC    = ../../../lib/gramlibs/libc01/include/
+LIBCOBJ = ../../../lib/gramlibs/libc01/obj
 
-	##
-	## Objects
-	##
+	#
+	# Objects
+	#
 
-
-myObjects = crt0.o \
-main.o \
+myObjects = crt0.o main.o \
 api.o \
 ctype.o \
 stdio.o \
@@ -65,8 +64,6 @@ stubs.o
 all: crt0.o main.o all-c taskman-link finalize clean
 	@echo "Ok?"
 
-#head.o:
-#	nasm  head.s  -felf -o head.o
 
 crt0.o:
 	gcc  -c  crt0.c -I $(LIBC) -I $(API01) $(CFLAGS) -o crt0.o
@@ -75,30 +72,19 @@ main.o:
 	gcc  -c  main.c -I $(LIBC) -I $(API01) $(CFLAGS) -o main.o
 
 all-c:
-#	gcc  -c  shellui.c   -I ../../include/libc/ $(CFLAGS) -o shellui.o
-#	gcc  -c  builtins.c  -I ../../include/libc/ $(CFLAGS) -o builtins.o
-#	gcc  -c  desktop.c   -I ../../include/libc/ $(CFLAGS) -o desktop.o
-#	gcc  -c  parser.c    -I ../../include/libc/ $(CFLAGS) -o parser.o
-#	gcc  -c  lexer.c     -I ../../include/libc/ $(CFLAGS) -o lexer.o
-#	gcc  -c  net.c       -I ../../include/libc/ $(CFLAGS) -o net.o
-#	gcc  -c  terminal.c  -I ../../include/libc/ $(CFLAGS) -o terminal.o
 
 	cp $(APIOBJ)/api.o .
-	
 	cp $(LIBCOBJ)/ctype.o .
 	cp $(LIBCOBJ)/stdio.o .
 	cp $(LIBCOBJ)/stdlib.o .
 	cp $(LIBCOBJ)/string.o .
 	cp $(LIBCOBJ)/conio.o .
-#	cp ../../../lib/wait.o .
-
 	cp $(LIBCOBJ)/unistd.o .
-	
 	cp $(LIBCOBJ)/stubs.o .
+
 
 taskman-link:
 	ld -m elf_i386 -T link.ld -o TASKMAN.BIN $(myObjects) -Map map.s
-
 
 finalize:
 	cp TASKMAN.BIN ../../../bin/boot/

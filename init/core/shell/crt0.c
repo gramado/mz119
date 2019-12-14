@@ -1,8 +1,14 @@
 /*
  * File: crt0.c
- *     Inicializa runtime.
+ * 
+ * Environment:
+ *     Gramado Core - SHELL
+ *     ring 3.
+ * 
+ * Purpose:
+ *     Initialize gramlibc and call main() function.
  */
-
+ 
 
 #include "sh.h" 
 
@@ -25,7 +31,7 @@ static char *envp[] = {
 };
 
 
-extern int main ( int argc, char *argv[] );	
+extern int main ( int argc, char *argv[] );
 
 
 
@@ -35,46 +41,53 @@ extern int main ( int argc, char *argv[] );
 // ?? avaliando nisso ??
 
 void crt0 (){
-	
-	int Response;
-	
+
+    int ExitCode;
+
 
     // Inicializando o suporte a alocação dinâmica de memória.
-	// Inicializando o suporte ao fluxo padrão.
-    // Call main().	
-	
-	libcInitRT ();
-	
-	stdioInitialize ();	
+    // Inicializando o suporte ao fluxo padrão.
 
-	Response = (int) main ( 3, argv ); 
-								
+    libcInitRT ();
+    stdioInitialize ();
+
+    //
+    // Calling main().
+    //
+
+    ExitCode = (int) main ( 3, argv ); 
+
 	// Chama kill ou exit de acordo com o problema ocorrido em main.
 	// O erro pode vir no retorno ou implementa-se uma forma de pegar a execessão 
 	// ocorrida durante a execussão de main.
-	
-	switch (Response)
-	{
-	    case 0:
-		    exit (0);
+
+    switch (ExitCode)
+    {
+        case 0:
+            exit (0);
             break;
  
         default:
-		    //exit(app_response);
-			//exit(1);
-			die ("crt0: EXIT ERROR! \n");
-            break;		
-	};
-	
+            //exit (-1);
+            die ("Gramado Core crt0: shell\n");
+            break;
+    };
+
+
 	//
 	// Error.
 	//
-	
-//hang:
-	
-    printf ("[SHELL.BIN] crt0: *Hang\n");
-	
-	while (1) { asm ("pause"); };
+
+__fatal_error:
+
+    printf ("Gramado Core: SHELL\n");
+    printf ("crt0: exit_code=%d *hang!\n", ExitCode );
+
+    while (1)
+    {
+        asm ("pause");
+    };
+    goto __fatal_error;
 }
 
 //

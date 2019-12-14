@@ -1532,8 +1532,9 @@ void *gde_services ( unsigned long number,
 			return NULL;
 			break;
 		
-		//
-		// 129, Um driver confirmando que foi inicializado.
+		// #especial
+		// 129
+		// Um driver confirmando que foi inicializado.
 		// Efetuaremos a rotina de ligação do driver com o sistema.
 		// O sistema linka o driver com o sistema operacional.
 	    //@todo: Essa rotina precisa ser aprimorada. Mas a chamada deve ser 

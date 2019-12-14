@@ -1,5 +1,6 @@
     
     Gramado Core Services.
+    ring 3.
 
     Special services that run on Gramado Core environment.
 
