@@ -112,10 +112,10 @@ static inline void rep_nop (void){
 int 
 tmProc( int junk, 
         int message, 
-		unsigned long long1, 
-		unsigned long long2 );
-		
-		
+        unsigned long long1, 
+        unsigned long long2 );
+
+
 //Protótipos de funções internas.
 void tmUpdateStatus();
 
@@ -156,23 +156,25 @@ int tmInit();
  * sleep:
  *     Apenas uma espera, um delay.
  */
-void tmSleep (unsigned long ms){
-	
-    unsigned long t = (ms*512);
-	
-	do{
-	    --t;
-	}while(t > 0);
 
-};
+void tmSleep (unsigned long ms){
+
+    unsigned long t = (ms*512);
+
+
+    do {
+       --t;
+    } while(t > 0);
+
+}
 
 
 /*
  * tmProbeProcessList:
  *     Sonda para ver se o processo está presente e é válido.
  *     Se retornar 1234 (MAGIC) é um processo válido.
- *
  */
+
 int tmProbeProcessList (int pid){
 	
 	//if(pid < 1){
@@ -180,7 +182,7 @@ int tmProbeProcessList (int pid){
 	//};
 	
 	return (int) system_call ( SYSTEMCALL_88, pid, pid, pid );
-};
+}
 
  
 /*
@@ -221,21 +223,26 @@ int tmCreateTaskBar (){
 	
 	//nothing
 	
-	return (int) 0;
-};
+	return 0;
+}
+
+
 
 
 /*
  *****************************************************************
  * tmProc:
  *     Procedimento de janela do Task Manager.
- *     O procedimento intercepta algumas mensagens e as mensagens de sistema
- * são passadas para o procedimento do sistema na opção default.
+ *     O procedimento intercepta algumas mensagens e 
+ * as mensagens de sistema são passadas para o procedimento 
+ * do sistema na opção default.
  */
-int tmProc ( int junk, 
-             int message, 
-			 unsigned long long1, 
-			 unsigned long long2 )
+ 
+int 
+tmProc ( int junk, 
+         int message, 
+         unsigned long long1, 
+         unsigned long long2 )
 {
     //Filtrar mensagem.
 	
@@ -262,20 +269,23 @@ int tmProc ( int junk,
 
 	//Nothing.
 
-    return (int) 0;
-};
+    return 0;
+}
+
 
 
 /*
  * tmUpdateStatus:
  *
  */
+
 void tmUpdateStatus (){
-	
-	int CpuStep;
-    int ActiveWindow;	
-	int wFocus;
-	
+
+    int CpuStep;
+    int ActiveWindow;
+    int wFocus;
+
+
 	//@todo: O número dos serviços estão desatualizados.
 	
 	//pega o valor do step do processador. quantas vezes ele rodou tarefa.
@@ -298,10 +308,7 @@ void tmUpdateStatus (){
 	tmSetCursor(0,1);
 
 	//...
-	
-//done:	
-	//return;
-};
+}
 
 
 /*
@@ -309,15 +316,21 @@ void tmUpdateStatus (){
  *     Desenhar uma barra em modo texto.
  *    #bugbug Não é esse o ambiente que estamos. @todo
  */
+ 
 int tmDrawBar (int color){
-	
+
     unsigned int i = 0;	
-	char *vm = (char *) 0x00800000;  //g_current_vm; //phis=0x000B8000; 
-	
-	
+    
+    // #bugbug
+    // O que é isso ???
+    // Memória compartilhada ?
+    
+    char *vm = (char *) 0x00800000;  //g_current_vm; //phis=0x000B8000; 
+
+
 	// @todo: Usar alguma função de uma biblioteca GUI em user mode.
 	
-	while (i < ( SCREEN_WIDTH * 2) ) 
+    while (i < ( SCREEN_WIDTH * 2) ) 
     { 
         vm[i] = 219; 
         i++; 
@@ -328,15 +341,18 @@ int tmDrawBar (int color){
 	
 	//Cursor.
 	tmSetCursor(0,0);
-	
-    return (int) 0; 
-};
+
+
+
+    return 0; 
+}
 
 
 /*
  * tmSetCursor:
  *     Configurando o cursor. (stdio.h).
  */
+ 
 void tmSetCursor (unsigned long x, unsigned long y){
 	
 	// #BUGBUG: Aconteceu uma pagefault depois de incluir essa função. 
@@ -409,9 +425,7 @@ void DoProgress ( char label[], int step, int total ){
 
     //reset text color, only on Windows
     //SetConsoleTextAttribute(  GetStdHandle( STD_OUTPUT_HANDLE ), 0x08 );
-	
-    //return;	
-};
+}
 
 
 void DoSome (){
@@ -431,13 +445,13 @@ void DoSome (){
     // Nothing.
 
     printf("\n");
-};
+}
 
 
-void progress_bar_test (){
-    
-	DoSome();
-};
+void progress_bar_test ()
+{
+    DoSome();
+}
 
 
 
@@ -475,19 +489,21 @@ int tmInit (){
  */
 
 int main ( int argc, char *argv[] ){
-	
-	//int Status;	
-	int Flag;
-	void *P;
-	
+
+
+    int Flag;
+    void *P;
+
     struct window_d *hWindow;
-	
+
 	// #importante
 	// buffer de mensagens	
-	unsigned long buffer[5];
-	
+    unsigned long buffer[5];
+
     int PID;
-	
+
+
+
 	//@todo:
     //+pegar o id do processo e chamar uma rotina 
     //para inicializar o processo como o 
@@ -499,32 +515,36 @@ int main ( int argc, char *argv[] ){
     //115
     //esse é o serviço usado pelos servidores 
     //para dialogar com o kernel.
-	
+
+
 #ifdef TASKMAN_VERBOSE
-	printf("taskman is alive\n");
-#endif	
-	
+    printf ("taskman is alive\n");
+#endif
+
 	//window, x, y, color, string.
-    apiDrawText ( NULL, 0, 16, COLOR_RED, "Gramado Core Taskman is alive!" );
-	refresh_screen ();
-	
-//loop:
-//	while (1){}	
-	
+    apiDrawText ( NULL, 
+        0, 16, 
+        COLOR_RED, "Gramado Core: Taskman is alive!" );
+    refresh_screen ();
+
+
 	// #bugbug
 	// Essa conexão está obscura.
 	// precisamos criar mecanismos mais transparentes.
-	
+
 	//o kernel deverá associar o PID a um magic.
 	
     PID = (int) system_call ( SYSTEMCALL_GETPID, 0, 0, 0 );
-	
+
+    //++
 	enterCriticalSection(); 
 	system_call ( 115,                 
 	    (unsigned long) &buffer[0], //ponteiro para o vetor de mensagem.  
 		(unsigned long) 1234,       //acoplar taskman.  
 		(unsigned long) PID );      //magic para taskman.
 	exitCriticalSection(); 	
+    //--
+
 
     //reason?	
 	//O servidor chamará o kernel para se acoplar 
@@ -542,12 +562,12 @@ int main ( int argc, char *argv[] ){
 	//no vetor passado pelo servidor.
 	
 	//
-	// ## LOOP ##
+	// # LOOP #
 	//
-	
-	while (listening)
-	{
-		
+
+    while (listening)
+    {
+		//++
 		//pega uma mensagem com 4 elementos.
 		enterCriticalSection(); 
 		system_call ( 115,                 //Número do serviço invocado pelo servidor
@@ -555,8 +575,9 @@ int main ( int argc, char *argv[] ){
 			(unsigned long) 12345678,    //magic para pegar mensagens.          
 			(unsigned long) PID );       //PID do taskman.      
 		exitCriticalSection(); 
-			
-			
+		//--
+
+
 		//msg. Se existe uma mensagem válida.	
 		if ( buffer[1] != 0  )
 		{
@@ -583,307 +604,13 @@ int main ( int argc, char *argv[] ){
 		cpu_relax();
 		pause();
 		pause();
-		//pause();
-		//pause();
-		//pause();
-		//pause();
-		//pause();
-		//pause();
-		//asm("pause");
-		//exit(0);
 	};
-	
-	
-	//
-	// #todo:
-	// Nesse momento o servidor parou de ouvir por mensagens,
-	// devemos então efetuarmos uma rotina de finalização.
-	//
 
     //
-	// Opção: Tratar os argumentos recebidos.
-	//
-	
-	
-	//#debug
-//debugStuff:
-
-    // Uma mensagem de sinal de vida.
-	apiBeginPaint();
-	    //(type, string1, string2)
-	    MessageBox( 1, "TASKMAN.BIN:", "Initializing..");
-	apiEndPaint();
-	
-	
-	
-	//Debug breakpoint.
-	//while(1){}
-	
-	
-	// Obs:
-	//  **** O message box apresenta mensagens corretamente. ****
-	// O desafio agora é enviar mensagens para a área de cliente 
-	// do utilitário TaskMan.
-	// mensagens de erro serão apresentadas via MessageBox.
-	
-    //Initializing ...	
-//initializing:	
-
-	tmInit();  
-	
-	//
-	// Criando os processos que compoem o Security Control:
-	// ===================================================
-	//
-	// LOGON  - Logon. 
-	// LOGOFF - Logoff
-	// OM     - Object Manager. 
-	// SS     - System Security.
-	//
-
-//	
-// Obs: O object manager controlará algumas permissões iniciais
-// que habilitam os usuários a utilizarem recursos do sistema.
-// Quem controla na verdade os objetos é o kernel base, que consede
-// acesso aos objetos. Permitindo que grupos, usuários, processos e 
-// e threads denham acesso aos recursos do sistema. 
-//	
-//creatingSecurityControl:	
-	
-	//Logon.
-	P = (void *) apiCreateProcess( 0x400000, PRIORITY_HIGH,"LOGON");
-	if ( (void *) P == NULL  ){
-	    MessageBox( 1, "TASKMAN.BIN:", "Fail creating process LOGON");		
-		while(1){}
-	};
-
-	//Logoff.
-	P = (void *) apiCreateProcess( 0x400000, PRIORITY_HIGH,"LOGOFF");
-	if( (void *) P == NULL  ){
-	    MessageBox( 1, "TASKMAN.BIN:", "Fail creating process LOGOFF");		
-		while(1){}
-	};
-	
-	//Object Manager. 
-	//(Pertence ao Security Control).
-	P = (void *) apiCreateProcess( 0x400000, PRIORITY_HIGH,"OM");
-	if( (void *) P == NULL  ){
-	    MessageBox( 1, "TASKMAN.BIN:", "Fail creating process OM");		
-		while(1){}
-	};
-
-	//System Security.
-	//(Pertence ao Security Control).
-	P = (void *) apiCreateProcess( 0x400000, PRIORITY_HIGH,"SS");
-    if( (void *) P == NULL ){ 
-	    MessageBox( 1, "TASKMAN.BIN:", "Fail creating process SS");		
-		while(1){}
-	};
-	
-	// Obs:
-	// Os processos criados qui ainda são um conjunto de testes.
-	// Estamos criando os processos que compoem o security control,
-	// mas não estamos associando nenhuma imagens à eles.
-	// @todo: Podemos testar a qui a criação de algumas threads
-	// associadas à esses processos.
-	// Obs: Quando criamos um processo, uma thread inicial deve ser criada.
-	
-    /*
-     * @todo: 
-	 *     O recurso de criar janelas está razoavelmente funcionando. 
-	 * Mas não criaremos janelas ainda. Pois o recurso de janelas está 
-	 * sendo testado e aprimorado no utilitário shell. 
-	 * Na verdade convém testar tudo no shell.
-	 * Obs: No futuro, criaremos aqui a janela principal do utilitário TaskMan.
-	 *
-	 */
-	 
-	 
-	// 
-    // Create window.
-	//
-	
-	/*
-	
-	//Tentando enviar strings pra propria janela.
-	
-	//@todo: Obter o ponteiro para a janela que repressenta a área de trabalho.
-	//Ou deveria ter uma flag que indicasse, que a janela deve ter como janela mae a área
-	//de trabalho...
-	
-	hWindow = (void*) APICreateWindow( WT_OVERLAPPED, 1, 1,"TaskMan Window",     
-                                       2, 2, 128, 64,    
-                                       0, 0, 0 , COLOR_WINDOW );
-	
-	if( (void*) hWindow != NULL )
-	{
-        //Registrar.
-	    APIRegisterWindow(hWindow);
-	
-	    //Configurar como ativa.
-	    //APISetActiveWindow(hWindow);
-	
-	    //Setar foco.
-	    //APISetFocus(hWindow);
-		
-		//Sondando processos. criando ícones.
-	    //@todo #bugbug esta pintando na area de cliente de outro processo.
-		//tmCreateTaskBar();
-	    
-        
-        //...		
-	};	
-	*/
-
-	
+    // Fail.
     //
-	// @todo: 
-	//     Fazer alguns testes de chamadas ao sistema.
-	// Logo após os teste, pararemos num loop que funcionará 
-	// como pegador de mensagens na fila de mensagens da janela 
-	// do processo.
-	//
     
-	
-	//Show info: 
-	// As chamadas ao sistema que servem para mostrar informações
-	// são consideradas seguras, perfeitas para essa fase de desenvolvimento
-	// do sistem. Apesar de ainda termos problemas com exibição das mensagens 
-	// na janela correta.
-	
-	
-	//PCI info
-    //system_call( SYSTEMCALL_SHOW_PCI_INFORMATION, 0, 0, 0 );
-				   
-	//kernel info			   
-    //system_call( SYSTEMCALL_SHOW_KERNEL_INFORMATION, 0, 0, 0 );	
-		
-	
-	//Testing String
-    // ?? do que se trata isso ??
-    // Me parece um bom teste.	
-	//system_call( SYSTEMCALL_DRAWTEXT, 0,  0, (unsigned long) "/TASKMAN.BIN Testing strings...");
-		
-		
-	//Refresh screen
-	//system_call( SYSTEMCALL_REFRESHSCREEN, 0, 0, 0);
-	
-	
-	
-   	//
-	// * Hang.
-	//
-	
-//getmessageLoop:	
-	
-	// Debug:
-	
-	apiBeginPaint();
-	    //(type, string1, string2)
-	    MessageBox( 1, "TASKMAN:", "Get message loop");	
-	apiEndPaint();
-    
-	while (1)
-	{
-        //
-        // Test: 		
-        // Aproveitando para testar chamadas.		
-		// Usando o loop para cauasr um pouco de stress, com muitas chamadas.
-		//
-		
-		//system_call( SYSTEMCALL_NULL, 0, 0, 0 );
-        //system_call( SYSTEMCALL_DEAD_THREAD_COLLECTOR, 0, 0, 0 );
-		//...
-		
-		//
-		// Sinal de vida.
-		// Pintando caracteres no canto superior esquerdo da janela.
-		//
-		
-		//#bugbug ... isso impediu do procedimento de janela do kernel 
-		//receber mensagens do teclado. Talvez outro procesimento foi acionado.
-		//#bugbug: Cria tantas janelas assim pode nos causa problemas...
-		//pois as janelas ainda não são delatadas...
-		//MessageBox( 1, "Message", "Testing TASKMAN application.");
-		
-		
-	    //tmSetCursor(0,0);		
-		//printf("\\");
-		//tmSleep(12345);
-
-	    //tmSetCursor(0,0);		
-		//printf(" "); 
-		//tmSleep(12345); 		
-
-	    //tmSetCursor(0,0);	
-		//printf("|");
-		//tmSleep(12345);
-
-	    //tmSetCursor(0,0);		
-		//printf(" "); 
-		//tmSleep(12345); 		
-
-	    //tmSetCursor(0,0);	
-		//printf("/");
-		//tmSleep(12345);
-
-	    //tmSetCursor(0,0);		
-		//printf(" "); 
-		//tmSleep(12345); 		
-
-	    //tmSetCursor(0,0);	
-		//printf("-"); 
-		//tmSleep(12345);
-
-	    //tmSetCursor(0,0);		
-		//printf(" "); 
-		//tmSleep(12345); 		
-
-	    //tmSetCursor(0,0);	
-		//printf("|"); 
-		//tmSleep(12345);
-
-	    //tmSetCursor(0,0);		
-		//printf(" "); 
-		//tmSleep(12345); 		
-
-	    //tmSetCursor(0,0);	
-		//printf("-");
-		//tmSleep(12345);
-
-	    //tmSetCursor(0,0);		
-		//printf(" "); 
-		//tmSleep(12345); 
-
-        //progress_bar_test();	
-
-		//
-		//taskmanagerStatus
-		//
-		
-		//if(Flag == 1234){
-		//	goto done;
-		//}
-		
-		//if(Flag == 1234){}
-		//if(Flag == 1234){}
-		//if(Flag == 1234){}
-		//...
-	};	
-	
-   
-    //
-    // Obs: 
-	// O exit(0) funcionou corretamente no teste.
-    // Mas não usaremos exit(0) ainda pois temos poucas threads no sistema.
-	//
-	
-done:   
-   
-    //exit (0);         //Obs: Não usar por enquanto. 
-    
-    // Obs: Retornar com um valor para cr0.s ou head.s.
-    return 0;    
+    return -1;
 }
 
 
