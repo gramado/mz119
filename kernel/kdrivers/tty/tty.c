@@ -47,8 +47,13 @@ void tty_reset_termios ( struct tty_d *tty )
 */
 
 
-// mostrar o conteúdo do arquivo stdout.
 
+/*
+//#cancelado. Deletar isso.
+// Checar no tty atual se tem que atualizar a tela,
+// a linha ou o char.
+// mostrar o conteúdo do arquivo stdout.
+void check_CurrentTTY (void);
 void check_CurrentTTY (void){
 
 	int refresh = 0;
@@ -133,6 +138,8 @@ done:
     CurrentTTY->stdout_status = 0;
     CurrentTTY->stdout_update_what = 0;
 }
+*/
+
 
 
 /*
@@ -186,7 +193,69 @@ int tty_find_empty_slot (){
 }
 */
 
+
+//#todo criar uma tty ldisc. 
+/* 
+struct ttyldisc_d *ttyldisc_create ();  
+struct ttyldisc_d *ttyldisc_create () 
+{
+    return NULL;
+}
+*/
+
+
+//#todo: deletar uma tty ldisc
+/*
+int ttyldisc_delete ( struct ttyldisc_d *tty );
+int ttyldisc_delete ( struct ttyldisc_d *tty )
+{
+    return -1;
+}
+*/ 
+
+
+
+
+//#todo criar uma tty driver. 
+/* 
+struct ttydrv_d *ttydrv_create ();  
+struct ttydrv_d *ttydrv_create () 
+{
+    return NULL;
+}
+*/
+
+
+//#todo: deletar uma tty driver
+/*
+int ttydrv_delete ( struct ttydrv_d *tty );
+int ttydrv_delete ( struct ttydrv_d *tty )
+{
+    return -1;
+}
+*/ 
+
+
+
  
+//#todo criar uma tty. 
+/* 
+struct tty_d *tty_create ();  
+struct tty_d *tty_create () 
+{
+    return NULL;
+}
+*/
+
+
+//#todo: deletar uma tty
+/*
+int tty_delete ( struct tty_d *tty );
+int tty_delete ( struct tty_d *tty )
+{
+    return -1;
+}
+*/ 
  
 /*
  ***********************************
@@ -194,25 +263,38 @@ int tty_find_empty_slot (){
  *     Inicialização do módulo.
  */
 
+// #bugbug
+// Essa rotina está inicializando a tty CurrentTTY e atribuindo
+// o id tty_id para ela.
+
 // #importante
 // No momento estamos apenas inicializando o primeiro tty
-// e usando o mesmo fluxo padr~ao que o teclado usa.
+// e usando o mesmo fluxo padrão que o teclado usa.
 
 int ttyInit (int tty_id){
-	
-	int i;
-		
+
+    int i;
+
 	debug_print ("ttyInit:\n");
-	
-	if ( tty_id < 0 || tty_id > 7 ){
-		
-	    panic ("ttyInit: tty_id");
-	}
-	
+
+    //
+    // #todo
+    // Rever esse limite.
+    // Todos os drivers de dispositivos precisarão de tty.
+    // todos os terminais virtuais.
+    // O linux usa terminais virtuais que vão até ctl+al+f7. 
+    // Mas ttys tem muitas.
+
+    if ( tty_id < 0 || tty_id > 7 )
+    {
+        panic ("ttyInit: tty_id");
+    }
+
+
 	//
 	// CurrentTTY
 	//
-	
+
 	CurrentTTY = (struct tty_d *) malloc ( sizeof(struct tty_d) );
 	
 	if ( (void *) CurrentTTY == NULL ){

@@ -241,7 +241,6 @@ unsigned long ttyList[8];
 //#define TTY_MAGIC	0x0771
 
 
-void check_CurrentTTY (void);
 
 //void *createTTYLine (void); 
 

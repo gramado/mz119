@@ -728,34 +728,40 @@ void fs_load_fatEx (void){
 void 
 load_directory ( unsigned long address, 
                  unsigned long lba, 
-				 unsigned long sectors )
+                 unsigned long sectors )
 {
-	unsigned long i;
-	unsigned long b = 0;
-	
-	for ( i=0; i < sectors; i++ )
-	{
+    unsigned long i;
+    unsigned long b = 0;
+
+
+    for ( i=0; i < sectors; i++ )
+    {
         my_read_hd_sector ( address + b, lba + i, 0, 0 );
-		
-		b = b+512;    
-	}
-};
+
+        b = (b +512);    
+    };
+}
 
 
+// Carrega o diretório raiz.
+// address, lba, number of sectors.
 void fs_load_rootdir (void)
-{	
-    load_directory ( VOLUME1_ROOTDIR_ADDRESS, VOLUME1_ROOTDIR_LBA, 32 );	
+{
+    load_directory ( VOLUME1_ROOTDIR_ADDRESS, 
+        VOLUME1_ROOTDIR_LBA, 
+        32 );
 }
 
 
 /*
  ********************************************************
  * fs_load_rootdirEx:
- *    Carrega o diretório raiz na memória. */
+ *    Carrega o diretório raiz na memória. 
+ */
 
-void fs_load_rootdirEx (void){
-	
-	fs_load_rootdir ();
+void fs_load_rootdirEx (void)
+{
+    fs_load_rootdir ();
 }
 
 
@@ -765,9 +771,19 @@ void fs_load_rootdirEx (void){
  * dado o índice da lista de streams do kernel.
  */
  
-void fs_load_dir ( unsigned long id ){
+void fs_load_dir ( unsigned long id )
+{
     //#cancelar.
 }
+
+
+
+
+/*
+ ***************************** 
+ * fsGetFileSize: 
+ * 
+ */
 
 // #bugbug: Isso dá problemas na máquina real.
 // Essa rotina é chamada pela função fopen, por isso precisamos dela.
@@ -785,38 +801,38 @@ void fs_load_dir ( unsigned long id ){
 
 unsigned long fsGetFileSize ( unsigned char *file_name ){
 
-	unsigned long FileSize = 0;
-		
-    int Status;		
-	int i;
+    unsigned long FileSize = 0;
+
+    int Status;
+    int i;
     unsigned short next;
 
     unsigned long max = 64;    //?? @todo: rever. Número máximo de entradas.
     unsigned long z = 0;       //Deslocamento do rootdir 
     unsigned long n = 0;       //Deslocamento no nome.
-    
+
     // #bugbug
     // Estamos com problemas na string do nome.
     
     //??Nome. 
-	char NameX[13];	           
+    char NameX[13];
 
 	// #importante:
 	// Poderíamos usar malloc ou alocador de páginas ??	
-    // A FAT permanece a mesma para a situaçãod e termos apenas uma partição.
+	// A FAT permanece a mesma para a situaçãod e termos apenas uma partição.
 	//mas se tivermos mai de uma partição também precisamos carregar a FAT 
 	//da partição atual.
 	//unsigned short *fat = (unsigned short *) VOLUME1_FAT_ADDRESS;
-	unsigned short cluster;    //Cluster inicial
+    unsigned short cluster;    //Cluster inicial
 
-    //??	
-	unsigned long S;  //Primeiro setor do cluster.
-	int Spc;
+    //??
+    unsigned long S;  //Primeiro setor do cluster.
+    int Spc;
 
 	// #importante:
 	// Poderíamos usar malloc ou alocador de páginas ??
 	// #todo: Devemos carregar o diretório atual.
-	
+
     unsigned short *root = (unsigned short *) VOLUME1_ROOTDIR_ADDRESS;
 
 	// #todo: Devemos carregar o diretório atual.
@@ -1009,9 +1025,10 @@ found:
 	//while(1){ asm("hlt"); }
 	
 	printf ("fsGetFileSize: FileSize=%d \n" , FileSize);
-    refresh_screen ();	
-	
-	return (unsigned long) FileSize;
+    refresh_screen ();
+
+
+    return (unsigned long) FileSize;
 }
 
 

@@ -59,6 +59,24 @@ typedef enum {
 
 
 /*
+int devmgr_init_device_list();
+int devmgr_init_device_list()
+{
+    int i;
+
+    for (i=0; i<NUMBER_OF_FILES; i++)
+    {
+        deviceList[i] = 0; 
+    }
+
+    //...
+    
+    return 0;
+}
+*/
+
+
+/*
  * init_device_manager:
  */
 

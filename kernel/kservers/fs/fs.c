@@ -51,6 +51,28 @@
 //...
 
 
+// #todo
+/*
+int fs_count_separators( const char *path);
+int fs_count_separators( const char *path){
+
+    size_t count = 0;
+    int i;
+
+    
+    for (i=0; i < strlen(path); i++)
+    {
+        if (path[i] == '/')
+        {
+            count++;
+        }
+    };
+
+
+    return (size_t) count;
+}
+*/
+
 
 int fsCheckELFFile ( unsigned long address ){
 

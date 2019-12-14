@@ -143,14 +143,7 @@ void task_switch (void){
 
     Max = PRIORITY_MAX;
 
-	// #importante
-	// Checar no tty atual se tem que atualizar a tela,
-	// a linha ou o char.
-	
-	//check_CurrentTTY ();
 
-
-	
 	// Current thread. 
 	
     Current = (void *) threadList[current_thread]; 
