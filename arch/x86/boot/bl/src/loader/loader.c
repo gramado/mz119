@@ -69,39 +69,46 @@ int load_kernel (){
 	printf ("load_kernel: Loading %s .. PA=%x | VA=%x \n", 
 	    kernel_name, kernel_pa, kernel_va );
 #endif
-														
+
+
     //Carregando KERNEL.BIN no endereço físico.
 	
 	//isso funciona.
 	//Status = (int) fsLoadFile ("KERNEL  BIN", kernel_pa, FAT16_ROOTDIR_ADDRESS );
 	
 	//#test
-	Status = (int) load_path ( "BOOT       /KERNEL  BIN", (unsigned long) kernel_pa );
+	Status = (int) load_path ( "BOOT       /KERNEL  BIN", 
+	                   (unsigned long) kernel_pa );
     
 	if ( Status != 0 )
 	{
 		//isso funciona.
-	    Status = (int) fsLoadFile ("KERNEL  BIN", kernel_pa, FAT16_ROOTDIR_ADDRESS );
+	    Status = (int) fsLoadFile ( "KERNEL  BIN", 
+	                       kernel_pa, 
+	                       FAT16_ROOTDIR_ADDRESS );
 	}
-	
 	
 	if (Status != 0 )
 	{
-        printf("load_kernel fail: Load\n");  		
+        printf("load_kernel fail: Load\n");  
         goto fail;    
 	};
-	
+
+
     // Update progress bar
-	// updateProgressBar();
-	
-	
+    // updateProgressBar();
+
 	// Check for .ELF file. 0x7f 0x45 0x4c 0x46 (.ELF)	
-	if ( kernel[0] != 0x7F || kernel[1] != 'E' || kernel[2] != 'L' || kernel[3] != 'F' )
-	{	
-	    printf ("load_kernel fail: %s Validation\n", kernel_name );  
-		goto fail;	
-	}
-	
+    if ( kernel[0] != 0x7F || 
+         kernel[1] != 'E' || 
+         kernel[2] != 'L' || 
+         kernel[3] != 'F' )
+    {
+        printf ("load_kernel fail: %s Validation\n", kernel_name );  
+        goto fail;
+    }
+
+
 	//WORD Machine.
 	//WORD NumberOfSections.
 	
@@ -119,29 +126,29 @@ int load_kernel (){
 	// provavelmente apenas em modo texto.
 
 	
-	// Multiboot magic signature.
+    // Multiboot magic signature.
     // O header está em 0xC0001000.	
-	// 0x1BADB002
-	// tem um jmp antes do header.
-	
-	if ( kernel[0x1008] != 0x02 ||
+    // 0x1BADB002
+    // tem um jmp antes do header.
+
+    if ( kernel[0x1008] != 0x02 ||
          kernel[0x1009] != 0xB0 ||
-         kernel[0x100A] != 0xAD ||  		
-	     kernel[0x100B] != 0x1B )
-	{	    
+         kernel[0x100A] != 0xAD || 
+         kernel[0x100B] != 0x1B )
+    {    
         
 		//#debug
 		printf ("0x1BADB002 found!\n");
 		//refresh_screen();
 		//while(1){}
-	}	
-	
-	
-	
+    }
+
+
+
 	//Continua ...
 
-//Done.	
-//Kernel carregado.	
+//Done.
+//Kernel carregado.
 
 #ifdef BL_VERBOSE
 	printf("Done\n");
@@ -149,18 +156,17 @@ int load_kernel (){
 #endif
 
     //Status.
-	
-    return (int) 0;  
-	
+
+    return 0; 
+
 
 // Fail 
 // O Kernel não pôde ser carregado.	
 
 fail:
-    printf("load_kernel: Fail\n");
+    printf ("load_kernel: Fail\n");
     abort ();
-	//die();	
-};
+}
 
 
  
@@ -182,16 +188,16 @@ fail:
  */ 
  
 int load_files (){
-	
+
     int Status;   
-	
+
     //Names.
-	
+
     char *init_name = "INIT.BIN";
     char *shell_name = "SHELL.BIN";
-	char *taskmanager_name = "TASKMAN.BIN";
+    char *taskmanager_name = "TASKMAN.BIN";
 	//...
-	
+
 
 	// @todo: Carregar mais arquivos. Especialmente os arquivos 
 	// de configuração e os arquivos de componentes da interface gráfica.
@@ -222,28 +228,29 @@ int load_files (){
 	
 	// 0x00400000, 0x00450000, 0x004A0000; 
 	
-	unsigned char *init = (unsigned char *) INIT_ADDRESS;                   	 
-	unsigned char *shell = (unsigned char *) SHELL_ADDRESS;                 	 
-	unsigned char *taskmanager = (unsigned char *) TASKMANAGER_ADDRESS;     	 	
+    unsigned char *init = (unsigned char *) INIT_ADDRESS; 
+    unsigned char *shell = (unsigned char *) SHELL_ADDRESS; 
+    unsigned char *taskmanager = (unsigned char *) TASKMANAGER_ADDRESS; 
 	//...
-	
-	
+
+
 	// Limites: 
 	// O endereço base deve estar acima do limite mínimo estabelecido 
 	// para um processo de usuário.
-	
-	if ( INIT_ADDRESS < USER_BASE || 
-	     SHELL_ADDRESS < USER_BASE || 
-	     TASKMANAGER_ADDRESS < USER_BASE )
-	{
-	    printf("load_files fail: Address\n");
-		goto fail;
-	}
-	
-	
-	// @todo: Limpar a tela.
-	// Mas isso demora muito.
-	
+
+    if ( INIT_ADDRESS < USER_BASE || 
+         SHELL_ADDRESS < USER_BASE || 
+         TASKMANAGER_ADDRESS < USER_BASE )
+    {
+        printf("load_files fail: Address\n");
+        goto fail;
+    }
+
+
+    // #todo: 
+    // Limpar a tela.
+    // Mas isso demora muito.
+
 	//==================
 	//0, IDLE.BIN. 
 #ifdef BL_VERBOSE
@@ -252,15 +259,18 @@ int load_files (){
 	
 	//isso funciona
 	//Status = (int) fsLoadFile ("INIT    BIN", INIT_ADDRESS, FAT16_ROOTDIR_ADDRESS );
-	
-	Status = (int) load_path ( "BOOT       /INIT    BIN", (unsigned long) INIT_ADDRESS );	
-	
-	if (Status != 0)
-	{
-		printf ("falhou em carregar boot/init.bin, tentaremos init.bin\n");
-		Status = (int) fsLoadFile ("INIT    BIN", INIT_ADDRESS, FAT16_ROOTDIR_ADDRESS );
-	}
-	
+
+    Status = (int) load_path ( "BOOT       /INIT    BIN", 
+                       (unsigned long) INIT_ADDRESS );
+
+    if (Status != 0)
+    {
+        printf ("Falhou em carregar boot/init.bin, tentaremos init.bin\n");
+        Status = (int) fsLoadFile ("INIT    BIN", 
+                           INIT_ADDRESS, 
+                           FAT16_ROOTDIR_ADDRESS );
+    }
+
 	if (Status != 0)
     {	
 	    printf("load_files: Error loading file: %s\n", init_name );
@@ -280,14 +290,17 @@ int load_files (){
 	//Status = (int) fsLoadFile ("SHELL   BIN", SHELL_ADDRESS, FAT16_ROOTDIR_ADDRESS );
 	
 	
-	Status = (int) load_path ( "BOOT       /SHELL   BIN", (unsigned long) SHELL_ADDRESS );	
-	
-	if (Status != 0)
-	{
-		printf ("falhou em carregar boot/shell.bin, tentaremos shell.bin\n");
-	    Status = (int) fsLoadFile ("SHELL   BIN", SHELL_ADDRESS, FAT16_ROOTDIR_ADDRESS );	
-	}
-	
+    Status = (int) load_path ( "BOOT       /SHELL   BIN", 
+                      (unsigned long) SHELL_ADDRESS );
+
+    if (Status != 0)
+    {
+        printf ("falhou em carregar boot/shell.bin, tentaremos shell.bin\n");
+        Status = (int) fsLoadFile ("SHELL   BIN", 
+                           SHELL_ADDRESS, 
+                           FAT16_ROOTDIR_ADDRESS );
+    }
+
 	if (Status != 0){
 	    
 		printf("load_files: Error loading file: %s\n",shell_name);
@@ -305,21 +318,25 @@ int load_files (){
 
 	//isso funciona
 	//Status = (int) fsLoadFile ("TASKMAN BIN", TASKMANAGER_ADDRESS, FAT16_ROOTDIR_ADDRESS );
-	
-	Status = (int) load_path ( "BOOT       /TASKMAN BIN", (unsigned long) TASKMANAGER_ADDRESS );	
-	
-	if (Status != 0)
-	{
-		printf ("falhou em carregar boot/taskman.bin, tentaremos taskman.bin\n");
-	    Status = (int) fsLoadFile ("TASKMAN BIN", TASKMANAGER_ADDRESS, FAT16_ROOTDIR_ADDRESS );	
-	}
-	
-	if (Status != 0){
-		
-	    printf("load_files: Error loading file: %s\n", taskmanager_name );
-	    goto fail;
-	};
-	
+
+    Status = (int) load_path ( "BOOT       /TASKMAN BIN", 
+                       (unsigned long) TASKMANAGER_ADDRESS );
+
+    if (Status != 0)
+    {
+        printf ("falhou em carregar boot/taskman.bin, tentaremos taskman.bin\n");
+        Status = (int) fsLoadFile ("TASKMAN BIN", 
+                           TASKMANAGER_ADDRESS, 
+                           FAT16_ROOTDIR_ADDRESS );
+    }
+
+    if (Status != 0)
+    {
+        printf ("load_files: Error loading file %s\n", 
+            taskmanager_name );
+        goto fail;
+    }
+
     // Update progress bar
 	//updateProgressBar();
 
@@ -329,8 +346,13 @@ int load_files (){
 	// arquivos de configuração e módulos do kernel com endereço definido.
 	// Pode também carregar imagens para a interface gráfica. Além de fontes e
 	// drivers. 
-	
-	
+
+
+    //
+    // Validation.
+    //
+
+
 	// #importante
 	// Check for elf signature.
 	// Check for .ELF file. 0x7f 0x45 0x4c 0x46 (.ELF)	
@@ -340,19 +362,28 @@ int load_files (){
 	// TaskManager.
 	
     
-	if ( init[0] != 0x7F || init[1] != 'E' || init[2] != 'L' || init[3] != 'F' )
-	{	
+	if ( init[0] != 0x7F || 
+	     init[1] != 'E' || 
+	     init[2] != 'L' || 
+	     init[3] != 'F' )
+	{
 	    printf ("load_files fail: %s Validation\n", init_name );  
 		goto fail;	
 	}
     
-	if ( shell[0] != 0x7F || shell[1] != 'E' || shell[2] != 'L' || shell[3] != 'F' )
+	if ( shell[0] != 0x7F || 
+	     shell[1] != 'E' || 
+	     shell[2] != 'L' || 
+	     shell[3] != 'F' )
 	{	
 	    printf ("load_files fail: %s Validation\n", shell_name );  
 		goto fail;	
 	}
     
-	if ( taskmanager[0] != 0x7F || taskmanager[1] != 'E' || taskmanager[2] != 'L' || taskmanager[3] != 'F' )
+	if ( taskmanager[0] != 0x7F || 
+	     taskmanager[1] != 'E' || 
+	     taskmanager[2] != 'L' || 
+	     taskmanager[3] != 'F' )
 	{	
 	    printf ("load_files fail: %s Validation\n", taskmanager_name );  
 		goto fail;	

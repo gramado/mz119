@@ -350,7 +350,7 @@ Linker script and memory map
                 0x00000000000265ff                init_heap
  .text          0x000000000002671b       0x98 procedure.o
                 0x000000000002671b                bl_procedure
- .text          0x00000000000267b3      0xa36 fs.o
+ .text          0x00000000000267b3      0xa44 fs.o
                 0x00000000000267b3                fatClustToSect
                 0x00000000000267da                fatLoadCluster
                 0x0000000000026817                fs_format
@@ -385,67 +385,67 @@ Linker script and memory map
                 0x00000000000268f4                fs_relood_dir
                 0x00000000000268fa                fsLoadFile
                 0x0000000000026adf                load_path
-                0x0000000000026d13                fsSearchFile
-                0x0000000000026dec                fsSearchFileName
-                0x0000000000026e02                fs_load_rootdirEx
-                0x0000000000026e54                fs_load_fatEx
-                0x0000000000026ea3                fs_put_list_on_fat
-                0x0000000000026f66                fs_find_n_empty_entries
-                0x0000000000026fe7                fs_load_rootdir
-                0x0000000000026ff5                read_lba
-                0x0000000000027010                write_lba
-                0x000000000002702b                fsSaveFile
-                0x0000000000027035                fsCreateDir
-                0x000000000002704e                fsCreateFile
-                0x0000000000027149                fsClearFat
-                0x0000000000027157                fsCheckFat
-                0x00000000000271c9                fsInitFat
-                0x00000000000271cf                fsInitStructures
-                0x00000000000271d5                fsInit
- .text          0x00000000000271e9      0x603 shell.o
-                0x00000000000271e9                blShellMain
-                0x0000000000027254                shellProcedure
-                0x00000000000272c2                shellInitializePrompt
-                0x0000000000027351                shellWaitCmd
-                0x000000000002736a                shellCompare
-                0x000000000002771e                shellHelp
-                0x0000000000027737                boot
-                0x000000000002773d                debug
-                0x0000000000027758                testa_mbr
-                0x0000000000027789                testa_root
-                0x00000000000277bd                reboot
-                0x00000000000277cb                shellInit
- .text          0x00000000000277ec       0x14 services.o
-                0x00000000000277ec                blServices
-                0x00000000000277fa                system_services
- .text          0x0000000000027800       0x1f abort.o
-                0x0000000000027800                abort
- .text          0x000000000002781f       0xc0 faults.o
-                0x000000000002781f                cpu_falts
-                0x00000000000278d9                faultsShowRegisters
+                0x0000000000026d21                fsSearchFile
+                0x0000000000026dfa                fsSearchFileName
+                0x0000000000026e10                fs_load_rootdirEx
+                0x0000000000026e62                fs_load_fatEx
+                0x0000000000026eb1                fs_put_list_on_fat
+                0x0000000000026f74                fs_find_n_empty_entries
+                0x0000000000026ff5                fs_load_rootdir
+                0x0000000000027003                read_lba
+                0x000000000002701e                write_lba
+                0x0000000000027039                fsSaveFile
+                0x0000000000027043                fsCreateDir
+                0x000000000002705c                fsCreateFile
+                0x0000000000027157                fsClearFat
+                0x0000000000027165                fsCheckFat
+                0x00000000000271d7                fsInitFat
+                0x00000000000271dd                fsInitStructures
+                0x00000000000271e3                fsInit
+ .text          0x00000000000271f7      0x603 shell.o
+                0x00000000000271f7                blShellMain
+                0x0000000000027262                shellProcedure
+                0x00000000000272d0                shellInitializePrompt
+                0x000000000002735f                shellWaitCmd
+                0x0000000000027378                shellCompare
+                0x000000000002772c                shellHelp
+                0x0000000000027745                boot
+                0x000000000002774b                debug
+                0x0000000000027766                testa_mbr
+                0x0000000000027797                testa_root
+                0x00000000000277cb                reboot
+                0x00000000000277d9                shellInit
+ .text          0x00000000000277fa       0x14 services.o
+                0x00000000000277fa                blServices
+                0x0000000000027808                system_services
+ .text          0x000000000002780e       0x1f abort.o
+                0x000000000002780e                abort
+ .text          0x000000000002782d       0xc0 faults.o
+                0x000000000002782d                cpu_falts
+                0x00000000000278e7                faultsShowRegisters
                 0x0000000000028000                . = ALIGN (0x1000)
- *fill*         0x00000000000278df      0x721 
+ *fill*         0x00000000000278ed      0x713 
 
-.rodata         0x0000000000028000      0xeb0
+.rodata         0x0000000000028000      0xed4
  .rodata        0x0000000000028000       0x67 main.o
  *fill*         0x0000000000028067        0x1 
- .rodata        0x0000000000028068      0x21b loader.o
- .rodata        0x0000000000028283       0x11 init.o
- .rodata        0x0000000000028294       0x3f stdio.o
- *fill*         0x00000000000282d3        0x1 
- .rodata        0x00000000000282d4       0x44 pci.o
- .rodata        0x0000000000028318       0x33 hdd.o
- *fill*         0x000000000002834b        0x1 
- .rodata        0x000000000002834c      0x46b ide.o
- *fill*         0x00000000000287b7        0x1 
- .rodata        0x00000000000287b8      0x1c1 heap.o
- .rodata        0x0000000000028979        0xc procedure.o
- *fill*         0x0000000000028985        0x3 
- .rodata        0x0000000000028988      0x2e4 fs.o
- .rodata        0x0000000000028c6c      0x196 shell.o
- .rodata        0x0000000000028e02        0xd abort.o
- *fill*         0x0000000000028e0f        0x1 
- .rodata        0x0000000000028e10       0xa0 faults.o
+ .rodata        0x0000000000028068      0x23f loader.o
+ .rodata        0x00000000000282a7       0x11 init.o
+ .rodata        0x00000000000282b8       0x3f stdio.o
+ *fill*         0x00000000000282f7        0x1 
+ .rodata        0x00000000000282f8       0x44 pci.o
+ .rodata        0x000000000002833c       0x33 hdd.o
+ *fill*         0x000000000002836f        0x1 
+ .rodata        0x0000000000028370      0x46b ide.o
+ *fill*         0x00000000000287db        0x1 
+ .rodata        0x00000000000287dc      0x1c1 heap.o
+ .rodata        0x000000000002899d        0xc procedure.o
+ *fill*         0x00000000000289a9        0x3 
+ .rodata        0x00000000000289ac      0x2e4 fs.o
+ .rodata        0x0000000000028c90      0x196 shell.o
+ .rodata        0x0000000000028e26        0xd abort.o
+ *fill*         0x0000000000028e33        0x1 
+ .rodata        0x0000000000028e34       0xa0 faults.o
 
 .eh_frame       0x0000000000029000     0x1c60
  .eh_frame      0x0000000000029000       0xf4 main.o

@@ -699,14 +699,25 @@ done:
 }
 
 
+
+/*
+ ********************************** 
+ * load_path:
+ *     Carrega nesse endereço o arquivo que está nesse path.
+ */
+
 // Esse é o endereço do arquivo, que é o último nível do path.
+
 int load_path ( unsigned char *path, unsigned long address ){
 
-    int level = 0;
+
+    int i=0;         // Deslocamento dentro do buffer.
+    int level=0;
 
     char buffer[12];
     unsigned char *p;
 
+    int Ret = -1;    // fail. Usado na função que carrega o arquivo.
 
 	//#bugbug
 	//isso pode dar problema, é muito grande.
@@ -714,39 +725,43 @@ int load_path ( unsigned char *path, unsigned long address ){
 	//512 entradas de 32 bytes
 	//char dir[512*32];
 	
-	void *dir;                  //diretório do primeiro nível.
-	
-	// #obs:
-    // Alocaremos memória apenas para os diretórios do primeiro nível.
-	// o endereço do arquivo no segundo nível deve ser passado via argumento.
-	
 	//diretório do primeiro nível.
-	dir = (void *) malloc (512*32);
-	if ( (void *) dir == NULL )
-	{
-	    printf ("load_path: dir malloc fail");
-		abort();
-	}
-	
+	void *__dir;                  
+
+
+    // #obs:
+    // Alocaremos memória apenas para os diretórios do primeiro nível.
+    // o endereço do arquivo no segundo nível deve ser passado via argumento.
+
+
+	//diretório do primeiro nível.
+	__dir = (void *) malloc (512*32);
+    if ( (void *) __dir == NULL )
+    {
+        printf ("load_path: dir malloc fail");
+        abort();
+    }
+
 
 	if (address == 0)
 	{
 	    printf ("load_path: file address");
 		abort();
 	}
-	
-	
-	p = path;
-	
-	int i=0;
-	int Ret = -1; //fail
-	
-	for (;;){
-		
-	switch (level)
-	{
+
+
+    p = path;
+
+
+    level = 0;
+    
+    for (;;){
+
+    switch (level)
+    {
 		//level0:	
-		case 0:
+        case 0:
+            i=0;
 			printf ("\n[LEVEL 0]\n\n");
 			for ( i=0; i<12; i++ )
 			{
@@ -754,7 +769,6 @@ int load_path ( unsigned char *path, unsigned long address ){
 				printf ("%c", (char) *p);
 				
 				buffer[i] = (char) *p;
-				
 				if ( *p == '/' )
 				{
 					//#DEBUG
@@ -764,16 +778,19 @@ int load_path ( unsigned char *path, unsigned long address ){
 					buffer[i] = 0;
 					
 					// Carregando o diretório do primeiro nível.
-					// nome do diretório, endereço onde carregar o diretório, endereço do diretório onde está o diretório.
-					Ret = fsLoadFile ( (unsigned char *) buffer, (unsigned long) dir, FAT16_ROOTDIR_ADDRESS );
-					
+					// arg1 = nome do diretório a ser carregado, 
+					// arg2 = endereço onde carregar o diretório, 
+					// arg3 = endereço do diretório onde está o diretório.
+					Ret = fsLoadFile ( (unsigned char *) buffer, 
+					          (unsigned long) __dir, 
+					          FAT16_ROOTDIR_ADDRESS );
 					//ok
 					if ( Ret == 0 )
 					{
 						printf ("arquivo carregado com sucesso\n");
 						
 						//buffer[0] = 0; //reiniciamos o buffer
-						i = 0;     //reiniciamos o contador do buffer
+						//i = 0;     //reiniciamos o contador do buffer
 						level++;
 						p++;
 						break;
@@ -791,6 +808,7 @@ int load_path ( unsigned char *path, unsigned long address ){
 		
 		//level1:
 		case 1:
+		    i=0;
 			printf ("\n\n[LEVEL 1]\n\n");
 			for ( i=0; i<12; i++ )
 			{
@@ -798,9 +816,7 @@ int load_path ( unsigned char *path, unsigned long address ){
 				printf ("%c", (char) *p);
 				
 				buffer[i] = (char) *p;
-				
 				//printf ("BUFFER: {%s} \n", buffer);
-				
 				//fim da string ?
 				if ( *p == 0 )
 				{
@@ -808,9 +824,13 @@ int load_path ( unsigned char *path, unsigned long address ){
 					//abort ();
 					
 					// Carregando o arquivo alvo que está no segundo nível.
-					// nome do arquivo alvo, endereço onde carregar o diretório, endereço do diretório onde está o diretório.
-					Ret = fsLoadFile ( (unsigned char *) buffer, (unsigned long) address, (unsigned long) dir );					
-				
+					// arg1=nome do arquivo alvo, (pode ser um diretório) 
+					// arg2=endereço onde carregar o arquivo, 
+					// arg3=endereço do diretório onde está o arquivo.
+					Ret = fsLoadFile ( (unsigned char *) buffer, 
+					         (unsigned long) address, 
+					         (unsigned long) __dir );
+
 					//ok
 				    if ( Ret == 0 )
 					{
@@ -820,20 +840,21 @@ int load_path ( unsigned char *path, unsigned long address ){
 					    //fail
 					    printf ("load_path: fail loading level 1\n");
 						
-						//#debug: vamos mostrar o conteúdo do diretório de primeiro nível.
-						printf ("DIR: %s", dir );
+						// #debug: 
+						// vamos mostrar o conteúdo do diretório de primeiro nível.
+						printf ("DIR: %s", __dir );
 						abort();
-					}
-				 
+					};
 				};
 				
 				p++;
 			}
 			//se acabou a contage então falhamos.
 			printf ("load_path: level 1: name too long\n");
-			abort();				
+			abort();
 			break;
-			
+
+
 		default:
 			//#bugbug
 			printf ("load_path: Default level");
@@ -841,7 +862,8 @@ int load_path ( unsigned char *path, unsigned long address ){
 			//refresh_screen();
 			//while (1){}
 			break;
-	
+
+
 	};  //fim do switch
 	}; //fim do for
 
