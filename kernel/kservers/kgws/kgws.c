@@ -100,7 +100,7 @@ int kgws_mouse_scan_windows (void){
     kgws_mouse_event_mouse_x = ps2_mouse_get_info (3);
     kgws_mouse_event_mouse_y = ps2_mouse_get_info (4);
     kgws_mouse_event_moving = ps2_mouse_get_info (5);
-    kgws_mouse_event_drag_status = ps2_mouse_get_info (6);
+    //kgws_mouse_event_drag_status = ps2_mouse_get_info (6);
     kgws_mouse_event_button_action = ps2_mouse_get_info (7);
     kgws_mouse_event_mouse_buttom_1 = ps2_mouse_get_info (8);
     kgws_mouse_event_mouse_buttom_2 = ps2_mouse_get_info (9);
@@ -108,7 +108,7 @@ int kgws_mouse_scan_windows (void){
     kgws_mouse_event_old_mouse_buttom_1 = ps2_mouse_get_info (11);
     kgws_mouse_event_old_mouse_buttom_2 =  ps2_mouse_get_info (12);
     kgws_mouse_event_old_mouse_buttom_3 =  ps2_mouse_get_info (13);
-    kgws_mouse_event_button_pressed =  ps2_mouse_get_info (14);
+    //kgws_mouse_event_button_pressed =  ps2_mouse_get_info (14);
     //...
 
 
@@ -319,9 +319,7 @@ int kgws_mouse_scan_windows (void){
 						// houve alteração no estado do botão 1 e estamos em cima de uma janela.
                         if ( (void *) Window != NULL )
                         {
-							//estamos carregando o objeto
-							kgws_mouse_event_drag_status = 1;
-							
+							ps2mouse_change_and_show_pointer_bmp(4); //folder bmp
 							//pegamos o total tick
 							kgws_current_totalticks = (unsigned long) get_systime_totalticks();
                             kgws_delta_totalticks = (kgws_current_totalticks - kgws_last_totalticks); 
@@ -339,6 +337,8 @@ int kgws_mouse_scan_windows (void){
                             t->long1 = 1;
                             t->long2 = 0;
                             t->newmessageFlag = 1;   
+							//estamos carregando o objeto
+							//kgws_mouse_event_drag_status = 1;                        
                         }
                         //else: // houve alteração no estado do botão 1 mas não estamos em cima de uma janela.
                         
@@ -359,15 +359,24 @@ int kgws_mouse_scan_windows (void){
 					// #importante 
 					// Enviaremos a mensagem para a thread atual.
                     if ( (void *) Window != NULL )
-                    {
-						// Não estamos mais carregando um objeto.
-						kgws_mouse_event_drag_status = 0;
-                        
+                    {                       
                         t->window = Window;
                         t->msg = MSG_MOUSEKEYUP;
                         t->long1 = 1;
                         t->long2 = 0;
                         t->newmessageFlag = 1;
+                    
+                        //é up, mas se estamos carregando então é drop.
+                        //if ( kgws_mouse_event_drag_status == 1 )
+                        //{
+                            //t->window = Window;
+                            //t->msg = MSG_MOUSE_DROP;
+                            //t->long1 = 1;
+                            //t->long2 = 0;
+                            //t->newmessageFlag = 1;
+                        //}
+						// Não estamos mais carregando um objeto.
+						kgws_mouse_event_drag_status = 0;
                     }
 
                     //kgws_mouse_event_old_mouse_buttom_1 = 0;
@@ -375,7 +384,8 @@ int kgws_mouse_scan_windows (void){
                 };
             }; 
 
-            
+       
+       
 			// >> BOTÃO 2 ==================
 			// Igual ao estado anterior
             if ( kgws_mouse_event_mouse_buttom_2 == kgws_mouse_event_old_mouse_buttom_2 )
@@ -398,9 +408,6 @@ int kgws_mouse_scan_windows (void){
 						// houve alteração no estado do botão 2 e estamos em cima de uma janela.
                         if ( (void *) Window != NULL )
                         {
-							//estamos carregando o objeto
-							kgws_mouse_event_drag_status = 1;
-							
 							//pegamos o total tick
 							kgws_current_totalticks = (unsigned long) get_systime_totalticks();
                             kgws_delta_totalticks = (kgws_current_totalticks - kgws_last_totalticks); 
@@ -418,6 +425,8 @@ int kgws_mouse_scan_windows (void){
                             t->long1 = 2;
                             t->long2 = 0;
                             t->newmessageFlag = 1;
+							//estamos carregando o objeto
+							//kgws_mouse_event_drag_status = 1;
                         }
                         //else: // houve alteração no estado do botão 2 mas não estamos em cima de uma janela.
 
@@ -434,15 +443,15 @@ int kgws_mouse_scan_windows (void){
 				    
                    if ( (void *) Window != NULL )
                    {
-						// Não estamos mais carregando um objeto.
-						kgws_mouse_event_drag_status = 0;
 
                         t->window = Window;
                         t->msg = MSG_MOUSEKEYUP;
                         t->long1 = 2;
                         t->long2 = 0;
                         t->newmessageFlag = 1;
-                        
+
+						// Não estamos mais carregando um objeto.
+						kgws_mouse_event_drag_status = 0;                        
                     }
 
                     //kgws_mouse_event_old_mouse_buttom_2 = 0;
@@ -473,9 +482,6 @@ int kgws_mouse_scan_windows (void){
                         // houve alteração no estado do botão 3 e estamos em cima de uma janela.
                         if ( (void *) Window != NULL )
                         {
-							//estamos carregando o objeto
-							kgws_mouse_event_drag_status = 1;
-							
 							//pegamos o total tick
 							kgws_current_totalticks = (unsigned long) get_systime_totalticks();
                             kgws_delta_totalticks = (kgws_current_totalticks - kgws_last_totalticks); 
@@ -493,6 +499,8 @@ int kgws_mouse_scan_windows (void){
                             t->long1 = 3;
                             t->long2 = 0;
                             t->newmessageFlag = 1;
+							//estamos carregando o objeto
+							//kgws_mouse_event_drag_status = 1;
                         }
                         //else: // houve alteração no estado do botão 1 mas não estamos em cima de uma janela.
 
@@ -509,15 +517,14 @@ int kgws_mouse_scan_windows (void){
 				    
                     if ( (void *) Window != NULL )
                     {
-						// Não estamos mais carregando um objeto.
-						kgws_mouse_event_drag_status = 0;
-
                         t->window = Window;
                         t->msg = MSG_MOUSEKEYUP;
                         t->long1 = 3;
                         t->long2 = 0;
                         t->newmessageFlag = 1;
-                        
+
+						// Não estamos mais carregando um objeto.
+						kgws_mouse_event_drag_status = 0;                        
                     }
 
                     //kgws_mouse_event_old_mouse_buttom_3 = 0;
@@ -571,6 +578,19 @@ int kgws_mouse_scan_windows (void){
                     t->long1 = 0;
                     t->long2 = 0;
                     t->newmessageFlag = 1;
+                    
+                    if ( Window->type == WT_EDITBOX )
+                    {
+                        ps2mouse_change_and_show_pointer_bmp(6); //cursor
+                    }
+                    if ( kgws_mouse_event_drag_status == 1 )
+                    {
+                        t->window = Window;
+                        t->msg = MSG_MOUSE_DRAG;
+                        t->long1 = 0;
+                        t->long2 = 0;
+                        t->newmessageFlag = 1;
+				    }
 				}
 
                 // Não estamos em cima da janela que estávamos antes.

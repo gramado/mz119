@@ -669,6 +669,53 @@ unsigned long ps2_mouse_get_info ( int i )
 }
 
 
+
+void ps2mouse_change_and_show_pointer_bmp ( int number ){
+
+    switch (number)
+    {
+		
+		case 1:
+	      refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
+	       bmpDisplayMousePointerBMP ( mouseBMPBuffer, mouse_x, mouse_y ); 		
+		   break;
+		   
+		case 2:
+	      refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
+	       bmpDisplayMousePointerBMP ( appIconBuffer, mouse_x, mouse_y ); 		
+		   break;		
+		
+		case 3:
+	      refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
+	       bmpDisplayMousePointerBMP (fileIconBuffer, mouse_x, mouse_y ); 		
+		   break;
+
+		case 4:
+	      refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
+	       bmpDisplayMousePointerBMP (folderIconBuffer, mouse_x, mouse_y ); 		
+		   break;
+
+		case 5:
+	      refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
+	       bmpDisplayMousePointerBMP (terminalIconBuffer, mouse_x, mouse_y ); 		
+		   break;
+		   
+		case 6:
+	      refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
+	       bmpDisplayMousePointerBMP (cursorIconBuffer, mouse_x, mouse_y ); 		
+		   break;
+		   
+		 //#estamos usando os ícones previamente carregados.  
+		   
+		 //...  
+		   
+		default:
+	      refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
+	       bmpDisplayMousePointerBMP ( mouseBMPBuffer, mouse_x, mouse_y ); 		
+		   break;
+    }
+}
+
 // #todo: 
 // Isso aqui deveria colocar um pacote na fila
 // para o window server pegar depois.
@@ -725,33 +772,8 @@ void ps2mouse_parse_data_packet (void)
 				// um release cancela o carregar.
 				
 				ps2_mouse_moving = 1;
-				
-				
-				// #todo: 
-				// drag support
-				// Como o bitmap é tratado aqui, então talvez seja a melhor hora
-				// para lidar com movimento.
-				// Mas existe tratamento semelhante no ws. (cuidado.)
-				
-				//#bugbug
-				//Esse if não faz sentido. trataremos isso em kgws.
-				//deletar.
-				
-				if ( ps2_button_pressed == 1 )
-				{ 
-				    //ps2_mouse_drag_status = 1;
-				    //refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
-				    //bmpDisplayMousePointerBMP ( appIconBuffer, mouse_x, mouse_y ); 
-                }else{
-				    //ps2_mouse_drag_status = 0;
-				    refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
-				    bmpDisplayMousePointerBMP ( mouseBMPBuffer, mouse_x, mouse_y ); 
-				}
 
-                   
-                //
                 // draw
-                //
 
                 // Apaga o antigo.
                 // + Copia no LFB um retângulo do backbuffer 
@@ -769,7 +791,7 @@ void ps2mouse_parse_data_packet (void)
 				
 				// Não redesenhamos quando o evento for um click, sem movimento.
 			    ps2_mouse_moving = 0;
-			} 
+			}; 
 			
 		
     //
@@ -790,6 +812,12 @@ void ps2mouse_parse_data_packet (void)
 		//liberada.
         mouse_buttom_1 = 0;
         ps2_button_pressed = 0;
+        
+        //mudamos sempre que pressionar.
+        //todo: mudaremos sempre que pressionar numa title bar.
+	    refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
+	    bmpDisplayMousePointerBMP ( mouseBMPBuffer, mouse_x, mouse_y ); 
+
 
     }else if( ( mouse_packet_data & MOUSE_LEFT_BUTTON ) != 0 )
         {
@@ -799,6 +827,12 @@ void ps2mouse_parse_data_packet (void)
             mouse_buttom_2 = 0;
             mouse_buttom_3 = 0;
             ps2_button_pressed = 1;
+            
+            //mudamos sempre que pressionar.
+            //todo: mudaremos sempre que pressionar numa title bar.
+	        refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
+	        bmpDisplayMousePointerBMP ( appIconBuffer, mouse_x, mouse_y ); 
+
         };
 
 

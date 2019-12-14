@@ -155,6 +155,8 @@ ps2_mouse_dialog ( int msg,
                    
 unsigned long ps2_mouse_get_info ( int i );
 
+void ps2mouse_change_and_show_pointer_bmp ( int number );
+
 //
 // End.
 //

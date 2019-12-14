@@ -152,6 +152,7 @@ int window_getch (void);
 //#define MSG_MOUSEMOVEBYOFFSET
 //#define MSG_MOUSEMOVETOELEMENT
 
+
 //outros (40 - ...)
 #define MSG_COMMAND       40
 #define MSG_CUT           41
