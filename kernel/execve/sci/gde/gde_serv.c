@@ -1735,38 +1735,32 @@ void *gde_services ( unsigned long number,
 		case SYS_GETCURRENTGROUPID:
 		    return (void *) current_group;
 			break;
-			
-		// 167 - SYS_GRAMADOCORE_INIT_EXECVE
-		// >>>> do_gexeve.
-		// serviço de suporte a chamada gexecve(), que executa
-		// no processo init.
-		//	
+
+
+        // 167 - SYS_GRAMADOCORE_INIT_EXECVE
+        // >>>> do_gexeve.
+        // serviço de suporte a chamada gexecve(), que executa
+        // no processo init.
         // Executa um novo programa dentro do processo INIT 
-		// do ambiente Gramado Core.	
+        // do ambiente Gramado Core.	
         // #importante:
         // Os argumentos recebidos aqui precisam ir para ipc/spawn.c 
         // que serão enviados via registradores para o aplicativo.
         // Obs: Não adianta enviar ponteiros para o aplicativo, 
-        // pois ele não pode pegar no kernel.	
-
-		// 167:
-		// Executa elf .BIN com entrypoint em 0x401000.
-		// executive_gramado_core_init_execve (execve.c)
-		case 167:	
+        // pois ele não pode pegar no kernel.
+        // 167:
+        // Executa elf .BIN com entrypoint em 0x401000.
+        // executive_gramado_core_init_execve (execve.c)
+        // See: execve/execve.c
+        // IN: serviço, name, (arg)(endereço da linha de comando), env.
         //case SYS_GRAMADOCORE_INIT_EXECVE_BIN:
-
-			//serviço, name, (arg)(endereço da linha de comando), env
-
-            //return (void *) sys_executive_gramado_core_init_execve ( 0, 
-            //                    (const char *) arg2, 
-            //                    (const char *) arg3, 
-            //                    (const char *) arg4 ); 
-
+        case 167:
             return (void *) do_gexecve ( 0, 
                                 (const char *) arg2, 
                                 (const char *) arg3, 
                                 (const char *) arg4 ); 
             break;
+
 
 
 		// 168

@@ -88,21 +88,17 @@ void *unistd_system_call ( unsigned long ax,
 
  
 
- 								 
-
-//#deletar.
-//int 
-//shell_gramado_core_init_execve ( const char *arg1,     // nome
-//                                 const char *arg2,     // arg (endereço da linha de comando)
-//                                 const char *arg3 )    // env
-								 
-//padrão libc.
-//int execve ( const char *path, char *const argv[], char *const envp[] );  
-
+/*
+ ****************************** 
+ * gexecve: 
+ *    Um tipo especial de execv que e roda um novo programa
+ * usando o processo INIT do Gramado Core.
+ */
+ 
 int 
 gexecve ( const char *filename, 
          char *argv[], 
-         char *envp[] )	
+         char *envp[] )
 {
 	//erro.
     int Status = 1;
@@ -130,14 +126,11 @@ gexecve ( const char *filename,
 
 translate:
 
-	//
 	// ## BUG BUG
-	//
 	// Talvez nesse momento, ao transformar a string ele 
 	// corrompa o espaço reservado para o argumento seguinte.
 	// vamos fazer um teste no quan a rotina não precise 
 	// acrescentar zeros.
-	//
 	
 	//
 	// correto é isso mesmo,
@@ -154,10 +147,6 @@ translate:
 	//shell_fntos(filename);
 
 
-	// #importante:
-	// Isso deve chamar gramado_core_init_execve() na api.
-								
-	
 	// #obs:
 	// isso chamará uma rotina especial de execve, somente  
 	// usada no ambiente gramado core. 
@@ -170,7 +159,6 @@ execve:
 	// Se retornar o número do processo então podemos esperar por ele 
 	// chamando wait (ret);
 
- 
 
     Status = (int) gramado_system_call ( 167, 
                        (unsigned long) filename,    // Nome

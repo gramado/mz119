@@ -60,12 +60,12 @@ do_gexecve ( int i,
 	//??
 	//Esse é o primeiro argumento.
     int Plane = 0;
-	
+
     char *s;
     struct thread_d *Thread;
 
 	// Usados gerenciamento de arquivo.
-	
+
     size_t l;                        //lenght.
     char bin_string[] = ".bin";
      //char bin2_string[] = ".BIN";
@@ -93,25 +93,28 @@ do_gexecve ( int i,
 
     unsigned char *shared_memory = (unsigned char *) (0xC0800000 - 0x100);
 
+
 	// #IMPORTANTE:
-	// PRECISAMOS ENVIAR A MENSAGEM SOMENTE DEPOIS QUE O NOVO PROGRAMA FOR 
-	// COLOCADO NA MEMÓRIA, SENÃO AO COLOCAR O PROGRAMA NA MEMÓRIA A MENSAGEM 
-	// SERÁ SOBRESCRITA.
-	// #TODO: CRIAR UM MECANISMO DE TROCA DE MENSAGENS MAIS EFICIENTE,
+	// PRECISAMOS ENVIAR A MENSAGEM SOMENTE DEPOIS QUE O NOVO 
+	// PROGRAMA FOR COLOCADO NA MEMÓRIA, SENÃO AO COLOCAR O PROGRAMA 
+	// NA MEMÓRIA A MENSAGEM SERÁ SOBRESCRITA.
+	// #TODO: 
+	// CRIAR UM MECANISMO DE TROCA DE MENSAGENS MAIS EFICIENTE,
 	// BASEADO NESSE.
-	
+
+
 	//=================================================
 	//  ## CMD ##
 
 	//#importante.
 	//antes de tudo vamos testar o comando.
 	//se ele não existir então nem vamos mexer na estrutura da trhead.
-	//se não mexermos na estrutura da thread ele continuará presa no while 
-	//do exit da libc.
+	//se não mexermos na estrutura da thread ele continuará presa 
+	// no while do exit da libc.
 
 
 	//
-	// ## Load file ##
+	// ==== Load file ====
 	//
 	
 	// #bugbug
@@ -372,7 +375,8 @@ format_ok:
 		// Plano. bg/fg.
 
         Thread->plane = Plane;
-		
+
+
 		//#test
 		// Vamos associar ao primeiro tty, mesmo que seja um aplicatibo GUI.
 		// Se ele for um aplicativo GUI ele irá atualizar o foco.
@@ -387,7 +391,7 @@ format_ok:
                 current_tty = CurrentTTY->index;
 
                 Thread->tty_id = current_tty;
-
+                
 				// #terminal window.
                 window_with_focus = CurrentTTY->window->id;
                 terminal_window = CurrentTTY->window->id;
@@ -399,8 +403,9 @@ format_ok:
             }
 
         }else{
-			//Thread->tty_id = 0; //-1
+            Thread->tty_id = -1;
         };
+
 
 		// Context.
 		// #todo: 

@@ -152,10 +152,10 @@ pid_t do_clone_execute_process (char *filename){
 		old_dir_entry1 = dir[1]; //salvando
 		
 		//salvando o endereço físico da imagem que existe no processo.
-		//old_image_pa = (unsigned long) virtual_to_physical ( Current->Image, gKernelPageDirectoryAddress ); 		
+		//old_image_pa = (unsigned long) virtual_to_physical ( Current->Image, gKernelPageDirectoryAddress ); 
 		
 	    //#debug
-	    //printf(">>> check current process: %d %d \n", current_process, Current->pid );		
+	    //printf(">>> check current process: %d %d \n", current_process, Current->pid );
 		goto do_clone;
 		//...
 	};

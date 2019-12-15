@@ -3699,34 +3699,26 @@ doexec_first_command:
 	
 	// Colocamos todos os ponteiros no array.
 	
-	for ( z=0; z<token_count; z++ )
-	{
-	    buffer[z] = (unsigned long) tokenList[z];	
-	}						 
+    for ( z=0; z<token_count; z++ )
+    {
+        buffer[z] = (unsigned long) tokenList[z];	
+    }
 
-	// ## ISSO DEU CERTO ## 	
-    // Passamos anteriormente a linha de comandos via memória compartilhada,
-    // agora então precisamos passar somente o nome do arquivo.	
-	
-    //Execve_Ret = (int) shell_gramado_core_init_execve ( 
-	//                       (const char *) tokenList[0], //nome
-	//                       (const char *) 0,            //NULL
-	//					   (const char *) 0);           //NULL
-						 	
-    //Execve_Ret = (int) shell_gramado_core_init_execve( 
-	//                       (const char*) tokenList[0], //nome
-	//                       (const char*) tokenList[1], 
-	//					   (const char*) tokenList[2]); //env ...deve ser null
-	
-	
-	//gramlibs libc02.
+
+    // ## ISSO DEU CERTO ## 
+    // Passamos anteriormente a linha de comandos via 
+    // memória compartilhada, agora então precisamos passar 
+    // somente o nome do arquivo.
+
+    //gramlibs libc02.
     Execve_Ret = (int) gexecve ( (const char *) tokenList[0], //nome
-	                       (const char *) 0, (const char *) 0 );           
+                           (const char *) 0, 
+                           (const char *) 0 );           
 
-	
-	
-	// Ok, funcionou e o arquivo foi carregado,
-	// mas demora para receber tempo de processamento.
+    // #importante.
+    // Ok, funcionou e o arquivo foi carregado,
+    // mas demora para receber tempo de processamento.
+
 	if ( Execve_Ret == 0 )
 	{
 		//
