@@ -137,16 +137,7 @@ void KiTimer (void){
 }
 
 
-void timerEnableTextCursor (void){
-	
-    timerShowTextCursor = 1;	
-}
 
-
-void timerDisableTextCursor (void){
-	
-    timerShowTextCursor = 0;	
-}
 	
 
 /*
@@ -205,16 +196,29 @@ void timer (void){
     // #todo
     // As variáveis de working set estão em timer.h
 	
-	/*
-	//Working set and profiler support.	
-    if ( sys_time_ticks_total % 1000 == 0 )	
+
+	//Working set and profiler support.
+	
+	//apenas incremente.
+	thread_profiler (1);
+	    
+    if ( sys_time_ticks_total % profiler_ticks_limit == 0 )
 	{
+        //profiler_ticks_count++;
+        //if ( profiler_ticks_count >= profiler_ticks_limit )
+        //{
+            //profiler_ticks_count = 0;
+        //}
+    
 	    //quantidade de frames num determinado período de tempo.
 	    // mm_profiler (); 
-	    //thread_profiler ();
-	    //process_profiler ();
+	    
+	    //calcule.
+	    thread_profiler (2);
+	    //process_profiler (?);    
 	}
-    */
+
+
 
 	//
 	//  ## extra ## 
@@ -342,9 +346,19 @@ done:
 	//};
 	
 	return;
-};
+}
 
 
+void timerEnableTextCursor (void){
+	
+    timerShowTextCursor = 1;	
+}
+
+
+void timerDisableTextCursor (void){
+	
+    timerShowTextCursor = 0;	
+}
 
 int new_timer_id (void){
 	
@@ -713,6 +727,14 @@ int timerTimer (void){
     sys_time_ms = 0;	
 	
 	sys_time_ticks_total = 0;	
+    
+    
+    //
+    // Profiler
+    //
+    
+    profiler_ticks_count = 0;
+    profiler_ticks_limit = PROFILER_TICKS_DEFAULT_LIMIT;
     
     //...
 	

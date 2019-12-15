@@ -632,9 +632,10 @@ struct process_d
 	
 	//quanto por cento do tempo o processo ficou rodando.
 	//é a soma do quanto ficou rodando todas as suas threads.
-	//unsigned long profiler_percentage_running;
-
-
+	unsigned long profiler_percentage_running;
+	unsigned long profiler_ticks_running;
+	unsigned long profiler_last_ticks;
+	
 	//
 	//  +++++ Thread support +++++
 	//

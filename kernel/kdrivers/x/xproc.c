@@ -779,6 +779,8 @@ system_procedure ( struct window_d *window,
                 //#testes
                 //Testes diversos.
                 case VK_F6:
+                
+                    thread_show_profiler_info ();
 
                     //printf("%d Hz | sys time %d ms | ticks %d \n", 
 	                //     sys_time_hz, sys_time_ms, sys_time_ticks_total );

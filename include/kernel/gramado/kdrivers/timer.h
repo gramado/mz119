@@ -24,15 +24,17 @@
 
 //10*100 =  1000 TICKS;
 //#define PROFILER_TICKS_DEFAULT_LIMIT 1000
+//#define PROFILER_TICKS_DEFAULT_LIMIT (100*100)
+#define PROFILER_TICKS_DEFAULT_LIMIT 200
 
 //contador do profiler ticks.
 //só vai de zero até o limite configurável.
-//unsigned long profiler_ticks_count;
+unsigned long profiler_ticks_count;
 
 //limite da contagem do profile ticks.
 //quando chegar aqui, então devemos calcular 
 //a porcentagem para todas as threads e processos.
-//unsigned long profiler_ticks_limit;
+unsigned long profiler_ticks_limit;
  
  
  

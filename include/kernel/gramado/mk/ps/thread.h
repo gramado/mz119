@@ -383,7 +383,7 @@ struct thread_d
 	//unsigned long ServiceTable;
 	
     //
-	// ## Tmeporizadores  ##
+	// ## Temporizadores  ##
 	//
 	
 	//
@@ -401,7 +401,7 @@ struct thread_d
 
 	// sys time inicial da thread.
 	// quando ela foi criada.
-	unsigned long initial_time_ms;	
+	unsigned long initial_time_ms;
 	
 	//ms total..
 	unsigned long total_time_ms; 
@@ -449,9 +449,11 @@ struct thread_d
 	
 	//quanto por cento do tempo o processo ficou rodando.
 	//é a soma do quanto ficou rodando todas as suas threads.
-	//unsigned long profiler_percentage_running;
-
-
+	unsigned long profiler_percentage_running;
+	unsigned long profiler_percentage_running_res;
+	unsigned long profiler_percentage_running_mod;
+	unsigned long profiler_ticks_running;
+	unsigned long profiler_last_ticks;
 
 	//unsigned long alarm;            //Tempo para o próximo alarme, dado em ticks.
 	
@@ -749,6 +751,16 @@ int thread_getchar (void);
 // se a flag estiver habilitada, então devemos acorar a
 // thread do dead thread collector.
 void check_for_dead_thread_collector (void);
+
+int thread_profiler( int service );
+
+
+// pegar a porcentagem de vezes que a thread rodou durante um determinado
+//período.
+unsigned long 
+thread_get_profiler_percentage ( struct thread_d *thread);
+
+void thread_show_profiler_info (void);
 
 //
 // End.

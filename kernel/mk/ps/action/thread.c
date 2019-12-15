@@ -26,14 +26,127 @@
 #include <kernel.h>
 
 
-/*
+
 // Chamada pelo timer.c
-int thread_profiler();
-int thread_profiler()
+int thread_profiler( int service )
 {
+    struct thread_d *__current;
+    struct thread_d *__tmp;
+    int i;
+    
+    __current = (struct thread_d *) threadList[current_thread];
+    
+    if ( (void *) __current == NULL )
+    {
+		printf ("thread_profiler: t");
+		die();
+		//return -1;
+    }
+    
+    
+    //unsigned long __total_ticks;
+    //__total_ticks = (unsigned long) get_systime_totalticks();
+ 
+ 
+    switch (service)
+    {
+		// Incrementa.
+		case 1:
+		    __current->profiler_ticks_running++;
+		    return 0;
+		    break;
+		
+		// finaliza
+		case 2:
+		  
+		  for (i=0; i<THREAD_COUNT_MAX; i++)
+		  {
+		    __tmp = (struct thread_d *) threadList[i];
+		    
+		    if ( (void *) __tmp != NULL )
+		    {
+				if ( __tmp->used == 1 && __tmp->magic == 1234 )
+				{
+					//salva a contagem dessa thread para consulta futura.
+					__tmp->profiler_last_ticks = __tmp->profiler_ticks_running;
+				    //zera a contagem dessa thread,
+				    __tmp->profiler_ticks_running = 0;
+				    
+				    __tmp->profiler_percentage_running_res = (__tmp->profiler_last_ticks / profiler_ticks_limit );
+				    __tmp->profiler_percentage_running_mod = (__tmp->profiler_last_ticks % profiler_ticks_limit );    
+				    __tmp->profiler_percentage_running =  (__tmp->profiler_percentage_running_mod / (profiler_ticks_limit/100) );
+				}
+			}  
+		  };  
+		    //t->profiler_ticks_running = 0;
+		    //Esse é pra que os aplicativos peguem.
+            //t->profiler_last_ticks = t->profiler_ticks_running;
+            
+            // Quantas vezes a thread rodou durante um determinado período
+            // dividido pela quantidade de ticks no período. 
+            //t->profiler_percentage_running = (t->profiler_ticks_running % profiler_ticks_limit);
+            
+            //t->profiler_percentage_running = (t->profiler_percentage_running / 100);
+            
+            //if ( t->profiler_ticks_running >= profiler_ticks_limit )
+            //{
+              //  t->profiler_ticks_running = 0;
+		    //}
+		    return 0;
+		    break;
+		    
+		//...
+    };
+    
+		// salva a contagem de vezes que a thread rodou
+		// durante o período.
+
     return -1;
 }
-*/
+
+
+unsigned long 
+thread_get_profiler_percentage ( struct thread_d *thread)
+{
+    if ( (void *) thread == NULL )
+    {
+		printf ("thread_get_profiler_percentage: thread");
+		die();
+		//return -1;
+    }
+    
+    return ( unsigned long ) thread->profiler_percentage_running;
+}
+
+
+void thread_show_profiler_info (void)
+{
+	struct thread_d *thread;
+	
+	int i;
+	
+	printf ("\n");
+	
+	for (i=0; i<THREAD_COUNT_MAX; i++)
+	{
+	    thread = (struct thread_d *) threadList[i];
+	
+        if ( (void *) thread != NULL )
+        {
+			if ( thread->used == 1 && thread->magic == 1234 )
+			{
+		        printf ("tid=%d totalp=%d last_ticks=%d ( %d percent ) \n", 
+		            thread->tid,
+		            profiler_ticks_limit,
+		            thread->profiler_last_ticks,
+		            thread->profiler_percentage_running );
+			}
+        }
+	};
+
+
+    refresh_screen();
+}
 
 
 /*
