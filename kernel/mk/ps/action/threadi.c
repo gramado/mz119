@@ -42,7 +42,13 @@ void xxxRing0Idle (void);
 
 // Isso é uma thread em ring 0 que será usada como idle.
 
+// #importante
+// Suspendemos o uso do dead thread collector por enquanto.
+// Para usarmos a instrução hlt e calcularmos 
+// quanto tempo ficamos parados e quanto tempo ficamos rodando.
+
 void xxxRing0Idle (void){
+	
 	
 	//
 	// Initializing ...
@@ -52,12 +58,13 @@ void xxxRing0Idle (void){
 	// Quando a thread inicializa ela muda o status do dead thread collector,
 	// liberando rotinas que dependam dele estar funcionando.
 	
-	dead_thread_collector_status = 1;
+	//dead_thread_collector_status = 1;
 	
 Loop:
 	
-	asm ("cli");
-	dead_thread_collector ();
+	//asm ("cli");
+	
+	//dead_thread_collector ();
     asm ("sti");
 	
 	// Importante:
@@ -75,7 +82,7 @@ Loop:
 	// Não chamaremos a função agora porque estamos usando ele.
 	// Vamos apenas sinalizar que queremos que ele durma.
 	
-	dead_thread_collector_flag = 0;
+	//dead_thread_collector_flag = 0;
 
 
     asm ("hlt");

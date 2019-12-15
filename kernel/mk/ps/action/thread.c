@@ -135,11 +135,12 @@ void thread_show_profiler_info (void)
         {
 			if ( thread->used == 1 && thread->magic == 1234 )
 			{
-		        printf ("tid=%d totalp=%d last_ticks=%d ( %d percent ) \n", 
+		        printf ("tid=%d totalp=%d last_ticks=%d ( %d percent ) name={%s} \n", 
 		            thread->tid,
 		            profiler_ticks_limit,
 		            thread->profiler_last_ticks,
-		            thread->profiler_percentage_running );
+		            thread->profiler_percentage_running,
+		            thread->name_address );
 			}
         }
 	};
