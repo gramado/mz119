@@ -46,9 +46,15 @@ struct device_d
 
 	int deviceUsed;
 	int deviceMagic;
+	
+	FILE *stream;
 
     char *name;
 
+    // char, block, network
+    int __class;
+
+    //pci, legacy ...
     int type;
     
     // se o tipo for pci.
@@ -62,10 +68,9 @@ struct device_d
     //#todo: 
     //estruturas para outros grupos de dispositivos.
 
-
-
+    //?? why light - suspenso.
 	//Se o dispositivo petence ao grupo dos prioritários.
-    int Light;
+    //int Light;
 	
 	
 	//Fila de dispositivos que está esperando
@@ -77,7 +82,7 @@ struct device_d
 	//struct process_d *list;
 
 
-    struct ttydrv_d *driver;
+    struct ttydrv_d *ttydrv;
 
 	//struct device_d *next;
 	
@@ -100,6 +105,7 @@ struct device_d *devices;
 // na lista Streams.
 // Se o arquivo for um dispositivo então teremos
 // um ponteiro na lista deviceList.
+
 unsigned long deviceList[NUMBER_OF_FILES];    
 
 
@@ -107,6 +113,16 @@ unsigned long deviceList[NUMBER_OF_FILES];
 // Protótipo de funções.
 //
 
+int devmgr_init_device_list(void);
+struct device_d *devmgr_device_object (void);
+
+int 
+devmgr_register_device ( FILE *stream, 
+                         char *name,
+                         int class, 
+                         int type,
+                         struct pci_device_d *pci_device,
+                         struct ttydrv_d *tty_driver );
 
 
 void init_device_manager (void);

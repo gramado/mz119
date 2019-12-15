@@ -259,6 +259,12 @@ void *gde_extra_services ( unsigned long number,
     
  
  
+    if (number == 770)
+    {
+		systemShowDevicesInfo ();
+        return NULL;
+    }
+ 
     /*
     //arp request test.
     if ( number == 800 )

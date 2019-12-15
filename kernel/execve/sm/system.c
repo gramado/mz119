@@ -266,6 +266,7 @@ void *systemLinkDriver( unsigned long arg1,
 /*
  * ************************************************************
  * systemShowDevicesInfo:
+ * 
  *     Mostrar informações sobre o sistema, seguindo a ordem de
  *     velocidade dos dispositivos e barramentos.
  *
@@ -275,45 +276,40 @@ void *systemLinkDriver( unsigned long arg1,
  */
 
 void systemShowDevicesInfo (void){
-	
-#ifdef KERNEL_VERBOSE	
-	printf("sm-sys-system-systemShowDevicesInfo:\n");
-#endif	
-	
-    //Título.
-	printf(" ## DEVICES ## \n");
-    //...	
-	
-	//CPU Devices.
-	printf(" ** CPU Info ** \n\n");
-	show_cpu_intel_parameters();
-	//...
-	
-	//Memory Devices.
-	printf(" ** Memory Info ** \n\n");
-	//...
-	
-	//PCIE Devices (Graphic cards)
-	printf(" ** Graphic Card Info ** \n\n");
-	//...
-	
-	//PCI Devices.
-	printf(" ** PCI Devices ** \n\n");
-	pciInfo();
-	
-	//Legacy ...
-	printf(" ** Legacy Devices Info ** \n\n");
-	//...
-	
-	//
-	// More ?!
-	//
-	
-done:
-    printf("done\n");
+
+    // tmp device.
+    struct device_d *d;
+
+    int i;
+
+
+#ifdef KERNEL_VERBOSE
+	printf ("sm-systemShowDevicesInfo:\n");
+#endif
+
+    for (i=0; i<NUMBER_OF_FILES; i++)
+    {
+        d = ( struct device_d *) deviceList[i];
+
+        if ( (void *) d != NULL )
+        {
+			//dispositivo válido.
+            if ( d->deviceUsed == 1 && 
+                 d->deviceMagic == 1234 )
+            {
+				//#todo: more ...
+                printf ( "id=%d class=%d type=%d name=%s \n", 
+                    d->deviceId, d->__class, d->type, d->name );
+            }
+            
+            //printf (".");
+        }
+    };
+
+
+    printf ("Done\n");
 	refresh_screen();
-    return;
-}; 
+}
  
 
 /*

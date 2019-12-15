@@ -1,5 +1,5 @@
 /*
- * File: executive\sm\io.h
+ * File: sm/io.h
  *
  * Descrição:
  *     Arquivo principal do I/O Manager.

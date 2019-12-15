@@ -1249,6 +1249,10 @@ pciHandleDevice ( unsigned char bus,
 
 	//Device.
     struct pci_device_d *D;    
+    
+    // char, block, network
+    int __class;
+    
 
 	//#debug
 	//printf ("bus=%d dev=%d fun=%d \n", bus, dev, fun);
@@ -1271,7 +1275,7 @@ pciHandleDevice ( unsigned char bus,
 		D->id = (int) pciListOffset;
 		D->used = (int) 1;
 		D->magic = (int) 1234;
-		D->name = "No name";
+		//D->name = "No name";
 
 		//Localização.
 		D->bus = (unsigned char) bus;
@@ -1279,8 +1283,10 @@ pciHandleDevice ( unsigned char bus,
 		D->func = (unsigned char) fun; 
 
 		//Pci Header.
-		D->Vendor = (unsigned short) pciCheckVendor (bus, dev);	
+		D->Vendor = (unsigned short) pciCheckVendor (bus, dev);
 		D->Device = (unsigned short) pciCheckDevice (bus, dev);
+		
+		D->name = "pci-device-no-name";
 		
 		// #debug
 		// printf ("$ vendor=%x device=%x \n",D->Vendor, D->Device);
@@ -1336,6 +1342,9 @@ pciHandleDevice ( unsigned char bus,
                 //printf("#debug breakpoint");
                 //refresh_screen();
                 //while(1){} 
+                
+                //network device,
+                __class = 3;
  
             }else{
 
@@ -1366,6 +1375,40 @@ pciHandleDevice ( unsigned char bus,
 
 	};
 
+
+    //
+    // Agora registra o dispositivo pci na lista genérica
+    // de dispositivos.
+    // #importante: ele precisa de uma stream.
+    //
+    
+    FILE *__stream;
+    
+    __stream = (FILE *) malloc ( sizeof(FILE) );
+    
+    if ( (void *) __stream == NULL )
+    {
+        printf ("pciHandleDevice: __stream fail, can't register device\n");
+        die ();
+    }else{
+    
+        __stream->used = 1;
+        __stream->magic = 1234;
+        __stream->isDevice = 1;
+        
+        //Tem que registrar em Streams[]
+        //__stream->_file   //id
+        
+        //__stream->deviceId ?
+        
+        devmgr_register_device ( (FILE *) __stream, 
+                         D->name,
+                         __class,     //class (char, block, network)
+                         1,           //type (pci, legacy
+                         (struct pci_device_d *) D,  //pci device
+                         NULL );                     //tty driver
+    
+    };
 
     return 0;
 }

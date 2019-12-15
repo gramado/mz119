@@ -85,13 +85,15 @@ int init_architecture_dependent (void){
 	debug_print ("init_architecture_dependent\n");
 	
 	//
-	// Fase. (Verificar se essa rotina foi chamada na fase certa de inicialização.)
+	// Fase. (Verificar se essa rotina foi chamada 
+	// na fase certa de inicialização.)
     //
 	
 	if ( KeInitPhase != 1 )
 	{
 		panic ("init_architecture_dependent: KeInitPhase\n");	
 	}
+
 
 	// #### IMPORTANTE ####
 	//
@@ -160,12 +162,16 @@ int init_architecture_dependent (void){
 	//	
 	
 	
+	// o contexto é depedente.
 	//Inicializando o Process manager.
 	init_process_manager ();
-	
- //
- // Continua ...
- //
+
+
+
+
+    //
+    // Continua ...
+    //
 	
     // Done.
     
@@ -630,8 +636,11 @@ int init (void){
 	printf("sm-init-init: ioInit\n");	
 #endif	
 	
-	ioInit ();	
-	
+	ioInit ();
+
+    // Inicializa o gerenciamento de dispositivos.
+    // Inicializa a lista de dispositivos.
+    init_device_manager ();
 	
     //
 	// =================== ## STORAGE ## ===========================
