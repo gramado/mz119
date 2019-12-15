@@ -9,11 +9,40 @@
  */
  
  
+ 
+//
+// Working set support.
+// 
+
+// Isso será usado pelo profiler para
+// medir a quantidade de páginas que possuem frames em um determinado
+// período de tempo.
+// Também será usado pelo profiler para saber quantas vezes 
+// Uma thread rodou num determinado período de tempo.
+// Etc.
+// Será o tempo de referência para o profiler.
+
+//10*100 =  1000 TICKS;
+//#define PROFILER_TICKS_DEFAULT_LIMIT 1000
+
+//contador do profiler ticks.
+//só vai de zero até o limite configurável.
+//unsigned long profiler_ticks_count;
+
+//limite da contagem do profile ticks.
+//quando chegar aqui, então devemos calcular 
+//a porcentagem para todas as threads e processos.
+//unsigned long profiler_ticks_limit;
+ 
+ 
+ 
+ 
 //
 // Count support variables.
 //
 
-#define	HZ 100	
+#define  HZ  100
+
 
 //Usado no Linux. 
 //#define CT_TO_SECS(x)	((x) / HZ)
@@ -21,12 +50,21 @@
 //... 
 
 
+
+//
+//
+//
+
+// Em que tempo estávamos quando iniciamos a contagem;
+//#define TIMER_PROFILE_TICKS_DEADLINE 1000
+//unsigned long timer_profile_ticks;
+
+
 //
 //  ## sys time ##
 //
 
 unsigned long sys_time_hz;
-
 unsigned long sys_time_ms;
 
 //Saving the total ticks the kernel is running.

@@ -89,7 +89,14 @@ int caller_process_id;
 int processNewPID;   
 
 
-
+/*
+// Chamada pelo timer.c
+int process_profiler();
+int process_profiler()
+{
+    return -1;
+}
+*/
 
 
 /*
@@ -1310,7 +1317,7 @@ int processSendSignal (struct process_d *p, unsigned long signal){
 	if (signal == 0)
 	{
 		return 1;
-	};
+	}
 	
 	//struct fail
 	//if( (void*) p == NULL ){
@@ -2016,13 +2023,8 @@ get_next:
 
         if ( g_heap_count < 0 || g_heap_count >= g_heap_count_max )
         {
-
             printf ("create_process: g_heap_count limits");
             die ();
-
-			// #debug
-			// refresh_screen();
-			// while(1){ asm ("hlt"); };
         }
 
 
@@ -2033,7 +2035,6 @@ get_next:
         g_heap_count++;
 
 		//Process->Heap = (unsigned long) allocPages (64); 
-
 		//Process->Heap = (unsigned long) malloc (1024*32); //32kb
 
 		// Endereço do início do Heap do processo.
@@ -2158,6 +2159,18 @@ get_next:
         Process->msg = 0;          //arg2.
         Process->long1 = 0;        //arg3.
         Process->long2 = 0;        //arg4.
+
+        //
+        // tty support
+        //
+        
+        Process->tty = ( struct tty_d *) tty_create ();  
+       
+        if ( (void *) Process->tty == NULL )
+        {
+            printf ("create_process: couldn't create tty\n");
+            die ();
+        }
 
         Process->prev = NULL; 
         Process->next = NULL; 

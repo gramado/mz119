@@ -321,7 +321,7 @@ struct process_d
     int plane;
 
 	// error.
-	//unsigned long error; 	
+	//unsigned long error; 
 
 	// @todo:
 	// +name     (Nome=EXEMPLO.BIN)
@@ -463,9 +463,14 @@ struct process_d
 	//Ou colocaremos aqui o total de todos os context switches das threads ??
 	//unsigned long ContextSwitches;   
 
-	//working set support.
-	//Quantas trocas de context sofreu durante um determinado tempo de análise.
-	//Esse deve ser o mesmo tempo de análise usado para calcular o working set.
+	// Importante:
+	// working set support.
+	// The working set of a process is the set of pages in the 
+	// virtual address space of the process that are currently 
+	// resident in physical memory. 
+	// Quantas trocas de context sofreu durante um determinado tempo de análise.
+	// Esse deve ser o mesmo tempo de análise usado para calcular o working set.
+
 
 	//unsigned long ContextSwitchesDelta;  
 
@@ -617,7 +622,19 @@ struct process_d
 	 *     'ProcessingTime' é atribuído pelo processo. É o quanto
 	 *     ele precisa. o quanto ele deseja.
 	 */
+	 
+	//
+	// Working set support.
+	// 
+	 
+	//unsigned long ws_number_of_frames; 
+	//...
 	
+	//quanto por cento do tempo o processo ficou rodando.
+	//é a soma do quanto ficou rodando todas as suas threads.
+	//unsigned long profiler_percentage_running;
+
+
 	//
 	//  +++++ Thread support +++++
 	//

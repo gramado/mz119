@@ -195,67 +195,134 @@ int tty_find_empty_slot (){
 
 
 //#todo criar uma tty ldisc. 
-/* 
-struct ttyldisc_d *ttyldisc_create ();  
-struct ttyldisc_d *ttyldisc_create () 
+struct ttyldisc_d *ttyldisc_create (void) 
 {
-    return NULL;
+    struct ttyldisc_d *__ttyldisc;
+    
+    __ttyldisc = (struct ttyldisc_d *) malloc ( sizeof(struct ttyldisc_d) );
+    
+    if ( (void *) __ttyldisc == NULL )
+    {
+        return NULL;
+    }else{
+
+        __ttyldisc->used = 1;
+        __ttyldisc->magic = 1234;
+    };
+
+
+    return (struct ttyldisc_d *) __ttyldisc;
 }
-*/
+
 
 
 //#todo: deletar uma tty ldisc
-/*
-int ttyldisc_delete ( struct ttyldisc_d *tty );
-int ttyldisc_delete ( struct ttyldisc_d *tty )
+int ttyldisc_delete ( struct ttyldisc_d *tty_ldisc )
 {
+    // Nothing to do.
+    if ( (void *) tty_ldisc == NULL )
+    {
+        return 0;
+    }else{
+         
+         //#bugbug: fast way
+         //free (tty_ldisc);
+         
+         //reusar
+         tty_ldisc->magic = 216;
+    };
+    
     return -1;
 }
-*/ 
 
 
 
 
-//#todo criar uma tty driver. 
-/* 
-struct ttydrv_d *ttydrv_create ();  
-struct ttydrv_d *ttydrv_create () 
+//#todo criar uma tty driver.  
+struct ttydrv_d *ttydrv_create (void) 
 {
-    return NULL;
+    struct ttydrv_d *__ttydrv;
+    
+    __ttydrv = (struct ttydrv_d *) malloc ( sizeof(struct ttydrv_d) );
+    
+    if ( (void *) __ttydrv == NULL )
+    {
+        return NULL;
+    }else{
+
+        __ttydrv->used = 1;
+        __ttydrv->magic = 1234;
+    };
+
+
+    return (struct ttydrv_d *) __ttydrv;
 }
-*/
+
 
 
 //#todo: deletar uma tty driver
-/*
-int ttydrv_delete ( struct ttydrv_d *tty );
-int ttydrv_delete ( struct ttydrv_d *tty )
+int ttydrv_delete ( struct ttydrv_d *tty_driver )
 {
+    // Nothing to do.
+    if ( (void *) tty_driver == NULL )
+    {
+        return 0;
+    }else{
+         
+         //#bugbug: fast way
+         //free (tty_driver);
+         
+         //reusar
+         tty_driver->magic = 216;
+    };
+    
     return -1;
 }
-*/ 
 
 
 
  
 //#todo criar uma tty. 
-/* 
-struct tty_d *tty_create ();  
-struct tty_d *tty_create () 
+struct tty_d *tty_create (void) 
 {
-    return NULL;
+    struct tty_d *__tty;
+    
+    __tty = (struct tty_d *) malloc ( sizeof(struct tty_d) );
+    
+    if ( (void *) __tty == NULL )
+    {
+        return NULL;
+    }else{
+
+        __tty->used = 1;
+        __tty->magic = 1234;
+    };
+
+
+    return (struct tty_d *) __tty;
 }
-*/
 
 
-//#todo: deletar uma tty
-/*
-int tty_delete ( struct tty_d *tty );
+
+//#todo: 
 int tty_delete ( struct tty_d *tty )
 {
+    // Nothing to do.
+    if ( (void *) tty == NULL )
+    {
+        return 0;
+    }else{
+         
+         //#bugbug: fast way
+         //free (tty);
+         
+         //reusar
+         tty->magic = 216;
+    };
+    
     return -1;
 }
-*/ 
+
  
 /*
  ***********************************
@@ -285,7 +352,12 @@ int ttyInit (int tty_id){
     // O linux usa terminais virtuais que vão até ctl+al+f7. 
     // Mas ttys tem muitas.
 
-    if ( tty_id < 0 || tty_id > 7 )
+    // #importante
+    // O sistema terá 8 terminais
+    // e terá vários pseudo terminais. pts. - Stands for pseudo terminal slave.
+
+    //if ( tty_id < 0 || tty_id > 7 )
+    if ( tty_id < 0 || tty_id > 32 )
     {
         panic ("ttyInit: tty_id");
     }

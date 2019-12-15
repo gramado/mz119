@@ -231,10 +231,13 @@ struct tty_d
 };
 struct tty_d *CurrentTTY;
 
+// #importante
+// O sistema terá 8 terminais
+// e terá vários pseudo terminais.
 
 // Lista de TTYs.
-unsigned long ttyList[8];
-
+//unsigned long ttyList[8];
+unsigned long ttyList[32];
 
 
 /* tty magic number */
@@ -244,6 +247,15 @@ unsigned long ttyList[8];
 
 //void *createTTYLine (void); 
 
+struct ttyldisc_d *ttyldisc_create (void);  
+int ttyldisc_delete ( struct ttyldisc_d *tty_ldisc );
+
+struct ttydrv_d *ttydrv_create (void); 
+int ttydrv_delete ( struct ttydrv_d *tty_driver );
+
+
+struct tty_d *tty_create (void); 
+int tty_delete ( struct tty_d *tty );
 
 int ttyInit (int tty_id);
 

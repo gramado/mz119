@@ -440,6 +440,19 @@ struct thread_d
 	//Ticks remaining. (tempo para a tarefa chegar ao fim, tempo total-tempo percorrito)
 	unsigned long ticks_remaining; //rt, quanto tempo a tarefa tem disponível para ser concluida.
 
+
+	//
+	// Working set support.
+	// 
+	
+	//profiler support 
+	
+	//quanto por cento do tempo o processo ficou rodando.
+	//é a soma do quanto ficou rodando todas as suas threads.
+	//unsigned long profiler_percentage_running;
+
+
+
 	//unsigned long alarm;            //Tempo para o próximo alarme, dado em ticks.
 	
 	//??iopl??

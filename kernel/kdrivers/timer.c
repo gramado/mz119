@@ -172,7 +172,7 @@ void timer (void){
     //Contador de ticks.
 	//Incrementa o Tempo total de funcionamento do kernel.
 	
-    sys_time_ticks_total++;	
+    sys_time_ticks_total++;
 
 	//
 	// ## sys time ##
@@ -198,6 +198,24 @@ void timer (void){
 	//kernel_request = KR_TIME;  
 	
 	
+	//
+	// Working set support.
+	//
+    
+    // #todo
+    // As variáveis de working set estão em timer.h
+	
+	/*
+	//Working set and profiler support.	
+    if ( sys_time_ticks_total % 1000 == 0 )	
+	{
+	    //quantidade de frames num determinado período de tempo.
+	    // mm_profiler (); 
+	    //thread_profiler ();
+	    //process_profiler ();
+	}
+    */
+
 	//
 	//  ## extra ## 
 	//

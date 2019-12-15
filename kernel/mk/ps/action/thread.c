@@ -27,6 +27,16 @@
 
 
 /*
+// Chamada pelo timer.c
+int thread_profiler();
+int thread_profiler()
+{
+    return -1;
+}
+*/
+
+
+/*
  ***********************************
  * threadCopyThread:
  *     Clona uma thread.
