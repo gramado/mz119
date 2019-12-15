@@ -203,13 +203,7 @@ void timer (void){
 	thread_profiler (1);
 	    
     if ( sys_time_ticks_total % profiler_ticks_limit == 0 )
-	{
-        //profiler_ticks_count++;
-        //if ( profiler_ticks_count >= profiler_ticks_limit )
-        //{
-            //profiler_ticks_count = 0;
-        //}
-    
+	{   
 	    //quantidade de frames num determinado período de tempo.
 	    // mm_profiler (); 
 	    

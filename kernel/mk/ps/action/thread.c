@@ -77,21 +77,7 @@ int thread_profiler( int service )
 				    __tmp->profiler_percentage_running =  (__tmp->profiler_percentage_running_mod / (profiler_ticks_limit/100) );
 				}
 			}  
-		  };  
-		    //t->profiler_ticks_running = 0;
-		    //Esse é pra que os aplicativos peguem.
-            //t->profiler_last_ticks = t->profiler_ticks_running;
-            
-            // Quantas vezes a thread rodou durante um determinado período
-            // dividido pela quantidade de ticks no período. 
-            //t->profiler_percentage_running = (t->profiler_ticks_running % profiler_ticks_limit);
-            
-            //t->profiler_percentage_running = (t->profiler_percentage_running / 100);
-            
-            //if ( t->profiler_ticks_running >= profiler_ticks_limit )
-            //{
-              //  t->profiler_ticks_running = 0;
-		    //}
+		};  
 		    return 0;
 		    break;
 		    

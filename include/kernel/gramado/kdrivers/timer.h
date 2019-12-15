@@ -22,9 +22,7 @@
 // Etc.
 // Será o tempo de referência para o profiler.
 
-//10*100 =  1000 TICKS;
-//#define PROFILER_TICKS_DEFAULT_LIMIT 1000
-//#define PROFILER_TICKS_DEFAULT_LIMIT (100*100)
+
 #define PROFILER_TICKS_DEFAULT_LIMIT 200
 
 //contador do profiler ticks.
