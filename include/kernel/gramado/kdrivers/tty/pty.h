@@ -34,6 +34,12 @@ The role of the terminal emulator process is:
 */
 
 
+//credits: linux
+// pty subtypes;
+// lembrando que pty usa a mesma estrutura do tty.
+#define PTY_TYPE_MASTER			0x0001
+#define PTY_TYPE_SLAVE			0x0002
+
  
 void pty_send_message_to_process ( unsigned long msg_buffer, int pid );
 void pty_send_message_to_thread ( unsigned long msg_buffer, int tid );

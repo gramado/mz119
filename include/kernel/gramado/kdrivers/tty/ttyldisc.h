@@ -13,8 +13,8 @@
 #define NR_LDISCS 20
 
 
-
-
+//#define TTY_LDISC_MAGIC	0x5403
+#define TTY_LDISC_MAGIC 1234
 
 
 struct ttyldisc_d {
