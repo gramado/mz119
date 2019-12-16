@@ -65,6 +65,10 @@ int rtcError;
 
 void KiRtcIrq (void){
 	
+	
+	// Contando as interrupções desse tipo.
+	g_profiler_ints_irq8++;	
+	
 	//...
 	
     rtc_irq ();

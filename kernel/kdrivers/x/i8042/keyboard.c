@@ -180,6 +180,9 @@ void abnt2_keyboard_handler (void){
 	// Não aqui ... pois cada driver deve ser para um tipo de teclado.
 
 void KiKeyboard (void){
+	
+	// Contando as interrupções desse tipo.
+	g_profiler_ints_irq1++;
 
     // pt-br keyboard.
     if (abnt2 == 1)

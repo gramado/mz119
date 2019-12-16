@@ -4,6 +4,51 @@
 #include <kernel.h>
 
 
+//
+// #bugbug: 
+// Esses protótipos devem ir par ao header.
+// Esse handler é chamado pelo assembly.
+
+void serial1_handler (void);
+void serial2_handler (void);
+void serial3_handler (void);
+void serial4_handler (void);
+
+
+void serial1_handler (void)
+{
+    //
+    // profiler
+    //
+    
+	// Contando as interrupções desse tipo.
+	g_profiler_ints_irq4++;
+}
+
+
+void serial2_handler (void)
+{
+    //
+    // profiler
+    //
+    
+	// Contando as interrupções desse tipo.
+	g_profiler_ints_irq3++;	
+}
+
+
+//#todo
+void serial3_handler (void)
+{}
+
+
+//#todo
+void serial4_handler (void)
+{}
+
+
+
+
 void serial_write_char ( char data ) {
 	
 	while (( inportb(COM1_PORT + 5) & 0x20 ) == 0) ;

@@ -8,6 +8,12 @@
 #include <kernel.h>
 
 
+
+//
+// #bugbug: 
+// Esses protótipos devem ir par ao header.
+// Esse handler é chamado pelo assembly.
+
 void diskATAIRQHandler1 (void);
 void diskATAIRQHandler2 (void);
 int disk_get_ata_irq_invoked (void);
@@ -26,6 +32,13 @@ static unsigned long ata_irq_invoked = 0;
 
 void diskATAIRQHandler1 (void)
 {
+    //
+    // profiler
+    //
+    
+	// Contando as interrupções desse tipo.
+	g_profiler_ints_irq14++;	
+	
     ata_irq_invoked = 1; 
 }
 
@@ -38,6 +51,13 @@ void diskATAIRQHandler1 (void)
 
 void diskATAIRQHandler2 (void)
 {
+    //
+    // profiler
+    //
+    
+	// Contando as interrupções desse tipo.
+	g_profiler_ints_irq15++;	
+	
     ata_irq_invoked = 1; 
 }
 

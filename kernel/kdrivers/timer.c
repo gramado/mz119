@@ -122,6 +122,14 @@ void timer (void);
  
 void KiTimer (void){
 	
+	//
+	// Profiler
+	//
+	
+	// Contando as interrupções desse tipo.
+	g_profiler_ints_irq0++;
+	
+	
 	//#debug
 	//vamos checar se o primeiro iret está trazendo
 	//o fluxo para cá.

@@ -493,8 +493,39 @@ void init_globals (void){
 	//Essa flag bloqueia e impede que uma janela obtenha o foco.
 	gFocusBlocked = (int) 0;
 	
+	
 	//
-	// As globais relativas à usuário são independentes do ambiente gráfico.
+	// ==== Profiler ====
+	//
+	
+	// See: include/kernel/profiler/pints.h
+	
+	// Interrupção para serviços do sistema.
+	g_profiler_ints_gde_services = 0;
+
+    // Legacy hardware interrupts (irqs) (legacy pic)
+    g_profiler_ints_irq0 = 0;  
+    g_profiler_ints_irq1 = 0;  
+    g_profiler_ints_irq2 = 0;  
+    g_profiler_ints_irq3 = 0;  
+    g_profiler_ints_irq4 = 0;  
+    g_profiler_ints_irq5 = 0;  
+    g_profiler_ints_irq6 = 0;  
+    g_profiler_ints_irq7 = 0;  
+    g_profiler_ints_irq8 = 0;   
+    g_profiler_ints_irq9 = 0;   
+    g_profiler_ints_irq10 = 0;  
+    g_profiler_ints_irq11 = 0;  
+    g_profiler_ints_irq12 = 0;  
+    g_profiler_ints_irq13 = 0;  
+    g_profiler_ints_irq14 = 0;  
+    g_profiler_ints_irq15 = 0;  
+
+
+
+	//
+	// As globais relativas à usuário são independentes do 
+	// ambiente gráfico.
 	//
 	
 	//Group, User.

@@ -397,6 +397,8 @@ e1000_init_nic ( unsigned char bus,
  * a mensagem para ele, contendo o endereço do buffer.
  */
 
+// Isso é chamado pelo assembly.
+
 void xxxe1000handler (void){
 
 	//Structs.
@@ -407,6 +409,14 @@ void xxxe1000handler (void){
 
     int i;
 
+
+
+    //
+    // profiler
+    //
+    
+	// Contando as interrupções desse tipo.
+	g_profiler_ints_irq9++;	
 
 	// #importante:
 	// #flag 

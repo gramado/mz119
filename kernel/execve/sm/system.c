@@ -1270,8 +1270,28 @@ unsigned long systemGetSystemMetrics ( int index ){
         case 8:
 		    return (unsigned long) get_char_height();
             break;
-            
+      
+        //
+        // screen buffers
+        //
 
+        // lfb pa
+        case 10:
+		    return (unsigned long) g_frontbuffer_pa;
+            break;        
+
+            
+        // lfb va
+        case 11:
+		    return (unsigned long) g_frontbuffer_va;
+            break;        
+
+        // main backbuffer va
+        case 12:
+		    return (unsigned long) g_backbuffer_va;
+            break;                   
+     
+                      
         //20   
         // mouse x    
         case SM_GETMOUSEX:
@@ -1286,6 +1306,239 @@ unsigned long systemGetSystemMetrics ( int index ){
             return (unsigned long) ps2_mouse_get_info (4); 
             break;
             
+        //
+        // Ram support
+        //
+      
+        // base memory
+        case 30:
+            return (unsigned long) memorysizeBaseMemory;
+            break;
+            
+        // extended - base
+        case 31:
+            return (unsigned long) memorysizeOtherMemory;
+            break;
+            
+            
+        // extended memory
+        case 32:
+            return (unsigned long) memorysizeExtendedMemory;
+            break;
+            
+        // total = base + other + extended 
+        case 33:
+            return (unsigned long) memorysizeTotal;
+            break;                    
+
+        // used
+        case 34:
+            return (unsigned long) memorysizeUsed;
+            break;  
+        
+        // free   
+        case 35:
+            return (unsigned long) memorysizeFree;
+            break;  
+            
+         //
+         // Kernel Heap support.
+         //   
+
+        case 40:
+            return (unsigned long) kernel_heap_start;
+            break;  
+            
+        case 41:
+            return (unsigned long) kernel_heap_end;
+            break;  
+            
+        case 42:
+            return (unsigned long) g_available_heap;
+            break; 
+            
+         //
+         // Kernel Stack support.
+         //   
+            
+        case 50:
+            return (unsigned long) kernel_stack_start;
+            break; 
+
+        case 51:
+            return (unsigned long) kernel_stack_end;
+            break; 
+            
+        case 52:
+            return (unsigned long) kernel_stack_start_pa;
+            break; 
+
+
+            
+        //
+        // used memory support
+        //
+
+        case 60:
+            return (unsigned long) mm_used_kernel_area;
+            break;   
+            
+
+        case 61:
+            return (unsigned long) mm_used_user_area;
+            break;   
+
+
+        case 62:
+            return (unsigned long) mm_used_backbuffer;
+            break;   
+
+
+
+        case 63:
+            return (unsigned long) mm_used_pagedpool;
+            break;   
+
+
+
+        case 64:
+            return (unsigned long) mm_used_heappool;
+            break;   
+
+
+        case 65:
+            return (unsigned long) mm_used_gramadocore_init_heap;
+            break;   
+            
+        case 66:
+            return (unsigned long) mm_used_gramadocore_shell_heap ;
+            break;   
+            
+        case 67:
+            return (unsigned long) mm_used_gramadocore_taskman_heap;
+            break;               
+            
+
+        //
+        // Dispatch critéria.
+        //
+        
+        case 70:
+            return (unsigned long) DispatchCountBlock->SelectIdleCount;
+            break;               
+
+        case 71:
+            return (unsigned long) DispatchCountBlock->SelectInitializedCount;
+            break;   
+            
+        case 72:
+            return (unsigned long) DispatchCountBlock->SelectNextCount;
+            break;                         
+
+        case 73:
+            return (unsigned long) DispatchCountBlock->SelectCurrentCount;
+            break;   
+            
+        case 74:
+            return (unsigned long) DispatchCountBlock->SelectAnyCount;
+            break;   
+            
+        case 75:
+            return (unsigned long) DispatchCountBlock->SelectIdealCount;
+            break;   
+            
+        case 76:
+            return (unsigned long) DispatchCountBlock->SelectDispatcherQueueCount;
+            break;               
+   
+
+
+        // system type. by memory size;
+        case 90:
+            return (unsigned long) g_mm_system_type;
+            break;  
+            
+        //
+        // Profiler ... (reservar vários números.)
+        //
+        
+                      
+        case 100:
+            return (unsigned long) g_profiler_ints_irq0;
+            break;              
+
+        case 101:
+            return (unsigned long) g_profiler_ints_irq1;
+            break;              
+            
+        case 102:
+            return (unsigned long) g_profiler_ints_irq2;
+            break;              
+            
+            
+        case 103:
+            return (unsigned long) g_profiler_ints_irq3;
+            break;              
+            
+
+        case 104:
+            return (unsigned long) g_profiler_ints_irq4;
+            break;              
+
+        case 105:
+            return (unsigned long) g_profiler_ints_irq5;
+            break;              
+            
+        case 106:
+            return (unsigned long) g_profiler_ints_irq6;
+            break;              
+            
+            
+        case 107:
+            return (unsigned long) g_profiler_ints_irq7;
+            break;              
+
+        case 108:
+            return (unsigned long) g_profiler_ints_irq8;
+            break;              
+
+        case 109:
+            return (unsigned long) g_profiler_ints_irq9;
+            break;              
+            
+        case 110:
+            return (unsigned long) g_profiler_ints_irq10;
+            break;              
+            
+            
+        case 111:
+            return (unsigned long) g_profiler_ints_irq11;
+            break;              
+
+        case 112:
+            return (unsigned long) g_profiler_ints_irq12;
+            break;              
+
+        case 113:
+            return (unsigned long) g_profiler_ints_irq13;
+            break;              
+            
+        case 114:
+            return (unsigned long) g_profiler_ints_irq14;
+            break;              
+            
+            
+        case 115:
+            return (unsigned long) g_profiler_ints_irq15;
+            break;              
+            
+          
+        // Interrupção de serviços do sistema.
+        case 117:
+            return (unsigned long) g_profiler_ints_gde_services;
+            break;              
+
+                        
 		//...
 		
 		default:

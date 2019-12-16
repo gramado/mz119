@@ -31,6 +31,9 @@
 void mouse_handler (void)
 {
 	
+	// Contando as interrupções desse tipo.
+	g_profiler_ints_irq12++;
+	
 	 mouseHandler ();
 	 
 	 

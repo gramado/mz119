@@ -480,6 +480,10 @@ _irq1:
 ;=======================================================
 ; IRQ 3 – serial port controller for serial port 2 
 ; (shared with serial port 4, if present)
+
+extern _serial2_handler
+extern _serial4_handler
+
 global _irq3
 _irq3:
 
@@ -500,6 +504,10 @@ _irq3:
 ;====================================================
 ; IRQ 4 – serial port controller for serial port 1 
 ;(shared with serial port 3, if present)
+
+extern _serial1_handler
+extern _serial3_handler
+
 global _irq4
 _irq4:
 
@@ -619,6 +627,7 @@ _irq10:
 
 
 ;;===============================================
+;;  interrupção 41. irq 9;
 extern _xxxe1000handler
 
 global _nic_handler

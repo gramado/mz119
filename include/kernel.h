@@ -64,7 +64,7 @@
 #include <kernel/globals/gentry.h>
 #include <kernel/globals/gdef.h>
 #include <kernel/globals/gdevice.h>
-//...
+//... 
 
 //spinlocks
 #include <kernel/gramado/mk/ps/spinlock.h>
@@ -427,6 +427,10 @@ extern void do_executa_new_task (void);
 #include <kernel/gramado/execve/ss.h>
 
 #include <kernel/gramado/kservers/events.h>
+
+//=============================================
+
+#include <kernel/profiler/pints.h>
 
 //=============================================
 

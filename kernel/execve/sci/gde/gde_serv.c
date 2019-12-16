@@ -550,7 +550,10 @@ void *gde_extra_services ( unsigned long number,
     return NULL;  
 }
 
+
+
 /*
+ ****************************************
  * gde_services:
  *     Rotina que atende os pedidos feitos pelos aplicativos em user mode 
  *     via int 200. Ou ainda o kernel pode chamar essa rotina diretamente.
@@ -706,6 +709,16 @@ void *gde_services ( unsigned long number,
 	//struct window_d *wFocus;
 
     int desktopID;
+
+
+
+    //
+    // Profiler
+    //
+    
+    // Contando as interrupções desse tipo.
+    g_profiler_ints_gde_services++;
+
 
 
 	//
