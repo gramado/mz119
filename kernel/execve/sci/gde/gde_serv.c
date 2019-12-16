@@ -264,6 +264,13 @@ void *gde_extra_services ( unsigned long number,
 		systemShowDevicesInfo ();
         return NULL;
     }
+    
+    // cpu usage for idle thread.
+    if (number == 777)
+    {
+		return (void *) profiler_percentage_idle_thread;
+    }
+    
  
     /*
     //arp request test.

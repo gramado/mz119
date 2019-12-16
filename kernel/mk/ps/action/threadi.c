@@ -136,7 +136,7 @@ void *KiCreateRing0Idle (void){
 	
 	if( (void *) ring0IdleStack == NULL )
 	{
-	    printf("pc-create-KiCreateRing0Idle: ring0IdleStack\n");
+	    printf("KiCreateRing0Idle: ring0IdleStack\n");
 		die();
 	};
   	
@@ -271,6 +271,12 @@ void *KiCreateRing0Idle (void){
 	threadList[3] = (unsigned long) t;
 	
 	t->Next = NULL;
+	
+	//
+	// Setup idle.
+	//
+	
+	____IDLE = (struct thread_d *) t;
 	
 	//
 	// Running tasks.

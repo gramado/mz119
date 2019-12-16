@@ -10,10 +10,10 @@
 # We will have a new name just when the release changes.
 
 VERSION = 1
-PATCHLEVEL = 16
+PATCHLEVEL = 17
 SUBLEVEL = 0
-EXTRAVERSION = 0
-NAME = Idle
+EXTRAVERSION = -rc0
+NAME = 
 
 #
 

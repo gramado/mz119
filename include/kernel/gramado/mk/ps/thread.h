@@ -612,6 +612,12 @@ struct thread_d *ShellThread;        // Shell Thread. TID=1
 struct thread_d *TaskManThread;      // TaskMan Thread. TID=2
 struct thread_d *RING0IDLEThread;    // RING0 IDLE Thread. TID=3
 
+//
+// Idle
+//
+
+struct thread_d *____IDLE;
+
 
 struct thread_d *ClonedThread;
 

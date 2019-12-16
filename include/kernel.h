@@ -484,6 +484,9 @@ int idle; //true ring 0 idle tread id.
 int next_thread; //next user mode thread.
 
 
+
+
+
 // Organização dos discos.
 int current_disk;
 int current_volume;

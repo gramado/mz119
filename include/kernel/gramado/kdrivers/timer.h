@@ -36,6 +36,10 @@ unsigned long profiler_ticks_limit;
  
  
  
+unsigned long profiler_percentage_all_normal_threads;
+ 
+unsigned long profiler_percentage_idle_thread;
+ 
  
 //
 // Count support variables.

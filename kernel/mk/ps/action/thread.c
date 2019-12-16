@@ -32,7 +32,11 @@ int thread_profiler( int service )
 {
     struct thread_d *__current;
     struct thread_d *__tmp;
+
     int i;
+    unsigned long __total = 0; //todas inclusive idle.
+    
+    
     
     __current = (struct thread_d *) threadList[current_thread];
     
@@ -77,7 +81,12 @@ int thread_profiler( int service )
 				    __tmp->profiler_percentage_running =  (__tmp->profiler_percentage_running_mod / (profiler_ticks_limit/100) );
 				}
 			}  
-		};  
+		  };
+		  
+
+			profiler_percentage_all_normal_threads = (100 - ____IDLE->profiler_percentage_running );
+			profiler_percentage_idle_thread = ____IDLE->profiler_percentage_running ;
+		    
 		    return 0;
 		    break;
 		    
