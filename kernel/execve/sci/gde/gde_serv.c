@@ -326,6 +326,20 @@ void *gde_extra_services ( unsigned long number,
     {
         return (void *) do_fork_process2 ();
     }
+    
+    // get screen window.
+    // #todo. checar validade
+    if ( number == 955 )
+    {
+        return (void *) gui->screen;
+    }    
+
+    // get main window.
+    // #todo. checar validade
+    if ( number == 956 )
+    {
+        return (void *) gui->main;
+    }    
 
     //o processo está se comunicando com o driver de rede.
     //um descritor de soquete é enviado via argumento.
