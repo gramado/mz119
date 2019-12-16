@@ -69,43 +69,30 @@ struct thread_d *xxxClonedThread;
 	// 2 - esperando um processo finalizar. wait4pid
 	// 3 - esperando um objeto. (BLOCKED)(espera genérica)
 	// ...
-	
+
+
+// #importante
+// isso será usado na estrutura de thread em wait_reason[]
+// Com limite de 10 por enquanto.
+
 typedef enum {
-	WAIT_REASON_LOOP,           
-	WAIT_REASON_WAIT4TID,      
-	WAIT_REASON_WAIT4PID,
-	WAIT_REASON_EXIT,
-	WAIT_REASON_BLOCKED
 	
+	WAIT_REASON_NULL,
+	WAIT_REASON_LOOP,           
+	WAIT_REASON_EXIT,
+	WAIT_REASON_BLOCKED,
+	WAIT_REASON_PREMMPTED,      // ?? Esperando a preempção de thread de menor prio.
+	WAIT_REASON_SEMAPHORE,      // ?? Semáforo.
+	WAIT_REASON_WAIT4PID,       // Esperando o processo filho morrer.
+	WAIT_REASON_WAIT4TID,       // Esperando uma thread morrer.
+	WAIT_REASON_TEST            // # Usada pelo desenvolvedor para testes.
+
 	//continua... @todo
 }thread_wait_reason_t;
-  
 
- 
-/*
- **********************************************************
- * thread_event_type_t:
- *
- *     Enumerando os tipos de eventos que fazem a tarefa 
- * entrar em modo de espera:
- *
- *  EVENT_NULL       - Nulo. 
- *	EVENT_PREMMPTED  - Preempção.
- *  EVENT_SEMAPHORE  - Semáforo.
- *  //...
- */
- 
-typedef enum {
-	EVENT_NULL,           // Nulo. 
-	EVENT_PREMMPTED,      // ?? Esperando a preempção de thread de menor prio.
-	EVENT_SEMAPHORE,      // ?? Semáforo.
-	EVENT_WAIT4PID,       // Esperando o processo filho morrer.
-	EVENT_WAIT4TID        // Esperando uma thread morrer.
-	
-	//continua... @todo
-}thread_event_type_t;
- 
- 
+
+
+
 /*
  * thread_type_t:
  *     Enumerando os tipos de threads:
@@ -555,15 +542,6 @@ struct thread_d
 	//struct thread_d *sendersList; //Lista encadeada de threads querendo enviar mensagem
 	//struct thread_d *nextSender;  //próxima thread a enviar mensagem.
 	
-	
-	//
-	//  ## EVENT SUPPORT ##
-	//
-
-	//#bugbug: 
-	//agora temos um array e a thread pode esperar por mais de um evento.
-    // Tipo de evento pelo qual a thread está esperando.	
-    //thread_event_type_t event;
 
 	// Objeto pelo qual a thread está esperando.
 	// #todo: mudar esses nomes, pode confundir com o header no início da 
@@ -584,7 +562,7 @@ struct thread_d
 	// 3 - esperando um objeto. (espera genérica)
 	// ...
 	
-	int wait_reason[8];
+	int wait_reason[10]; 
 	
 	int wait4pid;   //id do processo que a thread está esperando moorrer.
 	int wait4tid;   //id da thread que a thread está esperando moorrer.

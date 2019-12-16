@@ -99,6 +99,9 @@ void preempt (void);
 int do_waitpid (pid_t pid, int *status, int options);
 
 
+//Espera por um motivo.
+void wait_for_a_reason ( int tid, int reason );
+
 //bloqueia por um motivo
 void block_for_a_reason (int tid, int reason);
 

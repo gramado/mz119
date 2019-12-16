@@ -97,11 +97,63 @@ int do_waitpid (pid_t pid, int *status, int options){
 }
 
 
+/*
+ ********************************************
+ * wait_for_a_reason:
+ *     Faz a thread esperar  por um motivo.
+ */
+
+void wait_for_a_reason ( int tid, int reason ){
+
+    struct thread_d *t;
+
+    printf ("wait_for_a_reason: %d\n", reason);
+
+    if ( tid < 0 || tid >= THREAD_COUNT_MAX )
+    {
+        return;
+    } 
+
+
+    if ( reason < 0 || reason >= 10 )
+    {
+        return;
+    }
+
+
+	//thread
+    t = (struct thread_d *) threadList[tid];
+
+    if ( (void *) t == NULL )
+    {
+        return;
+
+    } else {
+
+        if ( t->used == 1 && t->magic == 1234 )
+        {
+			t->wait_reason[reason] = 1;
+	        
+			//
+			// ## Wait ##
+			//
+			
+			t->state =  WAITING;
+        }
+    };
+    
+   //KiScheduler ();
+    
+   printf ("wait_for_a_reason: done\n");
+   refresh_screen();
+}
+
+
 
 /*
+ ********************************************
  * block_for_a_reason:
  *     Bloqueia thread por um motivo.
- * 
  */
 
 void block_for_a_reason ( int tid, int reason ){
@@ -115,7 +167,7 @@ void block_for_a_reason ( int tid, int reason ){
     } 
 
 
-    if ( reason < 0 || reason >= 8 )
+    if ( reason < 0 || reason >= 10 )
     {
         return;
     }
@@ -138,7 +190,7 @@ void block_for_a_reason ( int tid, int reason ){
 			// ## Block ##
 			//
 			
-			do_thread_sleeping (tid);
+			t->state =  BLOCKED;
         }
     };
 }
@@ -166,7 +218,7 @@ int wakeup_thread_reason ( int tid, int reason ){
     } 
 
 
-    if ( reason < 0 || reason >= 8 )
+    if ( reason < 0 || reason >= 10 )
     {
         goto fail;
     }
@@ -200,28 +252,37 @@ int wakeup_thread_reason ( int tid, int reason ){
 			switch (reason)
 			{
 				//Esperando um processo morrer. Mas qual ??
-				case EVENT_WAIT4PID:
+				case WAIT_REASON_WAIT4PID: 
 				    //se o processo que acabamos de fechar for o mesmo que 
 					//a thread estava esperando.
 					if ( current_dead_process > 0 && 
 					     current_dead_process == t->wait4pid )
 					{
-					    t->wait_reason[reason] = 0;	
-					    KiDoThreadRunning (tid);
+					    t->wait_reason[reason] = 0;
+					    KiDoThreadReady (tid);
+					    //KiDoThreadRunning (tid);
+					    
 					}
 					break;
 					
 				//Esperando uma thread morrer. Mas qual ??
-				case EVENT_WAIT4TID:
+				case WAIT_REASON_WAIT4TID:
 				    //se a thread que acabamos de fechar for a mesma que 
 					//a thread estava esperando.
 					if ( current_dead_thread > 0 && 
 					     current_dead_thread == t->wait4tid )
 					{
-					    t->wait_reason[reason] = 0;	
-					    KiDoThreadRunning (tid);
+					    t->wait_reason[reason] = 0;
+					    KiDoThreadReady (tid);
+					    //KiDoThreadRunning (tid);
+					    
 					}
 					break;
+					
+				case WAIT_REASON_TEST:
+					t->wait_reason[reason] = 0;
+					KiDoThreadReady (tid);
+				    break;
 			    
                 // ...
 			}
@@ -242,6 +303,7 @@ done:
 
 
 /*
+ ******************************************
  * wakeup_scan_thread_reason:
  * 
  */
@@ -253,7 +315,10 @@ int wakeup_scan_thread_reason ( int reason ){
 
     int i;
 
-    if ( reason < 0 || reason >= 8 )
+    printf ("wakeup_scan_thread_reason: %d", reason);
+    refresh_screen();
+    
+    if ( reason < 0 || reason >= 10 )
     {
         goto fail;
     } 
@@ -264,29 +329,14 @@ int wakeup_scan_thread_reason ( int reason ){
         wakeup_thread_reason ( i, reason );
     };
 
-
-    switch (reason)
-    {
-		//já acordamos todas as threads que esperavam por essa razão.
-		//podemos sinalizar que não há mais nenhum processo morto recentemente.
-		case EVENT_WAIT4PID:
-			current_dead_process = 0;
-			break;
-
-		//já acordamos todas as threads que esperavam por essa razão.
-		//podemos sinalizar que não há mais nenhuma thread morta recentemente.
-		case EVENT_WAIT4TID:
-    		current_dead_thread = 0;
-			break;
-			    
-                // ...
-    };
-
-
 done:
+    printf ("wakeup_scan_thread_reason: done\n");
+    refresh_screen();
     return 0;
 
 fail:
+    printf ("wakeup_scan_thread_reason: fail\n");
+    refresh_screen();
     return (int) 1;
 }
 

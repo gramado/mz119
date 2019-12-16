@@ -298,7 +298,11 @@ int request (void){
 		//cuidado.	
 		case 14:	
 			current_thread = REQUEST.target_tid;
-			break;			
+			break;
+			
+		case 15:
+		    wait_for_a_reason ( REQUEST.target_tid, (int) REQUEST.long1  );
+		    break;
 		
 		//@todo: Tratar mais tipos.	
 		//...

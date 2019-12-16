@@ -349,6 +349,26 @@ void *gde_extra_services ( unsigned long number,
     }
 
 
+    // A interrupção não conseguirá retornar para a mesma thread.
+    // Chamará o scheduler por conta própria;
+    // IN: reson, reason
+    if ( number == 970 )
+    {
+            sys_create_request ( (unsigned long) 15, // number 
+                (int) 1,                             // status 
+                (int) 0,                             // timeout. 0=imediatamente.
+                (int) current_process,               // target_pid
+                (int) current_thread,                // target_tid
+                NULL,                                // window 
+                (int) 0,                             // msg  
+                (unsigned long) arg2,                // long1  
+                (unsigned long) arg3 );              // long2
+                
+		//wait_for_a_reason ( current_thread, (int) arg2 );
+        return NULL;
+    }
+
+
 	// t18
 	// O arg2 é o PID.
 	// devemos retornar o ponteiro para o stdout do terminal
@@ -1146,6 +1166,7 @@ void *gde_services ( unsigned long number,
 		// Criaremos um 'request' que será atendido somente quando houver uma 
 		// interrupção de timer. 
 		// Enquanto isso a thread deve esperar em um loop.
+		//IN: ??
 
         case SYS_EXIT:
             sys_create_request ( (unsigned long) 12, // number 
@@ -1995,7 +2016,7 @@ void *gde_services ( unsigned long number,
         //bloqueamos uma thead por um dos motivos indicados em argumento.
         case SYS_GENERICWAIT:
 		    //TID, reason.
-            sys_block_for_a_reason ( (int) arg2, (int) arg3 );
+            //sys_block_for_a_reason ( (int) arg2, (int) arg3 );
 			break;		
 			
 		//210

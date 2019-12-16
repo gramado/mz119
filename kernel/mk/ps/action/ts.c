@@ -703,10 +703,9 @@ void taskswitchRR (void)
 // Done.
 //
 dispatch_current:	
-	dispatcher(DISPATCHER_CURRENT);	
-	return;	
-};
-
+	dispatcher (DISPATCHER_CURRENT);	
+	return;
+}
 
 
 
