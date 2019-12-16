@@ -9,13 +9,9 @@
 
 
 
-//
-// #bugbug: 
-// Esses protótipos devem ir par ao header.
-// Esse handler é chamado pelo assembly.
+ 
 
-void diskATAIRQHandler1 (void);
-void diskATAIRQHandler2 (void);
+
 int disk_get_ata_irq_invoked (void);
 void disk_reset_ata_irq_invoked (void);
 

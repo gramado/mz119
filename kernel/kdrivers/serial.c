@@ -4,15 +4,9 @@
 #include <kernel.h>
 
 
-//
-// #bugbug: 
-// Esses protótipos devem ir par ao header.
-// Esse handler é chamado pelo assembly.
+ 
 
-void serial1_handler (void);
-void serial2_handler (void);
-void serial3_handler (void);
-void serial4_handler (void);
+
 
 
 void serial1_handler (void)
