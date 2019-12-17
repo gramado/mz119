@@ -2730,6 +2730,9 @@ void windowUnblockFocus (void){
  
 // wm.
  
+// #bugbug
+// Revendo a questão de repintar a janela mãe quando se seta o foco. 
+ 
 void SetFocus ( struct window_d *window ){
 
     int i=0;
@@ -2832,7 +2835,7 @@ void SetFocus ( struct window_d *window ){
 			        set_active_window (window->parent);
 			        
 			        //#obs: Isso deu certo.
-			        redraw_window (window->parent, 1);
+			        //redraw_window (window->parent, 1);
 			    };
 			};
 
