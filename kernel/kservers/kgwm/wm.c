@@ -1,7 +1,7 @@
 /*
- * File: kgws/kgws/window.c 
+ * File: kgwm/kgwm/ww.c 
  *
- *  wm.
+ *  wm. - Window Manager.
  * 
  * Descrição:
  *     Arquivo principal do Window Manager.
@@ -1537,6 +1537,7 @@ void windowShowWindowList (void){
 // chamar isso quando chamarmos raise_window.
 
 // IN: redesenha a janela, mostra na tela ou não.
+
 int redraw_window (struct window_d *window, unsigned long flags ){
 
     int Status; 
@@ -1589,13 +1590,15 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 	
 	//Pintar ?? Onde ?? backbuffer ?? dedicated buffer ??
 //drawWindow:	
-	
+
+
 	// *********************************
-	// Devo lembrar que as características da janela estão salvas na estrutura
-	// e são muitas características. Não exige cálculos, toda a métrica já está pronta.
+	// Devo lembrar que as características da janela estão salvas 
+	// na estrutura e são muitas características. 
+	// Não exige cálculos, toda a métrica já está pronta.
 	// *********************************
-	
-	
+
+
 	//Buffers ??
 	//window->DedicatedBuffer
 	//window->BackBuffer
@@ -1640,7 +1643,7 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 	
 	// Cada estilo de design tem suas características,
 	// essas características precisas ser registradas 
-	// na estrutura de janel, bem como o próprio estilo 
+	// na estrutura de janela, bem como o próprio estilo 
 	// de design.
 	
 //redrawBegin:

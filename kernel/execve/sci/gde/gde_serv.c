@@ -334,9 +334,14 @@ void *gde_extra_services ( unsigned long number,
         return (void *) gui->screen;
     }    
 
+    if ( number == 956 )
+    {
+        return (void *) gui->background;
+    } 
+    
     // get main window.
     // #todo. checar validade
-    if ( number == 956 )
+    if ( number == 957 )
     {
         return (void *) gui->main;
     }    
@@ -1032,17 +1037,17 @@ void *gde_services ( unsigned long number,
 
 		//50 resize window (handle,x,y)
 		case SYS_BUFFER_RESIZEWINDOW:
-		    return (void *) sys_resize_window ( (struct window_d*) arg2, arg3, arg4);
+		    return (void *) sys_resize_window ( (struct window_d *) arg2, arg3, arg4);
 		    break;
 		
 		//51 redraw window. (handle)
 		case SYS_BUFFER_REDRAWWINDOW:
-		    return (void *) sys_redraw_window ( (struct window_d*) arg2, arg3 );
+		    return (void *) sys_redraw_window ( (struct window_d *) arg2, arg3 );
 		    break;
 		
 		//52  replace window. (handle,x,y)
 		case SYS_BUFFER_REPLACEWINDOW:
-		    return (void *) sys_replace_window ( (struct window_d*) arg2, arg3, arg4);
+		    return (void *) sys_replace_window ( (struct window_d *) arg2, arg3, arg4);
 		    break;
 		
 		//53 maximize window 

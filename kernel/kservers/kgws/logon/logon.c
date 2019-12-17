@@ -462,6 +462,9 @@ int grid             // Grid da janela principal.
 /*
  **************************************
  * logon_create_screen:
+ * 
+ *     ( * ROOT WINDOW )
+ * 
  *     Cria a tela. 
  *     Atribuindo as dimensões.
  *     ...
@@ -479,95 +482,68 @@ void logon_create_screen (void){
 	
 	// Screen
 	// Obs: Não tem 'parent window' !!!
+
+	// # minimized
+	// não pode ser pintada nem repintada.
+
+    //hWindow = (void *) CreateWindow ( 1, 0, VIEW_MINIMIZED, "Screen", 
+    hWindow = (void *) CreateWindow ( WT_SIMPLE, 0, VIEW_FULL, "Screen", 
+                           Left, Top, Width, Height, 
+                           NULL, 0, 0, COLOR_BLACK );  
 	
-	//#debug
-	//printf ("         >>>>>>> CREATE WINDOW \n");
-	
-	hWindow = (void *) CreateWindow ( 1, 0, VIEW_MINIMIZED, "Screen", 
-	                       Left, Top, Width, Height, 
-						   NULL, 0, 0, COLOR_BLACK );  
-	
-	if( (void*) hWindow == NULL )
-	{
-		panic ("logon_create_screen:");
-		//die ();
-	
-	}else{
-		
-		//#debug breakpoint
-		//ok isso funcionou ... gigabyte/intel
-		//printf ("         +++++++++++++++++ >>>>>>> CREATE WINDOW OK OK OK \n");
-	    //refresh_screen();
-		//while(1){}
+    if( (void*) hWindow == NULL )
+   {
+       panic ("logon_create_screen:");
+
+    }else{
 
 		if ( hWindow->used != 1 || hWindow->magic != 1234 )
 		{
 			
 			//se essa mensagem n~ao aparecer 'e porque a estrutura est'a certa.
-		    printf ("logon_create_screen: CREATE WINDOW STRUCT FAIL \n");		
+		    printf ("logon_create_screen: CREATE WINDOW STRUCT FAIL \n");
 		    die ();
 		}
-		
-		//#debug
-		//printf ("         ++++++++++++++++++++++++++++++++++++++++ >>>>>>> REGISTER \n");		
-		
+
 		RegisterWindow (hWindow);
-		
-		//#debug
-		//printf ("         ++++++++++++++++++++++++++++++++++++++++ >>>>>>> LOCK \n");		
-	    
+
 		windowLock (hWindow); 
-		
-		//#debug
-		//printf ("         ++++++++++++++++++++++++++++++++++++++++ >>>>>>> SET ACTIVE \n");	
-		
+
 		set_active_window (hWindow); 
 
-		//#debug breakpoint
 
-		//printf ("         ++++++++++++++++++++++++++++++++++++++++ >>>>>>> DEBUG BREAKPOINT \n");
-	    //refresh_screen();
-		//while(1){}
-		
-		
 		//a janela pertence ao desktop 0
 	    //hWindow->desktop = (void*) desktop0;
 
 	    if( (void *) gui == NULL)
 		{
 			panic ("logon_create_screen: gui");
-			//die ();
-			//refresh_screen();
-			//return;
-		
 		}else{
 			
 			//if ( gui->used != 1 || gui->magic != 1234 )
 			//{
-			//	printf ("++++++++++++++++++++++++++++++++++++++++logon: gui struct fail");
+			//	printf ("+++++++++++++++++logon: gui struct fail");
 			    
 			//}
 			
-			//#debug
-			//printf ("++++++++++++++++++++++++++++++++++++++++logon: gui->screen\n");
-	        
+
 			gui->screen = (void *) hWindow;
-			
-			//#debug
-			//printf ("++++++++++++++++++++++++++++++++++++++++logon: gui->screen  ok\n");
 			
 			//refresh_screen();
 			//while(1){}
 		};
 		
 	};
-	
+
+
 done:
-    //#bugbug: 
-	//Não usar set focus nessa que é a primeira janela.	
-	//windowLock(hWindow);
+
+    // #bugbug: 
+    // Não usar set focus nessa que é a primeira janela.
+    // windowLock (hWindow);
+
     return; 
-};
+}
 
 
 /*
@@ -583,48 +559,61 @@ void logon_create_background (void)
 	unsigned long Left = (unsigned long) SCREEN_DEFAULT_LEFT;
 	unsigned long Top  = (unsigned long) SCREEN_DEFAULT_TOP;
 	unsigned long Width = (unsigned long) screenGetWidth();
-	unsigned long Height = (unsigned long) screenGetHeight();	
+	unsigned long Height = (unsigned long) screenGetHeight();
 
 	//Debug:
-	//printf("logon_create_background createwindow\n");				   
+	//printf("logon_create_background createwindow\n");
 	//refresh_screen();
 
 	//O background pertence ao desktop0.
-	hWindow = (void*) CreateWindow( 1, 0, 0, "Background", 
-	                                Left, Top, Width, Height, 
-							        gui->screen, 0, 0, COLOR_BACKGROUND );
-													
-	if( (void*) hWindow == NULL){
-	    printf("logon_create_background:");
-		die();
-	}else{
-	    
+    hWindow = (void *) CreateWindow ( 1, 0, 0, "Background", 
+                          Left, Top, Width, Height, 
+                          gui->screen, 0, 0, COLOR_BACKGROUND );
+
+   if ( (void *) hWindow == NULL )
+   {
+        printf ("logon_create_background:");
+        die ();
+ 
+   }else{
+ 
 		RegisterWindow(hWindow);
 	    windowLock(hWindow); 
 		set_active_window(hWindow); 
+	    
 	    //a janela pertence ao desktop 0
 	    //hWindow->desktop = (void*) desktop0;
 
-		if( (void*) gui == NULL){
+		if ( (void *) gui == NULL )
+		{
 		    return;
 		}else{
-	        gui->background = (void*) hWindow;
-		};	
+	        gui->background = (void *) hWindow;
+		};
 
-	};
-	
+    };
+
+
 done:
-    SetFocus(hWindow);
-    //windowLock(hWindow);	
+
+    // #bugbug
+    // Fazer isso aqui pode repintar essa janela e a sua janela mãe;
+
+    //SetFocus (hWindow);
+    
+    //windowLock(hWindow);
+
     return; 
-};
+}
 
 
 /*
  *************************************************
  * logon_create_mainwindow:
  *      A área de trabalho.
- *      *Importante: É a área disponível na tela para o aplicativo. 
+ * 
+ *  #Importante: 
+ *  É a área disponível na tela para o aplicativo. 
  */
 
 void logon_create_mainwindow (void){
@@ -659,7 +648,11 @@ void logon_create_mainwindow (void){
 	// Mas ela precisa ter todos os elementos da estrutura,
 	// pois ela server de referência.
 	
-    hWindow = (void *) CreateWindow ( 1, 0, VIEW_MINIMIZED, "logon desktop window", 
+	// # minimized
+	// não pode ser pintada nem repintada.
+	
+    //hWindow = (void *) CreateWindow ( 1, 0, VIEW_MINIMIZED, "MAIN", 
+    hWindow = (void *) CreateWindow ( WT_SIMPLE, 0, VIEW_NORMAL, "MAIN", 
                            Left, Top, Width, Height,           
                            gui->screen, 0, 0, COLOR_WINDOW  );
 	
@@ -669,12 +662,11 @@ void logon_create_mainwindow (void){
 	    die ();
 		
 	}else{   
-	    		
-	    RegisterWindow(hWindow);
-		
-	    windowLock (hWindow); 
-		set_active_window (hWindow); 
-		
+
+        RegisterWindow(hWindow);
+        windowLock (hWindow); 
+        set_active_window (hWindow); 
+
 		// TTY window,
 		
 	    if ( (void *) CurrentTTY == NULL )
@@ -706,7 +698,7 @@ void logon_create_mainwindow (void){
 	// ## Desktop Window ##
     //
 	
-	gui->desktop = (void*) gui->main;
+	gui->desktop = (void *) gui->main;
 	
 	if ( (void *) gui->desktop == NULL )
 	{	
@@ -724,7 +716,8 @@ void logon_create_mainwindow (void){
 	// RegisterWindow(gui->desktop);
 	
 done:
-    // SetFocus (hWindow);
+
+    SetFocus (hWindow);
     
 	return;
 }
@@ -776,9 +769,10 @@ void logon_create_controlmenu (void)
  */
 void logon_create_infobox (void)
 {
-   //@todo: trocar isso por message window, aquela janela amarela de mensagens.
+   // #todo: 
+   // trocar isso por message window, aquela janela amarela de mensagens.
     return; //Nothing for now.
-};
+}
 
 
 /*
@@ -789,7 +783,7 @@ void logon_create_infobox (void)
 void logon_create_messagebox (void)
 { 
     return; 
-};
+}
 
 
 /*
@@ -800,7 +794,7 @@ void logon_create_messagebox (void)
 void logon_create_debug (void)
 { 
     return; //Nothing for now.
-};
+}
 
 
 /*
@@ -813,80 +807,18 @@ void logon_create_debug (void)
  *     Usada para navegação simples. 
  *     Fica em baixo.
  *     A barra de navegação da tela de logon pode ser um pouco mais larga.
- *
  */
+
 void logon_create_navigationbar (void)
 {
 	
 /*
- * #suspensa
+ * # cancelada
+ */
  
-    struct window_d *hWindow; 
+    return; 
+}
 
-	unsigned long Left = (unsigned long) SCREEN_DEFAULT_LEFT;
-	unsigned long Top  = (unsigned long) SCREEN_DEFAULT_TOP;
-	unsigned long Width = (unsigned long) screenGetWidth();
-	unsigned long Height = (unsigned long) screenGetHeight();
-
-	if( (void*) gui == NULL ){
-        return;
-    };		
-	
-	//A navigation bar pertence a janela principal.
-	hWindow = (void*) CreateWindow( 1, 0, 0, "NavigationBar", 
-	                                 Left, Height-(8*5), Width, (8*5), 
-									gui->screen, 0, 0, COLOR_BLACK); 
-	if( (void*) hWindow == NULL)
-	{
-	    printf("logon_create_navigationbar:");
-		die();
-		//refresh_screen();
-	    //while(1){};
-	}else{
-	    		
-        //navigation bar como foreground window inicialmente.		
-		//set_current_foreground(desktop0, gui->navigationbar);
-		
-		RegisterWindow(hWindow);
-	    windowLock(hWindow); 
-		set_active_window(hWindow); 
-		
-	    //a janela pertence ao desktop 0
-	    //hWindow->desktop = (void*) desktop0;
-		gui->navigationbar = (void*) hWindow;
-	};
-
-	// Buttons.
-draw_buttons:	
-    draw_button( gui->navigationbar, "MENU", 1, 2, 2, 48, 20, COLOR_BLACK);	
-	
-   
-//	//Start
-//    draw_button( gui->navigationbar, "F1=START", 1,  
-//	             6*(480/8), 8, 100, 24, 
-//				 COLOR_WINDOW);	
-//    
-//				 
-//    //Reboot
-//    draw_button( gui->navigationbar, "F2=REBOOT", 1,  
-//	             8*(480/8), 8, 100, 24, 
-//				 COLOR_WINDOW);	
-			
-	
-    //
-    // Text.
-    //
-	
-draw_texts:    
-	draw_text( gui->navigationbar, 1*(600/8), 8, COLOR_WHITE, ".Logon "); 
-	//draw_text( gui->navigationbar, 2*(480/8), 8, COLOR_WHITE, CurrentUser->name_address ); 
-	
-done:
-    SetFocus(hWindow);	
-
-*/	
-	return; 
-};
 
 
 /*
@@ -896,7 +828,7 @@ done:
 void logon_create_grid (void)
 { 
 	return; //Cancelada!
-};
+}
 
 
 /*
@@ -908,113 +840,16 @@ void logon_create_grid (void)
  *     Atribuindo as dimensões.
  *     ...
  */
+
 void logon_create_developer_screen (void)
 {
 	
 /*
- * #suspensa
- 
-    struct window_d *hWindow; 
-	
-	//
-	// @todo: Os parâmetros passados com as dimensões foram
-	//        passados pelo boot loader e estão disponíveis.
-	//
-	
-	//Métrica. 
-	//Precisa ter boa altura.
-	//Não pode atrapalhar as outras que serão basicamente pequenas e centralizadas.
-	//Então ela deve ser estreita e do lado esquerdo... 
-	//Deve ter uma cor distinta... naõ pode preto, azul, nem verde, nem rosa...
-	//Será laranjada.
-	unsigned long Left = (unsigned long) SCREEN_DEFAULT_LEFT;
-	unsigned long Top  = (unsigned long) SCREEN_DEFAULT_TOP;
-	unsigned long Width = (unsigned long) screenGetWidth();
-	unsigned long Height = (unsigned long) screenGetHeight();
-	
-    
-    Width = (Width/2);	
-	
-	//
-	//
-	//
-	//
-	
-	// Screen - Não tem parent window.
-	hWindow = (void*) CreateWindow( 3, 0, VIEW_NORMAL, "{} DEVELOPER SCREEN", 
-	                                Left, Top, Width, Height, 
-							        NULL, 0, COLOR_ORANGE, COLOR_BLUE );  
-	if( (void*) hWindow == NULL ){
-	    printf("logon_create_developer_screen:");
-		die();
-		//refresh_screen();
-	    //while(1){};
-	}else{
-	    
-		RegisterWindow(hWindow);
-	    windowLock(hWindow);     //?? 
-		set_active_window(hWindow); 
-		
-		//a janela pertence ao desktop 0
-	    //hWindow->desktop = (void*) desktop0;
+ * # cancelada.
+ */
 
-		//
-		// Mais métricas.
-		//
-		hWindow->left    = Left;
-	    hWindow->top     = Top;
-		hWindow->width   = Width; 
-		hWindow->height  = Height;
-		hWindow->right   = (Left+Width);
-		hWindow->bottom  = (Top+Height);
-		//...
-		
-		//Cursor
-		hWindow->cursor_x = Left;
-		hWindow->cursor_y = Top;
-		
-		
-		//salva na estrutura gui->
-		if( (void*) gui == NULL){
-		    return;
-		}else{
-	        gui->DEVELOPERSCREEN = (void*) hWindow;
-		};
-	};
-	
-done:
-    //
-	// *IMPORTANTE:
-	//
-	//  TRAVAREMOS A JANELA EM PRIMEIRO PLANO E COM O FOCO DE ENTRADA.
-    //  NENHUMA OUTRA JANELA PODERÁ GANHAR O FOCO.
-    //  
-    // Até que a interface gráfica fique mais robusta, apenas a janela 
-    // dodesenvolvedor ficará com o foco de entrada.  	
-	//
-	
-	//ganho o foco.
-	SetFocus(hWindow);
-	
-	//trava o foco nela.
-	//não criaremos uma rotina para manipular essa variável...
-	//e ela será usada apenas uma vez. 
-	// essa variável será uma flag na rotina SetFocus(.).
-	//e ficará definida no começo do arquivo window.h.
-	//_lockfocus = 1;
-	
-
-	//ERRO NA CRIAÇÃO DA ESTRUTURA.
-	if( (void*) gui->DEVELOPERSCREEN == NULL ){
-		printf("logon_create_developer_screen: gui->DEVELOPERSCREEN");
-		die();
-		//refresh_screen();
-		//while(1){};
-	};
-	
-*/
     return; 
-};
+}
 
 
 /*
@@ -1022,7 +857,7 @@ done:
  * LogonProcedure:
  *     O procedimento de janela do Logon.
  *
- */		
+ */
 
 unsigned long 
 LogonProcedure ( struct window_d *window, 
@@ -1050,7 +885,7 @@ LogonProcedure ( struct window_d *window,
 					ExitLogon ();
 				    sys_reboot ();				
                     break;				
-														
+				
 				default:
                     //Nothing.
 				    break;
@@ -1063,11 +898,14 @@ LogonProcedure ( struct window_d *window,
 	};
 	
 // Done.
+
 done:
-	//Refresh screen. 
-	if(VideoBlock.useGui == 1){
+
+	if (VideoBlock.useGui == 1)
+	{
 	    refresh_screen();
 	};
+
 	return (unsigned long) 0;
 }
 
@@ -1077,8 +915,10 @@ done:
 /*
  **********************************************
  * init_logon:
+ * 
  *     Inicializa o Logon.
  *     Obs: Aceita argumentos.
+ * 
  * Argumentos:
  * -l ou /l; ...
  */
@@ -1154,11 +994,13 @@ int init_logon (int argc, char *argv[]){
 	//...
 	
 done:
+
 	//printf("init_logon: Initializing..\n");
     SetProcedure ( (unsigned long) &LogonProcedure);
     logonStatus = 1;	
 	//g_logged = (int) 0;
-	
+
+
 	return 0;
 }
 
@@ -1168,7 +1010,8 @@ int logonInit()
 {}
 */
 
+
 //
-//fim.
+// End.
 //
 
