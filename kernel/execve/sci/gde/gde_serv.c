@@ -984,7 +984,8 @@ void *gde_services ( unsigned long number,
 
 		//34	
         case SYS_VIDEO_SETCURSOR: 
-			sys_set_up_cursor ( (unsigned long) arg2, (unsigned long) arg2);
+			sys_set_up_cursor ( (unsigned long) arg2, 
+			                    (unsigned long) arg3 );
 			break;              
 
 		//35 - Configura o procedimento da tarefa atual.
