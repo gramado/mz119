@@ -333,6 +333,10 @@ struct process_d
 	char *name;                    //Nome do processo. 
 	//unsigned long name_address;    //@todo: não usar isso.
 
+    //#test
+    //Assim fica mais fácil enviar para o aplicativo.
+    char __processname[64];    // HOSTNAME_BUFFER_SIZE
+    size_t processName_len;    // len 
 
     //
     // Standard input.
@@ -887,6 +891,13 @@ struct process_info_d
 //
 // Protótipos de função.
 //
+
+unsigned long __GetProcessStats ( int pid, int index );
+
+int getprocessname ( int pid, char *buffer );
+
+
+
 
 // t900
 //clona e executa o filho dado o nome do filho.

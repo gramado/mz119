@@ -99,6 +99,290 @@ int process_profiler()
 */
 
 
+
+unsigned long __GetProcessStats ( int pid, int index )
+{
+	
+    struct process_d *p;
+
+    //#todo:
+    //checar validade dos argumentos.
+
+	//Struct.
+    p = (void *) processList[pid];
+
+    if ( (void *) p == NULL )
+    {
+        printf ("__GetProcessStats: struct \n");
+        return 0; 
+
+    } else {
+        //checar validade.
+		//...
+    };
+
+	
+	
+	
+	
+    switch ( index )
+    {
+
+        case 1:
+           return (unsigned long) p->pid;
+           break;            
+            
+        case 2:
+           return (unsigned long) p->ppid;
+           break;            
+
+        case 3:
+           return (unsigned long) p->uid;
+           break;            
+
+        case 4:
+           return (unsigned long) p->gid;
+           break; 
+           
+       //state    
+       case 5:
+           return (unsigned long) p->state;
+           break;                      
+           
+       case 6:
+           return (unsigned long) p->plane;
+           break;              
+           
+       case 7:
+           return (unsigned long) p->input_type;
+           break;              
+
+       case 8:
+           return (unsigned long) p->personality;
+           break;              
+
+       case 9:
+           return (unsigned long) p->appMode;
+           break;              
+
+        
+       case 10:
+           return (unsigned long) p->private_memory_size;
+           break;  
+           
+       case 11:
+           return (unsigned long) p->shared_memory_size;
+           break;          
+
+
+
+       case 12:
+           return (unsigned long) p->workingset_size;
+           break;          
+
+
+       case 13:
+           return (unsigned long) p->workingset_peak_size;
+           break;          
+
+
+       case 14:
+           return (unsigned long) p->pagefaultCount;
+           break;          
+
+
+       case 15:
+           return (unsigned long) p->DirectoryPA;
+           break;
+           
+       case 16:
+           return (unsigned long) p->DirectoryVA;
+           break;
+
+     
+       //image address.    
+       case 17:
+           return (unsigned long) p->Image;
+           break;
+
+       case 18:
+           return (unsigned long) p->ImagePA;
+           break;
+
+
+       case 19:
+           return (unsigned long) p->childImage;
+           break;
+           
+        case 20:
+           return (unsigned long) p->childImage_PA;
+           break;
+          
+       case 21:
+           return (unsigned long) p->Heap;
+           break;
+
+       case 22:
+           return (unsigned long) p->HeapEnd;
+           break;
+           
+       case 23:
+           return (unsigned long) p->HeapSize;
+           break;
+
+
+       case 24:
+           return (unsigned long) p->HeapPointer;
+           break;
+
+       case 25:
+           return (unsigned long) p->HeapLastValid;
+           break;
+
+       case 26:
+           return (unsigned long) p->HeapLastSize;
+           break;
+
+       case 27:
+           return (unsigned long) p->Stack;
+           break;
+           
+       case 28:
+           return (unsigned long) p->StackEnd;
+           break;
+
+
+       case 29:
+           return (unsigned long) p->StackSize;
+           break;
+
+       case 30:
+           return (unsigned long) p->StackOffset;
+           break;
+
+
+       case 31:
+           return (unsigned long) p->iopl;
+           break;
+           
+       case 32:
+           return (unsigned long) p->base_priority;
+           break;
+           
+       case 33:
+           return (unsigned long) p->priority;
+           break;
+
+       case 34:
+           return (unsigned long) p->step;
+           break;
+
+
+       case 35:
+           return (unsigned long) p->quantum;
+           break;
+
+       case 36:
+           return (unsigned long) p->timeout;
+           break;
+           
+           
+       case 37:
+           return (unsigned long) p->ticks_remaining;
+           break;
+
+       case 38:
+           return (unsigned long) p->profiler_percentage_running;
+           break;
+           
+           
+       case 39:
+           return (unsigned long) p->profiler_ticks_running;
+           break;
+
+       case 40:
+           return (unsigned long) p->profiler_last_ticks;
+           break;
+
+       case 41:
+           return (unsigned long) p->threadCount;
+           break;
+
+       case 42:
+           return (unsigned long) p->bound_type;
+           break;
+
+       case 43:
+           return (unsigned long) p->preempted;
+           break;
+
+       case 44:
+           return (unsigned long) p->saved;
+           break;
+
+       case 45:
+           return (unsigned long) p->PreviousMode;
+           break;
+
+
+       case 46:
+           return (unsigned long) p->wait4pid;
+           break;
+
+       case 47:
+           return (unsigned long) p->exit_code;
+           break;
+
+       case 48:
+           return (unsigned long) p->signal;
+           break;
+           
+       case 49:
+           return (unsigned long) p->signal_mask;
+           break;
+
+       case 50:
+           return (unsigned long) p->dialog_address;
+           break;
+    };
+    
+    return 0;
+}
+
+
+
+//pega o nome do processo.
+int getprocessname ( int pid, char *buffer )
+{
+	struct process_d *p;
+	
+    char *name_buffer = (char *) buffer;
+
+    //#todo
+    //checar validade dos argumentos.
+ 
+    p = (struct process_d *) processList[pid]; 
+
+    if ( (void *) p == NULL )
+    {
+		return -1;
+    }else{
+    
+        if ( p->used != 1 || p->magic != 1234 )
+        {
+             return -1;
+        }
+        
+        // 64 bytes
+        strcpy ( name_buffer, (const char *) p->__processname );       
+        
+        return (int) p->processName_len;
+    };
+    return -1;
+}
+
+
+
 /*
  ****************************
  * do_clone_execute_process:  (t900)
@@ -1852,6 +2136,12 @@ get_next:
 		Process->name = (char *) name; //@todo: usar esse.
 		//Process->cmd = NULL;  //nome curto que serve de comando.
         //Process->pathname = NULL;
+        
+        
+        //#test
+        //64 bytes máx.
+        strcpy ( Process->__processname, (const char *) name); 
+        
 
 		// Lista de streams...
 		// #todo: 

@@ -304,7 +304,42 @@ void *gde_extra_services ( unsigned long number,
     {
 		return (void *) __setusername ( (const char *) arg2); 
     }
+    
+    
+    
+    
+    
+    // Get process stats given pid
+    // IN: pid, number
+    if ( number == 880 )
+    {
+       return (void *) __GetProcessStats ( (int) arg2, (int) arg3 );
+    }
 
+    // get thread stats given tid
+    // IN: tid, number
+    if ( number == 881 )
+    {
+        return (void *) __GetThreadStats ( (int) arg2, (int) arg3 );
+    }
+
+
+
+    //get process name
+    if ( number == 882 )
+    {
+		return (void *) getprocessname ( (int) arg2, (char *) arg3);
+    }
+
+    //get thread name
+    if ( number == 883 )
+    {
+		return (void *) getthreadname ( (int) arg2, (char *) arg3);
+    }
+ 
+ 
+ 
+ 
  
 	// t900
 	//clona e executa o filho dado o nome do filho.

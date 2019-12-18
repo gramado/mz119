@@ -244,8 +244,15 @@ struct thread_d
 	unsigned long name_address;
 	unsigned long name_pointer;   	
 	char short_name[4];
-	char *cmd;	
-	
+	char *cmd;
+
+    //#test
+    //Assim fica mais fácil enviar para o aplicativo.
+    char __threadname[64];    // HOSTNAME_BUFFER_SIZE
+    size_t threadName_len;    // len 
+
+
+
     //
 	// ## CPU support ##
 	//
@@ -745,6 +752,12 @@ unsigned long
 thread_get_profiler_percentage ( struct thread_d *thread);
 
 void thread_show_profiler_info (void);
+
+
+int getthreadname ( int tid, char *buffer );
+
+
+unsigned long __GetThreadStats ( int tid, int index );
 
 //
 // End.
