@@ -538,29 +538,7 @@ system_procedure ( struct window_d *window,
 	};
 	
 	
-	switch (msg)
-	{
-        //
-        // Mouse.
-        //
 
-        // Vamos tratar aqui vários eventos de mouse.
-        case 30:
-        case 31:
-            return (unsigned long) kgwm_mouse_dialog ( window, 
-                                       msg, 
-                                       long1, 
-                                       long2 );
-            break;
-
-
-        default:    
-            break;
-	
-	}    
-	
-	// #debug
-	return 0;
 
     //
     // ================= CUT HERE =============
