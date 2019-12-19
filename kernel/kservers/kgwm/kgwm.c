@@ -1529,8 +1529,15 @@ kgwm_window_control_dialog ( struct window_d *window,
                              unsigned long long1,
                              unsigned long long2 )
 {
-	
-	
+
+    //#bugbug
+    if ( window->isControl != 1 )
+    {
+		printf ("kgwm_window_control_dialog: isControl ?");
+		die ();
+		//return 0;
+    }
+
 	switch (msg)
 	{
 
@@ -1545,20 +1552,7 @@ kgwm_window_control_dialog ( struct window_d *window,
 				    if ( window->isButton == 1 )
 				    {
 						button_down ( window );
-						
-                        //update_button ( (struct button_d *) window->button,
-                            //(unsigned char *) window->button->string,
-                            //(int) window->button->style,
-                            //(int) BS_PRESS,
-                            //(int) window->button->type,
-                            //(unsigned long) window->button->x, 
-                            //(unsigned long) window->button->y, 
-                            //(unsigned long) window->button->width, 
-                            //(unsigned long) window->button->height, 
-                            //(unsigned long) window->button->color );
-						
-						//redraw_button ( (struct button_d *) window->button );
-						//show_window_rect (window);
+
 			            //#debug
 			            printf ("kgwm_window_control_dialog: mouse keydown, window name %s \n",
 			                window->name ); 
@@ -1578,25 +1572,47 @@ kgwm_window_control_dialog ( struct window_d *window,
 				    if ( window->isButton == 1 )
 				    {
 						button_up ( window );
-						
-                        //update_button ( (struct button_d *) window->button,
-                            //(unsigned char *) window->button->string,
-                            //(int) window->button->style,
-                            //(int) BS_DEFAULT,
-                            //(int) window->button->type,
-                            //(unsigned long) window->button->x, 
-                            //(unsigned long) window->button->y, 
-                            //(unsigned long) window->button->width, 
-                            //(unsigned long) window->button->height, 
-                            //(unsigned long) window->button->color );
-						
-						//redraw_button ( (struct button_d *) window->button );
-						//show_window_rect (window);
 
 			        //#debug
 			        printf ("kgwm_window_control_dialog: mouse keyup, window name %s \n",
 			            window->name ); 
 			        refresh_screen();
+			        
+			        if ( window->isMinimize == 1 ){}
+			        if ( window->isMaximize == 1 ){}
+			        if ( window->isClose == 1 ){}
+			        
+			        if ( window->isScrollBarButton1 == 1 )
+                    {
+			            printf ("Scroll Bar: ^ \n"); 
+			            refresh_screen();
+			            
+			            //#test
+			            window->control->window = window; //afeta esse botão
+			            window->control->msg = 8812; //scroll up.
+			            window->control->long1 = 0;
+			            window->control->long2 = 0;
+			            window->control->newmessageFlag = 1;
+
+                    }
+                    if ( window->isScrollBarButton2 == 1 )
+                    {
+			            printf ("Scroll Bar: = \n"); 
+			            refresh_screen();
+                    }
+			        if ( window->isScrollBarButton3 == 1 )
+                    {
+			            printf ("Scroll Bar: V \n"); 
+			            refresh_screen();
+			            
+			            //#test
+			            window->control->window = window; //afeta esse botão
+			            window->control->msg = 8811; //scroll down.
+			            window->control->long1 = 0;
+			            window->control->long2 = 0;
+			            window->control->newmessageFlag = 1;
+                    }
+			        
 			        return 0;
 					}
 				    break;

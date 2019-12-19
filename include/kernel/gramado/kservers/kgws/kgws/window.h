@@ -943,10 +943,15 @@ struct window_d
 
 	// scroll bar
     struct window_d *scrollbar;
-    struct window_d *scrollbar_button1;
-    struct window_d *scrollbar_button2;
-    struct window_d *scrollbar_button3;
-
+    struct window_d *scrollbar_button1; // ^
+    struct window_d *scrollbar_button2; // =
+    struct window_d *scrollbar_button3; // V
+    
+    int isScrollBarButton1;
+    int isScrollBarButton2;
+    int isScrollBarButton3;
+ 
+ 
 //==================================================
 
     struct window_d *statusbar;
@@ -1186,6 +1191,11 @@ struct window_d
     struct window_d *minimize;
     struct window_d *maximize;
     struct window_d *close;
+    
+    //#teste
+    int isMinimize;
+    int isMaximize;
+    int isClose;
 
 //==================================================    
 

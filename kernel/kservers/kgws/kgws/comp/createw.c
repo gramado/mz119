@@ -1121,6 +1121,7 @@ void *CreateWindow ( unsigned long type,
 			windowButton1->top    = window->top +2;
 			windowButton1->bottom = windowButton1->top +32; 
 			windowButton1->isControl = 1; // Esse botão é um controle.
+			windowButton1->isMinimize = 1;
 
 			RegisterWindow (windowButton1);
 			window->minimize = windowButton1;
@@ -1142,7 +1143,8 @@ void *CreateWindow ( unsigned long type,
 			windowButton2->top    = window->top +2;
 			windowButton2->bottom = windowButton2->top +32; 
 			windowButton2->isControl = 1; // Esse botão é um controle.
-
+            windowButton2->isMaximize = 1;
+            
 			RegisterWindow (windowButton2);
 			window->minimize = windowButton2;
         }
@@ -1163,7 +1165,8 @@ void *CreateWindow ( unsigned long type,
 			windowButton3->top    = window->top +2;
 			windowButton3->bottom = windowButton3->top +32; 
             windowButton3->isControl = 1; // Esse botão é um controle.
-
+            windowButton3->isClose = 1;
+            
 			RegisterWindow (windowButton3);
 			window->close = windowButton3;
          }
@@ -1339,7 +1342,7 @@ void *CreateWindow ( unsigned long type,
 			//
 
 			//Salva o ponteiro.
-			window->rcClient = (void*) clientRect;
+			window->rcClient = (void *) clientRect;
 			
 			// Object stuff.
 			window->rcClient->objectType = ObjectTypeRectangle;
@@ -1526,6 +1529,7 @@ void *CreateWindow ( unsigned long type,
 		// Registrar.
 		RegisterWindow (windowButton4); 
 		windowButton4->isControl = 1;  // Esse botão é um controle.
+		windowButton4->isScrollBarButton1 = 1;
         window->scrollbar_button1 = windowButton4; 
 		
 		//#test	
@@ -1536,7 +1540,6 @@ void *CreateWindow ( unsigned long type,
 		}
 
 	    //Botão do meio da scrollbar vertival
-		
 		// Criar.
 		windowButton5 = CreateWindow ( WT_BUTTON, 1, 1, "=", 
 	                        window->left + 1, window->top +(window->height/2), 
@@ -1548,11 +1551,10 @@ void *CreateWindow ( unsigned long type,
 		// Registrar.
 		RegisterWindow (windowButton5);
 		windowButton5->isControl = 1;  // Esse botão é um controle.
-		window->scrollbar_button3 = windowButton5;
-		
-	    //botão 2 da barra horizontal.
+		windowButton5->isScrollBarButton2 = 1;
+		window->scrollbar_button2 = windowButton5;
+	
         //Botão de baixo da scrollbar vertival
-	    
 		// Criar.
 		windowButton6 = CreateWindow ( WT_BUTTON, 1, 1, "v", 
 	                        window->left +1, window->top +(window->height -32 -1), 
@@ -1564,7 +1566,8 @@ void *CreateWindow ( unsigned long type,
 		// Registrar.
 		RegisterWindow (windowButton6);
 		windowButton6->isControl = 1;  // Esse botão é um controle.
-		window->scrollbar_button2 = windowButton6;
+		windowButton6->isScrollBarButton3 = 1;
+		window->scrollbar_button3 = windowButton6;
 		
 	}
 
@@ -1824,11 +1827,19 @@ done:
 	//    RegisterWindow (window);	
 	//}
 	
-	//#teste
-	//Associando a janela criada a trhead atual, que chamou essa rotina.
-	//o problema é na hora da inicialização.
 
-        window->control = (struct thread_d *) threadList[current_thread];
+    //
+    // Thread.
+    //
+
+	// Associando a janela criada a trhead atual, 
+	// que chamou essa rotina. O problema é na hora da inicialização.
+    // #importante: Quando criarmos uma janela do tipo controle
+    // uma thread será associada à ela. Então o window manager
+    // poderá mandar mensagem para o procedimento de janela
+    // do aplicativo avisando dos efeitos dobre o controle.
+
+    window->control = (struct thread_d *) threadList[current_thread];
 
         if ( (void *) window->control != NULL )
         {
