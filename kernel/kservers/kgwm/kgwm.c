@@ -1554,9 +1554,9 @@ kgwm_window_control_dialog ( struct window_d *window,
 						button_down ( window );
 
 			            //#debug
-			            printf ("kgwm_window_control_dialog: mouse keydown, window name %s \n",
-			                window->name ); 
-			            refresh_screen();
+			            //printf ("kgwm_window_control_dialog: mouse keydown, window name %s \n",
+			             //   window->name ); 
+			            //refresh_screen();
 			            return 0;
 					}
 				    break;
@@ -1574,9 +1574,9 @@ kgwm_window_control_dialog ( struct window_d *window,
 						button_up ( window );
 
 			        //#debug
-			        printf ("kgwm_window_control_dialog: mouse keyup, window name %s \n",
-			            window->name ); 
-			        refresh_screen();
+			        //printf ("kgwm_window_control_dialog: mouse keyup, window name %s \n",
+			            //window->name ); 
+			        //refresh_screen();
 			        
 			        if ( window->isMinimize == 1 ){}
 			        if ( window->isMaximize == 1 ){}
@@ -1584,8 +1584,8 @@ kgwm_window_control_dialog ( struct window_d *window,
 			        
 			        if ( window->isScrollBarButton1 == 1 )
                     {
-			            printf ("Scroll Bar: ^ \n"); 
-			            refresh_screen();
+			            //printf ("Scroll Bar: ^ \n"); 
+			            //refresh_screen();
 			            
 			            //#test
 			            window->control->window = window; //afeta esse botão
@@ -1602,8 +1602,8 @@ kgwm_window_control_dialog ( struct window_d *window,
                     }
 			        if ( window->isScrollBarButton3 == 1 )
                     {
-			            printf ("Scroll Bar: V \n"); 
-			            refresh_screen();
+			            //printf ("Scroll Bar: V \n"); 
+			            //refresh_screen();
 			            
 			            //#test
 			            window->control->window = window; //afeta esse botão

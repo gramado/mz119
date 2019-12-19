@@ -460,6 +460,10 @@ system_procedure ( struct window_d *window,
 	
 	//struct window_d *w;
 	
+	
+	// #debug
+	//return 0;
+	
 
 	//
 	// Checamos se a janela com o focod e entrada é válida.
@@ -532,7 +536,35 @@ system_procedure ( struct window_d *window,
 	
 	    //...
 	};
+	
+	
+	switch (msg)
+	{
+        //
+        // Mouse.
+        //
 
+        // Vamos tratar aqui vários eventos de mouse.
+        case 30:
+        case 31:
+            return (unsigned long) kgwm_mouse_dialog ( window, 
+                                       msg, 
+                                       long1, 
+                                       long2 );
+            break;
+
+
+        default:    
+            break;
+	
+	}    
+	
+	// #debug
+	return 0;
+
+    //
+    // ================= CUT HERE =============
+    //
 
 	// *importante:
 	// Desejamos que as teclas de controle sejam tratadas por esse 
