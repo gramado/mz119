@@ -405,8 +405,11 @@ void procTestF6 (void){
  *
  * OBS: ESSE PROCEDIMENTO É INVOCADO POR 'ldisc.c' NA ROTINA LINEDISCIPLINE(..)
  *      POR ENQUANTO ESTÁ PASSANDO UM HANDLE DE JANELA NULO. 
- *
  */
+
+// #todo
+// Vamos redirecionar as mensagens aqui.
+// Cada uma para seu respectivo diálogo.
 
 unsigned long 
 system_procedure ( struct window_d *window, 
@@ -541,39 +544,33 @@ system_procedure ( struct window_d *window,
     switch (msg)
     {
 
-		//teclas de digitação.
-		case MSG_KEYDOWN:
+        // Teclas de digitação.
+        // O procedimento de janelas do sistema 
+        // normalmente ignora as teclas de digitação.
+
+        case MSG_KEYDOWN:
             switch (long1)
-            {	
-				// [ ENTER ]
-				case VK_RETURN:
-				    
-					//#test
-					//printf("\r");
-					//printf("\n");
-					
-					//input esta em stdio.c
-					//#test
-					//input( (unsigned long) long1);  
-					goto done;
-					break;
-					
-				//??isso deveria ser do sistema ??
-				//usando o scape para fechar a janela com o foco de entrada.
+            {
+
+				// O procedimento de janelas do sistema 
+				// normalmente ignora as teclas de digitação.
+                case VK_RETURN:
+                    goto done;
+                    break;
+
+
+				// O procedimento de janelas do sistema 
+				// normalmente ignora as teclas de digitação.
                 case VK_ESCAPE:
-				    alt_status = 0;
-					ctrl_status = 0;
-					shift_status = 0;
-					//Mensagem para fechar a janela passada via argumento.
-					//SendMessage(window,MSG_DEVELOPER,1,0);
-					//CloseWindow(window);
-                    KillFocus(window);
-					goto done;
-				    break;
-					
-				//Obs: Não deve ser preocupação do desenvolvedor de aplicação 
+                    goto done;
+                    break;
+
+
+
+				//Obs: 
+				// Não deve ser preocupação do desenvolvedor de aplicação 
 				//incrementar o cursor quando pressiona a seta.
-				//por isso vou tratálas aqui.
+				//por isso vou tratá las aqui.
 				
 				//# bugbug problemas no 'i'.
 				
@@ -592,111 +589,64 @@ system_procedure ( struct window_d *window,
 				//case VK_UP:
 				//    g_cursor_y--;
 				//	break;
-				
-				
 
-                //??quem deve tratar essa tecla ?? 
-                //o tab deve fazer parte das teclas de difitação. ??
+
+
+				// Avançar o cursor.
                 case VK_TAB:
-					//if(AltStatus == 1){
-                    //    //@todo: Chama uma rotina que muda a janela com o foco de entrada.
-					//	break;
-					//};
-					
-					//#test
-					//printf("\t");
-					
-					//#test
-					//input( (unsigned long) long1);  
-					goto done;
-				    break;
-                
-				//??quem deve tratar essa tecla ??
-				case VK_BACK:
-				    
-					//#test
-					//g_cursor_x--;
-					//printf(" ");
-					
-					//#test
-					//input( (unsigned long) long1);  
-					goto done;
+                    goto done;
                     break;
-					
-				case VK_PAUSE:
-                    //#test
-					//if(CtrlStatus == 1){
-					//    KiInformation();
-					//}
-					goto done;
-					break;	
-	
-					//Se for do tipo terminal as teclas de digitação se 
-					//serão tratadas pelo procedimento de janelas do terminal.
-					//para isso é só ir para o fim desse procedimento.
-					//if( window->terminal == 1 ){
-					//    goto do_terminal;	
-					//}
-						
-					//
-					// *importante:
-					// Podemos imprimir nesse momento, pois a impressão está correta e 
-					// deixarmos o input sem imprimir. O que parece ser normal, input
-					// apenas por dentro do buffer.
-					//
-						
-					//printf deve imprimir no caso de tab ou espaço...
-					//input só vai mexer com o buffer
-	
-	                // Isso funciona, porque printf incrementa o cursor antes 
-					// de imprimir o char no backbuffer. Tem caso que ele 
-					// manipula o cursor e não imprime nada.
-						
-					// printf deveria imprimir na janela com o foco de entrada.
-					// obs: printf usa o cursor do sistema. Para imprimir na janela temos 
-					// que auterar o cursor do sistema para ficar com as dimensões da 
-					// janela com o foco de entrada. shell.bin agradece.
-					
-					//#bugbug: Problemas com o cursor. Está saltando a cada 
-					//caractere digitado. Mas o refresh funciona bem.
-					
-					//teste
-					//#IMPORTANTE: ISSO FOI CANCELADO PORQUE A LIB EM USER MODE 
-					//AGORA IMPRIME OS CARACTERES E FAZ O REFRESH DO CHAR.
-					
-					//printf("%c", (char) long1);
-		            //refresh_rectangle( g_cursor_x*8, g_cursor_y*8, 8, 8 );
-						
-			        //
-					// input:
-					// Devemos nos certificar que input não imprima nada.
-					//
-								//teclas de digitação para o editbox.   
-                
-				default:	
-					//#test
-					//input( (unsigned long) long1);      //Coloca no stdin
-					goto done;
+
+
+				// Voltar o cursor,
+                case VK_BACK:
+                    goto done;
+                    break;
+
+
+                case VK_PAUSE:
+                    goto done;
+                    break;
+
+
+				// O procedimento de janelas do sistema 
+				// normalmente ignora as teclas de digitação.
+                default:
+                    goto done;
                     break; 
-            };		
-			break;
-          
-		//## Teclas do sistema interceptadas pelo kernel ##   
-        // F1 ~  F4 (usadas pelos aplicativos)
-        // F5 ~  F8 (usados pelo sistema nessa fase do desenvolvimento)
-		// F9 ~  F12 (usadas pelos aplicativos)
+            };
+            break;
+
+
+        // Teclas de digitação.
+        // O procedimento de janelas do sistema 
+        // normalmente ignora as teclas de digitação.
+
+        //case MSG_KEYUP:
+            //break;
+
+
+        // Teclas do sistema.
+        // O aplicativo pode deixar o sistema tratar esse tipo de tecla.
+        // F1~F4  (usadas pelos aplicativos)
+        // F5~F8  (* usados pelo sistema nessa fase do desenvolvimento)
+        // F9~F12 (usadas pelos aplicativos)
+
         case MSG_SYSKEYDOWN:     
             switch (long1)
             { 
 
+                // Usadas pelos aplicativos.
                 case VK_F1:
                 case VK_F2:
                 case VK_F4:
-                    // Nothing.
                     break;
 
-                //#tests
-				//Vamos usar F5 para testar as funcionalidades dos drivers apenas.
+                //
+                // F5
+                //
+   
+				// Usada para testes.
 				FILE *bmfp;
 				case VK_F5:
 				
@@ -720,7 +670,7 @@ system_procedure ( struct window_d *window,
 					//refresh_rectangle ( 100, 100, 200, 200 ); 
 					
 					//process info
-					//show_process_information ();					
+					//show_process_information ();	
 					
 					//testando driver ahci
 					//ahciSATAInitialize (1);
@@ -773,11 +723,13 @@ system_procedure ( struct window_d *window,
 					//pci_info();     //PCI information.
 				
 					//systemShowDevicesInfo();
-					break;
+                    break;
 
+                //
+                // F6
+                //
 
-                //#testes
-                //Testes diversos.
+                // Usada para testes.
                 case VK_F6:
                     //VAMOS ACORDAR TODO MUNDO QUE ESPEROU POR ESSE MOTIVO.
                     wakeup_scan_thread_reason (WAIT_REASON_TEST);
@@ -823,9 +775,7 @@ system_procedure ( struct window_d *window,
 				    //init_clock(); //clock information
 					//get_cmos_info();
 					//printf( (const char*) stdout->_ptr );
-				    
-					//printf("F6: Testando carregar arquivo ...\n");
-					//procedureMakeTests();
+
 					
 					//Obs: Não usa janelas, isso não mudará o foco.
 					//windowShowWWFMessageBuffers();
@@ -834,9 +784,11 @@ system_procedure ( struct window_d *window,
 					//procedureLinkDriverTest();
                     break;
 
+                //
+                // F7
+                //
 
-
-                //Testing
+                // Usada para testes.
 				case VK_F7:
 					
 					//clonar o pai e executar o filho dado o nome do filho.
@@ -864,191 +816,154 @@ system_procedure ( struct window_d *window,
 					//CurrentTTY->stdout_status = 1;
 					//CurrentTTY->stdout_update_what = 1; //mostra char
                     //CurrentTTY->stdout_update_what = 3;   //mostra tudo (string)
-					
-					break;
-					
-				// Cls. 
-				// (reiniciar as configurações originais)
-                // Seta o foco na janela principal.
-				case VK_F8:
+                    break;
+
+                //
+                // F8
+                //
+
+
+                // Usada para testes.
+                // Faz uma reinicialização de algumas funcionalidades básicas.
+                case VK_F8:
                     ldisc_init_modifier_keys();
 					ldisc_init_lock_keys();
 					videoInit ();
 					SetFocus (gui->main);
 					refresh_screen();
 					goto done;
-					break;
+                    break;
 
-
+                
+                // Usadas pelos aplicativos.
                 case VK_F9:
                 case VK_F10:
                 case VK_F11:
                 case VK_F12:
-                    // Nothing,
                     break;
 
 
-				//#IMPORTANTE
-				//caps lock keydown
-				//#test testando a utilização de maiúsculas,
-				//já que estamos usando o Windos como host e 
-				//ele escreve no diretório com maiúsculas.
+                // Nothing for now!
 				case VK_CAPITAL:
 				    break;
-					
+
+
                 // Nothing for now!
                 case VK_LMENU:
 				    break;
-					
+
+
 				// Nothing for now!
                 case VK_LCONTROL: 
 					break;
-                
+
+
 				// Nothing for now!
 				case VK_LSHIFT:   
 				    break;
-					
-			    //Num Lock.	
-		        case VK_NUMLOCK:
-				    if(numlock_status == 1){
+
+
+                // Num Lock.
+                case VK_NUMLOCK:
+				    if (numlock_status == 1)
+				    {
 					    keyboard_set_leds(LED_NUMLOCK);  
 					    break;
 				    };
 			        break;
-					
+
+
 			    //Scroll Lock.	
 		        case VK_SCROLL:
-				    if(scrolllock_status == 1){
+				    if (scrolllock_status == 1)
+				    {
 		                keyboard_set_leds(LED_SCROLLLOCK);
 					    break;
 				    };
 			        break;
-					
+
+
                 default: 
-				    break;				
+				    break;
 		    };              
         break;
-		
-		/* ## Teclas do sistema interceptadas pelo kernel ## */  
-		
-		case MSG_SYSKEYUP: 
+
+
+
+
+
+        // Teclas do sistema.
+        // O aplicativo pode deixar o sistema tratar esse tipo de tecla.
+
+        case MSG_SYSKEYUP: 
             switch (long1)  
             {
                 case VK_LWIN:
                 case VK_RWIN:
-				    if ( winkey_status == 0 )
-					{
-						//printf ("winkey\n");
+                    if ( winkey_status == 0 )
+                    {
+                        //printf ("winkey\n");
                     }
-					break;
-					
+                    break;
+
                 // ??
                 case VK_CONTROL_MENU:
                     break;
-					
+
                 default:
                     break;
             }; 
             break;
-		
 
-		// Essa categoria é para receber mensagens
-        //enviadas para o console para gerenciamento do sistema.
-        //como desligamentos, inicializações, reboot ...		
-        //case MSG_CONSOLE:
-		//case MSG_CONSOLE_COMMAND:
-            //goto do_terminal;
-		//	break;
-		 
-        //Continua ... Create ... Close ...
-        //case MSG_CREATE:
-		//    break;
-		//case MSG_DESTROY:
-	    //    break;
-		//case MSG_CLOSE:
-		    //#debug.
-		    //Vamos tentar invalidar as janelas de diálogo.
-			//Certamente não queremos fechar a janela gui->main.
-	        //CloseWindow(window);
-			//break;
-		//case MSG_SETFOCUS:
-	    //    break;
-		//case MSG_KILLFOCUS:
-	    //    break;
-		//case MSG_PAINT:
-	    //    break;
-		
-		//Dialogo especial:
-		//Serve para funções provisórias usadas pelo desenvolvedor 
-		//do sistema operacional.
-		case MSG_DEVELOPER:
-		    switch(long1)
-			{
+
+
+		// Dialogo especial:
+		// Serve para funções provisórias usadas pelo desenvolvedor 
+		// do sistema operacional.
+        case MSG_DEVELOPER:
+            switch(long1)
+            {
 				//fechar message box em kernel mode.
 				case 1:
-				    CloseWindow(window);
-				break;
-				
+				    CloseWindow (window);
+				    break;
+                
+                //...
+                
 				default:
-				break;
-			}
+				    break;
+			};
 			break;
 
-			
-	    //
-		// Aqui provavelmente estamos com teclas de digitação.
-		// então não precisamos efetuar o refresh_screen() deixando isso 
-		// para o procedimento de janela do aplicativo
-		//
-		
-			
-		// #teste
-		// testando quando o aplicativo chama o procedimento default,.
-		// o teste sera para o click do mouse.
-		// no nosso teste esse click é tratado pelo aplicativo,
-		// mas a mesnagem chegará aqui para tratarmos os botões gerenciados pelo servidor kgws.	
-			
-		//#importante
-		//vamos tratar aqui vários eventos de mouse.
-			
-		case 30:
-		case 31:
-			return (unsigned long) kgws_mouse_dialog ( window, msg, long1, long2 );
-			break;
-			
-			
-	    //Nothing.
-	    default:    
-		    //return (unsigned long) 0;
-			break;
-	};
-	
-	
+
+        //
+        // Mouse.
+        //
+
+        // Vamos tratar aqui vários eventos de mouse.
+        case 30:
+        case 31:
+            return (unsigned long) kgwm_mouse_dialog ( window, 
+                                       msg, 
+                                       long1, 
+                                       long2 );
+            break;
+
+
+        default:    
+            break;
+    };
+
+    //
+    // Done.
+    //
     
-do_terminal:
-	//if(VideoBlock.useGui == 1){
-	//    refresh_screen();
-	//};
-    //return (unsigned long) 0;	
-	
-	//
-	// Chama o procedimento da janela terminal.
-	// Se ajanela não for uma janela do tipo terminal isso irá retornar imediatamente.
-	//
-	//return (unsigned long) terminal_procedure( window, (int) msg, (unsigned long) long1, (unsigned long) long2 );
 done:
 
-   //
-   // *importante:
-   // Aqui devemos chamar o procedimento de janela da janela com o foco de entrada.
-   // Pois bem, já mandamos a mensagem para fila de mensagens da janela com o foco
-   // de entrada, então quando o aplicativo receber tempo de processamento ele irá  
-   // processar a mensagem.
-   //
-   
-
     return (unsigned long) 0;
-};  
+}
+
+
 
 
 /*
@@ -1063,16 +978,21 @@ done:
  * arg1 - next procedure.
  * arg2 - 0
  * arg3 - 0
- *
  */
-unsigned long registra_procedimento( unsigned long arg1, 
-                                     unsigned long arg2, 
-									 unsigned long arg3, 
-									 unsigned long arg4 )
+ 
+// #todo
+// Deletar isso.
+ 
+unsigned long 
+registra_procedimento( unsigned long arg1, 
+                       unsigned long arg2, 
+                       unsigned long arg3, 
+                       unsigned long arg4 )
 {
-	SetProcedure(arg1);
-	return (unsigned long) 0;
-};
+    SetProcedure (arg1);
+    return (unsigned long) 0;
+}
+
 
 
 /*
@@ -1085,44 +1005,48 @@ unsigned long registra_procedimento( unsigned long arg1,
  *     Mas as mensagens enviada para ícones são diferentes das mensagens
  *     enviadas para janelas.
  */
-void SetProcedure (unsigned long proc){
-	
+
+// #todo
+// Deletar isso.
+
+void 
+SetProcedure (unsigned long proc)
+{
+
 	//@todo: Checar limites.
-	if( (unsigned long) proc == 0 ){
+	if ( (unsigned long) proc == 0 )
+	{
 		return; 
-	};
-	
+	}
+
 
 	// A estrutura da janela com o foco de entrada pode ser
 	// atualizada nesse momento. Ou ao menos conferir
 	// se o endereço enviado por argumento corresponde
 	// com o endereço do procedimento da janela com o foco de entrada.
 	
-    g_next_proc = (unsigned long) proc;	
-	
-	//return;
-};
+    g_next_proc = (unsigned long) proc;
+}
+
 
 
 /*
+ ***************************************************
  * SendMessage:
- *     Envia mensagem para o procedimento da janela
- *     indicada no argumento.
- *     É bem provável que a janela enviada por argumento
- *     seja a janela com o foco de entrada.
- *     
- *     @todo: Esse pode ser o formato padrão e envio de mensagens.
- *            Os processos podem trocar mensagens desse tipo
- *            atravéz de uma estrutura que contenha esses quatro 
- *            argumentos na forma de parâmetros. 
+ *     Envia uma mensagem para o procedimento de janelas do sistema.
+ *     Ou seja do x-server. Em x/xproc.c
  */
 
-unsigned long SendMessage ( struct window_d *window, 
-                  int msg, 
-				  unsigned long long1, 
-				  unsigned long long2 )
+unsigned long 
+SendMessage ( struct window_d *window, 
+              int msg, 
+              unsigned long long1, 
+              unsigned long long2 )
 {
-	return (unsigned long) system_procedure(window,msg,long1,long2);
+    return (unsigned long) system_procedure ( window, 
+                               msg,
+                               long1,
+                               long2 );
 }
 
 
@@ -1132,113 +1056,12 @@ unsigned long SendMessage ( struct window_d *window,
  *     Mensagem de ajuda ao usuário.
  */
 
-void procedureHelp (void){
-	
-	/*
-	
-	struct window_d *hWindow; 		
-	
-	unsigned long left;
-	unsigned long top;    
-	unsigned long width;  
-	unsigned long height; 	
-	
-	if( VideoBlock.useGui != 1 )
-	{
-		printf("procedureHelp: no GUI\n");
-		goto fail;
-	}	
-	
-	//Parent window.
-	
-	if( (void*) gui->main == NULL )
-	{
-		printf("procedureHelp: parent window fail\n");
-	    goto fail;
-	}else{
-		
+// #cancelada
+// Deletar isso.
 
-	    left = 20;  // gui->main->left;
-	    top = 20;  // gui->main->top;
-	    
-		width = 240; // gui->main->width;
-	    height = 200; // gui->main->height;		
-		
-		//...
-
-	    g_cursor_x = (left/8);
-	    g_cursor_y = (top/8); 
-		
-	};
-	
-
-	//backgroundDraw(COLOR_BACKGROUND);	
-	
-	//
-	// ## Window ##
-	//	
-	
-	//VIEW_MAXIMIZED
-	//Create.
-	hWindow = (void*) CreateWindow( 3, 0, VIEW_NORMAL, "procedureHelp", 
-	                  left, top, width, height, 
-					  gui->main, 0, 
-					  KERNEL_WINDOW_DEFAULT_CLIENTCOLOR, 
-					  KERNEL_WINDOW_DEFAULT_BGCOLOR );
-					  
-	if( (void*) hWindow == NULL )
-	{
-	    printf("procedureHelp: hWindow\n");
-		goto fail;
-    }else{
-		RegisterWindow(hWindow);
-        
-		//Coloca as mensagens na janela.	
-	    //Somente se tivermos uma janela válida. 
-	
-	    draw_text( hWindow, 8,  2*(height/20), 
-	        COLOR_WINDOWTEXT, "F1 ?");
-        draw_text( hWindow, 8,  3*(height/20), 
-	        COLOR_WINDOWTEXT, "F2 ?");
-	    draw_text( hWindow, 8,  4*(height/20), 
-	        COLOR_WINDOWTEXT, "F3 ?");
-	    draw_text( hWindow, 8,  5*(height/20), 
-	        COLOR_WINDOWTEXT, "F4 ?");
-	    draw_text( hWindow, 8,  6*(height/20), 
-	        COLOR_WINDOWTEXT, "F5 Tests");
-	    draw_text( hWindow, 8,  7*(height/20), 
-	        COLOR_WINDOWTEXT, "F6 Tests");
-	    draw_text( hWindow, 8,  8*(height/20), 
-	        COLOR_WINDOWTEXT, "F7 ?");
-	    draw_text( hWindow, 8,  9*(height/20), 
-	        COLOR_WINDOWTEXT, "F8 Cls");
-	    draw_text( hWindow, 8, 10*(height/20), 
-	        COLOR_WINDOWTEXT, "F9 Reboot");
-	    draw_text( hWindow, 8, 11*(height/20), 
-	        COLOR_WINDOWTEXT, "F10 ?");
-	    draw_text( hWindow, 8, 12*(height/20), 
-	        COLOR_WINDOWTEXT, "F11 ?");
-        draw_text( hWindow, 8, 13*(height/20), 
-	        COLOR_WINDOWTEXT, "F12 ?");	
-	
-	    //...
-	};
-	
-	
-	goto done;
-		
-		
-fail:		
-    printf("fail\n");
-done:
-    SetFocus (hWindow);
-   
-	//@todo: 
-	//Devemos dar o refresh somente da janela.
-	refresh_screen();
-    return;
-	
-	*/
+void procedureHelp (void)
+{
+	// Nothing.
 }
 
 
@@ -1249,6 +1072,9 @@ done:
  * iret, mas poderia bem ser um jmp.
  * Obs: Isse test  funcionou bem, implementar essa rotina definitivamente.
  */
+
+// #cuidado
+// rever isso.
 
 void procedureLinkDriverTest (void)
 {
@@ -1289,120 +1115,32 @@ void procedureLinkDriverTest (void)
                  " pushl $0x00401000      \n"    //eip. 
 				 
 				 " mov $1234, %edx  \n"          //Obs: Acrescentamos essa flag.
-												 
+
                  " iret \n" );
 				 
 				 
 //failReturn:
-    return;	
-};
+
+    return;
+}
 
 
-// Função interna para realiza testes usando o procedimento do sistema.
+
+// #cancelada
+// Deletar isso. 
 void procedureMakeTests (void)
 {
-	
-     //
-	 // Outro teste.
-	 //
-	 
-	/*
-    printf("Testando desalocar..\n");	
-	void *buff;
-	buff = (void*) malloc( sizeof(32) );
-    //~~~~
-	//show_memory_structs();//mostra apos alocar
-	//~~~~
-	free(buff); //zera o penultimo indice da lista.
-	//~~~~
-	buff = (void*) malloc( sizeof(32) );
-	//...
-	show_memory_structs();//mostra apos desalocar
-	//~~~~	
-	return;
-	*/
-	
-	
-	//
-	// @todo: #bugbug: A interruoção de timer bagunça tudo.
-	//
-	
-	
-	//unsigned long buff;
-	// Desabilita taskswitch
-	
-	taskswitch_lock();
-	scheduler_lock();	
-	
-	printf("sm-sys-procedureMakeTests:\n");
-	
-	//Fluxo padrão. (file structure)
-	stdout = (void *) malloc ( sizeof(FILE) );
-	
-	if ( (void *) stdout != NULL )
-	{
-		//File size.
-		//@todo: Fazer assim.
-
-		stdout->_p = (unsigned char *) malloc ( sizeof(4096) );
-		
-		if(stdout->_p == 0)
-		{
-			printf("erro 1\n");
-			goto done;
-		}
-				
-		fsLoadFile ( VOLUME1_FAT_ADDRESS, VOLUME1_ROOTDIR_ADDRESS, 
-		    "INIT    TXT", (unsigned long) stdout->_p );
-			
-		printf ("%s\n", (const char*) stdout->_p);		
-		
-		//printf("~~%s \n",stdout->_ptr);
-		//free(stdout->_ptr);
-		goto done;
-		//refresh_screen();
-		//return;
-		//while(1){}
-	
-	} else {
-		
-		//printf("fail.\n");
-		printf("erro2\n");
-		goto done;
-		//refresh_screen();
-		//return;
-		//while(1){}
-	};
-	
-	
-
-	
-done:
-
-    //
-	// Testando listar os arquivos.
-	//
-    
-	//fsFAT16ListFiles(,,);
-
-	printf("sm-sys-procedureMakeTests: done\n");
-    //Reabilita task switch.
-	scheduler_unlock();
-	taskswitch_unlock();
-
-
-
-	
-	//refresh_screen();
-	//while(1){}
-	return;
+    // Nothing.
 }
+
+
 
 /*
  * Configura o procedimento atual.
 void procedureSetProcedure(unsigned long address)
 {};
 */
+
 
 /*
  * Obtem o procedimento atual.
@@ -1411,6 +1149,7 @@ void procedureGetProcedure()
     return (unsigned long) x;	
 };
 */
+
 
 /*
  * Invocar um procedimento que está em user mode
@@ -1427,14 +1166,14 @@ void *procedureInvokeUserModeProcedure()
 */
 
 
+// ??
+// Rever isso.
 void procedureWindowWithFocusTest (void)
 {
-	//
-	// ****  TESTANDO A JANELA DO desenvolvedor ****
-	// ****  SERÁ A ÚNICA JANELA EM PRIMEIRO PLANO POR ENQUANTO ****
-	// **** A ÚNICA COM O FOCO DE ENTRADA  ****
-	//
-					
+	// TESTANDO A JANELA DO desenvolvedor 
+	// SERÁ A ÚNICA JANELA EM PRIMEIRO PLANO POR ENQUANTO 
+	// A ÚNICA COM O FOCO DE ENTRADA
+
 	//
 	// #bugbug ... essa rotina está travando ...
 	//
@@ -1480,24 +1219,29 @@ void procedureWindowWithFocusTest (void)
 	//printf("F12: [right/bottom]\n");
 	
 	//...
-	
-	return;				
-};
+
+    return;
+}
 
 
-/* @todo; Criar um grid parecido com o outro, mas que será gerenciado pelo
- procedimento de janelas do sistema.
-*/
+
+// ??
+// Rever isso.
 
 void procedureGrid (void)
-{	
-	int Status;
-	
-	Status = grid( (struct window_d*) gui->main ,(int) 4, (int) GRID_HORIZONTAL ); 
-	
-	if(Status == 1){
-		printf("sm-sys-procedureGrid: grid\n");
-	}	
+{
+    int Status;
+
+
+    Status = grid ( (struct window_d *) gui->main, 
+                 (int) 4, 
+                 (int) GRID_HORIZONTAL ); 
+
+
+    if (Status == 1)
+    {
+        panic ("xproc-procedureGrid:\n");
+    }
 }
 
 

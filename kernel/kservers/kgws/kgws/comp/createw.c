@@ -1120,6 +1120,7 @@ void *CreateWindow ( unsigned long type,
 			windowButton1->right  = windowButton1->left +32;
 			windowButton1->top    = window->top +2;
 			windowButton1->bottom = windowButton1->top +32; 
+			windowButton1->isControl = 1; // Esse botão é um controle.
 
 			RegisterWindow (windowButton1);
 			window->minimize = windowButton1;
@@ -1140,6 +1141,7 @@ void *CreateWindow ( unsigned long type,
 			windowButton2->right  = windowButton2->left +32;
 			windowButton2->top    = window->top +2;
 			windowButton2->bottom = windowButton2->top +32; 
+			windowButton2->isControl = 1; // Esse botão é um controle.
 
 			RegisterWindow (windowButton2);
 			window->minimize = windowButton2;
@@ -1160,6 +1162,7 @@ void *CreateWindow ( unsigned long type,
 			windowButton3->right  = windowButton3->left +32;
 			windowButton3->top    = window->top +2;
 			windowButton3->bottom = windowButton3->top +32; 
+            windowButton3->isControl = 1; // Esse botão é um controle.
 
 			RegisterWindow (windowButton3);
 			window->close = windowButton3;
@@ -1522,6 +1525,7 @@ void *CreateWindow ( unsigned long type,
         
 		// Registrar.
 		RegisterWindow (windowButton4); 
+		windowButton4->isControl = 1;  // Esse botão é um controle.
         window->scrollbar_button1 = windowButton4; 
 		
 		//#test	
@@ -1543,6 +1547,7 @@ void *CreateWindow ( unsigned long type,
 		
 		// Registrar.
 		RegisterWindow (windowButton5);
+		windowButton5->isControl = 1;  // Esse botão é um controle.
 		window->scrollbar_button3 = windowButton5;
 		
 	    //botão 2 da barra horizontal.
@@ -1558,7 +1563,9 @@ void *CreateWindow ( unsigned long type,
 
 		// Registrar.
 		RegisterWindow (windowButton6);
+		windowButton6->isControl = 1;  // Esse botão é um controle.
 		window->scrollbar_button2 = windowButton6;
+		
 	}
 
 

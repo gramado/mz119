@@ -1454,20 +1454,32 @@ int init_gui (void){
 
 /*
  *********************************************
- * kgws_mouse_dialog:
+ * kgwm_mouse_dialog:
+ * 
  *     O system_procedure redireciona para cá as mensagens de mouse.
  *     Lembrando que o aplicativo em ring3 chamou o system_procedure
  *  quando invocou o defered procedure. (defered/default)
  */
 
 unsigned long
-kgws_mouse_dialog ( struct window_d *window,
+kgwm_mouse_dialog ( struct window_d *window,
                     int msg,
                     unsigned long long1,
                     unsigned long long2 )
 {
 
-    switch ( msg)
+    // #todo
+    // Checar validade da estrutura.
+    
+    if ( window->isControl == 1 )
+    {
+        return (unsigned long) kgwm_window_control_dialog ( window,
+                                   msg,
+                                   long1,
+                                   long2 ); 
+    } 
+
+    switch (msg)
     {
 		// #teste
 		// testando quando o aplicativo chama o procedimento default,.
@@ -1480,57 +1492,27 @@ kgws_mouse_dialog ( struct window_d *window,
 		// Vamos tratar aqui vários eventos de mouse;
 
         case 30:
+        
 			//qual botão do mouse?
 			switch (long1)
 			{
-				//botão 1	
+				//botão 1
 				case 1:
-				
-				    // #todo
-				    // Aqui devemos avaliar se o botão é um dos controles da janela.
-				    // Então enviarmos para o aplicativo a mensagem de acordo com 
-				    // o botão de comando pressionado. ( V ^ x) ( ^ = V )
-				
-			        //#debug
-			        printf ("kgws_mouse_dialog: mouse keydown, window name %s \n",
-			            window->name ); 
-			        refresh_screen();
-					
-					//#test
-					if ( window->isButton == 1 )
-					{
-						//lembrando: temos que mandar uma mensagem para a thread 
-						// com uma ação dependendo do botão.
-					
-					    //#test
-                        update_button ( (struct button_d *) window->button,
-                            (unsigned char *) window->button->string,
-                            (int) window->button->style,
-                            (int) BS_PRESS,
-                            (int) window->button->type,
-                            (unsigned long) window->button->x, 
-                            (unsigned long) window->button->y, 
-                            (unsigned long) window->button->width, 
-                            (unsigned long) window->button->height, 
-                            (unsigned long) window->button->color );
-						
-						redraw_button ( (struct button_d *) window->button );
-						show_window_rect (window);
-					};
 					break;
-					
+
 				case 2:
 					break;
-					
+
 				case 3:
 					break;
 			}
 			break;
-	
+
         //#todo
 		//case 31:
 			//break;
-			
+
+
         default:
             break;
     }; //switch
@@ -1540,6 +1522,93 @@ kgws_mouse_dialog ( struct window_d *window,
 }
 
 
+
+unsigned long
+kgwm_window_control_dialog ( struct window_d *window,
+                             int msg,
+                             unsigned long long1,
+                             unsigned long long2 )
+{
+	
+	
+	switch (msg)
+	{
+
+        // mouse button down
+        case 30:
+			//qual botão do mouse?
+			switch (long1)
+			{
+				//botão 1	
+				case 1:
+				    // Se esse controle é um botão.
+				    if ( window->isButton == 1 )
+				    {
+						button_down ( window );
+						
+                        //update_button ( (struct button_d *) window->button,
+                            //(unsigned char *) window->button->string,
+                            //(int) window->button->style,
+                            //(int) BS_PRESS,
+                            //(int) window->button->type,
+                            //(unsigned long) window->button->x, 
+                            //(unsigned long) window->button->y, 
+                            //(unsigned long) window->button->width, 
+                            //(unsigned long) window->button->height, 
+                            //(unsigned long) window->button->color );
+						
+						//redraw_button ( (struct button_d *) window->button );
+						//show_window_rect (window);
+			            //#debug
+			            printf ("kgwm_window_control_dialog: mouse keydown, window name %s \n",
+			                window->name ); 
+			            refresh_screen();
+			            return 0;
+					}
+				    break;
+				    
+			};
+				
+		// mouse button up
+		case 31:
+		    switch (long1)
+		    {
+				case 1:
+				    // Se esse controle é um botão.
+				    if ( window->isButton == 1 )
+				    {
+						button_up ( window );
+						
+                        //update_button ( (struct button_d *) window->button,
+                            //(unsigned char *) window->button->string,
+                            //(int) window->button->style,
+                            //(int) BS_DEFAULT,
+                            //(int) window->button->type,
+                            //(unsigned long) window->button->x, 
+                            //(unsigned long) window->button->y, 
+                            //(unsigned long) window->button->width, 
+                            //(unsigned long) window->button->height, 
+                            //(unsigned long) window->button->color );
+						
+						//redraw_button ( (struct button_d *) window->button );
+						//show_window_rect (window);
+
+			        //#debug
+			        printf ("kgwm_window_control_dialog: mouse keyup, window name %s \n",
+			            window->name ); 
+			        refresh_screen();
+			        return 0;
+					}
+				    break;
+			};
+		    break;		
+				
+				
+	};
+
+
+    return 0;
+}
 
 /*
 int guiInit()

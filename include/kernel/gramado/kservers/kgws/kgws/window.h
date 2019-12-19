@@ -373,10 +373,8 @@ int _lockfocus;
 int gFocusBlocked;   
 
 
-/*
- * Window.
- */
- 
+
+// #todo: deletar.
 unsigned long g_mainwindow_width;
 unsigned long g_mainwindow_height;
 unsigned long g_navigationbar_width;
@@ -1163,9 +1161,13 @@ struct window_d
 
     // Flag par indicar se a janela é um item de menu ou um botão.
     int isMenu;   
+    int isMenuItem;
+    
+    int isControl;  // Window control ...
     int isButton;  //#importante: Indica que a janela é um botão.
     int isEditBox; //#importante: Indica que a janela é um editbox.
-    int isIcon; 
+    int isIcon;
+     
 	//...
 
 //==================================================    
