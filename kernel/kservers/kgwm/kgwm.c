@@ -1453,12 +1453,12 @@ int init_gui (void){
 
 
 /*
+ *********************************************
  * kgws_mouse_dialog:
- *     
+ *     O system_procedure redireciona para cá as mensagens de mouse.
+ *     Lembrando que o aplicativo em ring3 chamou o system_procedure
+ *  quando invocou o defered procedure. (defered/default)
  */
- 
-// #todo
-// Revisar o motivo dessa rotina.
 
 unsigned long
 kgws_mouse_dialog ( struct window_d *window,
@@ -1485,9 +1485,16 @@ kgws_mouse_dialog ( struct window_d *window,
 			{
 				//botão 1	
 				case 1:
+				
+				    // #todo
+				    // Aqui devemos avaliar se o botão é um dos controles da janela.
+				    // Então enviarmos para o aplicativo a mensagem de acordo com 
+				    // o botão de comando pressionado. ( V ^ x) ( ^ = V )
+				
 			        //#debug
-			        printf ("system_procedute: mouse keydown, window name %s \n",window->name); 
-			        refresh_screen();	
+			        printf ("kgws_mouse_dialog: mouse keydown, window name %s \n",
+			            window->name ); 
+			        refresh_screen();
 					
 					//#test
 					if ( window->isButton == 1 )
@@ -1509,7 +1516,7 @@ kgws_mouse_dialog ( struct window_d *window,
 						
 						redraw_button ( (struct button_d *) window->button );
 						show_window_rect (window);
-					}
+					};
 					break;
 					
 				case 2:
@@ -1520,7 +1527,7 @@ kgws_mouse_dialog ( struct window_d *window,
 			}
 			break;
 	
-
+        //#todo
 		//case 31:
 			//break;
 			
