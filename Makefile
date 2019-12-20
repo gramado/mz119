@@ -564,12 +564,12 @@ vhd-copy-files:
 
 
 # c test suite
-	-sudo cp ../garden/gt/tests/TEST1.C    /mnt/gramadovhd
-	-sudo cp ../garden/gt/tests/TEST2.C    /mnt/gramadovhd
-	-sudo cp ../garden/gt/tests/TEST3.C    /mnt/gramadovhd
-	-sudo cp ../garden/gt/tests/*.LUA      /mnt/gramadovhd
+	-sudo cp ../atacama/gt/tests/TEST1.C    /mnt/gramadovhd
+	-sudo cp ../atacama/gt/tests/TEST2.C    /mnt/gramadovhd
+	-sudo cp ../atacama/gt/tests/TEST3.C    /mnt/gramadovhd
+	-sudo cp ../atacama/gt/tests/*.LUA      /mnt/gramadovhd
 
-	
+
 #
 # ======== Creating the all the folders in root dir ========
 #		
@@ -596,7 +596,7 @@ vhd-copy-files:
 # Suspendendo isso por falta de espaço na partição.
 
 	#-sudo cp ../garden/bin/*         /mnt/gramadovhd/BIN 
-	#-sudo cp ../atacama/bin/*         /mnt/gramadovhd/BIN 
+	#-sudo cp ../atacama/bin/*        /mnt/gramadovhd/BIN 
 
 #
 # ======== Files in the BOOT/ folder. ========

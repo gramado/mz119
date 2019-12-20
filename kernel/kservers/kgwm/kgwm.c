@@ -1578,22 +1578,38 @@ kgwm_window_control_dialog ( struct window_d *window,
 			            //window->name ); 
 			        //refresh_screen();
 			        
-			        if ( window->isMinimize == 1 ){}
-			        if ( window->isMaximize == 1 ){}
-			        if ( window->isClose == 1 ){}
-			        
+                    if ( window->isMinimize == 1 )
+                    {
+                      window->control->window = window; //afeta esse botão
+                      window->control->msg = MSG_HIDE;
+                      window->control->long1 = 0;
+                      window->control->long2 = 0;
+                      window->control->newmessageFlag = 1;
+                    }
+                    //if ( window->isRestore == 1 ){} //#todo: Criar esse elemento na struct
+                    if ( window->isMaximize == 1 )
+                    {
+                      window->control->window = window; //afeta esse botão
+                      window->control->msg = MSG_MAXIMIZE;
+                      window->control->long1 = 0;
+                      window->control->long2 = 0;
+                      window->control->newmessageFlag = 1;
+                    }
+                    if ( window->isClose == 1 )
+                    {
+                      window->control->window = window; //afeta esse botão
+                      window->control->msg = MSG_CLOSE;
+                      window->control->long1 = 0;
+                      window->control->long2 = 0;
+                      window->control->newmessageFlag = 1;
+                    }
 			        if ( window->isScrollBarButton1 == 1 )
                     {
-			            //printf ("Scroll Bar: ^ \n"); 
-			            //refresh_screen();
-			            
-			            //#test
-			            window->control->window = window; //afeta esse botão
-			            window->control->msg = 8812; //scroll up.
-			            window->control->long1 = 0;
-			            window->control->long2 = 0;
-			            window->control->newmessageFlag = 1;
-
+                      window->control->window = window;   //afeta esse botão
+                      window->control->msg = MSG_VSCROLL; //8812; //scroll up.
+                      window->control->long1 = 1;  //up
+                      window->control->long2 = 0;
+                      window->control->newmessageFlag = 1;
                     }
                     if ( window->isScrollBarButton2 == 1 )
                     {
@@ -1602,15 +1618,11 @@ kgwm_window_control_dialog ( struct window_d *window,
                     }
 			        if ( window->isScrollBarButton3 == 1 )
                     {
-			            //printf ("Scroll Bar: V \n"); 
-			            //refresh_screen();
-			            
-			            //#test
-			            window->control->window = window; //afeta esse botão
-			            window->control->msg = 8811; //scroll down.
-			            window->control->long1 = 0;
-			            window->control->long2 = 0;
-			            window->control->newmessageFlag = 1;
+                      window->control->window = window; //afeta esse botão
+                      window->control->msg = MSG_VSCROLL; //8811; //scroll down.
+                      window->control->long1 = 0;  //down
+                      window->control->long2 = 0;
+                      window->control->newmessageFlag = 1;
                     }
 			        
 			        return 0;

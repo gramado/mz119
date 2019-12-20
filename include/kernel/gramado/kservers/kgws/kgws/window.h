@@ -124,10 +124,12 @@ int window_getch (void);
 #define MSG_ACTIVATE      11
 #define MSG_SHOWWINDOW    12 
 #define MSG_SETCURSOR     13
-#define MSG_HIDE          14
+#define MSG_HIDE          14  // ?? (MIN)
+//#define MSG_MINIMIZE    14  // ?? (MIN)
 #define MSG_MAXIMIZE      15
 #define MSG_RESTORE       16
 #define MSG_SHOWDEFAULT   17
+
 
 //keyboard (20-29)
 #define MSG_KEYDOWN       20
@@ -206,6 +208,12 @@ int window_getch (void);
 #define TERMINALCOMMAND_PRINTCHAR 1000
 //#define TERMINALCOMMAND_PRINT??? 1001
 //...
+
+
+// o evento de rolagem aconteceu ...
+// O número do evento será entregue em long1.
+#define MSG_HSCROLL 2000
+#define MSG_VSCROLL 2001
 
 
 
