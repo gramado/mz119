@@ -558,8 +558,6 @@ vhd-copy-files:
 # 3rd party
 # Each app has your own folder.
 #	-sudo cp ../atacama/bin/LUA.BIN       /mnt/gramadovhd
-#	-sudo cp ../atacama/bin/CC500.BIN     /mnt/gramadovhd 
-#	-sudo cp ../atacama/bin/SPIN.BIN      /mnt/gramadovhd
 #	-sudo cp ../atacama/bin/BISON125.BIN  /mnt/gramadovhd
 #	-sudo cp ../atacama/bin/FASM.BIN      /mnt/gramadovhd
 #...
@@ -569,7 +567,7 @@ vhd-copy-files:
 	-sudo cp ../garden/gt/tests/TEST1.C    /mnt/gramadovhd
 	-sudo cp ../garden/gt/tests/TEST2.C    /mnt/gramadovhd
 	-sudo cp ../garden/gt/tests/TEST3.C    /mnt/gramadovhd
-	-sudo cp ../garden/gt/tests/*.LUA  /mnt/gramadovhd
+	-sudo cp ../garden/gt/tests/*.LUA      /mnt/gramadovhd
 
 	
 #
