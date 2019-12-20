@@ -15,8 +15,6 @@ SUBLEVEL = 0
 EXTRAVERSION = -rc5
 NAME = 
 
-#
-
 
 
 # That's our default target when none is given on the command line
@@ -120,12 +118,12 @@ CFLAGS = -m32 \
 ##
 
 #
-#DEFINES =  -DGRAMADO_VERSION=$(VERSION) \
+# DEFINES =  -DGRAMADO_VERSION=$(VERSION) \
 #		-DGRAMADO_PATCHLEVEL=$(PATCHLEVEL) \
 #		-DGRAMADO_SUBLEVEL=$(SUBLEVEL) \
 #		-DGRAMADO_EXTRAVERSION=\"$(EXTRAVERSION)\" \
 #		-DGRAMAD0_NAME=\"$(NAME)\"
-#
+
 
 ##
 ## Objects
@@ -351,7 +349,6 @@ compile-kernel:
 
 
 
-
 	# /fs
 	gcc -c kernel/kservers/fs/fs.c      -I include/ $(CFLAGS) -o fs.o
 	gcc -c kernel/kservers/fs/read.c    -I include/ $(CFLAGS) -o read.o
@@ -489,6 +486,8 @@ vhd-copy-files:
 # ======== Files in the root dir. ========
 #
 
+
+# bin/boot
 	sudo cp bin/boot/BM.BIN       /mnt/gramadovhd
 	sudo cp bin/boot/BL.BIN       /mnt/gramadovhd
 
@@ -514,41 +513,58 @@ vhd-copy-files:
 # fonts
 	sudo cp bin/NC2.FON /mnt/gramadovhd
 
-#Get available apps
+
+
+
+#
+#    ==== APPS ====
+#
+
+# Get available apps.
+
+
+# garden/apps
+	-sudo cp ../garden/bin/NORATERM.BIN  /mnt/gramadovhd
+	-sudo cp ../garden/bin/GDETERM.BIN   /mnt/gramadovhd 
+	-sudo cp ../garden/bin/GDESHELL.BIN  /mnt/gramadovhd 
 	-sudo cp ../garden/bin/GRAMCODE.BIN  /mnt/gramadovhd 
 	-sudo cp ../garden/bin/GRAMTEXT.BIN  /mnt/gramadovhd 
 	-sudo cp ../garden/bin/GFE.BIN       /mnt/gramadovhd 
 	-sudo cp ../garden/bin/SPR.BIN       /mnt/gramadovhd 
-
-	-sudo cp ../garden/bin/GDEINIT.BIN   /mnt/gramadovhd 
-	-sudo cp ../garden/bin/GDESHELL.BIN  /mnt/gramadovhd 
-	-sudo cp ../garden/bin/GDETERM.BIN   /mnt/gramadovhd 
-	-sudo cp ../garden/bin/GDETM.BIN     /mnt/gramadovhd 
-
-	-sudo cp ../garden/bin/HELLO.BIN     /mnt/gramadovhd 
-	-sudo cp ../garden/bin/HELLO2.BIN    /mnt/gramadovhd 
-	-sudo cp ../garden/bin/HELLO3.BIN    /mnt/gramadovhd 
-	-sudo cp ../garden/bin/JACKPOT.BIN   /mnt/gramadovhd 
-	-sudo cp ../garden/bin/CAT.BIN       /mnt/gramadovhd 
-	-sudo cp ../garden/bin/GLIBCT1.BIN   /mnt/gramadovhd 
-	-sudo cp ../garden/bin/GRAMC.BIN     /mnt/gramadovhd 
-	-sudo cp ../garden/bin/GRAM.BIN      /mnt/gramadovhd 
-#	-sudo cp ../garden/bin/CC500.BIN     /mnt/gramadovhd 
-#	-sudo cp ../garden/bin/LISP.BIN      /mnt/gramadovhd 
-	-sudo cp ../garden/bin/NORATERM.BIN  /mnt/gramadovhd
-	-sudo cp ../garden/bin/REBOOT.BIN    /mnt/gramadovhd
-	-sudo cp ../garden/bin/REBOOT2.BIN   /mnt/gramadovhd
-	-sudo cp ../garden/bin/WINTEST.BIN   /mnt/gramadovhd 
-	-sudo cp ../garden/bin/LAUNCHER.BIN  /mnt/gramadovhd
-	-sudo cp ../garden/bin/TASCII.BIN    /mnt/gramadovhd
-#	-sudo cp ../garden/bin/DUMPIT.BIN    /mnt/gramadovhd
-	-sudo cp ../garden/bin/LUA.BIN       /mnt/gramadovhd
-#	-sudo cp ../garden/bin/SPIN.BIN      /mnt/gramadovhd
 	-sudo cp ../garden/bin/SYSMON.BIN    /mnt/gramadovhd
-#	-sudo cp ../garden/bin/BISON125.BIN      /mnt/gramadovhd
-#	-sudo cp ../garden/bin/FASM.BIN      /mnt/gramadovhd
+	-sudo cp ../garden/bin/REBOOT2.BIN   /mnt/gramadovhd
+	-sudo cp ../garden/bin/LAUNCHER.BIN  /mnt/gramadovhd
+	-sudo cp ../garden/bin/WINTEST.BIN   /mnt/gramadovhd 
+#	-sudo cp ../garden/bin/GDEINIT.BIN   /mnt/gramadovhd 
+#	-sudo cp ../garden/bin/GDETM.BIN     /mnt/gramadovhd 
+
+
+# atacama/cmd
+	-sudo cp ../atacama/bin/CAT.BIN       /mnt/gramadovhd
+#	-sudo cp ../atacama/bin/DUMPIT.BIN    /mnt/gramadovhd
+	-sudo cp ../atacama/bin/HELLO.BIN     /mnt/gramadovhd
+	-sudo cp ../atacama/bin/HELLO2.BIN    /mnt/gramadovhd
+	-sudo cp ../atacama/bin/HELLO3.BIN    /mnt/gramadovhd
+	-sudo cp ../atacama/bin/JACKPOT.BIN   /mnt/gramadovhd
+#	-sudo cp ../atacama/bin/LISP.BIN      /mnt/gramadovhd
+	-sudo cp ../atacama/bin/REBOOT.BIN    /mnt/gramadovhd
+	-sudo cp ../atacama/bin/TASCII.BIN    /mnt/gramadovhd
+#	-sudo cp ../atacama/bin/GLIBCT1.BIN   /mnt/gramadovhd 
+
+# atacama/gt/gramcc
+	-sudo cp ../atacama/bin/GRAM.BIN      /mnt/gramadovhd 
+	-sudo cp ../atacama/bin/GRAMC.BIN     /mnt/gramadovhd 
+
+# 3rd party
+# Each app has your own folder.
+#	-sudo cp ../atacama/bin/LUA.BIN       /mnt/gramadovhd
+#	-sudo cp ../atacama/bin/CC500.BIN     /mnt/gramadovhd 
+#	-sudo cp ../atacama/bin/SPIN.BIN      /mnt/gramadovhd
+#	-sudo cp ../atacama/bin/BISON125.BIN  /mnt/gramadovhd
+#	-sudo cp ../atacama/bin/FASM.BIN      /mnt/gramadovhd
 #...
-	
+
+
 # c test suite
 	-sudo cp ../garden/gt/tests/TEST1.C    /mnt/gramadovhd
 	-sudo cp ../garden/gt/tests/TEST2.C    /mnt/gramadovhd
@@ -582,7 +598,7 @@ vhd-copy-files:
 # Suspendendo isso por falta de espaço na partição.
 
 	#-sudo cp ../garden/bin/*         /mnt/gramadovhd/BIN 
-
+	#-sudo cp ../atacama/bin/*         /mnt/gramadovhd/BIN 
 
 #
 # ======== Files in the BOOT/ folder. ========
