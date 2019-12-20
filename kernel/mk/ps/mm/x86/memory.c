@@ -92,70 +92,16 @@
 //Variáveis internas. 
 
 //int mmStatus;
+
+// Heap support.
 unsigned long last_valid;         //Último heap pointer válido. 
 unsigned long last_size;          //Último tamanho alocado.
 unsigned long mm_prev_pointer;    //Endereço da úntima estrutura alocada.
 
 
 
-/*
- * memsize: 
- *     Testando manualmente o tamanho da memória.
- *     ## Adaptado de SANOS - Michael Ringgaard.
- *     @todo: Corrigir o asm inline. usar padrão gcc.
- */
 
-/* 
-unsigned long memsize();  
-unsigned long memsize() 
-{
-    volatile unsigned long *mem;
-  unsigned long addr;
-  unsigned long value;
-  unsigned long cr0save;
-  unsigned long cr0new;
 
-  // Start at 1MB
-  addr = 1024 * 1024;
-
-  // Save a copy of CR0
-  __asm { mov eax, cr0 };
-  __asm { mov [cr0save], eax };
-
-  // Invalidate the cache (write-back and invalidate the cache)
-  __asm { wbinvd };
-
-  // Plug cr0 with just PE/CD/NW (cache disable(486+), no-writeback(486+), 32bit mode(386+))
-  cr0new = cr0save | 0x00000001 | 0x40000000 | 0x20000000;
-  __asm { mov eax, [cr0new] };
-  __asm { mov cr0, eax };
-
-  //Probe for each megabyte
-  
-    while(addr < 0xFFF00000){
-		
-        addr += 1024 * 1024;
-        mem = (unsigned long *) addr;
-
-        value = *mem;
-        *mem = 0x55AA55AA;
-
-        if(*mem != 0x55AA55AA) break;
-
-        *mem = 0xAA55AA55;
-        if(*mem != 0xAA55AA55) break;
-
-        *mem = value;  //corrige.
-    };
-
-  //Restore 
-  
-  __asm { mov eax, [cr0save] };
-  __asm { mov cr0, eax };
-
-  return addr;
-}
-*/
 
 
 /*

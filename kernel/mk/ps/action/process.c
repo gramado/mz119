@@ -144,206 +144,211 @@ unsigned long __GetProcessStats ( int pid, int index )
            return (unsigned long) p->gid;
            break; 
            
-       //state    
-       case 5:
-           return (unsigned long) p->state;
-           break;                      
+        //state    
+        case 5:
+            return (unsigned long) p->state;
+            break;                      
            
-       case 6:
-           return (unsigned long) p->plane;
-           break;              
+        case 6:
+            return (unsigned long) p->plane;
+            break;              
            
-       case 7:
-           return (unsigned long) p->input_type;
-           break;              
+        case 7:
+            return (unsigned long) p->input_type;
+            break;              
 
-       case 8:
-           return (unsigned long) p->personality;
-           break;              
+        case 8:
+            return (unsigned long) p->personality;
+            break;              
 
-       case 9:
-           return (unsigned long) p->appMode;
-           break;              
+        case 9:
+            return (unsigned long) p->appMode;
+            break;              
 
         
-       case 10:
-           return (unsigned long) p->private_memory_size;
-           break;  
+        case 10:
+            return (unsigned long) p->private_memory_size;
+            break;  
            
-       case 11:
-           return (unsigned long) p->shared_memory_size;
-           break;          
+        case 11:
+            return (unsigned long) p->shared_memory_size;
+            break;          
 
+        case 12:
+            return (unsigned long) p->workingset_size;
+            break;          
 
+        case 13:
+            return (unsigned long) p->workingset_peak_size;
+            break;          
 
-       case 12:
-           return (unsigned long) p->workingset_size;
-           break;          
+        case 14:
+            return (unsigned long) p->pagefaultCount;
+            break;          
 
-
-       case 13:
-           return (unsigned long) p->workingset_peak_size;
-           break;          
-
-
-       case 14:
-           return (unsigned long) p->pagefaultCount;
-           break;          
-
-
-       case 15:
-           return (unsigned long) p->DirectoryPA;
-           break;
+        case 15:
+            return (unsigned long) p->DirectoryPA;
+            break;
            
-       case 16:
-           return (unsigned long) p->DirectoryVA;
-           break;
+        case 16:
+            return (unsigned long) p->DirectoryVA;
+            break;
 
-     
-       //image address.    
-       case 17:
-           return (unsigned long) p->Image;
-           break;
+        //image address.    
+        case 17:
+            return (unsigned long) p->Image;
+            break;
 
-       case 18:
-           return (unsigned long) p->ImagePA;
-           break;
+        case 18:
+            return (unsigned long) p->ImagePA;
+            break;
 
 
-       case 19:
-           return (unsigned long) p->childImage;
-           break;
+        case 19:
+            return (unsigned long) p->childImage;
+            break;
            
         case 20:
            return (unsigned long) p->childImage_PA;
            break;
           
-       case 21:
-           return (unsigned long) p->Heap;
-           break;
+        case 21:
+            return (unsigned long) p->Heap;
+            break;
 
-       case 22:
-           return (unsigned long) p->HeapEnd;
-           break;
+        case 22:
+            return (unsigned long) p->HeapEnd;
+            break;
            
-       case 23:
-           return (unsigned long) p->HeapSize;
-           break;
+        case 23:
+            return (unsigned long) p->HeapSize;
+            break;
 
 
-       case 24:
-           return (unsigned long) p->HeapPointer;
-           break;
+        case 24:
+            return (unsigned long) p->HeapPointer;
+            break;
 
-       case 25:
-           return (unsigned long) p->HeapLastValid;
-           break;
+        case 25:
+            return (unsigned long) p->HeapLastValid;
+            break;
 
-       case 26:
-           return (unsigned long) p->HeapLastSize;
-           break;
+        case 26:
+            return (unsigned long) p->HeapLastSize;
+            break;
 
-       case 27:
-           return (unsigned long) p->Stack;
-           break;
+        case 27:
+            return (unsigned long) p->Stack;
+            break;
            
-       case 28:
-           return (unsigned long) p->StackEnd;
-           break;
+        case 28:
+            return (unsigned long) p->StackEnd;
+            break;
 
 
-       case 29:
-           return (unsigned long) p->StackSize;
-           break;
+        case 29:
+            return (unsigned long) p->StackSize;
+            break;
 
-       case 30:
+        case 30:
            return (unsigned long) p->StackOffset;
            break;
 
 
-       case 31:
-           return (unsigned long) p->iopl;
-           break;
+        case 31:
+            return (unsigned long) p->iopl;
+            break;
            
-       case 32:
-           return (unsigned long) p->base_priority;
-           break;
+        case 32:
+            return (unsigned long) p->base_priority;
+            break;
            
-       case 33:
-           return (unsigned long) p->priority;
-           break;
+        case 33:
+            return (unsigned long) p->priority;
+            break;
 
-       case 34:
-           return (unsigned long) p->step;
-           break;
+        case 34:
+            return (unsigned long) p->step;
+            break;
 
 
-       case 35:
-           return (unsigned long) p->quantum;
-           break;
+        case 35:
+            return (unsigned long) p->quantum;
+            break;
 
-       case 36:
-           return (unsigned long) p->timeout;
-           break;
-           
-           
-       case 37:
-           return (unsigned long) p->ticks_remaining;
-           break;
-
-       case 38:
-           return (unsigned long) p->profiler_percentage_running;
-           break;
+        case 36:
+            return (unsigned long) p->timeout;
+            break;
            
            
-       case 39:
-           return (unsigned long) p->profiler_ticks_running;
-           break;
+        case 37:
+            return (unsigned long) p->ticks_remaining;
+            break;
 
-       case 40:
-           return (unsigned long) p->profiler_last_ticks;
-           break;
-
-       case 41:
-           return (unsigned long) p->threadCount;
-           break;
-
-       case 42:
-           return (unsigned long) p->bound_type;
-           break;
-
-       case 43:
-           return (unsigned long) p->preempted;
-           break;
-
-       case 44:
-           return (unsigned long) p->saved;
-           break;
-
-       case 45:
-           return (unsigned long) p->PreviousMode;
-           break;
-
-
-       case 46:
-           return (unsigned long) p->wait4pid;
-           break;
-
-       case 47:
-           return (unsigned long) p->exit_code;
-           break;
-
-       case 48:
-           return (unsigned long) p->signal;
-           break;
+        case 38:
+            return (unsigned long) p->profiler_percentage_running;
+            break;
            
-       case 49:
-           return (unsigned long) p->signal_mask;
-           break;
+           
+        case 39:
+            return (unsigned long) p->profiler_ticks_running;
+            break;
 
-       case 50:
-           return (unsigned long) p->dialog_address;
-           break;
+        case 40:
+            return (unsigned long) p->profiler_last_ticks;
+            break;
+
+        case 41:
+            return (unsigned long) p->threadCount;
+            break;
+
+        case 42:
+            return (unsigned long) p->bound_type;
+            break;
+
+        case 43:
+            return (unsigned long) p->preempted;
+            break;
+
+        case 44:
+            return (unsigned long) p->saved;
+            break;
+
+        case 45:
+            return (unsigned long) p->PreviousMode;
+            break;
+
+
+        case 46:
+            return (unsigned long) p->wait4pid;
+            break;
+
+        case 47:
+            return (unsigned long) p->exit_code;
+            break;
+
+        case 48:
+            return (unsigned long) p->signal;
+            break;
+           
+        case 49:
+            return (unsigned long) p->signal_mask;
+            break;
+
+        case 50:
+            return (unsigned long) p->dialog_address;
+            break;
+           
+        // Image size.
+        // Isso é importante.
+        case 51:
+            return (unsigned long) p->ImageSize;
+            break;
+           
+        // #todo:
+        // Precisamos da quantidade de páginas usadas.
+    
+        // ...
     };
     
     return 0;
@@ -2109,8 +2114,13 @@ get_next:
         Process->objectType = ObjectTypeProcess;
         Process->objectClass = ObjectClassKernelObjects;
 
-        processNewPID = (int) PID;
+        //Validation.
+        Process->used = 1;
+        Process->magic = 1234;
 
+
+        processNewPID = (int) PID;
+        
 		// Identificadores.
 		// PID. PPID. UID. GID.
 
@@ -2118,6 +2128,7 @@ get_next:
         Process->ppid = (int) ppid; 
         Process->uid  = (int) GetCurrentUserId (); 
         Process->gid  = (int) GetCurrentGroupId (); 
+
 
 		//State of process
 
@@ -2128,9 +2139,6 @@ get_next:
 
 		//Error.
 		//Process->error = 0;
-
-        Process->used = 1;
-        Process->magic = 1234;
 
 		//Name.
 		Process->name = (char *) name; //@todo: usar esse.
@@ -2143,19 +2151,14 @@ get_next:
         strcpy ( Process->__processname, (const char *) name); 
         
 
-		// Lista de streams...
-		// #todo: 
-		// Temos que zerar essa lista e criarmos 3 streams para o processo.
-
+		// Lista de streams ...
+		// Zerando essa lista e criando 3 streams para o processo.
+		// Mas vamos improvisar e usar os ponteiros do kernel.
+		
         for ( i=0; i< NUMBER_OF_FILES; i++ )
         {
             Process->Streams[i] = 0;
         }
-
-		// #bugbug
-		// #test
-		// Temos que criar esses arquivos.
-		// Mas vamos improvisar e usar os ponteiros do kernel.
 
         Process->Streams[0] = (unsigned long) stdin;
         Process->Streams[1] = (unsigned long) stdout;
@@ -2221,7 +2224,6 @@ get_next:
             return NULL;
         }
 
-
         Process->DirectoryVA = (unsigned long ) directory_address;
         Process->DirectoryPA = (unsigned long) virtual_to_physical ( directory_address, 
                                                    gKernelPageDirectoryAddress );
@@ -2253,21 +2255,31 @@ get_next:
 		// #todo: estamos suspendendo essa informação.
 		
 		//
-		// ## IMPORTANTE ##
+		// # IMPORTANTE 
 		//
 		
 		// Base da imagem do processo.
-		
-		//Na verdade precisamos aceitar o endereço passado via argumento,
-		//pois nem todos processos começam no endereço default.
-		
-		//UPROCESS_IMAGE_BASE;
+		// Na verdade precisamos aceitar o endereço passado via 
+		// argumento, pois nem todos processos começam no endereço 
+		// default.
+
+        // Endereço virtual e endereço físico.
         Process->Image = base_address;  
         Process->ImagePA = (unsigned long) virtual_to_physical ( Process->Image, 
                                                gKernelPageDirectoryAddress ); 
+                                               
+        
+        // Endereço virtual e endereço físico de um processo filho.
+        // Isso é usado durante a clonagem.
         Process->childImage = 0;
         Process->childImage_PA = 0;
 
+
+        // #todo
+        // Precisamos saber o tamanho da imagem do processo para
+        // calcularmos quantas páginas ele vai usar.
+        // Precisamos dividir a imagem em code, data, heap e stack
+        // Pois a área de dados poderá sofrer swap.
 
 		// Tamanho da imagem do processo.
 		// Temos que chamar a função que pega o tamanho de um arquivo,
@@ -2277,7 +2289,7 @@ get_next:
 		// #obs: O tamanho também poderia ser passado por arguemento.
 		// #ou um argumento com ponteiro pra estrutura de informação 
 		// sobre uma imagem.
-        Process->ImageSize = 0; 
+        Process->ImageSize = 0;
 
 		//#todo: estrutura com informações sobre a imagem do processo.
         Process->image_info = NULL;

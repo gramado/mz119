@@ -53,197 +53,183 @@ unsigned long __GetThreadStats ( int tid, int index )
     {
 
         case 1:
-           return (unsigned long) t->tid;
-           break;            
+            return (unsigned long) t->tid;
+            break;            
             
         case 2:
-           return (unsigned long) t->ownerPID;
-           break;            
+            return (unsigned long) t->ownerPID;
+            break;            
 
         case 3:
-           return (unsigned long) t->type;
-           break;            
+            return (unsigned long) t->type;
+            break;            
 
         case 4:
-           return (unsigned long) t->state;
-           break; 
+            return (unsigned long) t->state;
+            break; 
            
-       //state    
-       case 5:
-           return (unsigned long) t->plane;
-           break;                      
+        //state    
+        case 5:
+            return (unsigned long) t->plane;
+            break;                      
            
-       case 6:
-           return (unsigned long) t->cpuID;
-           break;              
+        case 6:
+            return (unsigned long) t->cpuID;
+            break;              
            
-       case 7:
-           return (unsigned long) t->confined;
-           break;              
+        case 7:
+            return (unsigned long) t->confined;
+            break;              
 
-       case 8:
-           return (unsigned long) t->CurrentProcessor;
-           break;              
+        case 8:
+            return (unsigned long) t->CurrentProcessor;
+            break;              
 
-       case 9:
-           return (unsigned long) t->NextProcessor;
-           break;              
+        case 9:
+            return (unsigned long) t->NextProcessor;
+            break;              
 
         
-       case 10:
-           return (unsigned long) t->DirectoryPA;
-           break;  
+        case 10:
+            return (unsigned long) t->DirectoryPA;
+            break;  
            
-       case 11:
-           return (unsigned long) t->iopl;
-           break;          
+        case 11:
+            return (unsigned long) t->iopl;
+            break;          
 
+        case 12:
+            return (unsigned long) t->base_priority;
+            break;          
 
+        case 13:
+            return (unsigned long) t->priority;
+            break;          
 
-       case 12:
-           return (unsigned long) t->base_priority;
-           break;          
+        case 14:
+            return (unsigned long) 0;
+            //return (unsigned long) t->pagefaultCount;
+            break;          
 
-
-       case 13:
-           return (unsigned long) t->priority;
-           break;          
-
-
-       case 14:
-           return (unsigned long) 0;
-           //return (unsigned long) t->pagefaultCount;
-           break;          
-
-
-       case 15:
-           return (unsigned long) t->preempted;
-           break;
+        case 15:
+            return (unsigned long) t->preempted;
+            break;
            
-       case 16:
-           return (unsigned long) t->saved;
-           break;
+        case 16:
+            return (unsigned long) t->saved;
+            break;
 
-     
-       //image address.    
-       case 17:
-           return (unsigned long) t->Heap;
-           break;
+        //image address.    
+        case 17:
+            return (unsigned long) t->Heap;
+            break;
 
-       case 18:
-           return (unsigned long) t->Stack;
-           break;
+        case 18:
+            return (unsigned long) t->Stack;
+            break;
 
-
-       case 19:
-           return (unsigned long) t->HeapSize;
-           break;
+        case 19:
+            return (unsigned long) t->HeapSize;
+            break;
            
         case 20:
-           return (unsigned long) t->StackSize;
-           break;
+            return (unsigned long) t->StackSize;
+            break;
           
-       case 21:
-           return (unsigned long) t->step;
-           break;
+        case 21:
+            return (unsigned long) t->step;
+            break;
 
-       case 22:
-           return (unsigned long) t->initial_time_ms;
-           break;
+        case 22:
+            return (unsigned long) t->initial_time_ms;
+            break;
            
-       case 23:
-           return (unsigned long) t->total_time_ms;
-           break;
+        case 23:
+            return (unsigned long) t->total_time_ms;
+            break;
 
+        case 24:
+            return (unsigned long) t->quantum;
+            break;
 
-       case 24:
-           return (unsigned long) t->quantum;
-           break;
+        case 25:
+            return (unsigned long) t->quantum_limit;
+            break;
 
-       case 25:
-           return (unsigned long) t->quantum_limit;
-           break;
+        case 26:
+            return (unsigned long) t->standbyCount;
+            break;
 
-       case 26:
-           return (unsigned long) t->standbyCount;
-           break;
-
-       case 27:
-           return (unsigned long) t->runningCount;
-           break;
+        case 27:
+            return (unsigned long) t->runningCount;
+            break;
            
-       case 28:
-           return (unsigned long) t->runningCount_ms;
-           break;
+        case 28:
+            return (unsigned long) t->runningCount_ms;
+            break;
 
+        case 29:
+            return (unsigned long) t->readyCount;
+            break;
 
-       case 29:
-           return (unsigned long) t->readyCount;
-           break;
+        case 30:
+            return (unsigned long) t->ready_limit;
+            break;
 
-       case 30:
-           return (unsigned long) t->ready_limit;
-           break;
-
-
-       case 31:
-           return (unsigned long) t->waitingCount;
-           break;
+        case 31:
+            return (unsigned long) t->waitingCount;
+            break;
            
-       case 32:
-           return (unsigned long) t->waiting_limit;
-           break;
+        case 32:
+            return (unsigned long) t->waiting_limit;
+            break;
            
-       case 33:
-           return (unsigned long) t->blockedCount;
-           break;
+        case 33:
+            return (unsigned long) t->blockedCount;
+            break;
 
-       case 34:
-           return (unsigned long) t->blocked_limit;
-           break;
+        case 34:
+            return (unsigned long) t->blocked_limit;
+            break;
 
 
-       case 35:
-           return (unsigned long) t->ticks_remaining;
-           break;
+        case 35:
+            return (unsigned long) t->ticks_remaining;
+            break;
 
-       case 36:
-           return (unsigned long) t->profiler_percentage_running;
-           break;
-           
-           
-       case 37:
-           return (unsigned long) t->profiler_percentage_running_res;
-           break;
+        case 36:
+            return (unsigned long) t->profiler_percentage_running;
+            break;
+            
+        case 37:
+            return (unsigned long) t->profiler_percentage_running_res;
+            break;
 
-       case 38:
-           return (unsigned long) t->profiler_percentage_running_mod;
-           break;
+        case 38:
+            return (unsigned long) t->profiler_percentage_running_mod;
+            break;
            
            
-       case 39:
-           return (unsigned long) t->profiler_ticks_running;
-           break;
+        case 39:
+            return (unsigned long) t->profiler_ticks_running;
+            break;
 
-       case 40:
-           return (unsigned long) t->profiler_last_ticks;
-           break;
+        case 40:
+            return (unsigned long) t->profiler_last_ticks;
+            break;
 
-       case 41:
-           return (unsigned long) t->PreviousMode;
-           break;
+        case 41:
+            return (unsigned long) t->PreviousMode;
+            break;
 
-       case 42:
-           return (unsigned long) t->signal;
-           break;
+        case 42:
+            return (unsigned long) t->signal;
+            break;
 
-       case 43:
-           return (unsigned long) t->signalMask;
-           break;
+        case 43:
+            return (unsigned long) t->signalMask;
+            break;
     };
-
-
-
 
 
     return 0;

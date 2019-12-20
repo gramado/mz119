@@ -644,6 +644,14 @@ int init (void){
     //Globals.
 	init_globals ();
 	
+	
+	// #importante
+	// À partir daqui podemos exibir strings na tela.
+	
+
+	
+	
+	
 #ifdef EXECVE_VERBOSE	
 	printf("sm-init-init: init_globals ok\n");     
 #endif  

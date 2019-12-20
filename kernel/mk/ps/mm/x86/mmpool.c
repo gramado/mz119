@@ -12,7 +12,7 @@
 
 /*
  ******************************************************
- * newPageFrame:
+ * page:
  *
  *     Cria uma estrutura de página.
  *     Procura um slot vazio para registrar ela.
@@ -23,7 +23,6 @@
 void *page (void){
 
     struct page_d *New;
-
     int Index;
 
 
@@ -41,17 +40,11 @@ void *page (void){
 				//free
 				goto fail;
 			}
-			
-			//printf("$");
-			
+
 			New->id = Index;
-			
 			New->used = 1;
 			New->magic = 1234;
-			
-			//not free
-			New->free = 0;  
-
+			New->free = 0;        // Not free!
 			New->next = NULL;
 			
 			
@@ -76,14 +69,16 @@ fail:
 /*
  ***************************************************
  * newPage:
+ * 
  *     Aloca uma página e retorna seu endereço virtual inicial. 
- *     Isso é feito com base no id do pageframe e no endereço virtual inicial 
- * do pool de pageframes.
+ * 
+ *     Isso é feito com base no id do pageframe e no endereço virtual 
+ * inicial do pool de pageframes.
  * 
  * Obs: 
- * Alocaremos uma página de memória virtual e retornaremos 
- * o ponteiro para o início da página.
- * Para isso usaremos o alocador de frames de memória física.
+ * Alocaremos uma página de memória virtual e retornaremos o ponteiro 
+ * para o início da página. Para isso usaremos o alocador de frames 
+ * de memória física.
  */
 
 void *newPage (void){
@@ -105,7 +100,7 @@ void *newPage (void){
 
     if ( New == NULL )
     {
-		printf ("pc-mm-newPage: New\n");
+		printf ("mm-x86-newPage: New\n");
 		
 		goto fail;
 		
@@ -145,7 +140,8 @@ void *newPage (void){
 			        New->frame_number = 0;
 			    }
 				
-				// Retorna o endereço virtual.	
+				// #importante:
+				// Retorna o endereço virtual.
 				
 				return (void *) ( base + (New->id * 4096) );
 			}

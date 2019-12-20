@@ -57,7 +57,9 @@ void faults ( unsigned long number ){
 	
 	asm ("cli");
     
-    kprintf ("\n *FAULTS: totalticks=%d \n\n", sys_time_ticks_total );
+    kprintf ("\n x86fault-faults: *FAULTS: totalticks=%d \n\n", 
+        sys_time_ticks_total );
+        
     
 	//
 	//   ## Thread ##

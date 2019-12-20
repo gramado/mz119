@@ -1874,11 +1874,6 @@ int systemInit (void){
     //vamos avançar
 	// quem chamou essa funçao foi o começo da inicializaçao do kernel.
 	// retornamos para x86main.c para arch x86.
-	
-	//printf ("+++++++++++++++++ systemInit ++++++\n");
-    //refresh_screen(); 
-    //while(1){}
-
 
 
 	//retornando para a rotina de entrypoint da arquitetura alvo.

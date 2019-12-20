@@ -28,6 +28,9 @@
  * dentro do terminal. 
  */
  
+// #importante
+// Isso é rotina de terminal virtual.
+ 
 void _outbyte (int c){
 	
     unsigned long i;
@@ -122,6 +125,9 @@ void _outbyte (int c){
  * Essa rotina é chamada pelas funções: /putchar/scroll/.
  * @todo: Colocar no buffer de arquivo.
  */
+
+// #importante
+// Isso é rotina de terminal virtual.
 
 void outbyte (int c){
 	
