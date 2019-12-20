@@ -2752,8 +2752,6 @@ void SetFocus ( struct window_d *window ){
 	
     if ( (void *) window == NULL )
 	{
-		//Isso e recursivo, pode dar problema.
-		//SetFocus(gui->screen);    
 		goto fail;
 	
 	} else {
@@ -2762,6 +2760,9 @@ void SetFocus ( struct window_d *window ){
 		{
 			goto fail;
 		}
+		
+		//A janela que antes tinha o foco, perde ele.
+		KillFocus (WindowWithFocus);
 		
 		//
 		// Thread.
@@ -2772,8 +2773,7 @@ void SetFocus ( struct window_d *window ){
 		// foco de entrada à thread atual, pois é ela quem chamou essa rotina. 
 		// Apesar que o próprio kernel pode ter chamado isso na inicialização,
 		// nesse caso a thread será inválida.
-		
-		window->control = (struct thread_d *) threadList[current_thread];
+
 		
 		if ( (void *) window->control != NULL )
         {
@@ -2796,7 +2796,6 @@ void SetFocus ( struct window_d *window ){
 		if ( window->id == window_with_focus )
 		{
 			window->focus = 1; 
-			
 			goto setup_wwf;
 		};
 		
@@ -3215,42 +3214,36 @@ void KillFocus ( struct window_d *window ){
 	{
 		printf ("KillFocus: window\n");
 	    goto fail; 
-	};
-	
-	//Focus.
-	//window->focus = (int) 0;
-    
-	// ?? @todo: Quem deve receber o foco nesse caso ??
-	// ?? um índice antes no zorder ??
-	
-	if ( (void *) gui->main != NULL )
-	{
-		if ( gui->main->used == 1 && gui->main->magic == 1234 )
+	}else {
+		
+		if ( window->used == 1 && window->magic == 1234 )
 		{
-	        window_with_focus = (int) gui->main->id;
+			window->focus = 0;
+			
+			window_with_focus = 0; //#test
+			WindowWithFocus = NULL;
+			
+			
+            // thread
+		    if ( (void *) window->control != NULL )
+            {
+			    if ( window->used == 1 || window->magic == 1234 )
+			    {
+			   // mandamos a mensagem
+			   // o aplicativo decide o que fazer com ela.
+			    window->control->window = window;
+			    window->control->msg = MSG_KILLFOCUS;
+			    window->control->long1 = 0;
+			    window->control->long2 = 0;
+			    window->control->newmessageFlag = 1;
+			    }
+		    }
+		
 		};
-	}
-	
-	// #obs:
-	// Pra onde vai o foco ??
-	
-	//Set next window
-	if ( (void *) window->parent != NULL )
-	{
-		if ( window->parent->used == 1 && window->parent->magic == 1234 )
-		{
-		    SetFocus (window->parent); 	
-		}; 	    
-    };	
-	
-	// Nothing.
-	
-done:
+	};
 
-	return;
-	
+
 fail:
-
     return;
 }
 
