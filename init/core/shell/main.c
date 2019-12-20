@@ -2016,7 +2016,6 @@ shellProcedure( struct window_d *window,
 
 
 		case MSG_SETFOCUS:
-		    APISetFocus(window);
 			break;
 
 
