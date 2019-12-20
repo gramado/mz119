@@ -1848,7 +1848,35 @@ done:
 			    window->control = NULL;
 			}
         }
-
+        
+        
+        //
+        // MSG_CREATE
+        //
+        
+        // #test
+        // O procedimento de janelas do aplicativo receberá essa mensagem
+        // quando criar uma overlapped, pedindo pra ele terminar de criar
+        // as janelas filhas da overlapped.
+ 
+    if (window->type == WT_OVERLAPPED)
+    {
+		if ( (void *) window->control != NULL )
+        {
+			if ( window->used == 1 || window->magic == 1234 )
+			{
+			   // mandamos a mensagem
+			   // o aplicativo decide o que fazer com ela.
+			    window->control->window = window;
+			    window->control->msg = MSG_CREATE;
+			    window->control->long1 = 0;
+			    window->control->long2 = 0;
+			    window->control->newmessageFlag = 1;
+			}
+		}        
+    };
+    
+ 
     return (void *) window;
 }
 

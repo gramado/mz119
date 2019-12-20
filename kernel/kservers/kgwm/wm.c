@@ -2258,7 +2258,23 @@ resize_window ( struct window_d *window,
 		//@todo: Checar limites.
 	
         window->width = (unsigned long) cx;
-        window->height = (unsigned long) cy;	
+        window->height = (unsigned long) cy;
+        
+        
+        //validade da thread,
+		if ( (void *) window->control != NULL )
+        {
+			if ( window->control->used == 1 || window->control->magic == 1234 )
+			{
+			   // mandamos a mensagem
+			   // o aplicativo decide o que fazer com ela.
+			    window->control->window = window;
+			    window->control->msg = MSG_SIZE;
+			    window->control->long1 = 0;
+			    window->control->long2 = 0;
+			    window->control->newmessageFlag = 1;
+			}
+		};
 	};
 
     return 0;
@@ -2777,7 +2793,7 @@ void SetFocus ( struct window_d *window ){
 		
 		if ( (void *) window->control != NULL )
         {
-			if ( window->used == 1 || window->magic == 1234 )
+			if ( window->control->used == 1 || window->control->magic == 1234 )
 			{
 			   // mandamos a mensagem
 			   // o aplicativo decide o que fazer com ela.
@@ -3227,7 +3243,7 @@ void KillFocus ( struct window_d *window ){
             // thread
 		    if ( (void *) window->control != NULL )
             {
-			    if ( window->used == 1 || window->magic == 1234 )
+			    if ( window->control->used == 1 || window->control->magic == 1234 )
 			    {
 			   // mandamos a mensagem
 			   // o aplicativo decide o que fazer com ela.

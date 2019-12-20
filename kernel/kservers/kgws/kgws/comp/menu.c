@@ -837,7 +837,7 @@ int MainMenu (struct window_d *window){
     struct window_d *cmWindow;
     
     //#debug
-    printf ("MainMenu: *debug initializing ...\n");
+    //printf ("MainMenu: *debug initializing ...\n");
 
 	//
 	// Parent 
