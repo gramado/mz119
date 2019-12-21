@@ -501,100 +501,68 @@ void shellCreateEditBox (){
 	//Registrar.
     APIRegisterWindow (editboxWindow);
 
-	//shellSetCursor ( 8, 8 );								   
-};
+	//shellSetCursor ( 8, 8 );
+}
 
 
 /*
  ******************** 
- * shellCreateTaskBar:
+ * shellCreateMainWindow:
  *
- *     CRIANDO A TOP BAR.
- *     Obs: Essa é uma janela filha.
- *     @todo: ?? e o procedimento de janela ?? e as mensagens ??
- *     Obs: É uma janela simples e limpa, feita para dispositivos IOT 
- * com resolução 800x600.
- *
+ *    Criando a janela principal usada pelo shell.
  */
- 
-struct window_d *shellCreateMainWindow( int status ){
-	
-	// #todo:
-	// Precisamos registrar no kernel que essa janela corresponde 
-	// a área de taskbar e que a área de trabalho agora é menor.
-	
-	// # ??
-	// Pegando a janela principal para usarmos como janela mãe.
-	
-	/*
-	
-	struct window_d *pW;
 
-	pW = (struct window_d *) apiGetWSScreenWindow ();
-	
-	if ( (void *) pW == NULL )
-	{
-	    printf("Screen Window fail\n ");
-	    
-		while (1){
-			asm ("pause");
-			//exit (1);
-		}
-	}
-	*/
-	
-	
-	unsigned long left;
-	unsigned long top;
-	unsigned long width;
-	unsigned long height;
-	
-	//left = 0;
-	//top = (600 - (600/16));
-	//width = 800;
-	//height = (600/8); 	
-	
-	//left = wpWindowLeft;
-	//top = wpWindowTop;
-	//width = wsWindowWidth;
-	//height = wsWindowHeight;
+struct window_d *shellCreateMainWindow ( int status ){
 
-	wpWindowLeft = 0;
-	wpWindowTop = 0;
-	wsWindowWidth = 800;
-	wsWindowHeight = 600;
+    struct window_d *w;
 
-	
-	left = wpWindowLeft;
-	top = wpWindowTop;
-	width = wsWindowWidth;
-	height = wsWindowHeight;
+    unsigned long left;
+    unsigned long top;
+    unsigned long width;
+    unsigned long height;
 
-	
-	struct window_d *w;
 
-	w = (void *) APICreateWindow ( 1, 1, 1, "shell-main",     
-                                left, top, width, height,    
-                                0, 0, xCOLOR_GRAY1, xCOLOR_GRAY1 );
-								
+    // #bugbug
+    // Precisamos pegar o tamanho do sispositivo.
+    // E se for uma resolução menor que isso ?
+    // 800x600 é o padrão do Gramado.
+    
+    wpWindowLeft = 0;
+    wpWindowTop = 0;
+    wsWindowWidth = 800;
+    wsWindowHeight = 600;
+
+
+    left = wpWindowLeft;
+    top = wpWindowTop;
+    width = wsWindowWidth;
+    height = wsWindowHeight;
+
+
+
+    //w = (void *) APICreateWindow ( 1, 1, 1, "shell-main",     
+    w = (void *) APICreateWindow ( WT_OVERLAPPED, 1, 1, "shell-main",     
+                     left, top, width, height,    
+                     0, 0, xCOLOR_GRAY1, xCOLOR_GRAY1 );
+
 	if ( (void *) w == NULL )
 	{	
-		printf("shellCreateTaskBar: taskbar Window fail");
-		refresh_screen();
+		printf ("shellCreateMainWindow: taskbar Window fail");
 		
 		while (1){
 			asm("pause");
 		}
 		//exit(0);
-	};
-	
-	//Registrar.
+	}
+
+
+	// Registrar e mostrar.
+
     APIRegisterWindow (w);
-	
-	apiShowWindow (w);
-	
-	return w;
-};
+    apiShowWindow (w);
+
+    return w;
+}
 
 
 

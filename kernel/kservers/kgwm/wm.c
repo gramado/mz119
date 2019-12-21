@@ -2790,10 +2790,12 @@ void SetFocus ( struct window_d *window ){
 		// Apesar que o próprio kernel pode ter chamado isso na inicialização,
 		// nesse caso a thread será inválida.
 
-		
+		// Validade da thread.
 		if ( (void *) window->control != NULL )
         {
-			if ( window->control->used == 1 || window->control->magic == 1234 )
+			// Validade da thread.
+			if ( window->control->used == 1 || 
+			     window->control->magic == 1234 )
 			{
 			   // mandamos a mensagem
 			   // o aplicativo decide o que fazer com ela.
@@ -2805,7 +2807,7 @@ void SetFocus ( struct window_d *window ){
 			}
 		}
 		
-		//Salvando id localmente.
+		// Salvando id localmente.
 		WindowID = (int) window->id; 
 			
 		//Se a janela já tem o foco não precisa fazer nada.
@@ -3239,19 +3241,21 @@ void KillFocus ( struct window_d *window ){
 			window_with_focus = 0; //#test
 			WindowWithFocus = NULL;
 			
-			
-            // thread
-		    if ( (void *) window->control != NULL )
+
+            // Validade da thread.
+            if ( (void *) window->control != NULL )
             {
-			    if ( window->control->used == 1 || window->control->magic == 1234 )
+                // Validade da thread.
+                if ( window->control->used == 1 || 
+                     window->control->magic == 1234 )
 			    {
-			   // mandamos a mensagem
-			   // o aplicativo decide o que fazer com ela.
-			    window->control->window = window;
-			    window->control->msg = MSG_KILLFOCUS;
-			    window->control->long1 = 0;
-			    window->control->long2 = 0;
-			    window->control->newmessageFlag = 1;
+			        // mandamos a mensagem
+			        // o aplicativo decide o que fazer com ela.
+			        window->control->window = window;
+			        window->control->msg = MSG_KILLFOCUS;
+			        window->control->long1 = 0;
+			        window->control->long2 = 0;
+			        window->control->newmessageFlag = 1;
 			    }
 		    }
 		

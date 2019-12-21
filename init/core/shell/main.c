@@ -732,13 +732,14 @@ int main ( int argc, char *argv[] ){
 					break;
 
 	            default:
-					printf ("Nothing ...\n");
+					//printf ("Nothing ...\n");
 	                //if (change_flag_char (arg_character, on_or_off) == FLAG_ERROR)
 		            //{
 		                //report_error ("%c%c: bad option", on_or_off, arg_character);
 		                //printf ("%c%c: bad option", on_or_off, arg_character);
 		                //exit (1);
 		            //}
+		            break;
 
 	        }
 	    }
@@ -749,7 +750,7 @@ int main ( int argc, char *argv[] ){
 	
 after_flags:		
 	
-	printf ("Nothing ...\n");
+	printf ("Gramado core shell: Initializing ...\n");
 	
 	
 
@@ -1156,277 +1157,46 @@ noArgs:
 	// Os argumentos tratados abaixo podem modificar esses padrões
 	// Ex: Um argumento de entrada pode solicitar a troca de cor de fonte.
 	
-	shellShell (); 	
+	
+	//funcionou.
+	//printf ("shell: *breakpoint :)");
+	//while(1){}
+	
+	
+	printf ("shell: Chamando constructor :)");
+	shellShell (); 
 	
 	//Apenas inicialize. Continuaremos com o procedimento 
 	//do shell e não o da barra,	
 	
+	printf ("shell: Criando janela.");
     
-//again:	
-	enterCriticalSection ();    
+    //++
+    // Criar, registrar e mostrar.
+    enterCriticalSection ();    
     hWindow = shellCreateMainWindow (1);
-	exitCriticalSection ();
-	//goto again;
-	
-	//#bugbug
-	//falha quando chamamos a rotina de pintura da janela.
-		
-	//
-	// @todo: Usar essa rotina para fazer testes de modo gráfico.
-	//	
-	
-	//Debug:
-	//while(1){};
-	
-	// @todo: 
-	//     Set priority.
-	//     Set Window Station, Desktop ...
-	//     ...
-	//
-	// @todo:
-	//     Quando essa janela é criada ainda estamos no ambiente de Logon,
-	// dentro do desktop de Logon. Não há problema nisso por enquanto,
-	// pois poderemos utilizar os recursos do shell antes de habilitarmos
-	// todos os recursos o ambiente do usuário. Porém será necessário, 
-	// no futuro, executarmos o Shell no desktop do ambiente do usuário.
-	//
-	// @todo: 
-	//     Precisamos de um ponteiro com a área de memória que representa
-	// a área de trabalho do Shell.
-	//     Precisamos de um ponteiro com a área de cliente da janela do Shell.
-	//
-    // @todo: 
-	//     Buffers. Buffers pra linha e buffer pra arquivo.	
-	//
-	// @todo: 
-	//     Essa janela aparece centralizada e pequena, evidenciando que os 
-	// argumentos não foram passados corretamente, então o gerente de recursos 
-	// gráficos usou dimensões default. Provavelmente o Kernel não os 
-	// recepciona devidamente ainda.
-	// ...
-	
-	
-	//
-    // Create Window.
-	//
-	
-	//Debug:
-	//printf("\n\n Starting Shell Version ");
-	//printf(SHELL_VERSION);
-	//refresh_screen();	
-	
-	//Debug:
+    if ( (void *) hWindow == NULL )
+    {
+        printf ("shellCreateMainWindow FAIL!");
+        while(1){}
+        //die ("shell.bin: hWindow fail");
+    }
+    exitCriticalSection ();
+    //--
+
+    //funcionou.
+	//printf ("shell: *breakpoint :)");
 	//while(1){}
 	
-	
-	//
-	// Step 2. Creating a window frame.
-	//
-		
-	
-    // Não é necessário passar todos os argumentos de uma vez só.
-	// Podemos realizar 3 ou 4 chamadas para construírmos a janela.
-	// Essa rotina tem 12 argumentos mas ela poderá realizar 3 chamadas
-	// ao sistema para passar todos os argumentos.
-	
-	
-	// *Importante:
-	//      A janela do shell será uma aba dentro da janela do navegador,
-	// essa janela do navegador é gerenciada pelo kernel, mas não passa de uma moldura 
-	// com abas.
-	// >> o kernel ja sabe que o processo tem uma aba, então quando o processo 
-	//tenta criar uma janela, a sua janela será criada dentro de sua aba.
-	
-	//General purpose appplication  -  {} Developer version
-	
-	//@todo:
-	//Criar essas funções na API.
-	//unsigned long ScreenWidth = (unsigned long) APIGetScreenWidth();
-	//unsigned long ScreenHeight = (unsigned long) APIGetScreenheight();
-	
-	
-	//
-	// Configurando o retângulo que deve ser usado pelo terminal.
-	//
-	
-	//#bugbug 
-	// esses valores são usados para construir a janela principal.
-	// o que desejamos são os valores do retângulo da área de cliente 
-	// da janela principal.
-	
-	//terminal_rect.left = wpWindowLeft;
-	//terminal_rect.top = wpWindowTop;
-	//terminal_rect.width = wsWindowWidth;
-	//terminal_rect.height = wsWindowHeight;
-	
-	//#debug
-	//printf("terminal_rect: 1\n");	
-    //printf("l={%d} t={%d} w={%d} h={%d}\n", 
-	//    terminal_rect.left, terminal_rect.top,
-	//	terminal_rect.width, terminal_rect.height );
-	//while(1){}
-	
-	
-	
-	// # ??
-	// Pegando a janela principal para usarmos como janela mãe.
-	
-	/*
-	
-	struct window_d *pW;
-
-	pW = (struct window_d *) apiGetWSScreenWindow ();
-	
-	if ( (void *) pW == NULL )
-	{
-	    printf("Screen Window fail\n ");
-	    
-		while (1){
-			asm ("pause");
-			//exit (1);
-		}
-	}
-	*/
-    
-    //
-    // #todo: Pegar o desktop atual.
-    //
-    
-    
-	//
-	// Criando a janela WT_OVERLAPPED.
-	// 
-	
-	// Com base nas informações obtidas no sistema.
-	// verde 0x83FCFF
-	// preto COLOR_BLACK
-						
-    //para flat os dois poem ser a mesma cor.
-    //não completamente preto.	
-	//apiBeginPaint ();
-	
-	//hWindow = (void *) APICreateWindow ( WT_OVERLAPPED, 1, 1, "SHELL",
-	//                    wpWindowLeft, wpWindowTop, 
-	//				    wsWindowWidth, wsWindowHeight,    
-    //                    pW, 0, 0x35475F, xCOLOR_GRAY1 ); //pW, 0, xCOLOR_GRAY3, xCOLOR_GRAY1 ); //#35475F	
-
-	//hWindow = (void *) APICreateWindow ( WT_OVERLAPPED, 1, 1, "SHELL",
-	//                    10, 10, 200, 200,    
-    //                    pW, 0, 0x35475F, xCOLOR_GRAY1 ); 	
-	
-	//hWindow = (void *) APICreateWindow ( 1, 1, 1, "XXX",     
-    //                            10, 10, 200, 200,
-    //                            0, 0, xCOLOR_GRAY1, xCOLOR_GRAY1 );
-
-
-	//printf("SHELL\n");	
-    //printf("#debug breakpoint");	
-	//while(1){} 
-
-
-	if ( (void *) hWindow == NULL )
-	{
-		printf ("FAIL!");
-		while(1){}
-		
-		die ("shell.bin: hWindow fail");
-	}
-	
-	
-	//printf("SHELL\n");	
-    //printf("#debug breakpoint");	
-	//while(1){} 
-	
-	/*
-	 Imprimindo o ponteiro para a estrutura da janela criada 
-	 Estamos testando se o retorno está funcionando nesse caso.
-	 */
-	/* isso funcionou
-	printf("Testing handle {%x}\n",hWindow);
-	
-	printf("Testing resize window\n");
-	APIresize_window( hWindow, 640, 480);
-	*/
- 
-	
-	//apiEndPaint();
-	
-	//hWindow = shellCreatemainWindow ();
-	
-	//printf("OK FUNCIONOU");
-	//while(1){}
-	
-	//
-	// Funcionou setar o foco, e a mensagem foi para a janela certa.
-	//
-	
-    // Registrar.
-	// Configurar como ativa.
-    // Setar foco.
-	// *IMPORTANTE: 
-	// É FUNDAMENTAL SETAR O FOCO, POIS O KERNEL DEPENDE DELE
-	// PARA RETORNAR A MENSAGEM DA JANELA COM O FOCO DE ENTRADA.
-	// Nesse momento o kernel configura as margens para o cursor 
-	// dentro da janela.
-	// @todo: O kernel deve reiniciar as variáveis de cursor 
-	// dentro da janela também, pois cada janela tem uma configuração 
-	// diferente de cursor.
-	//
-	// ?? Show Window !!
-	// Precisamos mostrar a janela e não repintar 
-	// a tela toda.
-
-
-
-    // Registrando e mostrando a janela principal.
-    APIRegisterWindow (hWindow);
-    apiShowWindow (hWindow);
-
-
-
-	//#test 
-	//Criando um timer.
-	
-	//printf("shmain: Creating timer\n");
-					
-		//janela, 100 ms, tipo 2= intermitente.
-	//system_call ( 222, (unsigned long) hWindow, 100, 2);		
-
-	
-	//printf("SHELL\n");	
-    //printf("#debug breakpoint");
-    //while(1){} 	
-	
-	//#importante
-	//VAMOS EFETUAR ESSE REFRESH DEPOIS DE CRIARMOS OUTRA JANELA.
-	//refresh_screen ();
-	
-	
-	//
-	// #importante:
-	// +pegamos o retângulo referente à area de cliente da janela registrada. 
-	// +atualizamos as variáveis que precisam dessa informação. 
-	// reposicionamos o cursor.
-	// reabilitamos a piscagem de cursor.
-	//
-	
- 
-
-	//3bugbug
-	//vamos suspender isso porque estamos usando janela WT_SIMPLE,
-	//e sanela simples não tem área de cliente 
-	
-	// +pegamos o retângulo referente à area de cliente da janela registrada. 
-	//unsigned long xbuffer[8];	
-	//system_call ( 134, (unsigned long) hWindow, 
-	//    (unsigned long) &xbuffer[0], (unsigned long) &xbuffer[0] );	
-	//terminal_rect.left = xbuffer[0];
-	//terminal_rect.top = xbuffer[1];
-	//terminal_rect.width = xbuffer[2];
-	//terminal_rect.height = xbuffer[3];	
 	
 	//...
 	
+	//
+	// #todo
+	// Aqui a janela do terminal á a janela principal.
+	// Mas ela é uma overlapped por enquanto.
+	// Vamos testar assim.
+
 	terminal_rect.left = wpWindowLeft;
 	terminal_rect.top = wpWindowTop;
 	terminal_rect.width = wsWindowWidth;
@@ -1451,7 +1221,7 @@ noArgs:
 		    terminal_rect.width, 
 			terminal_rect.height );
 		
-        while (1){ asm ("pause"); }			
+        while (1){ asm ("pause"); }
 	}
 	
 	
@@ -1470,83 +1240,25 @@ noArgs:
     //printf("#debug breakpoint");
     //while(1){} 	
 	
-	//===============================
-	
-    //
-	// ## Janela para texto ##
-	//
-	
-    /*
-    apiBeginPaint();
-	
-	//mudando as dimensões a janela dentro da área de cliente.
-	
-	terminal_rect.left = terminal_rect.left +2;
-	terminal_rect.top = terminal_rect.top +2;
-	
-	terminal_rect.width = terminal_rect.width -4 -40; //8 * 80;
-	terminal_rect.height = terminal_rect.height -4; //8 * 32;
-	
-	//terminal_rect.width = 8 * 80;
-	//terminal_rect.height = 8 * 32;
-	
-	
-	hWindow2 = (void *) APICreateWindow ( WT_SIMPLE, 1, 1, "SHELL-CLIENT",
-	                        terminal_rect.left, terminal_rect.top, 
-					        terminal_rect.width, terminal_rect.height,    
-                            0, 0, SHELL_TERMINAL_COLOR2, SHELL_TERMINAL_COLOR2 );	   
-
-						
-	if ( (void *) hWindow2 == NULL )
-	{	
-		die ("shell.bin: hWindow2 fail");
-	}	
-	
-	apiEndPaint();
-	
-    APIRegisterWindow (hWindow2);
-    //APISetActiveWindow (hWindow2);	
-    APISetFocus (hWindow2);	 
-	
-	//#importante
-	//refresh_screen ();	
-	
-	//#test 
-	//substituindo refresh screen por show window.
-	//vamos mostrar a janela da área do cliente, depois de 
-	//termos mostrado a janela mãe.
-	apiShowWindow (hWindow2);
-	*/
-	
-	
-	
-	//===========================================================
 
 	
 	//
 	// Habilitando o cursor piscante de textos.
 	//
+
+	printf ("shell: habilitando cursor piscante \n");
 	
 	shellSetCursor ( (terminal_rect.left / 8) , ( terminal_rect.top/8) );	
 	
 	system_call ( 244, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0 );
-	
-    //Mensagem ...
-	//printf ("\n");
-	//printf ("Starting GDESHELL.BIN ... \n\n");	
-	
-    //printf("#debug breakpoint");
-    //while(1){} 	
-	
-	//#bugbug
-	//janela usada para input de textos ...
-	//o input de texto pode vir de várias fontes.
-	//api_set_window_with_text_input(hWindow);
+
+
 	
 	//
 	// ++ terminal ++
 	//
-	
+	printf ("shell: configurando janela do terminal \n");
+		
 	// #importante
 	// Definindo a janela como sendo uma janela de terminal.
 	// Isso faz com que as digitações tenham acesso ao procedimento de janela de terminal 
@@ -1565,6 +1277,9 @@ noArgs:
 	// @todo: Apenas registrar o procedimento dessa janela na sua estrutura no kernel..
     // 
 
+
+	printf ("shell: *breakpoint :)");
+	while(1){}
 
 
 
@@ -4167,22 +3882,12 @@ void shellShell (){
 	
 	//...
 	
-//done:
+// done:
 
     ShellFlag = SHELLFLAG_COMMANDLINE;
-	
-    //#bugbug
-	//Nossa referência é a moldura e não a área de cliente.
-	//@todo:usar a área de cliente como referência
-	//shellSetCursor(0,0);
-    //shellSetCursor(0,4);
-    
-	//@todo
-	//tentando posicionar o cursor dentro da janela
-	//shellSetCursor( (shell_info.main_window->left/8) , (shell_info.main_window->top/8));	
-	
-	//shellPrompt();
-};
+
+    shellSetCursor (0,0);
+}
 
 
 /*

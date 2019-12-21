@@ -612,6 +612,7 @@ void x86main (void){
     int gramado_core = 0;
 
 
+    debug_print ("==============\n");
     debug_print ("[x86] x86main:\n");
 
 
@@ -638,15 +639,16 @@ void x86main (void){
 	
 	//system.c
 
-	//Construtor.
-    systemSystem (); //status.
+	// Construtor.
+	// status.
+    systemSystem (); 
 
     Status = (int) systemInit ();
 
     if ( Status != 0 )
     {
-        debug_print ("x86main: systemInit fail\n");
-        printf ("x86main: systemInit fail\n");
+        debug_print ("[x86] x86main: systemInit fail\n");
+        printf ("[x86] x86main: systemInit fail\n");
 
         KernelStatus = KERNEL_ABORTED;
 
@@ -700,7 +702,7 @@ void x86main (void){
 
     if ( (void *) KernelProcess == NULL )
     {
-        panic ("x86main: KernelProcess\n");
+        panic ("[x86] x86main: : KernelProcess\n");
 
     }else{
 
@@ -718,14 +720,14 @@ void x86main (void){
 
     if ( gramado_core == 1 )
     {
-		printf ("Starting all processes\n");
+		printf ("[x86] x86main: Starting all processes\n");
 	    
 		//varios processos.
 		x86StartGramadoCore ();
 		
     }else{
 
-		printf ("Starting only init\n");
+		printf ("[x86] x86main: Starting only init\n");
 		
 		//apenas o init.
 		x86StartInit ();
@@ -772,24 +774,22 @@ void x86main (void){
     timer_cursor_used = 0;   //desabilitado.
     timer_cursor_status = 0;
 
-//doTests:
-   //...
+
+
 
 	//
 	// ========= ## ps2 ## =============
 	//
 
-
 	// Initializing ps/2 controller.
-	// ldisc.c
-
-    debug_print ("[x86] x86main: ps2\n");    
 
 
 	//#DEBUG
 	//printf ("testing ps2\n");
 	//refresh_screen(); 
 
+
+    debug_print ("[x86] x86main: ps2\n");    
     ps2 ();
 
 
@@ -871,8 +871,7 @@ void x86main (void){
 
     if ( (void *) gui->taskmanWindow == NULL )
     {
-        printf("x86main: falaha ao criar a janela do servidor taskman\n");
-        die ();
+        panic ("[x86] x86main: taskmanWindow\n");
 
     } else {
 
@@ -910,7 +909,7 @@ void x86main (void){
 	//a primeira mensagem só aparece após a inicialização da runtime.
 	//por isso não deu pra limpar a tela antes.
 
-    printf(">>>debug hang: after entry");
+    printf ("[x86] x86main: after entry");
     refresh_screen(); 
     while (1){ asm ("hlt"); }
 
@@ -924,17 +923,19 @@ void x86main (void){
 
 done:
 
-    debug_print("x86main: done\n");
+
+    debug_print ("[x86] x86main: done\n");
+    debug_print ("==============\n");
+
 
     // Return to assembly file, (head.s).
     if ( KernelStatus == KERNEL_INITIALIZED )
     {
-
         //
         // Starting idle thread.
         //
         
-		printf("x86main: Initializing INIT ..\n");
+		printf("[x86] x86main: Initializing INIT ..\n");
         
 #ifdef KERNEL_VERBOSE
     refresh_screen();
@@ -942,7 +943,7 @@ done:
    
 		x86mainStartFirstThread ();        
 
-        printf ("x86main: No idle thread selected\n");
+        printf ("[x86] x86main: No idle thread selected\n");
         goto fail;
     };
 
@@ -953,7 +954,7 @@ fail:
 	// e ao invés de retornarmos, apenas entrarmos na thread idle
 	// em ring 0, isso depois de criadas as threads em user mode.
 
-    printf ("x86main: fail\n");
+    debug_print ("[x86] x86main: fail\n");
     refresh_screen ();
 }
 

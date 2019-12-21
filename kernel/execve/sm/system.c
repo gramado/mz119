@@ -1826,10 +1826,9 @@ done:
     debug_print ("====\n");
 
     //#debug
-    printf ("systemStartUp: *breakpoint :) \n"); 
-    refresh_screen();
-    while(1){}
-
+    //printf ("systemStartUp: *breakpoint :) \n"); 
+    //refresh_screen();
+    //while(1){}
 
     //printf("systemStartUp: Done!\n");
 	//refresh_screen();
@@ -1854,7 +1853,8 @@ int systemInit (void){
 
     int Status;
 
-    debug_print ("systemInit:\n");
+    debug_print ("====\n");
+    debug_print ("====systemInit:\n");
 
 	//Colocando na variável global, a opção selecionada manualmente pelo 
 	//desenvolvedor.
@@ -1874,21 +1874,33 @@ int systemInit (void){
 	//a primeira mensagem só aparece após a inicialização da runtime.
 	//por isso não deu pra limpar a tela antes.
 	
-	printf (">>>debug hang: after init");
+	printf ("systemInit: *breakpoint\n");
 	refresh_screen(); 
 	while (1){ asm ("hlt"); }
 #endif
 	
 	
-	//#debug :  
-    // esperamos alcaçarmos esse alvo.
-    //isso funcionou gigabyte/intel
-    //vamos avançar
-	// quem chamou essa funçao foi o começo da inicializaçao do kernel.
-	// retornamos para x86main.c para arch x86.
+    // #debug:  
+    // Esperamos alcaçarmos esse alvo.
+    // Isso funcionou gigabyte/intel
+    // Vamos avançar
+    // Quem chamou essa funçao foi o começo da inicializaçao do kernel.
+    // Retornamos para x86main.c para arch x86.
 
+    debug_print ("====systemInit: done\n");
+    debug_print ("====\n");
 
-	//retornando para a rotina de entrypoint da arquitetura alvo.
+    //#debug
+	//printf ("systemInit: *breakpoint :)");
+	//refresh_screen(); 
+	//while (1){ asm ("hlt"); }
+
+	// #importante:
+	// Retornando para a rotina de entrypoint da arquitetura alvo.
+	// See: /kernel/arch/x86/entry/x86main.c
+	// See: ...
+	// See: ...
+
     return (int) Status;
 }
 
