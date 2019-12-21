@@ -106,18 +106,17 @@ struct tty_d
     int flags;        // tty flags.   
     
     
+    //talvez;
+    //int device_number;
+    
+    
     //status
     int stopped;
 
 	// #importante: #TODO
 	//see: termios.h
-	//struct termios *termios;
+	struct termios *termios;
 
-
-	//devemos colocar sem ponteiro,
-	//isso será tratado em tty.c
-	//struct termios termios;   
-	
 	
 	//
 	// User

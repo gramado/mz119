@@ -15,6 +15,136 @@
 #include <kernel.h> 
 
 
+//#todo
+/*
+int 
+tty_ioctl ( int fd, unsigned long request, char *arg );
+int 
+tty_ioctl ( int fd, unsigned long request, char *arg )
+{
+    return -1;
+}
+*/
+
+
+
+//#test
+/*
+void tty_attr_init ( struct termios *t );
+void tty_attr_init ( struct termios *t )
+{
+	//
+	if ( (void *) t == NULL )
+	    return;
+	
+    t->c_iflag = BRKINT | ICRNL;
+    t->c_oflag = 0;
+    t->c_cflag = 0;
+    t->c_lflag = ECHO | ECHOE | ECHOK | ECHONL | ICANON | ISIG;
+    t->c_cc[VEOF] = 0x04;     // ASCII EOT 
+    t->c_cc[VEOL] = 0x00;     // undefined 
+    t->c_cc[VERASE] = 0x08;   // ASCII BS 
+    t->c_cc[VINTR] = 0x03;    // ASCII ETX 
+    t->c_cc[VKILL] = 0x00;    // undefined 
+    t->c_cc[VMIN] = 0x00;     // undefined 
+    t->c_cc[VQUIT] = 0x1C;    // ASCII FS 
+    t->c_cc[VSTART] = 0x00;   // undefined 
+    t->c_cc[VSUSP] = 0x00;    // undefined 
+    t->c_cc[VTIME] = 0x00;
+}
+*/
+
+
+/*
+void 
+tty_struct_init ( struct tty_d *tty, dev_t dev);
+void 
+tty_struct_init ( struct tty_d *tty, dev_t dev)
+{}
+*/
+
+
+/*
+//#todo
+struct tty_d *get_tty (int tty_id);
+struct tty_d *get_tty (int tty_id)
+{
+	//#todo filtros.
+	
+	if ( tty_id < 0)
+	    return NULL;
+	    
+    
+    return (struct tty_d *) ttyList[tty_id];
+}
+*/
+
+
+/*
+int tty_fclose (FILE *stream);
+int tty_fclose (FILE *stream)
+{}
+*/
+
+
+/*
+FILE *tty_get_file (struct tty_d *tty);
+FILE *tty_get_file (struct tty_d *tty)
+{}
+*/
+
+
+//#todo
+//sinalizar todas os processos que pertençam ao mesmo grupo.
+/*
+void tty_intr (struct tty_d *tty, int signal);
+void tty_intr (struct tty_d *tty, int signal)
+{
+    int i;
+
+    if ( (void *) tty == NULL )
+        return;
+
+    // o grupo ao qual a tty pertence.
+	//if (tty->pgrp <= 0)
+		//return;
+
+    //sinalizar todos os processos em p->signal[x] = ?; ou t->signal[x] = ?;
+	//for (i=0;i<NR_TASKS;i++)
+		//if (task[i] && task[i]->pgrp==tty->pgrp)
+			//task[i]->signal |= 1<<(signal-1);
+}
+*/
+
+
+
+/*
+void __stop_tty (struct tty_d *tty);
+void __stop_tty (struct tty_d *tty)
+{
+	
+    //se ela já está parada.
+    if (tty->stopped == 1)
+        return;
+
+
+    tty->stopped = 1;
+}
+*/
+
+/*
+void __start_tty (struct tty_d *tty);
+void __start_tty (struct tty_d *tty)
+{
+
+    //Se não está parada.
+    if (tty->stopped == 0)
+        return;
+
+
+    tty->stopped = 0;
+}
+*/
 
 /*
 void tty_reset_termios ( struct tty_d *tty );
@@ -222,7 +352,7 @@ int ttyldisc_delete ( struct ttyldisc_d *tty_ldisc )
     // Nothing to do.
     if ( (void *) tty_ldisc == NULL )
     {
-        return 0;
+        return -1;
     }else{
          
          //#bugbug: fast way
@@ -232,7 +362,7 @@ int ttyldisc_delete ( struct ttyldisc_d *tty_ldisc )
          tty_ldisc->magic = 216;
     };
     
-    return -1;
+    return 0;
 }
 
 
@@ -266,7 +396,7 @@ int ttydrv_delete ( struct ttydrv_d *tty_driver )
     // Nothing to do.
     if ( (void *) tty_driver == NULL )
     {
-        return 0;
+        return -1;
     }else{
          
          //#bugbug: fast way
@@ -276,7 +406,7 @@ int ttydrv_delete ( struct ttydrv_d *tty_driver )
          tty_driver->magic = 216;
     };
     
-    return -1;
+    return 0;
 }
 
 
@@ -310,7 +440,7 @@ int tty_delete ( struct tty_d *tty )
     // Nothing to do.
     if ( (void *) tty == NULL )
     {
-        return 0;
+        return -1;
     }else{
          
          //#bugbug: fast way
@@ -320,7 +450,7 @@ int tty_delete ( struct tty_d *tty )
          tty->magic = 216;
     };
     
-    return -1;
+    return 0;
 }
 
  

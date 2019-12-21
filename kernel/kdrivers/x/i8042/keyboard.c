@@ -49,9 +49,6 @@
 // para acessar as portas para configurar o controlador ps/2.
 // +se o driver estiver em kernel mode, tudo o que ele precisa é de uma 
 // biblioteca estática que acesse as portas por ele.
-//
-
-
 
 
 
@@ -142,6 +139,14 @@ void abnt2_keyboard_handler (void){
 
 	// #todo: 
 	// Aqui podemos retornar.
+	
+	// #todo
+	// Vamos escrever em um buffer tty.
+	// Pode ser uma stream, como fizemos aqui.
+	
+	
+	//current_stdin = tty->stdin;
+	
 
     if ( (void *) current_stdin == NULL )
     {
@@ -183,6 +188,15 @@ void KiKeyboard (void){
 	
 	// Contando as interrupções desse tipo.
 	g_profiler_ints_irq1++;
+
+
+    // #todo
+    // O driver de teclado precisa escrever em seu fluxo padrão,
+    // pois é tudo o que ele tem.
+    // Depois ele avisa o kernel chamando a tty (slave) ao qual o
+    // driver está conectado.
+    // >> No momento esse handler está colocando num buffer em
+    // current_stdin os scancodes obtidos na digitação.
 
     // pt-br keyboard.
     if (abnt2 == 1)

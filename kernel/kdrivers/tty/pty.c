@@ -8,6 +8,147 @@
 
 
  
+ 
+ 
+
+//#todo
+/*
+int 
+pty_ioctl ( int fd, unsigned long request, char *arg );
+int 
+pty_ioctl ( int fd, unsigned long request, char *arg )
+{
+    return -1;
+}
+*/
+
+/*
+//cria um arquivo para tty master.
+//essa arquivo irá representá-lo.
+//obs: não existe estrutura de pty;
+FILE *pty_master_create (struct tty_d *pty);
+FILE *pty_master_create (struct tty_d *pty)
+{
+	FILE *__stream;
+	
+	if ( (void *) pty == NULL )
+	{
+		return NULL;
+	}
+    
+    //#todo: check validation
+
+
+	__stream = (FILE *) malloc ( sizeof(FILE) );
+	
+	if ( (void *) __stream != NULL )
+	{
+		__stream->used = 1;
+		__stream->magic = 1234;
+		
+		//#todo: continua ...
+		
+		//master
+		pty->type = PTY_TYPE_MASTER;
+		
+		return (FILE *) __stream;
+	}
+	
+	return NULL;
+}
+*/
+
+
+/*
+//cria um arquivo para tty slave
+//se é que a estrutura ja não tenha seu arquivo.
+//obs: não existe estrutura de pty;
+FILE *pty_slave_create (struct tty_d *pty);
+FILE *pty_slave_create (struct tty_d *pty)
+{
+	FILE *__stream;
+	
+	
+	if ( (void *) pty == NULL )
+	{
+		return NULL;
+	}
+
+    //#todo: check validation
+    
+    
+	__stream = (FILE *) malloc ( sizeof(FILE) );
+	
+	if ( (void *) __stream != NULL )
+	{
+		__stream->used = 1;
+		__stream->magic = 1234;
+		
+		//#todo: continua ...
+		
+		//slave
+		pty->type = PTY_TYPE_SLAVE;
+		
+		return (FILE *) __stream;
+	}
+	
+	return NULL;
+}
+*/
+
+/*
+int pty_create_link ( struct tty_d *tty );
+int pty_create_link ( struct tty_d *tty )
+{
+
+	if ( (void *) pty == NULL )
+	{
+		return NULL;
+	}
+	
+	//pty->link = ?
+	
+    return 0;	
+}
+*/
+
+
+/*
+int pty_unlink ( struct tty_d *tty );
+int pty_unlink ( struct tty_d *tty )
+{
+	if ( (void *) pty == NULL )
+	{
+		return -1;
+	}
+	
+	pty->link = NULL;
+	
+	return 0;
+}
+*/
+
+/*
+int pty_link ( struct tty_d *master, struct tty_d *slave );
+int pty_link ( struct tty_d *master, struct tty_d *slave )
+{
+	if ( (void *) master == NULL )
+	{
+		return -1;
+	}
+
+	if ( (void *) slave == NULL )
+	{
+		return -1;
+	}
+	
+	master->link = slave;
+	
+	return 0;
+}
+*/
+
+
 
 /*
  *********************
