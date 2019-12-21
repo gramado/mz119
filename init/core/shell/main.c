@@ -4337,8 +4337,8 @@ done:
     printf ("shellInit: setando foco\n");
     gde_set_focus (window);
     
-    printf ("shellInit: *breakpoint\n");
-    while(1){}
+    //printf ("shellInit: *breakpoint\n");
+    //while(1){}
 	
 	// #bugbug 
 	// Vamos retornar sem mostrarmos a janela 

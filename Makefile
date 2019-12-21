@@ -10,9 +10,9 @@
 # We will have a new name just when the release changes.
 
 VERSION = 1
-PATCHLEVEL = 17
+PATCHLEVEL = 20
 SUBLEVEL = 0
-EXTRAVERSION = -rc6
+EXTRAVERSION = -rc0
 NAME = 
 
 
