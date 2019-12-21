@@ -1693,7 +1693,9 @@ int systemStartUp (void){
 
     int Status = 0;
 
-    debug_print("systemStartUp:\n");
+
+    debug_print ("====\n");
+    debug_print ("==== systemStartUp:\n");
 
     KeInitPhase = 0;    //Set Kernel phase.    
 
@@ -1755,41 +1757,40 @@ int systemStartUp (void){
         
         //
         // INIT ! 
-        //  		
-		
-//#ifdef EXECVE_VERBOSE
-		//(inicializa as 4 fases.)
-	    // Básico. ( Variáveis globais e estruturas ... ).
-	    //printf("sm-sys-system-systemStartUp: Initializing Basics..\n");
-//#endif	
-		
-		
+        //  
+
+        // See: 
+        // execve/sm/init.c
+
         Status = (int) init (); 
-		
-	    if ( Status != 0 )
-		{
-			debug_print("systemStartUp: init fail\n");
-	        panic ("sm-system-systemStartUp error: init\n");
-	    }	
-        //...	 
-		
-	}; //--else
-    
-    
-  	
-	
+
+        if ( Status != 0 )
+        {
+            debug_print ("sm-systemStartUp: init fail\n");
+            panic ("sm-systemStartUp error: init\n");
+        }
+
+        //...
+
+    }; //--else
+
+
+
 	// System Version:
 	//     Configurando a versão do sistema.
+
 	systemSetupVersion ();
-	
-	//
+
+
+	// Product ?
 	// Inicializa a edição do sistema.
-	// Define um tipo de destinação para a versão do sistema operacional.
-	//
-	
+	// Define um tipo de destinação para a versão do 
+	// sistema operacional.
+
+
     switch (SYSTEM_EDITION)
-	{
-		case SYSTEM_DEVELOPER_EDITION:
+    {
+        case SYSTEM_DEVELOPER_EDITION:
 		    gSystemEdition = SYSTEM_DEVELOPER_EDITION; 
 		    break;
 
@@ -1808,16 +1809,27 @@ int systemStartUp (void){
         //...
         default:
 		    gSystemEdition = 0;
-            break; 		
-	};
-	
-//
+            break; 
+    };
+
+
 // Done: 
 //     Completas as 3 fases de inicialização do sistema.
 //     @todo: Na verdade serão mais fases..
 //           as fases estão em init().
-	
+
+
 done:
+
+
+    debug_print ("==== systemStartUp: done\n");
+    debug_print ("====\n");
+
+    //#debug
+    printf ("systemStartUp: *breakpoint :) \n"); 
+    refresh_screen();
+    while(1){}
+
 
     //printf("systemStartUp: Done!\n");
 	//refresh_screen();
@@ -1825,7 +1837,7 @@ done:
 	if (KeInitPhase != 3)
 	{ 
 	    Status = (int) 1; 
-	};
+	}
 
 
     return (int) Status;

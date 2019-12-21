@@ -104,6 +104,28 @@ void create_logon (void){
 	
 	debug_print ("create_logon\n");
 	
+	
+	//
+	// Atenção
+	//
+	
+	// #
+	// Estamos começando um ambiente novo.
+	// Vamos limpar a tela para as mensagens desse ambiente.
+	// Não será mais azul, igual quanto estávamos iniciando o hardware
+	// e nem preto como no bootloader.
+	// Será uma cor mais clara.
+	
+	// Limpa a tela e reinicia o curso em (0,0);
+	// Isso funcionou em init.c
+	backgroundDraw ( (unsigned long) COLOR_RED ); 
+	
+	kprintf ("*\n");
+	kprintf ("**\n");
+	kprintf ("*** logon.c: Initializing user environment!\n");
+	kprintf ("**\n");
+	kprintf ("*\n");
+	
 	//g_guiMinimal = 1;
 	
 	// Disable interrupts, lock task switch and scheduler.
@@ -250,49 +272,80 @@ void create_logon (void){
 					   
 draw_logon_stuff:	
 	   
-	//Debug.
-	//printf("create_logon: Draw..\n");   
 
-	//Screen, Background and Logo. 
-	if(gui->screenStatus == 1)
+	printf ("create_logon: Draw..\n");   
+
+    // Root window !
+	// Screen, Background and Logo. 
+	if (gui->screenStatus == 1)
 	{ 
 		logon_create_screen (); 
-	};
+	}
 	
-	if(gui->backgroundStatus == 1)
+	/*
+	if (gui->backgroundStatus == 1)
 	{
-	    logon_create_background(); 
-	};
+	    logon_create_background (); 
+	}
+	*/
 
-	if(gui->logoStatus == 1){ 
-	    logon_create_logo(); 
-	};	
+    /*
+	if (gui->logoStatus == 1)
+	{ 
+	    logon_create_logo (); 
+	}
+	*/
 
+    /*
 	//Taskbar, Control menu and Messagebox.
-    if(gui->taskbarStatus == 1){	
-	    logon_create_taskbar(); 
-	};
-    if(gui->menuStatus == 1){ 
-	    logon_create_controlmenu(); 
-	};
-    if(gui->messageboxStatus == 1){ 
-	    logon_create_messagebox(); 
-	};
+    if (gui->taskbarStatus == 1)
+    {
+	    logon_create_taskbar (); 
+	}
+	*/
+
+    /*
+    if (gui->menuStatus == 1)
+    { 
+	    logon_create_controlmenu (); 
+	}
+	*/
 	
-	//Main window, Navigation bar and grid.    
-	if(gui->mainStatus == 1){ 
-	    logon_create_mainwindow(); 
-	};
-    if(gui->navigationbarStatus == 1){ 
-	    logon_create_navigationbar(); 
-	};
-    if(gui->gridStatus == 1){ 
-	    logon_create_grid(); 
-	};
+	/*
+    if (gui->messageboxStatus == 1)
+    { 
+	    logon_create_messagebox (); 
+	}
+	*/
 	
+	// Main window.
+	// Destop. That area for applications.
+	if (gui->mainStatus == 1)
+	{ 
+	    logon_create_mainwindow (); 
+	}
 	
- 
-		
+    /*
+    if (gui->navigationbarStatus == 1)
+    { 
+	    logon_create_navigationbar (); 
+	}
+	*/
+	
+	/*
+    if (gui->gridStatus == 1)
+    { 
+	    logon_create_grid (); 
+	}
+	*/
+
+	//draw_text( gui->main, 400 +8, 8*2, 
+	   //COLOR_RED, "Gramado Operating System" );
+			    
+    //printf ("create_logon: *breakpoint"); 
+	//refresh_screen();
+	//while(1){}
+	
 	//
 	// ## Strings ##
 	//
@@ -305,7 +358,7 @@ draw_logon_stuff:
 		// o desenvolvedor no processo de inicialização.
 		//@todo: Informar o desktop atual.
 			
-        if(g_guiMinimal != 1)
+        if (g_guiMinimal != 1)
 		{
 			
 	
@@ -350,28 +403,35 @@ draw_logon_stuff:
 		//Nothing.
 	};
 	
-	
-    //#debug
-   // printf ("create_logon: *breakpoint\n"); 
-   // refresh_screen();
-   // while(1){}
+
 	
 	//
-	// # Done # 
+	// Done 
 	//
-	
+
+
 done:
 
-	// # Refresh #
- 	
-	if( gui->refresh == 1 )
+    printf ("create_logon: Done\n"); 
+    
+    //printf ("create_logon: *breakpoint"); 
+	//refresh_screen();
+	//while(1){}
+
+
+	// Refresh
+
+/* 
+	if ( gui->refresh == 1 )
 	{
-		refresh_screen();
+		refresh_screen ();
 		gui->refresh = 0;
-	};
-	
+	}
+*/
+
+    refresh_screen ();
+    
     gui->initialised = 1;
-	
     return;
 }
 
@@ -486,12 +546,16 @@ void logon_create_screen (void){
 	// # minimized
 	// não pode ser pintada nem repintada.
 
-    //hWindow = (void *) CreateWindow ( 1, 0, VIEW_MINIMIZED, "Screen", 
-    hWindow = (void *) CreateWindow ( WT_SIMPLE, 0, VIEW_FULL, "Screen", 
+    //#bugbug
+    //Tá falhando na máquina real mais ou menos nessa hora.
+    // vamos testar minimizada como antes, quando funcionava,
+
+    //hWindow = (void *) CreateWindow ( WT_SIMPLE, 0, VIEW_FULL, "Screen", 
+    hWindow = (void *) CreateWindow ( 1, 0, VIEW_MINIMIZED, "Screen", 
                            Left, Top, Width, Height, 
                            NULL, 0, 0, COLOR_BLACK );  
 	
-    if( (void*) hWindow == NULL )
+    if ( (void *) hWindow == NULL )
    {
        panic ("logon_create_screen:");
 
@@ -499,23 +563,17 @@ void logon_create_screen (void){
 
 		if ( hWindow->used != 1 || hWindow->magic != 1234 )
 		{
-			
-			//se essa mensagem n~ao aparecer 'e porque a estrutura est'a certa.
-		    printf ("logon_create_screen: CREATE WINDOW STRUCT FAIL \n");
-		    die ();
+		    panic ("logon_create_screen: hWindow\n");
 		}
 
 		RegisterWindow (hWindow);
-
-		windowLock (hWindow); 
-
-		set_active_window (hWindow); 
-
+		//windowLock (hWindow); 
+		//set_active_window (hWindow); 
 
 		//a janela pertence ao desktop 0
 	    //hWindow->desktop = (void*) desktop0;
 
-	    if( (void *) gui == NULL)
+	    if ( (void *) gui == NULL)
 		{
 			panic ("logon_create_screen: gui");
 		}else{
@@ -529,10 +587,10 @@ void logon_create_screen (void){
 
 			gui->screen = (void *) hWindow;
 			
-			//refresh_screen();
-			//while(1){}
+			// #debug
+			// refresh_screen();
+			// while(1){}
 		};
-		
 	};
 
 
@@ -554,6 +612,8 @@ done:
 
 void logon_create_background (void)
 { 
+
+    /*
     struct window_d *hWindow;
 
 	unsigned long Left = (unsigned long) SCREEN_DEFAULT_LEFT;
@@ -602,6 +662,8 @@ done:
     //SetFocus (hWindow);
     
     //windowLock(hWindow);
+    
+    */ 
 
     return; 
 }
@@ -617,6 +679,14 @@ done:
  */
 
 void logon_create_mainwindow (void){
+	
+	// #
+	// Suspensa para debug.
+	
+	gui->main = (void *) gui->screen;
+	return;
+	
+	/*
 	
     struct window_d *hWindow; 
 	 
@@ -651,10 +721,14 @@ void logon_create_mainwindow (void){
 	// # minimized
 	// não pode ser pintada nem repintada.
 	
-    //hWindow = (void *) CreateWindow ( 1, 0, VIEW_MINIMIZED, "MAIN", 
-    hWindow = (void *) CreateWindow ( WT_SIMPLE, 0, VIEW_NORMAL, "MAIN", 
+    //#bugbug
+    //Tá falhando na máquina real mais ou menos nessa hora.
+    // vamos testar minimizada como antes, quando funcionava,
+    
+    //hWindow = (void *) CreateWindow ( WT_SIMPLE, 0, VIEW_NORMAL, "MAIN", 
+    hWindow = (void *) CreateWindow ( 1, 0, VIEW_MINIMIZED, "MAIN", 
                            Left, Top, Width, Height,           
-                           gui->screen, 0, 0, COLOR_WINDOW  );
+                           gui->screen, 0, 0, COLOR_BLUE ); //COLOR_WINDOW  );
 	
 	if ( (void *) hWindow == NULL)
 	{
@@ -718,7 +792,9 @@ void logon_create_mainwindow (void){
 done:
 
     SetFocus (hWindow);
+     
     
+    */
 	return;
 }
 
@@ -851,6 +927,10 @@ void logon_create_developer_screen (void)
     return; 
 }
 
+
+//
+// ====================================
+//
 
 /*
  *********************************************
@@ -996,7 +1076,7 @@ int init_logon (int argc, char *argv[]){
 done:
 
 	//printf("init_logon: Initializing..\n");
-    SetProcedure ( (unsigned long) &LogonProcedure);
+    //SetProcedure ( (unsigned long) &LogonProcedure);
     logonStatus = 1;	
 	//g_logged = (int) 0;
 

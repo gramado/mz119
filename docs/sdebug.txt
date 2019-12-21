@@ -5,8 +5,8 @@ KiInitRuntime
 [x86] x86main:
 [x86] x86main: Starting x86 kernel ..
 systemInit:
-systemStartUp:
-init:
+==== systemStartUp:
+==== init:
 init_globals:
 init_globals: WE HAVE MESSAGES NOW !!!
 fsInit:
@@ -28,14 +28,5 @@ init_user_session:
 init_room_manager:
 init_desktop:
 init_logon
-[x86] x86main: processes and threads
-[x86] x86main: ps2
-fsLoadFile:
-fsLoadFile:
-fsLoadFile:
-fsLoadFile:
-fsLoadFile:
-fsLoadFile:
-fsLoadFile:
-x86main: done
-fsLoadFile:
+==== init: done
+==== systemStartUp: done

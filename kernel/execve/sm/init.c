@@ -619,13 +619,18 @@ void init_globals (void){
  * init:
  *     Base initializations.
  *     (Four phases).
+ *     Isso foi chamado por systemStartUp() em execve/sm/system.c
+ *   
+ *    #todo: 
+ *    Descrever aqui as fazer dessa rotina.
  */ 
 
 int init (void){
 	
     int Status = 0;
-	
-	debug_print ("init:\n");
+
+
+	debug_print ("==== init:\n");
 	
 	//Check kernel phase.
 	
@@ -902,8 +907,8 @@ int init (void){
     //printf ("init: *breakpoint :) \n"); 
     //refresh_screen();
     //while(1){}
-	
-	
+
+
 	// Continua ...
 	
 
@@ -929,11 +934,14 @@ int init (void){
     //#debug 
 	//a primeira mensagem só aparece após a inicialização da runtime.
 	//por isso não deu pra limpar a tela antes.
-	printf(">>>debug hang: after init");
+	printf("debug hang: after init");
 	refresh_screen(); 
 	while (1){ asm ("hlt"); }
-#endif	
-	
+#endif
+
+
+    debug_print ("==== init: done\n");
+
     return 0;  
 }
  

@@ -36,9 +36,7 @@ extern unsigned long SavedBPP;
  *     #todo get device info.
  */
 
-// #bugbug
-// Isso não está funcionando,
-// Tá dando page fault.
+// #atenção: rotina sensível.
 
 void backgroundDraw (unsigned long color){
 	
@@ -54,7 +52,7 @@ void backgroundDraw (unsigned long color){
 	
 	//#bugbug
 	//estamos determinando as dimensoes do char.
-	//?? ja' podemos usar a varia'vel. ??
+	//?? ja' podemos usar a variável. ??
 	
 	//Cursor.
 	g_cursor_x = 0;
