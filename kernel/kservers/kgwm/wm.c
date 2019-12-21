@@ -2750,6 +2750,40 @@ void windowUnblockFocus (void){
 // Revendo a questão de repintar a janela mãe quando se seta o foco. 
  
 void SetFocus ( struct window_d *window ){
+	
+	
+	// #debug
+	// Testando com uma versão simplificada, pois isso está falahdo na máquina real.
+	// Sem foco do teclado não funciona.
+	
+	if ( (void *) window == NULL )
+	{
+		printf ("SetFocus: window");
+		die();
+    }else{
+	
+	    if ( window->used != 1 || window->magic != 1234 )
+	    {
+		    printf ("SetFocus: validation");
+		    die();
+		}
+		
+		// ... ok
+
+	    window_with_focus = (int) window->id;
+	    WindowWithFocus = (void *) window;
+		window->focus = 1; 
+	}
+	
+	return;
+	
+	
+	
+	
+	
+	//
+	// ===== cut here for now ...====
+	//
 
     int i=0;
     int WindowID;
@@ -3227,6 +3261,17 @@ fail:
  */
  
 void KillFocus ( struct window_d *window ){
+	
+	
+	// #debug
+	// suspensa para testes na máquina real
+	
+	return;
+	
+	//
+	// ====== cut here for now =====
+	//
+	
 	
 	if ( (void *) window == NULL )
 	{

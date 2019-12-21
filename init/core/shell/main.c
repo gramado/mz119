@@ -1277,9 +1277,9 @@ noArgs:
 	// @todo: Apenas registrar o procedimento dessa janela na sua estrutura no kernel..
     // 
 
-
-	printf ("shell: *breakpoint :)");
-	while(1){}
+    //funcionou
+	//printf ("shell: *breakpoint :)");
+	//while(1){}
 
 
 
@@ -1718,7 +1718,7 @@ shellProcedure( struct window_d *window,
         //MSG_CREATE, se o aplicativo retornar -1, então a rotina em kernel mode que 
         //esta criando a janela, cancela a janela que está criando e retorn NULL.		
 		case MSG_CREATE:
-		    printf ("Gramado Core - shell: MSG_CREATE\n");
+		    //printf ("Gramado Core - shell: MSG_CREATE\n");
 		    break;
 
 
@@ -1729,11 +1729,9 @@ shellProcedure( struct window_d *window,
 			updateObject(); //interna
             break; 		
 
-
+        
 		case MSG_SETFOCUS:
 			break;
-
-
 		case MSG_KILLFOCUS:
             break;
 
@@ -1742,7 +1740,7 @@ shellProcedure( struct window_d *window,
         //essa mensagem é enviada para o aplicativo quando 
         //a função 'update window'	é chamada.	
         case MSG_PAINT:
-            printf ("Gramado Core - shell: MSG_PAINT\n");
+            //printf ("Gramado Core - shell: MSG_PAINT\n");
             break;
 
 
@@ -3462,7 +3460,7 @@ doexec_first_command:
 		
 		_running = 0;
 		
-	    goto exit_cmp;	
+	    goto exit_cmp;
 	}else{
 		
 		// falhou. Significa que o serviço naõ conseguir encontrar 
@@ -3982,26 +3980,32 @@ int shellInit ( struct window_d *window ){
 	
 	if ( (void *) window == NULL )
 	{
-	    printf("shellInit: window fail.\n"); 
-		
+	    printf ("shellInit: window fail.\n"); 
+		while(1){}
+
 	} else {
+
 		
 		// Nesse momento temos um ponteiro válido,
 		// mas infelismente não podemos testar outros elementos 
 		// da estrutura.
 		
-		APISetFocus ( window );
+		// #bugbug
+		// Depois de setar o foco o kernel manda uma mensagem para o aplicativo.
+		// Cuidado com isso.
+		//APISetFocus ( window );
 		
 		// mensagens !!
 		
 #ifdef SHELL_VERBOSE		
 		printf ("shellInit: Starting gdeshell.bin ...\n");
-		printf ("shellInit: Running tests ...\n");
+		//printf ("shellInit: Running tests ...\n");
 #endif
 		
 	};
 	
-	
+
+    /*
 	//
 	// Obtendo informações sobre a janela ativa.
 	//
@@ -4043,7 +4047,7 @@ int shellInit ( struct window_d *window ){
 	printf("wlMaxColumns={%d} \n", wlMaxColumns );
 	printf("wlMaxRows={%d} \n", wlMaxRows );	
 #endif
-	
+	*/
 	
 	//
 	// Process support.
@@ -4073,6 +4077,7 @@ int shellInit ( struct window_d *window ){
 	
 	//PID = (int) APIGetPID();
 	
+	/*
     PID = (int) system_call( SYSTEMCALL_GETPID, 0, 0, 0 );
 	if ( PID == (-1) ){
 	    printf("ERROR getting PID\n");	
@@ -4082,7 +4087,8 @@ int shellInit ( struct window_d *window ){
 	if ( PPID == (-1) ){
 	    printf("ERROR getting PPID\n");	
 	}
-  
+    */
+     
     //Mensagem ...
 	//printf("Starting SHELL.BIN ... PID={%d} PPID={%d} \n", PID, PPID );
 	
@@ -4154,11 +4160,12 @@ int shellInit ( struct window_d *window ){
 	//app_clear(0);  //Não fez nada.
     //...
 
+/*
 	//stdlib.h
 #ifdef SHELL_VERBOSE			
 	printf("Testing stdlib:\n");
 #endif
-	
+*/
 	//
 	// *Importante:
 	//     Isso inicializa o gerenciamento de memória oferecido pela 
@@ -4170,7 +4177,7 @@ int shellInit ( struct window_d *window ){
 //initRT:	
 	//libcInitRT(); 
 	
-	
+	/*
 #ifdef SHELL_VERBOSE			
 	//Obs: Sempre inicia com o mesmo número.
 	int rand_value;
@@ -4182,6 +4189,7 @@ int shellInit ( struct window_d *window ){
 	//printf("RandValue3={%d}\n", rand_value);
 	//...
 #endif	
+*/
 
 	//stddef.h
 	//printf("Testing stddef:\n");	
@@ -4249,10 +4257,6 @@ int shellInit ( struct window_d *window ){
 	//        System call redraw client area.
 	
 	
-	// ## prompt string support ##
-	shellInitializeWorkingDiretoryString ();
-
-	
 // Done.
 	
 done:
@@ -4313,12 +4317,28 @@ done:
 	// no bss do arquivo e do tamanho certo.
 	// tudo indica que é saudável aumentar o tamanho do buffer usado pelo heap.
 	*/
-	
+
+
+    printf ("shellInit: initializing prompt\n");
+
+	// ## prompt string support ##
+	shellInitializeWorkingDiretoryString ();
+
 	
 	if ( interactive == 1 )
 	    shellPrompt ();
 	
-	
+
+    // foco de entrada nessa janela.
+    //talvez o driver de teclado precise disso.
+    //não vai repintar. vai enviar uma mensgem para esse procedimento.
+    
+    //#bugbug
+    printf ("shellInit: setando foco\n");
+    gde_set_focus (window);
+    
+    printf ("shellInit: *breakpoint\n");
+    while(1){}
 	
 	// #bugbug 
 	// Vamos retornar sem mostrarmos a janela 
