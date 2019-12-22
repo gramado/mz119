@@ -104,11 +104,25 @@ void systemSetTerminalWindow ( struct window_d *window ){
 
 	//rect
 	//configura por último
-    window->terminal_left = 0;
-    window->terminal_top = 0;
-    window->terminal_width = 0;
-    window->terminal_height = 0;
+    //window->terminal_left = 0;
+    //window->terminal_top = 0;
+    //window->terminal_width = 0;
+    //window->terminal_height = 0;
 	//..
+
+    window->terminal_left = window->left;
+    window->terminal_top = window->top;
+    window->terminal_width = window->width;
+    window->terminal_height = window->height;
+
+    g_cursor_x = (window->left / 8);
+    g_cursor_y = (window->top  / 8);
+    
+    g_cursor_left = g_cursor_x; 
+    g_cursor_top  = g_cursor_y;
+    
+    g_cursor_right  = ( (window->left + window->width ) /8 );
+    g_cursor_bottom = ( (window->top  + window->height) /8 );
 
 	//
 	// rcClient  (retângulo)
@@ -125,6 +139,8 @@ void systemSetTerminalWindow ( struct window_d *window ){
 	// #importante		
 	// Esse ajuste pode significar problemas.
 
+
+    /*
     if ( (void *) window->rcClient !=  NULL )
     {
 		//x inicial
@@ -144,8 +160,10 @@ void systemSetTerminalWindow ( struct window_d *window ){
 
             window->terminal_top = window->rcClient->top; 
         }
-    };
+    }
+    */
 
+    /*
     if ( window->rcClient->width > 0 )
     {
         window->terminal_width = window->rcClient->width; 
@@ -171,6 +189,7 @@ void systemSetTerminalWindow ( struct window_d *window ){
 
         window->terminal_bottom = window->rcClient->bottom; 
     }
+    */
 
 	//limits
 	//@todo: corrigir.
@@ -232,11 +251,18 @@ void systemSetTerminalWindow ( struct window_d *window ){
 			
 			
 			CurrentTTY->window = window;
-	        CurrentTTY->left = window->rcClient->left;
-	        CurrentTTY->top = window->rcClient->top;
-	        CurrentTTY->width = window->rcClient->width;
-	        CurrentTTY->height = window->rcClient->height;
-	
+	        
+	        //CurrentTTY->left = window->rcClient->left;
+	        //CurrentTTY->top = window->rcClient->top;
+	        //CurrentTTY->width = window->rcClient->width;
+	        //CurrentTTY->height = window->rcClient->height;
+
+	        CurrentTTY->left   = window->left;
+	        CurrentTTY->top    = window->top;
+	        CurrentTTY->width  = window->width;
+	        CurrentTTY->height = window->height;
+
+
             //cursor support.
             CurrentTTY->cursor_x = g_cursor_x;
             CurrentTTY->cursor_y = g_cursor_y;

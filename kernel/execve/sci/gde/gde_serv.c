@@ -1079,6 +1079,11 @@ void *gde_services ( unsigned long number,
 
 		//34	
         case SYS_VIDEO_SETCURSOR: 
+
+            //g_cursor_x = (unsigned long) arg2;
+            //g_cursor_y = (unsigned long) arg3;
+
+
 			sys_set_up_cursor ( (unsigned long) arg2, 
 			                    (unsigned long) arg3 );
 			break;              
