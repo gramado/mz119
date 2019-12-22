@@ -496,6 +496,15 @@ vhd-copy-files:
 	sudo cp user/config/INIT.TXT     /mnt/gramadovhd
 	sudo cp user/config/GUI.TXT      /mnt/gramadovhd
 	sudo cp user/config/GRAMADO.TXT  /mnt/gramadovhd
+	
+# test
+# ttys padrão.
+# O sistema tem que inicializar com alguma tty já configurada.
+#	-sudo cp user/config/TTY0.TTY     /mnt/gramadovhd
+#	-sudo cp user/config/TTY1.TTY     /mnt/gramadovhd
+#	-sudo cp user/config/TTY2.TTY     /mnt/gramadovhd
+#	-sudo cp user/config/TTY3.TTY     /mnt/gramadovhd
+
 
 # bitmaps
 	sudo cp kernel/kservers/kgws/bmp/APP.BMP       /mnt/gramadovhd

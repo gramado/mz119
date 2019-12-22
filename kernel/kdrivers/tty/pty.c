@@ -22,6 +22,46 @@ pty_ioctl ( int fd, unsigned long request, char *arg )
 }
 */
 
+
+// #todo
+// copiar o conteúdo do buffer ??
+// do slave para o master. do master para o slave.
+/*
+void pty_copy (struct tty_d *from, struct tty_d *to);
+void pty_copy (struct tty_d *from, struct tty_d *to)
+{
+}
+*/
+
+
+/*
+void pty_write (struct tty_d *tty);
+void pty_write (struct tty_d *tty)
+{
+	
+	if (tty->link)
+		pty_copy (tty,tty->link);
+}
+*/
+
+
+/*
+int pty_open (struct tty_d *tty, FILE *stream);
+int pty_open (struct tty_d *tty, FILE *stream)
+{
+}
+*/
+
+/*
+int pty_close (struct tty_d *tty, FILE *stream);
+int pty_close (struct tty_d *tty, FILE *stream)
+{
+}
+*/
+
+
+
+
 /*
 //cria um arquivo para tty master.
 //essa arquivo irá representá-lo.

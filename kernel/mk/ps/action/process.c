@@ -389,12 +389,19 @@ int getprocessname ( int pid, char *buffer )
 
 
 /*
- ****************************
- * do_clone_execute_process:  (t900)
+ ****************************************************
+ * do_clone_execute_process:  
+ * 
+ *     serviço 900.
  *     Clona o processo atual e executa o processo filho.
  *     O processo pai continua rodando.
+ *     Isso é usado pelo processo noraterm.
  *     #obs: Isso funciona.
  */
+
+// Se o processo filho herdar o floxo padrão, então o processo filho
+// pode escrever no seu stdout e o processo pai pode ler no seu
+// próprio stdout.
 
 pid_t do_clone_execute_process (char *filename){
 
@@ -662,8 +669,12 @@ do_clone:
 		Clone->control->saved = 0;
 		SelectForExecution (Clone->control);
 
-		
-		
+
+        // Se o processo filho herdar o floxo padrão, então o 
+        // processo filho pode escrever no seu stdout e o processo 
+        // pai pode ler no seu próprio stdout.
+
+
 		//#test
 		//Clone->control->stdin  = stdin; //Current->control->stdin;
 		//Clone->control->stdout = stdout; //Current->control->stdout;
@@ -682,7 +693,7 @@ do_clone:
 		// Igual acontece no fork().
 		
 		//pai
-		current_thread = Current->control->tid;	
+		current_thread = Current->control->tid;
 		current_process = Current->pid;
         return (pid_t) Clone->pid;
 	};

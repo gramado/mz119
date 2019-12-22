@@ -342,9 +342,9 @@ void *gde_extra_services ( unsigned long number,
  
  
 	// t900
-	//clona e executa o filho dado o nome do filho.
-	//do_clone_execute_process ("noraterm.bin");
-	//process.c
+	// Clona e executa o filho dado o nome do filho.
+	// Isso é usado pelo terminal virtual. (noraterm)
+	// See: See: ps/action/process.c
 	
     if ( number == 900 )
     { 
@@ -353,9 +353,9 @@ void *gde_extra_services ( unsigned long number,
 
 
 	// t901
-	//clona um processo, retorna par ao pai e inicializa o processo
-	//filho do seu entrypoint. (#test)
-	//process.c
+	// Clona um processo, retorna para o pai e inicializa o processo.
+	// Filho do seu entrypoint. (#test)
+	// See: ps/action/process.c
 
     if ( number == 901 )
     {
@@ -474,36 +474,73 @@ void *gde_extra_services ( unsigned long number,
     } 
 
 
+
+    // #importante
 	// Set terminal PID.
+
     if ( number == 1003 )
     {
         CurrentTTY->terminal_pid = (int) arg2;
         return NULL;
     }
 
-	//get terminal pid.
+
+    // #importante
+	// Get terminal pid.
+    
     if ( number == 1004 )
     {
         return (void *) CurrentTTY->terminal_pid;
     }
 
-
+    // inicializa o stdout da CurrentTTY.
+    // #bugbug: Isso está fazendo o mesmo que 1001.
     if ( number == 1005 )
     {
         CurrentTTY->stdout = stdout;
-        fprintf (stdout, "dirty\n");
+        //fprintf (stdout, "dirty\n"); //debug
         return NULL;
     }
 
 	 //get sdtout
     if ( number == 1006 )
     {
+		//return (void *) CurrentTTY->stdout;
         return (void *) stdout;
     }
 
 
+    //#todo: Testar isso.
+    /*
+    // Agora vamos ler de uma tty indicada pelo processo.
+    int __xxx_ch;
+    int __tty_id;
+    if ( number == 1007 )
+    {
+		//
+		__tty_id = (int) arg2;
+		CurrentTTY = (struct tty_d *) ttyList[ __tty_id ]
+		
+		//pega
+        __xxx_ch = (int) *CurrentTTY->ring0_stdout_last_ptr;
 
-	
+		//apaga.
+        *CurrentTTY->ring0_stdout_last_ptr = 0;
+
+		//incrementa e circula
+        CurrentTTY->ring0_stdout_last_ptr++;
+        if ( CurrentTTY->ring0_stdout_last_ptr >= CurrentTTY->ring0_stdout_limit )
+        {
+            CurrentTTY->ring0_stdout_last_ptr = CurrentTTY->ring0_stdout->_base;
+        }
+
+		//retorna o que pegou.
+        return (void *) __xxx_ch;
+    } 
+    */
+
+
+
 	 // bmp:
 	 // Carrega o bmp na memória e decodifica no backbuffer.
 	 // Isso não mostra na tela.
@@ -2037,7 +2074,7 @@ void *gde_services ( unsigned long number,
 		    return (void *) sys_fseek ( (FILE *) arg2, (long) arg3, (int) arg4 );
             break;
 			
-		//fputc	
+		// fputc
 		case 196:	
 		    return (void *) sys_fputc ( (int) arg2 , (FILE *) arg3 );
             break;

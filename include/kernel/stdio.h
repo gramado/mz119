@@ -616,7 +616,9 @@ struct _iobuf
     // 1= is a device; 0= is a file.
     // Se é um dispositivo ou não.
     // Se for um dispositivo então o dispositivo terá
-    // na lista deviceList o mesmo offset da stream na list Streams.
+    // na lista deviceList[] o mesmo offset da stream 
+    // na list Streams[].
+
     int isDevice;
     int deviceId;  //índice na lista deviceList[]
 

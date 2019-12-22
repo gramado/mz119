@@ -27,6 +27,20 @@ tty_ioctl ( int fd, unsigned long request, char *arg )
 */
 
 
+/*
+int init_dev(int dev);
+int init_dev(int dev)
+{}
+*/
+
+
+/*
+void release_dev (int dev, FILE *stream);
+void release_dev (int dev, FILE *stream)
+{}
+*/
+
+
 
 //#test
 /*
