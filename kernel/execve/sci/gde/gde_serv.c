@@ -105,6 +105,30 @@ void *gde_extra_services ( unsigned long number,
                             (unsigned char *) arg3, 
                             (unsigned char *) arg4 );
     }
+    
+    struct window_d *__window;
+    
+    //veja se essa é overlapped.
+    if (number == 400)
+    {
+		//#bugbug todo: fazer checks
+        
+        __window = (struct window_d *) windowList[arg2];
+        
+        if ( __window->type == WT_OVERLAPPED )
+        {
+			return (void *) 1;
+        }
+        return (void *) 0;		
+    }
+
+    //pega o ponteiro de um janela.
+    if (number == 401)
+    {
+		//#bugbug todo: fazer checks
+        return (void *) windowList[arg2];
+    }
+
 
 
 	// 512 - get x server PID

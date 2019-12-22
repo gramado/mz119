@@ -533,6 +533,7 @@ vhd-copy-files:
 
 
 # garden/apps
+	-sudo cp ../garden/bin/GWM.BIN       /mnt/gramadovhd
 	-sudo cp ../garden/bin/NORATERM.BIN  /mnt/gramadovhd
 	-sudo cp ../garden/bin/GDETERM.BIN   /mnt/gramadovhd 
 	-sudo cp ../garden/bin/GDESHELL.BIN  /mnt/gramadovhd 
