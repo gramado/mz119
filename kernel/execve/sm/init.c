@@ -48,6 +48,25 @@
 
 
 /*
+void init_set_current_runlevel ( int number )
+void init_set_current_runlevel ( int number )
+{
+	//#todo: limits.
+    current_runlevel = number;
+}
+*/
+
+/*
+int init_get_current_runlevel (void)
+int init_get_current_runlevel (void)
+{
+    return (int) current_runlevel;
+}
+*/
+
+
+
+/*
  * save_kernel_args:
  *     Salvando em estrutura os argumentos recebidos.
  */
@@ -483,6 +502,16 @@ void init_globals (void){
 	debug_print("init_globals: WE HAVE MESSAGES NOW !!!\n");
 	printf("init_globals: first message!\n");
 	
+	
+	//
+	// Runlevel
+	//
+	
+	// 5 	Start the system normally with appropriate 
+	// display manager (with GUI) 	
+	// Same as runlevel 3 + display manager.
+	// Full multi-user graphical mode. 
+	current_runlevel = 5;
 	
     //===================	
 	//vamos atrazar configuração de janela em favor de configuração de mensagem

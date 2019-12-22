@@ -87,6 +87,19 @@ int taskmanagerBufferPos;
 //FILE *taskmanOutput;
 
 
+
+//interna
+void __debug_print (char *string)
+{
+    gramado_system_call ( 289, 
+        (unsigned long) string,
+        (unsigned long) string,
+        (unsigned long) string );
+}
+
+
+
+
 static inline void pause (void){
 	
     asm volatile ("pause" ::: "memory"); 
@@ -503,6 +516,7 @@ int main ( int argc, char *argv[] ){
     int PID;
 
 
+    __debug_print ("Gramado Core: Initializing taskman process ...\n");
 
 	//@todo:
     //+pegar o id do processo e chamar uma rotina 

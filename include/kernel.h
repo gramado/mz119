@@ -488,7 +488,8 @@ int idle; //true ring 0 idle tread id.
 int next_thread; //next user mode thread.
 
 
-
+// Current runlevel. Used in init process.
+int current_runlevel;
 
 
 // Organização dos discos.

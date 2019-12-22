@@ -79,9 +79,26 @@ void *gde_extra_services ( unsigned long number,
     FILE *__fp;
 
 	//bmp file pointer.
-    FILE *__bmfp;	
-	
+    FILE *__bmfp;
 
+
+
+    // Returns the current runlevel.
+    if ( number == 288 )
+    {
+        return (void *) current_runlevel;
+    }
+    
+    // Serial debug print.
+    // See: sm/debug/debug.c
+    if ( number == 289 )
+    {
+		debug_print ( (char *) arg2 );
+        return NULL;
+    }
+
+
+    // Updates a status bar of a given window.
     if ( number == 300 )
     {
         return (void *) UpdateStatusBar ( (struct window_d *) arg2, 
@@ -886,13 +903,19 @@ void *gde_services ( unsigned long number,
 
 
     //
-    // ===============  Switch ============
+    // ===============  Special ============
     //
 
     if ( number > 256 )
     {
         return (void *) gde_extra_services ( number, arg2, arg3, arg4 );
     }
+    
+    
+    //
+    // ===============  Switch ============
+    //
+    
 
 	// 0-256
     switch (number)

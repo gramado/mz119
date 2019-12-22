@@ -385,6 +385,19 @@ struct {
 */
 
 
+
+
+//interna
+void __debug_print (char *string)
+{
+    gramado_system_call ( 289, 
+        (unsigned long) string,
+        (unsigned long) string,
+        (unsigned long) string );
+}
+
+
+
 //
 // ===============================================================
 //
@@ -586,6 +599,9 @@ void quit ( int status ){
  * Obs: Esses argumentos podem ser um padrão.
  */
  
+// #todo
+// Tentar colocar essa função no fim do arquivo. 
+ 
 int main ( int argc, char *argv[] ){
 	
     int i, arg_index = 1;
@@ -600,10 +616,17 @@ int main ( int argc, char *argv[] ){
 	 int locally_skip_execution = 0, top_level_arg_index;
 	 //extern char *base_pathname ();
 	
+
 //#ifdef JOB_CONTROL
   //extern int job_control;
 //#endif	
 	
+    //
+    // Debug
+    //
+
+    __debug_print ("Gramado Core: Initializing shell process ...\n");
+
 	
     /* Wait forever if we are debugging a login shell. */
     //  while (debugging_login_shell);	

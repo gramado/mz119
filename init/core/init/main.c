@@ -47,6 +47,18 @@
  
 #include "init.h"
 
+/*
+ Example:
+ID 	Name 	Description
+0 	Halt 	Shuts down the system.
+1 	Single-user mode 	Mode for administrative tasks.[2][b]
+2 	Multi-user mode 	Does not configure network interfaces and does not export networks services.[c]
+3 	Multi-user mode with networking 	Starts the system normally.[1]
+4 	Not used/user-definable 	For special purposes.
+5 	Start the system normally with appropriate display manager (with GUI) 	Same as runlevel 3 + display manager.
+6 	Reboot 	Reboots the system.  
+ */
+int __current_runlevel;
 
 //
 // Variáveis internas.
@@ -92,6 +104,16 @@ void enable_maskable_interrupts();
 // ==========
 //
 
+
+
+//interna
+void __debug_print (char *string)
+{
+    gramado_system_call ( 289, 
+        (unsigned long) string,
+        (unsigned long) string,
+        (unsigned long) string );
+}
 
 
 static inline void pause (void){
@@ -242,7 +264,7 @@ unsigned long idleServices (unsigned long number){
 	};	
 	
     return (unsigned long) 0;	
-};
+}
 
 
 /*
@@ -284,7 +306,10 @@ void enable_maskable_interrupts()
  
 int main ( int argc, char *argv[] ){
 
-	//printf ("INIT.BIN is alive!");
+    char runlevel_string[64];
+
+
+    __debug_print ("Gramado Core: Initializing init process ...\n");
 
     //
     // Chamando a interrupção 129.
@@ -292,10 +317,93 @@ int main ( int argc, char *argv[] ){
 
 	//window, x, y, color, string.
     apiDrawText ( NULL, 
-        0, 0, COLOR_RED, 
+        0, 0, COLOR_YELLOW, 
         "Gramado Core: Init is alive! Calling int 129" );
+ 
+ 
+    //
+    // Runlevel
+    // 
+ 
+    // Initialize with error value.
+    __current_runlevel = (int) -1; 
 
-    refresh_screen ();
+
+    // Get the current runlevel.
+    __current_runlevel = (int) gramado_system_call ( 288, 0, 0, 0 );  
+ 
+ 
+    switch ( __current_runlevel )
+    {
+		// 0 	Halt 	
+		// Shuts down the system. 
+        case 0:
+            __debug_print ("Gramado Core: RUNLEVEL 0\n");
+            //do_reboot();
+            break;
+
+		// 1 	Single-user mode 	
+		// Mode for administrative tasks.
+        case 1:
+            __debug_print ("Gramado Core: RUNLEVEL 1\n");
+            //do_single_usermode();
+            break;
+
+		// 2 	Multi-user mode 	
+		// Does not configure network interfaces and 
+		// does not export networks services.
+        case 2:
+            __debug_print ("Gramado Core: RUNLEVEL 2\n");
+            //do_mu_no_network();
+            break;
+
+		// 3 	Multi-user mode with networking 	
+		// Starts the system normally.
+        // Full multi-user text mode.
+        case 3:
+            __debug_print ("Gramado Core: RUNLEVEL 3\n");
+            //do_mu_with_network();
+            break;
+
+		// 4 	Not used/user-definable 	
+		// For special purposes.
+        case 4:
+            __debug_print ("Gramado Core: RUNLEVEL 4\n");
+            //do_special();
+            break;
+
+		// 5 	Start the system normally with appropriate 
+		// display manager (with GUI) 	
+		// Same as runlevel 3 + display manager. 
+		// Full multi-user graphical mode.
+        case 5:
+            __debug_print ("Gramado Core: RUNLEVEL 5\n");
+            //do_mu_full ();
+            break;    
+
+		// 6 	Reboot 	Reboots the system. 
+        case 6:
+             __debug_print ("Gramado Core: RUNLEVEL 6\n");
+            //do_reboot();
+            break;   
+            
+        // Fail!    
+        default:
+            goto fail1;
+            break; 
+    };
+ 
+    itoa (__current_runlevel, runlevel_string);
+ 
+ 
+     //#test
+    apiDrawText ( NULL, 
+        400, 0, COLOR_YELLOW, runlevel_string );        
+        
+        
+     refresh_screen ();
+     //while(1){} //debug
+
 
     //
     // Habilita as interrupções mascaraveis.
@@ -305,12 +413,36 @@ int main ( int argc, char *argv[] ){
     //asm ("int $129 \n");
 
 
+    goto done;
+
+
+//
+// ===============================================
+//
+
+
+// fail 1.
+fail1:
+
+    // serial debug
+    // __debug_print ("Gramado Core: Run level fail");
+    
+	//window, x, y, color, string.
+    apiDrawText ( NULL, 
+        0, 0, COLOR_YELLOW, 
+        "Gramado Core: Run level fail" );
+
+
     // Não sairemos, ficaremos no loop.
     // Isso porque o gramado core executará um novo processo
     // usando o processo INIT.
 
-loop:
 
+done:
+
+    __debug_print ("Gramado Core: init done.\n");
+
+ 
     while (1)
     {
         asm ("pause");

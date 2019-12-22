@@ -47,6 +47,9 @@ fsLoadFile:
 fsLoadFile:
 [x86] x86main: done
 ==============
-fsLoadFile:
-fsLoadFile:
+Gramado Core: Initializing init process ...
+Gramado Core: RUNLEVEL 5
+Gramado Core: init done.
+Gramado Core: Initializing shell process ...
+Gramado Core: Initializing taskman process ...
 fsLoadFile:
