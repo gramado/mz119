@@ -1544,7 +1544,10 @@ int redraw_window (struct window_d *window, unsigned long flags ){
     unsigned long border_size = 0;
     unsigned long border_color = COLOR_BORDER;
 
-
+    unsigned long __tmp_color;
+	
+	
+	
     if ( (void *) window == NULL )
     {
 		goto fail;
@@ -1649,10 +1652,10 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 //redrawBegin:
 
 	//#bugbug
-	if ( window->view == VIEW_NULL )
-	{
-	    goto fail;
-	};
+    if ( window->view == VIEW_NULL )
+    { goto fail; }
+
+
 
     // Sombra.
     // Para overlapped?
@@ -1668,9 +1671,15 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 			// bordas horizontais e da barra de títulos.
 			// Cinza escuro.  CurrentColorScheme->elements[??] 
 			// @TODO: criar elemento sombra no esquema. 
-			
+
+			if (window->focus == 1)
+			{ __tmp_color = xCOLOR_GRAY1; }    //mais escuro
+			if (window->focus == 0)
+			{ __tmp_color = xCOLOR_GRAY2; }    //mais claro
+
 			drawDataRectangle ( window->left +1, window->top  +1, 
-				window->width  +1 +1, window->height +1 +1, xCOLOR_GRAY1 );             
+				window->width  +1 +1, window->height +1 +1, 
+				__tmp_color );             
         };
         
         //...                
@@ -1781,20 +1790,20 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 		//ao fato de serem ativas ou não ou de terem o foco ou não.
  
         //no caso de janela mãe.
-        if (window->id == active_window){
-			window->bg_color = CurrentColorScheme->elements[csiActiveWindowTitleBar];
-		}else{
-			window->bg_color = CurrentColorScheme->elements[csiInactiveWindowTitleBar]; 
-		};
+        //if (window->id == active_window){
+			//window->bg_color = CurrentColorScheme->elements[csiActiveWindowTitleBar];
+		//}else{
+			//window->bg_color = CurrentColorScheme->elements[csiInactiveWindowTitleBar]; 
+		//};
 	
 		//Focus.
 		//Cores diferentes se tiver foco e se não tiver.
 		//no caso de janelas filhas
-		if (window->id == window_with_focus){
-		    window->bg_color = CurrentColorScheme->elements[csiActiveWindowTitleBar]; 
-		}else{
-			window->bg_color = CurrentColorScheme->elements[csiInactiveWindowTitleBar]; 
-		};
+		//if (window->id == window_with_focus){
+		    //window->bg_color = CurrentColorScheme->elements[csiActiveWindowTitleBar]; 
+		//}else{
+			//window->bg_color = CurrentColorScheme->elements[csiInactiveWindowTitleBar]; 
+		//};
 		
 		//@todo: String color.
 		
@@ -1806,9 +1815,22 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 		//Rectangle and string.
 		
         drawDataRectangle ( window->left, window->top, 
-			window->width +1 +1, window->height +1 +1, window->bg_color );
+			window->width +1 +1, window->height +1 +1, 
+			window->bg_color );
 						   
-						   
+
+       // barra de títulos; 
+       //todo: usar o esquema de cores.       
+			if (window->focus == 1)
+			{ __tmp_color = xCOLOR_GRAY1; }        // mais escuro
+			if (window->focus == 0)
+			{ __tmp_color = window->bg_color; }    // escolhida pelo aplicativo;
+        
+        drawDataRectangle ( window->left +2, window->top +2, 
+            window->width -4, 30, 
+            __tmp_color );        
+
+
 		//@todo: 
 		//string da barra de títulos.
 		//Se estivermos em full screen, não teremos string.				   

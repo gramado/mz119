@@ -257,6 +257,9 @@ void *CreateWindow ( unsigned long type,
 	unsigned long border_size = 0;
 	unsigned long border_color = COLOR_BORDER;
 	
+	
+	unsigned long __tmp_color;
+	
 	//salvar para depois restaurar os valores originais no fim da rotina.
 	//unsigned long saveLeft;
 	//unsigned long saveTop;
@@ -449,8 +452,9 @@ void *CreateWindow ( unsigned long type,
 			//...
 		};
 
-		//focus	
-		//window->focus = 0; //determinando que não temos o foco.
+		// Focus = No!
+		// Determinando que não temos o foco.
+		window->focus = 0; 
 
 		// @todo:
 		// Se for uma janela filha o posicionamento deve ser somado às margens 
@@ -822,7 +826,7 @@ void *CreateWindow ( unsigned long type,
     }
 
 
-	// Minimized ? 
+	// Minimized ? (Hide ?)
 	// Se tiver minimizada, não precisa mostrar a janela, porém
 	// é necessário pintar a janela no buffer dedicado, se essa técnica 
 	// estiver disponível.
@@ -883,7 +887,8 @@ void *CreateWindow ( unsigned long type,
 		//#debug
 		printf("file: createw.c: #debug\n");
 		printf ("original: l=%d t=%d w=%d h=%d \n", 
-		    window->left, gui->main->top, window->width, window->height );
+		    window->left, gui->main->top, 
+		    window->width, window->height );
 		
 		//Margens da janela gui->main
         window->left = gui->main->left;    
@@ -905,7 +910,8 @@ void *CreateWindow ( unsigned long type,
 		
 		//#debug
 		printf ("corrigido: l=%d t=%d w=%d h=%d \n", 
-		    window->left, gui->main->top, window->width, window->height );
+		    window->left, gui->main->top, 
+		    window->width, window->height );
 		
 		//#debug
 		refresh_screen ();
@@ -983,9 +989,15 @@ void *CreateWindow ( unsigned long type,
 		// @TODO: criar elemento sombra no esquema. 
 		
 		if ( (unsigned long) type == WT_OVERLAPPED )
-		{	
+		{
+			if (window->focus == 1)
+			{ __tmp_color = xCOLOR_GRAY1; }    //mais escuro
+			if (window->focus == 0)
+			{ __tmp_color = xCOLOR_GRAY2; }    //mais claro
+			
 			drawDataRectangle ( window->left +1, window->top +1, 
-				window->width +1 +1, window->height +1 +1, xCOLOR_GRAY1 );             
+				window->width +1 +1, window->height +1 +1, 
+				__tmp_color );             
         }
 
         // ??
@@ -1069,6 +1081,7 @@ void *CreateWindow ( unsigned long type,
         //flag.
         window->titlebarUsed = 1;
         
+        // Passado via argumento.
 		window->bg_color = color;  
 		
 		//@todo: String color.
@@ -1087,6 +1100,17 @@ void *CreateWindow ( unsigned long type,
 
         drawDataRectangle ( window->left, window->top, 
             window->width +1 +1, window->height +1 +1, window->bg_color );
+        
+       
+       // barra de títulos;   
+       //todo: usar o esquema de cores.      
+			if (window->focus == 1)
+			{ __tmp_color = xCOLOR_GRAY1; }        // mais escuro
+			if (window->focus == 0)
+			{ __tmp_color = window->bg_color; }    // escolhida pelo aplicativo;
+        
+        drawDataRectangle ( window->left +2, window->top +2, 
+            window->width -4, 30, __tmp_color );        
         
 		// String
         draw_string ( window->left +16 +8 +8, window->top +(32/3), 
@@ -1682,8 +1706,9 @@ void *CreateWindow ( unsigned long type,
 		active_window = window->id;
 		window->active = 1;
 		
-		window_with_focus = window->id;
-		window->focus = 1;
+		// Não começar com o foco.
+		//window_with_focus = window->id;
+		//window->focus = 1;
 		
 		// ## scrollbar ##
 		//Esses valores precisam ser melhor declarados.
