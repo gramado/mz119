@@ -1694,7 +1694,7 @@ void *CreateWindow ( unsigned long type,
 		
 		// #test
 		// No momento vamos criar a scrool bar apenas para testar e implementar.
-		
+
         window->scrollbar = CreateWindow ( WT_SCROLLBAR, 1, 1, "scrollbar-test", 
                                 window->right -37, window->top +2 +32 +2, 
                                 35, (window->height -2 -35 -2 -24 -2),

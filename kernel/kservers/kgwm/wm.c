@@ -2273,6 +2273,7 @@ resize_window ( struct window_d *window,
 	    // Mas e se ela tiver uma janela client window?
         window->width = (unsigned long) cx;
         window->height = (unsigned long) cy;
+
         
         if (window->clientAreaUsed == 1)
         {
@@ -2304,6 +2305,24 @@ resize_window ( struct window_d *window,
 			}
         };
         
+        if (window->statusbarUsed == 1)
+        {
+			if ( (void *) window->statusbar != NULL )
+			{
+			    window->statusbar->width = window->width;
+			    window->statusbar->height = 25;
+		    }
+        };
+        
+        
+        if (window->scrollbarUsed == 1)
+        {
+			if ( (void *) window->scrollbar != NULL )
+			{
+                window->scrollbar->width  = 35;
+                window->scrollbar->height = (window->height -2 -35 -2 -24 -2);
+            }
+        }
         
         //validade da thread,
 		if ( (void *) window->control != NULL )
@@ -2348,6 +2367,8 @@ replace_window ( struct window_d *window,
         window->left = (unsigned long) x;
         window->top = (unsigned long) y;
         
+        
+        
         if (window->clientAreaUsed == 1)
         {
 			if ( (void *) window->rcClient != NULL )
@@ -2379,7 +2400,26 @@ replace_window ( struct window_d *window,
         };
         
         
-        
+        if (window->statusbarUsed == 1)
+        {
+			if ( (void *) window->statusbar != NULL )
+			{
+				window->bottom = window->top + window->height; 
+			    window->statusbar->left = window->left +1;
+			    window->statusbar->top  = window->bottom -25 -1;
+            }
+        };	
+
+
+        if (window->scrollbarUsed == 1)
+        {
+			if ( (void *) window->scrollbar != NULL )
+			{
+				window->right = window->left + window->width;
+                window->scrollbar->left = window->right -37;
+                window->scrollbar->top = window->top +2 +32 +2;
+            }
+        }
     };
 
     return 0;
