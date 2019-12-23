@@ -68,16 +68,25 @@ my_buffer_horizontal_line ( unsigned long x1,
 }
 
 
+
+/*
+ * #todo 
+ * kgws não pode acessar o lfb, devemos chamar o diálogo em x/video.c
+ * 
+ */
+ 
 void 
 refresh_horizontal_line ( unsigned long x1,
                           unsigned long y, 
-	  				      unsigned long x2 )
+                          unsigned long x2 )
 {
-	
-	int bytes_count;
-	
-	switch (SavedBPP)
-	{
+
+    int bytes_count;
+
+
+
+    switch (SavedBPP)
+    {
 		case 32:
 		    bytes_count = 4;
 		    break;

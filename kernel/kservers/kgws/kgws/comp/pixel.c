@@ -1,6 +1,13 @@
 /*
  * File: pixel.c
  *
+ * Rotinas de mais baixo nível do compositor do servidor kgws.
+ * #todo:
+ * Lembrando que esse servidor não deve acessar o LFB, para isso
+ * usaremos o diálogo com o driver de vídeo através do x-server.
+ * See: x/video.c
+ * 
+ * 
  * Descrição:
  *     Rotinas de pintura de pixel.
  *     Faz parte do módulo Window Manager do tipo MB.
@@ -71,23 +78,26 @@ extern unsigned long SavedBPP;
 void pixelDirectPutPixel( void* FrontBuffer, unsigned long x, unsigned long y, unsigned long color );
 void pixelDirectPutPixel( void* FrontBuffer, unsigned long x, unsigned long y, unsigned long color )
 {
-    return; //ainda não implementada.							  
+    return; //ainda não implementada.
 }
 */
 
 
-										 
+ 
 //Pinta um pixel em um buffer de janela.
 void 
-pixelPutPixelWindowBuffer( void *buffer, 
-                           unsigned long x, 
-						   unsigned long y, 
-						   unsigned long color )
+pixelPutPixelWindowBuffer ( void *buffer, 
+                            unsigned long x, 
+                            unsigned long y, 
+                            unsigned long color )
 {
-	//return; //@todo: Ainda não implementada.					  
+	//return; 
+	//@todo: Ainda não implementada.
 }
 
-										 
+
+
+ 
 /*
  * *IMPORTANTE
  * Obs: Se uma estrutura de janela for passada como argumento
@@ -101,12 +111,13 @@ pixelPutPixelWindowBuffer( void *buffer,
  */	
 
 void 
-pixelPutPixelDedicatedWindowBuffer( struct window_d *window, 
-                                    unsigned long x, 
-									unsigned long y, 
-									unsigned long color )
+pixelPutPixelDedicatedWindowBuffer ( struct window_d *window, 
+                                     unsigned long x, 
+                                     unsigned long y, 
+                                     unsigned long color )
 {
-	
+
+
 	//#suspensa.
 	
 	/*
@@ -181,14 +192,21 @@ useDedicatedBuffer:
 	//pinta. asm_putpixel()
 	
 	*/
-    return;	
+
+    return;
 }
+
 
 
 /*
  *********************************
  * backbuffer_putpixel:
  *
+ *     Ok. 
+ *     O servidor kgws pode acessar um backbuffer. Mas não tem acesso
+ * ao frontbuffer. Para isso ele precisa usasr o diálogo do driver 
+ * de vídeo.
+ *      
  * IN: 
  *     color, x, y, 0
  */
@@ -199,38 +217,61 @@ backbuffer_putpixel ( unsigned long ax,
                       unsigned long cx, 
                       unsigned long dx )
 {
+
 	// #importante
-	// Esse é o origina. Isso funciona.
+	// Esse é o original. Isso funciona.
 	// Não usar.
 	// hal_backbuffer_putpixel ( ax, bx, cx, dx );
 
+
 	// #test
 	// tentando um novo método.
-    // usando o endereço virtual do backbuffer.
+	// usando o endereço virtual do backbuffer.
 	// precisamos de uma variável global para isso.
-	
-	
-	unsigned char *where = (unsigned char *) 0xC0800000;
-		
-	unsigned long color = (unsigned long) ax;
-	
-	char b, g, r, a;
-	
-	b = (color & 0xFF);	
-	g = (color & 0xFF00) >> 8;
-	r = (color & 0xFF0000) >> 16;
-	a = (color >> 24) + 1;
-	
-	int x = (int) bx;
-	int y = (int) cx;
-	
-	// = 3; 
-	//24bpp
-	
-	int bytes_count;
-	
-	switch (SavedBPP)
-	{
+
+    // # todo
+    // Estamos determinando um valor.
+    // Precisamos de uma variável de devinição do sistema.
+    
+    // BACKBUFFER_VA
+    // See: /include/kernel/globals/gva.h 
+    
+    unsigned char *where = (unsigned char *) 0xC0800000;
+
+    unsigned long color = (unsigned long) ax;
+
+    char b, g, r, a;
+
+
+    // bgra
+
+    b = (color & 0xFF);	
+    g = (color & 0xFF00) >> 8;
+    r = (color & 0xFF0000) >> 16;
+    a = (color >> 24) + 1;
+
+
+    // Position.
+
+    int x = (int) bx;
+    int y = (int) cx;
+
+
+
+
+	// 3 = 24 bpp
+
+    int bytes_count;
+
+    //
+    // bpp
+    //
+    
+    // #danger
+    // Esse valor foi herdado do bootloader.
+
+    switch (SavedBPP)
+    {
 		case 32:
 		    bytes_count = 4;
 		    break;
@@ -246,35 +287,49 @@ backbuffer_putpixel ( unsigned long ax,
 		
 		//case 8:
 		//	bytes_count = 1;
-		//	break;	
+		//	break;
+		
+		default:
+		    panic ("backbuffer_putpixel: SavedBPP");
+		    break;
 	}
 	
 	// #importante
 	// Pegamos a largura do dispositivo.
 	
-	int width = (int) SavedX; 
-	
-	int offset = (int) ( (bytes_count*width*y) + (bytes_count*x) );
-	
-	where[offset] = b;
-	where[offset +1] = g;
-	where[offset +2] = r;
-	
-	//teste
-	if ( SavedBPP == 32 )
-	{
-	    where[offset +3] = a;	
-	}
+    int width = (int) SavedX; 
+
+    int offset = (int) ( (bytes_count*width*y) + (bytes_count*x) );
+
+    //
+    // BGR and A
+    //
+
+    where[offset]    = b;
+    where[offset +1] = g;
+    where[offset +2] = r;
+    if ( SavedBPP == 32 ){ where[offset +3] = a; };
+
 }
+
+
 
 
 /*
  ****
  * lfb_putpixel:
  *
+ *    # todo:
+ *    Tá errado isso.   
+ *    Devemos dialogar com o driver de vídeo e pedir pra ele 
+ * acesasr o lfb. 
+ * 
+ * See: x/video.c __video_lfb_putpixel
+ * 
  * IN: 
  *     color, x, y, 0
  */ 
+
 
 void 
 lfb_putpixel ( unsigned long ax, 
@@ -331,6 +386,13 @@ lfb_putpixel ( unsigned long ax,
 }
 
 
+/*
+ * 
+ * get_pixel:
+ *     Pegando byte do backbuffer.
+ * 
+ */
+ 
 //#importante:
 //pega um pixel no BACKBUFFER
 //tem que usar variável pra bytes per pixel e screen width. 
@@ -409,7 +471,7 @@ void refresh_pixel ( unsigned long x,  unsigned long y ){
 	
 	int width = (int) SavedX; 	
 
-	unsigned long pos = (unsigned long) (y* bytes_count * width)+(x * bytes_count);	
+	unsigned long pos = (unsigned long) (y* bytes_count * width)+(x * bytes_count);
 	
 	//pego o pixel no backbuffer
 	COLOR = get_pixel ( x, y );

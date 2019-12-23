@@ -85,8 +85,12 @@ void screenSetSize( unsigned long width, unsigned long height )
 
 
 /*
+ *********************************************************
  * refresh_screen:
  *     Coloca o conteúdo do BackBuffer no LFB da memória de vídeo.
+ *     Ok, isso está no lugar certo. Pois somente
+ *  O driver de vídeo pode acessar o LFB
+ *  /x/video/screen.c 
  */
 
 void refresh_screen (void){

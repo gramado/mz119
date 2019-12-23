@@ -35,6 +35,13 @@ static int nibble_count_16colors = 0;
 
 
 
+
+/*
+ * #todo 
+ * kgws não pode acessar o lfb, devemos chamar o diálogo em x/video.c
+ * 
+ */
+ 
 /*
  **********************************
  * bmpDirectDisplayBMP:

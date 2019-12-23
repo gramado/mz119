@@ -277,6 +277,14 @@ setClientAreaRect ( unsigned long x,
 }
 
 
+
+
+/*
+ * #todo 
+ * kgws não pode acessar o lfb, devemos chamar o diálogo em x/video.c
+ * 
+ */
+ 
 /*
  ***********************************************************
  * refresh_rectangle:

@@ -331,10 +331,14 @@ compile-kernel:
 	gcc -c kernel/kdrivers/usb/usb.c  -I include/ $(CFLAGS) -o usb.o
 	
 	# kdrivers/x
-	gcc -c kernel/kdrivers/x/video.c   -I include/ $(CFLAGS) -o video.o
-	gcc -c kernel/kdrivers/x/vsync.c   -I include/ $(CFLAGS) -o vsync.o
-	gcc -c kernel/kdrivers/x/screen.c  -I include/ $(CFLAGS) -o screen.o
-	gcc -c kernel/kdrivers/x/xproc.c   -I include/ $(CFLAGS) -o xproc.o	
+	gcc -c kernel/kdrivers/x/xproc.c   -I include/ $(CFLAGS) -o xproc.o
+
+	# kdrivers/x/video
+	gcc -c kernel/kdrivers/x/video/screen.c  -I include/ $(CFLAGS) -o screen.o
+	gcc -c kernel/kdrivers/x/video/video.c   -I include/ $(CFLAGS) -o video.o
+	gcc -c kernel/kdrivers/x/video/vsync.c   -I include/ $(CFLAGS) -o vsync.o
+
+
 	# kdrivers/x/i8042
 	gcc -c kernel/kdrivers/x/i8042/i8042.c     -I include/ $(CFLAGS) -o i8042.o
 	gcc -c kernel/kdrivers/x/i8042/keyboard.c  -I include/ $(CFLAGS) -o keyboard.o
