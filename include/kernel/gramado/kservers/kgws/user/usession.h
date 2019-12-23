@@ -53,6 +53,9 @@ struct usession_d
 	
 	int userID; // *IMPORTANTE , ID do usuário da secção.
 	
+		
+	
+	
 	unsigned long BeginTime;
 	unsigned long EndTime;
 	

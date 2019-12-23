@@ -1921,41 +1921,11 @@ void *gde_services ( unsigned long number,
 		    return (void *) current_group;
 			break;
 
-
-        // 167 - SYS_GRAMADOCORE_INIT_EXECVE
-        // >>>> do_gexeve.
-        // serviço de suporte a chamada gexecve(), que executa
-        // no processo init.
-        // Executa um novo programa dentro do processo INIT 
-        // do ambiente Gramado Core.	
-        // #importante:
-        // Os argumentos recebidos aqui precisam ir para ipc/spawn.c 
-        // que serão enviados via registradores para o aplicativo.
-        // Obs: Não adianta enviar ponteiros para o aplicativo, 
-        // pois ele não pode pegar no kernel.
-        // 167:
-        // Executa elf .BIN com entrypoint em 0x401000.
-        // executive_gramado_core_init_execve (execve.c)
-        // See: execve/execve.c
-        // IN: serviço, name, (arg)(endereço da linha de comando), env.
-        //case SYS_GRAMADOCORE_INIT_EXECVE_BIN:
-        case 167:
-            return (void *) do_gexecve ( 0, 
-                                (const char *) arg2, 
-                                (const char *) arg3, 
-                                (const char *) arg4 ); 
+        //156 - SYS_SHOWUSERINFO
+        case 156:
+            ShowUserInfo (current_user);
+            return NULL;
             break;
-
-
-
-		// 168
-		// Executa .EXE com entrypoint em 0x400400
-		// #Cancelada. Substituir por alguma rotina de execução 
-		// de formato binário como COFF;
-        case SYS_GRAMADOCORE_INIT_EXECVE_EXE: 
-			// #todo
-            break;
-
 
 		//157 - get user session id	
         case SYS_GETCURRENTUSERSESSION:
@@ -2019,8 +1989,44 @@ void *gde_services ( unsigned long number,
 		//netBuffer
         case 166:
             //IN:  ( service, buffer_address, option, option );	
-			break;		
-			
+			break;
+
+        // 167 - SYS_GRAMADOCORE_INIT_EXECVE
+        // >>>> do_gexeve.
+        // serviço de suporte a chamada gexecve(), que executa
+        // no processo init.
+        // Executa um novo programa dentro do processo INIT 
+        // do ambiente Gramado Core.	
+        // #importante:
+        // Os argumentos recebidos aqui precisam ir para ipc/spawn.c 
+        // que serão enviados via registradores para o aplicativo.
+        // Obs: Não adianta enviar ponteiros para o aplicativo, 
+        // pois ele não pode pegar no kernel.
+        // 167:
+        // Executa elf .BIN com entrypoint em 0x401000.
+        // executive_gramado_core_init_execve (execve.c)
+        // See: execve/execve.c
+        // IN: serviço, name, (arg)(endereço da linha de comando), env.
+        //case SYS_GRAMADOCORE_INIT_EXECVE_BIN:
+        case 167:
+            return (void *) do_gexecve ( 0, 
+                                (const char *) arg2, 
+                                (const char *) arg3, 
+                                (const char *) arg4 ); 
+            break;
+
+
+
+		// 168
+		// Executa .EXE com entrypoint em 0x400400
+		// #Cancelada. Substituir por alguma rotina de execução 
+		// de formato binário como COFF;
+        case SYS_GRAMADOCORE_INIT_EXECVE_EXE: 
+			// #todo
+            break;
+
+
+
 		//170
         //pwd ...
         //Cada processo tem seu próprio pwd.

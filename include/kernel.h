@@ -161,10 +161,10 @@ extern void do_executa_new_task (void);
 #include <kernel/gramado/kdrivers/cpuid.h>
 
 
-//# /x
-#include <kernel/gramado/kdrivers/x/screen.h>
-#include <kernel/gramado/kdrivers/x/video.h>
-
+//# /x/video
+#include <kernel/gramado/kdrivers/x/video/screen.h>
+#include <kernel/gramado/kdrivers/x/video/video.h>
+#include <kernel/gramado/kdrivers/x/video/virtcon.h>
 
 
 #include <kernel/gramado/kdrivers/rtc2.h>

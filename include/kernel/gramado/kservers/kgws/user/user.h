@@ -392,30 +392,21 @@ struct user_info_d
 	object_type_t objectType;
 	object_class_t objectClass;
 	
-	
-	int used;
-	int magic;
-	
-	//File.
-	FILE userinfo;  //User info file.
-	//FILE *userinfo; //?? NÃO SERIA ASSIM ??
-    
-	char *path;  // '/root/user/(name)'
-	
-	//Name. deletar.
-	char *name;
-    unsigned long name_address;
+    //Id. 
+    int userId;
 
-    //deletar
-    char *userName;         // Nome.
-    
-    //usar esse.
-    //char __username[32];    //
+    int used;
+    int magic;
+
+	//File.
+    //FILE userinfo;  //User info file.
+	//FILE *userinfo; //?? NÃO SERIA ASSIM ??
+
+    char *path;  // '/root/user/(name)'
+
     char __username[64];    // HOSTNAME_BUFFER_SIZE
     size_t userName_len;    // len 
-	
-    //Id. 
-	int userId;
+
 	
 	//
 	// *** Bancos de Dados ***
@@ -441,9 +432,30 @@ struct user_info_d
 	//
 	
 	//Section, window station and desktop.
-	int sessionId;
-    int windowstationId;
-    int desktopId;	
+	int usessionId;
+    int roomId;
+    int desktopId;
+    
+    // em qual console virtual iniciamos a sessão.
+    int virtualconsoleId;
+
+    //
+    // 4 estruturas principais.
+    //
+    
+    //=============================
+    
+    struct usession_d *usession;
+    struct room_d     *room;
+    struct desktop_d  *desktop;
+    
+	// Em qual console virtual iniciamos a sessão?
+	// F1 ~ F7 ...
+	struct virtual_console_d *virtual_console;
+ 
+    //=========================
+    
+    
 
 	//user type.
     user_type_t userType;	
@@ -514,17 +526,20 @@ void SetCurrentGroupId (int group_id);
 
 int GetCurrentGroupId (void);
 
+
 void 
 UpdateUserInfo ( struct user_info_d *user, 
                  int id, 
-				 char *name, 
-				 int type, 
-				 int user_session_id, 
-				 int window_station_id,
-				 int desktop_id );
+                 char *name, 
+                 int type, 
+                 int user_session_id, 
+                 int room_id,
+                 int desktop_id );
+
 
 void ShowUserInfo (int user_id);
-					 
+
+
 //
 // End.
 //

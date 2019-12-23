@@ -107,33 +107,53 @@ int startUserEnvironment ( int argc, char* argv[] ){
 
 
 /*
+ **************************************************
  * ShowUserInfo:
  *     Mostra informações sobre o usuário atual.
  */
 
-void ShowUserInfo (int user_id){
-	
-	struct user_info_d *User;
-	
-	if ( user_id < 0 || user_id >= USER_COUNT_MAX )
-	{
-	    return;
-	};  
-	
-	User = (void *) userList[user_id];
-	
-	if ( (void *) User == NULL )
+// #todo
+// Mostrar as informações do usuário e da sessão.
+
+void 
+ShowUserInfo (int user_id)
+{
+
+    struct user_info_d *__User;
+
+
+
+    if ( user_id < 0 || user_id >= USER_COUNT_MAX )
+    {
+        return;
+    }
+
+
+    __User = (void *) userList[user_id];
+
+	if ( (void *) __User == NULL )
 	{
 	    printf ("ShowUserInfo: Error\n");
         return;
 	}else{
 	    
-		printf ("Name={%s} Id={%d} Type={%d} \n", 
-		    User->name_address,
-		    User->userId, 
-		    User->userType );
-	    return;
+	    //buffer
+	    printf(__User->__username);
+	     
+		printf (" Id={%d} UserType={%d} \n", 
+		    __User->userId, 
+		    __User->userType );
+	
+
+		printf (" usession={%d} room={%d} desktop={%d} \n", 
+		    __User->usessionId, 
+		    __User->roomId,
+		    __User->desktopId );
+
+	    //...
 	};
+	
+	refresh_screen();
 }
 
 
@@ -179,17 +199,15 @@ void *CreateUser ( char *name, int type ){
 		New->magic = 1234;
 		
 		//New->path = ?
-		
-		New->name = (char *) name;      
-	    New->name_address = (unsigned long) name;
+	    
 	    New->userType = type;  
 
  		//Session.
         //Window Station. (Desktop pool).
         //Desktop.		 
 	
-	    New->sessionId = current_usersession;           
-	    New->windowstationId = current_room;  //->roomID  
+	    New->usessionId = current_usersession;           
+	    New->roomId = current_room;  //->roomID  
 	    New->desktopId = current_desktop;          
 
 	    //Inicializa tokens. (rever)
@@ -280,18 +298,22 @@ int GetCurrentGroupId (void)
 
 
 /*
+ ***********************************
  * UpdateUserInfo:
  *    Atualiza todas as informações de usuário.
- */	
+ */
 
-void UpdateUserInfo ( struct user_info_d *user, 
-                      int id, 
-					  char *name, 
-					  int type, 
-					  int user_session_id, 
-					  int window_station_id,
-					  int desktop_id )
-{  
+void 
+UpdateUserInfo ( struct user_info_d *user, 
+                 int id, 
+                 char *name, 
+                 int type, 
+                 int user_session_id, 
+                 int room_id,
+                 int desktop_id )
+{
+
+
 	if ( (void *) user == NULL )
 	{
         return;
@@ -303,19 +325,16 @@ void UpdateUserInfo ( struct user_info_d *user,
         if ( user->used != 1 || user->magic != 1234 )
 		{
 			//fail;
-			//return;
+			return;
 		}  	
 	    
 		user->userId = (int) id;                      //Id.     
-		
-		user->name = (char *) name;                   //Name.
-	    user->name_address = (unsigned long) name;    //Name.
-		
+
 		user->userType = type;                        //Type.
-	    
-		user->sessionId = user_session_id;            //Session.
-	    user->windowstationId = window_station_id;    //Window Station.
-        user->desktopId = desktop_id;                 //Desktop.
+
+        user->usessionId = user_session_id;    //Session.
+        user->roomId     = room_id;            //room (Window Station).
+        user->desktopId  = desktop_id;         //Desktop.
 		//...
 	};
 }
