@@ -1654,13 +1654,14 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 	    goto fail;
 	};
 
-    //Sombra.	
-	if (window->shadowUsed == 1)
-	{
+    // Sombra.
+    // Para overlapped?
+    if (window->shadowUsed == 1)
+    {
 		//#bugbug
 		//A sombra deve ter suas dimensões registradas também.
-		if ( window->type == WT_OVERLAPPED )
-		{
+        if ( window->type == WT_OVERLAPPED )
+        {
             // @todo: Adicionar a largura das bordas verticais 
 			// e barra de rolagem se tiver.
 			// @todo: Adicionar as larguras das 
@@ -1670,25 +1671,28 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 			
 			drawDataRectangle ( window->left +1, window->top  +1, 
 				window->width  +1 +1, window->height +1 +1, xCOLOR_GRAY1 );             
-        };                
-	};
+        };
+        
+        //...                
+    };
 
-    //Background.
-	if (window->backgroundUsed == 1)
-	{		
-		drawDataRectangle ( window->left, window->top, 
-			window->width, window->height, window->bg_color ); 
-	};
-	
-    //printf ("redraw_window: breakpoint \n");
-	//refresh_screen();
-	//while(1){}
-	
-	//borda.
-	//para os casos de editbox por exemplo.
-	
-	if ( window->borderUsed == 1 )
-	{
+
+    // Background.
+    // Para todos os tipos.
+    if (window->backgroundUsed == 1)
+    {
+        drawDataRectangle ( window->left, window->top, 
+            window->width, window->height, window->bg_color ); 
+    };
+
+
+
+
+	// Borda.
+	// Para os casos de editbox por exemplo.
+	// Para vários tipos.
+    if ( window->borderUsed == 1 )
+    {
 		//#importante:
 		//devemos tratar a borda para cada tipo de janela individualmente.
 		
@@ -1704,7 +1708,7 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 			    border_size = 1;
 			}
 		};
-		
+
 		//editbox
 		if ( window->type == WT_EDITBOX )
 		{
@@ -1749,8 +1753,7 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 			}
 		};		
 		
-		
-	    //board1, borda de cima e esquerda.    
+		//board1, borda de cima e esquerda.    
 		drawDataRectangle ( window->left, window->top, 
 			window->width, border_size, border_color );
 						   
@@ -1764,12 +1767,14 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 	    drawDataRectangle ( window->left, window->top +window->height -1, 
 			window->width, border_size, border_color );		
 	};
-	
-	
-	
-    //Título + borda(frame).	
-	if (window->titlebarUsed == 1)
-	{ 
+
+
+
+
+    // Título + borda (frame).
+    // Repinta retângulo e string para todos os tipos.
+    if (window->titlebarUsed == 1)
+    { 
 		//#importante:
 		//@todo:Ainda há muito o que levar em consideração 
 		//na hora de repintar uma janela com relação 
@@ -1868,18 +1873,19 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 				}
 				
 			}		
-	    };					 
-					
-		//More??...
+	    };
+	    				 
+		//...
 	};		
 	
-	// #debug
-    // printf ("redraw_window: breakpoint after title bar \n");
-    
-	// refresh_screen();
-	// while(1){}	
 
-    // Client Area. 	
+
+
+
+    // Client Area. 
+    // #bugbug
+    // Precisamos repintar a client area, mas a rotina de resize
+    // não modificou a client area. #todo.
 	if (window->clientAreaUsed == 1)
 	{
 		// Obs: 
@@ -1922,9 +1928,7 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 		//Nothing.
 	};
 
-    //printf ("redraw_window: breakpoint after client area \n");
-	//refresh_screen();
-	//while(1){}	
+
 	
     // #obs: 
 	// Talvez isso pode ficar dentro do if de client window.
@@ -1982,8 +1986,9 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 			};								
 		};
 	};		
-	
-    
+
+
+
 	//status bar
 	if (window->statusbarUsed == 1)
     {
@@ -2004,12 +2009,10 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 			}
 		}
 	}
-	
-    //printf ("redraw_window: breakpoint status bar \n");
-	//refresh_screen();
-	//while(1){}	
-	
-	
+
+
+
+
 	//
 	// ## Button ##
 	//
@@ -2124,10 +2127,19 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 
 	
 	//poderemos ter mais valores em flags no futuro.
-   if ( flags == 1 )
-   {
-       refresh_rectangle ( window->left, window->top, 
-            window->width, window->height );
+    if ( flags == 1 )
+    {
+		// #obs:
+		// Quando uma rotina muda a posição da janela.
+		// E em seguida repinta. Esse será o retângulo que 
+		// será mostrado no front buffer, mesmo se a rotina
+		// de repintura falhar.
+		
+		// #test
+		// Vamos mostrar um pouco mais.
+		// #todo: Esse extra deve ser do tamanho da sombra.
+        refresh_rectangle ( window->left, window->top, 
+            window->width +4, window->height +4 );
     }
 
 
@@ -2257,8 +2269,40 @@ resize_window ( struct window_d *window,
 	    
 		//@todo: Checar limites.
 	
+	    // Ok mudamos as dimensões da janela principal.
+	    // Mas e se ela tiver uma janela client window?
         window->width = (unsigned long) cx;
         window->height = (unsigned long) cy;
+        
+        if (window->clientAreaUsed == 1)
+        {
+			if ( (void *) window->rcClient != NULL )
+			{
+				//validade da estrutura de retângulo
+				if ( window->rcClient->used == 1 &&
+				     window->rcClient->magic == 1234 )
+				{
+					if ( window->type == WT_SIMPLE )
+					{
+					    window->rcClient->width = window->width;
+					    window->rcClient->height = window->height;
+					}
+					
+                    if ( window->type == WT_OVERLAPPED )
+                    {
+                        window->rcClient->width = (unsigned long) (window->width -1 -1);
+                        window->rcClient->height = (unsigned long) (window->height -2 -32 -2 -24 -2);
+			        }
+			        
+                    if ( window->type == WT_EDITBOX || 
+                         window->type == WT_EDITBOX_MULTIPLE_LINES )
+                    {
+                        window->rcClient->width = (unsigned long) (window->width -1 -1);
+                        window->rcClient->height = (unsigned long) (window->height -1 -1);
+                    }
+				} 
+			}
+        };
         
         
         //validade da thread,
@@ -2266,13 +2310,13 @@ resize_window ( struct window_d *window,
         {
 			if ( window->control->used == 1 || window->control->magic == 1234 )
 			{
-			   // mandamos a mensagem
-			   // o aplicativo decide o que fazer com ela.
-			    window->control->window = window;
-			    window->control->msg = MSG_SIZE;
-			    window->control->long1 = 0;
-			    window->control->long2 = 0;
-			    window->control->newmessageFlag = 1;
+			    // mandamos a mensagem
+			    // o aplicativo decide o que fazer com ela.
+			    //window->control->window = window;
+			    //window->control->msg = MSG_SIZE;
+			    //window->control->long1 = 0;
+			    //window->control->long2 = 0;
+			    //window->control->newmessageFlag = 1;
 			}
 		};
 	};
@@ -2303,6 +2347,39 @@ replace_window ( struct window_d *window,
 	
         window->left = (unsigned long) x;
         window->top = (unsigned long) y;
+        
+        if (window->clientAreaUsed == 1)
+        {
+			if ( (void *) window->rcClient != NULL )
+			{
+				//validade da estrutura de retângulo
+				if ( window->rcClient->used == 1 &&
+				     window->rcClient->magic == 1234 )
+				{
+					if ( window->type == WT_SIMPLE )
+					{
+                        window->rcClient->left = (unsigned long) (window->left);
+                        window->rcClient->top = (unsigned long) (window->top);
+					}
+					
+                    if ( window->type == WT_OVERLAPPED )
+                    {
+                        window->rcClient->left = (unsigned long) (window->left +1);
+                        window->rcClient->top = (unsigned long) (window->top  +2 +32 +2);
+			        }
+			        
+                    if ( window->type == WT_EDITBOX || 
+                         window->type == WT_EDITBOX_MULTIPLE_LINES )
+                    {
+                        window->rcClient->left = (unsigned long) (window->left +1);
+                        window->rcClient->top = (unsigned long) (window->top  +1);
+                    }
+				} 
+			}
+        };
+        
+        
+        
     };
 
     return 0;
