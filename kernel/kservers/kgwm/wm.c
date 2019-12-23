@@ -1817,7 +1817,10 @@ int redraw_window (struct window_d *window, unsigned long flags ){
         drawDataRectangle ( window->left, window->top, 
 			window->width +1 +1, window->height +1 +1, 
 			window->bg_color );
-						   
+
+        // #bugbug
+        // na máquina real, falhou logo após pintar a string da barra de títulos.
+        // Vamos usar breakpoint até acharmos o problema.
 
        // barra de títulos; 
        //todo: usar o esquema de cores.       
@@ -1836,7 +1839,12 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 		//Se estivermos em full screen, não teremos string.				   
 		draw_string ( window->left +8 +16 +8, window->top +8 +4, 
 			COLOR_TERMINALTEXT2, window->name );  		 
-					 
+		
+		//#debug
+		//printf ("* real machine breakpoint");
+		//refresh_screen();
+		//while(1){}
+		
 	    //Isso é um teste.
 	    //A janela nem foi registrada ainda e já estamos passando o handle
 	    //via argumento.
@@ -1846,7 +1854,7 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 		
 		// #todo: 
 		// Se estivermos em full screen, não teremos botão.	
-		
+		/*
 		if (window->minimizebuttonUsed == 1)
 		{        
 			if ( window->minimize != NULL )
@@ -1862,7 +1870,9 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 				
 			}
 	    };
+		*/
 		
+		/*
 		if (window->maximizebuttonUsed == 1)
 		{
 			if ( window->maximize != NULL )
@@ -1878,10 +1888,12 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 				
 			}					
 		}
+		*/
 		
 		// #todo: 
 		// Se estivermos em full screen, não teremos botão.
 	    
+	    /*
 		if (window->closebuttonUsed == 1)
 		{			
 			if( window->close != NULL )
@@ -1896,12 +1908,17 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 				
 			}		
 	    };
+	    */
 	    				 
 		//...
 	};		
 	
 
-
+        //funcionou até aqui na máquina real.
+		//#debug
+		//printf ("* real machine breakpoint");
+		//refresh_screen();
+		//while(1){}
 
 
     // Client Area. 
@@ -2032,7 +2049,11 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 		}
 	}
 
-
+       //funcionou ate aqui na maquina real
+		//#debug
+		//printf ("* real machine breakpoint");
+		//refresh_screen();
+		//while(1){}
 
 
 	//
