@@ -2311,6 +2311,11 @@ resize_window ( struct window_d *window,
 			{
 			    window->statusbar->width = window->width;
 			    window->statusbar->height = 25;
+			    //window->statusbar->bg_color = COLOR_PINK;
+			    
+			    //ajuste
+			    window->bottom = window->top + window->height;
+			    window->statusbar->top = window->bottom -25-1; 
 		    }
         };
         
@@ -2321,6 +2326,11 @@ resize_window ( struct window_d *window,
 			{
                 window->scrollbar->width  = 35;
                 window->scrollbar->height = (window->height -2 -35 -2 -24 -2);
+                //window->scrollbar->bg_color = COLOR_PINK;
+                
+                //ajuste
+                window->right = window->left + window->width;
+                window->scrollbar->left = window->right -37;
             }
         }
         
