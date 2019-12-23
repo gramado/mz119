@@ -539,9 +539,8 @@ struct window_d *shellCreateMainWindow ( int status ){
     height = wsWindowHeight;
 
 
-
-    //w = (void *) APICreateWindow ( 1, 1, 1, "shell-main",     
-    w = (void *) APICreateWindow ( WT_OVERLAPPED, 1, 1, "shell-main",     
+    //w = (void *) APICreateWindow ( WT_OVERLAPPED, 1, 1, "shell-main",     
+    w = (void *) APICreateWindow ( WT_SIMPLE, 1, 1, "Gramado Core Shell",     
                      left, top, width, height,    
                      0, 0, xCOLOR_GRAY1, xCOLOR_GRAY1 );
 

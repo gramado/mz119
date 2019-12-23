@@ -528,97 +528,97 @@ Linker script and memory map
 .iplt           0x000000000045c000        0x0
  .iplt          0x000000000045c000        0x0 crt0.o
 
-.rodata         0x000000000045c000     0x3acc
+.rodata         0x000000000045c000     0x3aec
  .rodata        0x000000000045c000      0x50d crt0.o
  *fill*         0x000000000045c50d       0x13 
  .rodata        0x000000000045c520     0x1873 main.o
  *fill*         0x000000000045dd93        0xd 
- .rodata        0x000000000045dda0      0x6c7 shellui.o
- *fill*         0x000000000045e467        0x1 
- .rodata        0x000000000045e468      0x3d5 api.o
- *fill*         0x000000000045e83d        0x3 
- .rodata        0x000000000045e840      0x100 ctype.o
-                0x000000000045e840                _ctype
- .rodata        0x000000000045e940      0x2d4 stdio.o
-                0x000000000045ea80                hex2ascii_data
- *fill*         0x000000000045ec14        0x4 
- .rodata        0x000000000045ec18      0x510 stdlib.o
- .rodata        0x000000000045f128        0x6 conio.o
- *fill*         0x000000000045f12e       0x12 
- .rodata        0x000000000045f140      0x4bc builtins.o
- *fill*         0x000000000045f5fc        0x4 
- .rodata        0x000000000045f600      0x48f desktop.o
- *fill*         0x000000000045fa8f        0x1 
- .rodata        0x000000000045fa90       0x3c unistd.o
+ .rodata        0x000000000045dda0      0x6cf shellui.o
+ *fill*         0x000000000045e46f        0x1 
+ .rodata        0x000000000045e470      0x3d5 api.o
+ *fill*         0x000000000045e845       0x1b 
+ .rodata        0x000000000045e860      0x100 ctype.o
+                0x000000000045e860                _ctype
+ .rodata        0x000000000045e960      0x2d4 stdio.o
+                0x000000000045eaa0                hex2ascii_data
+ *fill*         0x000000000045ec34        0x4 
+ .rodata        0x000000000045ec38      0x510 stdlib.o
+ .rodata        0x000000000045f148        0x6 conio.o
+ *fill*         0x000000000045f14e       0x12 
+ .rodata        0x000000000045f160      0x4bc builtins.o
+ *fill*         0x000000000045f61c        0x4 
+ .rodata        0x000000000045f620      0x48f desktop.o
+ *fill*         0x000000000045faaf        0x1 
+ .rodata        0x000000000045fab0       0x3c unistd.o
 
-.eh_frame       0x000000000045facc     0x2ef4
- .eh_frame      0x000000000045facc       0x34 crt0.o
- .eh_frame      0x000000000045fb00      0xca4 main.o
+.eh_frame       0x000000000045faec     0x2ef4
+ .eh_frame      0x000000000045faec       0x34 crt0.o
+ .eh_frame      0x000000000045fb20      0xca4 main.o
                                         0xcbc (size before relaxing)
- .eh_frame      0x00000000004607a4      0x140 shellui.o
+ .eh_frame      0x00000000004607c4      0x140 shellui.o
                                         0x158 (size before relaxing)
- .eh_frame      0x00000000004608e4      0xc6c api.o
+ .eh_frame      0x0000000000460904      0xc6c api.o
                                         0xc84 (size before relaxing)
- .eh_frame      0x0000000000461550      0x6f0 stdio.o
+ .eh_frame      0x0000000000461570      0x6f0 stdio.o
                                         0x708 (size before relaxing)
- .eh_frame      0x0000000000461c40      0x400 stdlib.o
+ .eh_frame      0x0000000000461c60      0x400 stdlib.o
                                         0x418 (size before relaxing)
- .eh_frame      0x0000000000462040      0x320 string.o
+ .eh_frame      0x0000000000462060      0x320 string.o
                                         0x338 (size before relaxing)
- .eh_frame      0x0000000000462360       0xa0 conio.o
+ .eh_frame      0x0000000000462380       0xa0 conio.o
                                          0xb8 (size before relaxing)
- .eh_frame      0x0000000000462400      0x1e0 builtins.o
+ .eh_frame      0x0000000000462420      0x1e0 builtins.o
                                         0x1f8 (size before relaxing)
- .eh_frame      0x00000000004625e0       0x20 desktop.o
+ .eh_frame      0x0000000000462600       0x20 desktop.o
                                          0x38 (size before relaxing)
- .eh_frame      0x0000000000462600      0x39c unistd.o
+ .eh_frame      0x0000000000462620      0x39c unistd.o
                                         0x3b4 (size before relaxing)
- .eh_frame      0x000000000046299c       0x24 stubs.o
+ .eh_frame      0x00000000004629bc       0x24 stubs.o
                                          0x3c (size before relaxing)
 
-.rel.dyn        0x00000000004629c0        0x0
- .rel.got       0x00000000004629c0        0x0 crt0.o
- .rel.iplt      0x00000000004629c0        0x0 crt0.o
- .rel.text      0x00000000004629c0        0x0 crt0.o
+.rel.dyn        0x00000000004629e0        0x0
+ .rel.got       0x00000000004629e0        0x0 crt0.o
+ .rel.iplt      0x00000000004629e0        0x0 crt0.o
+ .rel.text      0x00000000004629e0        0x0 crt0.o
 
-.data           0x00000000004629c0     0x2640
-                0x00000000004629c0                data = .
-                0x00000000004629c0                _data = .
-                0x00000000004629c0                __data = .
+.data           0x00000000004629e0     0x2620
+                0x00000000004629e0                data = .
+                0x00000000004629e0                _data = .
+                0x00000000004629e0                __data = .
  *(.data)
- .data          0x00000000004629c0      0x4c4 crt0.o
- *fill*         0x0000000000462e84       0x1c 
- .data          0x0000000000462ea0      0x55c main.o
-                0x0000000000463340                _running
-                0x0000000000463344                the_current_maintainer
-                0x0000000000463348                primary_prompt
-                0x000000000046334c                secondary_prompt
-                0x0000000000463350                current_user_name
-                0x0000000000463354                current_host_name
-                0x0000000000463358                remember_on_history
-                0x000000000046335c                current_command_number
-                0x0000000000463360                bashrc_file
-                0x0000000000463364                shell_config_file
-                0x0000000000463380                long_args
-                0x00000000004633f8                deltaValue
- *fill*         0x00000000004633fc        0x4 
- .data          0x0000000000463400      0x4a0 shellui.o
- .data          0x00000000004638a0      0x440 api.o
- .data          0x0000000000463ce0        0x0 ctype.o
- .data          0x0000000000463ce0        0x0 stdio.o
- .data          0x0000000000463ce0        0x8 stdlib.o
-                0x0000000000463ce0                _infinity
- .data          0x0000000000463ce8        0x0 string.o
- .data          0x0000000000463ce8        0x0 conio.o
- *fill*         0x0000000000463ce8       0x18 
- .data          0x0000000000463d00      0x4a0 builtins.o
- .data          0x00000000004641a0      0x4a8 desktop.o
-                0x0000000000464640                primary_desktop_folder
-                0x0000000000464644                secondary_desktop_folder
- .data          0x0000000000464648        0x0 unistd.o
- .data          0x0000000000464648        0x0 stubs.o
+ .data          0x00000000004629e0      0x4c4 crt0.o
+ *fill*         0x0000000000462ea4       0x1c 
+ .data          0x0000000000462ec0      0x55c main.o
+                0x0000000000463360                _running
+                0x0000000000463364                the_current_maintainer
+                0x0000000000463368                primary_prompt
+                0x000000000046336c                secondary_prompt
+                0x0000000000463370                current_user_name
+                0x0000000000463374                current_host_name
+                0x0000000000463378                remember_on_history
+                0x000000000046337c                current_command_number
+                0x0000000000463380                bashrc_file
+                0x0000000000463384                shell_config_file
+                0x00000000004633a0                long_args
+                0x0000000000463418                deltaValue
+ *fill*         0x000000000046341c        0x4 
+ .data          0x0000000000463420      0x4a0 shellui.o
+ .data          0x00000000004638c0      0x440 api.o
+ .data          0x0000000000463d00        0x0 ctype.o
+ .data          0x0000000000463d00        0x0 stdio.o
+ .data          0x0000000000463d00        0x8 stdlib.o
+                0x0000000000463d00                _infinity
+ .data          0x0000000000463d08        0x0 string.o
+ .data          0x0000000000463d08        0x0 conio.o
+ *fill*         0x0000000000463d08       0x18 
+ .data          0x0000000000463d20      0x4a0 builtins.o
+ .data          0x00000000004641c0      0x4a8 desktop.o
+                0x0000000000464660                primary_desktop_folder
+                0x0000000000464664                secondary_desktop_folder
+ .data          0x0000000000464668        0x0 unistd.o
+ .data          0x0000000000464668        0x0 stubs.o
                 0x0000000000465000                . = ALIGN (0x1000)
- *fill*         0x0000000000464648      0x9b8 
+ *fill*         0x0000000000464668      0x998 
 
 .got            0x0000000000465000        0x0
  .got           0x0000000000465000        0x0 crt0.o

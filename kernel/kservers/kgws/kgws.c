@@ -226,13 +226,9 @@ int kgws_mouse_scan_windows (void){
 			//isso é global do sistema?
             mouseover_window = 0;
         }
-     }
      
-     
-    if ( wID == -1 )
-    {
-		return -1;
-    }
+        return -1;
+     };
 
 
     //++
@@ -269,9 +265,6 @@ int kgws_mouse_scan_windows (void){
 		//#todo:
 		// Deveriamos aqui checarmos a validade da estrutura ??
 
-		//redraw_window(wScan);
-
-
         //
         // ==== Button events ====
         //
@@ -291,7 +284,11 @@ int kgws_mouse_scan_windows (void){
         if ( kgws_mouse_event_button_action == 1 )
         {
 			//printf ("[Action ");
-
+			
+			 //debug
+			 //if( Window->type == WT_OVERLAPPED)
+             //{ printf ("[Action overlapped "); refresh_screen(); }
+              
 			// >> BOTÃO 1 ==================
 			//Igual ao estado anterior
             if ( kgws_mouse_event_mouse_buttom_1 == kgws_mouse_event_old_mouse_buttom_1 )

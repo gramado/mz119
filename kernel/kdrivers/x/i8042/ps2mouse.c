@@ -1002,6 +1002,7 @@ void mouseHandler (void){
             //#bugbug
             // escaneando janelas.
             // O window server deveria fazer isso.
+            // kgws/kgws.c
             kgws_mouse_scan_windows ();
             
             // O driver precisa do old pra configurar a variável de ação.
