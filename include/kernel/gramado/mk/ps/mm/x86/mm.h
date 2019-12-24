@@ -1058,6 +1058,48 @@ int g_mm_system_type;
 // ## Physical memory ##
 //
 
+	// Small systems.
+	unsigned long SMALL_kernel_address;
+	unsigned long SMALL_kernel_base;
+	unsigned long SMALL_user_address;
+	unsigned long SMALL_vga_address;
+	unsigned long SMALL_frontbuffer_address;
+	unsigned long SMALL_backbuffer_address; 
+	unsigned long SMALL_pagedpool_address; 
+	unsigned long SMALL_heappool_address; 
+	unsigned long SMALL_gramadocore_init_heap_address;
+    unsigned long SMALL_gramadocore_shell_heap_address; 
+    unsigned long SMALL_gramadocore_taskman_heap_address; 
+    //...
+
+    // Medium systems.	
+	unsigned long MEDIUM_kernel_address;
+	unsigned long MEDIUM_kernel_base; 
+	unsigned long MEDIUM_user_address; 
+	unsigned long MEDIUM_vga_address; 
+	unsigned long MEDIUM_frontbuffer_address; 
+	unsigned long MEDIUM_backbuffer_address; 
+	unsigned long MEDIUM_pagedpool_address;  	
+    unsigned long MEDIUM_heappool_address; 
+	unsigned long MEDIUM_gramadocore_init_heap_address; 	
+    unsigned long MEDIUM_gramadocore_shell_heap_address; 
+    unsigned long MEDIUM_gramadocore_taskman_heap_address; 
+	
+    // Large systems.
+	unsigned long LARGE_kernel_address;
+	unsigned long LARGE_kernel_base;
+	unsigned long LARGE_user_address;
+	unsigned long LARGE_vga_address;
+	unsigned long LARGE_frontbuffer_address;
+	unsigned long LARGE_backbuffer_address;
+	unsigned long LARGE_pagedpool_address; 
+    unsigned long LARGE_heappool_address;
+	unsigned long LARGE_gramadocore_init_heap_address;
+    unsigned long LARGE_gramadocore_shell_heap_address; 
+    unsigned long LARGE_gramadocore_taskman_heap_address; 
+
+
+
 
 //base     = base memory retornada pelo cmos
 //other    = (1MB - base). (Shadow memory = 384 KB)

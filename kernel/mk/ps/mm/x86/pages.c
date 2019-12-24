@@ -696,59 +696,62 @@ int SetUpPaging (void){
 	int Index;
 	
 	
+	// #importante
+	// Inicializando as variáveis que vamos usr aqui.
+	// São endereços de memória física.
+	// As variáveis são globais para podermos gerenciar o uso de
+	// memória física.
+	// See:  mm/x86/mm.h
+	
+	
 	//==============================================================
 	//                  ****    SMALL SYSTEMS    ****
 	//==============================================================
-	
-	unsigned long SMALL_kernel_address = SMALLSYSTEM_KERNELADDRESS;
-	unsigned long SMALL_kernel_base = SMALLSYSTEM_KERNELBASE;
-	unsigned long SMALL_user_address = SMALLSYSTEM_USERBASE;
-	unsigned long SMALL_vga_address = SMALLSYSTEM_VGA;
-	unsigned long SMALL_frontbuffer_address = (unsigned long) SavedLFB;                    //frontbuffer
-	unsigned long SMALL_backbuffer_address = (unsigned long) SMALLSYSTEM_BACKBUFFER;       //backbuffer
-	unsigned long SMALL_pagedpool_address = (unsigned long) SMALLSYSTEM_PAGEDPOLL_START;   //PAGED POOL
-    unsigned long SMALL_heappool_address = (unsigned long) SMALLSYSTEM_HEAPPOLL_START;		
-	
-	unsigned long SMALL_gramadocore_init_heap_address = (unsigned long) SMALLSYSTEM_GRAMADOCORE_INIT_HEAP_START;
-    unsigned long SMALL_gramadocore_shell_heap_address = (unsigned long) SMALLSYSTEM_GRAMADOCORE_SHELL_HEAP_START;
-    unsigned long SMALL_gramadocore_taskman_heap_address = (unsigned long) SMALLSYSTEM_GRAMADOCORE_TASKMAN_HEAP_START;	
+    SMALL_kernel_address = SMALLSYSTEM_KERNELADDRESS;
+    SMALL_kernel_base = SMALLSYSTEM_KERNELBASE;
+    SMALL_user_address = SMALLSYSTEM_USERBASE;
+    SMALL_vga_address = SMALLSYSTEM_VGA;
+    SMALL_frontbuffer_address = (unsigned long) SavedLFB;                    //frontbuffer
+    SMALL_backbuffer_address = (unsigned long) SMALLSYSTEM_BACKBUFFER;       //backbuffer
+    SMALL_pagedpool_address = (unsigned long) SMALLSYSTEM_PAGEDPOLL_START;   //PAGED POOL
+    SMALL_heappool_address = (unsigned long) SMALLSYSTEM_HEAPPOLL_START;		
+    SMALL_gramadocore_init_heap_address = (unsigned long) SMALLSYSTEM_GRAMADOCORE_INIT_HEAP_START;
+    SMALL_gramadocore_shell_heap_address = (unsigned long) SMALLSYSTEM_GRAMADOCORE_SHELL_HEAP_START;
+    SMALL_gramadocore_taskman_heap_address = (unsigned long) SMALLSYSTEM_GRAMADOCORE_TASKMAN_HEAP_START;	
 	//...
-	
-	
 	//==============================================================
 	//                  ****    MEDIUM SYSTEMS    ****
-	//==============================================================	
-	
-	unsigned long MEDIUM_kernel_address = MEDIUMSYSTEM_KERNELADDRESS;
-	unsigned long MEDIUM_kernel_base = MEDIUMSYSTEM_KERNELBASE;
-	unsigned long MEDIUM_user_address = MEDIUMSYSTEM_USERBASE;
-	unsigned long MEDIUM_vga_address = MEDIUMSYSTEM_VGA ;
-	unsigned long MEDIUM_frontbuffer_address = (unsigned long) SavedLFB;
-	unsigned long MEDIUM_backbuffer_address = (unsigned long) MEDIUMSYSTEM_BACKBUFFER;
-	unsigned long MEDIUM_pagedpool_address = (unsigned long) MEDIUMSYSTEM_PAGEDPOLL_START; 	
-    unsigned long MEDIUM_heappool_address = (unsigned long) MEDIUMSYSTEM_HEAPPOLL_START;
-	
-	unsigned long MEDIUM_gramadocore_init_heap_address = (unsigned long) MEDIUMSYSTEM_GRAMADOCORE_INIT_HEAP_START;	
-    unsigned long MEDIUM_gramadocore_shell_heap_address = (unsigned long) MEDIUMSYSTEM_GRAMADOCORE_SHELL_HEAP_START;
-    unsigned long MEDIUM_gramadocore_taskman_heap_address = (unsigned long) MEDIUMSYSTEM_GRAMADOCORE_TASKMAN_HEAP_START;	
-	
+	//==============================================================
+    MEDIUM_kernel_address = MEDIUMSYSTEM_KERNELADDRESS;
+    MEDIUM_kernel_base = MEDIUMSYSTEM_KERNELBASE;
+    MEDIUM_user_address = MEDIUMSYSTEM_USERBASE;
+    MEDIUM_vga_address = MEDIUMSYSTEM_VGA ;
+    MEDIUM_frontbuffer_address = (unsigned long) SavedLFB;
+    MEDIUM_backbuffer_address = (unsigned long) MEDIUMSYSTEM_BACKBUFFER;
+    MEDIUM_pagedpool_address = (unsigned long) MEDIUMSYSTEM_PAGEDPOLL_START; 	
+    MEDIUM_heappool_address = (unsigned long) MEDIUMSYSTEM_HEAPPOLL_START;
+    MEDIUM_gramadocore_init_heap_address = (unsigned long) MEDIUMSYSTEM_GRAMADOCORE_INIT_HEAP_START;	
+    MEDIUM_gramadocore_shell_heap_address = (unsigned long) MEDIUMSYSTEM_GRAMADOCORE_SHELL_HEAP_START;
+    MEDIUM_gramadocore_taskman_heap_address = (unsigned long) MEDIUMSYSTEM_GRAMADOCORE_TASKMAN_HEAP_START;	
 	//==============================================================
 	//                  ****    LARGE SYSTEMS    ****
 	//==============================================================	
-	
-	unsigned long LARGE_kernel_address = LARGESYSTEM_KERNELADDRESS;
-	unsigned long LARGE_kernel_base = LARGESYSTEM_KERNELBASE;
-	unsigned long LARGE_user_address = LARGESYSTEM_USERBASE;
-	unsigned long LARGE_vga_address = LARGESYSTEM_VGA;
-	unsigned long LARGE_frontbuffer_address = (unsigned long) SavedLFB;
-	unsigned long LARGE_backbuffer_address = (unsigned long) LARGESYSTEM_BACKBUFFER;
-	unsigned long LARGE_pagedpool_address = (unsigned long) LARGESYSTEM_PAGEDPOLL_START; 	
-    unsigned long LARGE_heappool_address = (unsigned long) LARGESYSTEM_HEAPPOLL_START;
-	
-	unsigned long LARGE_gramadocore_init_heap_address = (unsigned long) LARGESYSTEM_GRAMADOCORE_INIT_HEAP_START;	
-    unsigned long LARGE_gramadocore_shell_heap_address = (unsigned long) LARGESYSTEM_GRAMADOCORE_SHELL_HEAP_START;
-    unsigned long LARGE_gramadocore_taskman_heap_address = (unsigned long) LARGESYSTEM_GRAMADOCORE_TASKMAN_HEAP_START;	
-	
+    LARGE_kernel_address = LARGESYSTEM_KERNELADDRESS;
+    LARGE_kernel_base = LARGESYSTEM_KERNELBASE;
+    LARGE_user_address = LARGESYSTEM_USERBASE;
+    LARGE_vga_address = LARGESYSTEM_VGA;
+    LARGE_frontbuffer_address = (unsigned long) SavedLFB;
+    LARGE_backbuffer_address = (unsigned long) LARGESYSTEM_BACKBUFFER;
+    LARGE_pagedpool_address = (unsigned long) LARGESYSTEM_PAGEDPOLL_START; 	
+    LARGE_heappool_address = (unsigned long) LARGESYSTEM_HEAPPOLL_START;
+    LARGE_gramadocore_init_heap_address = (unsigned long) LARGESYSTEM_GRAMADOCORE_INIT_HEAP_START;	
+    LARGE_gramadocore_shell_heap_address = (unsigned long) LARGESYSTEM_GRAMADOCORE_SHELL_HEAP_START;
+    LARGE_gramadocore_taskman_heap_address = (unsigned long) LARGESYSTEM_GRAMADOCORE_TASKMAN_HEAP_START;	
+
+
+
+
+
 	// ** bank 1 ** //
 	// O primeiro banco representa o mínimo de memória RAM que o sistema 
 	// operacional suporta, 32MB. 
@@ -1207,9 +1210,10 @@ int SetUpPaging (void){
     page_directory[ENTRY_BACKBUFFER_PAGES] = (unsigned long) page_directory[ENTRY_BACKBUFFER_PAGES] | 7;  	
 
 
-	// Obs: 4MB da memória física à partir do endereço físico 0x01000000 (16MB)
-    // são destinados ao back buffer. Obs: Isso é bem pouco, uma tela com alta 
-	// resolução usa mais que isso.	
+	// Obs: 
+	// 4MB da memória física à partir do endereço físico 0x01000000 (16MB)
+    // são destinados ao back buffer. 
+    // Obs: Isso é bem pouco, uma tela com alta resolução usa mais que isso.	
 	
 	
 	//
@@ -1251,7 +1255,7 @@ int SetUpPaging (void){
 	//heaps suppport
 	//preparando uma área de memória grande o bastante 
 	//para conter o heap de todos os processos.
-	//ex: podemos dar 128kb para cada processo inicialmente.
+	//ex: podemos dar 128KB para cada processo inicialmente.
 
     mm_used_heappool = (1024 * 4);  // 4096 KB = (4 MB).
 	

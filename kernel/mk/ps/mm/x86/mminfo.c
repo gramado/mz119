@@ -91,7 +91,21 @@ void memoryShowMemoryInfo (void){
 	
 	printf ("\n");
 	printf (" TotalUsed      = (%d KB)\n", memorysizeUsed );
-	printf (" TotalFree      = (%d KB)\n", memorysizeFree );	
+	printf (" TotalFree      = (%d KB)\n", memorysizeFree );
+	
+    printf ("\n");
+	printf (" kernel area      = (%d KB)\n", mm_used_kernel_area );
+	printf (" user area        = (%d KB)\n", mm_used_user_area );
+	printf (" backbuffer       = (%d KB)\n", mm_used_backbuffer );
+	printf (" paged pool       = (%d KB)\n", mm_used_pagedpool );	
+	printf (" heap pool        = (%d KB)\n", mm_used_heappool );
+	printf (" heap for init    = (%d KB)\n", mm_used_gramadocore_init_heap );
+	printf (" heap for shell   = (%d KB)\n", mm_used_gramadocore_shell_heap );
+	printf (" heap for taskman = (%d KB)\n", mm_used_gramadocore_taskman_heap );
+
+
+
+	
 	
 	printf ("\n This is a ");
 		
@@ -100,15 +114,51 @@ void memoryShowMemoryInfo (void){
 	switch (g_mm_system_type){
 		
 		case stSmallSystem:
-		    printf("Small System with %d KB\n", memorysizeTotal );
+		    printf("Small System with %d KB \n\n", memorysizeTotal );
+		    
+		    printf("%x Kernel area start \n", SMALL_kernel_address );
+		    printf("%x Base kernel start \n", SMALL_kernel_base );
+		    printf("%x User area start \n", SMALL_user_address );
+		    printf("%x vga memory \n", SMALL_vga_address );
+		    printf("%x frontbuffer \n", SMALL_frontbuffer_address );
+		    printf("%x backbuffer \n", SMALL_backbuffer_address );
+		    printf("%x paged memory pool \n", SMALL_pagedpool_address );
+		    printf("%x heap pool \n", SMALL_heappool_address );
+		    printf("%x heap for init \n", SMALL_gramadocore_init_heap_address );
+		    printf("%x heap for shell \n", SMALL_gramadocore_shell_heap_address );
+		    printf("%x heap for taskman \n", SMALL_gramadocore_taskman_heap_address );
 		    break;
 			
 		case stMediumSystem:
 		    printf("Medium System with %d KB\n", memorysizeTotal );
+
+		    printf("%x Kernel area start \n", MEDIUM_kernel_address );
+		    printf("%x Base kernel start \n", MEDIUM_kernel_base );
+		    printf("%x User area start \n", MEDIUM_user_address );
+		    printf("%x vga memory \n", MEDIUM_vga_address );
+		    printf("%x frontbuffer \n", MEDIUM_frontbuffer_address );
+		    printf("%x backbuffer \n", MEDIUM_backbuffer_address );
+		    printf("%x paged memory pool \n", MEDIUM_pagedpool_address );
+		    printf("%x heap pool \n", MEDIUM_heappool_address );
+		    printf("%x heap for init \n", MEDIUM_gramadocore_init_heap_address );
+		    printf("%x heap for shell \n", MEDIUM_gramadocore_shell_heap_address );
+		    printf("%x heap for taskman \n", MEDIUM_gramadocore_taskman_heap_address );
 			break;
 			
 		case stLargeSystem:
 		    printf("Large System %d KB\n", memorysizeTotal );
+
+		    printf("%x Kernel area start \n", LARGE_kernel_address );
+		    printf("%x Base kernel start \n", LARGE_kernel_base );
+		    printf("%x User area start \n", LARGE_user_address );
+		    printf("%x vga memory \n", LARGE_vga_address );
+		    printf("%x frontbuffer \n", LARGE_frontbuffer_address );
+		    printf("%x backbuffer \n", LARGE_backbuffer_address );
+		    printf("%x paged memory pool \n", LARGE_pagedpool_address );
+		    printf("%x heap pool \n", LARGE_heappool_address );
+		    printf("%x heap for init \n", LARGE_gramadocore_init_heap_address );
+		    printf("%x heap for shell \n", LARGE_gramadocore_shell_heap_address );
+		    printf("%x heap for taskman \n", LARGE_gramadocore_taskman_heap_address );
 			break;
 			
 		case stNull:
