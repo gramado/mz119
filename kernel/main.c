@@ -30,7 +30,7 @@ int kernel_main (void){
 
     int Status = 0;
 
-    int zIndex;	
+    int z;	
 
 	//
 	// Serial debug
@@ -52,9 +52,9 @@ int kernel_main (void){
 	// Initializing zorder list.
 	// Isso não deve ficar aqui.
 
-    for ( zIndex = 0; zIndex < ZORDER_COUNT_MAX; zIndex++ )
+    for ( z=0; z < KGWS_ZORDER_MAX; z++ )
     {
-        zorderList[zIndex] = (unsigned long) 0;
+        Windows[z] = (unsigned long) 0;
     }
 
     zorderCounter = 0;

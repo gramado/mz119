@@ -12,6 +12,30 @@
  *     Versão: 1.0, 2015 - Revisão. 
  *     Versão: 1.0, 2016 - Revisão.
  */
+
+
+ 
+//
+// z order support.
+//
+
+#define KGWS_ZORDER_BOTTOM  0 
+#define KGWS_ZORDER_TOP     1023   //top window
+#define KGWS_ZORDER_MAX     1024   //max
+
+ 
+unsigned long Windows[KGWS_ZORDER_MAX];
+
+
+// pega a janela que está mais ao topo da zorder e que
+// corresponda às cordenadas do mouse.
+// retorna window id
+int top_at ( int x, int y );
+
+//
+// =========
+// 
+ 
  
  //id da janela que o mouse está em cima.
 int window_mouse_over; 
@@ -801,6 +825,13 @@ struct window_d
 	// Deslocamento dentro da janela?
     unsigned long x;           //deslocamento x
     unsigned long y;           //deslocamento y 
+    int z;                     // z order.
+    
+    //invalidadas.
+    //indica que precisamos repintar essa quando
+    //chamarmos a rotina redraw_windows ou redraw_screen
+    //See wm.c
+    int invalidated;               
 
     // Background color.
     // Em user mode estamos usando color_bg.
@@ -1098,11 +1129,11 @@ struct window_d
 
 	//ordem na pilha de janelas do eixo z.
 	//A janela mais ao topo é a janela foreground.
-    int zIndex;    
+    //int zIndex;    
 
 	//z-order global.
 	//Sua ordem em relação a janela gui->main.    
-    struct zorder_d *zorder;
+    //struct zorder_d *zorder;
 
 //==================================================    
 
@@ -1309,7 +1340,7 @@ struct window_d *FULLSCREEN_TABWINDOW;
 // z order support
 //
 
-#define ZORDER_COUNT_MAX  128  //??PROVISÓRIO   
+//#define ZORDER_COUNT_MAX  128  //??PROVISÓRIO   
 
 int zorder;
 
@@ -1388,7 +1419,7 @@ struct zorderInfo
  *  >> uma janelas minimizada é excluida dessa lista, é zerada z_axis_order na sua estrutura.
  *  >> repintaremos começando do zero.
  */ 
-unsigned long zorderList[ZORDER_COUNT_MAX];
+//unsigned long zorderList[ZORDER_COUNT_MAX];
 
 
 

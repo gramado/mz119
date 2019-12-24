@@ -174,6 +174,8 @@ int kgws_mouse_scan_windows (void){
 
     int __saved;
     
+    
+    /*
     wID = (int) windowOverLappedScan ( kgws_mouse_event_mouse_x, kgws_mouse_event_mouse_y );
     __saved = wID;
     
@@ -189,14 +191,16 @@ int kgws_mouse_scan_windows (void){
             wID = __saved;
         }
     }
+    */    
     
-    
-    // Editbox and button.
-    //wID = (int) windowScan ( kgws_mouse_event_mouse_x, kgws_mouse_event_mouse_y );
+
+    //#test
+    wID = (int) top_at ( kgws_mouse_event_mouse_x, kgws_mouse_event_mouse_y );
 
 
     //================
-	//Se houve problema no escaneamento de janela do tipo botão ou editbox.
+    // Se não temos uma janela.
+	// Se houve problema no escaneamento de janela do tipo botão ou editbox.
     if ( wID == -1 )
     { 
 

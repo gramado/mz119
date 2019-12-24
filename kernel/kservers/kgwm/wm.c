@@ -2213,7 +2213,12 @@ fail:
 // Repintaremos todas as janelas com ponteiros válidos. 
  
 int redraw_screen (void){
-	
+
+    // #todo
+    // Repintar todas as janelas de baixo para cima
+    // mas só as que estiverem invalidadas.
+
+	/*
 	int z;
     int RedrawStatus;	
     
@@ -2287,6 +2292,7 @@ done:
 fail:
 
     panic ("redraw_screen: \n");
+    */
 }
 
 
@@ -2626,11 +2632,11 @@ void CloseWindow ( struct window_d *window ){
 		
 	    // devemos retirar a janela da zorder list 
 	
-	    z = (int) window->zIndex;
+	    z = (int) window->z;
 	
-	    if ( z >= 0 && z < ZORDER_COUNT_MAX )
+	    if ( z >= 0 && z < KGWS_ZORDER_MAX )
 	    {
-	        zorderList[z] = (unsigned long) 0;	
+	        Windows[z] = (unsigned long) 0;	
 	    
 		    //atualiza o contador.
             zorderCounter--;
@@ -3862,7 +3868,7 @@ int get_zorder ( struct window_d *window ){
 	
     if ( (void *) window != NULL )
 	{
-		return (int) window->zIndex;
+		return (int) window->z;
 	}
 
 	return (int) -1;
@@ -3893,8 +3899,8 @@ struct window_d *getTopWindow (struct window_d *window){
 	
 	if ( (void *) window == NULL )
 	{
-		return (struct window_d *) windowList[top_window];
-	};
+		return (struct window_d *) Windows[KGWS_ZORDER_TOP];
+	}
 	
 	return NULL;
 }
@@ -3911,8 +3917,17 @@ int get_top_window (void){
 //Setando a top window.
 // wm
 void set_top_window (int id){
-	
-	top_window = (int) id;
+
+    struct window_d *w;
+
+    w = (struct window_d *) windowList[id];
+    
+    if ( (void *) w != NULL )
+    {
+        Windows[KGWS_ZORDER_TOP] = (unsigned long) w;    
+        top_window = (int) id;
+    }
+
 }
 
 
@@ -3945,9 +3960,9 @@ int z_order_get_free_slot (void){
 	int z; 
 	struct window_d *zWindow;
 
-	for( z=0; z < ZORDER_COUNT_MAX; z++ )
+	for( z=0; z < KGWS_ZORDER_MAX; z++ )
 	{
-	    zWindow = (void*) zorderList[z];
+	    zWindow = (void*) Windows[z];
         
 		//Obtendo um espaço vazio.
 		//Se for NULL, então não tinha um ponteiro no slot.
@@ -3956,7 +3971,7 @@ int z_order_get_free_slot (void){
 			response = (int) z; 
 			
 			zorderCounter++;
-			if (zorderCounter >= ZORDER_COUNT_MAX)
+			if (zorderCounter >= KGWS_ZORDER_MAX)
 			{
 				printf("z_order_get_free_slot: zorderCounter\n");
 				goto fail;
@@ -4084,6 +4099,65 @@ int windowLoadGramadoIcons (void){
 	// More ?
 
     return 0;
+}
+
+
+
+/*
+ **************** 
+ * top_at: 
+ * 
+ */
+// pega a janela que está mais ao topo da zorder e que
+// corresponda às cordenadas do mouse.
+// retorna window id
+int top_at ( int x, int y )
+{
+    int z = 0;
+    
+    
+    int wID = -1;
+    struct window_d *__last_found;
+    struct window_d *tmp;
+        
+    //max 1024 janelas.
+    for ( z=0; z<KGWS_ZORDER_MAX; z++)
+    {
+        //pega a próxima na zorderlist;
+        tmp = (struct window_d *) Windows[z];
+        
+        //check
+        if ( (void *) tmp != NULL )
+        {
+            if ( tmp->used == 1 && tmp->magic == 1234 )
+            {
+
+                 // #importante
+                 // Checando coordenadas.
+                  if ( x > (tmp->left)  && 
+                       x < (tmp->left + tmp->width)  && 
+                       y > (tmp->top)  &&
+                       y < (tmp->top + tmp->height)  )
+                 {
+                      // salva essa.
+                      __last_found = (struct window_d *) tmp;
+                      goto __found;
+                 }
+            }
+        }
+
+    };
+
+
+// #debug
+// Não encontramos uma perfeita.
+    panic ("kgwm-wm-top_at: fail");
+
+__found:
+
+    window_mouse_over = __last_found->id;
+
+    return (int) __last_found->id;
 }
 
 

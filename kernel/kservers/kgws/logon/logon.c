@@ -587,6 +587,12 @@ void logon_create_screen (void){
 
 			gui->screen = (void *) hWindow;
 			
+			// z order
+			// Primeira janela da ordem;
+			hWindow->z = 0;
+			Windows[KGWS_ZORDER_BOTTOM] = (unsigned long) hWindow;
+			
+			
 			// #debug
 			// refresh_screen();
 			// while(1){}

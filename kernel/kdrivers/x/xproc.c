@@ -892,7 +892,22 @@ system_procedure ( struct window_d *window,
 				    };
 			        break;
 
-
+                //#test
+                //mouse up
+                case 31:
+                    switch (long1)
+                    {
+						//botaõ 1
+                        case 1:
+                            if ( window == gui->screen )
+                            {
+                                printf ("system_pocedure: Clicking on root screen\n");
+                                refresh_screen ();
+                            }
+                            break;
+                    }
+                    break;
+                
                 default: 
 				    break;
 		    };              

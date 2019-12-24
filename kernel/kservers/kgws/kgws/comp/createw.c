@@ -438,7 +438,7 @@ void *CreateWindow ( unsigned long type,
 		    //window->active = WINDOW_STATUS_ACTIVE;
 			//window->status = (unsigned long) WINDOW_STATUS_ACTIVE;
 			window->relationship_status = (unsigned long) WINDOW_REALATIONSHIPSTATUS_FOREGROUND; 
-            window->zIndex = 0; // ?? inicializando apenas. @todo:getNextZAxisOrder()
+            window->z = 0;  //z_order_get_free_slot()
 			//...
 		};
 
@@ -448,7 +448,7 @@ void *CreateWindow ( unsigned long type,
 		    //window->active = WINDOW_STATUS_INACTIVE;
 			//window->status = (unsigned long) WINDOW_STATUS_INACTIVE;
 			window->relationship_status = (unsigned long) WINDOW_REALATIONSHIPSTATUS_BACKGROUND;
-            window->zIndex = 0; //inicializando apenas. @todo:getNextZAxisOrder()
+            window->z = 0; //z_order_get_free_slot()
 			//...
 		};
 
@@ -1828,9 +1828,12 @@ void *CreateWindow ( unsigned long type,
     int z;
 	z = (int) z_order_get_free_slot();
     
-	if ( z >= 0 && z < ZORDER_COUNT_MAX )
+	if ( z >= 0 && z < KGWS_ZORDER_MAX )
 	{
-	    zorderList[z] = (unsigned long) window;
+		window->z = z;
+	    Windows[z] = (unsigned long) window;
+	}else{
+	    panic ("CreateWindow: no free slot on zorder");
 	}
 	
 	// #todo: 
