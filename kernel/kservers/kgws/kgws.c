@@ -197,12 +197,15 @@ int kgws_mouse_scan_windows (void){
     //#test
     wID = (int) top_at ( kgws_mouse_event_mouse_x, kgws_mouse_event_mouse_y );
 
+    // #bugbug
+    // Estamos sempre recebendo a janela gui->screen
 
     //================
     // Se não temos uma janela.
-	// Se houve problema no escaneamento de janela do tipo botão ou editbox.
+
     if ( wID == -1 )
     { 
+		//printf ("x");
 
 		// Essa flag indica que podemos fazer o refresh da mouse ouver,
 		// mas somente uma vez.
@@ -245,6 +248,7 @@ int kgws_mouse_scan_windows (void){
     //Se estamos sobre uma janela válida.
     if ( wID > -1 )
     {
+		//printf ("w ");
 
         Window = (struct window_d *) windowList[wID];
 

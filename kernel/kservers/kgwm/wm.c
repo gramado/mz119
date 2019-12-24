@@ -2211,88 +2211,87 @@ fail:
 
 // Vamos procurar na lista por ponteiros válidos.
 // Repintaremos todas as janelas com ponteiros válidos. 
- 
-int redraw_screen (void){
 
     // #todo
     // Repintar todas as janelas de baixo para cima
     // mas só as que estiverem invalidadas.
 
-	/*
-	int z;
-    int RedrawStatus;	
-    
-	struct window_d *zWindow;
-	
-	for ( z = 0; z < ZORDER_COUNT_MAX; z++ )
-	{
-	    zWindow = (void *) zorderList[z];
-	
-		//Pegando um ponteiro de janela válido na zorderList.
-		if ( (void *) zWindow != NULL )
-		{
-			if ( zWindow->used == 1 && zWindow->magic == 1234 )
+
+// funcionou mas está piscando ...
+// como se estivesse pintando a mesma janela duas vezes.
+// provavelmente a última; 
+ 
+int redraw_screen (void){
+
+
+    int z;
+    int RedrawStatus;
+
+    struct window_d *__window;
+
+
+    for ( z=0; z < KGWS_ZORDER_MAX; z++ )
+    {
+        __window = (void *) Windows[z];
+
+        if ( (void *) __window != NULL )
+        {
+            if ( __window->used == 1 && __window->magic == 1234 )
             {
-				//compara os índices.
-				if ( zWindow->zIndex != z )
-				{	
-					printf ("redraw_screen: z index error\n");
-					goto fail;
-				};
-				
-				//retira o foco.
-				//KillFocus(zWindow);
-				
-				//Repinta uma janela.
-				RedrawStatus = (int) redraw_window (zWindow, 1);
-				
-				if (RedrawStatus == 1)
-				{	
-					printf ("redraw_screen: redraw error\n");
-					goto fail;
-				};
-				//Nothing.
-			};
-        //Nothing.			
-		};
-       //nothing.
-	};	
+                // Compara os índices.
+                if ( __window->z != z )
+                {
+                    panic ("wm-redraw_screen: index\n");
+                }
 
-	// #bugbug: ?? 
-	// Repintaremos duas vezes a última janela.
-    // Repintaremos novamente a última janela.
-    // Agora com foco de entrada.	
+                //retira o foco.
+                //KillFocus(__window);
 
-    if ( (void *) zWindow != NULL )
+                // durty.
+                // se ela foi marcada como suja e precisa ser repintada.
+                //if ( __window->invalidated == 1 )
+                //{
+                    //Repinta uma janela.
+                    RedrawStatus = (int) redraw_window (__window, 1);
+                    if (RedrawStatus == 1)
+                    {
+                        panic ("redraw_screen: status\n");
+                    }
+                //}
+            }
+        };
+    };
+
+
+    /*
+    if ( (void *) __window != NULL )
 	{
-		if ( zWindow->used == 1 && zWindow->magic == 1234 )
+		if ( __window->used == 1 && __window->magic == 1234 )
 		{
-            set_active_window (zWindow);	
-            
-            SetFocus (zWindow);
+            //set_active_window (__window);
+            SetFocus (__window);
 
-	        //Repinta uma janela.
-	        RedrawStatus = (int) redraw_window (zWindow, 1);
-			
-	        if (RedrawStatus == 1)
-	        {	
-		        printf ("redraw_screen: redraw error\n");
-		        goto fail;
-	        };
-		};
-	};
-	
-	// #obs
-    // Se for terminar corretamente é porque repintamos tudo o que foi possível.	
+            //Repinta uma janela.
+            RedrawStatus = (int) redraw_window (__window, 1);
 
-done:	
-	
-    return 0;	
-	
-fail:
-
-    panic ("redraw_screen: \n");
+            if (RedrawStatus == 1)
+            {
+                panic ("redraw_screen: status again\n");
+            }
+        };
+    };
     */
+
+    // #obs
+    // Se for terminar corretamente é porque 
+    // repintamos tudo o que foi possível.
+
+done:
+
+    return 0;	
+
+//fail:
+    //panic ("redraw_screen: \n");
 }
 
 
@@ -4121,7 +4120,7 @@ int top_at ( int x, int y )
     struct window_d *tmp;
         
     //max 1024 janelas.
-    for ( z=0; z<KGWS_ZORDER_MAX; z++)
+    for ( z=0; z<KGWS_ZORDER_MAX; z++ )
     {
         //pega a próxima na zorderlist;
         tmp = (struct window_d *) Windows[z];
@@ -4139,19 +4138,14 @@ int top_at ( int x, int y )
                        y > (tmp->top)  &&
                        y < (tmp->top + tmp->height)  )
                  {
+					 //printf ("%d",z);
                       // salva essa.
                       __last_found = (struct window_d *) tmp;
-                      goto __found;
                  }
             }
         }
 
     };
-
-
-// #debug
-// Não encontramos uma perfeita.
-    panic ("kgwm-wm-top_at: fail");
 
 __found:
 
