@@ -466,28 +466,26 @@ void *gde_extra_services ( unsigned long number,
 
 	// t18
 	// O arg2 é o PID.
-	// devemos retornar o ponteiro para o stdout do terminal
+	// Devemos retornar o ponteiro para o stdout do terminal
 	// associado com o aplicativo.
     if ( number == 1000 )
     {
-		// #provisório
-		// Isso é o mesmo que current_stdout usado pelo teclado.
         return (void *) CurrentTTY->stdout;
     }
 
 
-	//
     if ( number == 1001 )
     {
-		printf ("service1001: configurando tty stream \n",arg2);
-		
+		printf ("service1001: Configurando CurrentTTY->stdout \n",
+		    arg2 );
 		CurrentTTY->stdout = (FILE *) arg2;
 		stdout = (FILE *) arg2;
         return NULL;
     }
 
 
-	// Pega um char na stream, o último que foi pego,
+	// Pega um char na stream, 
+	// o último que foi pego CurrentTTY->stdout,
 	// não o último que foi colocado.
 	// #importante: uma no terminal deve chamar isso.
 	// mas o terminal precisa ser alertado de que tem mensagens
@@ -514,9 +512,9 @@ void *gde_extra_services ( unsigned long number,
     }
 
 
-    // #importante
-	// Set terminal PID.
 
+    // #importante
+    // Set terminal PID for the current TTY.
     if ( number == 1003 )
     {
         CurrentTTY->terminal_pid = (int) arg2;
@@ -525,27 +523,31 @@ void *gde_extra_services ( unsigned long number,
 
 
     // #importante
-	// Get terminal pid.
-    
+    // Set terminal PID for the current TTY.
     if ( number == 1004 )
     {
         return (void *) CurrentTTY->terminal_pid;
     }
 
-    // inicializa o stdout da CurrentTTY.
+    // #importante
+    // Isso é usado por terminal/child por enquanto.
+    // Inicializa o stdout da CurrentTTY.
     // #bugbug: Isso está fazendo o mesmo que 1001.
     if ( number == 1005 )
     {
+		//#todo: Checar a validade
         CurrentTTY->stdout = stdout;
         //fprintf (stdout, "dirty\n"); //debug
         return NULL;
     }
 
+
 	 //get sdtout
     if ( number == 1006 )
     {
-		//return (void *) CurrentTTY->stdout;
-        return (void *) stdout;
+		//#todo: Checar a validade
+        return (void *) CurrentTTY->stdout;
+        //return (void *) stdout;
     }
 
 
@@ -561,16 +563,16 @@ void *gde_extra_services ( unsigned long number,
 		CurrentTTY = (struct tty_d *) ttyList[ __tty_id ]
 		
 		//pega
-        __xxx_ch = (int) *CurrentTTY->ring0_stdout_last_ptr;
+        __xxx_ch = (int) *CurrentTTY->stdout_last_ptr;
 
 		//apaga.
-        *CurrentTTY->ring0_stdout_last_ptr = 0;
+        *CurrentTTY->stdout_last_ptr = 0;
 
 		//incrementa e circula
-        CurrentTTY->ring0_stdout_last_ptr++;
-        if ( CurrentTTY->ring0_stdout_last_ptr >= CurrentTTY->ring0_stdout_limit )
+        CurrentTTY->stdout_last_ptr++;
+        if ( CurrentTTY->stdout_last_ptr >= CurrentTTY->stdout_limit )
         {
-            CurrentTTY->ring0_stdout_last_ptr = CurrentTTY->ring0_stdout->_base;
+            CurrentTTY->stdout_last_ptr = CurrentTTY->stdout->_base;
         }
 
 		//retorna o que pegou.
@@ -578,6 +580,22 @@ void *gde_extra_services ( unsigned long number,
     } 
     */
 
+    // retorna o id da tty atual.
+    if (number == 1008)
+    {
+        return (void *) CurrentTTY->index;
+    }
+    
+    /*
+    // retorna o id da tty do processo atualatual.
+    struct process_d * __P;
+    if (number == 1009)
+    {
+		__P = (struct process_d *)processList[current_process];
+
+        return (void *) __P->tty->index;
+    }
+    */
 
 
 	 // bmp:
