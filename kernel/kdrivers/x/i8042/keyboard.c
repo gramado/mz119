@@ -139,22 +139,19 @@ void abnt2_keyboard_handler (void){
 
 	// #todo: 
 	// Aqui podemos retornar.
-	
-	// #todo
-	// Vamos escrever em um buffer tty.
-	// Pode ser uma stream, como fizemos aqui.
-	
-	
-	//current_stdin = tty->stdin;
-	
+
 
     if ( (void *) current_stdin == NULL )
     {
         panic ("abnt2_keyboard_handler: current_stdin \n");
     }
 
-    current_stdin->_base[keybuffer_tail++] = (char) scancode;
+    // #bugbug
+    // Checar a validade.
 
+    CurrentTTY->stdin->_base[keybuffer_tail++] = (char) scancode;
+    
+    
     if ( keybuffer_tail >= current_stdin->_lbfsize )
     {
         keybuffer_tail = 0;
@@ -208,7 +205,7 @@ void KiKeyboard (void){
     if (abnt2 != 1)
     {
         panic ("KiKeyboard: not abnt2\n");
-    };
+    }
 }
 
 

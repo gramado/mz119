@@ -702,9 +702,12 @@ update_standard_stream ( int PID,
 	stderr = stream3;
 	
 	//
-	// Current tty
+	// #bugbug
+	// Já que foi passado um PID então temos que atualizar 
+	// o fluxo padrão do processo e não o atual.
 	//
 	
+	/*
     if ( (void *) CurrentTTY == NULL )
 	{	
 		panic ("update_standard_stream: CurrentTTY");
@@ -715,7 +718,7 @@ update_standard_stream ( int PID,
 	    CurrentTTY->stdout = stdout;
 	    CurrentTTY->stderr = stderr;
 	};
-
+    */
 
 	//#debug
 	//printf ("update_standard_stream: done\n");

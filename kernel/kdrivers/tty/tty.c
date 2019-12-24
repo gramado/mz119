@@ -482,13 +482,16 @@ int tty_delete ( struct tty_d *tty )
 // No momento estamos apenas inicializando o primeiro tty
 // e usando o mesmo fluxo padrão que o teclado usa.
 
+// #obs
+// Isso é chamado por create_logon na inicialização do sistema.
+
 int ttyInit (int tty_id){
 
     int i;
 
-	debug_print ("ttyInit:\n");
+    debug_print ("ttyInit:\n");
 
-    //
+
     // #todo
     // Rever esse limite.
     // Todos os drivers de dispositivos precisarão de tty.
@@ -501,6 +504,7 @@ int ttyInit (int tty_id){
     // e terá vários pseudo terminais. pts. - Stands for pseudo terminal slave.
 
     //if ( tty_id < 0 || tty_id > 7 )
+
     if ( tty_id < 0 || tty_id > 32 )
     {
         panic ("ttyInit: tty_id");
@@ -511,64 +515,54 @@ int ttyInit (int tty_id){
 	// CurrentTTY
 	//
 
-	CurrentTTY = (struct tty_d *) malloc ( sizeof(struct tty_d) );
-	
-	if ( (void *) CurrentTTY == NULL ){
-		
-		panic ("ttyInit:");
-		//return -1;
-		
-	}else{
-		
-	    // Inicializa.
-	    CurrentTTY->index = tty_id;
-	    CurrentTTY->used = 1;
-	    CurrentTTY->magic = 1234;	
-	
-	
-	    // Configurando uma janela básica, pra não ficar null.
-	    //CurrentTTY->window = gui->main;
-	    CurrentTTY->window = NULL;	
-	    
-	    // #bugbug
-	    // Ainda não estamos usando esse fluxo padrão do tty.
-	    // Estamos usando outro, configurado logo abaixo.
-	
-	    CurrentTTY->stdin = stdin;
-	    CurrentTTY->stdout = stdout;
-	    CurrentTTY->stderr = stderr;
-	
-	    CurrentTTY->stdout_status = 0;
-	    CurrentTTY->stdout_update_what = 0;	
-	
+    CurrentTTY = (struct tty_d *) malloc ( sizeof(struct tty_d) );
+
+    if ( (void *) CurrentTTY == NULL )
+    {
+        panic ("ttyInit:");
+    }else{
+
+        CurrentTTY->index = tty_id;
+        CurrentTTY->used = 1;
+        CurrentTTY->magic = 1234;
+
+        //
+        // Window.
+        //
+        
+        // Configurando uma janela básica, pra não ficar null.
+        //CurrentTTY->window = gui->main;
+        CurrentTTY->window = NULL;
+
         CurrentTTY->left = 0; 
-	    CurrentTTY->top = 0;
-	    //CurrentTTY->width = 0;
-	    //CurrentTTY->height = 0;	
-	    
-	
-	    //
-	    // Fluxo padrão.
-	    //
-	 
-	    // #importante:
-	    // Esse é o mesmo fluxo padrão que pe usado pelo teclado
-	    // como buffer de input em kdrivers/x.
-	    // Presumindo que esses ponteiros foram inicializados antes. #bugbug
-	
-	    CurrentTTY->ring0_stdin = current_stdin;
-	    CurrentTTY->ring0_stdout = current_stdout;
-	    CurrentTTY->ring0_stderr = current_stderr;	
-	    
+        CurrentTTY->top = 0;
+        //CurrentTTY->width = 0;
+        //CurrentTTY->height = 0;	
+
+        // Standard stream. 
+
+
+
+        CurrentTTY->stdin = current_stdin;
+        CurrentTTY->stdout = current_stdout;
+        CurrentTTY->stderr = current_stderr;
+
+
+        CurrentTTY->stdout_status = 0;
+        CurrentTTY->stdout_update_what = 0;	
+
+
+
+
 	    //
 	    // buffer circular.
 	    //
-	
+
 	    //base
-	    CurrentTTY->ring0_stdout_last_ptr = CurrentTTY->ring0_stdout->_p;
+	    CurrentTTY->stdout_last_ptr = CurrentTTY->stdout->_p;
 	
 	    //limite
-	    CurrentTTY->ring0_stdout_limit = (CurrentTTY->ring0_stdout->_p + CurrentTTY->ring0_stdout->_lbfsize);
+	    CurrentTTY->stdout_limit = (CurrentTTY->stdout->_p + CurrentTTY->stdout->_lbfsize);
 	
 	    //fazer o mesmo para os outros dois arquivos.
 	    //...	    

@@ -472,7 +472,7 @@ void *gde_extra_services ( unsigned long number,
     {
 		// #provisório
 		// Isso é o mesmo que current_stdout usado pelo teclado.
-        return (void *) CurrentTTY->ring0_stdout;
+        return (void *) CurrentTTY->stdout;
     }
 
 
@@ -494,26 +494,24 @@ void *gde_extra_services ( unsigned long number,
 	//para ele o tty, então modemos enviar uma MSG_TTY?? vaisando que
 	//o terminal pode pegar sua mensagem na tty através dessa chamada aqui.
 
-    int xxx_ch;
+    int __xxx_ch;
     if ( number == 1002 )
     {
-		//pega
-        xxx_ch = (int) *CurrentTTY->ring0_stdout_last_ptr;
+        __xxx_ch = (int) *CurrentTTY->stdout_last_ptr;
 
 		//apaga.
-        *CurrentTTY->ring0_stdout_last_ptr = 0;
+        *CurrentTTY->stdout_last_ptr = 0;
 
 		//incrementa e circula
-        CurrentTTY->ring0_stdout_last_ptr++;
-        if ( CurrentTTY->ring0_stdout_last_ptr >= CurrentTTY->ring0_stdout_limit )
+        CurrentTTY->stdout_last_ptr++;
+        if ( CurrentTTY->stdout_last_ptr >= CurrentTTY->stdout_limit )
         {
-            CurrentTTY->ring0_stdout_last_ptr = CurrentTTY->ring0_stdout->_base;
+            CurrentTTY->stdout_last_ptr = CurrentTTY->stdout->_base;
         }
 
 		//retorna o que pegou.
-        return (void *) xxx_ch;
-    } 
-
+        return (void *) __xxx_ch;
+    }
 
 
     // #importante

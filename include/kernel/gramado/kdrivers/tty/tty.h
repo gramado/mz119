@@ -159,36 +159,27 @@ struct tty_d
 	// FILE
 	//
 	
-	FILE *stdin;
-	FILE *stdout;
-	FILE *stderr;
-	
-	
-	// #importante
-	// A comunicação entre processos precisa ser feita
-	// por arquivo gerenciado pelo kernel
-	// Vamos deixar algum arquivo em área compartilhada.
+    FILE *stdin;
+    FILE *stdout;
+    FILE *stderr;
 
-	FILE *ring0_stdin;	
-	FILE *ring0_stdout;  //*** testando esse,
-	FILE *ring0_stderr;	
-	
+
 	//
 	// Print support
 	//
 	
 	// De onde começar a pintar
 	// depois da libc ter colocado caracteres no arquivo. 
-	unsigned char *stdout_last_ptr;
-	unsigned char *stderr_last_ptr;
-	
-	
-	unsigned char *ring0_stdout_last_ptr;
-	unsigned char *ring0_stderr_last_ptr;
-	
-	unsigned char *ring0_stdout_limit;
-	unsigned char *ring0_stderr_limit;
-	
+
+    //unsigned char *stdin_last_ptr;
+    //unsigned char *stdin_limit;
+    unsigned char *stdout_last_ptr;
+    unsigned char *stdout_limit;
+    unsigned char *stderr_last_ptr;
+    unsigned char *stderr_limit;
+
+
+
 	// status
 	// 0 = não repinte stdout no tty atual
 	// 1 = repinte stdout no tty atual
