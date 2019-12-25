@@ -1939,12 +1939,18 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 		// SE TRATA APENAS DE UMA ESTRUTTURA DE RETÃNGULO, 
 		// NÃO ESPERAMOS MUITOS PROBLEMAS.
 		 
-		if ( (void *) window->rcClient == NULL )
-		{
-			panic ("redraw_window: rcClient \n");
+		// #bugbug
+		// Existem janelas que não possuem reClient.
+		// Elas não merecem falhar; 
+		 
+		//if ( (void *) window->rcClient == NULL )
+		//{
+			//panic ("redraw_window: rcClient \n");
 			
-		}else{
+		//}
 			
+		if ( (void *) window->rcClient != NULL )
+		{		
 			//conferir validade.
 			if ( window->rcClient->used != 1 || 
 			     window->rcClient->magic != 1234 )
