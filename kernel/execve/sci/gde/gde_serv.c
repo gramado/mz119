@@ -178,6 +178,15 @@ void *gde_extra_services ( unsigned long number,
         return NULL;
     }
     
+    
+    // Repinta todas as janelas que foram invalidadas.
+    // Isso será usado pelo compositor do window server. 
+    // Ou pelo window manager.
+    if ( number == 518 )
+    {
+        redraw_screen();
+        return NULL;
+    }
 
 
 	// 600 - dup
