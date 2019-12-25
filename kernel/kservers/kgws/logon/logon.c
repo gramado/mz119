@@ -146,6 +146,9 @@ void create_logon (void){
 		
 	}else{
 		
+		g_ws_pid = -1;
+		g_wm_pid = -1;
+		
 		
 	    //
 	    // TTY

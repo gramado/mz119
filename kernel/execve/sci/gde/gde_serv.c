@@ -132,16 +132,18 @@ void *gde_extra_services ( unsigned long number,
 
 
 	// 512 - get x server PID
+    //rotina repetida
     if ( number == SYS_GET_X_SERVER )
     {
-        return (void *) g_xserver_pid;
+        return (void *) g_ws_pid;
     }
     
 
 	// 513 - set x server PID
+    //rotina repetida
     if ( number == SYS_SET_X_SERVER )
     {
-		g_xserver_pid = (int) arg2;
+		g_ws_pid = (int) arg2;
 		return NULL;
     }
 
@@ -163,7 +165,7 @@ void *gde_extra_services ( unsigned long number,
     // 516 - show x server info	
     if ( number == SYS_SHOW_X_SERVER_INFO )
     {
-        kprintf ("x server info: PID=%d \n", g_xserver_pid);
+        kprintf ("516: ws PID=%d \n", g_ws_pid);
         refresh_screen ();
         return NULL;
     }

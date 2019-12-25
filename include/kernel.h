@@ -509,9 +509,6 @@ int current_terminal;
 //int current_pts;
 
 
-int current_ws;  //window server.
-int current_wm;  //window manager. 
-
 //...
 
 // ==== ====
