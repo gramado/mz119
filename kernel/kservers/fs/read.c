@@ -303,6 +303,63 @@ void read_lba ( unsigned long address, unsigned long lba ){
 }
 
 
+
+/**
+ * @brief Breaks a path
+ * 
+ * @details Parses the path pointed to by @p pathname extracting the first
+ *          path-part from it. The path-part is stored in the array pointed to
+ *          by @p filename.
+ * 
+ * @param pathname Path that shall be broken.
+ * @param filename Array where the first path-part should be save.
+ * 
+ * @returns Upon successful completion, a pointer to the second path-part is 
+ *          returned, so a new call to this function can be made to parse the
+ *          remainder of the path. Upon failure, a #NULL pointer is returned 
+ *          instead.
+ */
+ 
+ 
+/* 
+// Credits: Penna.
+const char *break_path (const char *pathname, char *filename); 
+const char *break_path (const char *pathname, char *filename)
+{
+
+    char *p2;          // Write pointer. 
+    const char *p1;    // Read pointer.  
+
+
+	p1 = pathname;
+	p2 = filename;
+	
+	//Skip those. 
+	while (*p1 == '/')
+		p1++;
+	
+	//Get file name.
+	while ((*p1 != '\0') && (*p1 != '/'))
+	{
+		//File name too long. 
+		if ((p2 - filename) > NAME_MAX)
+			return (NULL);
+		
+		*p2++ = *p1++;
+	}
+	
+	*p2 = '\0';
+	
+	return (p1);
+}
+*/
+
+
+
+
+
+
+
 /*
  **************
  * fsLoadFile:
