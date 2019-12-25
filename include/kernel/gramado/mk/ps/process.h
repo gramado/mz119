@@ -762,6 +762,9 @@ struct process_d
 	//Motivo do processo fechar.
 	int exit_code;
 	
+	// Número de processos filhos.
+	int nchildren;
+	
 	// Lista de processos filhos que estão no estado zumbi.
 	// List of terminated childs
 	struct process_d *zombieChildListHead;           

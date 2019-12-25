@@ -766,31 +766,29 @@ struct thread_d *create_thread ( struct room_d *room,
 	
 	// Já temos um PID para o processo que é dono da thread.
 
-	Process = (void *) processList[ProcessID]; 
-	if( (void *) Process == NULL )
-	{
-		printf ("create_thread: Process\n");
-		die();
-	}
-	
+    Process = (void *) processList[ProcessID]; 
+    if ( (void *) Process == NULL )
+    {
+        panic ("create_thread: Process\n");
+    }
+
 	//Alocando memória para a estrutura da thread.
 	//Obs: Estamos alocando memória dentro do heap do kernel.
 	
 	Thread = (void *) malloc ( sizeof(struct thread_d) );	
 	
-	if ( (void *) Thread == NULL )
-	{
-	    printf ("create_thread: Thread\n");
-		die();
-		
-	}else{  
-	    //Indica à qual proesso a thread pertence.
-	    //Thread->process = (void*) Process;
-	};
-	
+    if ( (void *) Thread == NULL )
+    {
+        panic ("create_thread: Thread\n");
+    }else{  
+        //Indica à qual proesso a thread pertence.
+       //Thread->process = (void*) Process;
+    };
+
 	//Nothing.
-	
-//Loop.	
+
+
+//Loop.
 get_next:	
 	
 	//BugBug: Isso pode virar um loop infinito!
@@ -800,8 +798,9 @@ get_next:
 	{
 		// Recomeça o loop na base para id de usuários.
 		i = USER_BASE_TID;    
-	};
-	
+	}
+
+
 	//Get empty.
 	Empty = (void *) threadList[i];
     
@@ -914,7 +913,7 @@ get_next:
 	    // Signal
 	    // Sinais para threads.
 	    Thread->signal = 0;
-        Thread->signalMask = 0;	
+        Thread->signalMask = 0;
 
 
 		// @todo: 
@@ -1000,16 +999,15 @@ get_next:
 	    // ORDEM: 
 		// O que segue é referenciado com pouca frequência.
 
-	    Thread->waitingCount = 0;    //Tempo esperando algo.
-	    Thread->blockedCount = 0;    //Tempo bloqueada.	
 	
         //À qual processo pertence a thread.  
-		Thread->process = (void *) Process; 	 	                      
+		Thread->process = (void *) Process; 
         
-		//Thread->window_station
-		//Thread->desktop
-         
-		
+        //Thread->usession
+        //Thread->room
+        //Thread->desktop
+ 
+
 		//Thread->control_menu_procedure
 		
 		//Thread->wait4pid =
@@ -1038,23 +1036,21 @@ get_next:
 	};
 
  
-	// #importante
+    // #importante
     // Contador de threads
     // Vamos atualizar o contador de threads, 
-	// pois mais uma thread existe, mesmo que não esteja rodando ainda.
-	
-	ProcessorBlock.threads_counter++;
-	
-	//limits 
-	
-	if ( ProcessorBlock.threads_counter >= THREAD_COUNT_MAX )
-	{
-	    printf ("create_thread: counter fail, cant create thread\n");
-        die();
-	};
+    // pois mais uma thread existe, mesmo que não esteja rodando ainda.
+    ProcessorBlock.threads_counter++;
 
-		
+	//limits 
+   if ( ProcessorBlock.threads_counter >= THREAD_COUNT_MAX )
+    {
+        panic ("create_thread: counter fail, cant create thread\n");
+    }
+
+
 // Done.
+
 done:
     
 	// Warning !!! 

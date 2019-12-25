@@ -877,8 +877,7 @@ do_clone:
 		//dir[1] = old_dir_entry1;
 		
 		// Ok, retornando o número do processo clonado.
-		
-		//printf ("do_fork_process: done\n");
+
 				
 		//
 		// Current thread.
@@ -1113,6 +1112,8 @@ fail:
  *     Isso está clonando o processo atual e executando o processo filho.
  *     Essa é a rotina que implementa a função fork() padrão da libc. 
  *     O Processo pai continua rodando.
+ * 
+ *     Esse rotina é chamada pela função gde_fork() em gdeserv.c
  *      
  */
  
@@ -1133,6 +1134,8 @@ pid_t do_fork_process (void){
 	//unsigned long old_image_pa; //usado para salvamento.
 
     int Ret = -1;
+    int i;
+    int w;
 
 
 
@@ -1195,8 +1198,9 @@ do_clone:
 		
 		// Obtêm um índice para um slot vazio na lista de processos.
 		
-	    PID = (int) getNewPID ();
-		
+        PID = (int) getNewPID ();
+
+        //#todo: melhorar essa checagem.
 		//if ( PID <= 0 ){
 		if ( PID == -1 || PID == 0 )
 		{	
@@ -1205,6 +1209,7 @@ do_clone:
 		}
 
 		Clone->pid = PID;
+		
 		Clone->used = 1;
 		Clone->magic = 1234;
 
@@ -1213,18 +1218,18 @@ do_clone:
 		// receberá os valores da estrutura do processo atual,
 		// até mesmo o endereço do diretório de páginas.
 
-		//...
-		
-		//Salvando na lista.
-		
-		processList[PID] = (unsigned long) Clone;
-		
+
+		// Salvando na lista.
+        processList[PID] = (unsigned long) Clone;
+
+
 		//
 		// # clone #
 		//
 
 		// Copia a memória usada pela imagem do processo.
-		
+		// Isso copiará a imagem do processo e colocará o novo endereço
+		// em Current->childImage  e Current->childImage_PA
 		processCopyMemory ( Current );
 
 		//
@@ -1251,20 +1256,18 @@ do_clone:
 		//
 		
 		// Isso cria um diretório de páginas para o processo clone;
-		
         Ret = processCopyProcess ( Current->pid, Clone->pid );
 
         if ( Ret != 0 )
         {
             panic ("do_fork_process: processCopyProcess fail\n");
-           //goto fail;
         }
 
         CreatePageTable ( (unsigned long) Clone->DirectoryVA, 
             ENTRY_USERMODE_PAGES, 
             Current->childImage_PA );
 
-		
+
 		//#test
 		// recuperamos a informação que o pai perdeu quando 
 		// sobrescrevemos uma pagedir.
@@ -1393,8 +1396,13 @@ do_clone:
 		
 		// Clonando manualmente a thread de controle.
 		// Só a imagem ... falta a pilha.
+
+        // #bugbug: size ???
+        // Ja não fizemos isso quando chamamos processCopyMemory ???
+        // lá copiamos 200kb
 		memcpy ( (void *) Clone->Image, (const void *) Current->Image, ( 0x50000 ) ); 
 		//====
+		Clone->control->ownerPID = Clone->pid;
 		Clone->control->type  = Current->control->type; 
 		Clone->control->plane = Current->control->plane;
 		Clone->control->base_priority = Current->control->base_priority;
@@ -1404,55 +1412,109 @@ do_clone:
 		Clone->control->step = Current->control->step;
 		Clone->control->quantum = Current->control->quantum;
 		Clone->control->quantum_limit = Current->control->quantum_limit;
-		Clone->control->standbyCount = Current->control->standbyCount;
-		Clone->control->runningCount = Current->control->runningCount;
-		Clone->control->initial_time_ms = Current->control->initial_time_ms;
-		Clone->control->total_time_ms = Current->control->total_time_ms;
-		Clone->control->runningCount_ms = Current->control->runningCount_ms;
-		Clone->control->readyCount = Current->control->readyCount;
-		Clone->control->ready_limit = Current->control->ready_limit;
-		Clone->control->waitingCount = Current->control->waitingCount;
-		Clone->control->waiting_limit = Current->control->waiting_limit;
-		Clone->control->blockedCount = Current->control->blockedCount;
-		Clone->control->blocked_limit = Current->control->blocked_limit;
+		
+		// A thread do processo clone ainda não rodou.
+		Clone->control->standbyCount = 0;
+		Clone->control->runningCount = 0;
+		Clone->control->initial_time_ms = get_systime_ms();
+		Clone->control->total_time_ms = 0;
+		Clone->control->runningCount_ms = 0;
+		Clone->control->readyCount = 0;
+		Clone->control->ready_limit = READY_LIMIT;
+		Clone->control->waitingCount = 0;
+		Clone->control->waiting_limit = WAITING_LIMIT;
+		Clone->control->blockedCount = 0;
+		Clone->control->blocked_limit = BLOCKED_LIMIT;
+		
+		for ( w=0; w<8; w++ ){
+			Clone->control->wait_reason[w] = (int) 0;
+		}
+
 		Clone->control->ticks_remaining = Current->control->ticks_remaining;
 		Clone->control->signal = Current->control->signal;
 		Clone->control->signalMask = Current->control->signalMask;
-		Clone->control->ss = Current->control->ss;
-		Clone->control->esp = Current->control->esp;   //>>>
-		Clone->control->eflags = Current->control->eflags;
-		Clone->control->cs = Current->control->cs;
-		Clone->control->eip = Current->control->eip; // >>>
+		
+		// CPU context
+		
+		// stack
+		Clone->control->ss          = Current->control->ss;
+		Clone->control->esp         = Current->control->esp;   
+		Clone->control->eflags      = Current->control->eflags;
+		Clone->control->cs          = Current->control->cs;
+		Clone->control->eip         = Current->control->eip; 
 		Clone->control->initial_eip = Current->control->initial_eip;
+
+		// more registers.
 		Clone->control->ds = Current->control->ds;
 		Clone->control->es = Current->control->es;
 		Clone->control->fs = Current->control->fs;
 		Clone->control->gs = Current->control->gs;
-		Clone->control->eax = 0; //Current->control->  >>>
+		Clone->control->eax = 0;
 		Clone->control->ebx = Current->control->ebx;
 		Clone->control->ecx = Current->control->ecx;
 		Clone->control->edx = Current->control->edx;
 		Clone->control->esi = Current->control->esi;
 		Clone->control->edi = Current->control->edi;
 		Clone->control->ebp = Current->control->ebp;
-		Clone->control->tss = Current->control->tss;
-		//process	
-		// for wait_reason[w]
-		//exit_code	
+
+		
+		// #bugbug 
+		// ATENÇÃO ATENÇÃO
+		// Funciona que iniciamos o filho no seu entrypoint,
+		// mas não funciona quando iniciamos no mesmo eip do pai.
+		// A diferença entre os dois casos é só o eip.
+
 		//====
-		
-		//#bugbug ATENÇÃO ATENÇÃO
-		//Funciona que iniciamos o filho no seu entrypoint,
-		//mas não funciona quando iniciamos no mesmo eip do pai.
-		//A diferença entre os dois casos é só o eip.
-		
-			//====
-		Clone->control->eip = 0x400000 + 0x1000;
-		Clone->control->esp = 0x450000 - 0x1000;
+		//Clone->control->eip = 0x400000 + 0x1000;
 		//Clone->control->eip = Current->control->eip; //#bug fail
-		//Clone->control->esp = Current->control->esp; //#bug fail
 		//====
 
+       //#debug
+       //printf ("#debug Current_control_eip = %x *hang \n",Current->control->eip);
+       //refresh_screen();
+       //while(1){}
+		
+		// tss
+		Clone->control->tss = Current->control->tss;
+        
+        Clone->control->Next = NULL;
+        Clone->control->exit_code = 0;
+        //====
+
+
+       Clone->ppid = Current->pid; 
+       Clone->uid = Current->uid;
+       Clone->gid = Current->gid;
+       Clone->tty = Current->tty;
+       //strncpy(proc->name, curr_proc->name, NAME_MAX);
+       Clone->plane = Current->plane;
+       Clone->personality = Clone->personality;
+       Clone->base_priority = Current->base_priority;       
+       Clone->priority = Current->priority;
+       Clone->step = 0;
+       Clone->quantum = Current->quantum;
+       Clone->bound_type = Current->bound_type;
+       Clone->preempted = Current->preempted;
+       Clone->usession = Current->usession;
+       Clone->room = Current->room;
+       Clone->desktop =Current->desktop;
+       Clone->wait4pid = 0;
+       Clone->exit_code = 0;
+       Clone->nchildren = 0;
+       
+       Current->nchildren++;
+       
+       //Clone->signal = 0;
+       Clone->signal_mask = Current->signal_mask;
+       
+       Clone->iopl = Current->iopl;
+       //Clone->prev = NULL;
+       Clone->next = NULL;
+       
+       // lista de arquivos abertos.
+       for (i=0; i<NUMBER_OF_FILES; i++)
+       {  Clone->Streams[i] = Current->Streams[i]; }
+       
 
 		//ok
 		//printf ("Current: %s\n", Current->Image + 0x1000);
@@ -1464,37 +1526,47 @@ do_clone:
 		
 		//#hackhack
 
+        /*
 		// [pai]
 		Current->control->quantum = 30;
-		//Current->control->quantum = 100;
-		//Current->control->saved = 0;
 		Current->control->state = READY;
         //SelectForExecution (Current->control);
-			
+
+
 		// [filho]
 		Clone->control->quantum = 30;
-		//Clone->control->quantum = 200;
 		Clone->control->saved = 0;
 		Clone->control->state = READY;
 		SelectForExecution (Clone->control);
+        */
+
+		// [pai]
+		Current->control->quantum = 30;
+		Current->control->state = READY;
+        //SelectForExecution (Current->control);
+
+
+		// [filho]
+		Clone->control->quantum = 30;
+		Clone->control->saved = 1;
+		Clone->control->state = READY;
+		//SelectForExecution (Clone->control);
 
         //
-		// return
-		//
-		
+        // return
+        //
+
+
 		// #importante:
 		// Retornamos para o processo pai o PID do filho.
 		
 		//pai
-		current_thread = Current->control->tid;	
+		current_thread = Current->control->tid;
 		current_process = Current->pid;
-        return (pid_t) Clone->pid;
 		
-		//filho
-		//current_thread = Clone->control->tid;	
-		//current_process = Clone->pid;
-        //return (pid_t) 0;
-
+		// Isso retornou corretamente para o processo pai
+		// o pid do filho.
+        return (pid_t) Clone->pid;
     };
 
     // Fail.
@@ -1648,12 +1720,16 @@ int processSendSignal (struct process_d *p, unsigned long signal){
 
 int processCopyMemory ( struct process_d *process ){
 
-	unsigned long new_base;	
-	
-	//#todo: Mensagem.
-	if ( (void *) process == NULL )
-		return -1;
-	
+    unsigned long new_base;
+
+
+	// #todo: 
+	// Mensagem de erro.
+
+    if ( (void *) process == NULL )
+        return -1;
+
+
 	//#todo: Mensagem.	
 	//if ( (void *) clone == NULL )
 	//	return -1;
@@ -1664,16 +1740,16 @@ int processCopyMemory ( struct process_d *process ){
 	
 	
 	// 200 KB.
-	// alocando memória para a imagem do processo.
+	// Alocando memória para a imagem do processo.
 	
-	new_base = (unsigned long) allocPages ( (1024*200)/4096 ); //>>  ring 3 ??.
-	
-	if ( new_base == 0 )
-	{
-		printf ("processCopyMemory: fail\n");
-		return -1;
-	}
-	
+    new_base = (unsigned long) allocPages ( (1024*200)/4096 ); //>>  ring 3 ??.
+
+    if ( new_base == 0 )
+    {
+        printf ("processCopyMemory: fail\n");
+        return -1;
+    }
+
 	//
 	// Copying memory.
 	//
@@ -1685,7 +1761,7 @@ int processCopyMemory ( struct process_d *process ){
 	memcpy ( (void *) new_base, (const void *) process->Image, ( 1024 * 200 ) );
 	
 	
-	// transformando o endereço virtual em físico.
+	// Transformando o endereço virtual em físico.
 	unsigned long new_base_PA = (unsigned long) virtual_to_physical ( new_base, gKernelPageDirectoryAddress ); 
 	
 	
@@ -1713,13 +1789,12 @@ int processCopyMemory ( struct process_d *process ){
 	//status: 0 = fail; address = ok
 	
  
-	
-	
-	// O processo está num novo endereço segundo o diretório de páginas do kernel.
-	//process->Image = (unsigned long) new_base;
-	process->childImage = (unsigned long) new_base;
-	process->childImage_PA = (unsigned long) new_base_PA;	
-	
+
+	// O processo está num novo endereço segundo o diretório 
+	// de páginas do kernel.
+    process->childImage = (unsigned long) new_base;
+    process->childImage_PA = (unsigned long) new_base_PA;	
+
 
 
 // Done.
@@ -2057,9 +2132,7 @@ struct process_d *create_process ( struct room_d *room,
 
     if ( (void *) Process == NULL )
     {
-        printf ("process-create_process: Process");
-        die ();
-
+        panic ("process-create_process: Process");
 		// #todo: 
 		// Aqui pode retornar NULL.
     }
@@ -2336,8 +2409,7 @@ get_next:
 
         if ( g_heap_count < 0 || g_heap_count >= g_heap_count_max )
         {
-            printf ("create_process: g_heap_count limits");
-            die ();
+            panic ("create_process: g_heap_count limits");
         }
 
 
@@ -2448,6 +2520,9 @@ get_next:
         // Esse é o PID do processo que ele está esperando fechar.
 
         Process->wait4pid = (pid_t) 0;
+        
+        // Número de processos filhos.
+        Process->nchildren = 0;
 
         Process->zombieChildListHead = NULL;
 

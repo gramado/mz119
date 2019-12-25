@@ -3445,8 +3445,9 @@ doexec_first_command:
     // memória compartilhada, agora então precisamos passar 
     // somente o nome do arquivo.
 
-    //gramlibs libc02.
-    Execve_Ret = (int) gexecve ( (const char *) tokenList[0], //nome
+    // gramlibs libc02.
+    // IN: name.
+    Execve_Ret = (int) gexecve ( (const char *) tokenList[0], 
                            (const char *) 0, 
                            (const char *) 0 );           
 
@@ -3476,6 +3477,7 @@ doexec_first_command:
 		//#provisório
 		//exit (0);
 		
+		// Isso fará fechar o programa.
 		ShellFlag = SHELLFLAG_EXIT;
 		
 		//Isso sai do loop de mensagens e 

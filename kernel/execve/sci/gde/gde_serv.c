@@ -1353,14 +1353,12 @@ void *gde_services ( unsigned long number,
 
 
         // 71
-		// #bugbug
-		// #importante: A questão é que precisamos do contexto salvo ;;;
-		// Essa função precisa de uma interrupção que salve o contexto do mesmo modo
-		// que o timer faz.
-		// podemos retornar com o clone bloqueado.
+        // #suspenso: Logo abaixo temos uma implementação
+        // de um handler de uma interrupção especial para o fork()
+        // da libc. que chamará do_fork_process();
 		case SYS_FORK: 
-		    //return (void *) sys_do_fork_process ();
-		    return (void *) do_fork_process ();
+		    //return (void *) do_fork_process ();
+			return NULL;
 			break;
 
 		// 72 - Create thread.
@@ -2656,7 +2654,7 @@ void servicesPutChar ( int c )
  * gde_fork:
  *     Implementa a função fork() da libc padrão.
  *
- *     Essa rotina foi chamada pela interrupção 133 
+ *     Essa rotina foi chamada pela interrupção 133,
  *     cujo handler está em: x86/entry/head/sw.inc 
  *     na função: _int133_fork.
  *
@@ -2678,9 +2676,9 @@ void *gde_fork ( unsigned long number,
 	//Salva contexto dos registradores.
     save_current_context ();
 
-	//
-	// Chama a rotina que implementa a função fork() em ring 0.
-	//
+
+    // Chama a rotina que implementa a função fork() em ring 0.
+    // See: ps/action/process.c
 
     ret = (void *) do_fork_process ();
 

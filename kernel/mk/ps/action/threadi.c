@@ -604,47 +604,46 @@ void mostra_slots(){
 //void threadiShowSlot(int id){  
 
 void mostra_slot (int id){
-	
+
     struct thread_d *t;
 
-    if ( id < 0 || id >= THREAD_COUNT_MAX ){
-		
-	    printf("pc-threadi-mostra_slot: id\n");
-		goto fail;
-	};
-	
-	
-	// Structure.
-	t = (void *) threadList[id];
-	
-	if( (void*) t == NULL )
-	{
-	    printf("pc-threadi-mostra_slot: t\n");
-		goto fail;	
-	}else{
-	
-	    // Show one slot.
-	    printf("\n");
-	    printf("TID   PID   pdPA  Prio  State Quan ms    initial_eip   tName \n");
-	    printf("====  ====  ====  ====  ===== ==== ====  ==========    ===== \n");
-		
-        printf("%d    %d    %x    %d    %d    %d    %d    %x           %s \n", 
-			t->tid, 
-			t->ownerPID,
-			t->DirectoryPA,
-			t->priority, 
-			t->state,
-			t->quantum,
-			t->total_time_ms,
-			t->initial_eip,
-			t->name_address );
-	};
-	
+    if ( id < 0 || id >= THREAD_COUNT_MAX )
+    {
+        printf ("action-mostra_slot: id\n");
+        goto fail;
+    }
+
+
+    t = (void *) threadList[id];
+
+    if ( (void *) t == NULL )
+    {
+        printf ("action-mostra_slot: t\n");
+        goto fail;
+    }else{
+
+        // Show one slot.
+        printf ("\n");
+        printf ("TID   PID   pdPA  Prio  State Quan ms    initial_eip   tName \n");
+        printf ("====  ====  ====  ====  ===== ==== ====  ==========    ===== \n");
+        printf ("%d    %d    %x    %d    %d    %d    %d    %x           %s \n", 
+            t->tid, 
+            t->ownerPID,
+            t->DirectoryPA,
+            t->priority, 
+            t->state,
+            t->quantum,
+            t->total_time_ms,
+            t->initial_eip,
+            t->name_address );
+    };
+
     goto done;
 
-	
-fail:	
-    printf("fail\n");	
+
+fail:
+    printf ("Fail\n");
+
 done:
     return; 
 }
