@@ -1269,7 +1269,7 @@ noArgs:
 	// Habilitando o cursor piscante de textos.
 	//
 
-	printf ("shell: habilitando cursor piscante \n");
+	//printf ("shell: habilitando cursor piscante \n");
 	
 	shellSetCursor ( (terminal_rect.left / 8) , ( terminal_rect.top/8) );	
 	
@@ -1280,7 +1280,7 @@ noArgs:
 	//
 	// ++ terminal ++
 	//
-	printf ("shell: configurando janela do terminal \n");
+	//printf ("shell: configurando janela do terminal \n");
 		
 	// #importante
 	// Definindo a janela como sendo uma janela de terminal.
@@ -4344,7 +4344,7 @@ done:
 	*/
 
 
-    printf ("shellInit: initializing prompt\n");
+    //printf ("shellInit: initializing prompt\n");
 
 	// ## prompt string support ##
 	shellInitializeWorkingDiretoryString ();
@@ -4359,7 +4359,7 @@ done:
     //não vai repintar. vai enviar uma mensgem para esse procedimento.
     
     //#bugbug
-    printf ("shellInit: setando foco\n");
+    //printf ("shellInit: setando foco\n");
     gde_set_focus (window);
     
     //printf ("shellInit: *breakpoint\n");

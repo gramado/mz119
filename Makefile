@@ -485,10 +485,18 @@ vhd-x86:
 # 2) KERNEL 
 # 3) INIT, SHELL, TASKMAN
 vhd-copy-files:
-	
+
+
+
+
+
 #
 # ======== Files in the root dir. ========
 #
+
+
+#init/sys
+	sudo cp bin/GRAMMGR.BIN    /mnt/gramadovhd
 
 
 # bin/boot
@@ -529,17 +537,21 @@ vhd-copy-files:
 
 
 
-#
-#    ==== APPS ====
-#
-
 # Get available apps.
 
 
 # garden/apps
+
+	#gwin
+	-sudo cp ../garden/bin/GWINMGR.BIN   /mnt/gramadovhd
+	-sudo cp ../garden/bin/GWS.BIN       /mnt/gramadovhd
+	-sudo cp ../garden/bin/GWM.BIN       /mnt/gramadovhd
+
+	#ili
 	-sudo cp ../garden/bin/ILIINIT.BIN   /mnt/gramadovhd
 	-sudo cp ../garden/bin/GLOGON.BIN    /mnt/gramadovhd
-	-sudo cp ../garden/bin/GWM.BIN       /mnt/gramadovhd
+
+	#apps
 	-sudo cp ../garden/bin/NORATERM.BIN  /mnt/gramadovhd
 	-sudo cp ../garden/bin/GDETERM.BIN   /mnt/gramadovhd 
 	-sudo cp ../garden/bin/GDESHELL.BIN  /mnt/gramadovhd 
@@ -617,7 +629,7 @@ vhd-copy-files:
 	#-sudo cp ../atacama/bin/*        /mnt/gramadovhd/BIN 
 
 #
-# ======== Files in the BOOT/ folder. ========
+# ======== Files in the /BOOT/ folder. ========
 #
 
 # principais.
@@ -634,14 +646,14 @@ vhd-copy-files:
 
 
 #
-# ======== Files in the EFI/ folder. ========
+# ======== Files in the /EFI/ folder. ========
 #	
 	
 #test efi
 #	-sudo cp arch/x86/boot/efi/BOOTIA32.EFI  /mnt/gramadovhd/EFI/BOOT
 
 #
-# ======== Files in the GARDEN/ folder. ========
+# ======== Files in the /GARDEN/ folder. ========
 #
 
 #garden
@@ -650,14 +662,14 @@ vhd-copy-files:
 
 
 #
-# ======== Files in the LIB/ folder. ========
+# ======== Files in the /LIB/ folder. ========
 #	
 	
 	-sudo cp arch/x86/boot/vhd/tests/TEST1.ASM  /mnt/gramadovhd/LIB
 	
 
 #
-# ======== Files in the TMP/ folder. ========
+# ======== Files in the /TMP/ folder. ========
 #	
 
 	-sudo cp arch/x86/boot/vhd/tests/TEST1.ASM  /mnt/gramadovhd/TMP
