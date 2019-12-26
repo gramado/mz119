@@ -537,6 +537,8 @@ vhd-copy-files:
 
 
 # garden/apps
+	-sudo cp ../garden/bin/ILIINIT.BIN   /mnt/gramadovhd
+	-sudo cp ../garden/bin/GLOGON.BIN    /mnt/gramadovhd
 	-sudo cp ../garden/bin/GWM.BIN       /mnt/gramadovhd
 	-sudo cp ../garden/bin/NORATERM.BIN  /mnt/gramadovhd
 	-sudo cp ../garden/bin/GDETERM.BIN   /mnt/gramadovhd 
@@ -564,6 +566,8 @@ vhd-copy-files:
 	-sudo cp ../atacama/bin/REBOOT.BIN    /mnt/gramadovhd
 	-sudo cp ../atacama/bin/TASCII.BIN    /mnt/gramadovhd
 #	-sudo cp ../atacama/bin/GLIBCT1.BIN   /mnt/gramadovhd 
+	-sudo cp ../atacama/bin/SHELL3.BIN    /mnt/gramadovhd
+
 
 # atacama/gt/gramcc
 	-sudo cp ../atacama/bin/GRAM.BIN      /mnt/gramadovhd 
