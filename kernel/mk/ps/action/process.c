@@ -1524,6 +1524,16 @@ do_clone:
 		//refresh_screen();
 		//while(1){}
 		
+		
+		
+		// #importante
+		// O dispatcher precis disso na hora que restaura
+		// o contexto.
+		// Mas isso ja foi feito antes quando copiamos o processo.
+		
+		Clone->control->DirectoryPA = Clone->DirectoryPA;
+		
+		
 		//#hackhack
 
         /*
@@ -1922,7 +1932,7 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 
     if ( (void *) Process2->DirectoryVA == NULL )
     {
-		//fail
+        panic ("processCopyProcess: DirectoryVA fail");
     }
 
 

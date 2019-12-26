@@ -510,6 +510,12 @@ done:
  * 
  *     args:  ?(serviço), name, arg, env.
  */
+ 
+// #Atenção
+// Isso foi chamado depois de um fork()
+
+// #bugbug
+// Isso funciona as vezes e em outra falha. 
 
 int 
 do_execve ( int i, 
@@ -585,16 +591,31 @@ do_execve ( int i,
 	// caso não exista uma extensão .bin e o nome seja menor que 8, 
 	// podemos adicionar a extensão .bin.
 
-    l = (size_t) strlen ( (char *) arg1 );
 
-    if ( l > 11 )
+
+    l = (size_t) strlen ( (char *) arg1 ); //ok
+    //l = (size_t) strlen ( (char *) &arg1[0] );
+    
+	printf ("filename %s   \n", &arg1[0] );
+	printf ("name size %d  \n", l );
+
+    // O tamanho máximo é 12.
+    // '8' '.' '3'
+
+    if ( l > 12 )
     {
-        printf ("do_execve: l fail\n");
+		printf ("name size %d  \n", l );
+        panic ("do_execve: l. The filename is too long ! \n");
+        
 		// #obs: 
 		// Não sairemos da função pois isso é um teste ainda.
 		// goto fail;
-    }else{
 
+    }
+    
+    // 
+    if (l < 9)
+    {
 		// Se não existe um ponto entre os oito primeiros chars,
 		// então colocamos a extensão .bin logo após o nome passado.
 		// Ele é pelo menos menor que 11, mas deveria ser menor que oito.
@@ -610,7 +631,8 @@ do_execve ( int i,
             {       
                 if ( l > 8 )
                 {
-                    printf ("do_execve: File without ext is too long\n");
+                    panic ("do_execve: File without ext is too long\n");
+                    
 					// Obs: 
 					// Não sairemos da função pois isso é um teste ainda.
 					// goto fail;
@@ -624,7 +646,7 @@ do_execve ( int i,
 			// nos primeiros oito bytes.
 			// Ainda não sabemos se todo o nome do arquivo está certo,
 			// mas ja sabemos que não precisamos incluir uma extenção.
-        };
+    };
 
 
 	// #importante
@@ -947,10 +969,17 @@ format_ok:
 		// Isso permitira que o taskswitch selecione ela pra rodar.
 
         SelectForExecution (Thread); 
+        
+        // #debug
+        printf ("do_execve: Spawn thread \n");
+        refresh_screen();
 
         KiSpawnTask ( Thread->tid );
 
-        goto done;
+        // No return!
+                
+        panic ("do_execve: KiSpawnTask returned ");
+        //goto done;
     };
 
 	// fail

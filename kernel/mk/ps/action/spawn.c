@@ -39,7 +39,8 @@ static inline void spawnSetCr3 ( unsigned long value ){
  
 void KiSpawnTask (int id){
 
-    if ( id < 0 )
+
+    if ( id < 0 || id >= THREAD_COUNT_MAX)
     {
         printf ("spawn-KiSpawnTask: TID=%d", id );
         die ();
@@ -76,10 +77,10 @@ void spawn_thread (int id){
 	// #todo: 
 	// Filtrar tid.
 
-	//#todo: mensagem de erro.
-    if ( id < 0 )
+    if ( id < 0 || id >= THREAD_COUNT_MAX)
     {
-        return;
+        printf ("spawn-spawn_thread: TID=%d", id );
+        die ();
     }
 
 
@@ -317,7 +318,7 @@ void spawn_thread (int id){
 	//asm ("sti  \n"); 
     */
 
-    panic ("spawn_thread");
+    panic ("spawn_thread: iret fail");
 }
 
 
