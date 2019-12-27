@@ -403,6 +403,12 @@ int getprocessname ( int pid, char *buffer )
 // pode escrever no seu stdout e o processo pai pode ler no seu
 // próprio stdout.
 
+
+// #importante
+// >>>> Isso funciona. 
+// ( * Não * ) mexa pois ainda estamos
+// trabalahndo os outros métodos.
+
 pid_t do_clone_execute_process (char *filename){
 
     int PID;
@@ -648,8 +654,10 @@ do_clone:
 	                     filename, (unsigned long) Clone->Image );		
 
 		//====
+		//#bugbug : Essa pilha está dentro da imagem. ...
+		//e se o aplicativo tiver mais que 63KB.???
 		Clone->control->eip = 0x400000 + 0x1000;
-		Clone->control->esp = 0x400000 + (1024 *63);
+		Clone->control->esp = 0x400000 + (1024 * 200);   //#bugbug
 		//Clone->control->eip = Current->control->eip; //#bug fail
 		//Clone->control->esp = Current->control->esp; //#bug fail
 		//====
@@ -1401,6 +1409,7 @@ do_clone:
         // Ja não fizemos isso quando chamamos processCopyMemory ???
         // lá copiamos 200kb
 		memcpy ( (void *) Clone->Image, (const void *) Current->Image, ( 0x50000 ) ); 
+		//memcpy ( (void *) Clone->Image, (const void *) Current->Image, (1024*200) );  //bugbug
 		//====
 		Clone->control->ownerPID = Clone->pid;
 		Clone->control->type  = Current->control->type; 
@@ -1438,7 +1447,8 @@ do_clone:
 		
 		// stack
 		Clone->control->ss          = Current->control->ss;
-		Clone->control->esp         = Current->control->esp;   
+		Clone->control->esp         = Current->control->esp;  
+		//Clone->control->esp = 0x400000 + (1024 * 100);    //bugbug
 		Clone->control->eflags      = Current->control->eflags;
 		Clone->control->cs          = Current->control->cs;
 		Clone->control->eip         = Current->control->eip; 
@@ -1456,6 +1466,7 @@ do_clone:
 		Clone->control->esi = Current->control->esi;
 		Clone->control->edi = Current->control->edi;
 		Clone->control->ebp = Current->control->ebp;
+		
 
 		
 		// #bugbug 
@@ -1552,6 +1563,7 @@ do_clone:
 
 		// [pai]
 		Current->control->quantum = 30;
+		Current->control->saved = 0;
 		Current->control->state = READY;
         //SelectForExecution (Current->control);
 

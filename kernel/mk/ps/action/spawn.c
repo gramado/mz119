@@ -166,7 +166,7 @@ void spawn_thread (int id){
 		// Destrava o Scheduler.
 		
 		set_task_status(UNLOCKED);    
-	    scheduler_unlock();	           
+	    scheduler_unlock();        
 
 	    //@todo: Continua ...
     };
@@ -182,6 +182,10 @@ void spawn_thread (int id){
         die ();
     }
 
+
+    // #debug
+    //printf ("spawn_thread: iret\n");
+    //refresh_screen();
 
 	// Configura a variável global.
 

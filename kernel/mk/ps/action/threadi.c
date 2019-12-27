@@ -111,9 +111,9 @@ void *KiCreateRing0Idle (void){
 
 	if ( (void *) KernelProcess == NULL )
 	{
-	    printf("pc-create-KiCreateRing0Idle: KernelProcess\n");
-		die();
-	};	
+	    panic ("action-KiCreateRing0Idle: KernelProcess\n");
+		//die ();
+	}
 
     //Thread.
 	//Alocando memória para a estrutura da thread.
@@ -121,8 +121,8 @@ void *KiCreateRing0Idle (void){
 	
 	if ( (void *) t == NULL )
 	{
-	    printf("pc-create-KiCreateRing0Idle: t \n");
-		die();
+	    panic ("action-KiCreateRing0Idle: t \n");
+		//die ();
 	}else{  
 	    //Indica à qual proesso a thread pertence.
 	    t->process = (void *) KernelProcess;
@@ -136,9 +136,9 @@ void *KiCreateRing0Idle (void){
 	
 	if( (void *) ring0IdleStack == NULL )
 	{
-	    printf("KiCreateRing0Idle: ring0IdleStack\n");
-		die();
-	};
+	    panic ("KiCreateRing0Idle: ring0IdleStack\n");
+		//die();
+	}
   	
 	//@todo: object
 	
@@ -369,7 +369,7 @@ void KiSetTaskStatus (unsigned long status)
     //@todo: criar interface para mudanca de status.
 	
 	set_task_status (status);
-};
+}
 
 
 /*
@@ -395,7 +395,7 @@ unsigned long KiGetTaskStatus (void){
 void KiSaveContextOfNewTask ( int id, unsigned long *task_address ){
 	
     //return;
-};
+}
 
 
  
@@ -405,7 +405,7 @@ void KiSaveContextOfNewTask ( int id, unsigned long *task_address ){
 void KiSetQuantum (unsigned long q){
     
     //return;
-};
+}
 
 
 unsigned long KiGetQuantum (void)
@@ -492,14 +492,14 @@ void KiShowTasksParameters (void)
 
 void KiMostraSlots (void)
 {	
-	mostra_slots();
+	mostra_slots ();
 }
 
 
 /* #todo: mudar nomes */
 void KiMostraSlot (int id){
 	
-	mostra_slot(id);
+	mostra_slot (id);
 }
 
 

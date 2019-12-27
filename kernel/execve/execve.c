@@ -970,9 +970,12 @@ format_ok:
 
         SelectForExecution (Thread); 
         
+
+        
         // #debug
-        printf ("do_execve: Spawn thread \n");
-        refresh_screen();
+        //printf ("do_execve: Spawn thread \n");
+        //refresh_screen();
+        //while(1){}
 
         KiSpawnTask ( Thread->tid );
 
