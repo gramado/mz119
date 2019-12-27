@@ -24,10 +24,38 @@
 
 struct desktop_d
 {
-	object_type_t objectType;
-	object_class_t objectClass;	
-	
-	
+    object_type_t objectType;
+    object_class_t objectClass;
+
+    //object control
+    struct object_d *object;
+
+
+
+    int desktopId;
+
+    int desktopUsed;
+    int desktopMagic;
+
+    // usando o mesmo esquema do usuário.
+    char __name[64];
+    int name_lenght;
+
+    // The window server and the window manager for this desktop.
+    int ws;
+    int wm;
+    
+  
+    // #todo
+    // A estrutura de eventos também desve estar associado
+    // a um desktop;
+    // Cada wm poderá pegar eventos em um desktop específico.
+    // Dessa forma poderemos ter vários wm, um para cada desktop.
+    // no desktop 0 ficam o ws e o wm que pertencem ao base kernel.
+    // kgws e kgwm, :)
+    
+
+
 	// #importante
 	// #quantidades
 	// Isso limita as quantidades que podem ser criadas em um desktop.
@@ -42,17 +70,7 @@ struct desktop_d
 	int apps_max;
 	
 	
-	//object control
-	struct object_d *object;
 	
-    //
-	// Desktop info.
-	//
-	
-	int desktopId;
-	
-	int desktopUsed;
-	int desktopMagic;
 
 	// #importante
 	//unsigned long backbuffer_address;
@@ -145,19 +163,19 @@ struct desktop_d
 	// @todo: user ??, Something more ??
 	//
 	
-    struct desktop_d *next;	
+    struct desktop_d *next;
 };
 
-// Lista encadeada de desktops.
-struct desktop_d *desktop_Conductor2;
-struct desktop_d *desktop_Conductor;
-struct desktop_d *desktop_rootConductor;
+// This is the desktop used by the base kernel.
+// So, the kgws and the kgwm can be here. 
 
-//Outros.
-struct desktop_d *CurrentDesktop;
-struct desktop_d *desktopDefault;
 struct desktop_d *desktop0;
-struct desktop_d *desktop1;
+
+// O desktop atual.
+struct desktop_d *CurrentDesktop;
+
+
+
 
 //List.
 unsigned long desktopList[DESKTOP_COUNT_MAX];
@@ -197,18 +215,52 @@ void *get_current_desktop (void);
 
 int get_current_desktop_id (void);
 
-void *CreateDesktop(struct room_d *room);
 
-void set_current_menuwindow(struct desktop_d *desktop, struct window_d *window); 
-void set_current_foreground(struct desktop_d *desktop, struct window_d *window); 
-void set_current_messagewindow(struct desktop_d *desktop, struct window_d *window); 
-void set_current_traywindow(struct desktop_d *desktop, struct window_d *window); 
-void set_current_tooltipwindow(struct desktop_d *desktop, struct window_d *window); 
-void change_foreground(struct desktop_d *desktop);
-void set_current_sysMenu(struct desktop_d *desktop, struct menu_d *menu);
-void set_current_dialogsysMenu(struct desktop_d *desktop, struct menu_d *menu);
-void set_current_menuHScroll(struct desktop_d *desktop, struct menu_d *menu);
-void set_current_menuVScroll(struct desktop_d *desktop, struct menu_d *menu);
+void *CreateDesktop (struct room_d *room);
+
+
+void 
+set_current_menuwindow ( struct desktop_d *desktop, 
+                         struct window_d *window ); 
+
+void 
+set_current_foreground ( struct desktop_d *desktop, 
+                         struct window_d *window ); 
+
+void 
+set_current_messagewindow ( struct desktop_d *desktop, 
+                            struct window_d *window ); 
+
+void 
+set_current_traywindow ( struct desktop_d *desktop, 
+                         struct window_d *window ); 
+
+void 
+set_current_tooltipwindow ( struct desktop_d *desktop, 
+                            struct window_d *window ); 
+
+void 
+change_foreground (struct desktop_d *desktop);
+
+void 
+set_current_sysMenu ( struct desktop_d *desktop, 
+                      struct menu_d *menu );
+
+void 
+set_current_dialogsysMenu ( struct desktop_d *desktop, 
+                            struct menu_d *menu );
+                            
+void 
+set_current_menuHScroll ( struct desktop_d *desktop, 
+                          struct menu_d *menu );
+                          
+void 
+set_current_menuVScroll ( struct desktop_d *desktop, 
+                          struct menu_d *menu );
+
+
+int desktop_setup_ws ( struct desktop_d *desktop, int ws_pid );
+int desktop_setup_wm ( struct desktop_d *desktop, int wm_pid );
 
 
 //

@@ -3742,8 +3742,8 @@ int init_windows (void){
 	current_window = 0;
 	current_menu = 0;
 	
-	// ## Contagens ##
-    windowstations_count = 0;  //room counts
+	//Contagens 
+    rooms_count = 0; 
     desktops_count = 0;
 	windows_count = 0;
 	

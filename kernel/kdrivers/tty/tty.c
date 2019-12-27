@@ -525,6 +525,11 @@ int ttyInit (int tty_id){
         CurrentTTY->index = tty_id;
         CurrentTTY->used = 1;
         CurrentTTY->magic = 1234;
+        
+        
+        CurrentTTY->user_session = usession0;
+        CurrentTTY->room = room0;
+        CurrentTTY->desktop = desktop0;
 
         //
         // Window.

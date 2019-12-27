@@ -1,5 +1,5 @@
 /*
- * File: kernel\gws\user\usession.c
+ * File: user/usession.c
  *
  * Descrição:
  *     User Session.
@@ -37,10 +37,13 @@ void *get_current_user_session (void){
 }
 
 
+
 /*
+ *********************************
  * CreateUserSection:
  *     Cria uma user section para um usuário válido.
  */
+
 void *CreateUserSession (int userID){
 	
 	int i=0;
@@ -49,24 +52,21 @@ void *CreateUserSession (int userID){
 	
 
 	// Check limits.
-    if( userID < 0 || userID >= USER_COUNT_MAX ){
-	    return NULL;
-	};
-	
+    if ( userID < 0 || userID >= USER_COUNT_MAX )
+    {
+        return NULL;
+    };
+
+
 	// Create a new user section struct.
     
 	NewUserSession = (void *) malloc ( sizeof(struct usession_d) );
 	
-	if ( (void *) NewUserSession == NULL )
-	{
-	    printf("CreateUserSection:");
-		die ();
-		
-		//refresh_screen();
-		//while(1){}	
-	
-	} else {
-		
+    if ( (void *) NewUserSession == NULL )
+    {
+        panic ("CreateUserSection:");
+    } else {
+
 		NewUserSession->usUsed  = (int) 1;         //flag, está em uso.
 		NewUserSession->usMagic = (int) 1234;      //magic
 	    
@@ -97,7 +97,8 @@ void *CreateUserSession (int userID){
 		i++;
 	};
     
-	printf("CreateUserSession error: Can't create!\n");
+    // ?? debug ??
+	printf ("CreateUserSession error: Can't create!\n");
     die ();
 	
 	//refresh_screen();
@@ -105,7 +106,7 @@ void *CreateUserSession (int userID){
 	
 	//#bugbug: Talvez devamos retornar.
 	return NULL;
-};
+}
 
 
 
@@ -162,35 +163,36 @@ void close_user_session (void){
  */
 
 void init_user_session (void){
-	
+
     int i = 0;
-	int CurrentUser_ID = 0;
-	
-	debug_print ("init_user_session:\n");
- 	
-	
-	//Init list	
-	
-	while ( i < USER_SESSION_COUNT_MAX )
-	{		
+    int CurrentUser_ID = 0;
+
+
+    debug_print ("init_user_session:\n");
+
+
+	//Init list
+
+    while ( i < USER_SESSION_COUNT_MAX )
+    {
         usessionList[i] = 0;
-		i++;
-	};
-	
+        i++;
+    };
+
+
 	//
 	// User.
 	//
-	
-	CurrentUser_ID = (int) GetCurrentUserId ();
-	
-	if ( CurrentUser_ID < 0 || CurrentUser_ID >= USER_COUNT_MAX )
-	{
-	    DefaultUserSession = NULL;
+
+    CurrentUser_ID = (int) GetCurrentUserId ();
+
+    if ( CurrentUser_ID < 0 || CurrentUser_ID >= USER_COUNT_MAX )
+    {
 		CurrentUserSession = NULL;
 		//panic ("init_user_session: CurrentUser_ID");
 		return;
-	}
-	
+    }
+
 	
 	//
 	// User Session.
@@ -198,28 +200,22 @@ void init_user_session (void){
 	
 	//Struct.
 	
-    DefaultUserSession = (void *) CreateUserSession (CurrentUser_ID);
+    usession0 = (void *) CreateUserSession (CurrentUser_ID);
 	
-	if ( (void *) DefaultUserSession == NULL )
+    if ( (void *) usession0 == NULL )
 	{
 	    panic ("init_user_session: DefaultUserSession");
 	}
 	
 	
-	if ( (void *) CurrentTTY == NULL )
-	{
-		panic ("init_user_session: CurrentTTY");
-	}	
-	CurrentTTY->user_session = DefaultUserSession;
-	
-	CurrentUserSession = (void *) DefaultUserSession;
+	CurrentUserSession = (void *) usession0;
 	
 	//Open.
 	open_user_session ();
 	
 	//...
 	
-    DefaultUserSession->initialized = 1;
+    CurrentUserSession->initialized = 1;
 }
 
 

@@ -700,8 +700,8 @@ int logoffStatus;             //Logoff status.
 int userenvironmentStatus;    //User environment status.
 
 
-// ## Contagens ##
-int windowstations_count;  
+//Contagens de ambientes;
+int rooms_count;  
 int desktops_count;
 int windows_count;  
 

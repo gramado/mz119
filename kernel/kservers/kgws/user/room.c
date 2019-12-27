@@ -131,14 +131,14 @@ int RegisterRoom (struct room_d *room){
 		{
        	    roomList[i] = (unsigned long) room; 
             
-			return (int) 0;			
+			return 0;
 	    };
 		
 	    i++;
     };		
 
     return (int) 1;
-};
+}
 
 
 /*
@@ -165,55 +165,31 @@ void init_room_list (void){
  */
 
 void init_room_manager (void){
-	
-	
-	debug_print ("init_room_manager:\n");	
-	
+
+    debug_print ("init_room_manager:\n");	
+
     //printf("init_window_station: Initializing ...\n");
-	
-	windowstations_count = 0;
+
+    
+	rooms_count = 0;
 	
 	//List.
 	init_room_list ();
-	
-	// Struct 'room0' 
-    
-	room0 = (void *) malloc ( sizeof(struct room_d) );
-	
-	if ( (void *) room0 == NULL )
-	{
-	    panic ("init_window_station: room0 Struct");
-		//die ();
-	};
-	
-	if ( (void *) CurrentTTY == NULL )
-	{
-		panic ("init_room_manager: CurrentTTY");
-	}	
-	CurrentTTY->room = room0;
-	
-	/*
-    UpdateUserInfo( 0, 
-                    CurrentUser, 
-					 0, 
-					 0, 
-					 NewUserSession->id, 
-					 0,
-					 0 );	
-	*/
-	
-	//...
 
-    RegisterRoom (room0);
-	
-	set_current_room (room0);   
+
+    room0 = (void *) malloc ( sizeof(struct room_d) );
+
+    if ( (void *) room0 == NULL )
+    {
+        panic ("init_room_manager: room0");
+    }else{
+
+        roomList[0] = (unsigned long) room0;
+        //RegisterRoom (room0);
+        
+        set_current_room (room0);   
+    };
 }
-
-
-/*
-int windowstationInit()
-{}
-*/
 
 
 //

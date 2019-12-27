@@ -89,14 +89,10 @@ struct usession_d
 	
     struct usession_d *next;	
 };
+
+struct usession_d *usession0;
 struct usession_d *CurrentUserSession;
 
-//#tests;
-struct usession_d *DefaultUserSession;
-struct usession_d *usession0;
-//struct usession_d *USession;
-//struct usession_d *UserSession;
-//..
 
 //
 // Um mesmo usuário pode usar sessoes diferentes para atividades diferentes.
@@ -105,10 +101,7 @@ struct usession_d *usession0;
 // pools de pagedirectory, pool de objetos...
 //
 
-// Lista encadeada de user section.
-struct usession_d *usession_Conductor2;
-struct usession_d *usession_Conductor;
-struct usession_d *usession_rootConductor;
+
 
 unsigned long usessionList[USER_SESSION_COUNT_MAX];
 
