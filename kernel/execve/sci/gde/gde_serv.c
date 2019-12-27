@@ -1127,22 +1127,23 @@ void *gde_services ( unsigned long number,
             return (void *) sys_show_window_rect ( (struct window_d *) arg2 );
             break;
 
+        //livre
+        //case 33:
+            //break;
 
-		//34	
+
+        // 34 - Setup cursor.
         case SYS_VIDEO_SETCURSOR: 
+            sys_set_up_cursor ( (unsigned long) arg2, 
+                (unsigned long) arg3 );
+            return NULL;
+            break; 
 
-            //g_cursor_x = (unsigned long) arg2;
-            //g_cursor_y = (unsigned long) arg3;
 
-
-			sys_set_up_cursor ( (unsigned long) arg2, 
-			                    (unsigned long) arg3 );
-			break;              
-
-		//35 - Configura o procedimento da tarefa atual.
-        case SYS_SETPROCEDURE:  
-            g_next_proc = (unsigned long) arg2;
-            break;
+		// 35 livre
+        //case SYS_35:  
+            //return NULL;
+            //break;
 			
 		//36
         //O teclado envia essa mensagem para o procedimento ativo.

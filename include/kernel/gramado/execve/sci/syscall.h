@@ -97,16 +97,18 @@
 #define	SYS_MY_BUFFER3_PUTPIXEL    32
 
 
-//Edit box.
-#define	SYS_EDITBOX            33
+//Livre: isar para outra coisa.
+#define  SYS_33  33
 
 
 //Cursor.
 #define	SYS_VIDEO_SETCURSOR    34
 
 
+//livre
+#define  SYS_35 35
+
 // Message and procedures.
-#define	SYS_SETPROCEDURE         35
 #define	SYS_KSENDMESSAGE         36  // O teclado envia essa mensagem para o procedimento ativo.
 #define	SYS_CALLSYSTEMPROCEDURE  37  // Chama o procedimento padrao do sistema.
 
