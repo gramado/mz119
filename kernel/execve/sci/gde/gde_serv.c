@@ -225,6 +225,23 @@ void *gde_extra_services ( unsigned long number,
     }
 
 
+    struct process_d *__net_process;
+    if (number == 550)
+    {
+        __net_process = (struct process_d *) processList[arg2];
+        if ( (void *) __net_process != NULL )
+        {
+             if ( __net_process->used == 1 && 
+                  __net_process->magic == 1234 )
+             {
+                 __net_process->net_buffer = (char *) arg3;
+                 return (void *) 0;
+             }
+        }
+        //?? fail
+        return (void *) -1;
+    }
+
 
 	// 600 - dup
     if ( number == 600 )

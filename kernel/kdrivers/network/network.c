@@ -180,7 +180,15 @@ network_procedure ( struct window_d *window,
            __process->control->long1 = (unsigned long) network__stream;    //stream;
            __process->control->long2 = (unsigned long) network__stream;    //stream;
            __process->control->newmessageFlag = 1;
-		    break;   
+		    break;
+		    
+		    
+		//#todo    
+		// notificando o app em ring3 que ele tem dados em 
+		// seu buffer previamente configurado por ele.
+		// MSG_ = 1444
+		case 4000:
+		    break;
 		//...
     } 
     

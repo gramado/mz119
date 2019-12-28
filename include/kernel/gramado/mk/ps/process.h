@@ -360,6 +360,11 @@ struct process_d
     // Será slave se o processo for um terminal.
     // O terminal(slave) encontrará o shell(master) em tty->link.
     struct tty_d *tty;
+    
+    // Um buffer no app en ring3
+    // onde o driver de rede pode colocar conteúdo e depois
+    // avisar o processo via mensagem.
+    char *net_buffer;
 
  
     // Qual é apersonalidade do processo.
