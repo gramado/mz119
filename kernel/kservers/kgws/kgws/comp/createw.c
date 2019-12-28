@@ -219,10 +219,10 @@ int DrawFrame ( struct window_d *window,
             if ( window->focus == 1 )
             {
                 border_color = COLOR_BLUE;
-                border_size = 2;
+                border_size = 3;
             }else{
                 border_color = COLOR_INACTIVEBORDER;
-                border_size = 1;
+                border_size = 2;
             };
             
         drawDataRectangle( window->left, 
@@ -237,20 +237,19 @@ int DrawFrame ( struct window_d *window,
 
         drawDataRectangle ( window->left, window->top +window->height -1, 
             window->width, border_size, border_color );
-
-        return 0;
-    }
-
-
-
-
-    DrawTitleBar ( (struct window_d *) window, 
+            
+       DrawTitleBar ( (struct window_d *) window, 
             x, y,
             width, height, 
             1,
             (char *) window->name );  //style
 
-     return 0;
+
+        return 0;
+    }
+
+
+     return 1;
 }
 
 
