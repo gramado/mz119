@@ -1194,11 +1194,11 @@ int system_get_pid (int index){
             break;
 
         case GETPID_WS:
-            return (int) g_ws_pid;
+            //return (int) g_ws_pid;
             break;
 
         case GETPID_WM:
-            return (int) g_wm_pid;
+           // return (int) g_wm_pid;
             break;
 
         default:

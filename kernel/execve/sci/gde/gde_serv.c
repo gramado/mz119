@@ -130,50 +130,80 @@ void *gde_extra_services ( unsigned long number,
     }
 
 
-
+    /*
 	// 512 - get x server PID
     //rotina repetida
     if ( number == SYS_GET_X_SERVER )
     {
-        return (void *) g_ws_pid;
+		return NULL; //#todo
+        //return (void *) g_ws_pid;
     }
+    */
     
-
+    /*
 	// 513 - set x server PID
     //rotina repetida
     if ( number == SYS_SET_X_SERVER )
     {
-		g_ws_pid = (int) arg2;
+		//g_ws_pid = (int) arg2;
 		return NULL;
     }
+    */
 
+    struct desktop_d *__desktop;
+    
 	// 514 - get wm PID
+	// IN: desktop
     if ( number == SYS_GET_WM_PID )
     {
-        return (void *) g_wm_pid;
+        // pega o wm de um dado desktop.
+        __desktop = ( struct desktop_d *) arg2;
+        if ( (void *) __desktop != NULL )
+        {
+            if ( __desktop->desktopUsed == 1 && 
+                 __desktop->desktopMagic == 1234 )
+            {
+                return (void *) __desktop->wm; 
+            }
+        }
+        return NULL; //#bugbug: Isso pode significar pid 0.
     }
+
 
 	// 515 - set wm PID
+	// IN: desktop, pid
     if ( number == SYS_SET_WM_PID )
     {
-        g_wm_pid = (int) arg2;
-        return NULL;
+        // pega o wm de um dado desktop.
+        __desktop = ( struct desktop_d *) arg2;
+        if ( (void *) __desktop != NULL )
+        {
+            if ( __desktop->desktopUsed == 1 && 
+                 __desktop->desktopMagic == 1234 )
+            {
+                 __desktop->wm = (int) arg3;
+                return (void *) 1;  //ok 
+            }
+        }
+        return NULL; //fail
     }
 
 
 
-    // 516 - show x server info	
+    // 516 - show x server info
+    // ws para o desktop atual
     if ( number == SYS_SHOW_X_SERVER_INFO )
     {
-        kprintf ("516: ws PID=%d \n", g_ws_pid);
+        kprintf ("516: ws PID=%d \n", CurrentDesktop->ws);
         refresh_screen ();
         return NULL;
     }
 
     // 517 - show wm info
+    // wm para o desktop atual
     if ( number == SYS_SHOW_WM_INFO )
     {
-        kprintf ("window manager info: PID=%d \n", g_wm_pid);
+        kprintf ("window manager info: PID=%d \n", CurrentDesktop->wm);
         refresh_screen ();
         return NULL;
     }
@@ -187,6 +217,13 @@ void *gde_extra_services ( unsigned long number,
         redraw_screen();
         return NULL;
     }
+
+    // get current desktop
+    if (number == 519)
+    {
+        return (void *) CurrentDesktop;
+    }
+
 
 
 	// 600 - dup

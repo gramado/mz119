@@ -254,8 +254,9 @@ typedef enum {
 // Window server and window manager.
 // Somente um processo pode ser o ws.
 // Somente um processo pode ser o wm.
-int g_ws_pid;
-int g_wm_pid;
+
+//int g_ws_pid;
+//int g_wm_pid;
 
 //
 // buffer support
