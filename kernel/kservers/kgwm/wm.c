@@ -1484,6 +1484,9 @@ void windowShowWindowList (void){
 /*
  *********************************************************
  * redraw_window:
+ * 
+ *  #todo: Isso deveria ficar no mesmo lugar que createw.
+ * 
  *     (Em fase de desenvolvimento)
  *     Repinta uma janela de acordo com os parâmetros na estrutura.
  *     Isso depende do tipo. Para alguns tipos o trabalho será fácil. 
@@ -1623,7 +1626,7 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 		{
 		    panic ("redraw_window: CurrentColorScheme validation");
 		}
-	};	
+	};
 	
 	
 	// ****************************
@@ -2092,19 +2095,19 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 							break;
 							
 						case BS_PRESS:
-						window->button->border1 = COLOR_BUTTONHIGHLIGHT2;
-						window->button->border2 = COLOR_BUTTONSHADOW2; 
+						    window->button->border1 = COLOR_BUTTONHIGHLIGHT2;
+						    window->button->border2 = COLOR_BUTTONSHADOW2; 
 							break;
 							
 						case BS_DEFAULT:
-						window->button->border1 = COLOR_BUTTONSHADOW2;
-						window->button->border2 = COLOR_BUTTONHIGHLIGHT2; 
+						    window->button->border1 = COLOR_BUTTONSHADOW2;
+						    window->button->border2 = COLOR_BUTTONHIGHLIGHT2; 
 							break;
 								
 						case BS_DISABLED:
-						window->button->border1 = COLOR_GRAY;
-						window->button->border2 = COLOR_GRAY; 
-						window->button->color = COLOR_GRAY;
+						    window->button->border1 = COLOR_GRAY;
+						    window->button->border2 = COLOR_GRAY; 
+						    window->button->color = COLOR_GRAY;
 							break;
 							
 						case BS_HOVER:
@@ -2116,41 +2119,45 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 							//break;
 					};
 					
-	                //bg
-	                drawDataRectangle ( window->left + window->button->x, 
-	                    window->top + window->button->y, 
-	                    window->button->width, window->button->height, window->button->color );
+	                //bg 
+	                drawDataRectangle ( window->left, window->top, 
+	                    window->button->width, window->button->height, 
+	                    window->button->color );
 					
 					//board1, borda de cima e esquerda.
-	                drawDataRectangle ( window->left + window->button->x, 
-	                    window->top + window->button->y, 
-	                    window->button->width, 1, window->button->border1 );
+	                drawDataRectangle ( window->left, 
+	                    window->top, 
+	                    window->button->width, 1, 
+	                    window->button->border1 );
 		
-	                drawDataRectangle ( window->left + window->button->x, 
-	                    window->top + window->button->y, 
-	                    1, window->button->height, window->button->border1 );
+	                drawDataRectangle ( window->left, 
+	                    window->top, 
+	                    1, window->button->height, 
+	                    window->button->border1 );
 
 	                //board2, borda direita e baixo.
-	                drawDataRectangle ( window->left + window->button->x + window->button->width -1, 
-	                    window->top + window->button->y, 
-		                1, window->button->height, window->button->border2 );
+	                drawDataRectangle ( window->left + window->button->width -1, 
+	                    window->top, 
+		                1, window->button->height, 
+		                window->button->border2 );
 					   
-	                drawDataRectangle ( window->left + window->button->x, 
-	                    window->top + window->button->y + window->button->height -1, 
-		                window->button->width, 1, window->button->border2 );
+	                drawDataRectangle ( window->left, 
+	                    window->top + window->button->height -1, 
+		                window->button->width, 1, 
+		                window->button->border2 );
 				    
 					//#todo: if aqui tem duas opções de draw string.
                     if ( window->button->selected == 1 )
 					{
-					    draw_string ( window->left + window->button->x +8, 
-					        window->top + window->button->y +8, 
+					    draw_string ( window->left +8, 
+					        window->top +8, 
 			                COLOR_WHITE, window->button->string );
                     }
 					
                     if ( window->button->selected == 0 )
                     {
-					    draw_string ( window->left + window->button->x +8, 
-					        window->top + window->button->y +8, 
+					    draw_string ( window->left +8, 
+					        window->top +8, 
 			                COLOR_TERMINALTEXT, window->button->string );
 					}						
 				}				
@@ -2158,7 +2165,28 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 		}			
 	};
 
-	 
+
+
+    //#test
+    //manda uma mensagem para thread atual
+    //para ela mostrar os elementos da área de cliente.
+
+		// Validade da thread.
+		if ( (void *) window->control != NULL )
+        {
+			// Validade da thread.
+			if ( window->control->used == 1 || 
+			     window->control->magic == 1234 )
+			{
+			   // mandamos a mensagem
+			   // o aplicativo decide o que fazer com ela.
+			    window->control->window = window;
+			    window->control->msg = MSG_PAINT;
+			    window->control->long1 = 0;
+			    window->control->long2 = 0;
+			    window->control->newmessageFlag = 1;
+			}
+		}
 
 	//
 	// Outros elementos ainda não implementados ...
@@ -2176,8 +2204,6 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 
 	
 	//poderemos ter mais valores em flags no futuro.
-    if ( flags == 1 )
-    {
 		// #obs:
 		// Quando uma rotina muda a posição da janela.
 		// E em seguida repinta. Esse será o retângulo que 
@@ -2187,6 +2213,9 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 		// #test
 		// Vamos mostrar um pouco mais.
 		// #todo: Esse extra deve ser do tamanho da sombra.
+
+    if ( flags == 1 )
+    {
         refresh_rectangle ( window->left, window->top, 
             window->width +4, window->height +4 );
     }
@@ -2196,7 +2225,8 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 
 done:
     return 0; 
-    
+
+
 fail:
     return (int) 1;
 }
