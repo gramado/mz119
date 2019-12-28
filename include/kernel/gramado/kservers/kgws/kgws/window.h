@@ -2433,6 +2433,22 @@ int windowSwitchFullScreen (void);
 
 
 
+int DrawTitleBar ( struct window_d *window,
+                unsigned long x,
+                unsigned long y,
+                unsigned long width,
+                unsigned long height,
+                int style,
+                char *string );
+
+
+int DrawFrame ( struct window_d *window,
+                unsigned long x,
+                unsigned long y,
+                unsigned long width,
+                unsigned long height,
+                int style );
+
 /*
  * CreateWindow:
  *     Cria uma janela com base em um tipo.
@@ -2452,6 +2468,23 @@ void *CreateWindow ( unsigned long type,  //1 - tipo de janela (popup ..normal .
           unsigned long color             //12 - cor do bg (para janelas simples, tipo 1)
 );
 
+
+// Essa será a função que atenderá a interrupção
+//esse é o serviço de criação da janela.
+// talvez ampliaremos o número de argumentos
+
+void *kgws_create_window ( unsigned long type, 
+                     unsigned long status, 
+                     unsigned long view, 
+                     char *windowname, 
+                     unsigned long x, 
+                     unsigned long y, 
+                     unsigned long width, 
+                     unsigned long height, 
+                     struct window_d *pWindow, 
+                     int desktopid, 
+                     unsigned long clientcolor, 
+                     unsigned long color );
  
 int scroll_client_window ( struct window_d *window ); 			
 

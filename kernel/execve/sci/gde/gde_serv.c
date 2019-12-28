@@ -2633,7 +2633,20 @@ unsigned long serviceCreateWindow ( char *message_buffer ){
 	//@todo: #bugbug a estrutura rect_d apresenta problema quando passada por argumento
 	//com um endereço da área de memória do app.
 	
+	
+	//#test
+	// testando novo método de pintura.
+	
+	/*
     NewWindow = (void *) CreateWindow ( WindowType, WindowStatus, 
+                             WindowView, WindowName, 
+                             WindowX, WindowY, WindowWidth, WindowHeight,
+                             cwArg9, desktopID, 
+                             (unsigned long) WindowClientAreaColor, 
+                             (unsigned long) WindowColor );
+     */
+
+    NewWindow = (void *) kgws_create_window ( WindowType, WindowStatus, 
                              WindowView, WindowName, 
                              WindowX, WindowY, WindowWidth, WindowHeight,
                              cwArg9, desktopID, 
