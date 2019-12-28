@@ -1759,11 +1759,11 @@ shellProcedure( struct window_d *window,
             break;
 
 
-		//isso pinta os elementos da área de cliente.
-        //essa mensagem é enviada para o aplicativo quando 
-        //a função 'update window'	é chamada.	
+        // Isso pinta os elementos da área de cliente.
+        // Essa mensagem é enviada para o aplicativo quando 
+        // a função 'update window' é chamada.
+        // Como estamos em fullscreen, não há o que fazer aqui.
         case MSG_PAINT:
-            //printf ("Gramado Core - shell: MSG_PAINT\n");
             break;
 
 
