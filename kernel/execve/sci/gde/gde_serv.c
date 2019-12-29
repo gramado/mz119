@@ -106,6 +106,17 @@ void *gde_extra_services ( unsigned long number,
                             (unsigned char *) arg4 );
     }
     
+    
+    /*
+    // Close a process, given it's pid and the exit code.
+    if ( number == 333 )
+    {
+        //#todo: Criar um request que chamará exit_process(...)
+        return NULL;
+    }
+    */
+    
+    
     struct window_d *__window;
     
     //veja se essa é overlapped.
@@ -223,7 +234,8 @@ void *gde_extra_services ( unsigned long number,
         return (void *) CurrentDesktop;
     }
 
-
+    // ??
+    // setup net buffer for a process.
     struct process_d *__net_process;
     if (number == 550)
     {
@@ -1427,10 +1439,10 @@ void *gde_services ( unsigned long number,
 
 		// 70 - Exit.
 		// Atende a função exit() da libc. 
-		// Criaremos um 'request' que será atendido somente quando houver uma 
-		// interrupção de timer. 
+		// Criaremos um 'request' que será atendido somente quando 
+		// houver uma interrupção de timer. 
 		// Enquanto isso a thread deve esperar em um loop.
-		//IN: ??
+		// IN: ??
 
         case SYS_EXIT:
             sys_create_request ( (unsigned long) 12, // number 
@@ -1449,41 +1461,50 @@ void *gde_services ( unsigned long number,
         // #suspenso: Logo abaixo temos uma implementação
         // de um handler de uma interrupção especial para o fork()
         // da libc. que chamará do_fork_process();
-		case SYS_FORK: 
-		    //return (void *) do_fork_process ();
-			return NULL;
-			break;
+        case SYS_FORK: 
+            return NULL;
+            break;
 
-		// 72 - Create thread.
-		// #todo: enviar os argumentos via buffer.
-		case SYS_CREATETHREAD:
-			return (void *) sys_create_thread ( 
-			                NULL,             // w. station 
-							NULL,             // desktop
-							NULL,             // w.
-							arg2,             // init eip
-							arg3,             // init stack
-							current_process,  // pid (determinado)(provisório).
-							(char *) a4 );    // name
-			break; 
 
-			
-		// 73 - Create process.
-		// #todo: enviar os argumentos via buffer.
-        // #todo: Ok, nesse momento, precisamos saber qual é o processo pai do processo 
-        // que iremos criar. Esse deve ser o processo atual ...  
-		// PPID = 0. Nesse momento todo processo criado será filho do processo número 0.
-		// mas não é verdade. @tpdp: Precisamos que o aplicativo em user mode 
-		// nos passe o número do processo pai, ou o proprio kernel identifica qual é o 
-		// processo atual e determina que ele será o processo pai. 
+        // 72 - Create thread.
+        // #todo: 
+        // Enviar os argumentos via buffer.
+        case SYS_CREATETHREAD:
+            return (void *) sys_create_thread ( 
+                                NULL,             // room ? 
+                                NULL,             // desktop
+                                NULL,             // w.
+                                arg2,             // init eip
+                                arg3,             // init stack
+                                current_process,  // pid
+                                (char *) a4 );    // name
+            break; 
 
-		case SYS_CREATEPROCESS:
-			return (void *) sys_create_process ( NULL, NULL, NULL, 
-			                    arg2, arg3, 0, (char *) a4, 
-								RING3, (unsigned long ) CreatePageDirectory() ); 
-			break;
-			
-			
+
+
+        // 73 - Create process.
+        // ??
+        // #todo: enviar os argumentos via buffer.
+        // #todo: Ok, nesse momento, precisamos saber qual é o 
+        // processo pai do processo que iremos criar. Esse deve ser 
+        // o processo atual ...  
+        // PPID = 0. Nesse momento todo processo criado será filho 
+        // do processo número 0. mas não é verdade. 
+        // @todo: Precisamos que o aplicativo em user mode nos passe 
+        // o número do processo pai, ou o proprio kernel identifica 
+        // qual é o processo atual e determina que ele será o 
+        // processo pai. 
+
+        case SYS_CREATEPROCESS:
+            return (void *) sys_create_process ( NULL, NULL, NULL, 
+                                arg2, arg3, 
+                                0, (char *) a4, 
+                                RING3, 
+                                (unsigned long ) CreatePageDirectory() ); 
+            break;
+
+
+
 		//80 Show current process info.
 		//#todo: Mostrar em uma janela própria.
 		//#todo: Devemos chamar uma função que mostre informações 
@@ -1707,26 +1728,28 @@ void *gde_services ( unsigned long number,
 		// #importante: 
 		// O kernel lê o buffer e dentro do buffer tem uma mensagem 
 		// que será colocada na thread de cotrole do processo;
-		case SYS_SENDMESSAGETOPROCESS:
-			//printf ("112: PID=%d\n", arg3 );
-			pty_send_message_to_process ( (unsigned long) &message_address[0], 
-			    (int) arg3 );
-			//printf ("112: done\n");
-			break;
+        case SYS_SENDMESSAGETOPROCESS:
+            //printf ("112: PID=%d\n", arg3 );
+            pty_send_message_to_process ( (unsigned long) &message_address[0], 
+               (int) arg3 );
+            //printf ("112: done\n");
+            break;
 
 
-		//Envia uma mensagem PAINT para o aplicativo atualizar a área de trabalho.
+		// Envia uma mensagem PAINT para o aplicativo atualizar a 
+		// área de cliente.
 		case 113:
 		    sys_windowUpdateWindow ( (struct window_d *) arg2 );
 			break;
-			
-		// 114	
-        // Envia uma mensagem para a thread atual.
+
+
+		// 114
+		// Envia uma mensagem para a thread atual.
 		// endereço do buffer da mensagem, tid.
-		case SYS_SENDMESSAGETOCURRENTTHREAD:
-			pty_send_message_to_thread ( (unsigned long) &message_address[0], 
-			    (int) current_thread );
-		    break;
+        case SYS_SENDMESSAGETOCURRENTTHREAD:
+            pty_send_message_to_thread ( (unsigned long) &message_address[0], 
+                (int) current_thread );
+            break;
 
 
 		// 115 - ## IMPORTANTE ## 
@@ -1783,8 +1806,12 @@ void *gde_services ( unsigned long number,
 				};
 			};
 			break;
-			
-		//Envia uma mensagem de teste para o servidor taskman	
+
+
+
+
+		// Envia uma mensagem de teste para o servidor taskman	
+        // #todo: deletar isso.
 		case 116:
 	        gui->taskmanWindow->msg_window = NULL;
 		    gui->taskmanWindow->msg = (int) arg2;                //123=temos uma mensagem. 
@@ -1792,55 +1819,74 @@ void *gde_services ( unsigned long number,
 		    gui->taskmanWindow->long2 = (unsigned long) arg4;    //0;
             gui->taskmanWindow->newmessageFlag = 1;
 		    break;
-			
-		
-		//envia uma mensagem para uma thread, dado o tid.
-		case 117:	
-		    pty_send_message_to_thread ( (unsigned long) &message_address[0], 
-			    (int) arg3 );	
-			break;
-			
+
+
+		// 117.
+		// Envia uma mensagem para uma thread, dado o tid.
+        case 117:
+            pty_send_message_to_thread ( (unsigned long) &message_address[0], 
+                 (int) arg3 );
+            break;
+
+
         // CREATE WINDOW
-		case SYS_118:
-		    return (void *) serviceCreateWindow ( (char *)  arg2 );
-		    break;
-		    
+        // Cria uma janela usando os recursos do kgws.
+        // Chamamos uma função nesse documento.
+        case SYS_118:
+            return (void *) serviceCreateWindow ( (char *)  arg2 );
+            break;
+
+
 		//119
 		case SYS_SELECTCOLORSCHEME:
 		    return (void *) sys_windowSelectColorScheme ( (int) arg2 );
 			break;
-			
-			
-		//124	
-		// defered system procedure call.
-		// #todo: precisamos armazenasr os argumentos em algum lugar.
+
+
+		// 124	
+		// Defered system procedure call.
+		// #todo: 
+		// Precisamos armazenasr os argumentos em algum lugar.
+		// #bugbug: Precisamos criar um request.
 		case 124:
 		    kernel_request = KR_DEFERED_SYSTEMPROCEDURE;
 			break;
-			
-		//125	
+
+
+		// 125
 		// system procedure call.
         case 125:
-            return (void *) sys_system_procedure ( NULL, arg2, arg3, arg4 );
-			break;	
-			
-		//126	
-		case SYS_USERMODE_PORT_IN:
+            return (void *) sys_system_procedure ( NULL, 
+                                arg2, arg3, arg4 );
+            break;
+
+
+		// 126
+		// Permitindo que drivers e servidores em usermode acessem
+		// as portas.
+        case SYS_USERMODE_PORT_IN:
 			//#bugbug
 			//#todo: Tem que resolver as questões de privilégios.
 			//bits, port
-			return (void *) sys_portsx86_IN ( (int) arg2, (unsigned long) arg3 );
-			break;
-			
-		//127	
-		case SYS_USERMODE_PORT_OUT:
+            return (void *) sys_portsx86_IN ( (int) arg2, 
+                                (unsigned long) arg3 );
+            break;
+
+
+		// 127
+		// Permitindo que drivers e servidores em usermode acessem
+		// as portas.
+        case SYS_USERMODE_PORT_OUT:
 			//#bugbug
 			//#todo: Tem que resolver as questões de privilégios.
 			//bits, port, value
-			sys_portsx86_OUT ( (int) arg2, (unsigned long) arg3, (unsigned long) arg4 );
-			return NULL;
-			break;
-		
+            sys_portsx86_OUT ( (int) arg2, 
+                (unsigned long) arg3, (unsigned long) arg4 );
+            return NULL;
+            break;
+
+
+
 		// #especial
 		// 129
 		// Um driver confirmando que foi inicializado.
@@ -1884,22 +1930,27 @@ void *gde_services ( unsigned long number,
 								COLOR_BLACK,                             //color. 
 								(unsigned long) arg4);                   //char.
     		break;
-			
+
+
+        // save rect ?
 		case 132:
 		    //#bugbug: pagefault
 			//save_rect (  message_address[0],  message_address[1],  message_address[2],  message_address[3] );
 			break;
-			
+
+
+        // show a saved rect ?
         case 133: 		
 		    //#bugbug: pagefault
 			//show_saved_rect (  message_address[0],  message_address[1],  message_address[2],  message_address[3] );
 			break; 
-			
+
+
 		// 134
 		// Pegar informações sobre a área de cliente de uma janela;
-		//#bugbug: temos que checar mais validade de estrutura.
-		//obs: No começo dessa função, colocamos o arg3 como ponteiro para a3.
-		//um buffer de longs.
+		// #bugbug: temos que checar mais validade de estrutura.
+		// obs: No começo dessa função, colocamos o arg3 como ponteiro para a3.
+		// um buffer de longs.
 		case 134:
 				hWnd = (struct window_d *) arg3;
 
@@ -1912,7 +1963,7 @@ void *gde_services ( unsigned long number,
 					a3[4] = (unsigned long) hWnd->rcClient->bg_color;
 				}
 			break;
-			
+
 
 		// 135
 		// Coloca caracteres na estrutura de terminal, para aplicativos pegarem
@@ -1930,20 +1981,20 @@ void *gde_services ( unsigned long number,
 			//teminalfeedCH = (char) arg3;
 			//teminalfeedCHStatus = (int) 1;
 		    break;	
-			
+
+
 		//136
 		//fgetc
 		case 136:
 			return (void *) sys_fgetc ( (FILE *) arg2 );
 			break;
 
-			
+
 		// 137
 		// Isso é usado pela biblioteca stdio em user mode
 		// na função 'getchar()'
-        // Pega caractere no stdin do teclado.
+		// Pega caractere no stdin do teclado.
 		// Isso funciona.
-			
         case SYS_GETCH:  
 			return (void *) sys_thread_getchar ();
             break;
@@ -1955,11 +2006,13 @@ void *gde_services ( unsigned long number,
         case 138:
 		    return (void *) sys_keyboardGetKeyState ( (unsigned char) arg2 );
             break;
-			
+
+
 		//139
         case SYS_GETSCANCODE:
 		    return (void *) sys_get_scancode ();
             break;
+
 
         //140
         case SYS_SET_CURRENT_KEYBOARD_RESPONDER:
@@ -2345,56 +2398,63 @@ void *gde_services ( unsigned long number,
 			//							arg3, 
 			//							arg4 );		
 		    break;
-			
+
+
 		//219
         case SYS_DESTROYTERMINAL:
-            break; 	
+            break; 
 
 
-		// 222 - create timer.
-		//args: window e ms e tipo
+		// 222 - Create timer.
+		// IN: window, ms e tipo
         case 222:
-		    return (void *) sys_create_timer ( (struct window_d *) arg2, 
-							    (unsigned long) arg3, (int) arg4 );
-		    break;
+            return (void *) sys_create_timer ( (struct window_d *) arg2, 
+                                (unsigned long) arg3, (int) arg4 );
+            break;
 
-		
+
         //223 - get sys time info.
         // informações variadas sobre o sys time.		
 		case 223:
 		    return (void *) sys_get_systime_info ( (int) arg2 );
             break;		
-			
+
+
 		//224 - get time	
 		case SYS_GETTIME:	
 		    return (void *) sys_get_time ();
 			break;
-			
+
+
 		//225 - get date
 		case SYS_GETDATE:
 		    return (void *) sys_get_date ();
             break;		
-			
-			
-		//Obs: @todo: poderia ser uma chamada para configurar o posicionamento 
-        //e outra para configurar as dimensões.		
-			
-		//226 - get
+
+
+
+        // Obs: 
+        // #todo: 
+        // Poderia ser uma chamada para configurar o posicionamento 
+        // e outra para configurar as dimensões.		
+        //226 - get
         case SYS_GET_KERNELSEMAPHORE:
             return (void *) __spinlock_ipc;
             break;
-        
-        //227 - close critical section	
-		case SYS_CLOSE_KERNELSEMAPHORE:
-			__spinlock_ipc = 0;
-			break;
-			
-		//228 - open critical section
-		case SYS_OPEN_KERNELSEMAPHORE:
-		    __spinlock_ipc = 1;
+
+
+        // 227 - close critical section	
+        case SYS_CLOSE_KERNELSEMAPHORE:
+            __spinlock_ipc = 0;
             break;
-			
-			
+
+
+        // 228 - open critical section
+        case SYS_OPEN_KERNELSEMAPHORE:
+            __spinlock_ipc = 1;
+            break;
+
+
 		//232 - fclose
 		case 232:
 			return (void *) sys_fclose ( (FILE *) arg2);
@@ -2459,7 +2519,7 @@ void *gde_services ( unsigned long number,
 			                    (const char *) arg3 );
 			break;
 				
-				
+	
 		// pipe	
 		case 247:
 			return (void *) sys_pipe ( (int *) arg2 ); 
@@ -2472,13 +2532,13 @@ void *gde_services ( unsigned long number,
 		// tá usando a thread atual e transformando ela em thread de controle.
 		case 248:
 			//serviço, name, (arg)(endereço da linha de comando), env
-
             return (void *) do_execve ( 0, 
                                 (const char *) arg2, 
                                 (const char *) arg3, 
                                 (const char *) arg4 ); 	
 			break;
-			
+
+
 		// 249 - ftell
 		case 249:
             return (void *) ftell ( (FILE *) arg2 );
@@ -2487,13 +2547,15 @@ void *gde_services ( unsigned long number,
 			
 			
 		//Info. (250 ~ 255).
-		
-		//250
-		//Get system metrics
-		case SYS_GETSYSTEMMETRICS:
-		    return (void *) sys_systemGetSystemMetrics ( (int) arg2 );
-		    break;
-		
+
+
+
+		// 250 - Get system metrics
+        case SYS_GETSYSTEMMETRICS:
+            return (void *) sys_systemGetSystemMetrics ( (int) arg2 );
+            break;
+
+
 		//251
 		//Informações sobre o disco atual.
 		case SYS_SHOWDISKINFO:
@@ -2537,7 +2599,9 @@ void *gde_services ( unsigned long number,
 			//return NULL;
 			break;
 	};
-	
+
+
+
 	//Debug.
 	//printf("SystemService={%d}\n",number);
    
@@ -2552,7 +2616,7 @@ void *gde_services ( unsigned long number,
 done:
     //Debug.
     //printf("Done\n",number);
-	//refresh_screen();
+    //refresh_screen();
     return NULL;
 }
 

@@ -109,13 +109,14 @@ void x86mainStartFirstThread ( void ){
 
         if ( Thread->saved != 0 )
         {
-            printf ("x86mainStartFirstThread: saved\n");
-            die ();
+            panic ("x86mainStartFirstThread: saved\n");
+            
         };
 
         if ( Thread->used != 1 || Thread->magic != 1234)
         {
-            printf ("x86mainStartFirstThread: tid={%d} magic \n", Thread->tid);
+            printf ("x86mainStartFirstThread: tid={%d} magic \n", 
+                Thread->tid);
             die ();
         };
 
@@ -126,7 +127,8 @@ void x86mainStartFirstThread ( void ){
     // State  
     if ( Thread->state != STANDBY )
     {
-        printf ("x86mainStartFirstThread: state tid={%d}\n", Thread->tid);
+        printf ("x86mainStartFirstThread: state tid={%d}\n", 
+            Thread->tid);
         die ();
     }
 

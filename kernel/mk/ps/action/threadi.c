@@ -101,7 +101,7 @@ Loop:
 
 void *KiCreateRing0Idle (void){
 	
-    void *ring0IdleStack;                    // Stack pointer. 	
+    void *ring0IdleStack;                    // Stack pointer. 
 	
 	struct thread_d *t;
 	char *ThreadName = "ring0-idle-thread";    // Name.
@@ -112,17 +112,15 @@ void *KiCreateRing0Idle (void){
 	if ( (void *) KernelProcess == NULL )
 	{
 	    panic ("action-KiCreateRing0Idle: KernelProcess\n");
-		//die ();
 	}
 
     //Thread.
 	//Alocando memória para a estrutura da thread.
-	t = (void *) malloc( sizeof(struct thread_d) );	
+	t = (void *) malloc( sizeof(struct thread_d) );
 	
 	if ( (void *) t == NULL )
 	{
 	    panic ("action-KiCreateRing0Idle: t \n");
-		//die ();
 	}else{  
 	    //Indica à qual proesso a thread pertence.
 	    t->process = (void *) KernelProcess;
@@ -137,7 +135,6 @@ void *KiCreateRing0Idle (void){
 	if( (void *) ring0IdleStack == NULL )
 	{
 	    panic ("KiCreateRing0Idle: ring0IdleStack\n");
-		//die();
 	}
   	
 	//@todo: object
@@ -160,9 +157,7 @@ void *KiCreateRing0Idle (void){
 	t->name_address = (unsigned long) ThreadName;   //Funciona.
 	
 	t->process = (void *) KernelProcess;
-	
 	t->plane = BACKGROUND;
-	
 	t->DirectoryPA = (unsigned long ) KernelProcess->DirectoryPA;
 	
 	

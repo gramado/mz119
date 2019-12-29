@@ -3194,12 +3194,13 @@ void exit_process ( pid_t pid, int code ){
 	//...
 
 
-	// Não fechar o processo 0. Ele é o kernel.
+    //debug_print ("exit_process:\n");
 
-    if ( pid == 0 )
-    {
-        return;
-    }
+//#ifdef MK_VERBOSE
+	// Debug:
+    printf ("exit_process: Terminating process %d\n", pid );
+    refresh_screen ();
+//#endif
 
 
 	//Limits. 
@@ -3210,27 +3211,23 @@ void exit_process ( pid_t pid, int code ){
     }
 
 
-	// Mais limites ??
-
-#ifdef MK_VERBOSE
-	// Debug:
-    printf ("exit_process: Terminating process %d\n", pid );
-    refresh_screen ();
-#endif
+	// Pega o ponteiro para a estrutura, 
+	// muda o código de saída e o status.
 
 
-	// Pega o ponteiro para a estrutura, muda o código de saída 
-	// e o status.
+    Process = (struct process_d *) processList[pid];
 
-    Process = (void *) processList[pid];
+    // Oh Dude, don't do that!
+    if ( Process == KernelProcess )
+    {
+        return;
+    }
 
     if ( (void *) Process == NULL )
     {
-		//printf ("Invalid PID\n");
-		return;
+        return;
     }else{
 
-		// Se estiver corrompida.
         if ( Process->used != 1 || Process->magic != PROCESS_MAGIC )
         {
             return;
@@ -3243,11 +3240,24 @@ void exit_process ( pid_t pid, int code ){
     };
 
 
-#ifdef MK_VERBOSE
+    // #todo
+    // Tem que liberar todos os recursos usados pelo processo.
+    // >>Streams[]
+    // memory ??
+    // ...
+ 
+
+//#ifdef MK_VERBOSE
 	//Debug:
 	printf ("exit_process: Terminating threads..\n");
 	refresh_screen ();
-#endif
+//#endif
+
+
+    // #obs
+    // Acho que ainda não estamos usando a lista.
+    // Mas podemos ao fim disso deletarmos a thread de controle
+    // caso ela ainda exista.
 
 	// Agora temos que terminar as threads que estão na lista 
 	// de threads do processo.
@@ -3257,19 +3267,25 @@ void exit_process ( pid_t pid, int code ){
 
     Thread = (void *) Process->threadListHead;
 
-	// Se não há nada na head.
+    // Se não há nada na head.
     if ( Thread == NULL )
     {
-		// @todo: Talvez haja mais o que fazer.
-	    goto done;
-    }else{
+		// #todo: 
+		// Talvez haja mais o que fazer.
+		// Podemos checar se existe uma thread de controle.
+  
+        goto done;
 
-		//used, magic ??
+    }else{
+		
+		// Ok, se o primeiro da lista é válido, podemos 
+		// tentar fechar todas.
+        // ... 
     };
 
 
-	// Se a primeira thread da lista é válida, então tentaremos
-	// fechar toda a lista.
+	// Se a primeira thread da lista é válida, 
+	// então tentaremos fechar toda a lista.
 
     while (1)
     {
@@ -3323,19 +3339,20 @@ done:
 	//?? Analizar essa parte.
 	//@todo: Select next process (idle)
 
-    current_process = 0;
-    current_thread = 0;    //@todo: Deletar isso.
 
 
-	//Process->used = 0;
-	//Process->magic = 0;
-	//Process = NULL;
-	
+
 	
 	// #todo: 
 	// chamar o scheduler.
 	
 	//scheduler ();
+	
+	//#test
+	current_process = KernelProcess->pid; 
+	current_thread = ____IDLE->tid;
+    KernelProcess->state = READY;
+    ____IDLE->state = READY;
 
     return;
 }
