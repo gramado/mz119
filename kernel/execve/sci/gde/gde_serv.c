@@ -174,7 +174,6 @@ void *gde_extra_services ( unsigned long number,
 	// IN: desktop, pid
     if ( number == SYS_SET_WM_PID )
     {
-        // pega o wm de um dado desktop.
         __desktop = ( struct desktop_d *) arg2;
         if ( (void *) __desktop != NULL )
         {
@@ -362,6 +361,45 @@ void *gde_extra_services ( unsigned long number,
                             (FILE *) arg3, 
                             (FILE *) arg4 );
     }
+    
+    
+    struct desktop_d *_Desktop;
+    
+	// 714 - get ws PID
+	// IN: desktop
+    if ( number == 714 )
+    {
+        // pega o ws de um dado desktop.
+        _Desktop = ( struct desktop_d *) arg2;
+        if ( (void *) _Desktop != NULL )
+        {
+            if ( _Desktop->desktopUsed == 1 && 
+                 _Desktop->desktopMagic == 1234 )
+            {
+                return (void *) _Desktop->ws; 
+            }
+        }
+        return NULL; //#bugbug: Isso pode significar pid 0.
+    }
+
+
+	// 715 - set ws PID
+	// IN: desktop, pid
+    if ( number == 715 )
+    {
+        _Desktop = ( struct desktop_d *) arg2;
+        if ( (void *) _Desktop != NULL )
+        {
+            if ( _Desktop->desktopUsed == 1 && 
+                 _Desktop->desktopMagic == 1234 )
+            {
+                 _Desktop->ws = (int) arg3;
+                return (void *) 1;  //ok 
+            }
+        }
+        return NULL; //fail
+    }
+
     
  
  
