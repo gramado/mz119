@@ -1270,6 +1270,12 @@ unsigned long systemGetSystemMetrics ( int index ){
         case 8:
 		    return (unsigned long) get_char_height();
             break;
+            
+            
+        case 9:
+            return (unsigned long) SavedBPP;
+            break;    
+            
       
         //
         // screen buffers
