@@ -81,11 +81,30 @@ void *gde_extra_services ( unsigned long number,
 //
 
 
+
+/*
+ *********************** 
+ * __do_111: 
+ *     Getting single message. No queue.
+ */
+ 
 // Getting single message.
 // No queue.
 // See: thread structure.
-void *__do_111 ( unsigned long buffer )
-{
+
+	// #importante:
+	// Esse é o get message usado pelos aplicativos.
+	// O aplicativo envia um endereço de array e devemos colocar 4 longs 
+	// como mensagem.
+	// Isso funcionou. 
+	// Esse será o padrão até usarmos ponteiro para estrutura.
+	// A intenção agora é pegar a mensagem na estrutura de thread atual.
+	// Desse modo cada aplicativo, quando estiver rodando, pegará as 
+	// suas mensagens em sua própria fila.  
+	// Se não houver mensagem na estrutura da thread, então tentaremos colocar alguma.
+	// Vamos colocar alguma coisa do buffer de teclado.
+
+void *__do_111 ( unsigned long buffer ){
 
     unsigned long *message_address = (unsigned long *) buffer;
     
@@ -1740,112 +1759,21 @@ void *gde_services ( unsigned long number,
 		case SYS_SENDMESSAGE:	
 			break;
 
-			
-		//110 Reboot.
-        //(Teclado é legado, é desbloqueado)		
-	    case SYS_REBOOT: 
-			sys_systemReboot ();
-			break;
-			
-		
-		//
-		// #### Get Message ####
-		//
-		
-		// Get a message routine
-		// for the single message method.
-		
-		// #importante:
-		// Esse é o get message usado pelos aplicativos.
-		// O aplicativo envia um endereço de array e devemos colocar 4 longs 
-		// como mensagem.
-		// Isso funcionou. 
-		// Esse será o padrão até usarmos ponteiro para estrutura.
-		
-		// A intenção agora é pegar a mensagem na estrutura de thread atual.
-		// Desse modo cada aplicativo, quando estiver rodando, pegará as 
-        // suas mensagens em sua própria fila.  
-		// Se não houver mensagem na estrutura da thread, então tentaremos colocar alguma.
-		// Vamos colocar alguma coisa do buffer de teclado.
+
+
+        // 110 - Reboot.
+        case SYS_REBOOT: 
+            sys_systemReboot ();
+            break;
+
+
+        // 111 - Getting single message.
+        // No queue. See: thread structure.
+        // rotina interna, veja nesse documento.
+        // IN: buffer para mensagens.
 
         case 111:
-            
-            // rotina interna, veja nesse documento.
-            // IN: buffer para mensagens.
             return (void *) __do_111 ( (unsigned long) &message_address[0] );
-            
-            // === cut here ===
-        
-            if ( &message_address[0] == 0 )
-            {
-                panic ("services: 111, null pointer");
-            }else{
-
-                t = (void *) threadList[current_thread];
-
-                if ( (void *) t == NULL ){ return NULL; }
-
-				// Se não existe uma mensagem na thread, então vamos
-				// pegar uma mensagem de teclado no buffer de teclado (stdin).
-				// Mas e se retornar o valor zero, pois não tem nada no buffer?
-				// Nesse caso vamos retornar essa função dizendo que não temos mensagem
-				// ou tentaremos pegar mensagens em outro arquivo de input.
-				// #teste Do mesmo modo, se o scancode for um prefixo, podemos
-				// pegar o próximo scancode para termos uma mensagem.
-				
-                if ( t->newmessageFlag != 1 )
-                {
-					sc_again:
-					
-					SC = (unsigned char) get_scancode ();
-					
-					if ( SC == 0 ){ return NULL; }
-					
-                    // teclas do teclado extendido.
-					
-					if ( SC == 0xE0 )
-					{
-						ke0 = 1;
-						goto sc_again;
-					}
-					
-				    if ( SC == 0xE1 )
-					{
-						ke0 = 2;
-						goto sc_again;
-					}
-					
-					//#obs:
-					//o scancode é enviado para a rotina,
-					//mas ela precisa conferir ke0 antes de construir a mensagem,
-					//para assim usar o array certo.
-	                KEYBOARD_SEND_MESSAGE (SC);
-					
-					ke0 = 0;
-				}
-	
-				//pegando a mensagem.
-			    
-				//padrão
-				message_address[0] = (unsigned long) t->window;
-			    message_address[1] = (unsigned long) t->msg;
-			    message_address[2] = (unsigned long) t->long1;
-			    message_address[3] = (unsigned long) t->long2;
-				
-				//extra. Usado pelos servidores e drivers.
-				message_address[4] = (unsigned long) t->long3;
-				message_address[5] = (unsigned long) t->long4;
-				message_address[6] = (unsigned long) t->long5;
-				message_address[7] = (unsigned long) t->long6;
-				//...	
-                    
-				//sinalizamos que a mensagem foi consumida.
-				//#todo: nese momento a estrutura da thread também precisa ser limpa.
-                t->newmessageFlag = 0; 
-				    
-				//sinaliza que há mensagem
-				return (void *) 1; 
-			};
             break;
 
 
