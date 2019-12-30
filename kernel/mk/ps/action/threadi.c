@@ -100,76 +100,81 @@ Loop:
  */
 
 void *KiCreateRing0Idle (void){
-	
+
+    struct thread_d *t;
+
+    char *ThreadName = "ring0-idle-thread";    // Name.
+
     void *ring0IdleStack;                    // Stack pointer. 
-	
-	struct thread_d *t;
-	char *ThreadName = "ring0-idle-thread";    // Name.
-	
-    int r;
 
-    int q; //msg queue.
 
-	if ( (void *) KernelProcess == NULL )
-	{
-	    panic ("action-KiCreateRing0Idle: KernelProcess\n");
-	}
+    int r;    // Wait reason.
+    int q;    // Msg queue.
 
-    //Thread.
-	//Alocando memória para a estrutura da thread.
-	t = (void *) malloc( sizeof(struct thread_d) );
-	
-	if ( (void *) t == NULL )
-	{
-	    panic ("action-KiCreateRing0Idle: t \n");
-	}else{  
-	    //Indica à qual proesso a thread pertence.
-	    t->process = (void *) KernelProcess;
-	};
-	
+
+    if ( (void *) KernelProcess == NULL )
+    {
+        panic ("action-KiCreateRing0Idle: KernelProcess\n");
+    }
+
+
+    t = (void *) malloc( sizeof(struct thread_d) );
+
+    if ( (void *) t == NULL )
+    {
+        panic ("action-KiCreateRing0Idle: t \n");
+    }else{  
+        //Indica à qual proesso a thread pertence.
+        t->process = (void *) KernelProcess;
+    };
+
+
 	//Stack.
 	//#bugbug
 	//estamos alocando uma stack dentro do heap do kernel.
 	//nesse caso serve para a thread idle em ring 0.
-	ring0IdleStack = (void *) malloc(8*1024);
-	
-	if( (void *) ring0IdleStack == NULL )
-	{
-	    panic ("KiCreateRing0Idle: ring0IdleStack\n");
-	}
-  	
-	//@todo: object
-	
-    //Identificadores      
-	t->tid = 3;  
 
-    //
-    //  ## Current idle thread  ##
-    //
-	
-	// #importante:
-	// Quando o sistema estiver ocioso, o scheduler 
-	// deve acionar a idle atual.
-	//current_idle_thread = (int) t->tid; 
-	
+    ring0IdleStack = (void *) malloc (8*1024);
+
+    if ( (void *) ring0IdleStack == NULL )
+    {
+        panic ("action-KiCreateRing0Idle: ring0IdleStack\n");
+    }
+
+
+
+	// #todo: 
+	// Object support.
+
+
+    t->used = 1;
+    t->magic = 1234;
+
+
+    //Identificadores      
+
+	t->tid = 3;  
 	t->ownerPID = (int) KernelProcess->pid;         
-	t->used = 1;
-	t->magic = 1234;
+
+
 	t->name_address = (unsigned long) ThreadName;   //Funciona.
-	
+
 	t->process = (void *) KernelProcess;
 	t->plane = BACKGROUND;
 	t->DirectoryPA = (unsigned long ) KernelProcess->DirectoryPA;
-	
-	
-	for ( r=0; r<8; r++ ){
-		t->wait_reason[r] = (int) 0;
-	}	
+
+
+    // Waiting reason.
+
+    for ( r=0; r<8; r++ ){
+        t->wait_reason[r] = (int) 0;
+    };
+
 
 	// ?? rever ??
 	//Procedimento de janela.
 	t->procedure = (unsigned long) &system_procedure;
-	
+
 
     //
     // Single message;
@@ -233,7 +238,7 @@ void *KiCreateRing0Idle (void){
 	t->ready_limit = READY_LIMIT;
 	t->waitingCount  = 0;
 	t->waiting_limit = WAITING_LIMIT;
-	t->blockedCount = 0;    //Tempo bloqueada.		
+	t->blockedCount = 0;    //Tempo bloqueada.
 	t->blocked_limit = BLOCKED_LIMIT;
 	
 
@@ -244,34 +249,37 @@ void *KiCreateRing0Idle (void){
 	t->signal = 0;
 	t->signalMask = 0;
 	
-	//Context.
-	t->ss  = 0x10 | 0;               
-	t->esp = (unsigned long) ( ring0IdleStack + (8*1024) );  //pilha. 
-	
-	// #bugbug 
-	// Problemas nos bits 12 e 13.
-	// Queremos que esse código rode em ring0.
-	
-	t->eflags = 0x0200;  
-	
-	t->cs = 8 | 0;                                
-	t->eip = (unsigned long) xxxRing0Idle; 	                                               
-	t->ds = 0x10 | 0;
-	t->es = 0x10 | 0;
-	t->fs = 0x10 | 0; 
-	t->gs = 0x10 | 0; 
-	t->eax = 0;
-	t->ebx = 0;
-	t->ecx = 0;
-	t->edx = 0;
-	t->esi = 0;
-	t->edi = 0;
-	t->ebp = 0;	
-	//...
-	
+
+
+
+	// x86 Context.
+	// Isso deve ir para uma estrutura de contexto.
+	// Obs: eflags 0x0200.
+	// Queremos que esse thread rode em ring0.
+
+    t->ss  = 0x10 | 0; 
+    t->esp = (unsigned long) ( ring0IdleStack + (8*1024) );  //pilha. 
+    t->eflags = 0x0200;    // # Atenção !!  
+    t->cs = 8 | 0; 
+    t->eip = (unsigned long) xxxRing0Idle; 
+
+    t->ds = 0x10 | 0;
+    t->es = 0x10 | 0;
+    t->fs = 0x10 | 0; 
+    t->gs = 0x10 | 0; 
+    t->eax = 0;
+    t->ebx = 0;
+    t->ecx = 0;
+    t->edx = 0;
+    t->esi = 0;
+    t->edi = 0;
+    t->ebp = 0;
+    //...
+
 	//O endereço incial, para controle.
-	t->initial_eip = (unsigned long) t->eip; 		
-	
+    t->initial_eip = (unsigned long) t->eip; 
+
+
 	//#bugbug
 	//Obs: As estruturas precisam já estar decidamente inicializadas.
 	//IdleThread->root = (struct _iobuf *) file_root;

@@ -956,37 +956,40 @@ get_next:
 		
 		//if( init_stack == 0 ){ ... }
 		//if( init_eip == 0 ){ ... }
-		
-		// Contexto x86 usado pela thread.
-		
-		//Context.
-		// ss (0x20 | 3)
-		// cs (0x18 | 3)
-	    Thread->ss = 0x23;    //RING 3.
-	    Thread->esp = (unsigned long) init_stack; 
-	    Thread->eflags = 0x3200;
-	    Thread->cs = 0x1B;                                
-	    Thread->eip = (unsigned long) init_eip; 
-		
-		//O endereço incial, para controle.
-		Thread->initial_eip = (unsigned long) init_eip; 
-		
-		// (0x20 | 3)
-	    Thread->ds = 0x23; 
-	    Thread->es = 0x23; 
-	    Thread->fs = 0x23; 
-	    Thread->gs = 0x23; 
-	    Thread->eax = 0;
-	    Thread->ebx = 0;
-	    Thread->ecx = 0;
-	    Thread->edx = 0;
-	    Thread->esi = 0;
-	    Thread->edi = 0;
-	    Thread->ebp = 0;
-		
-		//TSS
-		Thread->tss = current_tss;
-		
+
+
+        // x86 Context.
+        // #todo: Usar uma estrutura de contexto.
+        // ss (0x20 | 3)
+        // cs (0x18 | 3)
+        // eflags for ring3: (0x3200).
+
+        Thread->ss = 0x23;    //RING 3.
+        Thread->esp = (unsigned long) init_stack; 
+        Thread->eflags = 0x3200;
+        Thread->cs = 0x1B;                                
+        Thread->eip = (unsigned long) init_eip; 
+
+        //O endereço incial, para controle.
+        Thread->initial_eip = (unsigned long) init_eip; 
+
+        // (0x20 | 3)
+        Thread->ds = 0x23; 
+        Thread->es = 0x23; 
+        Thread->fs = 0x23; 
+        Thread->gs = 0x23; 
+        Thread->eax = 0;
+        Thread->ebx = 0;
+        Thread->ecx = 0;
+        Thread->edx = 0;
+        Thread->esi = 0;
+        Thread->edi = 0;
+        Thread->ebp = 0;
+
+        // TSS
+        Thread->tss = current_tss;
+
+
 		//cpu.
 		//Thread->cpuID = 0;
 		//Thread->confined = 0;
@@ -1032,11 +1035,13 @@ get_next:
 		
 		//Thread->wait4pid =
 
-		//razões para esperar.
-		for ( w=0; w<8; w++ ){
-			Thread->wait_reason[w] = (int) 0;
-		}
-		
+        // Waiting reasons.
+
+        for ( w=0; w<8; w++ ){
+            Thread->wait_reason[w] = (int) 0;
+        };
+
+
 		//...
         //@todo:
         //herdar o quantum do processo.
@@ -1128,30 +1133,32 @@ void *GetCurrentThread (void){
  */
 
 void *FindReadyThread (void){
-	
-	int Index;
+
     struct thread_d *Thread;  
-    
-	for ( Index=0; Index<THREAD_COUNT_MAX; Index++ )
-	{
-	    Thread = (void *) threadList[Index];	
-		
-		if ( (void*) Thread != NULL )
-		{
+
+    int Index;
+
+
+    for ( Index=0; Index<THREAD_COUNT_MAX; Index++ )
+    {
+
+        Thread = (void *) threadList[Index];
+
+        if ( (void *) Thread != NULL )
+        {
             if ( Thread->used == 1 && 
-			     Thread->magic == 1234 && 
-				 Thread->state == READY )
-			{
+                 Thread->magic == 1234 && 
+                 Thread->state == READY )
+            {
 				//Done.
-	            return (void *) Thread;
-			};
-			//Nothing.
-	    };
-        //Nothing.		
-	};
-	
-    //Nenhuma foi encontrada.   
-	
+                return (void *) Thread;
+            };
+        };
+    };
+
+
+    // Nenhuma foi encontrada.   
+
     return NULL;
 }
 
@@ -1204,7 +1211,7 @@ int GetThreadState (struct thread_d *Thread){
 
     if ( (void *) Thread == NULL )
     {
-        return (int) 0;
+        return 0;
     }
 
 
@@ -1217,7 +1224,7 @@ int GetThreadType (struct thread_d *Thread){
 
     if ( (void *) Thread == NULL )
     {
-        return (int) 0;
+        return 0;
     }
   
     return (int) Thread->type;
@@ -1306,7 +1313,7 @@ int init_threads (void){
 	//Variáveis usadas na inicialização de uma nova tarefa.	
 	start_new_task_status  = (unsigned long) 0;    //Se há uma nova tarefa.
 	start_new_task_id = (int) 0;                   //Id dá nova tarefa.
-	start_new_task_address = (unsigned long) 0;	   //Endereço da nova tarefa.
+	start_new_task_address = (unsigned long) 0;    //Endereço da nova tarefa.
 	
 	//@todo: Há mais variáveis para serem inicializadas??!!
 	
@@ -1324,7 +1331,8 @@ int init_threads (void){
 	// @todo: Nada mais?
 	//
 
-	return 0;
+
+    return 0;
 }
 
 
@@ -1459,6 +1467,6 @@ int threadmanagerInit()
 
 
 //
-//fim.
+// End.
 //
 
