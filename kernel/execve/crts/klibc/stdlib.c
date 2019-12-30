@@ -29,6 +29,14 @@ int rand (void){
 }
 
 
+/*
+ // See: https://en.wikipedia.org/wiki/Slab_allocation
+void *slab_alloc (size_t size);
+void *slab_alloc (size_t size)
+{}
+*/
+
+
 /* 
  *****************************************
  * kmalloc:
@@ -54,7 +62,8 @@ void *kmalloc (size_t size){
 
 	h = (void *) heapAllocateMemory (s);
 	
-	if ( (void *) h == NULL ){
+	if ( (void *) h == NULL )
+	{
 		return NULL;
 	}
 	
@@ -95,11 +104,11 @@ void kfree (void *ptr){
 
 
 /*
- * calloc: alloca e preenche com zero.
+ * kcalloc: alloca e preenche com zero.
  * @todo:
  */
 /*
-void *calloc (size_t count, size_t size)
+void *kcalloc (size_t count, size_t size)
 {
     size_t s = count * size;
     

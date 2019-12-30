@@ -291,14 +291,15 @@ _kernel_begin:
 ;entry -- The physical address to which the boot loader should jump in 
 ;order to start running the OS.
 
-	;; Multiboot support.
-    MB_PAGE_ALIGN   equ 1<<0
-    MB_MEMORY_INFO  equ 1<<1
-    MB_AOUT_KLUDGE  equ 1<<16
 
-    MB_HEADER_MAGIC equ 0x1BADB002
-    MB_HEADER_FLAGS equ MB_PAGE_ALIGN | MB_MEMORY_INFO | MB_AOUT_KLUDGE
-    CHECKSUM        equ -(MB_HEADER_MAGIC + MB_HEADER_FLAGS)
+    ;; Setup multiboot values.
+    MULTIBOOT_MAGIC        equ  0x1badb002
+    MULTIBOOT_PAGE_ALIGN   equ  0x1
+    MULTIBOOT_MEMORY_INFO  equ  0x2
+    MULTIBOOT_VIDEO_MODE   equ  0x4
+    multiboot_flags        equ  MULTIBOOT_PAGE_ALIGN | MULTIBOOT_MEMORY_INFO | MULTIBOOT_VIDEO_MODE
+    multiboot_checksum     equ  -(MULTIBOOT_MAGIC + multiboot_flags)
+
 
     extern _code_begin
 	extern _data_end
@@ -307,20 +308,34 @@ _kernel_begin:
 	
 	; The Multiboot header
 align 4
+
+;; =============================================================
 mboot_start:
-    dd MB_HEADER_MAGIC
-    dd MB_HEADER_FLAGS
-    dd CHECKSUM
+
+
+    dd  MULTIBOOT_MAGIC
+    dd  multiboot_flags
+    dd  multiboot_checksum
+
     ; fields used if MULTIBOOT_AOUT_KLUDGE is set in 
     ; MULTIBOOT_HEADER_FLAGS
-    dd mboot_start    ; these are PHYSICAL addresses
-    dd _code_begin    ; start of kernel .text (code) section
-    dd _data_end      ; end of kernel .data section
-    dd _bss_end       ; end of kernel BSS
-    dd _kernel_begin  ; kernel entry point (initial EIP)
-	
-mboot_end:
 
+    ;; for MULTIBOOT_MEMORY_INFO
+    dd  0x00000000    ;; header_addr   - mboot_start    ; these are PHYSICAL addresses
+    dd  0x00000000    ;; load_addr     - _code_begin    ; start of kernel .text (code) section
+    dd  0x00000000    ;; load_end_addr - _data_end      ; end of kernel .data section
+    dd  0x00000000    ;; bss_end_addr  - _bss_end       ; end of kernel BSS
+    dd  0x00000000    ;; entry_addr    - _kernel_begin  ; kernel entry point (initial EIP)
+
+    ;; for MULTIBOOT_VIDEO_MODE
+    dd  0x00000000    ;; mode_type 
+    dd  800           ;; width 
+    dd  600           ;; height 
+    dd  24            ;; depth 
+
+
+mboot_end:
+;; =============================================================
 
 
     ;Debug.
