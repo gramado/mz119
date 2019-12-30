@@ -32,7 +32,7 @@ void *page (void){
 
         if ( New == NULL )
         {
-			New = (void *) malloc ( sizeof( struct page_d ) );
+			New = (void *) kmalloc ( sizeof( struct page_d ) );
 			
 			if ( New == NULL )
 			{

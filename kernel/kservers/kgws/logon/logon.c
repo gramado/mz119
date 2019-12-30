@@ -138,22 +138,18 @@ void create_logon (void){
 	// GUI Structure. 
 	// 	
 	
-	gui = (void *) malloc ( sizeof(struct gui_d) );
+	gui = (void *) kmalloc ( sizeof(struct gui_d) );
     
 	if ( (void *) gui == NULL)
 	{
 	    panic ("create_logon: gui struct");
 		
 	}else{
-		
-		//g_ws_pid = -1;
-		//g_wm_pid = -1;
-		
-		
-	    //
-	    // TTY
-	    //
-	
+
+        //
+        // TTY
+        //
+
 	
 	    // tty support.
 	    // As mensagens do kernel precisam usar esses par^ametros.

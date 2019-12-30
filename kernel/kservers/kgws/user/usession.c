@@ -60,7 +60,7 @@ void *CreateUserSession (int userID){
 
 	// Create a new user section struct.
     
-	NewUserSession = (void *) malloc ( sizeof(struct usession_d) );
+	NewUserSession = (void *) kmalloc ( sizeof(struct usession_d) );
 	
     if ( (void *) NewUserSession == NULL )
     {

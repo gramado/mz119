@@ -70,17 +70,12 @@ void *CreateRoom (struct room_d *room){
 	
 	//Window Station Struct.
     
-	Current = (void *) malloc ( sizeof(struct room_d) );
-	
-	if ( (void *) Current == NULL )
-	{
-	    printf("CreateWindowStation: Current");
-		die ();
-		
-		//refresh_screen();
-		//while(1){}
-		
-	} else {
+	Current = (void *) kmalloc ( sizeof(struct room_d) );
+
+    if ( (void *) Current == NULL )
+    {
+        panic ("CreateWindowStation: Current");
+    } else {
 		
 	    //room.
 	    Current->room = (struct room_d *) room;
@@ -177,7 +172,7 @@ void init_room_manager (void){
 	init_room_list ();
 
 
-    room0 = (void *) malloc ( sizeof(struct room_d) );
+    room0 = (void *) kmalloc ( sizeof(struct room_d) );
 
     if ( (void *) room0 == NULL )
     {

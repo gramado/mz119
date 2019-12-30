@@ -182,19 +182,19 @@ void config_user (void){
  */
  
 void *CreateUser ( char *name, int type ){
-	
-	int Index = 0;	
-	
-   	struct user_info_d *New;
 
-	New = (void *) malloc ( sizeof(struct user_info_d) ); 
-	
-	if ( (void *) New == NULL )
-	{
-	    panic ("CreateUser: New");
-		
-	} else {
-	    
+    struct user_info_d *New;
+
+    int Index = 0;
+
+
+    New = (void *) kmalloc ( sizeof(struct user_info_d) ); 
+
+    if ( (void *) New == NULL )
+    {
+        panic ("CreateUser: New");
+    } else {
+
 		New->used = 1;
 		New->magic = 1234;
 		

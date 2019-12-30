@@ -264,7 +264,7 @@ int ide_identify_device ( uint8_t nport ){
         ide_ports[nport].type = (int) idedevicetypesPATA;
 		
 		
-		disk = (struct disk_d *) malloc (  sizeof(struct disk_d) );
+		disk = (struct disk_d *) kmalloc (  sizeof(struct disk_d) );
 		if ((void *) disk != NULL )
 		{
 			disk->channel = ata.channel;
@@ -304,7 +304,7 @@ int ide_identify_device ( uint8_t nport ){
         ide_ports[nport].name = "SATA";	
         ide_ports[nport].type = (int) idedevicetypesSATA;
 		
-		disk = (struct disk_d *) malloc (  sizeof(struct disk_d) );
+		disk = (struct disk_d *) kmalloc (  sizeof(struct disk_d) );
 		if ((void *) disk != NULL )
 		{
 			
@@ -345,7 +345,7 @@ int ide_identify_device ( uint8_t nport ){
         ide_ports[nport].type = (int) idedevicetypesPATAPI;
 		
 		
-		disk = (struct disk_d *) malloc (  sizeof(struct disk_d) );
+		disk = (struct disk_d *) kmalloc (  sizeof(struct disk_d) );
 		if ((void *) disk != NULL )
 		{
 			disk->channel = ata.channel;
@@ -385,7 +385,7 @@ int ide_identify_device ( uint8_t nport ){
         ide_ports[nport].name = "SATAPI";
         ide_ports[nport].type = (int) idedevicetypesSATAPI;
 
-		disk = (struct disk_d *) malloc (  sizeof(struct disk_d) );
+		disk = (struct disk_d *) kmalloc (  sizeof(struct disk_d) );
 		if ((void *) disk != NULL )
 		{
 			
@@ -468,8 +468,7 @@ void ide_mass_storage_initialize (void){
 
     if ( (void *) ready_queue_dev == NULL )
     {
-        kprintf ("ide_mass_storage_initialize:");
-        die ();
+        panic ("ide_mass_storage_initialize:");
     }
 
 
@@ -490,8 +489,7 @@ void ide_mass_storage_initialize (void){
 
     if ( (void *) ata_identify_dev_buf == NULL )
     {
-        kprintf ("ide_mass_storage_initialize: buffer");
-        die ();
+        panic ("ide_mass_storage_initialize: buffer");
     }
 
 
@@ -530,8 +528,7 @@ int ide_dev_init (char port){
 
     if ( (void *) new_dev ==  NULL )
     {
-        printf ("ide_dev_init: struct");
-        die ();
+        panic ("ide_dev_init: struct");
     }
 
 
@@ -681,8 +678,7 @@ int ide_dev_init (char port){
 
     if ( (void *) tmp_dev ==  NULL )
     {
-        printf ("ide_dev_init: tmp_dev");
-        die ();
+        panic ("ide_dev_init: tmp_dev");
     }
 
 
@@ -908,15 +904,13 @@ int diskATAInitialize ( int ataflag ){
 
     if ( (void *) ata_pci == NULL )
     {
-        kprintf ("diskATAInitialize: ata_pci");
-        die ();
+        panic ("diskATAInitialize: ata_pci");
 
     }else{
 
         if ( ata_pci->used != 1 || ata_pci->magic != 1234 )
         {
-            kprintf ("diskATAInitialize: Validation");
-            die ();
+            panic ("diskATAInitialize: Validation");
         }
 
 		//#debug
@@ -1036,12 +1030,11 @@ int diskATAInitialize ( int ataflag ){
         current_dev->next = NULL;
 
 
-        ata_identify_dev_buf = ( unsigned short  * ) kmalloc (4096);
+        ata_identify_dev_buf = (unsigned short *) kmalloc (4096);
 
         if ( (void *) ata_identify_dev_buf == NULL )
         {
-            kprintf ("diskATAInitialize: ata_identify_dev_buf");
-            die ();
+            panic ("diskATAInitialize: ata_identify_dev_buf");
         }
 
 

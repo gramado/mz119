@@ -354,7 +354,7 @@ void *CreatePageTable ( unsigned long directory_address_va,
 	// só depois converteremos para físico e salvaremos na 
 	// entrada do diretório o ponteiro que é um endereço físico.
 
-    //unsigned long ptVA = (unsigned long) malloc (4096);
+    //unsigned long ptVA = (unsigned long) kmalloc (4096);
     //unsigned long ptVA = (unsigned long) allocPages (1);
 	
 	//#bugbug
@@ -364,7 +364,7 @@ void *CreatePageTable ( unsigned long directory_address_va,
 	//precisamos encontrar alguma área dentro do kernel para isso.
 	
 	//unsigned long ptVA = (unsigned long) newPage ();    //bug (pf)
-	//unsigned long ptVA = (unsigned long) malloc(4096);  //bug (precisa 12bits zerados)
+	//unsigned long ptVA = (unsigned long) kmalloc(4096);  //bug (precisa 12bits zerados)
 	//unsigned long ptVA = (unsigned long) 0x1000;               //ok
 	unsigned long ptVA = (unsigned long) get_table_pointer();  //ok
 	
@@ -1533,7 +1533,9 @@ int SetUpPaging (void){
 	struct frame_pool_d *kfp;
 
 	//kernel framepool.
-	kfp = (void *) malloc ( sizeof(struct frame_pool_d) );
+	kfp = (void *) kmalloc ( sizeof(struct frame_pool_d) );
+	
+	// #todo: e se falhar?
 	
 	if ( (void *) kfp != NULL  )
 	{
@@ -1566,7 +1568,9 @@ int SetUpPaging (void){
 	struct frame_pool_d *small_fp;
 
 	//kernel framepool.
-	small_fp = (void *) malloc ( sizeof(struct frame_pool_d) );
+	small_fp = (void *) kmalloc ( sizeof(struct frame_pool_d) );
+	
+	// #todo: e se falhar.
 	
 	if( (void *) small_fp != NULL  )
 	{
@@ -1604,8 +1608,10 @@ int SetUpPaging (void){
 	struct frame_pool_d *pageable_fp;
 	
 	//kernel framepool.
-	pageable_fp = (void *) malloc ( sizeof(struct frame_pool_d) );
-	
+	pageable_fp = (void *) kmalloc ( sizeof(struct frame_pool_d) );
+ 
+    //#todo e se falhar?
+
 	if( (void *) pageable_fp != NULL  )
 	{
 		pageable_fp->id = 5;   //quinto índice.
@@ -1665,7 +1671,7 @@ void initializeFramesAlloc (void){
 	// Criando o primeiro para testes.
 	//
 	
-	p = (void *) malloc ( sizeof( struct page_d ) );
+	p = (void *) kmalloc ( sizeof( struct page_d ) );
 	
 	if ( p == NULL )
 	{
@@ -1784,7 +1790,7 @@ void *allocPages (int size){
 			//#bugbug
 			//Isso pode esgotar o heap do kernel
 			
-			p = (void *) malloc ( sizeof( struct page_d ) );
+			p = (void *) kmalloc ( sizeof( struct page_d ) );
 			
 			if ( p == NULL )
 			{

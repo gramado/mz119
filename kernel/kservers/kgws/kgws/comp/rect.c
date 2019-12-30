@@ -493,14 +493,12 @@ refresh_rectangle2 ( unsigned long x,
 int initialize_saved_rect (void){
 	
 	// Alocando memória para a estrutura de gerenciamento do retângulo.
-	
-    SavedRect = (void *) malloc ( sizeof(struct saved_rect_d) );   
+
+    SavedRect = (void *) kmalloc ( sizeof(struct saved_rect_d) );   
 
     if ( (void *) SavedRect ==  NULL )
     {
 		panic ("initialize_saved_rect: struct");
-	    //return (int) 1;	
-		
 	} else {
      
         // 800x600x3 (resolução máxima) 351+ páginas.

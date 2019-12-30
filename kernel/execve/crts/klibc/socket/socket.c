@@ -116,7 +116,7 @@ int socket ( int family, int type, int protocol ){
 	
 	// buffer
 	
-	char *buff = (char *) malloc (BUFSIZ);
+	char *buff = (char *) kmalloc (BUFSIZ);
 	//char *buff = (char *) newPage ();
 	
     if ( (void *) buff == NULL )
@@ -130,7 +130,7 @@ int socket ( int family, int type, int protocol ){
 	//
 	
 	//estruturas 
-	stream1 = (void *) malloc ( sizeof(FILE) );
+	stream1 = (void *) kmalloc ( sizeof(FILE) );
 	
 	if ( (void *) stream1 == NULL  )
 	{

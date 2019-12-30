@@ -180,7 +180,7 @@ void *draw_button ( unsigned char *string,
 	// Alocando memória para a estrutura do botão.
 	// Inicializando a estrutura.
 
-    b = (void *) malloc ( sizeof(struct button_d) );
+    b = (void *) kmalloc ( sizeof(struct button_d) );
 
     if ( (void *) b == NULL )
     {

@@ -250,7 +250,7 @@ void *CreateGrid (void){
 
     struct grid_d *g;
 
-    g = (void *) malloc ( sizeof( struct grid_d) );
+    g = (void *) kmalloc ( sizeof( struct grid_d) );
 
     if ( (void *) g == NULL )
     {

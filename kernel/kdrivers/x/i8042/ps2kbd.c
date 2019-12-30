@@ -701,7 +701,7 @@ void ps2kbd_initialize_device (void){
 
 
 	//user.h
-    ioControl_keyboard = (struct ioControl_d *) malloc ( sizeof(struct ioControl_d) );
+    ioControl_keyboard = (struct ioControl_d *) kmalloc ( sizeof(struct ioControl_d) );
 
     if ( (void *) ioControl_keyboard == NULL )
     {

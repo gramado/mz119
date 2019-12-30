@@ -91,15 +91,15 @@ struct device_d *devmgr_device_object (void)
          if ( __tmp == 0 )  //unsigned long
          {
              
-             d = (struct device_d *) malloc ( sizeof (struct device_d) );
+             d = (struct device_d *) kmalloc ( sizeof (struct device_d) );
              
              if ( (void *) d == NULL )
              {
-				printf ("devmgr_device_object: d");
-				die(); 
+                 panic ("devmgr_device_object: d"); 
              }
 
              d->deviceId = i;
+             
              d->deviceUsed = 1;
              d->deviceMagic = 1234;
              
@@ -110,7 +110,6 @@ struct device_d *devmgr_device_object (void)
     };
 
     // fail
-
     return NULL;
 }
 

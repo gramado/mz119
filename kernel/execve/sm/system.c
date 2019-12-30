@@ -348,14 +348,15 @@ void *systemCreateSystemMenuBar (void){
 	//      a janela popupmenu será a mesma, 
 	//
 	
-	hwItemSystem = (void*) CreateWindow( 1, 0, VIEW_MINIMIZED, "SystemMenuBar", 
-	                               0, 60, (800/4), (600-60), 
-							       gui->screen, 0, 0, COLOR_GRAY ); 
-	if( (void*) hwItemSystem == NULL ){
-		printf("sm-sys-system-systemCreateSystemMenuBar: hwItemSystem");
-		die();
-	}else{
-		
+    hwItemSystem = (void *) CreateWindow ( 1, 0, VIEW_MINIMIZED, 
+                                "SystemMenuBar", 
+                                0, 60, (800/4), (600-60), 
+                                gui->screen, 0, 0, COLOR_GRAY ); 
+    if ( (void *) hwItemSystem == NULL )
+    {
+        panic ("sm-system-systemCreateSystemMenuBar: hwItemSystem");
+    }else{
+
 		hwItemSystem = (void *) hwItemSystem;
 		hwItemApplications = (void *) hwItemSystem;
 		hwItemWindow = (void *) hwItemSystem;
@@ -363,13 +364,11 @@ void *systemCreateSystemMenuBar (void){
 		RegisterWindow(hwItemApplications);
 		RegisterWindow(hwItemWindow);
 		//...
-	};	
-	
-	
-//done:
+    };
 
-	return (void *) hwBar;
-}; 
+
+    return (void *) hwBar;
+} 
  
 
 /*
@@ -394,7 +393,7 @@ void systemCheck3TierArchitecture(){
 void systemSetupVersion (void){
 	
 	//Version.
-    Version = (void *) malloc( sizeof(struct version_d) );
+    Version = (void *) kmalloc( sizeof(struct version_d) );
     
 	if ( (void *) Version == NULL )
 	{
@@ -402,7 +401,7 @@ void systemSetupVersion (void){
         //Isso deve ser considerado um erro fatal,
         //pois existem aplicações que dependem da versão do sistema 
         //para funcionarem corretamente.. 		
-	    panic("sm-sys-system-systemSetupVersion: Version");
+	    panic("sm-system-systemSetupVersion: Version");
           
 	} else {
 		
@@ -413,7 +412,7 @@ void systemSetupVersion (void){
 	};
 	
 	//VersionInfo.
-    VersionInfo = (void *) malloc ( sizeof(struct version_info_d) );
+    VersionInfo = (void *) kmalloc ( sizeof(struct version_info_d) );
 	
     if ( (void*) VersionInfo == NULL )
 	{	
@@ -421,7 +420,7 @@ void systemSetupVersion (void){
         //Isso deve ser considerado um erro fatal,
         //pois existem aplicações que dependem da versão do sistema 
         //para funcionarem corretamente.. 	
-	    panic("sm-sys-system-systemSetupVersion: VersionInfo");
+	    panic ("sm-system-systemSetupVersion: VersionInfo");
 		
 	}else{
 		
@@ -599,8 +598,7 @@ int SystemMenu (void){
 
     if ( (void *) hWindow == NULL )
     {
-        printf ("sm-sys-system-SystemMenu: hWindow\n");
-        die ();
+        panic ("sm-system-SystemMenu: hWindow\n");
     }
 
 	// Se houve falha na criação do menu.
@@ -1163,7 +1161,6 @@ void die (void){
 
     asm ("hlt");   
 
-
     while (1){ 
         asm ("cli");
         asm ("hlt");
@@ -1576,7 +1573,7 @@ void *newLinkedlist (void){
 
     struct linkedlist_d *new_list; 
 
-    new_list = (void *) malloc ( sizeof(struct linkedlist_d) );
+    new_list = (void *) kmalloc ( sizeof(struct linkedlist_d) );
 
     if ( (void *) new_list == NULL )
     {
@@ -1604,7 +1601,7 @@ void *newNode (void){
 
     struct node_d *new_node; 
 
-    new_node = (void *) malloc ( sizeof(struct node_d) );
+    new_node = (void *) kmalloc ( sizeof(struct node_d) );
 
     if ( (void *) new_node == NULL )
     {

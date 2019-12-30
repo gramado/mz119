@@ -152,7 +152,7 @@ void create_gui (void){
 	// @todo: Estamos reinicializando tudo, recriando estruturas 
 	//        que devem ser deletadas na finalização do logon. @todo.
 
-    gui = (void *) malloc ( sizeof(struct gui_d) );
+    gui = (void *) kmalloc ( sizeof(struct gui_d) );
 
     if ( (void *) gui == NULL )
     {

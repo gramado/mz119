@@ -128,13 +128,13 @@ bmpDirectDisplayBMP ( char *address,
 	//
 	
 	// #BUGBUG 
-	// Um malloc aqui pode esgotar o heap na hora de movimentar o mouse.
+	// Um kmalloc aqui pode esgotar o heap na hora de movimentar o mouse.
 	// Precisamos usar um buffer interno para essa estrutura.
 	
 	char buffer[512];
 	char buffer2[512];
 	
-	//bh = (struct bmp_header_d *) malloc( sizeof(struct bmp_header_d) );	
+	//bh = (struct bmp_header_d *) kmalloc( sizeof(struct bmp_header_d) );	
     bh = (struct bmp_header_d *) &buffer[0];
 	
 	if ( (void *) bh == NULL )
@@ -161,7 +161,7 @@ bmpDirectDisplayBMP ( char *address,
 	//
 	
 	//Windows bmp.
-	//bi = (struct bmp_infoheader_d *) malloc( sizeof(struct bmp_infoheader_d) );
+	//bi = (struct bmp_infoheader_d *) kmalloc( sizeof(struct bmp_infoheader_d) );
     bi = (struct bmp_infoheader_d *)  &buffer2[0];
 	
 	if ( (void *) bi == NULL )
@@ -537,14 +537,14 @@ bmpDisplayBMP ( char *address,
 	//
 	
 	// #BUGBUG 
-	// Um malloc aqui pode esgotar o heap na hora de movimentar o mouse.
+	// Um kmalloc aqui pode esgotar o heap na hora de movimentar o mouse.
 	// Precisamos usar um buffer interno para essa estrutura.
 	
 	char buffer[512];
 	char buffer2[512];
 	
 	
-	//bh = (struct bmp_header_d *) malloc( sizeof(struct bmp_header_d) );	
+	//bh = (struct bmp_header_d *) kmalloc( sizeof(struct bmp_header_d) );	
     bh = (struct bmp_header_d *) &buffer[0];
 	
 	if ( (void *) bh == NULL )
@@ -578,7 +578,7 @@ bmpDisplayBMP ( char *address,
 	//
 	
 	//Windows bmp.
-	//bi = (struct bmp_infoheader_d *) malloc( sizeof(struct bmp_infoheader_d) );
+	//bi = (struct bmp_infoheader_d *) kmalloc( sizeof(struct bmp_infoheader_d) );
     bi = (struct bmp_infoheader_d *)  &buffer2[0];
 	
 	if ( (void *) bi == NULL )

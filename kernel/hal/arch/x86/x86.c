@@ -374,11 +374,11 @@ void init_gdt (void){
 	//
 	
 	
-	tss = (void *) malloc ( sizeof(struct i386tss_d) );
+	tss = (void *) kmalloc ( sizeof(struct i386tss_d) );
 	
 	if ( (void *) tss == NULL )
 	{
-	    panic ("init_gdt:");
+	    panic ("x86-init_gdt:");
 		
 	}else{
     

@@ -950,7 +950,7 @@ int init_dispatcher (void){
 	//inicializa a lista
 	//Conductor = (void*) IdleThread;
 		
-    rootConductor = (void *) malloc ( sizeof(struct thread_d) );
+    rootConductor = (void *) kmalloc ( sizeof(struct thread_d) );
 	
     if ( (void *) rootConductor == NULL )
     {

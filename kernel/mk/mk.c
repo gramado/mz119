@@ -432,18 +432,18 @@ int init_microkernel (void){
 	// 
 	
 	//Inicializar as filas que alimentarão a lista do dispatcher.	
-	queue = malloc( sizeof( struct queue_d ) );
+	queue = kmalloc ( sizeof( struct queue_d ) );
+	
 	if( (void *) queue == NULL )
 	{
-	    panic("init_microkernel: queue\n");
-	    //die();
+	    panic ("init_microkernel: queue\n");
 	}else{
-		
+
 		//Inicializa todas as filas do microkernel.
-	    init_queue(queue);
+	    init_queue (queue);
 		
 		// Initializing the dispatcher list.
-		init_dispatcher();
+		init_dispatcher ();
 		//...
 	};
 	
@@ -453,7 +453,7 @@ int init_microkernel (void){
 	// Dispatch Count Block.
 	//
 	
-	DispatchCountBlock = (void *) malloc ( sizeof( struct dispatch_count_d ) );
+	DispatchCountBlock = (void *) kmalloc ( sizeof( struct dispatch_count_d ) );
 	
 	if ( (void *) DispatchCountBlock == NULL )
 	{

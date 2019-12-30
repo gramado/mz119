@@ -31,11 +31,11 @@ int rand (void){
 
 /* 
  *****************************************
- * malloc:
- *     Standard malloc function. 
+ * kmalloc:
+ *     Standard kmalloc function. 
  */
 
-void *malloc (size_t size){
+void *kmalloc (size_t size){
 
 	void *h;
 	unsigned long s = ( unsigned long) size;
@@ -64,7 +64,7 @@ void *malloc (size_t size){
 
 /*
  ************************************
- * free:
+ * kfree:
  *
  * >> #importante:
  * >> Tradicionalmente essa função só libera o que foi alocado pela última 
@@ -84,15 +84,13 @@ void *malloc (size_t size){
  *
  */
 
-void free (void *ptr){
+void kfree (void *ptr){
 	
 	if ( (void *) ptr == NULL )
 	    return;
 
 	//memory.c
-    FreeHeap (ptr);	
-	
-	//return;
+    FreeHeap (ptr);
 }
 
 

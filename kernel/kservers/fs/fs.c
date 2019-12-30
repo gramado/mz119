@@ -689,9 +689,9 @@ void fs_init_fat (void){
 
 	// FAT structure.
 
-    fat = (void *) malloc ( sizeof(struct fat_d) );
+    fat = (void *) kmalloc ( sizeof(struct fat_d) );
 
-    if ((void *) fat == NULL )
+    if ( (void *) fat == NULL )
     {
         printf ("fs_init_fat error: fat\n");
         return;
@@ -728,7 +728,7 @@ void fs_init_structures (void){
 	
     int Type;
 	
-    filesystem = (void *) malloc ( sizeof(struct filesystem_d) );
+    filesystem = (void *) kmalloc ( sizeof(struct filesystem_d) );
 
     if ( (void *) filesystem == NULL )
     {
@@ -881,7 +881,7 @@ int fsInit (void){
 	//foi definido em stdio.h
 	//FILE *volume1_rootdir;
 
-    volume1_rootdir = (FILE *) malloc ( sizeof(FILE) );
+    volume1_rootdir = (FILE *) kmalloc ( sizeof(FILE) );
 
     if ( (void *) volume1_rootdir == NULL )
     {
@@ -913,7 +913,7 @@ int fsInit (void){
 	//foi definido em stdio.h
 	//FILE *volume2_rootdir;
 
-    volume2_rootdir = (FILE *) malloc ( sizeof(FILE) );
+    volume2_rootdir = (FILE *) kmalloc ( sizeof(FILE) );
 
     if ( (void *) volume2_rootdir == NULL )
     {
@@ -942,7 +942,7 @@ int fsInit (void){
 	//gramado core init execve 
 	
 	//aloca memória para a estrutura.
-    pipe_gramadocore_init_execve = (FILE *) malloc ( sizeof(FILE) );
+    pipe_gramadocore_init_execve = (FILE *) kmalloc ( sizeof(FILE) );
 	
     if ( (void *) pipe_gramadocore_init_execve == NULL )
     {
@@ -951,7 +951,7 @@ int fsInit (void){
     }else{
 
         //aloca memória para o buffer.
-        unsigned long pipe0base = (unsigned long) malloc (512);
+        unsigned long pipe0base = (unsigned long) kmalloc (512);
 
         if ( (void *) pipe0base == NULL )
         {
@@ -1419,7 +1419,7 @@ FILE *sys_read_file2 ( unsigned long name, unsigned long address ){
     unsigned long new_address;
 
 
-    stream = (FILE *) malloc ( sizeof(FILE) );
+    stream = (FILE *) kmalloc ( sizeof(FILE) );
 
     if ( (void *) stream == NULL )
     {
@@ -1560,7 +1560,7 @@ int fsLoadFileFromCurrentTargetDir (void){
 	//aqui no m'aquimo o arquivo pode ter 4kb.
 	//acho ques estamos falando somente de diret'orio aqui.
 	
-	new_address = (unsigned long) malloc (4096);
+	new_address = (unsigned long) kmalloc (4096);
 	
 	if ( new_address == 0 )
 	{

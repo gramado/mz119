@@ -117,7 +117,7 @@ FILE *fopen ( const char *filename, const char *mode ){
     char *file_buffer;
 
 	// #bugbug: 
-	// aqui podemos usar o malloc ?
+	// aqui podemos usar o kmalloc ?
 	// Buffer usado para colocar a estrutura, 
 	// mas o problema é o free que ainda não funciona.
 
@@ -175,7 +175,7 @@ FILE *fopen ( const char *filename, const char *mode ){
 
 	//#bugbug
 	//Quando pegamos o tamanho do arquivo e for muito grande
-	//o malloc vai falhar.
+	//o kmalloc vai falhar.
 	//precisamos exibir o tamanho do arquivo.
 
 	//vamos impor um limite.
@@ -211,7 +211,7 @@ FILE *fopen ( const char *filename, const char *mode ){
 
 
 	//file_buffer = (char *) newPage();
-    file_buffer = (char *) malloc (s);
+    file_buffer = (char *) kmalloc (s);
 
     if ( (char *) file_buffer == NULL )
     {
@@ -1343,22 +1343,16 @@ int fprintf ( FILE *stream, const char *format, ... ){
 
     if ( (void *) stream == NULL )
     {
-	     kprintf ("klibc-stdio-fprintf: stream\n");
-		 die (); 
-		 //refresh_screen();
-		 //return -1;
+        panic ("klibc-stdio-fprintf: stream\n");
     }else{
-	
-		if ( stream->used != 1 || stream->magic != 1234 )
-		{
-	         kprintf ("klibc-stdio-fprintf: stream validation\n");
-		     die (); 
-			 //refresh_screen();
-		     //return -1;
-		}
-   	
+
+        if ( stream->used != 1 || stream->magic != 1234 )
+        {
+            panic ("klibc-stdio-fprintf: stream validation\n");
+        }
 		//...
     };
+
 
 	//
 	// print 
@@ -2135,15 +2129,15 @@ int stdioInitialize (void){
 	// #todo
 	// podemos usar esse alocador ?? Ainda não ??
 	
-	//stdin = (void *) malloc( sizeof(FILE) );
-	//stdout = (void *) malloc( sizeof(FILE) );
-	//stderr = (void *) malloc( sizeof(FILE) );	
+	//stdin = (void *) kmalloc( sizeof(FILE) );
+	//stdout = (void *) kmalloc( sizeof(FILE) );
+	//stderr = (void *) kmalloc( sizeof(FILE) );	
 	
 
 	// #bugbug:
 	//  4KB alocados para cada estrutura. Isso é muito.
 	//  Mas ao mesmo tempo estamos economizando o heap 
-	//  usado pelo malloc.
+	//  usado pelo kmalloc.
 	//  Podemos alocar 4KB para o buffer. 'prompt'
 	
 	

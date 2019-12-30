@@ -1075,7 +1075,7 @@ int ps2_mouse_globals_initialize (void){
 
 
 	//user.h
-    ioControl_mouse = (struct ioControl_d *) malloc ( sizeof(struct ioControl_d) );
+    ioControl_mouse = (struct ioControl_d *) kmalloc ( sizeof(struct ioControl_d) );
 
     if ( (void *) ioControl_mouse == NULL )
     {
@@ -1103,7 +1103,7 @@ int ps2_mouse_globals_initialize (void){
 
 
 	// Estamos espaço para o buffer de mensagens de mouse.
-	// mousemsg = ( unsigned char *) malloc(32);
+	// mousemsg = ( unsigned char *) kmalloc(32);
 
 
 	//Inicializando as variáveis usadas na rotina em Assemly

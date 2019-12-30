@@ -429,7 +429,7 @@ compile-kernel:
 
 
 link-x86:
-	ld -m elf_i386 -T kernel/link.ld -o KERNEL.BIN $(OBJECTS) -Map docs/kmap.s
+	ld -m elf_i386 -T kernel/link.ld -o KERNEL.BIN $(OBJECTS) -Map docs/kernel.map
 
 #move
 	mv KERNEL.BIN bin/boot/

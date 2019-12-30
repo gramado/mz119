@@ -1609,14 +1609,13 @@ struct process_d *processObject (void){
 	
 	struct process_d *p;
 	
-	p = (void *) malloc ( sizeof(struct process_d) );
-	
-	if ( (void *) p == NULL )
-	{
-        // #debug
-	    printf ("processObject:");
-		die ();
-	};	
+	p = (void *) kmalloc ( sizeof(struct process_d) );
+
+
+    if ( (void *) p == NULL )
+    {
+        panic ("process-processObject:");
+    };
 	
 	return (struct process_d *) p;
 }
@@ -2152,7 +2151,7 @@ struct process_d *create_process ( struct room_d *room,
 
     PID = (int) processNewPID;
 
-    Process = (void *) malloc ( sizeof(struct process_d) );
+    Process = (void *) kmalloc ( sizeof(struct process_d) );
 
     if ( (void *) Process == NULL )
     {
@@ -2444,7 +2443,7 @@ get_next:
         g_heap_count++;
 
 		//Process->Heap = (unsigned long) allocPages (64); 
-		//Process->Heap = (unsigned long) malloc (1024*32); //32kb
+		//Process->Heap = (unsigned long) kmalloc (1024*32); //32kb
 
 		// Endereço do início do Heap do processo.
 		// #bubug: Endereço do fim do heap.

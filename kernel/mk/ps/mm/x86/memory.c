@@ -592,7 +592,7 @@ try_again:
 		//
         // Retorna o ponteiro para o início da área alocada.
 		// Essa área alocada chamado de user area.
-        // Obs: Esse é o valor que será usado pela função malloc.
+        // Obs: Esse é o valor que será usado pela função kmalloc.
         //
         // *Importante:
         // O que acontece se um aplicativo utilizar além da área alocada ??
@@ -1070,13 +1070,13 @@ int gcEXECUTIVE (void){
 	
 	
 	//#importante:
-	//mmblock_d é a estrutura usada pelo malloc para organizar as alocações 
+	//mmblock_d é a estrutura usada pelo kmalloc para organizar as alocações 
 	//dentro de um heap. 
 	//Essa estrutura será sinalizada com Free=1 e precisa liberar a área do cliente.
 	
 	//mmblockList[]
 	//#importante: Nessa lista tem ponteiros para uma estrutura especial,
-	//usada pela malloc para organizar os blocos de memória que serão utilizados 
+	//usada pela kmalloc para organizar os blocos de memória que serão utilizados 
 	//para alocação dinâmica.
 
     for ( i=0; i<MMBLOCK_COUNT_MAX; i++ )
@@ -1230,7 +1230,7 @@ int gcHAL (void)
  *
  * #importante:
  * Em duas condições as estruturas poderão ser destruidas ou reaproveitadas: 
- * +Quando a estrutura usada pelo malloc estiver sinalizada com Free=1 e 
+ * +Quando a estrutura usada pelo kmalloc estiver sinalizada com Free=1 e 
  * +quando as outras estruturas estiverem com a flag igual a used=216 e 
  * magic=4321.
  * obs: Outros tratamentos de flags serão introduzidos com o tempo,

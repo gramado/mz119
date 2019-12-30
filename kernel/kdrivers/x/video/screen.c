@@ -144,27 +144,27 @@ int screenInit (void){
 	
 	// Setup Screen structure.
 	
-    Screen = (void *) malloc( sizeof(struct screen_d) );
+    Screen = (void *) kmalloc( sizeof(struct screen_d) );
     
-	if ( (void *) Screen == NULL )
-	{	
-	    panic ("screenInit:");
-		
-	}else{
-		
-	    Screen->left = SCREEN_DEFAULT_LEFT;
-	    Screen->top = SCREEN_DEFAULT_TOP; 
-		
-		Screen->width = (unsigned long) screenGetWidth();
-	    Screen->height = (unsigned long) screenGetHeight();
-		//...
-         
-		// salvando o ponteiro da estrutura. 
+    if ( (void *) Screen == NULL )
+    {
+        panic ("screenInit:");
+    }else{
+
+        Screen->left = SCREEN_DEFAULT_LEFT;
+        Screen->top = SCREEN_DEFAULT_TOP; 
+        Screen->width = (unsigned long) screenGetWidth ();
+        Screen->height = (unsigned long) screenGetHeight ();
+        //...
+ 
+        // salvando o ponteiro da estrutura. 
         ScreenInfo = (void *) Screen;
         CurrentScreen = (void *) Screen;
-        //...		
+        //...
     };
-	
+
+
+
 	// More?!
 	
 //done:

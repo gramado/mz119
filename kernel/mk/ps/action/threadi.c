@@ -118,7 +118,7 @@ void *KiCreateRing0Idle (void){
     }
 
 
-    t = (void *) malloc( sizeof(struct thread_d) );
+    t = (void *) kmalloc( sizeof(struct thread_d) );
 
     if ( (void *) t == NULL )
     {
@@ -134,7 +134,7 @@ void *KiCreateRing0Idle (void){
 	//estamos alocando uma stack dentro do heap do kernel.
 	//nesse caso serve para a thread idle em ring 0.
 
-    ring0IdleStack = (void *) malloc (8*1024);
+    ring0IdleStack = (void *) kmalloc (8*1024);
 
     if ( (void *) ring0IdleStack == NULL )
     {

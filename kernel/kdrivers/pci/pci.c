@@ -1258,13 +1258,11 @@ pciHandleDevice ( unsigned char bus,
 	//printf ("bus=%d dev=%d fun=%d \n", bus, dev, fun);
 
 
-    D = (void *) malloc ( sizeof( struct pci_device_d  ) );
+    D = (void *) kmalloc ( sizeof( struct pci_device_d  ) );
 
     if ( (void *) D == NULL )
     {
-        panic ("pciHandleDevice: D \n");
-        //return (int) -1;
-
+        panic ("pciHandleDevice: D");
     }else{
 
 		//Object support.
@@ -1348,8 +1346,7 @@ pciHandleDevice ( unsigned char bus,
  
             }else{
 
-                printf ("pciHandleDevice: #debug NIC");
-                die ();
+                panic ("pciHandleDevice: #debug NIC");
             };
         }
 
@@ -1384,12 +1381,11 @@ pciHandleDevice ( unsigned char bus,
     
     FILE *__stream;
     
-    __stream = (FILE *) malloc ( sizeof(FILE) );
+    __stream = (FILE *) kmalloc ( sizeof(FILE) );
     
     if ( (void *) __stream == NULL )
     {
-        printf ("pciHandleDevice: __stream fail, can't register device\n");
-        die ();
+        panic ("pciHandleDevice: __stream fail, can't register device");
     }else{
     
         __stream->used = 1;
@@ -1402,11 +1398,11 @@ pciHandleDevice ( unsigned char bus,
         //__stream->deviceId ?
         
         devmgr_register_device ( (FILE *) __stream, 
-                         D->name,
-                         __class,     //class (char, block, network)
-                         1,           //type (pci, legacy
-                         (struct pci_device_d *) D,  //pci device
-                         NULL );                     //tty driver
+             D->name,
+             __class,     //class (char, block, network)
+             1,           //type (pci, legacy
+             (struct pci_device_d *) D,  //pci device
+             NULL );                     //tty driver
     
     };
 

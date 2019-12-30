@@ -406,19 +406,23 @@ struct timer_d *create_timer ( struct window_d *window,
 	
 	if ( type < 1 || type > 10 )
 	{
-		printf("create_timer: type fail\n");
-		refresh_screen ();
-		return NULL;
+		panic ("create_timer: type fail\n");
+		
+		///printf("create_timer: type fail\n");
+		//refresh_screen ();
+		//return NULL;
 	}
+
 	
-	
-	t = (void *) malloc ( sizeof(struct timer_d) );
+	t = (void *) kmalloc ( sizeof(struct timer_d) );
 	
 	if ( (void *) t == NULL )
 	{
-		printf("create_timer: t fail \n");
-		refresh_screen ();
-		return NULL; 
+		panic ("create_timer: t fail \n");
+		
+		//printf ("create_timer: t fail \n");
+		//refresh_screen ();
+		//return NULL; 
 
 	}else{
 		
@@ -427,10 +431,11 @@ struct timer_d *create_timer ( struct window_d *window,
 		//erro ao obter um novo id.
 		if (  ID < 0 || ID > 32 )
 		{
-
-		    printf("create_timer: ID fail \n");
-		    refresh_screen ();
-		    return NULL;
+		    panic ("create_timer: ID fail \n");
+		    
+		    //printf("create_timer: ID fail \n");
+		    //refresh_screen ();
+		    //return NULL;
 		}else{
 			
 			t->id = ID; 	

@@ -36,10 +36,10 @@
 	===============
     
 	//Supposing the display is 800x600 with 32 bpp (meaning 32/8 = 4 bytes per pixel).
-    uint8_t *BackBuffer = ((uint8_t *) (malloc(800 * 600 * 4)));
+    uint8_t *BackBuffer = ((uint8_t *) (kmalloc(800 * 600 * 4)));
 	
 	//24bpp.
-	unsigned char *BackBuffer = ( (unsigned char *) (malloc(800 * 600 * 3))); 
+	unsigned char *BackBuffer = ( (unsigned char *) (kmalloc(800 * 600 * 3))); 
 */
 
 
@@ -176,13 +176,11 @@ void *CreateDesktop ( struct room_d *room ){
 	
 	// Struct.
     
-	Current = (void *) malloc ( sizeof(struct desktop_d) );
+	Current = (void *) kmalloc ( sizeof(struct desktop_d) );
 	
 	if ( (void *) Current == NULL )
 	{
-	    printf ("CreateDesktop:");
-		die ();
-	
+	    panic ("CreateDesktop:");
 	} else {
 	    
 		//section.
@@ -459,13 +457,12 @@ void init_desktop (void){
     // Struct.
     //
 
-    desktop0 = (void *) malloc ( sizeof(struct desktop_d) );
+    desktop0 = (void *) kmalloc ( sizeof(struct desktop_d) );
 
-	if ( (void *) desktop0 == NULL )
-	{
-	    panic ("init_desktop: desktop0");
-
-	}else{
+    if ( (void *) desktop0 == NULL )
+    {
+        panic ("init_desktop: desktop0");
+    }else{
          
         desktops_count = 1;
  

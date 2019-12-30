@@ -1,5 +1,5 @@
 /*
- * File: create.c
+ * File: mk/create.c
  *
  * Cria as threads que serão usadas pelos servidores do ambiente system.
  * init/shell/taskman.
@@ -59,7 +59,7 @@ void *KiCreateIdle (void){
 
     // Struct.
 
-    IdleThread = (void *) malloc ( sizeof(struct thread_d) );	
+    IdleThread = (void *) kmalloc ( sizeof(struct thread_d) );	
 
     if ( (void *) IdleThread == NULL )
     {
@@ -105,7 +105,7 @@ void *KiCreateIdle (void){
 
     // Stack.
 
-    idleStack = (void *) malloc (4*1024);
+    idleStack = (void *) kmalloc (4*1024);
 
     if ( (void *) idleStack == NULL )
     {
@@ -352,7 +352,7 @@ void *KiCreateShell (void){
 
 
 	//Thread.
-    t = (void *) malloc ( sizeof(struct thread_d) );
+    t = (void *) kmalloc ( sizeof(struct thread_d) );
 
     if ( (void *) t == NULL )
     {
@@ -363,8 +363,9 @@ void *KiCreateShell (void){
     };
 
 
-	//Stack.
-    shellStack = (void*) malloc(4*1024);
+	// Stack.
+	// 4KB.
+    shellStack = (void *) kmalloc (4*1024);
 
     if ( (void *) shellStack == NULL )
     {
@@ -575,7 +576,7 @@ void *KiCreateTaskManager (void){
     //Thread.
 	//Alocando memória para a estrutura da thread.
 	
-	t = (void *) malloc ( sizeof(struct thread_d) );	
+	t = (void *) kmalloc ( sizeof(struct thread_d) );	
 	
     if( (void *) t == NULL )
     {
@@ -588,10 +589,11 @@ void *KiCreateTaskManager (void){
 
 
 
-	//Stack.
+	// Stack.
+	// 4 KB.
 	//#bugbug
 	//estamos alocando uma stack dentro do heap do kernel.
-	taskmanStack = (void *) malloc (4*1024);
+	taskmanStack = (void *) kmalloc (4*1024);
 	
 
     if ( (void *) taskmanStack == NULL )

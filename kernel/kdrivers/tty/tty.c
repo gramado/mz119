@@ -343,7 +343,7 @@ struct ttyldisc_d *ttyldisc_create (void)
 {
     struct ttyldisc_d *__ttyldisc;
     
-    __ttyldisc = (struct ttyldisc_d *) malloc ( sizeof(struct ttyldisc_d) );
+    __ttyldisc = (struct ttyldisc_d *) kmalloc ( sizeof(struct ttyldisc_d) );
     
     if ( (void *) __ttyldisc == NULL )
     {
@@ -387,7 +387,7 @@ struct ttydrv_d *ttydrv_create (void)
 {
     struct ttydrv_d *__ttydrv;
     
-    __ttydrv = (struct ttydrv_d *) malloc ( sizeof(struct ttydrv_d) );
+    __ttydrv = (struct ttydrv_d *) kmalloc ( sizeof(struct ttydrv_d) );
     
     if ( (void *) __ttydrv == NULL )
     {
@@ -431,7 +431,7 @@ struct tty_d *tty_create (void)
 {
     struct tty_d *__tty;
     
-    __tty = (struct tty_d *) malloc ( sizeof(struct tty_d) );
+    __tty = (struct tty_d *) kmalloc ( sizeof(struct tty_d) );
     
     if ( (void *) __tty == NULL )
     {
@@ -515,7 +515,7 @@ int ttyInit (int tty_id){
 	// CurrentTTY
 	//
 
-    CurrentTTY = (struct tty_d *) malloc ( sizeof(struct tty_d) );
+    CurrentTTY = (struct tty_d *) kmalloc ( sizeof(struct tty_d) );
 
     if ( (void *) CurrentTTY == NULL )
     {

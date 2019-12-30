@@ -253,7 +253,7 @@ void memoryShowMemoryInfo (void){
  * show_memory_structs:
  *     *IMPORTANTE.
  *     Mostra as informações das estruturas de memória. 
- *     Essas são as estruturas usadas pelo malloc.
+ *     Essas são as estruturas usadas pelo kmalloc.
  * @todo: 
  *     Mostrar a memória usada pelos processos.
  *     Mostrar o quanto de memória o processo usa.

@@ -133,14 +133,14 @@ int disk_init (void){
 	};
 	
  
-	//
-	//  ## disk ##
+    //
+    //  Disk
     //
 	
 	//#importante
 	//Essa estrutura é vital, não podemos ficar sem ela.
 	
-	storage->d = (void *) malloc( sizeof(struct disk_d) );
+	storage->d = (void *) kmalloc( sizeof(struct disk_d) );
 	
 	if( (void *) storage->d == NULL )
 	{
@@ -218,7 +218,7 @@ void init_test_disk (void){
 	
 	//@todo: Usar constantes ou variáveis para esses valores.
 	
-	addr = (void *) malloc(512*32); 
+	addr = (void *) kmalloc(512*32); 
 	if( (void *) addr ==  NULL)
 	{
 	    printf("init_test_disk: error\n");
@@ -424,7 +424,7 @@ int volume_init (void){
 	
 	
 	// Volume.
-	volume_vfs = (void*) malloc( sizeof(struct volume_d) );
+	volume_vfs = (void *) kmalloc( sizeof(struct volume_d) );
 	
 	if ( (void *) volume_vfs == NULL )
 	{
@@ -454,7 +454,7 @@ int volume_init (void){
 	
 	
 	// Volume.
-	volume_bootpartition = (void*) malloc( sizeof(struct volume_d) );
+	volume_bootpartition = (void *) kmalloc( sizeof(struct volume_d) );
 	
 	if ( (void *) volume_bootpartition == NULL )
 	{
@@ -491,7 +491,7 @@ int volume_init (void){
 	
 	
 	// Volume.
-	volume_systempartition = (void *) malloc( sizeof(struct volume_d) );
+	volume_systempartition = (void *) kmalloc( sizeof(struct volume_d) );
 	
 	if ( (void *) volume_systempartition == NULL )
 	{
@@ -591,7 +591,7 @@ void show_ideports_info (void){
 	printf("\n Testing primary master \n");
     if ( ide_ports[0].used ==  1 )
 	{
-	    if ( get_ide_disk_info ( (int) 0, (unsigned long) malloc(512), 1 ) == -1 )
+	    if ( get_ide_disk_info ( (int) 0, (unsigned long) kmalloc(512), 1 ) == -1 )
         {
 	        printf("primary master signature FAIL\n");	
 	    }else{
@@ -607,7 +607,7 @@ void show_ideports_info (void){
     printf("\n Testing primary slave \n");
 	if ( ide_ports[0].used ==  1 )
 	{
-	    if ( get_ide_disk_info ( (int) 0, (unsigned long) malloc(512), 0 ) == -1 )
+	    if ( get_ide_disk_info ( (int) 0, (unsigned long) kmalloc(512), 0 ) == -1 )
         {
 	        printf("primary slave signature FAIL\n");	
 	    }else{
@@ -623,7 +623,7 @@ void show_ideports_info (void){
 	printf("\n Testing secondary master \n");
     if ( ide_ports[2].used ==  1 )
 	{
-	    if ( get_ide_disk_info ( (int) 2, (unsigned long) malloc(512), 1 ) == -1 )
+	    if ( get_ide_disk_info ( (int) 2, (unsigned long) kmalloc(512), 1 ) == -1 )
         {
 	        printf("secondary master signature FAIL\n");	
 	    }else{
@@ -644,7 +644,7 @@ void show_ideports_info (void){
     printf("\n Testing secondary slave \n");
 	if ( ide_ports[2].used ==  1 )
 	{
-	    if ( get_ide_disk_info ( (int) 2, (unsigned long) malloc(1024), 0 ) == -1 )
+	    if ( get_ide_disk_info ( (int) 2, (unsigned long) kmalloc(1024), 0 ) == -1 )
         {
 	        printf("secondary slave signature FAIL\n");	
 	    }else{

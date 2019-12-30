@@ -83,23 +83,15 @@ struct ldiv_d
 */
 
 
-#define kmalloc malloc
-#define kfree free
+
+void *kmalloc (size_t size);
+void kfree (void *ptr);
 
 
-/*
- * malloc:
- *    Allocates the requested memory and returns a pointer to it.
- */
-void *malloc (size_t size);
 
 
-/*
- * free:
- *     Libera a memória alocada por malloc.
- */
-void free (void *ptr);
-//void free2(void *ptr);
+
+
 
 
 //Returns a pseudo-random number in the range of 0 to RAND_MAX.

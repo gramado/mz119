@@ -555,7 +555,7 @@ void windowSetUpColorScheme (int type){
 	//
 	
     //Criando o esquema de cores humility. (cinza)
-    humility = (void *) malloc ( sizeof(struct color_scheme_d) );
+    humility = (void *) kmalloc ( sizeof(struct color_scheme_d) );
     
 	if( (void *) humility == NULL )
 	{
@@ -599,13 +599,11 @@ void windowSetUpColorScheme (int type){
 	//
 	
     //Criando o esquema de cores PRIDE. (colorido)
-    pride = (void *) malloc ( sizeof(struct color_scheme_d) );
+    pride = (void *) kmalloc ( sizeof(struct color_scheme_d) );
     
 	if ( (void *) pride == NULL )
 	{
-		printf("windowSetUpColorScheme: pride");
-		die();
-	
+		panic ("windowSetUpColorScheme: pride");
 	}else{
 		
 		//Object.
@@ -1139,7 +1137,7 @@ int windowCreateDedicatedBuffer (struct window_d *window){
 	
 	}else{
 		
-	    window->DedicatedBuffer = (void *) malloc (bufferSize);	
+	    window->DedicatedBuffer = (void *) kmalloc (bufferSize);	
 	    
 	    if( (void *) window->DedicatedBuffer == NULL )
 	    {
@@ -3633,7 +3631,7 @@ int init_window_manager (void){
     // #bugbug 
     // Não sei se estamos realmente usando isso.	
 	
-	WindowProcedure = (void *) malloc ( sizeof( struct window_procedure_d ) );
+	WindowProcedure = (void *) kmalloc ( sizeof( struct window_procedure_d ) );
 	
 	if ( (void *) WindowProcedure == NULL )
 	{
@@ -3690,12 +3688,11 @@ int init_windows (void){
 	// Inicializando a estrutura do retângulo da área de cliente.
 	//
 	
-	rectClientArea = (void *) malloc ( sizeof(struct rect_d) );
+	rectClientArea = (void *) kmalloc ( sizeof(struct rect_d) );
     
 	if ( (void *) rectClientArea == NULL )
 	{	
-	    printf("init_windows: rectClientArea\n");
-		die();
+	    panic ("init_windows: rectClientArea\n");
 		
 	} else {
 	    setClientAreaRect( 0, 0, 0, 0);	
@@ -3807,7 +3804,7 @@ int init_windows (void){
 
 //BackBufferSupport:
 	
-	BackBufferInfo = (void *) malloc ( sizeof(struct backbufferinfo_d) );
+	BackBufferInfo = (void *) kmalloc ( sizeof(struct backbufferinfo_d) );
     
 	if ( (void *) BackBufferInfo == NULL )
 	{
@@ -3829,7 +3826,7 @@ int init_windows (void){
 	
 //FrontBufferSupport:
 
-	FrontBufferInfo = (void *) malloc ( sizeof(struct frontbufferinfo_d) );
+	FrontBufferInfo = (void *) kmalloc ( sizeof(struct frontbufferinfo_d) );
     
 	if ( (void *) FrontBufferInfo == NULL )
 	{	

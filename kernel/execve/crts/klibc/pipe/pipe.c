@@ -67,7 +67,7 @@ int sys_dup ( int oldfd ){
 	    return -1;		
 	}else{
         
-		stream_new = (void *) malloc ( sizeof(FILE) );
+		stream_new = (void *) kmalloc ( sizeof(FILE) );
 		
 		if ( (void *) stream_new == NULL )
 		{
@@ -333,7 +333,7 @@ int sys_pipe ( int *pipefd ){
 	
 	// buffer
 	
-	char *buff = (char *) malloc (BUFSIZ);
+	char *buff = (char *) kmalloc (BUFSIZ);
 	//char *buff = (char *) newPage ();
 	
     if ( (void *) buff == NULL )
@@ -344,8 +344,8 @@ int sys_pipe ( int *pipefd ){
 	}
 	
 	//estruturas 
-	stream1 = (void *) malloc ( sizeof(FILE) );
-	stream2 = (void *) malloc ( sizeof(FILE) );
+	stream1 = (void *) kmalloc ( sizeof(FILE) );
+	stream2 = (void *) kmalloc ( sizeof(FILE) );
 	
 	if ( (void *) stream1 == NULL || (void *) stream2 == NULL )
 	{

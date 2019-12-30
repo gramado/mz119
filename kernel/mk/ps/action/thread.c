@@ -775,7 +775,7 @@ struct thread_d *create_thread ( struct room_d *room,
 	//Alocando memória para a estrutura da thread.
 	//Obs: Estamos alocando memória dentro do heap do kernel.
 	
-	Thread = (void *) malloc ( sizeof(struct thread_d) );	
+	Thread = (void *) kmalloc ( sizeof(struct thread_d) );	
 	
     if ( (void *) Thread == NULL )
     {

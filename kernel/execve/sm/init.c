@@ -118,7 +118,7 @@ int init_architecture_dependent (void){
 	//
 	// VAMOS ANTECIPAR ESSA INICIALIZAÇÃO NA TENTATIVA DE
 	// ANTECIPARMOS O USO DE MENSAGENS.
-    // >>> mas essa rotina precisa do malloc ,,,
+    // >>> mas essa rotina precisa do kmalloc ,,,
 	//então tem que ser depois da inicialização do stdio.
 	
 	
@@ -478,13 +478,13 @@ void init_globals (void){
 	
 	//alocando memória para as estruturas do fluxo padrão.
 	//#bugbug: vamos deixar que stdioInitialize faça isso.
-	//stdin = (void *) malloc( sizeof(FILE) );
-	//stdout = (void *) malloc( sizeof(FILE) );
-	//stderr = (void *) malloc( sizeof(FILE) );
+	//stdin = (void *) kmalloc( sizeof(FILE) );
+	//stdout = (void *) kmalloc( sizeof(FILE) );
+	//stderr = (void *) kmalloc( sizeof(FILE) );
 	
-	//kstdin  = (void*) malloc( sizeof(FILE) );
-	//kstdout = (void*) malloc( sizeof(FILE) );
-	//kstderr = (void*) malloc( sizeof(FILE) );
+	//kstdin  = (void*) kmalloc( sizeof(FILE) );
+	//kstdout = (void*) kmalloc( sizeof(FILE) );
+	//kstderr = (void*) kmalloc( sizeof(FILE) );
 	
     //inicializa as estruturas do fluxo padrão.	
 	stdioInitialize ();
@@ -729,7 +729,7 @@ int init (void){
 	//A estrutura 'storage' vai ser o nível mais baixo.
 	//É nela que as outras partes devem se basear.
 		
-	storage = (void *) malloc ( sizeof(struct storage_d) );
+	storage = (void *) kmalloc ( sizeof(struct storage_d) );
 	
 	if ( (void *) storage == NULL )
 	{
@@ -789,34 +789,33 @@ int init (void){
 	printf("sm-init-init: Platform\n");	
 #endif
 
-	Platform = (void *) malloc ( sizeof(struct platform_d) );
-	
-	if( (void *) Platform ==  NULL )
-	{
-		// # This is the Root struct #
-		panic ("sm-init-init: Platform\n");	
-	
-	}else{
-		
+    // #important
+    // This is the Root struct. :)
+
+    Platform = (void *) kmalloc ( sizeof(struct platform_d) );
+
+    if( (void *) Platform ==  NULL )
+    {
+        panic ("sm-init-init: Platform\n");	
+    }else{
+
 		//Hardware
-	    Hardware = (void *) malloc ( sizeof(struct hardware_d) );
+        Hardware = (void *) kmalloc ( sizeof(struct hardware_d) );
 		
 	    if( (void *) Hardware ==  NULL )
 		{
-		    printf("sm-init-init: Hardware\n");	
-	        die();
+		    panic ("sm-init-init: Hardware\n");	
 		}else{
 		    Platform->Hardware = (void *) Hardware;
             //printf(".");			
 		};
 		
 		//Firmware
-	    Firmware = (void *) malloc ( sizeof(struct firmware_d) );
+	    Firmware = (void *) kmalloc ( sizeof(struct firmware_d) );
 	    
 		if( (void *) Firmware ==  NULL )
 		{
-		    printf("sm-init-init: Firmware\n");	
-	        die();
+		    panic ("sm-init-init: Firmware\n");
 		}else{
 		    Platform->Firmware = (void *) Firmware;
             //printf(".");  			
@@ -829,12 +828,11 @@ int init (void){
 		// *IMPORTATE: Aqui estamos inicializando a estrutura do systema.
 		//
 		
-		System = (void *) malloc ( sizeof(struct system_d) );
+		System = (void *) kmalloc ( sizeof(struct system_d) );
 		
 	    if( (void *) System ==  NULL )
 		{
-		    printf("sm-init-init: System\n");	
-	        die();
+		    panic ("sm-init-init: System\n");
 		}else{
 			
 			System->used = 1;    //Sinaliza que a estrutura esta em uso.
@@ -846,17 +844,15 @@ int init (void){
 		
 		//printf(" Done!\n");	
 		//...
-	};
-		
+    };
 
 	
 	//Fase 1: Inicia a parte independente da arquitetura.
-	Status = (int) init_architecture_independent ();
-	if (Status != 0)
-	{
-        printf ("init: init_architecture_independent fail\n"); 
-        die ();
-	}
+    Status = (int) init_architecture_independent ();
+    if (Status != 0)
+    {
+        panic ("init: init_architecture_independent fail\n"); 
+    }
 	KeInitPhase = 1;
     
 	//Fase 2: Inicia a parte de arquitetura especifica da máquina atual.
@@ -864,15 +860,10 @@ int init (void){
     Status = (int) init_architecture_dependent ();
     if (Status != 0)
     {
-        printf ("init: init_architecture_dependent fail\n"); 
-        die ();
+        panic ("init: init_architecture_dependent fail\n"); 
     }
 
-    //#debug
-   // printf ("init: *breakpoint\n"); 
-   // refresh_screen();
-   // while(1){}
-	
+
 	
 	// #importante
 	// So podemos carregar o diretorio raiz depois que inicializamos o 

@@ -32,9 +32,8 @@ struct socket_d *create_socket ( unsigned long ip, unsigned short port ){
 
     struct socket_d *s;
 
-	// Socket structure.
 
-    s = (void *) malloc ( sizeof( struct socket_d ) );
+    s = (void *) kmalloc ( sizeof( struct socket_d ) );
 
     if ( (void *) s ==  NULL )
     {

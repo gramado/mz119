@@ -291,7 +291,7 @@ unsigned short rtcGetBaseMemory (void){
 
 void *get_cmos_info (void){
 	
-	Rtc = (void *) malloc ( sizeof(struct rtc_d) );
+	Rtc = (void *) kmalloc ( sizeof(struct rtc_d) );
 	
     if ( (void *) Rtc == NULL)
 	{
@@ -304,9 +304,9 @@ void *get_cmos_info (void){
 	}else{
 		
 	    //time
-	    Rtc->Seconds = read_cmos_bcd(0);  // Seconds.
-	    Rtc->Minutes = read_cmos_bcd(2);  // Minutes.
-	    Rtc->Hours   = read_cmos_bcd(4);  // Hours.
+	    Rtc->Seconds = read_cmos_bcd (0);  // Seconds.
+	    Rtc->Minutes = read_cmos_bcd (2);  // Minutes.
+	    Rtc->Hours   = read_cmos_bcd (4);  // Hours.
 
 	    //date.
 	    Rtc->Year = read_cmos_bcd(9);    

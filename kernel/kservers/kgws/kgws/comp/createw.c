@@ -479,7 +479,7 @@ void *CreateWindow ( unsigned long type,
 
 	//Alocando memória para a estrutura da janela.
 
-	window = (void *) malloc ( sizeof(struct window_d) );
+	window = (void *) kmalloc ( sizeof(struct window_d) );
 
 	if ( (void *) window == NULL )
 	{
@@ -632,7 +632,7 @@ void *CreateWindow ( unsigned long type,
 		// pois tem janela que não tem ponteiro. 
 		// JÁ QUE NO MOMENTO ESTAMOS ENFRENTANDO ALGUNS TRAVAMENTOS.
 		//
-		//window->cursor = (void*) malloc( sizeof(struct cursor_d) );
+		//window->cursor = (void*) kmalloc( sizeof(struct cursor_d) );
 
 		//@@todo: Criar uma função: Inicializarcursor(struct cursor_d *cursor).
 		//if(window->cursor != NULL)
@@ -1455,7 +1455,7 @@ void *CreateWindow ( unsigned long type,
 		// Obs: A Client Area é apenas um retângulo.
 		//@todo: Passar a estrutura de janela.
 
-		clientRect = (void *) malloc ( sizeof(struct rect_d) ); 
+		clientRect = (void *) kmalloc ( sizeof(struct rect_d) ); 
 		
 		if ( (void *) clientRect == NULL )
 		{

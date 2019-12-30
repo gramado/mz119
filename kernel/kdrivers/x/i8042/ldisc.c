@@ -1,5 +1,5 @@
 /*
- * File: ldisc.c
+ * File: x/i8042ldisc.c
  *
  * Descrição:
  *    Esse será o gerenciador de Line Discipline.
@@ -42,26 +42,28 @@ void initialize_system_message_queue (void){
 	for ( i=0; i<SYSTEM_MESSAGE_QUEUE_MAX; i++ )
 	{
 		
-		m = (void *) malloc ( sizeof(struct message_d) );
+		m = (void *) kmalloc ( sizeof(struct message_d) );
 		
 		if ( (void *) m == NULL )
 		{
-			printf("unblocked-ldisc-initialize_system_message_queue:");
-			die();
+			panic ("ldisc-initialize_system_message_queue:");
 		}else{
-			
+
 			m->objectType = ObjectTypeMessage;
 			m->objectClass = ObjectClassKernelObjects;
 		    m->used = 1;
 			m->magic = 1234;
 			m->empty = 1;
-            system_message_queue[i] = (unsigned long) m;		
+
+            system_message_queue[i] = (unsigned long) m;
 		}; 
 	};
-	
+
+
 	system_message_write = 0;
 	system_message_read = 0;
-};
+}
+
 
 
 

@@ -215,7 +215,7 @@ do_create:
 	
 menuStructure:
 	
-	menuDefault = (void *) malloc( sizeof( struct menu_d ) );  
+	menuDefault = (void *) kmalloc( sizeof( struct menu_d ) );  
 	
 	if ( (void *) menuDefault == NULL )
 	{
@@ -279,7 +279,7 @@ menuStructure:
 	/*
 	 * O array pode ser inicializado depois.
 	 *
-	    menuDefault->Items = malloc( sizeof(struct menuitem_d) * iCount );
+	    menuDefault->Items = kmalloc( sizeof(struct menuitem_d) * iCount );
         if( (void*) menuDefault->Items == NULL)
 	    {
 	        printf("create_menu error: Menu array struct.\n");
@@ -293,7 +293,7 @@ menuStructure:
     //
 	
     /*	
-    LinkedList = (void*) malloc( sizeof(struct linkedlist_d) );
+    LinkedList = (void*) kmalloc( sizeof(struct linkedlist_d) );
     if( (void*) LinkedList == NULL )
 	{
 	    printf("create_menu: LinkedList\n");
@@ -707,7 +707,7 @@ ArraySupport:
 	// Multiplicamos para encontrar a quantidade a ser alocada.
     // ?? #bugbug: precisamos rever isso.
     
-    a->Items = (void *) malloc ( sizeof( struct menuitem_d ) * initialSize );	
+    a->Items = (void *) kmalloc ( sizeof( struct menuitem_d ) * initialSize );	
 	
 	if ( (void *) a->Items == NULL )
 	{
@@ -768,7 +768,7 @@ void insertArray( Array *a, Student element)
     }
 
     // Copy name
-    a->array[a->used].name = (char*)malloc(strlen(element.name) + 1);
+    a->array[a->used].name = (char*) kmalloc(strlen(element.name) + 1);
     strcpy(a->array[a->used].name, element.name);
 
     // Copy ID

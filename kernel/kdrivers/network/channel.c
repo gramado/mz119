@@ -32,7 +32,7 @@ void *CreateChannel ( struct process_d *OwnerProcess,
 {
     struct channel_d *NewChannel;
 
-    NewChannel = (void *) malloc ( sizeof(struct channel_d) );
+    NewChannel = (void *) kmalloc ( sizeof(struct channel_d) );
 
     if( (void *) NewChannel == NULL )
     {

@@ -113,7 +113,7 @@ void *create_menubar ( struct window_d *pwindow ){
 	//
 	
 	// Menu structure. (Cria uma estrutura para o menu da menubar).
-	gui->mb = (void *) malloc ( sizeof(struct menu_d) );
+	gui->mb = (void *) kmalloc ( sizeof(struct menu_d) );
 	
     if ( (void *) gui->mb == NULL )
 	{
@@ -137,7 +137,7 @@ void *create_menubar ( struct window_d *pwindow ){
 	};
 	
 	// Array para items.
-	gui->mb->Items = (void *) malloc ( sizeof(struct menuitem_d) * 16 );
+	gui->mb->Items = (void *) kmalloc ( sizeof(struct menuitem_d) * 16 );
     
 	if ( (void *) gui->mb->Items == NULL )
 	{
@@ -148,7 +148,7 @@ void *create_menubar ( struct window_d *pwindow ){
 	
 	/*
     // Linked list. (linked list na menubar).	
-    mb_linkedlist = (void*) malloc( sizeof(struct linkedlist_d));
+    mb_linkedlist = (void*) kmalloc( sizeof(struct linkedlist_d));
     if( (void*) mb_linkedlist == NULL){
 	    printf("create_menubar error: linked list struct.\n");
 		refresh_screen();

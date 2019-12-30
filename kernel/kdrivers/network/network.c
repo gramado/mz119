@@ -234,7 +234,7 @@ int networkInit (void){
 	// Host info struct. 
 	// See: host.h
 
-    HostInfo = (struct host_info_d *) malloc ( sizeof( struct host_info_d ) ); 
+    HostInfo = (struct host_info_d *) kmalloc ( sizeof( struct host_info_d ) ); 
 
     if ( (void *) HostInfo == NULL )
     {
@@ -247,7 +247,7 @@ int networkInit (void){
 		HostInfo->magic = 1234;
 
         //host name.
-		HostInfo->hostName = (char *) malloc ( HOSTNAME_BUFFER_SIZE );
+		HostInfo->hostName = (char *) kmalloc ( HOSTNAME_BUFFER_SIZE );
 		HostInfo->hostName_len = (size_t) HOSTNAME_BUFFER_SIZE;
 		
 		
@@ -675,7 +675,7 @@ network_SendIPV4_UDP ( uint8_t source_ip[4],
 	// # ethernet header #
 	//
 
-    eh = (void *) malloc ( sizeof(struct ether_header ) );
+    eh = (void *) kmalloc ( sizeof(struct ether_header ) );
 
     if ( (void *) eh == NULL)
     {
@@ -708,7 +708,7 @@ network_SendIPV4_UDP ( uint8_t source_ip[4],
 	// # ipv4 header #
 	//
 
-    ipv4 = (void *) malloc ( sizeof(struct ipv4_header_d) );
+    ipv4 = (void *) kmalloc ( sizeof(struct ipv4_header_d) );
 
     if ( (void *) ipv4 == NULL)
     {
@@ -748,7 +748,7 @@ network_SendIPV4_UDP ( uint8_t source_ip[4],
 	// # udp header #
 	//
 
-    udp = (void *) malloc ( sizeof(struct udp_header_d) );
+    udp = (void *) kmalloc ( sizeof(struct udp_header_d) );
 
     if ( (void *) udp == NULL)
     {
@@ -977,7 +977,7 @@ SendARP ( uint8_t source_ip[4],
 	// # ethernet header #
 	//
 
-    eh = (void *) malloc ( sizeof(struct ether_header ) );
+    eh = (void *) kmalloc ( sizeof(struct ether_header ) );
 
     if ( (void *) eh == NULL)
     {
@@ -1008,7 +1008,7 @@ SendARP ( uint8_t source_ip[4],
 	// # arp header #
 	//
 
-    h = (void *) malloc ( sizeof(struct  ether_arp) );
+    h = (void *) kmalloc ( sizeof(struct  ether_arp) );
 
     if ( (void *) h == NULL)
     {
@@ -1315,7 +1315,6 @@ int network_decode_buffer ( unsigned long buffer_address ){
     {
         printf ("network_decode_buffer: eh");
         return 1;
-        //die ();
     }else{
 
         //printf("src: ");

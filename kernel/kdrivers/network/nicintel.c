@@ -137,11 +137,7 @@ e1000_init_nic ( unsigned char bus,
     if ( (void *) pci_device ==  NULL )
     {
 
-        printf ("e1000_init_nic: pci_device\n");
-        die ();
-
-		//return (int) -1;
-
+        panic ("e1000_init_nic: pci_device\n");
     }else{
 
         pci_device->used = 1;
@@ -168,11 +164,10 @@ e1000_init_nic ( unsigned char bus,
 		// +usar if else.
 		// já fizemos essa checagem antes.
 
-		if ( pci_device->Vendor != 0x8086 || pci_device->Device != 0x100E )
+		if ( pci_device->Vendor != 0x8086 || 
+		     pci_device->Device != 0x100E )
 		{
-			//printf ("#debug breakpoint\n");
-			printf ("e1000_init_nic: 82540EM not found\n");
-			die ();
+			panic ("e1000_init_nic: 82540EM not found\n");
 		}
 
 
@@ -242,14 +237,11 @@ e1000_init_nic ( unsigned char bus,
 	// #todo: 
 	// Checar essa estrutura.
 
-	currentNIC = (void *) malloc ( sizeof( struct intel_nic_info_d ) );
+	currentNIC = (void *) kmalloc ( sizeof( struct intel_nic_info_d ) );
 	
 	if ( (void *) currentNIC ==  NULL )
 	{
-		printf ("e1000_init_nic: currentNIC struct\n");
-		die ();
-		//return (int) -1;
-		
+		panic ("e1000_init_nic: currentNIC struct\n");
 	} else {
 
 
@@ -1174,7 +1166,7 @@ uint32_t E1000ReadCommand (struct intel_nic_info_d *d, uint16_t addr){
 
 uint32_t E1000AllocCont ( uint32_t amount, uint32_t *virt ){
 	
-	uint32_t va = (uint32_t) malloc ( (uint32_t) amount );
+	uint32_t va = (uint32_t) kmalloc ( (uint32_t) amount );
 	
 	*virt = va;
 	
@@ -1215,7 +1207,7 @@ void NetSendEthPacket ( PNetworkDevice dev,
 	
 	// Let's build our ethernet frame!
 	//PEthFrame frame = (PEthFrame) MemAllocate ( sizeof(EthFrame) + len);	
-	PEthFrame frame = (PEthFrame) malloc ( sizeof(EthFrame) + len);	
+	PEthFrame frame = (PEthFrame) kmalloc ( sizeof(EthFrame) + len);	
 	
 	// Failed :(
 	//if (frame == Null) {

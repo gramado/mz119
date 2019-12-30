@@ -462,10 +462,10 @@ void init_cpu (void){
 	// Podemos atribuílo como Current ao fim da rotina.
 	
 	//
-	//  ## Processor struct ##
+	// Processor struct
 	//
 	
-	processor = (void *) malloc ( sizeof(struct tagProcessor) );
+	processor = (void *) kmalloc ( sizeof(struct tagProcessor) );
 	
 	if ( (void *) processor == NULL )
 	{
@@ -477,13 +477,14 @@ void init_cpu (void){
 	
 	    //Inicializa alguns valores da estrurura.
 		
-	    processor->Gdt = (unsigned long) getGdt();
-	    processor->Idt = (unsigned long) getIdt();
+	    processor->Gdt = (unsigned long) getGdt ();
+	    processor->Idt = (unsigned long) getIdt ();
 	    processor->Tss = 0;  //getTss();
         
 		//...
         
-		if ( (void *) Hardware != NULL ){
+		if ( (void *) Hardware != NULL )
+		{
 			Hardware->Processor = processor;
 		}
 		

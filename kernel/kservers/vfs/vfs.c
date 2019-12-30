@@ -29,7 +29,7 @@ void vfsInit (void){
 	printf("Initilizing VFS..\n");
 #endif	
 	
-	storage->vfs = malloc ( sizeof(struct vfs_d) );
+	storage->vfs = kmalloc ( sizeof(struct vfs_d) );
 	
 	if ( (void *) storage->vfs == NULL )
 	{
@@ -46,7 +46,7 @@ void vfsInit (void){
         storage->vfs->help_string = "Virtual File System help string @todo";
 
 	    // ## root dir address  ##
-	    storage->vfs->rootdir_address = (unsigned long) malloc ( VFS_ROOTDIR_NUMBER_OF_ENTRIES * VFS_ROOTDIR_ENTRY_SIZE );
+	    storage->vfs->rootdir_address = (unsigned long) kmalloc ( VFS_ROOTDIR_NUMBER_OF_ENTRIES * VFS_ROOTDIR_ENTRY_SIZE );
 	
 	    if ( storage->vfs->rootdir_address = 0 )
 	    {
@@ -63,7 +63,7 @@ void vfsInit (void){
 	//foi definido em stdio.h
 	//FILE *vfs;
 	
-	vfs = (FILE *) malloc ( sizeof(FILE) );
+	vfs = (FILE *) kmalloc ( sizeof(FILE) );
 	
 	if ( (void *) vfs == NULL )
 	{
