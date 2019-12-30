@@ -2362,32 +2362,32 @@ Linker script and memory map
                 0x00000000c002fd60                _SelectNextThread
                 0x00000000c002fe16                _check_for_standby
                 0x00000000c002fea0                _check_quantum
- .text          0x00000000c002ff0f      0xc8f create.o
+ .text          0x00000000c002ff0f      0xc8a create.o
                 0x00000000c002ff0f                _KiCreateIdle
                 0x00000000c00303a7                _KiCreateShell
                 0x00000000c00307a0                _KiCreateTaskManager
- .text          0x00000000c0030b9e      0x41c mk.o
-                0x00000000c0030b9e                _jobcontrol
-                0x00000000c0030ca6                _jobcheck
-                0x00000000c0030d76                _microkernelTestLimit
-                0x00000000c0030d7c                _sys_dead_thread_collector
-                0x00000000c0030d8a                _sys_exit_process
-                0x00000000c0030da4                _sys_exit_thread
-                0x00000000c0030dbb                _sys_create_process
-                0x00000000c0030de9                _sys_create_thread
-                0x00000000c0030e11                _sys_fork
-                0x00000000c0030e1e                _sys_getpid
-                0x00000000c0030e28                _sys_getppid
-                0x00000000c0030e8d                _init_microkernel
- .text          0x00000000c0030fba      0x43e request.o
-                0x00000000c0030fba                _KiRequest
-                0x00000000c0030fee                _request
-                0x00000000c0031205                _create_request
-                0x00000000c00312ac                _clear_request
-                0x00000000c0031334                _do_request_12
-                0x00000000c00313f8                _code_end = .
+ .text          0x00000000c0030b99      0x41c mk.o
+                0x00000000c0030b99                _jobcontrol
+                0x00000000c0030ca1                _jobcheck
+                0x00000000c0030d71                _microkernelTestLimit
+                0x00000000c0030d77                _sys_dead_thread_collector
+                0x00000000c0030d85                _sys_exit_process
+                0x00000000c0030d9f                _sys_exit_thread
+                0x00000000c0030db6                _sys_create_process
+                0x00000000c0030de4                _sys_create_thread
+                0x00000000c0030e0c                _sys_fork
+                0x00000000c0030e19                _sys_getpid
+                0x00000000c0030e23                _sys_getppid
+                0x00000000c0030e88                _init_microkernel
+ .text          0x00000000c0030fb5      0x43e request.o
+                0x00000000c0030fb5                _KiRequest
+                0x00000000c0030fe9                _request
+                0x00000000c0031200                _create_request
+                0x00000000c00312a7                _clear_request
+                0x00000000c003132f                _do_request_12
+                0x00000000c00313f3                _code_end = .
                 0x00000000c0032000                . = ALIGN (0x1000)
- *fill*         0x00000000c00313f8      0xc08 
+ *fill*         0x00000000c00313f3      0xc0d 
 
 .iplt           0x00000000c0032000        0x0
  .iplt          0x00000000c0032000        0x0 head.o
@@ -2567,13 +2567,13 @@ Linker script and memory map
  .rodata        0x00000000c003c134       0x4b sched.o
  *fill*         0x00000000c003c17f        0x1 
  .rodata        0x00000000c003c180      0x174 schedi.o
- .rodata        0x00000000c003c2f4      0x199 create.o
- *fill*         0x00000000c003c48d        0x3 
- .rodata        0x00000000c003c490       0x58 mk.o
- .rodata        0x00000000c003c4e8      0x139 request.o
-                0x00000000c003c621                _rodata_end = .
+ .rodata        0x00000000c003c2f4      0x16a create.o
+ *fill*         0x00000000c003c45e        0x2 
+ .rodata        0x00000000c003c460       0x58 mk.o
+ .rodata        0x00000000c003c4b8      0x139 request.o
+                0x00000000c003c5f1                _rodata_end = .
                 0x00000000c003d000                . = ALIGN (0x1000)
- *fill*         0x00000000c003c621      0x9df 
+ *fill*         0x00000000c003c5f1      0xa0f 
 
 .eh_frame       0x00000000c003d000     0x8aec
  .eh_frame      0x00000000c003d000       0x38 main.o

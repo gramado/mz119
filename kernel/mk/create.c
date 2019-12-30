@@ -45,39 +45,43 @@
 
 void *KiCreateIdle (void){
 
-    void *idleStack;                    // Stack pointer.
+    // using IdleThread structure.
+    // Fake idle. It's a idle in ring3.
+
     char *ThreadName = "idlethread";    // Name.
+
+    void *idleStack;                    // Stack pointer.
+
 
     int r;
     int q;  //msg queue.
 
 
-	//struct.
-	
-	IdleThread = (void *) malloc ( sizeof(struct thread_d) );	
-	
-	if ( (void *) IdleThread == NULL )
-	{
-	    panic ("pc-action-create-KiCreateIdle: IdleThread\n");
-		
-	} else {
-		
-	    //Ver se a estrutura do processo é válida.
-		if ( (void *) InitProcess == NULL )
-		{
-	        panic ("pc-action-create-KiCreateIdle: InitProcess\n");
+    // Struct.
 
-	    }else{
-			
-			//#todo
-			//checar validade ??
-			
-			//Indica à qual processo a thread pertence.
-	        IdleThread->process = (void *) InitProcess;
-		};		
-		
-	    //Continua...
-	};
+    IdleThread = (void *) malloc ( sizeof(struct thread_d) );	
+
+    if ( (void *) IdleThread == NULL )
+    {
+        panic ("mk-create-KiCreateIdle: IdleThread\n");
+
+    } else {
+
+        // Ver se a estrutura do processo é válida.
+        if ( (void *) InitProcess == NULL )
+        {
+            panic ("create-KiCreateIdle: InitProcess\n");
+
+        }else{
+
+            // ??
+            // e a validade da estrutura de processo? 
+
+            //Indica à qual processo a thread pertence.
+            IdleThread->process = (void *) InitProcess;
+        };
+        //Continua...
+    };
 
 
 	// @todo: 
@@ -98,65 +102,58 @@ void *KiCreateIdle (void){
 	//#BugBug.
 	// Estamos alocando mas não etamos usando.
 	//# podemos usar o alocador de páginas e alocar uma página para isso.
-	
-	idleStack = (void *) malloc (4*1024);
-	
-	if ( (void *) idleStack == NULL )
-	{
-	    panic ("pc-action-create-KiCreateIdle: idleStack\n");
-	}
-	
-	
-	
-	//#debug
-	//Ok isso funconou, vamos avançar e econtrar qual e1 o problema com essa rotina.
-	
-	//printf("pc-action-create-KiCreateIdle: struct OK\n");
-	//refresh_screen();
-	//while(1){}
-	
-	// @todo: 
+
+    // Stack.
+
+    idleStack = (void *) malloc (4*1024);
+
+    if ( (void *) idleStack == NULL )
+    {
+        panic ("create-KiCreateIdle: idleStack\n");
+    }
+
+
+	// #todo: 
 	//     É possível usar a função create_thread nesse momento.
 	//     Mas é mais veloz fazer o máximo em uma função só.
 	//     Mas por enquanto serão feitas à mão essas primeiras threads. 
-	
-	//@todo: objectType, objectClass, appMode
-	
+
+
+	// #todo: 
+	// objectType, objectClass, appMode
+
+
+    IdleThread->used = 1;
+    IdleThread->magic = 1234;
+
+
     //Identificadores.
 	IdleThread->tid = 0;
 	IdleThread->ownerPID = (int) InitProcess->pid;  
-	
-	
-	//#debug
-	//testando ... usar as informaç~oes da estrutura de processo.
-	//ok isso funcionou ... vamo prosseguir.
-	
-	//printf("pc-action-create-KiCreateIdle:  OK\n");
-	//refresh_screen();
-	//while(1){}
 
-	
-	
-	IdleThread->used = 1;
-	IdleThread->magic = 1234;
+
+
 	IdleThread->name_address = (unsigned long) ThreadName;   //Funciona.
 
-	IdleThread->process = (void *) InitProcess;
-	
-	
+    // Obs: Já fizemos isso no início da rotina.
+    IdleThread->process = (void *) InitProcess;
+
+
 	//
-	//  ## Directory ##
+	// Page Directory
 	//
-	
+
 	IdleThread->DirectoryPA = (unsigned long ) InitProcess->DirectoryPA;	
-	
-	
-	for ( r=0; r<8; r++ ){
-		IdleThread->wait_reason[r] = (int) 0;
-	}	
-	
-	
-	IdleThread->plane = BACKGROUND;
+
+
+    // Wait reason.
+
+    for ( r=0; r<8; r++ ){
+        IdleThread->wait_reason[r] = (int) 0;
+    };
+
+
+    IdleThread->plane = BACKGROUND;
 
 	// Procedimento de janela.
     //O procedimento.
@@ -191,25 +188,20 @@ void *KiCreateIdle (void){
 
 
 	//Características.
-	IdleThread->type = TYPE_IDLE;    //TYPE_SYSTEM.
-	IdleThread->iopl = RING3;        //Idle thread é uma thread de um processo em user mode.
-	IdleThread->state = INITIALIZED;   
-	    
+    IdleThread->type = TYPE_IDLE;    //TYPE_SYSTEM.
+    IdleThread->iopl = RING3;        //Idle thread é uma thread de um processo em user mode.
+    IdleThread->state = INITIALIZED;   
+
+    // Priorities.
+
     IdleThread->base_priority = KernelProcess->base_priority;  //básica.  
-	//IdleThread->base_priority = PRIORITY_NORMAL;
-	
-	//#debug
-	//testando se d'a problemas usar a estrtutura do processo kernel
-	//printf("pc-action-create-KiCreateIdle:  >>>> OK\n");
-	//refresh_screen();
-	//while(1){}
-	
-	
-  	IdleThread->priority = IdleThread->base_priority;          //dinâmica.
-	
+    //IdleThread->base_priority = PRIORITY_NORMAL;
+    IdleThread->priority = IdleThread->base_priority;          //dinâmica.
+
+
 	IdleThread->saved = 0; 
 	IdleThread->preempted = UNPREEMPTABLE; 
-	
+
 	//Temporizadores.
 	IdleThread->step = 0;          
 	IdleThread->quantum = QUANTUM_BASE;
@@ -248,9 +240,12 @@ void *KiCreateIdle (void){
 	//	
 	
 	//if(MachineType == i386Type){...};
-	
-	//Context.
-	//@todo: Isso deve ser uma estrutura de contexto.
+
+
+    // Context.
+    // #todo: 
+    // Isso deve ser uma estrutura de contexto.
+
 	IdleThread->ss  = 0x23;                          //RING 3.
 	IdleThread->esp = (unsigned long) GRAMADOCORE_IDLETHREAD_STACK; //0x0044FFF0;    //idleStack; (*** RING 3)
 	IdleThread->eflags = 0x3200;  //0x3202, pois o bit 1 é reservado e está sempre ligado.
@@ -270,7 +265,7 @@ void *KiCreateIdle (void){
 	//...
 	
 	//O endereço incial, para controle.
-	IdleThread->initial_eip = (unsigned long) IdleThread->eip; 	
+	IdleThread->initial_eip = (unsigned long) IdleThread->eip; 
 	
 	//#bugbug
 	//Obs: As estruturas precisam já estar devidamente inicializadas.
@@ -322,7 +317,7 @@ void *KiCreateIdle (void){
     
 	// * MOVEMENT 1 ( Initialized ---> Standby ).
 	SelectForExecution (IdleThread);    
-   	
+
 	return (void *) IdleThread;
 }
 
@@ -335,11 +330,13 @@ void *KiCreateIdle (void){
  */
 
 void *KiCreateShell (void){
-	
-    void *shellStack;                    // Stack pointer. 
-	struct thread_d *t;
-	char *ThreadName = "shellthread";    // Name.
 
+    struct thread_d *t;
+
+    char *ThreadName = "shellthread";    // Name.
+
+    void *shellStack;                    // Stack pointer. 
+    
     int r;
     int q; //msg queue.
 
@@ -347,54 +344,61 @@ void *KiCreateShell (void){
     // todo: checar o tipo de processador antes de configurar o contexto.
 
 	// PID=1 Shell (RING 3).  
-	
-	if ( (void *) ShellProcess == NULL )
-	{
-	    panic ("pc-create-KiCreateShell: ShellProcess\n");
-	}
-	
+
+    if ( (void *) ShellProcess == NULL )
+    {
+        panic ("create-KiCreateShell: ShellProcess\n");
+    }
+
+
 	//Thread.
-	t = (void *) malloc ( sizeof(struct thread_d) );
-	
-	if ( (void *) t == NULL )
-	{
-	    panic ("pc-create-KiCreateShell: t \n");
-	}else{  
-	    //Indica à qual proesso a thread pertence.
-	    t->process = (void*) ShellProcess; 
-	};
+    t = (void *) malloc ( sizeof(struct thread_d) );
+
+    if ( (void *) t == NULL )
+    {
+        panic ("create-KiCreateShell: t \n");
+    }else{  
+        //Indica à qual proesso a thread pertence.
+        t->process = (void*) ShellProcess; 
+    };
+
 
 	//Stack.
-	shellStack = (void*) malloc(4*1024);
-	
-	if ( (void *) shellStack == NULL )
-	{
-	    panic ("pc-create-KiCreateShell: shellStack\n");
-	}
+    shellStack = (void*) malloc(4*1024);
+
+    if ( (void *) shellStack == NULL )
+    {
+        panic ("create-KiCreateShell: shellStack\n");
+    }
 
 
-	//@todo: objectType, objectClass, appMode
+	// #todo: 
+	// objectType, objectClass, appMode
+
+
+    t->used = 1;
+    t->magic = 1234;
+
 
     //Identificadores.       	
 	t->tid = 1;     
 	t->ownerPID = (int) ShellProcess->pid;         
-	t->used = 1;
-	t->magic = 1234;
 	t->name_address = (unsigned long) ThreadName;    //Funciona.
-	
 	t->plane = FOREGROUND;
-	
 	t->process = (void *) ShellProcess;  
-	
-	
-	// ## Directory  ## 
-	
+
+
+	// Page Directory 
+
 	t->DirectoryPA = (unsigned long ) ShellProcess->DirectoryPA;
-	
-	for ( r=0; r<8; r++ ){
-		t->wait_reason[r] = (int) 0;
-	}	
-	
+
+    // Wait reason.
+
+    for ( r=0; r<8; r++ ){
+        t->wait_reason[r] = (int) 0;
+    };
+
+
 	//Procedimento de janela.
 	t->procedure = (unsigned long) &system_procedure;
 	
@@ -482,12 +486,17 @@ void *KiCreateShell (void){
 	// RING 3.
 	// 0x0049FFF0;    //shellStack;//  //RING 3 (pilha do app2)(shell?). 
 	// 0x00451000; 
-	
+
+
+	// x86 Context.
+	// Isso deve ir para uma estrutura de contexto.
+
 	t->ss  = 0x23;                         
 	t->esp = (unsigned long) GRAMADOCORE_SHELLTHREAD_STACK; 
 	t->eflags = 0x3200;
 	t->cs = 0x1B;                                
-	t->eip = (unsigned long) GRAMADOCORE_SHELLTHREAD_ENTRYPOINT;     	                                               
+	t->eip = (unsigned long) GRAMADOCORE_SHELLTHREAD_ENTRYPOINT; 
+
 	t->ds = 0x23; 
 	t->es = 0x23; 
 	t->fs = 0x23; 
@@ -498,13 +507,14 @@ void *KiCreateShell (void){
 	t->edx = 0;
 	t->esi = 0;
 	t->edi = 0;
-	t->ebp = 0;	
+	t->ebp = 0;
 	//...
-	
+
+
 	//O endereço incial, para controle.
-	t->initial_eip = (unsigned long) t->eip; 		
-	
-	
+	t->initial_eip = (unsigned long) t->eip; 
+
+
 	//CPU stuffs.
 	//t->cpuID = 0;              //Qual processador.
 	//t->confined = 1;           //Flag, confinado ou não.
@@ -541,11 +551,12 @@ void *KiCreateShell (void){
  */
 
 void *KiCreateTaskManager (void){
-	
-    void *taskmanStack;                    // Stack pointer. 	
-	struct thread_d *t;
-	char *ThreadName = "taskmanthread";    // Name.
 
+    struct thread_d *t;
+
+    char *ThreadName = "taskmanthread";    // Name.
+
+    void *taskmanStack;                    // Stack pointer. 	
 
     int r;
     int q; //msg queue.
@@ -558,7 +569,7 @@ void *KiCreateTaskManager (void){
 	
     if ( (void *) TaskManProcess == NULL )
     {
-        panic ("pc-create-KiCreatetaskManager: TaskManProcess\n");
+        panic ("create-KiCreatetaskManager: TaskManProcess\n");
     }
 
     //Thread.
@@ -568,7 +579,7 @@ void *KiCreateTaskManager (void){
 	
     if( (void *) t == NULL )
     {
-        panic ("pc-create-KiCreateTaskManager: t \n");
+        panic ("create-KiCreateTaskManager: t \n");
 
     }else{  
 	    //Indica à qual proesso a thread pertence.
@@ -585,36 +596,42 @@ void *KiCreateTaskManager (void){
 
     if ( (void *) taskmanStack == NULL )
     {
-        panic ("pc-create-KiCreateTaskManager: taskmanStack\n");
+        panic ("create-KiCreateTaskManager: taskmanStack\n");
     }
 
 
-	//@todo: object
-	
+    // #todo: 
+    // Object support.
+
+
+    t->used = 1;
+    t->magic = 1234;
+
+
     //Identificadores      
-	t->tid = 2;     
-	t->ownerPID = (int) TaskManProcess->pid;         
-	t->used = 1;
-	t->magic = 1234;	
+    t->tid = 2;     
+    t->ownerPID = (int) TaskManProcess->pid;         
+
 	t->name_address = (unsigned long) ThreadName;   //Funciona.
-	
 	t->process = (void *) TaskManProcess;
-	
 	t->plane = BACKGROUND;
-	
-	
-	// # Directory #
-	
-	t->DirectoryPA = (unsigned long ) TaskManProcess->DirectoryPA; 
 
-	for ( r=0; r<8; r++ ){
-		t->wait_reason[r] = (int) 0;
-	}	
-	
-	//Procedimento de janela.
-    
-	t->procedure = (unsigned long) &system_procedure;
 
+
+	// Page Directory.
+
+    t->DirectoryPA = (unsigned long ) TaskManProcess->DirectoryPA; 
+
+    // Wait reason.
+
+    for ( r=0; r<8; r++ ){
+        t->wait_reason[r] = (int) 0;
+    };
+
+
+	// Procedimento de janela.
+
+    t->procedure = (unsigned long) &system_procedure;
 
 
     //
@@ -694,12 +711,17 @@ void *KiCreateTaskManager (void){
 	// RING 3.
 	// 0x004FFFF0; 
 	// 0x004A1000; 
-	
+
+
+    // x86 context.
+    // Isso deve ir para uma estrutura de contexto.
+
 	t->ss  = 0x23;                          
-	t->esp = (unsigned long) GRAMADOCORE_TASKMANTHREAD_STACK;     
+	t->esp = (unsigned long) GRAMADOCORE_TASKMANTHREAD_STACK;  
 	t->eflags = 0x3200;
-	t->cs = 0x1B;                                
-	t->eip = (unsigned long) GRAMADOCORE_TASKMANTHREAD_ENTRYPOINT;     	                                               
+	t->cs = 0x1B;   
+	t->eip = (unsigned long) GRAMADOCORE_TASKMANTHREAD_ENTRYPOINT;
+ 
 	t->ds = 0x23; 
 	t->es = 0x23; 
 	t->fs = 0x23; 
@@ -712,9 +734,10 @@ void *KiCreateTaskManager (void){
 	t->edi = 0;
 	t->ebp = 0;	
 	//...
-	
+
+
 	//O endereço incial, para controle.
-	t->initial_eip = (unsigned long) t->eip; 		
+	t->initial_eip = (unsigned long) t->eip; 
 	
 	//#bugbug
 	//Obs: As estruturas precisam já estar decidamente inicializadas.
