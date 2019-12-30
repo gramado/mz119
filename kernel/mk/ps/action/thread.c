@@ -716,32 +716,32 @@ struct thread_d *create_thread ( struct room_d *room,
                                  char *name)
 {
     //Structures.
-	struct process_d *Process;    //Process.
-	
-	struct thread_d *Thread;      //Thread.
-	struct thread_d *Empty;       //Empty slot.
+    
+    struct process_d *Process;    //Process.
+    struct thread_d *Thread;      //Thread.
+    struct thread_d *Empty;       //Empty slot.
+
 
 	//Identificadores.
-	int ProcessID;
-	int i = USER_BASE_TID;
-	
+    int ProcessID;
+    int i = USER_BASE_TID;
+
 	//wait reasons
-	int w;
+    int w;
+
+    int q; //msg queue.
 	
-	//
 	// Limits da thread atual.
-	//
 	// #bugbug: 
 	// Não sei pra que isso. 
 	// Pois a thread atual não importa.
 	// @todo: deletar isso. 
-	//
 	
 	
 	//#bugbug
 	//@deletar
-	if( current_thread < 0 || 
-	    current_thread >= THREAD_COUNT_MAX )
+	if ( current_thread < 0 || 
+	     current_thread >= THREAD_COUNT_MAX )
 	{
 		return NULL;
 	}
@@ -841,12 +841,32 @@ get_next:
 
 		// Procedimento de janela.
 	    Thread->procedure = (unsigned long) &system_procedure;
-		
+
+        //
+        // Single message;
+        //
+
 		// Msg support. //Argumentos.
 		Thread->window = NULL;        //arg1.
 	    Thread->msg = 0;              //arg2.
 	    Thread->long1 = 0;            //arg3.
-	    Thread->long2 = 0;            //arg4.		
+	    Thread->long2 = 0;            //arg4.
+        //Thread->long
+        //Thread->long
+        //Thread->long
+        //...
+
+        //
+        // Message queue.
+        //
+
+        for ( q=0; q<32; q++ )
+        {
+            Thread->MsgQueue[q] = 0;
+        }
+        Thread->MsgQueueHead = 0;
+        Thread->MsgQueueTail = 0;
+
 
         // Caracteristicas.
 		// TYPE_IDLE;    //?? //Type...@todo: Rever. 

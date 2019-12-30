@@ -2047,11 +2047,13 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 
     Process2->dialog_address = Process1->dialog_address;
 
+    //#bugbug
+    //deleta isso.
 	//message support.
-    Process2->window = Process1->window;    //arg1. 
-    Process2->msg    = Process1->msg;       //arg2.
-    Process2->long1  = Process1->long1;     //arg3.
-    Process2->long2  = Process1->long2;     //arg4.
+    //Process2->window = Process1->window;    //arg1. 
+    //Process2->msg    = Process1->msg;       //arg2.
+    //Process2->long1  = Process1->long1;     //arg3.
+    //Process2->long2  = Process1->long2;     //arg4.
 
 
     Process2->exit_code = Process1->exit_code;
@@ -2561,14 +2563,16 @@ get_next:
 		// Msg
 		//
 
+    //#bugbug
+    //deleta isso.
 		//Msg support.
 		//Argumentos do procedimento de janela.
 		//@todo: Isso pode ser um ponteiro de estrutura,
 		//a fila de mensgens pode ser uma fila de ponteiros.
-        Process->window = NULL;    //arg1. 
-        Process->msg = 0;          //arg2.
-        Process->long1 = 0;        //arg3.
-        Process->long2 = 0;        //arg4.
+        //Process->window = NULL;    //arg1. 
+        //Process->msg = 0;          //arg2.
+        //Process->long1 = 0;        //arg3.
+        //Process->long2 = 0;        //arg4.
 
         //
         // tty support
@@ -2578,8 +2582,7 @@ get_next:
        
         if ( (void *) Process->tty == NULL )
         {
-            printf ("create_process: couldn't create tty\n");
-            die ();
+            panic ("create_process: couldn't create tty\n");
         }
 
         Process->prev = NULL; 

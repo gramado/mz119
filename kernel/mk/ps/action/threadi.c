@@ -106,8 +106,9 @@ void *KiCreateRing0Idle (void){
 	struct thread_d *t;
 	char *ThreadName = "ring0-idle-thread";    // Name.
 	
-	int r;
-	
+    int r;
+
+    int q; //msg queue.
 
 	if ( (void *) KernelProcess == NULL )
 	{
@@ -165,15 +166,35 @@ void *KiCreateRing0Idle (void){
 		t->wait_reason[r] = (int) 0;
 	}	
 
-	
+	// ?? rever ??
 	//Procedimento de janela.
-    
 	t->procedure = (unsigned long) &system_procedure;
 	
-	t->window = NULL;      // arg1.
-	t->msg = 0;            // arg2.
-	t->long1 = 0;          // arg3.
-	t->long2 = 0;          // arg4.
+
+    //
+    // Single message;
+    //
+
+    t->window = NULL;      // arg1.
+    t->msg = 0;            // arg2.
+    t->long1 = 0;          // arg3.
+    t->long2 = 0;          // arg4.
+    //t->long
+    //t->long
+    //t->long
+    //...
+
+    //
+    // Message queue.
+    //
+
+    for ( q=0; q<32; q++ )
+    {
+        t->MsgQueue[q] = 0;
+    }
+    t->MsgQueueHead = 0;
+    t->MsgQueueTail = 0;
+
 
     //Características.	
 	t->type = TYPE_SYSTEM;  

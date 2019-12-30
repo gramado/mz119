@@ -786,11 +786,13 @@ struct process_d
 	unsigned long signal;
 	unsigned long signal_mask;
 
+    //#bugbug
+    //deleta isso.
 	//Argumentos para o procedimento de janela.
-	struct window_d *window;    //arg1.
-	int msg;                    //arg2.
-	unsigned long long1;        //arg3.
-	unsigned long long2;        //arg4.
+	//struct window_d *window;    //arg1.
+	//int msg;                    //arg2.
+	//unsigned long long1;        //arg3.
+	//unsigned long long2;        //arg4.
 
 	// diálogo com o processo.
 	// importante no caso de servidores e drivers

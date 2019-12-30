@@ -134,15 +134,17 @@ typedef enum {
  */
  
 typedef enum {
-    TYPE_NULL,
-	TYPE_SYSTEM,	 // first-come-first-served.
+	
+	TYPE_NULL,
+	TYPE_SYSTEM,     // first-come-first-served.
 	TYPE_IDLE,       // 
 	TYPE_PERIODIC,   // periodic threads with predefined intervals.
 	TYPE_RR,         // first-come-first-served cooperative.
-    TYPE_REALTIME,
+	TYPE_REALTIME,
 	//TYPE_UI, //@todo
 	//TYPE_IO, //@todo
 	//...
+
 }thread_type_t;
 
 
@@ -173,14 +175,16 @@ typedef enum {
  */
  
 typedef enum {
-    INITIALIZED,    //0 Earth, Criado o contexto e parâmetros.
+
+	INITIALIZED,    //0 Earth, Criado o contexto e parâmetros.
 	STANDBY,        //1 Earth, Pronta para rodar pela primeira vez. Ir para o 'espaço'.
 	ZOMBIE,         //2 Earth, Terminou a execução. Voltou para a 'terra'.
-	DEAD,	        //3 Earth, Deleted.	
+	DEAD,           //3 Earth, Deleted.
 	READY,          //4 Space, Thread is ready to run again.
 	RUNNING,        //5 Space, Thread is currently running.
-	WAITING,        //6 Space, Thread is waiting.	
+	WAITING,        //6 Space, Thread is waiting.
 	BLOCKED,        //7 Space, Thread is blocked by an event.
+
 }thread_state_t;
 
  
@@ -190,12 +194,13 @@ typedef enum {
  *
  *    TCB - Thread Control Block.
  *
- *    A estrutura onde guarda informações sobre a thread.
- *    @todo: Começar com informações sobre disco e arquivos.
- *    Obs: Deve ficar por último o que for referenciado 
- * com menos frequência.
+ * A estrutura onde guarda informações sobre a thread.
+ * #todo: 
+ * Começar com informações sobre disco e arquivos.
+ * #obs: 
+ * Deve ficar por último o que for referenciado com menos frequência.
  */
- 
+
 struct thread_d 
 {	
 	object_type_t objectType;
@@ -291,29 +296,31 @@ struct thread_d
 	//@todo: isso pode ser um char.
 	unsigned long iopl; 
 	
-	/*
-	 * Contexto. @todo: usars uma estrutura.
-	 @todo: isso deve virar um ponteiro de estrutura.
-	 */
 	
+	// Context. 
+	// #todo: 
+	// Usars uma estrutura.
+	// #todo: 
+	// Isso deve virar um ponteiro de estrutura.
+
 	//stack frame;
-	unsigned short ss;
+    unsigned short ss;
     unsigned long esp;
     unsigned long eflags;
     unsigned short cs;
     unsigned long eip;	//usado com o pd do processo
-	
+
 	// para o kernel saltar para o novo processo.
     unsigned long ring0_eip;  //usado com o pd do kernel		
     unsigned long eipPA;	
-	
-	
+
+
     unsigned short ds;
     unsigned short es;
     unsigned short fs;
     unsigned short gs;
-	
-    unsigned long eax;	
+
+    unsigned long eax;
     unsigned long ebx;
     unsigned long ecx;
     unsigned long edx;
@@ -519,6 +526,10 @@ struct thread_d
 	// O que segue é referenciado durante as trocas de mensagens.
 	// utilização de canais e IPC.
 
+    //
+    // Single message.
+    //
+
 	
 	//4 argumentos padrão;
 	struct window_d *window;    //arg1.
@@ -542,9 +553,19 @@ struct thread_d
 	int newmessageFlag;         //flag avisando que tem nova mensagem.
 	
 	
-	
-	
-	
+    //
+    // Message Queue
+    //
+
+    // Coloca-se em tail, quande chegar ao fim do buffer, recomeça.
+    // Se o tail encontrar o head é porque o processo não está 
+    // respondendo.
+    unsigned long MsgQueue[32];
+    int MsgQueueHead;  //retira. 
+    int MsgQueueTail;  //coloca.
+
+
+
 	//?? mensagens pendentes.
 	//struct thread_d *sendersList; //Lista encadeada de threads querendo enviar mensagem
 	//struct thread_d *nextSender;  //próxima thread a enviar mensagem.

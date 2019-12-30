@@ -44,27 +44,29 @@
  */
 
 void *KiCreateIdle (void){
-	
+
     void *idleStack;                    // Stack pointer.
-	char *ThreadName = "idlethread";    // Name.
-	
+    char *ThreadName = "idlethread";    // Name.
+
     int r;
-	
+    int q;  //msg queue.
+
+
 	//struct.
 	
 	IdleThread = (void *) malloc ( sizeof(struct thread_d) );	
 	
 	if ( (void *) IdleThread == NULL )
 	{
-	    printf("pc-action-create-KiCreateIdle: IdleThread\n");
-		die();
+	    panic ("pc-action-create-KiCreateIdle: IdleThread\n");
 		
 	} else {
 		
 	    //Ver se a estrutura do processo é válida.
-		if( (void *) InitProcess == NULL ){
-	        printf("pc-action-create-KiCreateIdle: InitProcess\n");
-		    die();
+		if ( (void *) InitProcess == NULL )
+		{
+	        panic ("pc-action-create-KiCreateIdle: InitProcess\n");
+
 	    }else{
 			
 			//#todo
@@ -101,9 +103,8 @@ void *KiCreateIdle (void){
 	
 	if ( (void *) idleStack == NULL )
 	{
-	    printf("pc-action-create-KiCreateIdle: idleStack\n");
-		die();
-	};
+	    panic ("pc-action-create-KiCreateIdle: idleStack\n");
+	}
 	
 	
 	
@@ -160,13 +161,35 @@ void *KiCreateIdle (void){
 	// Procedimento de janela.
     //O procedimento.
 	IdleThread->procedure = (unsigned long) &system_procedure;
-	
+
+
+    //
+    // Single message;
+    //
+
     //Argumentos do procedimento de janela.	
-	IdleThread->window = NULL; //window;//arg1.
-	IdleThread->msg   = 0;     //arg2.
-	IdleThread->long1 = 0;     //arg3.
-	IdleThread->long2 = 0;     //arg4.
-	
+    IdleThread->window = NULL; //window;//arg1.
+    IdleThread->msg   = 0;     //arg2.
+    IdleThread->long1 = 0;     //arg3.
+    IdleThread->long2 = 0;     //arg4.
+    //IdleThread->long
+    //IdleThread->long
+    //...
+
+
+    //
+    // Message queue.
+    //
+
+    for ( q=0; q<32; q++ )
+    {
+        IdleThread->MsgQueue[q] = 0;
+    }
+    IdleThread->MsgQueueHead = 0;
+    IdleThread->MsgQueueTail = 0;
+
+
+
 	//Características.
 	IdleThread->type = TYPE_IDLE;    //TYPE_SYSTEM.
 	IdleThread->iopl = RING3;        //Idle thread é uma thread de um processo em user mode.
@@ -318,23 +341,24 @@ void *KiCreateShell (void){
 	char *ThreadName = "shellthread";    // Name.
 
     int r;
-	
+    int q; //msg queue.
+
+
     // todo: checar o tipo de processador antes de configurar o contexto.
 
 	// PID=1 Shell (RING 3).  
 	
 	if ( (void *) ShellProcess == NULL )
 	{
-	    printf("pc-create-KiCreateShell: ShellProcess\n");
-		die();
-	};	
+	    panic ("pc-create-KiCreateShell: ShellProcess\n");
+	}
 	
 	//Thread.
 	t = (void *) malloc ( sizeof(struct thread_d) );
 	
-	if ( (void *) t == NULL ){
-	    printf("pc-create-KiCreateShell: t \n");
-		die();
+	if ( (void *) t == NULL )
+	{
+	    panic ("pc-create-KiCreateShell: t \n");
 	}else{  
 	    //Indica à qual proesso a thread pertence.
 	    t->process = (void*) ShellProcess; 
@@ -345,10 +369,10 @@ void *KiCreateShell (void){
 	
 	if ( (void *) shellStack == NULL )
 	{
-	    printf("pc-create-KiCreateShell: shellStack\n");
-		die();
-	};
-	
+	    panic ("pc-create-KiCreateShell: shellStack\n");
+	}
+
+
 	//@todo: objectType, objectClass, appMode
 
     //Identificadores.       	
@@ -373,11 +397,35 @@ void *KiCreateShell (void){
 	
 	//Procedimento de janela.
 	t->procedure = (unsigned long) &system_procedure;
-	t->window = NULL;  //window;  //arg1
-	t->msg = 0;        //arg2
-	t->long1 = 0;      //arg3
-	t->long2 = 0;      //arg4	
 	
+
+    //
+    // Single message;
+    //
+
+    t->window = NULL;      // arg1.
+    t->msg = 0;            // arg2.
+    t->long1 = 0;          // arg3.
+    t->long2 = 0;          // arg4.
+    //t->long
+    //t->long
+    //t->long
+    //...
+
+
+    //
+    // Message queue.
+    //
+
+    for ( q=0; q<32; q++ )
+    {
+        t->MsgQueue[q] = 0;
+    }
+    t->MsgQueueHead = 0;
+    t->MsgQueueTail = 0;
+
+
+
 	//Caracteristicas.
 	t->state = INITIALIZED;  
 	
@@ -497,45 +545,50 @@ void *KiCreateTaskManager (void){
     void *taskmanStack;                    // Stack pointer. 	
 	struct thread_d *t;
 	char *ThreadName = "taskmanthread";    // Name.
-	
-	int r;
-	
+
+
+    int r;
+    int q; //msg queue.
+
+
 	// #todo: Checar o tipo de processador antes de configurar o contexto.
 	
 	// PID=2 taskmanager (RING 3).
 	
 	
-	if ( (void *) TaskManProcess == NULL )
-	{
-	    printf("pc-create-KiCreatetaskManager: TaskManProcess\n");
-		die();
-	};	
+    if ( (void *) TaskManProcess == NULL )
+    {
+        panic ("pc-create-KiCreatetaskManager: TaskManProcess\n");
+    }
 
     //Thread.
 	//Alocando memória para a estrutura da thread.
 	
 	t = (void *) malloc ( sizeof(struct thread_d) );	
 	
-	if( (void *) t == NULL )
-	{
-	    printf("pc-create-KiCreateTaskManager: t \n");
-		die();
-	}else{  
+    if( (void *) t == NULL )
+    {
+        panic ("pc-create-KiCreateTaskManager: t \n");
+
+    }else{  
 	    //Indica à qual proesso a thread pertence.
 	    t->process = (void *) TaskManProcess;
-	};
-	
+    };
+
+
+
 	//Stack.
 	//#bugbug
 	//estamos alocando uma stack dentro do heap do kernel.
 	taskmanStack = (void *) malloc (4*1024);
 	
-	if ( (void *) taskmanStack == NULL )
-	{
-	    printf("pc-create-KiCreateTaskManager: taskmanStack\n");
-		die();
-	};
-  	
+
+    if ( (void *) taskmanStack == NULL )
+    {
+        panic ("pc-create-KiCreateTaskManager: taskmanStack\n");
+    }
+
+
 	//@todo: object
 	
     //Identificadores      
@@ -561,11 +614,35 @@ void *KiCreateTaskManager (void){
 	//Procedimento de janela.
     
 	t->procedure = (unsigned long) &system_procedure;
-	
-	t->window = NULL;    //arg1.
-	t->msg = 0;          //arg2.
-	t->long1 = 0;        //arg3.
-	t->long2 = 0;        //arg4.	
+
+
+
+    //
+    // Single message;
+    //
+
+    t->window = NULL;      // arg1.
+    t->msg = 0;            // arg2.
+    t->long1 = 0;          // arg3.
+    t->long2 = 0;          // arg4.
+    //t->long
+    //t->long
+    //t->long
+    //...
+
+    //
+    // Message queue.
+    //
+
+    for ( q=0; q<32; q++ )
+    {
+        t->MsgQueue[q] = 0;
+    }
+    t->MsgQueueHead = 0;
+    t->MsgQueueTail = 0;
+
+
+
 
     //Características.	
 	t->type = TYPE_SYSTEM;  

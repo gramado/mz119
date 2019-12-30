@@ -267,7 +267,8 @@ compile-kernel:
 	gcc -c  kernel/mk/ps/sched/sched.c     -I include/ $(CFLAGS) -o sched.o
 	gcc -c  kernel/mk/ps/sched/schedi.c    -I include/ $(CFLAGS) -o schedi.o
 
-
+	#mk
+	gcc -c kernel/mk/create.c  -I include/  $(CFLAGS) -o create.o
 
 	#kernel/request
 	gcc -c  kernel/request.c  -I include/ $(CFLAGS) -o request.o
@@ -423,8 +424,8 @@ compile-kernel:
 	
 	gcc -c kernel/kservers/kgws/kgws.c  -I include/ $(CFLAGS) -o kgws.o
 
-	#system
-	gcc -c kernel/system/create.c  -I include/  $(CFLAGS) -o create.o
+
+
 
 
 link-x86:
