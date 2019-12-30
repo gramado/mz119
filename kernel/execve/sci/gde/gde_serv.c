@@ -68,8 +68,8 @@ unsigned long cwArg12;     // WindowColor
 // ====
 //
 
+void *__do_35 ( unsigned long buffer );
 void *__do_111 ( unsigned long buffer );
-
 void *gde_extra_services ( unsigned long number, 
                      unsigned long arg2, 
                      unsigned long arg3, 
@@ -79,6 +79,124 @@ void *gde_extra_services ( unsigned long number,
 //
 // ======
 //
+
+/*
+ *********************** 
+ * __do_111: 
+ *     Getting message from thread's queue.
+ */
+
+    // #todo: 
+    // 35 - Getting message from the thread's queue. 
+    // Vamos pegar uma mensagem na fila de mesagens da thread
+    // e colocarmos nos elementos de single message para o aplicativo pegar.
+
+void *__do_35 ( unsigned long buffer ){
+
+    unsigned long *message_address = (unsigned long *) buffer;
+    
+    unsigned char SC;
+    
+    struct thread_d *t;
+    
+
+
+    // ==================================
+    //             STOPPED !!!
+    // ==================================
+
+    // #todo
+    // Trabalhando nessa rotina de servir uma mensagem que está na fila.
+    // Ainda nem existe a rotina que coloca a mensagem na fila.
+    
+    // #debug breakpoint.
+    panic ("gde_serv-__do_32: #todo");
+
+    // ==================================
+    //             STOPPED !!!
+    // ==================================
+  
+    
+    
+    if ( (void *) t == NULL )
+    {
+         panic ("__do_35: t");;
+    }
+
+
+    //
+    // Trying ...
+    //
+  
+    
+    struct msg_d *msg;
+    
+    
+    //
+    // #todo
+    //
+    
+    // Vamos pegar uma mensagem na fila de mesagens da thread
+    // e colocarmos nos elementos de single message para o aplicativo pegar.    
+    // msg = (struct msg_d *) t->MsgQueue[ t->MsgQueueHead++ ]
+    
+    
+    // pega o ponteiro da estrutura.
+    msg = ( struct msg_d * ) t->MsgQueue[ t->MsgQueueHead ];
+    
+
+    // Ok temos uma mensagem
+    // ja pegamos vamos limpar a fila, mesmo que a mensagem não preste.
+
+    //limpa elemento da fila.
+    t->MsgQueue[ t->MsgQueueHead ] = (unsigned long) 0;
+    
+    // avança
+    t->MsgQueueHead++;
+    
+    // circula.
+    if ( t->MsgQueueHead >= 32 )
+    {
+        t->MsgQueueHead = 0;
+    }
+
+    
+    // #todo
+    // Checar validade da estrutura de mensagem.
+    // Checar validade da estrutura de thread;.    
+    
+    // A estrutura é inválida ou não há mensagens
+    if ( (void *) msg == NULL )
+    {
+        return NULL;
+    } else {
+    
+        if ( msg->used != 1 || msg->magic != 1234 )
+        {
+            panic ("__do_35: msg struct");
+        }
+        
+
+        // #todo
+        // Se o head for igual ao tail, então o processo não está respondendo.
+        // Exceto na inicialização.
+    
+        // #todo
+        // Pegar os elementos da estrutura de mensagem e colocar
+        // no buffer me single message usado para pegar uma mensagem.
+    
+	    //padrão
+	    message_address[0] = (unsigned long) msg->window;
+	    message_address[1] = (unsigned long) msg->msg;
+	    message_address[2] = (unsigned long) msg->long1;
+	    message_address[3] = (unsigned long) msg->long2;
+ 
+	    //sinalizamos que a mensagem foi consumida.
+	    //#todo: nesse momento a estrutura da thread também precisa ser limpa.
+        t->newmessageFlag = 0;    
+        return (void *) 1;    
+    };
+}
 
 
 
@@ -1384,11 +1502,15 @@ void *gde_services ( unsigned long number,
             break; 
 
 
-		// 35 livre
-        //case SYS_35:  
-            //return NULL;
-            //break;
-			
+        // #todo: 
+        // 35 - Getting message from the thread's queue. 
+        // Vamos pegar uma mensagem na fila de mesagens da thread
+        // e colocarmos nos elementos de single message para o aplicativo pegar.
+        case 35:
+            return (void *) __do_35 ( (unsigned long) &message_address[0] );
+            break;
+
+
 		//36
         //O teclado envia essa mensagem para o procedimento ativo.
         case SYS_KSENDMESSAGE: 
@@ -2137,6 +2259,7 @@ void *gde_services ( unsigned long number,
         case 149:
             sys_MainMenu ( (struct window_d *) arg2 );
             break;
+
 
 
 		//152 - get user id

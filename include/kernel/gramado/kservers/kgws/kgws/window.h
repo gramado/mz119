@@ -750,6 +750,20 @@ struct window_class_d
     //...
 };
 
+
+// usada nas filas de mensagens que existem nas estruturas de thread.
+struct msg_d 
+{
+    int used;
+    int magic;
+    
+    struct window_d *window;
+    int msg;
+    unsigned long long1;
+    unsigned long long2;
+};
+
+
  
 /*
  ********************************************************

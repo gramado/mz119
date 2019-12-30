@@ -38,60 +38,63 @@
 // system call service routine numbers. 
 //
  
-//NULL.
-#define	SYS_NULL  0
 
-//Disk.
-#define	SYS_READ_LBA    1
-#define	SYS_WRITE_LBA   2
-#define	SYS_READ_FILE   3
-#define	SYS_WRITE_FILE  4
-
-//Gráfico.
-#define	SYS_VSYNC                5
-#define	SYS_BUFFER_PUTPIXEL      6
-#define	SYS_BUFFER_DRAWCHAR      7
-#define	SYS_BUFFER_DRAWLINE      8
-#define	SYS_BUFFER_DRAWRECT      9
-#define	SYS_BUFFER_CREATEWINDOW  10 
-#define	SYS_REFRESHSCREEN        11
-
-//rede
-#define	SYS_REDE_R1    12
-#define	SYS_REDE_R2    13
-#define	SYS_REDE_R3    14
-#define SYS_REDE_R4    15
-
-//i/o de disco
-#define	SYS_IO_R1    16  // open()
-#define	SYS_IO_R2    17  // close
-#define	SYS_IO_R3    18  // #todo
-#define	SYS_IO_R4    19  // #todo
+// NULL.
+#define  SYS_NULL  0
 
 
-//Outros. 
-#define	SYS_REFRESH_BUFFER1      20
-#define	SYS_REFRESH_BUFFER2      21
-#define	SYS_REFRESH_BUFFER3      22
+// Disk.
+#define  SYS_READ_LBA    1
+#define  SYS_WRITE_LBA   2
+#define  SYS_READ_FILE   3
+#define  SYS_WRITE_FILE  4
 
 
-//screen.
-#define	SYS_REFRESHSCREEN2       23
+// kgws - Graphics.
+#define  SYS_VSYNC                5
+#define  SYS_BUFFER_PUTPIXEL      6
+#define  SYS_BUFFER_DRAWCHAR      7
+#define  SYS_BUFFER_DRAWLINE      8
+#define  SYS_BUFFER_DRAWRECT      9
+#define  SYS_BUFFER_CREATEWINDOW  10 
+#define  SYS_REFRESHSCREEN        11
 
 
-// 24-28 WINDOW SUPPORT	
-#define	SYS_24    24    // show window.
-#define	SYS_25    25
-#define	SYS_26    26
-#define	SYS_27    27
-#define	SYS_28    28
+// Network.
+#define  SYS_REDE_R1    12
+#define  SYS_REDE_R2    13
+#define  SYS_REDE_R3    14
+#define  SYS_REDE_R4    15
 
 
-//buffer.
-#define	SYS_MY_BUFFER_PRINTSTRING    29
+// i/o - disk support.
+#define  SYS_IO_R1    16  // open()
+#define  SYS_IO_R2    17  // close
+#define  SYS_IO_R3    18  // #todo
+#define  SYS_IO_R4    19  // #todo
 
 
-//pixel.
+// kgws - Refresh.
+// Copy to the lfb. 
+#define  SYS_REFRESH_BUFFER1  20
+#define  SYS_REFRESH_BUFFER2  21
+#define  SYS_REFRESH_BUFFER3  22
+#define  SYS_REFRESHSCREEN2   23
+
+
+// Window support.
+#define  SYS_24  24    // Show window.
+#define  SYS_25  25
+#define  SYS_26  26
+#define  SYS_27  27
+#define  SYS_28  28
+
+
+// kgws - Print string on backbuffer.
+#define  SYS_MY_BUFFER_PRINTSTRING  29
+
+
+// kgws - Print pixel on backbuffer.
 #define	SYS_MY_BUFFER_PUTPIXEL     30
 #define	SYS_MY_BUFFER2_PUTPIXEL    31
 #define	SYS_MY_BUFFER3_PUTPIXEL    32
@@ -105,7 +108,7 @@
 #define	SYS_VIDEO_SETCURSOR    34
 
 
-//livre
+// livre
 #define  SYS_35 35
 
 // Message and procedures.
@@ -440,7 +443,8 @@
 
 // passando vetor de ponteiros,
 // executando um novo programa no processo init.
-#define	SYS_179 179
+#define  SYS_179  179
+
 
 //Memory support.
 #define	SYS_CREATEPAGEDIRECTORY 180    //cria um pagedir.
@@ -453,6 +457,7 @@
 #define	SYS_FREEKERNELHEAP 187         //Libera heap do kernel.
 #define	SYS_GETPROCESSDIRECTORY 188    //get process directory.
 #define	SYS_SETPROCESSDIRECTORY 189    //set process directory.
+
 //memory support.
 #define	SYS_GETPAGEDIRVALUE 190  //get page dir value.
 //Aloca memória virtual para um processo.
@@ -475,6 +480,8 @@
 #define	SYS_198 198
 
 #define	SYS_GC 199
+
+
 //variados
 #define	SYS_SENDSIGNAL  200    //Envia um sinal para um processo.
 #define	SYS_WAIT4OBJECT 201    //Espera por um objeto
@@ -512,16 +519,15 @@
 #define	SYS_SETTERMINALRECT         218
 #define	SYS_DESTROYTERMINAL         219
 
-//
-// Reboot.
-//
 
-#define	SYS_REBOOT2   220
+
+// Reboot.
+#define  SYS_REBOOT2  220
 
 
 // Execute program.
 
-#define	SYS_EXECUTEPROGRAM 221
+#define SYS_EXECUTEPROGRAM 221
 
 // Timer.
 
@@ -534,24 +540,21 @@
 #define	SYS_GETDATE 225
 
 
-//
-// Semaphore.
-//
 
-#define	SYS_GET_KERNELSEMAPHORE    226  // Get.     
-#define	SYS_CLOSE_KERNELSEMAPHORE  227  // Close (0).
-#define	SYS_OPEN_KERNELSEMAPHORE   228  // Open  (1).
+// Semaphore.
+
+#define  SYS_GET_KERNELSEMAPHORE    226  // Get.  
+#define  SYS_CLOSE_KERNELSEMAPHORE  227  // Close (0).
+#define  SYS_OPEN_KERNELSEMAPHORE   228  // Open  (1).
 
 
 //some kernel checks.
 
 #define	SYS_KERNELDEBUG 229    
 
-//
-// Logon and Logoff.
-//
 
-//logon logoff support.
+// Logon and Logoff.
+
 #define  SYS_STARTLOGON   230
 #define  SYS_STARTLOGOFF  231
 
@@ -592,28 +595,23 @@
 #define	SYS_245         245    // Disable text cursor.
 
 
-//
-// klibc
-//
+// libc support.
 
-//Reservado para libc support.
-
-#define	SYS_246 246   // fopen
-#define	SYS_247 247   // pipe
-#define	SYS_248 248   // execve	
-#define	SYS_249 249   // ftell
+#define  SYS_246  246    // fopen
+#define  SYS_247  247    // pipe
+#define  SYS_248  248    // execve
+#define  SYS_249  249    // ftell
 
 
-//
+
 // System info support.
-//
 
-#define	SYS_GETSYSTEMMETRICS  250 
-#define	SYS_SHOWDISKINFO      251  // Informações sobre o disco atual.            
-#define	SYS_SHOWVOLUMEINFO    252  // Informações sobre o volume atual.
-#define	SYS_MEMORYINFO        253
-#define	SYS_SHOWPCIINFO       254
-#define	SYS_SHOWKERNELINFO    255
+#define  SYS_GETSYSTEMMETRICS  250    // System metrics. 
+#define  SYS_SHOWDISKINFO      251    // Current disk.            
+#define  SYS_SHOWVOLUMEINFO    252    // Current volume.
+#define  SYS_MEMORYINFO        253    // Memory info.
+#define  SYS_SHOWPCIINFO       254    // PCI info.
+#define  SYS_SHOWKERNELINFO    255    // Kernel info.
 
 
 //
@@ -621,12 +619,15 @@
 //
 
 
+// Window server support.
 #define	SYS_GET_X_SERVER  512  // get x server PID
 #define	SYS_SET_X_SERVER  513  // set x server PID
 
+// Window manager support.
 #define	SYS_GET_WM_PID  514  // get wm PID
 #define	SYS_SET_WM_PID  515  // set wm PID
 
+// Ingo for ws and wm.
 #define	SYS_SHOW_X_SERVER_INFO  516  // show x server info	
 #define	SYS_SHOW_WM_INFO        517  // show wm info	
 
