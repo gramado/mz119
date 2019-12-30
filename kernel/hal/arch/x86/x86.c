@@ -618,8 +618,22 @@ void show_cpu_intel_parameters (void){
     //como não usa janelas devemos dar refresh na tela todo por enquanto.
 	
 	//#bugbug: isso é lento.
-	refresh_screen();
-};
+    refresh_screen();
+}
+
+
+// Initializes sse support.
+void x86_sse_init (void)
+{
+    asm volatile (
+        "mov %cr0, %eax\n"
+        "andl $0xfffffffb, %eax\n"
+        "orl $0x2, %eax\n"
+        "mov %eax, %cr0\n"
+        "mov %cr4, %eax\n"
+        "orl $0x600, %eax\n"
+        "mov %eax, %cr4\n" );
+}
 
 
 

@@ -103,6 +103,8 @@ int init_intel (void);
 void show_cpu_intel_parameters (void);
 
 
+void x86_sse_init (void);
+
 //
 // End.
 //

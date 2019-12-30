@@ -217,6 +217,8 @@ KRN_ENTRYPOINT equ 0x00101000    ;Entry Point.
 ;; <head>
 global _kernel_begin              
 _kernel_begin:
+
+    ;; >>
     jmp mboot_end
 
 	;;
@@ -302,9 +304,9 @@ _kernel_begin:
 
 
     extern _code_begin
-	extern _data_end
-	extern _bss_end
-	
+    extern _data_end
+    extern _bss_end
+
 	
 	; The Multiboot header
 align 4
@@ -336,6 +338,14 @@ mboot_start:
 
 mboot_end:
 ;; =============================================================
+
+
+    ;;
+    ;; The code restarts here !
+    ;;
+
+    cli
+    cld
 
 
     ;Debug.
@@ -670,14 +680,14 @@ dummyJmpAfterLTR:
 	; #IMPORTANTE.
 	; Desbilita as interrupções. 
 	
-	cli	
+	cli
 	
 	; Debug.
 	; Debug: Disable break points.
 	
-	xor	eax, eax
-	mov	dr7, eax
-	
+	xor eax, eax
+	mov dr7, eax
+
 	;mov dr2, eax	
 	
 	
@@ -739,20 +749,22 @@ dummyJmpAfterLTR:
 	;; os argumentos recebidos pelo kernel no entrypoint em head
 	;; deverão ser passador pelo assebly para variáveis em C.
 	
-	
-	;; void x86main (void)
-	
-	;call _x86main
-	
-	call _kernel_main
-	
-	
+
+    ;;  kernel/main.c 
+    call _kernel_main
+
+
+    ;; #bugbug
+    ;; Estamos no modo gráfico
+    ;; Não conseguiremos exibir uma mensagem.
+
 .hang:
+    cli
     hlt
-	jmp __die
-	jmp .hang	
-		
-	
+    jmp __die   ;; headlib.asm
+    jmp .hang
+
+
 	;
 	; ====================================
 	;

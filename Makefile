@@ -12,7 +12,7 @@
 VERSION = 1
 PATCHLEVEL = 20
 SUBLEVEL = 0
-EXTRAVERSION = -rc12
+EXTRAVERSION = -rc13
 NAME = 
 
 
@@ -349,8 +349,8 @@ compile-kernel:
 	gcc -c kernel/kdrivers/x/i8042/ldisc.c     -I include/ $(CFLAGS) -o ldisc.o
 
 
-	# devmgr
-	gcc -c kernel/execve/devmgr/devmgr.c  -I include/ $(CFLAGS) -o devmgr.o
+	# devices/
+	gcc -c kernel/devices/devmgr.c  -I include/ $(CFLAGS) -o devmgr.o
 
 
 
@@ -509,14 +509,7 @@ vhd-copy-files:
 	sudo cp user/config/INIT.TXT     /mnt/gramadovhd
 	sudo cp user/config/GUI.TXT      /mnt/gramadovhd
 	sudo cp user/config/GRAMADO.TXT  /mnt/gramadovhd
-	
-# test
-# ttys padrão.
-# O sistema tem que inicializar com alguma tty já configurada.
-#	-sudo cp user/config/TTY0.TTY     /mnt/gramadovhd
-#	-sudo cp user/config/TTY1.TTY     /mnt/gramadovhd
-#	-sudo cp user/config/TTY2.TTY     /mnt/gramadovhd
-#	-sudo cp user/config/TTY3.TTY     /mnt/gramadovhd
+
 
 
 # bitmaps
@@ -609,13 +602,16 @@ vhd-copy-files:
 	-sudo mkdir /mnt/gramadovhd/BIN
 	-sudo mkdir /mnt/gramadovhd/BOOT
 	-sudo mkdir /mnt/gramadovhd/DEV
+	-sudo mkdir /mnt/gramadovhd/DEV/PTS
 	-sudo mkdir /mnt/gramadovhd/EFI
 	-sudo mkdir /mnt/gramadovhd/EFI/BOOT
+	-sudo mkdir /mnt/gramadovhd/ETC
 	-sudo mkdir /mnt/gramadovhd/GARDEN
 	-sudo mkdir /mnt/gramadovhd/GARDEN/BIN
 	-sudo mkdir /mnt/gramadovhd/HOME
 	-sudo mkdir /mnt/gramadovhd/LIB
 	-sudo mkdir /mnt/gramadovhd/MNT
+	-sudo mkdir /mnt/gramadovhd/SBIN
 	-sudo mkdir /mnt/gramadovhd/TMP
 
 
@@ -628,7 +624,8 @@ vhd-copy-files:
 
 	#-sudo cp ../garden/bin/*         /mnt/gramadovhd/BIN 
 	#-sudo cp ../atacama/bin/*        /mnt/gramadovhd/BIN 
-
+	-sudo cp ../atacama/bin/HELLO3.BIN  /mnt/gramadovhd/BIN 
+	
 #
 # ======== Files in the /BOOT/ folder. ========
 #
@@ -647,8 +644,34 @@ vhd-copy-files:
 
 
 #
+# ======== Files in the /DEV/ folder. ========
+#
+
+# TTY SERIAL DEVICES
+	-sudo cp user/config/TTYS0     /mnt/gramadovhd/DEV
+	-sudo cp user/config/TTYS1     /mnt/gramadovhd/DEV
+	-sudo cp user/config/TTYS2     /mnt/gramadovhd/DEV
+	-sudo cp user/config/TTYS3     /mnt/gramadovhd/DEV
+
+# VIRTUAL CONSOLES
+	-sudo cp user/config/TTY0     /mnt/gramadovhd/DEV
+	-sudo cp user/config/TTY1     /mnt/gramadovhd/DEV
+	-sudo cp user/config/TTY2     /mnt/gramadovhd/DEV
+	-sudo cp user/config/TTY3     /mnt/gramadovhd/DEV
+# ...
+
+# NULL
+	-sudo cp user/config/NULL     /mnt/gramadovhd/DEV
+
+# PSEUDO TERMINAL
+	-sudo cp user/config/0        /mnt/gramadovhd/DEV/PTS
+	-sudo cp user/config/1        /mnt/gramadovhd/DEV/PTS
+	-sudo cp user/config/PTMX     /mnt/gramadovhd/DEV/PTS
+
+
+#
 # ======== Files in the /EFI/ folder. ========
-#	
+#
 	
 #test efi
 #	-sudo cp arch/x86/boot/efi/BOOTIA32.EFI  /mnt/gramadovhd/EFI/BOOT
@@ -659,7 +682,7 @@ vhd-copy-files:
 
 #garden
 	-sudo cp arch/x86/boot/vhd/tests/TEST1.ASM  /mnt/gramadovhd/GARDEN
-	-sudo cp ../garden/bin/*                    /mnt/gramadovhd/GARDEN/BIN 
+#	-sudo cp ../garden/bin/*                    /mnt/gramadovhd/GARDEN/BIN 
 
 
 #
@@ -668,6 +691,11 @@ vhd-copy-files:
 	
 	-sudo cp arch/x86/boot/vhd/tests/TEST1.ASM  /mnt/gramadovhd/LIB
 	
+
+#
+# ======== Files in the SBIN/ folder. ========
+#
+	-sudo cp ../atacama/bin/HELLO3.BIN  /mnt/gramadovhd/SBIN 
 
 #
 # ======== Files in the /TMP/ folder. ========

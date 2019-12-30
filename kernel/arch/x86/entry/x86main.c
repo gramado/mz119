@@ -238,8 +238,7 @@ void x86mainStartFirstThread ( void ){
              buff1[2] != 'L' ||
              buff1[3] != 'F' )
         {
-            printf ("x86mainStartFirstThread: init .ELF signature");
-            die ();
+            panic ("x86mainStartFirstThread: init .ELF signature");
         }
 
         printf (">>> IRET\n");
@@ -626,6 +625,9 @@ void x86main (void){
 
 
 //initializeSystem:
+
+
+    //x86_sse_init ();
 
 	//
 	// ## system ##

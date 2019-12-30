@@ -283,8 +283,6 @@ extern void do_executa_new_task (void);
 // HAL (4)
 //
 
-//device manager.
-#include <kernel/gramado/hal/device.h>
 #include <kernel/gramado/hal/hal.h>
 //--
 
@@ -379,6 +377,11 @@ extern void do_executa_new_task (void);
 #include <kernel/gramado/kservers/fs/fs.h>                  //fs.
 
 #include <kernel/gramado/kservers/vfs/vfs.h>                //vfs.
+
+
+
+#include <kernel/gramado/devices/devices.h>
+#include <kernel/gramado/devices/devmgr.h>        
 
 
 #include <kernel/gramado/execve/sm/io.h>                  //io.

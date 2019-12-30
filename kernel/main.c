@@ -23,14 +23,22 @@ extern unsigned long SavedBootMode;
  ****************************
  * kernel_main:
  *     Main function.
- *     Vem pra cá do entrypoint em assembly, que é dependente da arquitetura.
+ *     Vem pra cá do entrypoint em assembly, 
+ * que é dependente da arquitetura.
  */
 
 int kernel_main (void){
 
     int Status = 0;
 
-    int z;	
+    int z;
+
+
+    // #order
+    // serial debug.
+    // video.
+    // ...
+
 
 	//
 	// Serial debug
@@ -194,10 +202,12 @@ int kernel_main (void){
 	// ...
 	//}
 
-	// #provisório.
-	
-	x86main ();
 
+
+    // See: x86/entry/x86main.c
+    x86main ();
+
+    // See: x86/entry/???.c
 	//armmain ();
 
 
