@@ -2918,15 +2918,6 @@ unsigned long serviceCreateWindow ( char *message_buffer ){
 	
 	//#test
 	// testando novo método de pintura.
-	
-	/*
-    NewWindow = (void *) CreateWindow ( WindowType, WindowStatus, 
-                             WindowView, WindowName, 
-                             WindowX, WindowY, WindowWidth, WindowHeight,
-                             cwArg9, desktopID, 
-                             (unsigned long) WindowClientAreaColor, 
-                             (unsigned long) WindowColor );
-     */
 
     NewWindow = (void *) kgws_create_window ( WindowType, WindowStatus, 
                              WindowView, WindowName, 

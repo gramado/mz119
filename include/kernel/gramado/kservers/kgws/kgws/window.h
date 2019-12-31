@@ -1224,6 +1224,7 @@ struct window_d
     int isControl;  // Window control ...
     int isButton;  //#importante: Indica que a janela é um botão.
     int isEditBox; //#importante: Indica que a janela é um editbox.
+    int isCheckBox;
     int isIcon;
      
 	//...
