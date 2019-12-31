@@ -89,7 +89,7 @@ struct tty_d *get_tty (int tty_id)
 	    return NULL;
 	    
     
-    return (struct tty_d *) ttyList[tty_id];
+    return (struct tty_d *) ptsList[tty_id];
 }
 */
 
@@ -298,7 +298,7 @@ int set_current_tty (int tty_id){
 		//return -1;
 	}
 	
-	tty = (struct tty_d *)  ttyList[tty_id];
+	tty = (struct tty_d *)  ptsList[tty_id];
 	
 	if ( (void *) tty == NULL )
 	{
@@ -575,10 +575,10 @@ int ttyInit (int tty_id){
 	
         for (i=0; i<8; i++)
 	    {
-		    ttyList[i] = 0;
+		    ptsList[i] = 0;
 	    }
 	
-	    ttyList[tty_id] = (unsigned long) CurrentTTY;
+	    ptsList[tty_id] = (unsigned long) CurrentTTY;
 	       
 	       
 	    // More ?    

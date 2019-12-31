@@ -1353,8 +1353,8 @@ void windowShowWindowList (void){
 
 	//@todo: Chamar método.	
 	//Cursor.
-	g_cursor_x = (left/8);
-	g_cursor_y = (top/8);  
+	TTY[current_vc].cursor_x = (left/8);
+	TTY[current_vc].cursor_y = (top/8);  
 	//set_up_cursor(0,10);
 
 	//
@@ -1411,15 +1411,15 @@ void windowShowWindowList (void){
 		// #bugbug
 		// Cuidado para não dividir por '0'.
 
-		g_cursor_left = (hWindow->left/8);
-		g_cursor_top = (hWindow->top/8) + 4;   //Queremos o início da área de clente.
+		TTY[current_vc].cursor_left = (hWindow->left/8);
+		TTY[current_vc].cursor_top = (hWindow->top/8) + 4;   //Queremos o início da área de clente.
 		
-		g_cursor_right = g_cursor_left + (width/8);
-		g_cursor_bottom = g_cursor_top  + (height/8);
+		TTY[current_vc].cursor_right = TTY[current_vc].cursor_left + (width/8);
+		TTY[current_vc].cursor_bottom = TTY[current_vc].cursor_top  + (height/8);
 		
 		//cursor (0, mas com margem nova).
-		g_cursor_x = g_cursor_left; 
-		g_cursor_y = g_cursor_top; 
+		TTY[current_vc].cursor_x = TTY[current_vc].cursor_left; 
+		TTY[current_vc].cursor_y = TTY[current_vc].cursor_top; 
 
         //Mostrando as informações de todas as janelas registradas.
         while( i < WINDOW_COUNT_MAX )
@@ -1449,15 +1449,15 @@ void windowShowWindowList (void){
 	
 		
 		//voltando a margem normal a margem
-		g_cursor_left = (left/8);    //0;
-		g_cursor_top = (top/8);        //0;
+		TTY[current_vc].cursor_left = (left/8);    //0;
+		TTY[current_vc].cursor_top = (top/8);        //0;
 		
-		g_cursor_right = (width/8);   
-		g_cursor_bottom = (height/8);  
+		TTY[current_vc].cursor_right = (width/8);   
+		TTY[current_vc].cursor_bottom = (height/8);  
 		
 		//cursor (0, mas com margem nova)
-		g_cursor_x = g_cursor_left; 
-		g_cursor_y = g_cursor_top;
+		TTY[current_vc].cursor_x = TTY[current_vc].cursor_left; 
+		TTY[current_vc].cursor_y = TTY[current_vc].cursor_top;
         //set_up_cursor(g_cursor_left,g_cursor_top); 
 
 
@@ -3162,10 +3162,10 @@ setup_wwf:
 	    if ( window->rcClient->used == 1 && 
 		     window->rcClient->magic == 1234 )
 		{
-		    g_cursor_left = (window->rcClient->left/8);
-	        g_cursor_top = (window->rcClient->top/8) +1; //?? Ajuste temporário.   
-	        g_cursor_right  = g_cursor_left + (window->rcClient->right/8);
-	        g_cursor_bottom = g_cursor_top + (window->rcClient->height/8);
+		    TTY[current_vc].cursor_left = (window->rcClient->left/8);
+	        TTY[current_vc].cursor_top = (window->rcClient->top/8) +1; //?? Ajuste temporário.   
+	        TTY[current_vc].cursor_right  = TTY[current_vc].cursor_left + (window->rcClient->right/8);
+	        TTY[current_vc].cursor_bottom = TTY[current_vc].cursor_top + (window->rcClient->height/8);
 		}
 				 
 		// Nothing. 
@@ -3173,19 +3173,19 @@ setup_wwf:
 	}else{
 	
         // Configurando o cursor global gerenciado pelo kernel base.
-        g_cursor_left = (window->left/8);
-        g_cursor_top = (window->top/8);   
+        TTY[current_vc].cursor_left = (window->left/8);
+        TTY[current_vc].cursor_top = (window->top/8);   
    
-	    g_cursor_right = g_cursor_left + (window->right/8);
-	    g_cursor_bottom = g_cursor_top + (window->height/8);
+	    TTY[current_vc].cursor_right = TTY[current_vc].cursor_left + (window->right/8);
+	    TTY[current_vc].cursor_bottom = TTY[current_vc].cursor_top + (window->height/8);
 	};
 
 
 		// #importante: 
 		// Posicionando o cursor. 
 
-     g_cursor_x = g_cursor_left; 
-     g_cursor_y = g_cursor_top; 
+     TTY[current_vc].cursor_x = TTY[current_vc].cursor_left; 
+     TTY[current_vc].cursor_y = TTY[current_vc].cursor_top; 
 
     if ( window->isEditBox == 1 )
     {
@@ -3193,12 +3193,12 @@ setup_wwf:
 				//para ficar na segunda linha do editbox.
 				//tem que trabalhar isso melhor.
 
-	    g_cursor_y++; 
+	    TTY[current_vc].cursor_y++; 
 	}
 
     //configurando o cursor específico da janela com o foco de entrada.
-	window->CursorX = g_cursor_x;
-	window->CursorY = g_cursor_y;
+	window->CursorX = TTY[current_vc].cursor_x;
+	window->CursorY = TTY[current_vc].cursor_y;
     window->CursorColor = COLOR_TEXT;
 	
 	

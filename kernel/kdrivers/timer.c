@@ -254,7 +254,10 @@ void timer (void){
 		    if ( timerTextCursorStatus != 1 )
 		    { 
 	            //apaga
-	            refresh_rectangle ( (g_cursor_x + 1)  *8, g_cursor_y*8, 16, 16 );	
+	            
+	            //refresh_rectangle ( (g_cursor_x + 1)  *8, g_cursor_y*8, 16, 16 );
+	            refresh_rectangle ( (TTY[current_vc].cursor_x + 1)  *8, TTY[current_vc].cursor_y*8, 16, 16 );
+	            	            
                 timerTextCursorStatus = 1;
 		        goto mouseExit;
 		    }
@@ -262,7 +265,8 @@ void timer (void){
 		    if ( timerTextCursorStatus == 1 )
             {			
 		        //acende
-                bmpDisplayCursorBMP ( cursorIconBuffer, (g_cursor_x + 1) * 8, g_cursor_y*8 );		
+                //bmpDisplayCursorBMP ( cursorIconBuffer, (g_cursor_x + 1) * 8, g_cursor_y*8 );		
+                bmpDisplayCursorBMP ( cursorIconBuffer, (TTY[current_vc].cursor_x + 1) * 8, TTY[current_vc].cursor_y*8 );		        
 		        timerTextCursorStatus = 0;
 			    goto mouseExit;
 		    }

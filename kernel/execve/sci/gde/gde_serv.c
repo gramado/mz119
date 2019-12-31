@@ -933,7 +933,7 @@ void *gde_extra_services ( unsigned long number,
     {
 		//
 		__tty_id = (int) arg2;
-		CurrentTTY = (struct tty_d *) ttyList[ __tty_id ]
+		CurrentTTY = (struct tty_d *) ptsList[ __tty_id ]
 		
 		//pega
         __xxx_ch = (int) *CurrentTTY->stdout_last_ptr;

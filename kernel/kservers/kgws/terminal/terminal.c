@@ -115,14 +115,14 @@ void systemSetTerminalWindow ( struct window_d *window ){
     window->terminal_width = window->width;
     window->terminal_height = window->height;
 
-    g_cursor_x = (window->left / 8);
-    g_cursor_y = (window->top  / 8);
+    TTY[current_vc].cursor_x = (window->left / 8);
+    TTY[current_vc].cursor_y = (window->top  / 8);
     
-    g_cursor_left = g_cursor_x; 
-    g_cursor_top  = g_cursor_y;
+    TTY[current_vc].cursor_left = TTY[current_vc].cursor_x; 
+    TTY[current_vc].cursor_top  = TTY[current_vc].cursor_y;
     
-    g_cursor_right  = ( (window->left + window->width ) /8 );
-    g_cursor_bottom = ( (window->top  + window->height) /8 );
+    TTY[current_vc].cursor_right  = ( (window->left + window->width ) /8 );
+    TTY[current_vc].cursor_bottom = ( (window->top  + window->height) /8 );
 
 	//
 	// rcClient  (retângulo)
@@ -195,33 +195,38 @@ void systemSetTerminalWindow ( struct window_d *window ){
 	//@todo: corrigir.
 	// ajustes temporários caso tenha havido um erro anteriormente...
 
-    if ( g_cursor_left > 800 )
+    //#bugbug
+    //isso tá errado. limite   80;
+
+    if ( TTY[current_vc].cursor_left > 800 )
 	{
-        g_cursor_left = 795;
+        TTY[current_vc].cursor_left = 795;
     }
 
-    if ( g_cursor_top > 600 )
+    if ( TTY[current_vc].cursor_top > 600 )
 	{
-         g_cursor_top = 595;
+         TTY[current_vc].cursor_top = 595;
     }
 
-    if ( g_cursor_right > 800 )
+    if ( TTY[current_vc].cursor_right > 800 )
 	{
-         g_cursor_right = 795;
+         TTY[current_vc].cursor_right = 795;
     }
 
-    if ( g_cursor_bottom > 600 )
+    if ( TTY[current_vc].cursor_bottom > 600 )
 	{
-         g_cursor_bottom = 595;
+         TTY[current_vc].cursor_bottom = 595;
     }
+
+
 
 	//
     // Cursor.
     //
 	
-	g_cursor_width = 8; 
-    g_cursor_height = 8; 
-    g_cursor_color = COLOR_TERMINALTEXT;
+	TTY[current_vc].cursor_width = 8; 
+    TTY[current_vc].cursor_height = 8; 
+    TTY[current_vc].cursor_color = COLOR_TERMINALTEXT;
 	
 	
 	//
@@ -264,15 +269,15 @@ void systemSetTerminalWindow ( struct window_d *window ){
 
 
             //cursor support.
-            CurrentTTY->cursor_x = g_cursor_x;
-            CurrentTTY->cursor_y = g_cursor_y;
-            CurrentTTY->cursor_width = g_cursor_width;    //??
-            CurrentTTY->cursor_height = g_cursor_height;   //??
-            CurrentTTY->cursor_color = g_cursor_color;
-            CurrentTTY->cursor_left = g_cursor_left;      // margem esquerda dada em linhas
-            CurrentTTY->cursor_top = g_cursor_top;        // margem superior dada em linhas
-            CurrentTTY->cursor_right = g_cursor_right;    // margem direita dada em linhas
-            CurrentTTY->cursor_bottom = g_cursor_bottom;  // margem inferior dada em linhas
+            CurrentTTY->cursor_x = TTY[current_vc].cursor_x;
+            CurrentTTY->cursor_y = TTY[current_vc].cursor_y;
+            CurrentTTY->cursor_width = TTY[current_vc].cursor_width;    //??
+            CurrentTTY->cursor_height = TTY[current_vc].cursor_height;   //??
+            CurrentTTY->cursor_color = TTY[current_vc].cursor_color;
+            CurrentTTY->cursor_left = TTY[current_vc].cursor_left;      // margem esquerda dada em linhas
+            CurrentTTY->cursor_top = TTY[current_vc].cursor_top;        // margem superior dada em linhas
+            CurrentTTY->cursor_right = TTY[current_vc].cursor_right;    // margem direita dada em linhas
+            CurrentTTY->cursor_bottom = TTY[current_vc].cursor_bottom;  // margem inferior dada em linhas
 			
 		}
 	}

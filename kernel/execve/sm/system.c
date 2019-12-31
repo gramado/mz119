@@ -207,8 +207,8 @@ void set_up_text_color ( unsigned char forecolor, unsigned char backcolor ){
 
 void set_up_cursor ( unsigned long x, unsigned long y ){   
 
-	g_cursor_x = (unsigned long) x;
-	g_cursor_y = (unsigned long) y;	
+	TTY[current_vc].cursor_x = (unsigned long) x;
+	TTY[current_vc].cursor_y = (unsigned long) y;
 }
 
 
@@ -221,7 +221,7 @@ void set_up_cursor ( unsigned long x, unsigned long y ){
 
 unsigned long get_cursor_x (void){
 	
-	return (unsigned long) g_cursor_x;
+	return (unsigned long) TTY[current_vc].cursor_x;
 }
 
 
@@ -234,7 +234,7 @@ unsigned long get_cursor_x (void){
 
 unsigned long get_cursor_y (void){
 	
-    return (unsigned long) g_cursor_y; 	
+    return (unsigned long) TTY[current_vc].cursor_y; 
 }
 
 
@@ -1239,12 +1239,12 @@ unsigned long systemGetSystemMetrics ( int index ){
 			
 		//cursor width.
 		case 3:
-		    return (unsigned long) g_cursor_width;
+		    return (unsigned long) TTY[current_vc].cursor_width;
             break;
 
 		//cursor hight.
 		case 4:
-		    return (unsigned long) g_cursor_height;
+		    return (unsigned long) TTY[current_vc].cursor_height;
             break;
 			
 			

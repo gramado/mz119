@@ -93,7 +93,7 @@ void _outbyte (int c){
             // configuradas na estrutura do terminal atual.
             // Branco no preto é um padrão para terminal.
 			
-            draw_char ( cWidth*g_cursor_x, cHeight*g_cursor_y, c, 
+            draw_char ( cWidth * TTY[current_vc].cursor_x, cHeight * TTY[current_vc].cursor_y, c, 
 				COLOR_TERMINALTEXT, COLOR_TERMINAL2 );
 			
 		}else{
@@ -103,8 +103,9 @@ void _outbyte (int c){
 		    // char transparente.
             // Não sabemos o fundo. Vamos selecionar o foreground.
 			
-			drawchar_transparent ( cWidth*g_cursor_x, cHeight*g_cursor_y, 
-				g_cursor_color, c );
+			drawchar_transparent ( 
+			    cWidth* TTY[current_vc].cursor_x, cHeight * TTY[current_vc].cursor_y, 
+				TTY[current_vc].cursor_color, c );
 		};
 		
 		//#testando ...
@@ -146,8 +147,8 @@ void outbyte (int c){
     //form feed - Nova tela.
     if ( c == '\f' )
     {
-        g_cursor_y = g_cursor_top;
-        g_cursor_x = g_cursor_left;
+        TTY[current_vc].cursor_y = TTY[current_vc].cursor_top;
+        TTY[current_vc].cursor_x = TTY[current_vc].cursor_left;
         return;
     }
 
@@ -158,18 +159,18 @@ void outbyte (int c){
     if ( c == '\n' && prev == '\r' ) 
     {
 		//#todo: melhorar esse limite.
-        if ( g_cursor_y >= (g_cursor_bottom-1) )
+        if ( TTY[current_vc].cursor_y >= (TTY[current_vc].cursor_bottom-1) )
         {
             scroll ();
 
-            g_cursor_y = (g_cursor_bottom-1);
+            TTY[current_vc].cursor_y = (TTY[current_vc].cursor_bottom-1);
 
             prev = c; 
 
         }else{
 
-            g_cursor_y++;
-            g_cursor_x = g_cursor_left;
+            TTY[current_vc].cursor_y++;
+            TTY[current_vc].cursor_x = TTY[current_vc].cursor_left;
             prev = c;
         };
 
@@ -180,22 +181,22 @@ void outbyte (int c){
     //Próxima linha no modo terminal.
     if ( c == '\n' && prev != '\r' ) 
     {
-        if ( g_cursor_y >= (g_cursor_bottom-1) ){
+        if ( TTY[current_vc].cursor_y >= (TTY[current_vc].cursor_bottom-1) ){
 
             scroll ();
             
-            g_cursor_y = (g_cursor_bottom-1);
+            TTY[current_vc].cursor_y = (TTY[current_vc].cursor_bottom-1);
             prev = c;
 
         }else{
 
-            g_cursor_y++;
+            TTY[current_vc].cursor_y++;
 
 			//Retornaremos mesmo assim ao início da linha 
 			//se estivermos imprimindo no terminal.
             if ( stdio_terminalmode_flag == 1 )
             {
-                g_cursor_x = g_cursor_left;	
+                TTY[current_vc].cursor_x = TTY[current_vc].cursor_left;	
             } 
 
 			//verbose mode do kernel.
@@ -204,7 +205,7 @@ void outbyte (int c){
 			//sempre reiniciando x.
             if ( stdio_verbosemode_flag == 1 )
             {
-                g_cursor_x = g_cursor_left;	
+                TTY[current_vc].cursor_x = TTY[current_vc].cursor_left;
             } 
 
 			//Obs: No caso estarmos imprimindo em um editor 
@@ -221,7 +222,7 @@ void outbyte (int c){
 	//@todo: Criar a variável 'g_tab_size'.
     if( c == '\t' )  
     {
-        g_cursor_x += (8);
+        TTY[current_vc].cursor_x += (8);
         //g_cursor_x += (4); 
         prev = c;
         
@@ -251,7 +252,7 @@ void outbyte (int c){
     //Apenas voltar ao início da linha.
     if( c == '\r' )
     {
-        g_cursor_x = g_cursor_left;  
+        TTY[current_vc].cursor_x = TTY[current_vc].cursor_left;  
         prev = c;
         return;    
     }; 
@@ -274,7 +275,7 @@ void outbyte (int c){
     //#bugbug: Limits.
     if ( c == 8 )  
     {
-        g_cursor_x--; 
+        TTY[current_vc].cursor_x--; 
         prev = c;
         return;
     };
@@ -299,17 +300,17 @@ void outbyte (int c){
 //checkLimits:
 
     //Limites para o número de caracteres numa linha.
-    if ( g_cursor_x >= (g_cursor_right-1) )
+    if ( TTY[current_vc].cursor_x >= (TTY[current_vc].cursor_right-1) )
     {
-        g_cursor_x = g_cursor_left;
-        g_cursor_y++;  
+        TTY[current_vc].cursor_x = TTY[current_vc].cursor_left;
+        TTY[current_vc].cursor_y++;  
 
     }else{   
 
 		// Incrementando.
 		// Apenas incrementa a coluna.
 
-        g_cursor_x++;  
+        TTY[current_vc].cursor_x++;  
     };
 
 	// #bugbug
@@ -317,11 +318,11 @@ void outbyte (int c){
 	// de limite diferente desse.
 
 	// Número máximo de linhas. (8 pixels por linha.)
-    if ( g_cursor_y >= g_cursor_bottom )  
+    if ( TTY[current_vc].cursor_y >= TTY[current_vc].cursor_bottom )  
     { 
         scroll ();
 
-        g_cursor_y = g_cursor_bottom;
+        TTY[current_vc].cursor_y = TTY[current_vc].cursor_bottom;
     };
 
 	//

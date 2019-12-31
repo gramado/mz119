@@ -205,12 +205,15 @@ struct tty_d
     unsigned long cursor_y;
     unsigned long cursor_width;    //??
     unsigned long cursor_height;   //??
-    unsigned long cursor_color;
+
     unsigned long cursor_left;     // margem esquerda dada em linhas
     unsigned long cursor_top;      // margem superior dada em linhas
     unsigned long cursor_right;    // margem direita dada em linhas
     unsigned long cursor_bottom;   // margem inferior dada em linhas
-	
+
+    unsigned long cursor_color;
+    
+    	
 	
 	//linha atual da lista abaixo.
     int current_line;
@@ -251,15 +254,49 @@ struct tty_d
     struct tty_d *link;
 
 };
+
+//
+// Consoles virtuais
+//
+
+// Consoles virtuais em full screen.
+// Criados a unha pelo kernel.
+
+
+int current_vc;
+struct tty_d TTY[2];
+
+
+//
+// Pseudo terminais.
+//
+
+
 struct tty_d *CurrentTTY;
 
-// #importante
-// O sistema terá 8 terminais
-// e terá vários pseudo terminais.
 
-// Lista de TTYs.
-//unsigned long ttyList[8];
-unsigned long ttyList[32];
+// Usado pelos aplicativos para criarem terminais virtuais.
+// Criadas com ponteiros e alocadas com kmalloc.
+int current_pts;
+unsigned long ptsList[32]; 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /* tty magic number */

@@ -40,6 +40,37 @@ int kernel_main (void){
     // ...
 
 
+    //
+    //  Virtual Console
+    //
+
+
+    // Só tem 2.
+    current_vc = 0;
+    
+    // usado pelo kernel.
+    TTY[0].cursor_x = 0;
+    TTY[0].cursor_y = 0;
+    TTY[0].cursor_width = 80;
+    TTY[0].cursor_height = 80;
+    TTY[0].cursor_left = 0;
+    TTY[0].cursor_top = 0;
+    TTY[0].cursor_right = 80;
+    TTY[0].cursor_bottom = 80;
+    TTY[0].cursor_color = COLOR_TERMINALTEXT;
+    
+    // 
+    TTY[1].cursor_x = 0;
+    TTY[1].cursor_y = 0;
+    TTY[1].cursor_width = 80;
+    TTY[1].cursor_height = 80;
+    TTY[1].cursor_left = 0;
+    TTY[1].cursor_top = 0;
+    TTY[1].cursor_right = 80;
+    TTY[1].cursor_bottom = 80;
+    TTY[1].cursor_color = COLOR_TERMINALTEXT;
+
+    
 	//
 	// Serial debug
 	//

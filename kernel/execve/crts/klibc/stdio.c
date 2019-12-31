@@ -890,26 +890,27 @@ void scroll (void){
         //Limpa a última linha.
 		
 		//salva cursor
-		OldX = g_cursor_x;
-		OldY = g_cursor_y;
+		OldX = TTY[current_vc].cursor_x;  //g_cursor_x;
+		OldY = TTY[current_vc].cursor_y;  //g_cursor_y;
 		
 		//cursor na ultima linha.
 		
 		//g_cursor_x = 0;
-		g_cursor_x = g_cursor_left;
-		g_cursor_y = (g_cursor_bottom-1);
+		TTY[current_vc].cursor_x = TTY[current_vc].cursor_left;          //g_cursor_x = g_cursor_left;
+		TTY[current_vc].cursor_y = ( TTY[current_vc].cursor_bottom -1);  //g_cursor_y = (g_cursor_bottom-1);
 		
 		// limpa a linha.
 		
-		for ( i = g_cursor_x; i < g_cursor_right; i++ )
+		//for ( i = g_cursor_x; i < g_cursor_right; i++ )
+		for ( i = TTY[current_vc].cursor_x; i < TTY[current_vc].cursor_right; i++ )
 		{
 		    _outbyte (' '); 
 		};
 	
 		// Reposiciona o cursor na última linha.
 
-		g_cursor_x = g_cursor_left;
-		g_cursor_y = OldY;
+		TTY[current_vc].cursor_x = TTY[current_vc].cursor_left;   //g_cursor_x = g_cursor_left;
+		TTY[current_vc].cursor_y = OldY;   //g_cursor_y = OldY;
 		
 		refresh_screen ();
 	}
@@ -932,8 +933,8 @@ int kclear (int color) {
 	{
 		backgroundDraw ( COLOR_BLUE );
 
-		g_cursor_x = 0;
-		g_cursor_y = 0;
+		TTY[current_vc].cursor_x = 0; //g_cursor_x = 0;
+		TTY[current_vc].cursor_y = 0; //g_cursor_y = 0;
 
 		Status = 0;
 
@@ -2262,8 +2263,8 @@ int stdioInitialize (void){
 	
 	// Inicializa o cursor com margens bem abertas.
 	
-	g_cursor_left = (0);
-	g_cursor_top = (0); 
+	TTY[current_vc].cursor_left = 0;  //g_cursor_left = (0);
+	TTY[current_vc].cursor_top = 0;  //g_cursor_top = (0); 
 
 	//@todo:
 	//Isso é complicado.
@@ -2285,23 +2286,25 @@ int stdioInitialize (void){
 	//g_cursor_right = (800/8);
 	//g_cursor_bottom = (600/8);
 	
-	g_cursor_right = (SavedX/cWidth);
-	g_cursor_bottom = (SavedY/cHeight);
+	TTY[current_vc].cursor_right = (SavedX/cWidth);    //g_cursor_right = (SavedX/cWidth);
+	TTY[current_vc].cursor_bottom = (SavedY/cHeight);  //g_cursor_bottom = (SavedY/cHeight);
 	
 	
 	
     //x e y.
-	g_cursor_x = g_cursor_left; 
-	g_cursor_y = g_cursor_top; 
-	
+	TTY[current_vc].cursor_x = TTY[current_vc].cursor_left;  //g_cursor_x = g_cursor_left; 
+	TTY[current_vc].cursor_y = TTY[current_vc].cursor_top;   //g_cursor_y = g_cursor_top; 
+
+
 	// Default color.
 	// Não sabemos se o esquema de cores do sistema já
 	// está configurado, então usaremos uma cor padrão.
 	// A QUALQUER HORA O KERNEL PODE ESCREVER NO TERMINAL 
 	// E PARA USARMOS JANELAS PRETAS TEMOS QUE CONFIGURA A 
 	// COR DA FONTE, ENTÃO JANELAS TERÃO FONTE PRETA.
-	g_cursor_color = COLOR_TERMINALTEXT;
-	
+
+	TTY[current_vc].cursor_color = COLOR_TERMINALTEXT;    //g_cursor_color = COLOR_TERMINALTEXT;
+
 	
 	// #importante:
 	// Preenche os arquivos do fluxo padrão do kernel base
@@ -2456,7 +2459,13 @@ void REFRESH_STREAM ( FILE *stream ){
     {
 		printf ("%c", *c );
 		
-	    refresh_rectangle ( g_cursor_x * cWidth, g_cursor_y * cHeight, 
+	    //refresh_rectangle ( g_cursor_x * cWidth, g_cursor_y * cHeight, 
+		    //cWidth, cHeight );
+		    
+		    
+	    refresh_rectangle ( 
+	        TTY[current_vc].cursor_x * cWidth,     //g_cursor_x * cWidth, 
+	        TTY[current_vc].cursor_y * cHeight,    //g_cursor_y * cHeight, 
 		    cWidth, cHeight );
 		
 		c++;

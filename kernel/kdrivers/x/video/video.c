@@ -714,17 +714,18 @@ int videoInit (void){
 	gfontSize = FONT8X8;
 			    
 	//Cursor. 
-	g_cursor_x = 0;
-	g_cursor_y = 8;
-	g_cursor_width = 8;
-	g_cursor_height = 8;
-	g_cursor_color = COLOR_TERMINALTEXT;
+	TTY[current_vc].cursor_x = 0; //g_cursor_x = 0;
+	TTY[current_vc].cursor_y = 8; //g_cursor_y = 8;
+	TTY[current_vc].cursor_width = 8;    //g_cursor_width = 8;
+	TTY[current_vc].cursor_height = 8;   //g_cursor_height = 8;
+	TTY[current_vc].cursor_color = COLOR_TERMINALTEXT;
+        
         
 	//@todo; Criar defines para default.
-	g_cursor_left = 0;      // Margem esquerda dada em linhas.
-    g_cursor_top = 0;       // Margem superior dada em linhas.
-	g_cursor_right  = 256;  // Margem direita dada em linhas.
-    g_cursor_bottom = 256;  // Margem inferior dada em linhas.
+	TTY[current_vc].cursor_left = 0;      // Margem esquerda dada em linhas.
+    TTY[current_vc].cursor_top = 0;       // Margem superior dada em linhas.
+	TTY[current_vc].cursor_right  = 256;  // Margem direita dada em linhas.
+    TTY[current_vc].cursor_bottom = 256;  // Margem inferior dada em linhas.
 		
 	set_up_cursor(0,0);    //Cursor.
 	

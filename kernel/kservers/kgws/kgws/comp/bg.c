@@ -55,8 +55,8 @@ void backgroundDraw (unsigned long color){
 	//?? ja' podemos usar a variável. ??
 	
 	//Cursor.
-	g_cursor_x = 0;
-	g_cursor_y = 0;
+	TTY[current_vc].cursor_x = 0;
+	TTY[current_vc].cursor_y = 0;
 	
 	// #bugbug
 	// Será que nesse momento as dimensões do char já estão configuradas ??
@@ -98,8 +98,8 @@ void backgroundRedraw (unsigned long color){
 
 void backgroundBackground (void){
 	
-	g_cursor_x = 0;
-	g_cursor_y = 0; 
+	TTY[current_vc].cursor_x = 0;
+	TTY[current_vc].cursor_y = 0; 
 }
 
 

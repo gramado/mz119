@@ -785,6 +785,7 @@ unsigned long g_current_video_mode;  //video mode
 //unsigned long gwsSavedBPP;          //Bits per pixel.
 
 
+/*
 //cursor support.
 unsigned long g_cursor_x;
 unsigned long g_cursor_y;
@@ -795,7 +796,7 @@ unsigned long g_cursor_left;     // margem esquerda dada em linhas
 unsigned long g_cursor_top;      // margem superior dada em linhas
 unsigned long g_cursor_right;    // margem direita dada em linhas
 unsigned long g_cursor_bottom;   // margem inferior dada em linhas
-
+*/
 
 
 //status do cursor.

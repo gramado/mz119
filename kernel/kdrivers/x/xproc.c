@@ -268,6 +268,8 @@ void xxxtestSHELLServer (void){
 
 void xxxtestlibcSTDOUT (void){
 
+    /*
+     
     char *c;
 
     sprintf ( current_stdout->_base, "TESTING STDOUT ..." );
@@ -300,6 +302,8 @@ void xxxtestlibcSTDOUT (void){
 		 c++;
 	 }
 	stdio_terminalmode_flag = 0;  
+	
+	*/
 }
 
 
@@ -1200,6 +1204,9 @@ void *procedureInvokeUserModeProcedure()
 // Rever isso.
 void procedureWindowWithFocusTest (void)
 {
+	/*
+	
+	
 	// TESTANDO A JANELA DO desenvolvedor 
 	// SERÁ A ÚNICA JANELA EM PRIMEIRO PLANO POR ENQUANTO 
 	// A ÚNICA COM O FOCO DE ENTRADA
@@ -1251,6 +1258,9 @@ void procedureWindowWithFocusTest (void)
 	//...
 
     return;
+    
+    
+    */
 }
 
 

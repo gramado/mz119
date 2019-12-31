@@ -38,7 +38,8 @@ void terminalPutChar ( int c ){
 	// putchar ( (int) c );
 	
 	// Copiar o retângulo na memória de vídeo.	
-	refresh_rectangle ( g_cursor_x * cWidth, g_cursor_y * cHeight, 
+	refresh_rectangle ( 
+	    TTY[current_vc].cursor_x * cWidth, TTY[current_vc].cursor_y * cHeight, 
 		cWidth, cHeight );
 	
 	// flag off.
