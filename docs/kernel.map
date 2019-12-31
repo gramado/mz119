@@ -1059,21 +1059,21 @@ Linker script and memory map
 .text           0x00000000c0001000    0x30000
                 0x00000000c0001000                _code_begin = .
  *(.head_x86)
- .head_x86      0x00000000c0001000      0x1c3 head.o
+ .head_x86      0x00000000c0001000      0x1cc boot.o
                 0x00000000c0001000                _kernel_begin
-                0x00000000c000119b                _SavedBootBlock
-                0x00000000c000119f                _SavedLFB
-                0x00000000c00011a3                _SavedX
-                0x00000000c00011a7                _SavedY
-                0x00000000c00011ab                _SavedBPP
-                0x00000000c00011af                _SavedBootMode
-                0x00000000c00011b3                _kArg1
-                0x00000000c00011b7                _kArg2
-                0x00000000c00011bb                _kArg3
-                0x00000000c00011bf                _kArg4
+                0x00000000c00011a4                _SavedBootBlock
+                0x00000000c00011a8                _SavedLFB
+                0x00000000c00011ac                _SavedX
+                0x00000000c00011b0                _SavedY
+                0x00000000c00011b4                _SavedBPP
+                0x00000000c00011b8                _SavedBootMode
+                0x00000000c00011bc                _kArg1
+                0x00000000c00011c0                _kArg2
+                0x00000000c00011c4                _kArg3
+                0x00000000c00011c8                _kArg4
  *(.text)
- *fill*         0x00000000c00011c3        0xd 
- .text          0x00000000c00011d0     0x604a head.o
+ *fill*         0x00000000c00011cc        0x4 
+ .text          0x00000000c00011d0     0x604a boot.o
                 0x00000000c00011d0                _gdt
                 0x00000000c0001208                _end_gdt
                 0x00000000c000120c                _GDT_register
@@ -2395,7 +2395,7 @@ Linker script and memory map
  *fill*         0x00000000c0030c85      0x37b 
 
 .iplt           0x00000000c0031000        0x0
- .iplt          0x00000000c0031000        0x0 head.o
+ .iplt          0x00000000c0031000        0x0 boot.o
 
 .rodata         0x00000000c0031000     0xb000
                 0x00000000c0031000                _rodata_begin = .
@@ -2820,15 +2820,15 @@ Linker script and memory map
                                          0xb8 (size before relaxing)
 
 .rel.dyn        0x00000000c0044b6c        0x0
- .rel.got       0x00000000c0044b6c        0x0 head.o
- .rel.iplt      0x00000000c0044b6c        0x0 head.o
- .rel.head_x86  0x00000000c0044b6c        0x0 head.o
- .rel.text      0x00000000c0044b6c        0x0 head.o
+ .rel.got       0x00000000c0044b6c        0x0 boot.o
+ .rel.iplt      0x00000000c0044b6c        0x0 boot.o
+ .rel.head_x86  0x00000000c0044b6c        0x0 boot.o
+ .rel.text      0x00000000c0044b6c        0x0 boot.o
 
 .data           0x00000000c0044b80    0x11480
                 0x00000000c0044b80                _data_begin = .
  *(.data)
- .data          0x00000000c0044b80        0x2 head.o
+ .data          0x00000000c0044b80        0x2 boot.o
                 0x00000000c0044b80                _data_start
  *fill*         0x00000000c0044b82       0x1e 
  .data          0x00000000c0044ba0      0x1ec main.o
@@ -3091,13 +3091,13 @@ Linker script and memory map
  *fill*         0x00000000c00556cc      0x934 
 
 .got            0x00000000c0056000        0x0
- .got           0x00000000c0056000        0x0 head.o
+ .got           0x00000000c0056000        0x0 boot.o
 
 .got.plt        0x00000000c0056000        0x0
- .got.plt       0x00000000c0056000        0x0 head.o
+ .got.plt       0x00000000c0056000        0x0 boot.o
 
 .igot.plt       0x00000000c0056000        0x0
- .igot.plt      0x00000000c0056000        0x0 head.o
+ .igot.plt      0x00000000c0056000        0x0 boot.o
 
 .bss            0x00000000c0056000    0x4f000
                 0x00000000c0056000                _bss_begin = .
@@ -3941,7 +3941,7 @@ Linker script and memory map
                 0x00000000c00a3234                _last_size
                 0x00000000c00a3238                _last_valid
  *(.bss)
- .bss           0x00000000c00a323c        0x0 head.o
+ .bss           0x00000000c00a323c        0x0 boot.o
                 0x00000000c00a323c                _bss_start
  .bss           0x00000000c00a323c       0x28 main.o
  .bss           0x00000000c00a3264       0x28 x86main.o
@@ -4085,7 +4085,7 @@ Linker script and memory map
                 0x00000000c00a5000                . = ALIGN (0x1000)
  *fill*         0x00000000c00a4630      0x9d0 
                 0x00000000c00a5000                _kernel_end = .
-LOAD head.o
+LOAD boot.o
 LOAD main.o
 LOAD x86main.o
 LOAD pipe.o

@@ -2,7 +2,7 @@
 ; Gramado Header - The kernel entry point for x86 processors.
 ; (c) Copyright 2005-2017 Fred Nora.
 ;
-; File: x86/entry/head/head.asm 
+; File: x86/head/head.asm 
 ;
 ; Descrição:
 ;      Parte principal do núcleo na arquitetura x86. 
@@ -25,7 +25,33 @@
 ; No final desse arquivo estão a GDT, IDT e 
 ; includes padronizados.
 ;
-
+; Ordem padrão dos arquivos em assembly:
+; ======================================
+; (1) head.s
+; (2) headlib.s
+; (3) hw.inc
+; (4) hwlib.inc
+; (5) sw.inc
+; (6) swlib.inc.
+; Obs: Essa é uma ordem padrão, nunca mudar, nunca excluir arquivos, 
+;      nunca incluir outros arquivos.
+;
+; (Israel class): 
+; ==================
+;   wCodeBootManager (MSM)
+;   wCodeBootLoader
+;   wCodeKernel
+;   wCodeIdle
+;   wCodeShell
+;   wCodeTaskMan (Task Manager)
+; Obs: Esse pretende ser também um conjunto organizado de arquivos importantes
+; se serão aplicados de forma sistemática em muitos projetos.
+;
+; @todo:
+;     O Kernel base terá três (3) rotinas que oferecem serviços, saõ elas:
+;     _bmServices, herdada do Boot Manager.
+;     _blServices, herdada do Boot Loader.
+;     _kernelServices ou _services do próprio kernel base.
 ;
 ; Histórico:
 ; Versão 1.0, 2005 - Criadas as primeiras rotinas
@@ -36,10 +62,21 @@
 ;
 
 
+;;
+;; codename db 'fortaleza'
+;;
 
 
 
+;
+; Segmento .head_x86:
+;     Parte inicial do kernel. Esse marcador precisa ficar no começo
+; do arquivo.
+;
+segment .head_x86
 
+
+[bits 32]
 
 
  
@@ -154,8 +191,17 @@ KRN_ENTRYPOINT equ 0x00101000    ;Entry Point.
 ;...
 
 
-;==================================
-; head_init:
+
+;=================================================================
+; _kernel_begin:   (wCode)
+;    Entry point do Kernel.
+;
+;    @todo: Estamos incluindo o header do multiboot, isso irá deslocar
+; esse entry point e precisamos modificar o bootl loader para que ele
+; salte para a posição certa quando passar o comando para o kernel.
+;
+;    Esse formato de nome é usado pelo linker.
+;
 ; IN:  
 ;    al = 'G' (Graphic Mode).
 ;    al = 'T' (Text Mode).
@@ -165,10 +211,141 @@ KRN_ENTRYPOINT equ 0x00101000    ;Entry Point.
 ;       ecx = BootBlock pointer.
 ;       edx = LoaderBlock pointer.
 ;
-; Isso é chamado por boot.asm.
+
+
+
+;; <head>
+global _kernel_begin              
+_kernel_begin:
+
+    ;; >>
+    jmp mboot_end
+
+	;;
+	;; @todo: 
+	;; Seguir a 'multiboot specification'.
+	;; O objetivo é que o Gramado Boot também 
+	;; utilize as informações que existem aqui no header. 
+	;; Porém o entry point agora será depois do header.
+	;; Eu acho. 
+	;;
+	;; Obs:
+	;; O gramado Boot precisa carregar vários arquivos antes 
+	;; de carregar o kernel, e faz a configuração inicial 
+	;; de memória e de modo de vídeo.
+    ;;
+    ;; #importante:
+    ;; Se o kernel for carregado pelo multiboot ele 
+    ;; inicializará sem os argumentos enviados pelo 
+    ;; pelo Gramado Boot, então o kernel terá que fazer 
+    ;; uma inicialização diferente, provavelmente em modo texto.
+    ;; Talvez o kernel não funcione completamente se inicializado
+    ;; com o multiboot. isso não é problema, pois estamos 
+    ;; apenas implementando as primeiras tentativas de usarmos 
+    ;; o multiboot.	
+	;;
+	
+    ;The only problem with loading the PE format is that GRUB 
+	;doesn't know how to parse it and you will have to provide 
+	;it quite a bit of information on how to load it and where to jump too. 
+    ;You can make grub load any file format by using the aout kludge. 
+	;This uses additional fields at the end of the Multiboot header, like this: 
+	
+;	
+;	+-------------------+
+;0	| magic: 0x1BADB002 |	(required)
+;4	| flags		        |	(required)
+;8	| checksum	        |	(required)
+;	+-------------------+
+;8	| header_addr	    |	(present if flags[16] is set)
+;12	| load_addr	        |	(present if flags[16] is set)
+;16	| load_end_addr	    |	(present if flags[16] is set)
+;20	| bss_end_addr	    |	(present if flags[16] is set)
+;24	| entry_addr	    |	(present if flags[16] is set)
+;	+-------------------+
 ;
 
-head_init:
+;header_addr -- Contains the address corresponding to the beginning of 
+;the multiboot_header - the physical memory location at which the 
+;magic value is supposed to be loaded. This field serves to 
+;"synchronize" the mapping between OS image offsets and physical memory 
+;addresses.
+
+;load_addr -- Contains the physical address of the beginning of 
+;the text segment. The offset in the OS image file at which to 
+;start loading is defined by the offset at which the header was found, 
+;minus (header_addr - load_addr). load_addr must be less than or equal 
+;to header_addr.
+
+;load_end_addr -- Contains the physical address of the end of the data 
+;segment. 
+;(load_end_addr - load_addr) specifies how much data to load. 
+;This implies that the text and data segments must be consecutive in 
+;the OS image; 
+;this is true for existing a.out executable formats.
+
+;bss_end_addr -- Contains the physical address of the end of the bss 
+;segment. 
+;The boot loader initializes this area to zero, and reserves the memory
+;it occupies to avoid placing boot modules and other data relevant to 
+;the OS in that area.
+
+;entry -- The physical address to which the boot loader should jump in 
+;order to start running the OS.
+
+
+    ;; Setup multiboot values.
+    MULTIBOOT_MAGIC        equ  0x1badb002
+    MULTIBOOT_PAGE_ALIGN   equ  0x1
+    MULTIBOOT_MEMORY_INFO  equ  0x2
+    MULTIBOOT_VIDEO_MODE   equ  0x4
+    multiboot_flags        equ  MULTIBOOT_PAGE_ALIGN | MULTIBOOT_MEMORY_INFO | MULTIBOOT_VIDEO_MODE
+    multiboot_checksum     equ  -(MULTIBOOT_MAGIC + multiboot_flags)
+
+
+    extern _code_begin
+    extern _data_end
+    extern _bss_end
+
+	
+	; The Multiboot header
+align 4
+
+;; =============================================================
+mboot_start:
+
+
+    dd  MULTIBOOT_MAGIC
+    dd  multiboot_flags
+    dd  multiboot_checksum
+
+    ; fields used if MULTIBOOT_AOUT_KLUDGE is set in 
+    ; MULTIBOOT_HEADER_FLAGS
+
+    ;; for MULTIBOOT_MEMORY_INFO
+    dd  0x00000000    ;; header_addr   - mboot_start    ; these are PHYSICAL addresses
+    dd  0x00000000    ;; load_addr     - _code_begin    ; start of kernel .text (code) section
+    dd  0x00000000    ;; load_end_addr - _data_end      ; end of kernel .data section
+    dd  0x00000000    ;; bss_end_addr  - _bss_end       ; end of kernel BSS
+    dd  0x00000000    ;; entry_addr    - _kernel_begin  ; kernel entry point (initial EIP)
+
+    ;; for MULTIBOOT_VIDEO_MODE
+    dd  0x00000000    ;; mode_type 
+    dd  800           ;; width 
+    dd  600           ;; height 
+    dd  24            ;; depth 
+
+
+mboot_end:
+;; =============================================================
+
+
+    ;;
+    ;; The code restarts here !
+    ;;
+
+    cli
+    cld
 
 
     ;Debug.
@@ -237,20 +414,19 @@ head_init:
 	;
 
 .nogui:
-	mov byte [0xb8000], byte "t"
-    mov byte [0xb8001], byte 9
-    mov byte [0xb8002], byte "m"
-    mov byte [0xb8003], byte 9
+	mov byte [0xb8000], byte "t"	
+    mov byte [0xb8001], byte 9	
+    mov byte [0xb8002], byte "m"	
+    mov byte [0xb8003], byte 9	
 
-
-.nogui_hang:
+.nogui_hang:	
     hlt
-    jmp .nogui_hang
-
+	jmp .nogui_hang
+	
 	;
 	; Use GUI.
 	;
-
+	
 .useGUI:
 
     ;checar se chegamos aqui com a flag de gui acionada.
@@ -298,7 +474,7 @@ head_init:
 
     ;BPP.
 	xor eax, eax
-    mov al, byte [edx +12]  
+    mov al, byte [edx +12]        	
     mov dword [_SavedBPP], eax
 	
 
@@ -2611,6 +2787,40 @@ _IDT_register:
 	
 
 
+;
+; Includes:
+; ========
+; Esses includes são padronizados. Não acrescentar outros.
+;
+
+    ;Funções de apoio à inicialização do Kernel 32bit.
+    %include "headlib.asm" 
+
+	;Interrupções de hardware (irqs) e faults.
+    %include "hw.asm"
+    %include "hwlib.asm"
+
+	;Interrupções de software.
+	%include "sw.asm"
+    %include "swlib.asm"
+
+
+; DATA: 
+;     Início do Segmento de dados.
+
+segment .data
+global _data_start
+_data_start:
+    db 0x55    ;data magic.
+    db 0xAA    ;data magic.
+
+
+; BSS:
+;     Início do segmento BSS.
+
+segment .bss
+global _bss_start
+_bss_start:
 
 
 ;
