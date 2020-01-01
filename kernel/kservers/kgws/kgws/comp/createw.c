@@ -1398,6 +1398,7 @@ void *CreateWindow ( unsigned long type,
     {
         bmpDisplayBMP ( appIconBuffer, 
             window->left +8, window->top +8 );
+            
         draw_string ( window->left +8, window->top +16 +8 +8, 
             COLOR_TERMINALTEXT2, window->name );  
     }

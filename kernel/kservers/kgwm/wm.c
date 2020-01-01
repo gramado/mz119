@@ -1546,7 +1546,7 @@ int redraw_window (struct window_d *window, unsigned long flags ){
     unsigned long border_color = COLOR_BORDER;
 
     unsigned long __tmp_color;
-	
+
 	
 	
     if ( (void *) window == NULL )
@@ -2047,8 +2047,8 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 		            window->statusbar->top, 
 			        window->statusbar->width -1, 
 			        window->statusbar->height, 
-			        window->statusbar->bg_color ); 	
-						   
+			        window->statusbar->bg_color ); 
+
 		        draw_string ( window->statusbar->left +8, 
 		            window->statusbar->top +8, 
 		            COLOR_TEXT, window->statusbar->name ); 
@@ -2165,12 +2165,30 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 
 
 
+    // Icon.
+    if (window->type == WT_ICON)
+    {
+        bmpDisplayBMP ( appIconBuffer, 
+            window->left +8, window->top +8 );
+            
+        draw_string ( window->left +8, window->top +16 +8 +8, 
+            COLOR_TERMINALTEXT2, window->name );  
+    }
+
+
+
     //#test
     //manda uma mensagem para thread atual
     //para ela mostrar os elementos da área de cliente.
 
+    // isso será usado na função update window.()
+    /*
+    // não podemos fazer isso para todos os tipos de janelas.
+    // pois entraria num loop de recursividade.
+    if ( window->type == WT_OVERLAPPED || window->type == WT_SIMPLE )
+    {
 		// Validade da thread.
-		if ( (void *) window->control != NULL )
+        if ( (void *) window->control != NULL )
         {
 			// Validade da thread.
 			if ( window->control->used == 1 || 
@@ -2185,6 +2203,8 @@ int redraw_window (struct window_d *window, unsigned long flags ){
 			    window->control->newmessageFlag = 1;
 			}
 		}
+    };
+    */
 
 	//
 	// Outros elementos ainda não implementados ...
@@ -2962,33 +2982,34 @@ void SetFocus ( struct window_d *window ){
 	
 	
 	// #debug
-	// Testando com uma versão simplificada, pois isso está falahdo na máquina real.
+	// Testando com uma versão simplificada, pois isso está falhado na máquina real.
 	// Sem foco do teclado não funciona.
 	
 	if ( (void *) window == NULL )
 	{
-		printf ("SetFocus: window");
-		die();
+		panic ("SetFocus: window");
     }else{
 	
 	    if ( window->used != 1 || window->magic != 1234 )
 	    {
-		    printf ("SetFocus: validation");
-		    die();
+		    panic ("SetFocus: validation");
 		}
-		
+
 		// ... ok
 
 	    window_with_focus = (int) window->id;
 	    WindowWithFocus = (void *) window;
 		window->focus = 1; 
 	}
-	
+
 	return;
-	
-	
-	
-	
+
+
+    // send message ?
+
+
+
+
 	
 	//
 	// ===== cut here for now ...====
@@ -4447,10 +4468,40 @@ int windowOverLappedScan ( unsigned long x, unsigned long y ){
 
 
 //Envia uma mensagem PAINT para o aplicativo atualizar a área de trabalho.
-void windowUpdateWindow ( struct window_d *window ){
-	
-    windowSendMessage ( (unsigned long) window, (unsigned long) MSG_PAINT, 
-	    (unsigned long) 0, (unsigned long) 0 );
+void windowUpdateWindow ( struct window_d *window )
+{
+    // bugbug: esse send está falhando.
+    //windowSendMessage ( (unsigned long) window, 
+        //(unsigned long) MSG_PAINT, 
+        //(unsigned long) 0, 
+        //(unsigned long) 0 );
+        
+        
+		//window = (struct window_d *) arg2;
+
+		if ( (void *) window == NULL )
+		{  return; }
+		
+        if ( window->type == WT_OVERLAPPED || window->type == WT_SIMPLE )
+        {
+		    // Validade da thread.
+            if ( (void *) window->control != NULL )
+            {
+			    // Validade da thread.
+			    if ( window->control->used == 1 || 
+			         window->control->magic == 1234 )
+			    {
+			       // mandamos a mensagem
+			       // o aplicativo decide o que fazer com ela.
+			        window->control->window = window;
+			        window->control->msg = MSG_PAINT;
+			        window->control->long1 = 0;
+			        window->control->long2 = 0;
+			        window->control->newmessageFlag = 1;
+			    }
+		    }
+        };
+
 }
 
 

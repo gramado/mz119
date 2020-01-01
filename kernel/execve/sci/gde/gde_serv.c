@@ -353,6 +353,17 @@ void *gde_extra_services ( unsigned long number,
         tty_set_current_virtual_console ( (int) arg2 );
         return NULL;
     }
+    
+
+    // Update window.
+    // Atualiza a área de cliente enviando uma mensage MSG_PAINT.
+    // Isso funcionou.
+    if ( number == 279 )
+    {
+        windowUpdateWindow ( (struct window_d *) arg2 );
+        return NULL;
+    }
+
 
     // Returns the current runlevel.
     if ( number == 288 )
