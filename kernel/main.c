@@ -44,9 +44,9 @@ int kernel_main (void){
     //  Virtual Console
     //
 
-
     // Só tem 2.
-    current_vc = 0;
+    tty_set_current_virtual_console (0);
+
     
     // usado pelo kernel.
     TTY[0].cursor_x = 0;

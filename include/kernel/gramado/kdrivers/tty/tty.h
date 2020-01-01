@@ -325,6 +325,13 @@ int pty_write(struct tty_d *tty, const char *buf, int c)
 {}
 */
 
+
+// Virtual console support.
+void tty_set_current_virtual_console ( int n );
+int tty_get_current_virtual_console (void);
+
+void tty_init_virtual_console (int n);
+
 //
 // End.
 //
