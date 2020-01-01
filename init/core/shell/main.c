@@ -3286,6 +3286,15 @@ do_compare:
 		shellTree();
 		goto exit_cmp;
     }
+    
+    // Getting virtual console number.
+    int __current_virtual_console = -1;
+    if ( strncmp( prompt, "tty", 3 ) == 0 )
+    {
+        __current_virtual_console = (int) gramado_system_call (277,0,0,0);
+        printf ("Current Virtual Console %d \n");
+        goto exit_cmp;
+    }
 
 
 	// version

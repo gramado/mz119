@@ -24,7 +24,7 @@ void tty_set_current_virtual_console ( int n )
         return;
     }
     
-    if ( n >= 2 )
+    if ( n >= 4 )
     {
          return;
     }
@@ -46,7 +46,7 @@ void tty_init_virtual_console (int n)
         return;
     }
     
-    if ( n >= 2 )
+    if ( n >= 4 )
     {
          return;
     }
@@ -629,10 +629,10 @@ int ttyInit (int tty_id){
 	
         for (i=0; i<8; i++)
 	    {
-		    ptsList[i] = 0;
+		    ttyList[i] = 0;
 	    }
 	
-	    ptsList[tty_id] = (unsigned long) CurrentTTY;
+	    ttyList[tty_id] = (unsigned long) CurrentTTY;
 	       
 	       
 	    // More ?    

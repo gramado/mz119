@@ -46,29 +46,12 @@ int kernel_main (void){
 
     // Só tem 2.
     tty_set_current_virtual_console (0);
+    
+    tty_init_virtual_console (0);
+    tty_init_virtual_console (1);
+    tty_init_virtual_console (2);
+    tty_init_virtual_console (3);   // window server.
 
-    
-    // usado pelo kernel.
-    TTY[0].cursor_x = 0;
-    TTY[0].cursor_y = 0;
-    TTY[0].cursor_width = 80;
-    TTY[0].cursor_height = 80;
-    TTY[0].cursor_left = 0;
-    TTY[0].cursor_top = 0;
-    TTY[0].cursor_right = 80;
-    TTY[0].cursor_bottom = 80;
-    TTY[0].cursor_color = COLOR_TERMINALTEXT;
-    
-    // 
-    TTY[1].cursor_x = 0;
-    TTY[1].cursor_y = 0;
-    TTY[1].cursor_width = 80;
-    TTY[1].cursor_height = 80;
-    TTY[1].cursor_left = 0;
-    TTY[1].cursor_top = 0;
-    TTY[1].cursor_right = 80;
-    TTY[1].cursor_bottom = 80;
-    TTY[1].cursor_color = COLOR_TERMINALTEXT;
 
     
 	//

@@ -264,7 +264,7 @@ struct tty_d
 
 
 int current_vc;
-struct tty_d TTY[2];
+struct tty_d TTY[4];
 
 
 //
@@ -277,8 +277,8 @@ struct tty_d *CurrentTTY;
 
 // Usado pelos aplicativos para criarem terminais virtuais.
 // Criadas com ponteiros e alocadas com kmalloc.
-int current_pts;
-unsigned long ptsList[32]; 
+//int current_pts;
+unsigned long ttyList[64]; 
 
 
 
