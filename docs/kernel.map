@@ -543,8 +543,8 @@ _contextGS          0x4               x86cont.o
 _current_usersession
                     0x4               main.o
 _g_video_mode       0x4               main.o
-_fat                0x4               main.o
 _ttyCurrentY        0x4               main.o
+_fat                0x4               main.o
 _ps2_mouse_has_wheel
                     0x4               ps2mouse.o
 _kgws_last_totalticks
@@ -942,8 +942,6 @@ _kgws_mouse_event_moving
 _server_stdout      0x4               main.o
 _contextEDI         0x4               x86cont.o
 _timerLock          0x4               timer.o
-_g_file_system_type
-                    0x4               main.o
 _currentNIC         0x4               main.o
 _g_gramadocore_shell_heap_va
                     0x4               main.o
@@ -3457,8 +3455,8 @@ Linker script and memory map
                 0x00000000c0077230                _saved_mouse_y
                 0x00000000c0077234                _current_usersession
                 0x00000000c0077238                _g_video_mode
-                0x00000000c007723c                _fat
-                0x00000000c0077240                _ttyCurrentY
+                0x00000000c007723c                _ttyCurrentY
+                0x00000000c0077240                _fat
                 0x00000000c0077244                _mm_used_pagedpool
                 0x00000000c0077248                _stdio_verbosemode_flag
                 0x00000000c007724c                _file_bin
@@ -3718,26 +3716,25 @@ Linker script and memory map
                 0x00000000c0092c8c                _rooms_count
                 0x00000000c0092c90                _key_status
                 0x00000000c0092c94                _server_stdout
-                0x00000000c0092c98                _g_file_system_type
-                0x00000000c0092c9c                _currentNIC
-                0x00000000c0092ca0                _g_gramadocore_shell_heap_va
-                0x00000000c0092ca4                _mmblockCount
-                0x00000000c0092ca8                _prompt_status
-                0x00000000c0092cac                _pagedirectoryTaskmanProcess
-                0x00000000c0092cb0                _ambiente
-                0x00000000c0092cb4                _framepoolLargeSystemUserSpace
-                0x00000000c0092cb8                _g_platform_type
-                0x00000000c0092cbc                _folderIconBuffer
-                0x00000000c0092cc0                _line_stdin
-                0x00000000c0092cc4                _g_kernel_paged_memory
-                0x00000000c0092cc8                _mmFramesSuperBlockStart
-                0x00000000c0092ccc                _mouseBMPBuffer
-                0x00000000c0092cd0                _g_driver_keyboard_initialized
-                0x00000000c0092cd4                _rtc
-                0x00000000c0092cd8                _MEDIUM_gramadocore_init_heap_address
-                0x00000000c0092cdc                _bmp_substitute_color
-                0x00000000c0092ce0                _window_Conductor
-                0x00000000c0092ce4                _lastBank
+                0x00000000c0092c98                _currentNIC
+                0x00000000c0092c9c                _g_gramadocore_shell_heap_va
+                0x00000000c0092ca0                _mmblockCount
+                0x00000000c0092ca4                _prompt_status
+                0x00000000c0092ca8                _pagedirectoryTaskmanProcess
+                0x00000000c0092cac                _ambiente
+                0x00000000c0092cb0                _framepoolLargeSystemUserSpace
+                0x00000000c0092cb4                _g_platform_type
+                0x00000000c0092cb8                _folderIconBuffer
+                0x00000000c0092cbc                _line_stdin
+                0x00000000c0092cc0                _g_kernel_paged_memory
+                0x00000000c0092cc4                _mmFramesSuperBlockStart
+                0x00000000c0092cc8                _mouseBMPBuffer
+                0x00000000c0092ccc                _g_driver_keyboard_initialized
+                0x00000000c0092cd0                _rtc
+                0x00000000c0092cd4                _MEDIUM_gramadocore_init_heap_address
+                0x00000000c0092cd8                _bmp_substitute_color
+                0x00000000c0092cdc                _window_Conductor
+                0x00000000c0092ce0                _lastBank
                 0x00000000c0092d00                _TTY
                 0x00000000c0093300                _e1000_interrupt_flag
                 0x00000000c0093304                _g_mm_system_type

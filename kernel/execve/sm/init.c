@@ -605,12 +605,17 @@ void init_globals (void){
 	//Messages.
 	g_nova_mensagem = 0;
 	g_new_message = 0;
-	
-    //FS type.	
-	g_file_system_type = FS_TYPE_FAT16;	//tipo 1, fat16.
-	fatbits = (int) 16;
-	
-	//===================	
+
+
+
+    // FS type.
+    // type 1, fat16.
+    g_filesystem_type = FS_TYPE_FAT16;    
+    fatbits = (int) 16;
+
+
+
+	//===================
 	
 	// #importante:
 	// provavelmente isso altere o comportamento do cursor,

@@ -110,7 +110,8 @@ extern void do_executa_new_task (void);
 // kservers
 #include <kernel/kservers/kgws/kgws/fonts.h>
 #include <kernel/kservers/ascii.h>   
-#include <kernel/kservers/fs/fs2.h> 
+#include <kernel/kservers/fs/fs.h>                  // fs.
+#include <kernel/kservers/vfs/vfs.h>                // vfs.
 #include <kernel/kservers/kgws/kgws/prompt.h>
 #include <kernel/kservers/kgws/kgws/bmp2.h>
 
@@ -225,11 +226,6 @@ extern void do_executa_new_task (void);
 #include <kernel/kdrivers/network/client.h>      //(network) Client process support. 
 #include <kernel/kdrivers/network/ns.h>          //(network) Network Server.
 #include <kernel/kdrivers/network/network.h>     //(network) Gerenciamento de rede. 
-
-
-// kservers
-#include <kernel/kservers/fs/fs.h>                  //fs.
-#include <kernel/kservers/vfs/vfs.h>                //vfs.
 #include <kernel/kdrivers/dd.h>
 
 // devices
