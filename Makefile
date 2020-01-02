@@ -10,10 +10,10 @@
 # We will have a new name just when the release changes.
 
 VERSION = 1
-PATCHLEVEL = 20
+PATCHLEVEL = 21
 SUBLEVEL = 0
-EXTRAVERSION = 
-NAME = Bread
+EXTRAVERSION = -rc0
+NAME = 
 
 
 

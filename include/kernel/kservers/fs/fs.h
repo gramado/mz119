@@ -14,6 +14,21 @@
 //
 
 
+// LBA - logical block address.
+// fat16
+
+#define MBR_LBA               0 
+#define VOLUME1_VBR_LBA       63
+#define VOLUME1_FAT_LBA       67 
+#define VOLUME1_ROOTDIR_LBA   559
+#define VOLUME1_DATAAREA_LBA  591 
+#define VOLUME2_VBR_LBA       32000
+#define VOLUME2_FAT_LBA       33000  
+#define VOLUME2_ROOTDIR_LBA   34000
+#define VOLUME2_DATAAREA_LBA  35000
+
+
+
 
 // string support
 #define  FS_STRING_TERMINATOR  "\0" 
@@ -38,21 +53,6 @@
 #define  FS_SYSTEMWORKINGDIRECTORY_STRING   "volume2"
 #define  FS_UNKNOWNWORKINGDIRECTORY_STRING  "unknown-directory"
 #define  WORKINGDIRECTORY_STRING_MAX 32
-
-
-
-// LBA - logical block address.
-// fat16
-
-#define MBR_LBA               0 
-#define VOLUME1_VBR_LBA       63
-#define VOLUME1_FAT_LBA       67 
-#define VOLUME1_ROOTDIR_LBA   559
-#define VOLUME1_DATAAREA_LBA  591 
-#define VOLUME2_VBR_LBA       32000
-#define VOLUME2_FAT_LBA       33000  
-#define VOLUME2_ROOTDIR_LBA   34000
-#define VOLUME2_DATAAREA_LBA  35000
 
 
 
