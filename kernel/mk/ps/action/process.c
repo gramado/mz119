@@ -409,6 +409,9 @@ int getprocessname ( int pid, char *buffer )
 // ( * Não * ) mexa pois ainda estamos
 // trabalahndo os outros métodos.
 
+// IN: ??
+// OUT: ??
+
 pid_t do_clone_execute_process (char *filename){
 
     int PID;
@@ -420,6 +423,9 @@ pid_t do_clone_execute_process (char *filename){
 
     unsigned long *dir;
     unsigned long old_dir_entry1;
+    
+    // retorno da função de carregamento.
+    int __load_ret = -1;
 
 
 	//unsigned long old_image_pa; //usado para salvamento.
@@ -640,18 +646,44 @@ do_clone:
 		// refresh_screen();
 		// while(1){}
 		
-		
+
+
+
 		//
 		// Load file.
 		//
-		
-		// #importante: 
-       	// Carregando a imagem do porcesso filho.
 
-		read_fntos ( (char *) filename );
+        // #importante: 
+        // Carregando a imagem do porcesso filho.
+        // Se o carregamento falhar, temos que abortar a clonagem
+        // caso contrário executa a cópia da imagem do pai.
 
-        fsLoadFile ( VOLUME1_FAT_ADDRESS, VOLUME1_ROOTDIR_ADDRESS, 
-	                     filename, (unsigned long) Clone->Image );		
+        read_fntos ( (char *) filename );
+
+        __load_ret = (int) fsLoadFile ( VOLUME1_FAT_ADDRESS, 
+                              VOLUME1_ROOTDIR_ADDRESS, 
+                              filename, 
+                              (unsigned long) Clone->Image );
+
+       // Se falhou o carregamento.
+       if ( __load_ret != 0 )
+       {
+            // kill thread.
+            Clone->control->used = 0;
+            Clone->control->magic = 0;
+            Clone->control == NULL;
+            
+            // kill process.
+            Clone->used = 0;
+            Clone->magic = 0;            
+            Clone = NULL;
+            
+            printf ("do_clone_execute_process: Couldn't load the file %s\n", 
+                filename );
+            goto fail;
+       }
+       
+
 
 		//====
 		//#bugbug : Essa pilha está dentro da imagem. ...
@@ -709,7 +741,7 @@ do_clone:
 	// Fail.
 
 fail:
-
+    refresh_screen ();
     return (pid_t) -1;
 }
 
@@ -1544,35 +1576,24 @@ do_clone:
 		
 		Clone->control->DirectoryPA = Clone->DirectoryPA;
 		
-		
-		//#hackhack
 
-        /*
-		// [pai]
-		Current->control->quantum = 30;
-		Current->control->state = READY;
-        //SelectForExecution (Current->control);
+        // #hackhack
 
+        // #bugbug
+        // Chamar a função que muda a prioridade. Ela afeta o quantum.
 
-		// [filho]
-		Clone->control->quantum = 30;
-		Clone->control->saved = 0;
-		Clone->control->state = READY;
-		SelectForExecution (Clone->control);
-        */
-
-		// [pai]
-		Current->control->quantum = 30;
-		Current->control->saved = 0;
-		Current->control->state = READY;
-        //SelectForExecution (Current->control);
+        // [pai]
+        Current->control->quantum = 30;
+        Current->control->saved = 0;
+        Current->control->state = READY;
 
 
-		// [filho]
-		Clone->control->quantum = 30;
-		Clone->control->saved = 1;
-		Clone->control->state = READY;
-		//SelectForExecution (Clone->control);
+        // [filho]
+        Clone->control->quantum = 30;
+        Clone->control->saved = 1;
+        Clone->control->state = READY;
+
+
 
         //
         // return
@@ -1594,7 +1615,7 @@ do_clone:
     // Fail.
 
 fail:
-	
+
     return (pid_t) -1;
 }
 

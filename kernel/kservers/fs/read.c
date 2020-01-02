@@ -393,6 +393,9 @@ const char *break_path (const char *pathname, char *filename)
 // Problemas na string do nome.
 // Vamos limitar a 11.
 
+// IN: ??
+// OUT: 1=fail 0=ok.
+
 unsigned long 
 fsLoadFile ( unsigned long fat_address,
              unsigned long dir_address,

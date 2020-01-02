@@ -17,6 +17,50 @@
 
 
 
+/*
+ #todo
+// copia a estrutura de termios.
+// para o aplicativo em ring3 poder ler.
+int tty_gets ( struct tty_d *tty, struct termios *termiosp );
+int tty_gets ( struct tty_d *tty, struct termios *termiosp )
+{
+
+    // Copia a estrutura term da tty na estrutura de termios 
+    // que está em ring3.
+    memcpy ( termiosp, &tty->term, sizeof(struct termios));
+}
+*/
+
+
+/*
+ //copia de ring3 para o kernel.
+int tty_sets (struct tty_d *tty, int options, struct termios *termiosp );
+int tty_sets (struct tty_d *tty, int options, struct termios *termiosp )
+{
+	int ret;
+	
+	ret = 0;
+
+
+	switch (options)
+	{
+
+		case TCSANOW:
+			kmemcpy(&tty->term, termiosp, sizeof(struct termios));
+			break;
+
+
+		default:
+			ret = -EINVAL;
+			break;
+	}
+
+	return (ret);
+}
+*/
+ 
+ 
+
 void tty_set_current_virtual_console ( int n )
 {
     if ( n < 0 )
