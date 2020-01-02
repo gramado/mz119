@@ -767,11 +767,13 @@ void ScanReadyQueue(struct queue_d *q)
 		}; 
 		++i;
 	};
+
+
     return;
-};
+}
 
 
-void feed_ready_queue(struct queue_d *q, int type)
+void feed_ready_queue (struct queue_d *q, int type)
 {
 	struct thread_d *t;
 	unsigned long p;
@@ -823,7 +825,7 @@ feed_head:
     
 	    if( (void *) t != NULL && t->used == 1 && t->magic == 1234)
 	    {
-		    if( t->priority == PRIORITY_HIGH || t->priority == PRIORITY_REALTIME )
+		    if( t->priority == PRIORITY_HIGH || t->priority == PRIORITY_MAX )
             {
 			    if(t->priority > p)
 				{
@@ -850,7 +852,7 @@ feed_with_threadList:
 	    t = (void *) threadList[i];
         if( (void *) t != NULL && t->used == 1 && t->magic == 1234 )
 		{
-		    if( t->priority == PRIORITY_HIGH || t->priority == PRIORITY_REALTIME )
+		    if( t->priority == PRIORITY_HIGH || t->priority == PRIORITY_MAX )
             {
 			    if( t->priority >= p)
 				{

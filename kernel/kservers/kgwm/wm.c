@@ -2980,7 +2980,10 @@ void windowUnblockFocus (void){
  
 void SetFocus ( struct window_d *window ){
 	
-	
+    // priority stuff
+    struct thread_d *thread;
+
+
 	// #debug
 	// Testando com uma versão simplificada, pois isso está falhado na máquina real.
 	// Sem foco do teclado não funciona.
@@ -2997,63 +3000,27 @@ void SetFocus ( struct window_d *window ){
 
 		// ... ok
 
-	    window_with_focus = (int) window->id;
-	    WindowWithFocus = (void *) window;
-		window->focus = 1; 
+        window->focus = 1; 
+        window_with_focus = (int) window->id;
+        WindowWithFocus = (void *) window;
+	};
+	
+	
+	// Priority and quantum.
+	if ( (void *) window->control != NULL )
+	{
+	    set_thread_priority ( (struct thread_d *) window->control,
+	        PRIORITY_MAX );
+	
 	}
 
-	return;
 
-
-    // send message ?
-
-
-
-
+	// #bugbug
+	// Send message ?
+	// Isso falhou na máquina real.
+	// Tem que fazer testes.
 	
-	//
-	// ===== cut here for now ...====
-	//
-
-    int i=0;
-    int WindowID;
-
-
-	//Impossível mudar o focus.
-	//Isso manterá o foco na janela do desenvolvedor
-	//durante a fase de criação da interface gráfica.
-	//if( _lockfocus == 1){
-	//	return;
-	//};
-	
-	// Quando uma janela recebe o foco de entrada, ela vira a janela ativa, 
-	// porém se ela tiver uma janela mãe, então a janela mãe será a 
-	// janela ativa.
-	
-    if ( (void *) window == NULL )
-	{
-		goto fail;
-	
-	} else {
-		
-		if ( window->used != 1 || window->magic != 1234 )
-		{
-			goto fail;
-		}
-		
-		//A janela que antes tinha o foco, perde ele.
-		KillFocus (WindowWithFocus);
-		
-		//
-		// Thread.
-		//
-		
-		// #importante:
-		// Se a estrutura de janela é válida, vamos associar a janela com o 
-		// foco de entrada à thread atual, pois é ela quem chamou essa rotina. 
-		// Apesar que o próprio kernel pode ter chamado isso na inicialização,
-		// nesse caso a thread será inválida.
-
+	/*
 		// Validade da thread.
 		if ( (void *) window->control != NULL )
         {
@@ -3070,182 +3037,10 @@ void SetFocus ( struct window_d *window ){
 			    window->control->newmessageFlag = 1;
 			}
 		}
-		
-		// Salvando id localmente.
-		WindowID = (int) window->id; 
-			
-		//Se a janela já tem o foco não precisa fazer nada.
-		if ( window->id == window_with_focus )
-		{
-			window->focus = 1; 
-			goto setup_wwf;
-		};
-		
-		
-
-		//Se a janela é a janela ativa.
-		//Então atribuimos o foco e configuramos o procedimento de janela.
-		if ( window->id == active_window )
-		{
-		    window_with_focus = (int) window->id;
-		    WindowWithFocus = (void *) window;
-			window->focus = 1; 
-			goto setup_wwf;
-		};
+	*/
 
 
-		// Se ela não é a janela ativa, tentamos ativar sua janela mãe.
-		// Isso se a janela mão já não for a janela ativa.
-        // As janelas filhas nunca são janelas ativas. Se uma janela filha 
-		// tem o foco de entrada, então sua janela mãe é a ativa. 			
-		if ( window->id != active_window )
-		{
-			// Se a janela mãe tem um ponteiro inválido. Então ela não tem uma 
-			// janela mãe, então ativamos a janela filha.
-            // ?? #bugbug talvez não seja essa ideia certa.			
-		    
-			if( (void *) window->parent == NULL )
-			{
-		    //    set_active_window(window);
-		    }else{
-
-				// Testando a validade da janela mãe
-				// Ativar a janela mãe se ela tem um ponteiro válido
-				// Pois janela filha nunca é a janela ativa, mesmo tendo o foco.
-			    
-				if ( window->parent->used == 1 && window->parent->magic == 1234 )
-				{
-					if (window->parent->type == WT_OVERLAPPED )
-					{
-			            set_active_window (window->parent);
-				    };
-				    
-			        //#obs: Isso deu certo.
-			        //redraw_window (window->parent, 1);
-			    };
-			};
-
-
-            //Obs: Nesse momento a janela ativa está configurada.
-			// a janela ativa é a própria janela ou a sua janela mãe.
-                	
-            // Já podemos setar o foco de entrada e configurarmos o 
-			// procedimento de janela.	
-			window_with_focus = (int) window->id;
-            window->focus = 1; 
-			WindowWithFocus = (void *) window;
-            goto setup_wwf;
-		};
-
-
-
-// Nesse momento a janela já deve estar com o cofo de entrada,
-// se não estiver é porque falhamos.
-
-
-    //if( WindowID != window_with_focus )
-    //{
-	       //window_with_focus = main->id;;      
-    //};	
-
-
-//
-// Configurando a janela com o foco de entrada.
-//
-
-setup_wwf:
-
-			// Temos que posicionar o cursor caso a janela seja um editbox.	
-			
-			// Se a janela for um editbox, ela precisa ter seu input resetado..
-			// para que o procedimento de janela do kernel possa usá-lo.
-			// por enquanto, faremos isso para todos os tipos de janelas.
-			
-			//
-			// Reiniciando as margens para input em janela.
-			//
-			
-			//Resetando o input do procedimento de janela.
-			
-			// #importante:
-			// Salvar a configuração de cursor específica para essa janela.
-			// Pois cada janela vai querer o cursor em um lugar.
-			
-			// #importante 
-			// Tentando colocar o cursor dentro dos limites da área de cliente
-			// no momento em que setamos o foco.
-			
-			// Usaremos a área de cliente caso ela exista,
-			// pois tem janela que simplesmente não tem, o ponteiro é nulo.
-
-    if ( (void *) window->rcClient != NULL )
-	{
-	    if ( window->rcClient->used == 1 && 
-		     window->rcClient->magic == 1234 )
-		{
-		    TTY[current_vc].cursor_left = (window->rcClient->left/8);
-	        TTY[current_vc].cursor_top = (window->rcClient->top/8) +1; //?? Ajuste temporário.   
-	        TTY[current_vc].cursor_right  = TTY[current_vc].cursor_left + (window->rcClient->right/8);
-	        TTY[current_vc].cursor_bottom = TTY[current_vc].cursor_top + (window->rcClient->height/8);
-		}
-				 
-		// Nothing. 
-		
-	}else{
-	
-        // Configurando o cursor global gerenciado pelo kernel base.
-        TTY[current_vc].cursor_left = (window->left/8);
-        TTY[current_vc].cursor_top = (window->top/8);   
-   
-	    TTY[current_vc].cursor_right = TTY[current_vc].cursor_left + (window->right/8);
-	    TTY[current_vc].cursor_bottom = TTY[current_vc].cursor_top + (window->height/8);
-	};
-
-
-		// #importante: 
-		// Posicionando o cursor. 
-
-     TTY[current_vc].cursor_x = TTY[current_vc].cursor_left; 
-     TTY[current_vc].cursor_y = TTY[current_vc].cursor_top; 
-
-    if ( window->isEditBox == 1 )
-    {
-				//#teste
-				//para ficar na segunda linha do editbox.
-				//tem que trabalhar isso melhor.
-
-	    TTY[current_vc].cursor_y++; 
-	}
-
-    //configurando o cursor específico da janela com o foco de entrada.
-	window->CursorX = TTY[current_vc].cursor_x;
-	window->CursorY = TTY[current_vc].cursor_y;
-    window->CursorColor = COLOR_TEXT;
-	
-	
-	// Buffer do controle editbox.
-	// Esse buffer pode ser o arquivo usado pelo editbox.
-	
-    for ( i=0; i<PROMPT_MAX_DEFAULT; i++ )
-    {
-        prompt[i] = (char) '\0';
-        prompt_out[i] = (char) '\0';
-        prompt_err[i] = (char) '\0';
-    };
-    prompt_pos = 0;
-		    
-			//... 
-		
-    };
-
-
-    //...
-
-done:
-    return;
-
-fail:
-    return;
+	//return;
 }
 
 

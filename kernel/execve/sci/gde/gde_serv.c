@@ -2987,7 +2987,7 @@ unsigned long serviceCreateWindow ( char *message_buffer ){
 		
 		t = (void *) threadList[current_thread];
 		
-		set_thread_priority ( t, PRIORITY_HIGH4 );
+		set_thread_priority ( t, PRIORITY_MAX );
 		
 		NewWindow->control = t;
 

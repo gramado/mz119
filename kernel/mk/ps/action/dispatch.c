@@ -606,6 +606,9 @@ int rrDispatcher (void)
 
 int realtimeDispatcher (void)
 {
+	
+/*
+ 	
     struct thread_d *New;
 	  
     //Real time status ~ Round robin.     
@@ -616,7 +619,7 @@ int realtimeDispatcher (void)
 	                New->used == 1 && 
 				    New->magic == 1234 && 
 				    New->type == TYPE_REALTIME &&
-				    New->priority == PRIORITY_REALTIME)
+				    New->priority == PRIORITY_MAX )
 	    {   
 	        return (int) New->tid;
 	    };  
@@ -625,6 +628,8 @@ int realtimeDispatcher (void)
 //
 // Fail, use tID 0.
 //
+
+*/
 
 fail:
     return 0; //idle.

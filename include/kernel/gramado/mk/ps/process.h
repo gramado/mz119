@@ -128,12 +128,18 @@ struct process_d *xxxClonedProcess;
 #define PRIORITY_HIGH       PRIORITY_HIGH1 
 #define PRIORITY_MAX        PRIORITY_HIGH4
 
-//Definição especial.
-#define PRIORITY_REALTIME  10    
 
-#define TIMESLICE_MULTIPLIER 2
+
+// #todo: Criar uma variável para esse multiplicador.
+// para fazermos testes;
+//unsigned long g_timeslice_multiplier;
 //#define TIMESLICE_MULTIPLIER 1
+//#define TIMESLICE_MULTIPLIER 2
+#define TIMESLICE_MULTIPLIER 3
 //...
+
+
+
 
 /*
  * Constantes para níveis de quantum.
@@ -144,14 +150,16 @@ struct process_d *xxxClonedProcess;
  *  100ms + 5ms(que o timer fica esperando o kernel habilitar as interrupções).
  */
 
+// #test
 #define QUANTUM_BASE   (PRIORITY_NORMAL*TIMESLICE_MULTIPLIER)
-#define QUANTUM_LIMIT  (PRIORITY_REALTIME*TIMESLICE_MULTIPLIER)
+#define QUANTUM_LIMIT  (PRIORITY_MAX *TIMESLICE_MULTIPLIER)
 
-
-//Limite de tempo esperando.
-#define READY_LIMIT   (PRIORITY_REALTIME*TIMESLICE_MULTIPLIER)
-#define WAITING_LIMIT (PRIORITY_REALTIME*TIMESLICE_MULTIPLIER)
-#define BLOCKED_LIMIT (PRIORITY_REALTIME*TIMESLICE_MULTIPLIER)
+// #test
+// Limite de tempo esperando.
+#define READY_LIMIT   (PRIORITY_MAX *TIMESLICE_MULTIPLIER)
+#define WAITING_LIMIT (PRIORITY_MAX *TIMESLICE_MULTIPLIER)
+#define BLOCKED_LIMIT (PRIORITY_MAX *TIMESLICE_MULTIPLIER)
+ 
  
 //Lista de status na criação de um processo.     
 #define ERRO_SLOT_OCUPADO  0xfffff    //Slot ocupado.      

@@ -574,6 +574,22 @@ void x86StartGramadoCore (void){
         //RING0IDLEThread->ownerPID =  (int) KernelProcess->pid; 
 
 		RING0IDLEThread->tss = current_tss;
+		
+		// priority and quantum.
+	    //set_thread_priority ( (struct thread_d *) RING0IDLEThread,
+	        //PRIORITY_HIGH4 );
+
+	    //set_thread_priority ( (struct thread_d *) RING0IDLEThread,
+	        //PRIORITY_LOW1 );
+
+
+	    //set_thread_priority ( (struct thread_d *) RING0IDLEThread,
+	        //PRIORITY_LOW3 );
+
+        // funcionou no mínimo.
+        // com multiplicador 3. quantum = (1*3=3)
+	    set_thread_priority ( (struct thread_d *) RING0IDLEThread,
+	        PRIORITY_MIN );
 
 
 		// #importante

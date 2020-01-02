@@ -733,62 +733,67 @@ void mostra_reg (int id){
  * set_thread_priority: 
  *
  */
+ 
+// Muda a prioridade e o quantum de acordo com a prioridade.
 
-void set_thread_priority ( struct thread_d *t, unsigned long priority ){
-	
-    unsigned long ThreadPriority;
-	
+void 
+set_thread_priority ( struct thread_d *t, 
+                      unsigned long priority )
+{
+
+    unsigned long OldPriority;
+
+
 	if ( (void *) t == NULL )
 	{
 	    return;
 		
 	}else{
 		
-        if ( t->used != 1 || t->magic != 1234 ){
+        if ( t->used != 1 || t->magic != 1234 )
+        {
 		    return;
-	    }	
+	    }
+	    
+	    // get old
+	    OldPriority = t->priority;
+
+	    // Se aprioridade solicitada for igual da prioridade atual.	
+	    if ( priority == OldPriority )
+	    {
+		    return;
+	    }
+
+	    // limits
+	
+        if ( priority > PRIORITY_MAX )
+        {
+            t->priority = PRIORITY_MAX;
+        }
+
+        // Change!
+	    // se aprioridade solicitada for diferente da prioridade atual.
+	    if ( priority != OldPriority )
+	    {
+		    //Muda a prioridade.
+            t->priority = priority;
+        
+            t->quantum = ( priority * TIMESLICE_MULTIPLIER );
+            
+            if ( t->quantum > QUANTUM_LIMIT )
+            {
+                  t->quantum = QUANTUM_LIMIT;
+            }
+        };    
 		//...
 	};
 	
-	ThreadPriority = t->priority;
 
-	// se aprioridade solicitada for igual da prioridade atual.	
-	if ( priority == ThreadPriority ){
-		return;
-	}
-	
-//do_change:
-	
-	// se aprioridade solicitada for diferente da prioridade atual.
-	if ( priority != ThreadPriority )
-	{
-		//Muda a prioridade.
-        t->priority = priority;
-		
-		/*
-		switch(t->state) 
-		{
-		    case READY:
-		        //@todo if(priority < ThreadPriority){};
-				break; 
 
-		    case RUNNING:
-			    //@todo
-				//if( (void*) t->Next == NULL )
-				//{
-				//	if(priority < ThreadPriority){
-					    //@todo: encontra e prepara uma outra tarefa.
-				//	};
-				//};
-		        break; 
-			    //Nada para os outros estados.
-		    default:
-			    //Nothing for now.
-			    break;
-		};
-		*/
-		
-    };
+	
+
+	
+
 }
 
 
@@ -799,8 +804,11 @@ void set_thread_priority ( struct thread_d *t, unsigned long priority ){
  *     Apenas a variável. Não altera o CR3.
  */
  
-void SetThreadDirectory ( struct thread_d *thread, unsigned long Address ){
-	
+void 
+SetThreadDirectory ( struct thread_d *thread, 
+                     unsigned long Address )
+{
+
     if ( (void *) thread == NULL )
 	{
         return;
@@ -864,7 +872,7 @@ void show_preempted_task (void)
  */
 
 void show_tasks_parameters (void)
-{  	
+{
 	// 
 }
 
