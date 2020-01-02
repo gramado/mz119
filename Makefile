@@ -12,8 +12,8 @@
 VERSION = 1
 PATCHLEVEL = 20
 SUBLEVEL = 0
-EXTRAVERSION = -rc19
-NAME = 
+EXTRAVERSION = 
+NAME = Bread
 
 
 
@@ -562,17 +562,19 @@ vhd-copy-files:
 
 
 # atacama/cmd
-	-sudo cp ../atacama/bin/CAT.BIN       /mnt/gramadovhd
+	-sudo cp ../atacama/bin/TRUE.BIN      /mnt/gramadovhd
+	-sudo cp ../atacama/bin/FALSE.BIN     /mnt/gramadovhd
+#	-sudo cp ../atacama/bin/CAT.BIN       /mnt/gramadovhd
 #	-sudo cp ../atacama/bin/DUMPIT.BIN    /mnt/gramadovhd
-	-sudo cp ../atacama/bin/HELLO.BIN     /mnt/gramadovhd
-	-sudo cp ../atacama/bin/HELLO2.BIN    /mnt/gramadovhd
+#	-sudo cp ../atacama/bin/HELLO.BIN     /mnt/gramadovhd
+#	-sudo cp ../atacama/bin/HELLO2.BIN    /mnt/gramadovhd
 	-sudo cp ../atacama/bin/HELLO3.BIN    /mnt/gramadovhd
-	-sudo cp ../atacama/bin/JACKPOT.BIN   /mnt/gramadovhd
+#	-sudo cp ../atacama/bin/JACKPOT.BIN   /mnt/gramadovhd
 #	-sudo cp ../atacama/bin/LISP.BIN      /mnt/gramadovhd
 	-sudo cp ../atacama/bin/REBOOT.BIN    /mnt/gramadovhd
-	-sudo cp ../atacama/bin/TASCII.BIN    /mnt/gramadovhd
+#	-sudo cp ../atacama/bin/TASCII.BIN    /mnt/gramadovhd
 #	-sudo cp ../atacama/bin/GLIBCT1.BIN   /mnt/gramadovhd 
-	-sudo cp ../atacama/bin/SHELL3.BIN    /mnt/gramadovhd
+#	-sudo cp ../atacama/bin/SHELL3.BIN    /mnt/gramadovhd
 
 
 # atacama/gt/gramcc

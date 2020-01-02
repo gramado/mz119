@@ -72,6 +72,40 @@ dessa conta.
 #define GUI_ON   1
 #define GUI_OFF  0
 
+
+//layers
+#define KERNEL      0
+#define GRAMADO     1   //1 kgws
+#define EXECUTIVE   2   //2
+#define MICROKERNEL 3   //3
+#define HAL         4   //4
+
+
+//IOPL constants.
+#define KernelMode 0
+#define UserMode   3
+#define RING0 0
+#define RING1 1
+#define RING2 2
+#define RING3 3
+
+
+
+//Kernel status constants.
+#define  KERNEL_NULL          0
+#define  KERNEL_INITIALIZED   1
+#define  KERNEL_ABORTED       2
+#define  KERNEL_INICIALIZADO  KERNEL_INITIALIZED
+#define  KERNEL_ABORTADO      KERNEL_ABORTED
+
+
+//#define LOBYTE(w) ((char)(((unsigned long )(w)) & 0xff))
+//#define HIBYTE(w) ((char)((((unsigned long)(w)) >> 8) & 0xff))
+
+
+
+
+
 /*
  * Os Type:
  *     O sistema operacional pode ser usado como servidor.

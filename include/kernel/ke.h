@@ -46,13 +46,13 @@ int KeGetFocus (void);
 int 
 KeLoadFile ( struct channel_d *channel, 
              unsigned char *file_name, 
-			 unsigned long file_address );
+             unsigned long file_address );
 
 
 //Scheduler support.
 void KeNewProcessScheduler (void);
 void KeSaveCurrentContext (void);
-void KeRestoreCurrentContext (void);	
+void KeRestoreCurrentContext (void);
 
 
 //dispatch support.
@@ -63,7 +63,7 @@ void KeDoProcessRunning(int pid);
 void KeDoProcessSleeping(int pid);
 void KeDoProcessZombie(int pid);
 void KeDoProcessDead(int pid);
-void KeStartProcess(unsigned long pid, unsigned long *task_address);	
+void KeStartProcess(unsigned long pid, unsigned long *task_address);
 void KeWakeupProcess(int pid);
 
 void KeProcessExit (void);

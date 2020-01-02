@@ -481,7 +481,8 @@ do_exit:
     //então acordamos o processo pai.
     if (parent->wait4pid == p->pid )
     {
-		printf("acordando pai e sua thread de controle.\n");
+        printf ("do_request_12: Acordando pai e sua thread de controle.\n");
+        refresh_screen();
         parent->state = PROCESS_RUNNING;
         parent->control->state = RUNNING;
     }
