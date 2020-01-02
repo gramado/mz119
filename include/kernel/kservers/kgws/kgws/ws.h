@@ -691,6 +691,19 @@ struct color_scheme_d* PrideColorScheme;    // Colorido.
 // # Principais variáveis globais #
 //
 
+
+int current_display;    // monitor.
+int current_screen;     // tela. 
+
+
+//user 
+int current_usersession;    //gws/user
+int current_room;           //gws/user
+int current_desktop;        //gws/user
+
+
+
+
 int guiStatus;        //Status da Interface gráfica do usuário.
 int g_guiMinimal; //Light or Full gui.
 
@@ -706,10 +719,6 @@ int desktops_count;
 int windows_count;  
 
 
-//user 
-int current_usersession;    //gws/user
-int current_room;           //gws/user
-int current_desktop;        //gws/user
 
 
 int current_window;         //gws

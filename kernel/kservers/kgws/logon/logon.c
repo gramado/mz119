@@ -180,24 +180,33 @@ void create_logon (void){
 //#ifdef EXECVE_VERBOSE	  
     //printf ("init_user_info\n");
 //#endif
-	
-	    //initialize user info structure
-	    printf ("create_logon: init_user_info\n");
+
+
+        // Initialize user info structure
+        printf ("create_logon: init_user_info\n");
         init_user_info ();   
 
-		
-	    
-        //Set session, room (Window Station), desktop, window and menu.
-	    
-		current_usersession = 0;    
-	    current_room = 0;           
-	    current_desktop = 0;        
-		
-	    current_window = 0;        
-	    current_menu = 0;          
-		
-		// Initialize Session, WindowStation, Desktop, Windows and Menus.
-		  
+        // See: ws.h
+        // hostname:Displaynumber.Screennumber
+        // gramado:0.0
+
+        // display and screen
+        current_display = 0;
+        current_screen = 0;
+        
+        // User session, room (Window Station), desktop, 
+        current_usersession = 0;    
+        current_room = 0;           
+        current_desktop = 0;        
+
+        // window and menu.
+        current_window = 0;        
+        current_menu = 0;          
+
+
+
+		// Initialize user Session, room and Desktop.
+  
 		//user section.
 #ifdef KERNEL_VERBOSE		
 		printf ("create_logon: initializing user session\n");
@@ -216,7 +225,10 @@ void create_logon (void){
 #endif
 		init_desktop ();
 
-				
+
+
+
+
 	    //Inicia estrutura.
 		//window.c
 

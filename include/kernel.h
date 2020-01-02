@@ -102,6 +102,7 @@ extern void do_executa_new_task (void);
 // kdrivers
 #include <kernel/kdrivers/intel.h>
 #include <kernel/kdrivers/cpuid.h>
+#include <kernel/kdrivers/x/display.h>
 #include <kernel/kdrivers/x/video/screen.h>
 #include <kernel/kdrivers/x/video/video.h>
 #include <kernel/kdrivers/x/video/virtcon.h>
