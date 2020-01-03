@@ -46,17 +46,15 @@
 
 
 // Protótipos de funções internas.
-
+unsigned long init_testing_memory_size (int mb);
 void BlLoadKernel();
 void BlLoadFiles();
 void BlSetupPaging();
 
 
+
 //static char *codename = "Gramado Boot";
-
-
 //char kernel_file_name[] = "kernel.bin";
-
 //static char **argv = { NULL, NULL, NULL };
 //static char **envp = { NULL, NULL, NULL };
 
@@ -80,19 +78,88 @@ void BlSetupPaging();
 
 void BlMain (){
 
-	//Set GUI.
-	//Isso foi meio imperativo.
-	//VideoBlock.useGui = 1;
-	//VideoBlock.useGui = 0;
+    int Status = -1;
 
-	//INIT ~ Faz inicializações básicas.
+    //
+    // Set GUI.
+    //
 
-    init ();
+	// Isso foi meio imperativo.
+	// VideoBlock.useGui = 1;
+	// VideoBlock.useGui = 0;
+
+
+    //
+	// INIT ~ Faz inicializações básicas.
+    //
+    
+    Status = (int) init ();
+
+    if (Status != 0 ){
+    // #todo
+    }
+
+
+//
+// ========================== memory ===============================
+//
+
+    // #test
+    // Sondando quanta memória física tem instalada.
+    // Faremos isso antes de mapearmos qualquer coisa e
+    // antes de carregarmos qualquer arquivo.
+    // #todo:
+    // Temos várias questões à se considerar, como o fato de sujarmos
+    // a IVT no início da memória.
+
+
+    unsigned long __address = 0;
+
+    // ok
+    //__address = (unsigned long) init_testing_memory_size (4);
+    
+    
+    // ok
+    //__address = (unsigned long) init_testing_memory_size (64);
+    
+    
+    //ok
+    //__address = (unsigned long) init_testing_memory_size (127);    
+    
+
+    // 511
+    //__address = (unsigned long) init_testing_memory_size (1024);        
+    
+    //para testar na máquina real com 2048 mb instalado.
+    __address = (unsigned long) init_testing_memory_size (2048);        
+        
+    printf ("init: address = %x \n", __address);
+    refresh_screen();
+    //while(1){}
+
+//
+// ========================== memory ===============================
+//
+
+
+
+
+    // #todo
+    // Precisamos reconsiderar a necessidade de fazermos isso.
+    // O timer ira atrazar a inicialização ?
+    // Precisamos dessas interrupções para alguma coisa como
+    // o driver de ata ?
+
+    // #debug
+    // printf("habilitando as interrupcoes\n");
+    // refresh_screen();
+
+    asm ("sti");
+
 
 
 	//#test
 	//Inicializando alocação dinâmica de memória.
-
     init_heap ();
 
 	//#test
@@ -143,21 +210,24 @@ void BlMain (){
         die ();
     }
 
-	//Debug...
-	//printf("####################\n");
-	//printf("#DEBUG: *HANG\n");
-	//refresh_screen();
-	//while(1){}
+
+	// Debug...
+	// printf("#DEBUG: *HANG\n");
+	// refresh_screen();
+	// while(1){}
 
 
 	//*Importante:
     // ===========
-    //     Daqui pra frente vamos carregar os arquivos. Lembrando que
-    // o Boot Loader ainda não sabe carregar de outro dispositivo se não IDE. 
-    
+    //     Daqui pra frente vamos carregar os arquivos. 
+    // Lembrando que o Boot Loader ainda não sabe carregar de 
+    // outro dispositivo se não IDE. 
+
+
     //
-	// Inicia os carregamentos.
-	//
+    // Inicia os carregamentos.
+    //
+
 
 	//Carrega arquivos.
 #ifdef BL_VERBOSE	
@@ -178,7 +248,7 @@ void BlMain (){
 
 
     g_fat16_root_status = 1;
-    g_fat16_fat_status = 1;	
+    g_fat16_fat_status = 1;
 
 
 	//
@@ -229,7 +299,7 @@ void BlMain (){
 	//refresh_screen();
 #endif	
 	
-    BlSetupPaging();
+    BlSetupPaging ();
 
 
 	//@todo: Atualizar status.
@@ -265,12 +335,11 @@ void BlLoadKernel (){
     int Status;
 
     Status = (int) load_kernel ();
-
-    if ( Status != 0 )
-    {
+    
+    if ( Status != 0 ){
         printf ("BlLoadKernel:\n");
         die ();
-    };
+    }
 }
 
 
@@ -290,12 +359,10 @@ void BlLoadFiles (){
 	// Está em loader.c
     Status = (int) load_files ();
 
-    if ( Status != 0 )
-    {
-		//Erro fatal.
+    if ( Status != 0 ){
         printf ("BlLoadFiles:\n");
         die ();
-    };
+    }
 }
 
 
@@ -369,6 +436,121 @@ void BlKernelModuleMain (){
 }
 
 
+
+//
+//================================================================
+// begin - Testing memory size
+//================================================================
+//
+
+//interna
+unsigned long init_testing_memory_size (int mb)
+{
+    unsigned char *BASE = (unsigned char *) 0;  
+    
+    int offset; 
+
+    int i;
+
+
+    // salvando os valores durante o test
+    unsigned char ____value1 = 0;             
+    unsigned char ____value2 = 0;                 
+    
+    
+    //
+    // Flag.
+    //
+
+    //acionando
+    ____testing_memory_size_flag = 1;
+
+
+
+
+    printf ("=========================================\n");
+    printf ("__testing_memory_size: Looking for %d MB base...\n", mb);
+    refresh_screen();
+
+
+    // Começamos em 4MB porque o kernel está no primeiro mega.
+    for (i=1; i< (mb+1); i++)
+    {
+
+        //printf ("i=%d \n", i);
+        //refresh_screen();
+
+        offset = 0x00100000 * i;
+        
+        //printf ("coloca \n");
+        //refresh_screen();
+                    
+        //coloca.
+        BASE[offset +0] = 0xAA;  //1
+        BASE[offset +1] = 0x55;  //2
+        
+        
+        //printf ("retira \n");
+        //refresh_screen();
+
+        //retira dois chars.
+        ____value1 = BASE[offset +0];
+        ____value2 = BASE[offset +1];
+        
+        
+        
+        
+        // Se retiramos os mesmos bytes que colocamos.
+        if (____value1 == 0xAA && ____value2 == 0x55)
+        {
+            //salvamos o último endereço de memória válido.
+            __last_valid_address =  (unsigned long) &BASE[offset];
+        
+            // continua sondando.
+
+        // Se não conseguimos retirar os mesmos bytes que colocamos
+        // e não tivemos uma exceção.
+        }else{
+
+            ____testing_memory_size_flag = 0;
+            
+            printf ("__testing_memory_size: out of range with no exception! \n");
+            printf ("__testing_memory_size: last valid address = %x \n", 
+                __last_valid_address);
+            refresh_screen();
+            
+            
+            ____testing_memory_size_flag = 0;
+            return __last_valid_address;
+            
+            /*
+            while(1)
+            {
+                asm ("cli");
+                asm ("hlt");
+            }
+            */
+        }
+    };
+
+
+     ____testing_memory_size_flag = 0;        
+            
+    // ok temos um endereço de memória
+    // também será salvo em uma variável global para o caso de panic.
+    return __last_valid_address;
+}
+ 
+
+
+//
+//================================================================
+// end - Testing memory size
+//================================================================
+//
+
+
+
 /*
  **************************************************
  * die:
@@ -388,7 +570,6 @@ void die (){
     refresh_screen ();
 
     while (1){
-
         asm ("cli");
         asm ("hlt");
     };
