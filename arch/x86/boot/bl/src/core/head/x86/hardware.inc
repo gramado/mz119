@@ -25,7 +25,7 @@
 ;
 
 extern _keyboardHandler
-extern _cpu_falts
+extern _cpu_faults
 
 
 ;-------------------------------------
@@ -141,7 +141,7 @@ _irq15:
 global _fault_N0
 _fault_N0:
 	push dword 0
-    call _cpu_falts	
+    call _cpu_faults
 	hlt
 	jmp $
 	
@@ -149,7 +149,7 @@ _fault_N0:
 global _fault_N1
 _fault_N1:
 	push dword 1
-    call _cpu_falts	
+    call _cpu_faults	
 	hlt
 	jmp $
 	
@@ -157,7 +157,7 @@ _fault_N1:
 global _fault_N2
 _fault_N2:
 	push dword 2
-    call _cpu_falts	
+    call _cpu_faults	
 	hlt
 	jmp $
 	
@@ -165,7 +165,7 @@ _fault_N2:
 global _fault_N3
 _fault_N3:
 	push dword 3
-    call _cpu_falts	
+    call _cpu_faults	
 	hlt
 	jmp $
 	
@@ -173,7 +173,7 @@ _fault_N3:
 global _fault_N4
 _fault_N4:
 	push dword 4
-    call _cpu_falts	
+    call _cpu_faults	
 	hlt
 	jmp $
 	
@@ -181,7 +181,7 @@ _fault_N4:
 global _fault_N5
 _fault_N5:
 	push dword 5
-    call _cpu_falts	
+    call _cpu_faults	
 	hlt
 	jmp $	
 	
@@ -189,7 +189,7 @@ _fault_N5:
 global _fault_INTRUCAO_INVALIDA
 _fault_INTRUCAO_INVALIDA:
 	push dword 6
-    call _cpu_falts	
+    call _cpu_faults	
 	hlt
 	jmp $
 
@@ -197,7 +197,7 @@ _fault_INTRUCAO_INVALIDA:
 global _fault_N7
 _fault_N7:
 	push dword 7
-    call _cpu_falts	
+    call _cpu_faults	
 	hlt
 	jmp $
 	
@@ -205,7 +205,7 @@ _fault_N7:
 global _fault_DOUBLE
 _fault_DOUBLE:
 	push dword 8
-    call _cpu_falts	
+    call _cpu_faults	
 	hlt
 	jmp $
 	
@@ -213,7 +213,7 @@ _fault_DOUBLE:
 global _fault_N9
 _fault_N9:
 	push dword 9
-    call _cpu_falts	
+    call _cpu_faults	
 	hlt
 	jmp $
 	
@@ -221,7 +221,7 @@ _fault_N9:
 global _fault_N10
 _fault_N10:
 	push dword 10
-    call _cpu_falts	
+    call _cpu_faults	
 	hlt
 	jmp $
 	
@@ -229,7 +229,7 @@ _fault_N10:
 global _fault_N11
 _fault_N11:
 	push dword 11
-    call _cpu_falts	
+    call _cpu_faults	
 	hlt
 	jmp $
 	
@@ -237,7 +237,7 @@ _fault_N11:
 global _fault_STACK
 _fault_STACK:
     push dword 12
-	call _cpu_falts
+	call _cpu_faults
 	hlt
 	jmp $
 	
@@ -245,7 +245,7 @@ _fault_STACK:
 global _fault_GP
 _fault_GP:   
 	push dword 13
-	call _cpu_falts
+	call _cpu_faults
 	hlt
 	jmp $
 	
@@ -253,7 +253,7 @@ _fault_GP:
 global _fault_N14
 _fault_N14:
 	push dword 14
-    call _cpu_falts	
+    call _cpu_faults	
 	hlt
 	jmp $
 	
@@ -261,7 +261,7 @@ _fault_N14:
 global _fault_N15
 _fault_N15:
 	push dword 15
-    call _cpu_falts	
+    call _cpu_faults	
 	hlt
 	jmp $
 	
@@ -269,7 +269,7 @@ _fault_N15:
 global _fault_N16
 _fault_N16:
 	push dword 16
-    call _cpu_falts	
+    call _cpu_faults	
 	hlt
 	jmp $
 	
@@ -277,7 +277,7 @@ _fault_N16:
 global _fault_N17
 _fault_N17:
 	push dword 17
-    call _cpu_falts	
+    call _cpu_faults	
 	hlt
 	jmp $
 	
@@ -285,7 +285,7 @@ _fault_N17:
 global _fault_N18
 _fault_N18:
 	push dword 18
-    call _cpu_falts	
+    call _cpu_faults	
 	hlt
 	jmp $
 	
@@ -293,7 +293,7 @@ _fault_N18:
 global _fault_N19
 _fault_N19:
 	push dword 19
-    call _cpu_falts	
+    call _cpu_faults	
 	hlt
 	jmp $
 	
@@ -301,7 +301,7 @@ _fault_N19:
 global _fault_N20
 _fault_N20:
 	push dword 20
-    call _cpu_falts	
+    call _cpu_faults	
 	hlt
 	jmp $
 	
@@ -309,7 +309,7 @@ _fault_N20:
 global _fault_N21
 _fault_N21:
 	push dword 21
-    call _cpu_falts	
+    call _cpu_faults	
 	hlt
 	jmp $
 	
@@ -317,7 +317,7 @@ _fault_N21:
 global _fault_N22
 _fault_N22:
 	push dword 22
-    call _cpu_falts	
+    call _cpu_faults	
 	hlt
 	jmp $
 	
@@ -325,7 +325,7 @@ _fault_N22:
 global _fault_N23
 _fault_N23:
 	push dword 23
-    call _cpu_falts	
+    call _cpu_faults	
 	hlt
 	jmp $
 	
@@ -333,7 +333,7 @@ _fault_N23:
 global _fault_N24
 _fault_N24:
 	push dword 24
-    call _cpu_falts	
+    call _cpu_faults	
 	hlt
 	jmp $
 	
@@ -341,7 +341,7 @@ _fault_N24:
 global _fault_N25
 _fault_N25:
 	push dword 25
-    call _cpu_falts	
+    call _cpu_faults	
 	hlt
 	jmp $
 	
@@ -349,7 +349,7 @@ _fault_N25:
 global _fault_N26
 _fault_N26:
 	push dword 26
-    call _cpu_falts	
+    call _cpu_faults	
 	hlt
 	jmp $
 	
@@ -357,7 +357,7 @@ _fault_N26:
 global _fault_N27
 _fault_N27:
 	push dword 27
-    call _cpu_falts	
+    call _cpu_faults	
 	hlt
 	jmp $
 	
@@ -365,7 +365,7 @@ _fault_N27:
 global _fault_N28
 _fault_N28:
 	push dword 28
-    call _cpu_falts	
+    call _cpu_faults	
 	hlt
 	jmp $
 	
@@ -373,7 +373,7 @@ _fault_N28:
 global _fault_N29
 _fault_N29:
 	push dword 29
-    call _cpu_falts	
+    call _cpu_faults	
 	hlt
 	jmp $
 	
@@ -381,7 +381,7 @@ _fault_N29:
 global _fault_N30
 _fault_N30:
 	push dword 30
-    call _cpu_falts	
+    call _cpu_faults	
 	hlt
 	jmp $
 	
@@ -389,13 +389,13 @@ _fault_N30:
 global _fault_N31
 _fault_N31:
 	push dword 31
-    call _cpu_falts
+    call _cpu_faults
 	hlt
 	jmp $
 
 
 ;
-; Fim.
+; End.
 ;
 
 

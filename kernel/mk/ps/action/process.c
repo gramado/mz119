@@ -425,7 +425,11 @@ pid_t do_clone_execute_process (char *filename){
     unsigned long old_dir_entry1;
     
     // retorno da função de carregamento.
-    int __load_ret = -1;
+    //int __load_ret = -1;
+    int Status = -1;
+
+
+
 
 
 	//unsigned long old_image_pa; //usado para salvamento.
@@ -660,13 +664,13 @@ do_clone:
 
         read_fntos ( (char *) filename );
 
-        __load_ret = (int) fsLoadFile ( VOLUME1_FAT_ADDRESS, 
+        Status = (int) fsLoadFile ( VOLUME1_FAT_ADDRESS, 
                               VOLUME1_ROOTDIR_ADDRESS, 
                               filename, 
                               (unsigned long) Clone->Image );
 
        // Se falhou o carregamento.
-       if ( __load_ret != 0 )
+       if ( Status != 0 )
        {
             // kill thread.
             Clone->control->used = 0;
@@ -683,6 +687,27 @@ do_clone:
             goto fail;
        }
        
+
+       // Check ELF signature.
+	   // OK. O comando existe e o arquivo foi carregado, mas 
+	   // precisamos saber se a assinatura de ELF é válida.
+       Status = (int) fsCheckELFFile ( (unsigned long) Clone->Image );
+       if ( Status != 0 )
+       {
+            // kill thread.
+            Clone->control->used = 0;
+            Clone->control->magic = 0;
+            Clone->control == NULL;
+            
+            // kill process.
+            Clone->used = 0;
+            Clone->magic = 0;            
+            Clone = NULL;
+            
+            printf ("do_clone_execute_process: file format fail \n");
+            goto fail;
+        };
+
 
 
 		//====
