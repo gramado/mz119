@@ -120,8 +120,27 @@ void *kcalloc (size_t count, size_t size)
 	};
   return value;
 };
-
 */
+
+
+// supporting the services 808 e 809.
+int __ptsname (int fd, char *buf, size_t buflen)
+{
+     char *ptsname_buffer = (char *) buf;
+
+     char test_str[50] = "klibc-stdlib-__ptsname:";
+
+    // 64 bytes limit
+    strcpy ( ptsname_buffer, (const char *) test_str );
+    
+    // lá na lib em ring3 a rotina retorna para o app o ponteiro para o buffer
+    return 0;  //ok
+}
+
+
+
+
+
 
 //
 // End.

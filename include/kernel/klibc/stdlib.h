@@ -90,10 +90,6 @@ void kfree (void *ptr);
 
 
 
-
-
-
-
 //Returns a pseudo-random number in the range of 0 to RAND_MAX.
 int rand (void);
 
@@ -105,6 +101,14 @@ int rand (void);
 //@todo: talvez essa função esteja declara erradamente em systemcall.
 //int system(const char *string);
 
+
+
+int __ptsname (int fd, char *buf, size_t buflen);
+
 //
-//fim.
+// End.
 //
+
+
+
+

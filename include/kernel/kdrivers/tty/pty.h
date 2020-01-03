@@ -1,6 +1,29 @@
 // see: 
 //http://man7.org/linux/man-pages/man7/pty.7.html
 //https://en.wikipedia.org/wiki/Pseudoterminal
+//https://lwn.net/Articles/688809/
+
+
+// See: ptmx.
+
+
+
+// A pseudoterminal (sometimes abbreviated "pty") is a pair of virtual
+// character devices that provide a bidirectional communication channel.
+// The slave end of the pseudoterminal provides an interface
+// that behaves exactly like a classical terminal.
+// A process that expects to be connected to a terminal, 
+// can open the slave end of a pseudoterminal and then be driven 
+// by a program that has opened the master end.   
+   
+   
+            
+// In some operating systems, including Unix, a pseudoterminal, 
+// pseudotty, or PTY is a pair of pseudo-devices, ...
+
+// The multiplexer and the pts fili system.
+// This design for PTYs created two related singletons: 
+// the master multiplexer /dev/ptmx and the slave virtual filesystem /dev/pts. 
 
 //pty é um canal de comunicação com duas pontas.
 // é semelhante ao canal com dois soquetes, um em cada ponta.

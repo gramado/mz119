@@ -755,6 +755,24 @@ void *gde_extra_services ( unsigned long number,
 		return (void *) __setusername ( (const char *) arg2); 
     }
     
+
+    // #todo
+    // supporting ptsname libc function
+    // get_ptsname
+    // IN: fd do master, buffer em ring3 para o nome, buflen
+    //
+    if ( number == 808 )
+    {
+		return (void *) __ptsname ( (int) arg2, (char *) arg3, (size_t) arg4  ); 
+    }
+    
+    //#todo
+    //supporting ptsname_r libc function
+    //IN: fd do master, buffer e buflen.
+    if ( number == 809 )
+    {
+		return (void *) __ptsname ( (int) arg2, (char *) arg3, (size_t) arg4  ); 
+    } 
     
     
     
