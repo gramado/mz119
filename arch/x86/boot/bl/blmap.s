@@ -431,7 +431,7 @@ Linker script and memory map
                 0x0000000000028000                . = ALIGN (0x1000)
  *fill*         0x0000000000027a9b      0x565 
 
-.rodata         0x0000000000028000     0x1024
+.rodata         0x0000000000028000     0x1014
  .rodata        0x0000000000028000      0x14b main.o
  *fill*         0x000000000002814b        0x1 
  .rodata        0x000000000002814c      0x23f loader.o
@@ -443,14 +443,14 @@ Linker script and memory map
  *fill*         0x0000000000028453        0x1 
  .rodata        0x0000000000028454      0x46b ide.o
  *fill*         0x00000000000288bf        0x1 
- .rodata        0x00000000000288c0      0x1c1 heap.o
- .rodata        0x0000000000028a81        0xc procedure.o
- *fill*         0x0000000000028a8d        0x3 
- .rodata        0x0000000000028a90      0x2e4 fs.o
- .rodata        0x0000000000028d74      0x196 shell.o
- .rodata        0x0000000000028f0a        0xd abort.o
- *fill*         0x0000000000028f17        0x1 
- .rodata        0x0000000000028f18      0x10c faults.o
+ .rodata        0x00000000000288c0      0x1b1 heap.o
+ .rodata        0x0000000000028a71        0xc procedure.o
+ *fill*         0x0000000000028a7d        0x3 
+ .rodata        0x0000000000028a80      0x2e4 fs.o
+ .rodata        0x0000000000028d64      0x196 shell.o
+ .rodata        0x0000000000028efa        0xd abort.o
+ *fill*         0x0000000000028f07        0x1 
+ .rodata        0x0000000000028f08      0x10c faults.o
 
 .eh_frame       0x000000000002a000     0x1c80
  .eh_frame      0x000000000002a000      0x114 main.o

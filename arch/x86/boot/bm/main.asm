@@ -306,19 +306,20 @@ bootmanagerSTART:
 		
     ;Code located at 0000:0x8000. 
 	;Adjust segment registers and stack.
-	
+
+
     cli
-	mov ax, 0
+    mov ax, 0
     mov ds, ax
     mov es, ax
     mov ax, 0x0000
     mov ss, ax
     mov sp, 0x6000   
     sti
-	
+
     ;;
-	;; Argumento passado pelo MBR. 
-	;;
+    ;; Argumento passado pelo MBR. 
+    ;;
 	
 	;Disk number.
 	mov byte [bootmanagerDriveNumber], dl
@@ -669,7 +670,8 @@ bootmanagerDisplayMessage:
 .bootmanagerDONE:
     ret
 	
-	
+
+
 ;************************************************************************
 ; bootmanagerReadSectors:
 ;     Reads "cx" sectors from disk starting at "ax" into memory location 
@@ -677,10 +679,13 @@ bootmanagerDisplayMessage:
 ;     Carrega na memória, em es:bx, 'cx' setores do disco, começando pela 
 ; LBA 'ax'. 
 ;************************************************************************
+
 bootmanagerReadSectors:
-	mov WORD [bootmanagerDAPBuffer], bx
-	mov WORD [bootmanagerDAPBuffer+2], es
-	mov WORD [bootmanagerDAPStart], ax
+
+    mov WORD [bootmanagerDAPBuffer], bx
+    mov WORD [bootmanagerDAPBuffer+2], es
+    mov WORD [bootmanagerDAPStart], ax
+
 .bootmanagerMAIN:
     mov di, 0x0005           ;Five retries for error. (8??)
 .bootmanagerSECTORLOOP:
@@ -724,8 +729,8 @@ bootmanagerReadSectors:
     mov WORD [bootmanagerDAPStart], ax
     loop .bootmanagerMAIN                ; read next sector
     ret
- 
- 
+
+
 ;*****************************************************
 ; bootmanagerClusterLBA:
 ; convert FAT cluster into LBA addressing scheme
@@ -744,12 +749,14 @@ bootmanagerClusterLBA:
 ;; Dados de supporte.
 ;;
 
+
 ;DAP.
-bootmanagerDAPSizeOfPacket  db 10h
-bootmanagerDAPReserved		db 00h
-bootmanagerDAPTransfer		dw 0001h
-bootmanagerDAPBuffer		dd 00000000h
-bootmanagerDAPStart		    dq 0000000000000000h
+bootmanagerDAPSizeOfPacket  db  10h
+bootmanagerDAPReserved      db  00h
+bootmanagerDAPTransfer      dw  0001h
+bootmanagerDAPBuffer        dd  00000000h
+bootmanagerDAPStart         dq  0000000000000000h
+
 
 ;Sector, Head, Track.
 bootmanagerabsoluteSector   db 0x00
@@ -766,18 +773,18 @@ bootmanagercluster dw 0x0000
 ;; Messages and strings.
 ;;
 
-;File name.
+; File name.
 bootmanagerImageName    db "BL      BIN" ,0x0D, 0x0A,0x00
 
-;strings.
-bootmanagermsgFAT		db  0x0D, 0x0A,"Loading FAT", 0x0D, 0x0A, 0x00
-bootmanagermsgImg		db "L... I", 0x0D, 0x0A, 0x00
-bootmanagermsgFailure   db 0x0D, 0x0A, "ROOT", 0x00
-bootmanagermsgFail		db "Read",0x00
-bootmanagermsgSearch    db "S",0
-bootmanagermsgProgress  db "*", 0x00
-bootmanagermsgOK        db "#",0
-bootmanagermsgCRLF      db 0x0D, 0x0A, 0x00
+; Strings.
+bootmanagermsgFAT       db  0x0D, 0x0A,"Loading FAT", 0x0D, 0x0A, 0x00
+bootmanagermsgImg       db  "L... I", 0x0D, 0x0A, 0x00
+bootmanagermsgFailure   db  0x0D, 0x0A, "ROOT", 0x00
+bootmanagermsgFail      db  "Read",0x00
+bootmanagermsgSearch    db  "S",0
+bootmanagermsgProgress  db  "*", 0x00
+bootmanagermsgOK        db  "#",0
+bootmanagermsgCRLF      db  0x0D, 0x0A, 0x00
 ;;...
 
 
@@ -974,38 +981,40 @@ stage2_main:
 	; Includes.
 	;
 
-	;metafile.
-    ;*IMPORTANTE	
-	;Obs: (No início do metafile tem uma trap para AFTER_DATA).
-	%include "s2metafile.inc"
-    
-	;header.
-	%include "s2header.inc"
-	
-	;bpb.
-	%include "s2bpb.inc"
-	
-	;dados.
-	%include "s2gdt.inc"
-	%include "s2vesa.inc"      
-	%include "s2config16.inc"    ;Configurações de inicialização.
+    ; metafile.
+    ; *IMPORTANTE	
+    ; Obs: (No início do metafile tem uma trap para AFTER_DATA).
+    %include "s2metafile.inc"
 
-	;lib.
-	%include "s2a20.inc"
-	%include "s2lib.inc"	
+    ;header.
+    %include "s2header.inc"
+
+    ;bpb.
+    %include "s2bpb.inc"
+
+    ;dados.
+    %include "s2gdt.inc"
+    %include "s2vesa.inc"      
+    %include "s2config16.inc"    ;Configurações de inicialização.
+
+    ;lib.
+    %include "s2a20.inc"
+    %include "s2lib.inc"
     %include "s2fat12.inc"
-	%include "s2fat16.inc"
+    %include "s2fat16.inc"
     %include "s2menu16.inc"
-	%include "s2modes.inc"
-	%include "s2detect.inc"
-	%include "lib16.inc"  ;;lib16
-	;;continua ...
+    %include "s2modes.inc"
+    %include "s2detect.inc"
+    %include "lib16.inc"  ;;lib16
+    ;;continua ...
 
-	
-	
+
+
 ;;
-;; @todo: Criar essas traps lá em baixo desse arquivo, em 16bit mesmo.
-;;	
+;; #todo: 
+;; Criar essas traps lá em baixo desse arquivo, em 16bit mesmo.
+;;
+
 
 ;;procisório.
 ;stage2Trap1:  ;;Essa trap está localizada logo abaixo.
@@ -1174,19 +1183,21 @@ HERE:
 	
 	;; Se os dois char não estão ausentes, significa que o arquivo eta no lugar.
 	jmp .sigFound
-	
+
+
 ;;A assinatura não foi encontrada, o arqui não está na memória.	
 .sigNotFound:
     ;;message: o arquivo não esta presente na memória.
 	mov si, stage2_msg_pe_sig
 	call DisplayMessage
-	
-;; Hang
 
+
+;; Hang
 .sigHalt:
-    hlt	
-	jmp .sigHalt
-	
+    hlt
+    jmp .sigHalt
+
+
 ;; A assinatura foi encontrada ... 
 ;; prosseguimos com o stage2.
 
@@ -1211,7 +1222,7 @@ HERE:
     ;pop ds	
 
 	;;?? fail???
-	;debug: mostrar o entry point. (Æ..€..BÆ..€...Æ.)
+	;debug: mostrar o entry point. 
 	;push ds
     ;push es
     ;push si
@@ -1235,33 +1246,36 @@ HERE:
 	;REPETIR ESSE DEBUG EM OUTRAS PARTES DO BM ... 
 	;EM MUITAS PARTES SE PRECISO ... FAZER ALGO SEMELHANTE EM 32BIT
 	;jmp $
-	
+
+
+
     ;Turn off FDC motor.
-	
-.turnoffFDCMotor:	
-	mov dx, 3F2h 
+.turnoffFDCMotor:
+    mov dx, 3F2h 
     mov al, 0 
     out dx, al
-	 
+
+ 
 .setupRegisters:	
    
     ;Setup registers.
-	
+
     cli
-	mov ax, 0       
+    mov ax, 0  
     mov ds, ax
     mov es, ax
-	;mov fs, ax           
-	;mov gs, ax     
-	xor ax, ax
+	;mov fs, ax  
+	;mov gs, ax 
+    xor ax, ax
     mov ss, ax
     mov sp, 0x6000 
-	xor dx, dx
-	xor cx, cx	
-	xor bx, bx
-	xor ax, ax
-	sti
-	
+    xor dx, dx
+    xor cx, cx
+    xor bx, bx
+    xor ax, ax
+    sti
+
+
 .setupA20:
 	
 	;Enable a20 line.
@@ -1378,35 +1392,36 @@ stage2_msg_pe_sigOK db "BM:stage2Initializations: SIG OK", 13, 10, 0
 ;;     chamar uma rotina de retorno para o modo real.
 ;;
 
-stage2Shutdown:	
+stage2Shutdown:
     
-	;Connect to APM API
-    MOV     AX, 5301h
-    XOR     BX,BX
-    INT     15h
+	; Connect to APM API
+    MOV  AX, 5301h
+    XOR  BX, BX
+    INT  15h
 
-    ;Try to set APM version (to 1.2)
-    MOV     AX, 530Eh
-    XOR     BX,BX
-    MOV     CX, 0102h
-    INT     15h
+    ; Try to set APM version (to 1.2)
+    MOV  AX, 530Eh
+    XOR  BX, BX
+    MOV  CX, 0102h
+    INT  15h
 
-    ;Turn off the system
-    MOV     AX, 5307h
-    MOV     BX, 0001h
-    MOV     CX, 0003h
-    INT     15h
+    ; Turn off the system
+    MOV  AX, 5307h
+    MOV  BX, 0001h
+    MOV  CX, 0003h
+    INT  15h
 
     ;Exit (for good measure and in case of failure)
-    RET	
-	
+    RET
+
+
 ;
 ; End.
 ;
 	
 	;pm
 	;Comuta para o modo protegido.
-	%include "pm.inc"	       
+    %include "pm.inc"	       
 
 ;--------------------------------------------------------
 ; 32 bits - (Boot Manager 32bit Asm.)
@@ -1421,20 +1436,20 @@ bootmanager_main:
 	;14, Header principal. 
 	;Definições globais usadas em 32bit.
 	;Header principal em 32 bits.
-	%include "header32.inc"	    
+    %include "header32.inc"	    
 
 	;13, Headers. 
-	%include "system.inc"       ;Arquivo de configuração do sistema.
-	%include "init.inc"   	    ;Arquivo de configuração da inicialização.
-	%include "sysvar32.inc"     ;Variáveis do sistema.
+    %include "system.inc"       ;Arquivo de configuração do sistema.
+    %include "init.inc"   	    ;Arquivo de configuração da inicialização.
+    %include "sysvar32.inc"     ;Variáveis do sistema.
     %include "gdt32.inc"        ;Gdt.
     %include "idt32.inc"        ;Idt.
     %include "ldt32.inc"        ;Ldt.
     %include "tss32.inc"        ;Tss.
     %include "stacks32.inc"     ;Stacks.
     %include "ints32.inc"       ;Handles para as interrupções.
-	%include "fat16header.inc"	;Headers para o sistema de arquivos fat16.
-		
+    %include "fat16header.inc"	;Headers para o sistema de arquivos fat16.
+
     ;12, Monitor.
     %include "screen32.inc"     ;Rotinas de screen em 32 bits.
     %include "input32.inc"      ;Rotinas de input 2m 32 bits.
@@ -1444,15 +1459,15 @@ bootmanager_main:
 	;11, Hardware.
     %include "cpuinfo.inc"      ;Rotinas de detecção e configuração de cpu.
     %include "hardware.inc"     ;Rotinas de detecção e configuração de hardware.
-	;...
+    ;...
 
 	;10, Irqs.
-	%include "timer.inc"        ;Irq 0, Timer.
+    %include "timer.inc"        ;Irq 0, Timer.
     %include "keyboard.inc"     ;Irq 1, Keyboard.
     %include "fdc32.inc"        ;Irq 6, Fdc. (@todo: Suspender o suporte.)
-	%include "clock.inc"        ;Irq 8, Clock.
-	%include "hdd32.inc"        ;Irq 14/15, Hdd.
-	;...
+    %include "clock.inc"        ;Irq 8, Clock.
+    %include "hdd32.inc"        ;Irq 14/15, Hdd.
+    ;...
 
     ;9 - Tasks. (#no tasks)
     %include "tasks32.inc"     ;Rotinas de inicialização do sistema de tarefas.
@@ -1461,38 +1476,38 @@ bootmanager_main:
     ;%include "lib32.inc"       ;Rotinas em 32 bits.
 
 	;7 - setup  
-	%include "setup.inc"       ;Inicializa arquitetura.
+    %include "setup.inc"       ;Inicializa arquitetura.
 
 	;6 - Disk.
-	%include "fat12pm.inc"     ;FAT12 em 32 bits.
-	%include "fat16lib.inc"    ;FAT16 (rotinas).
+    %include "fat12pm.inc"     ;FAT12 em 32 bits.
+    %include "fat16lib.inc"    ;FAT16 (rotinas).
     %include "fat16.inc"       ;FAT16 (funções principais).
-	%include "ramfs.inc"       ;RamDisk fs.
+    %include "ramfs.inc"       ;RamDisk fs.
     %include "format.inc"      ;Formata.
-	%include "fs32.inc"        ;fs, (gerência os sistemas de arquivos).	
-	
+    %include "fs32.inc"        ;fs, (gerência os sistemas de arquivos).	
+
 	;5 - File.
     %include "installer.inc"   ;Instala metafiles em LBAs específicas.
-	%include "file.inc"        ;Operações com aquivos.
-	%include "bootloader.inc"  ;Carrega o Boot Loader (BL.BIN).
+    %include "file.inc"        ;Operações com aquivos.
+    %include "bootloader.inc"  ;Carrega o Boot Loader (BL.BIN).
 
 	;4 - Debug.
-	%include "debug.inc"       ;System debug.
+    %include "debug.inc"       ;System debug.
 
 	;3 - blconfig.
-	%include "blconfig.inc"    ;Gerência a inicialização.
+    %include "blconfig.inc"    ;Gerência a inicialização.
 
 	;2 - Boot Manager Mini-Shell.
-	%include "shell.inc"       ;Prompt de comandos.
-	
+    %include "shell.inc"       ;Prompt de comandos.
+
     
 	;1 - Start.
-	%include "start.inc"
+    %include "start.inc"
 
 
     ;8 - lib32.	
     %include "lib32.inc"       ;Rotinas em 32 bits.	
-	
+
 	
 
 ;;===============================================
@@ -1549,7 +1564,7 @@ root_buffer:
 fat_buffer:
 
 ;
-;fim.
+; End.
 ;
 
 
