@@ -70,31 +70,33 @@ unsigned long heapAllocateMemory ( unsigned long size ){
         // @todo: Aqui poderia parar o sistema e mostrar essa mensagem.
         //
 
-        printf("heapAllocateMemory fail: g_available_heap={0}\n");
+        printf ("heapAllocateMemory fail: g_available_heap={0}\n");
         goto fail;
-    };
+    }
 
 
-    //
-    // Size limits. (Min, max).
-    //
+    // Size limits. 
+    // (Min, max).
 
     // Se o tamanho desejado for igual a zero.
-    // @todo: Aqui podemos converter o size para o tamanho mínimo.
+    // #todo: 
+    // Aqui podemos converter o size para o tamanho mínimo.
     // não há problema nisso.
-    if( size == 0 )
-	{
+    
+    if ( size == 0 )
+    {
         //size = 1;
-        printf("heapAllocateMemory error: size={0}\n");
-        refresh_screen();
+        printf ("heapAllocateMemory error: size={0}\n");
+        refresh_screen ();
         
-		//?? NULL seria o retorno para esse caso ??
-		return (unsigned long) g_heap_pointer;
-    };
+        // ?? NULL seria o retorno para esse caso ??
+        return (unsigned long) g_heap_pointer;
+    }
 
     // Se o tamanho desejado é maior ou 
-	// igual ao espaço disponível.
-    if( size >= g_available_heap )
+    // igual ao espaço disponível.
+
+    if ( size >= g_available_heap )
     {
         //
         // @todo: Tentar crescer o heap para atender o size requisitado.
@@ -102,10 +104,11 @@ unsigned long heapAllocateMemory ( unsigned long size ){
 
         //try_grow_heap() ...
 
-        printf("heapAllocateMemory error: size >= g_available_heap\n");
+        printf ("heapAllocateMemory error: size >= g_available_heap\n");
         goto fail;
-    };
-    
+    }
+ 
+
     //Salvando o tamanho desejado.
     last_size = (unsigned long) size;
     
@@ -125,47 +128,49 @@ try_again:
     
 	if( mmblockCount >= MMBLOCK_COUNT_MAX )
 	{
-        printf("pc-mm-memory-heapAllocateMemory: MMBLOCK_COUNT_MAX");
-        die();
-    };
+        printf ("sore-heap-heapAllocateMemory: MMBLOCK_COUNT_MAX");
+        die ();
+    }
+
 
     //
-	// #importante
+    // #importante
     // A variável 'Header', no header do bloco, 
-	// é o início da estrutura que o define. 'b->Header'. 
-	// Ou seja, o endereço da variável marca o início da
+    // é o início da estrutura que o define. 'b->Header'. 
+    // Ou seja, o endereço da variável marca o início da
     // estrutura.
     //
     // Pointer Limits:
     // ( Não vamos querer um heap pointer fora dos limites 
-	//   do heap do bl ).
+    //   do heap do bl ).
     // Se o 'g_heap_pointer' atual esta fora dos limites do heap, 
-	// então devemos usar o último válido, que provavelmente está 
-	// nos limites. ?? #bugbug: Mas se o último válido está sendo 
-	// usado por uma alocação anterior. ?? Temos flags que 
-	// indiquem isso ??
+    // então devemos usar o último válido, que provavelmente está 
+    // nos limites. ?? #bugbug: Mas se o último válido está sendo 
+    // usado por uma alocação anterior. ?? Temos flags que 
+    // indiquem isso ??
     //
     // #importante: 
-	// O HEAP POINTER TAMBÉM É O INÍCIO DE UMA ESTRUTURA. 
+    // O HEAP POINTER TAMBÉM É O INÍCIO DE UMA ESTRUTURA. 
     // NESSA ESTRUTURA PODEMOS SABER SE O HEAP ESTA EM USO OU NÃO.
     // ISSO SE APLICA À TENTATIVA DE REUTILIZAR O ÚLTIMO HEAP 
-	// POINTER VÁLIDO.
+    // POINTER VÁLIDO.
     //
 
-    //Se estiver fora dos limites.
-    if( g_heap_pointer < BL_HEAP_START || 
-        g_heap_pointer >= BL_HEAP_END )
+    // Se estiver fora dos limites.
+
+    if ( g_heap_pointer < BL_HEAP_START || 
+         g_heap_pointer >= BL_HEAP_END )
     {
         // #bugbug: ?? Como saberemos, se o último válido,
         // não está em uso por uma alocação anterior. ??
 
         //Checa os limites o último last heap pointer válido.
-        if( last_valid < BL_HEAP_START || 
-           last_valid >= BL_HEAP_END )
+        if ( last_valid < BL_HEAP_START || 
+             last_valid >= BL_HEAP_END )
         {
-            printf("pc-mm-memory-heapAllocateMemory: last_valid");
-            die();
-        };
+            printf ("heapAllocateMemory: last_valid");
+            die ();
+        }
 
         //
         // @todo: Checar a disponibilidade desse último válido.
@@ -173,29 +178,27 @@ try_again:
 		
 		//Havendo um last heap pointer válido.
 		//?? isso não faz sentido.
-		g_heap_pointer = (unsigned long) last_valid + last_size;
-		goto try_again;
-	};
-	
+        g_heap_pointer = (unsigned long) last_valid + last_size;
+        goto try_again;
+    }
 
-    //
+
     // Agora temos um 'g_heap_pointer' válido, salvaremos ele.
     // 'last_valid' NÃO é global. Fica nesse arquivo.
-    //
-    
+
+ 
     last_valid = (unsigned long) g_heap_pointer;
-    
-    //
-	// #importante:
+
+
+    // #importante:
     // Criando um bloco, que é uma estrutura mmblock_d.
     // Estrutura mmblock_d interna.
     // Configurando a estrutura para o bloco atual.
     //
     // Obs: A estutura deverá ficar lá no espaço reservado 
-	// para o header. (Antes da area alocada).
-	//
-    // Current = (void*) g_heap_pointer;
+    // para o header. (Antes da area alocada).
     //
+    // Current = (void*) g_heap_pointer;
 
     
 	// ## importante ##
@@ -203,7 +206,7 @@ try_again:
 	
     Current = (void *) g_heap_pointer;    
 
-    if( (void *) Current != NULL )
+    if ( (void *) Current != NULL )
     {
         // #importante:
 		// Obs: Perceba que 'Current' e 'Current->Header' 
@@ -377,10 +380,9 @@ try_again:
 
 fail:
 
-    refresh_screen();
+    refresh_screen ();
     //Se falhamos, retorna 0. Que equivalerá à NULL.
     return (unsigned long) 0;
-
 }
 
 
@@ -414,8 +416,7 @@ void FreeHeap (void *ptr){
 
     if ( (void *) Header == NULL )
     {
-		return;
-		
+        return;
     }else{
 
         if ( Header->Used != 1 || Header->Magic != 1234 )
@@ -425,22 +426,19 @@ void FreeHeap (void *ptr){
 
 		//Checa
 
-		if ( mmblockList[mmblockCount] == (unsigned long) Header && 
-			 Header->Id == mmblockCount )
-		{
-			mmblockList[mmblockCount] = 0;
-			mmblockCount--;
-		}
+       if ( mmblockList[mmblockCount] == (unsigned long) Header && 
+            Header->Id == mmblockCount )
+       {
+            mmblockList[mmblockCount] = 0;
+            mmblockCount--;
+       }
 
-		//Isso invalida a estrutura, para evitar mal uso.
-
+        // Isso invalida a estrutura, para evitar mal uso.
         Header->Used = 0;
         Header->Magic = 0;
 
         g_heap_pointer = (unsigned long) Header;
-
     };
-
 }
 
 
@@ -470,8 +468,8 @@ int init_heap (){
 
 
 	//Heap Pointer, Available heap and Counter.
-    g_heap_pointer = (unsigned long) bl_heap_start;    	
-    g_available_heap = (unsigned long) (bl_heap_end - bl_heap_start);    	 
+    g_heap_pointer = (unsigned long) bl_heap_start;  
+    g_available_heap = (unsigned long) (bl_heap_end - bl_heap_start); 
     heapCount = 0;      
 
 
@@ -481,43 +479,46 @@ int init_heap (){
     last_size = 0;
 
 	//Check Heap Pointer.
-    if ( g_heap_pointer == 0 )
-    {
-	    printf ("init_heap fail: Heap pointer\n");
-		goto fail;
+    if ( g_heap_pointer == 0 ){
+        printf ("init_heap fail: Heap pointer\n");
+        goto fail;
     }
 
 
 	//Check Heap Pointer overflow.
-	if( g_heap_pointer > bl_heap_end )
-	{
-        printf("init_heap fail: Heap Pointer Overflow\n");
-		goto fail;
-    }	
-	
-    //Heap Start.
-	if( bl_heap_start == 0 )
-	{
-	    printf("init_heap fail: HeapStart={%x}\n", bl_heap_start );
-	    goto fail;
-	}
-	
-	//Heap End.
-	if( bl_heap_end == 0 )
-	{
-	    printf("init_heap fail: HeapEnd={%x}\n", bl_heap_end );
-	    goto fail;
-	}
-	
-	//Check available heap.
-	if( g_available_heap == 0 )
-	{
-	    //@todo: Tentar crescer o heap.
-		
-		printf("init_heap fail: Available heap\n");
-		goto fail;
-	}
-	
+    if ( g_heap_pointer > bl_heap_end )
+    {
+        printf ("init_heap fail: Heap Pointer Overflow\n");
+        goto fail;
+    }
+
+
+    // Heap Start.
+    if ( bl_heap_start == 0 )
+    {
+        printf ("init_heap fail: HeapStart={%x}\n", bl_heap_start );
+        goto fail;
+    }
+
+
+	// Heap End.
+    if ( bl_heap_end == 0 )
+    {
+        printf ("init_heap fail: HeapEnd={%x}\n", bl_heap_end );
+        goto fail;
+    }
+
+
+	// Check available heap.
+    if ( g_available_heap == 0 )
+    {
+       //@todo: Tentar crescer o heap.
+
+        printf ("init_heap fail: Available heap\n");
+        goto fail;
+    }
+
+
 	// Heap list:
 	// Inicializa a lista de heaps.
 	// #bugbug suspensa a lista de heaps;

@@ -106,7 +106,10 @@ unsigned short pciCheckDevice ( unsigned char bus, unsigned char slot ){
  *     Check vendor, offset 0. 
  */
 
-unsigned short pciCheckVendor ( unsigned char bus, unsigned char slot ){
+unsigned short 
+pciCheckVendor ( unsigned char bus, 
+                 unsigned char slot )
+{
 
 	//Offset 0.
 
@@ -114,28 +117,30 @@ unsigned short pciCheckVendor ( unsigned char bus, unsigned char slot ){
 
 	//Pega o vendor.
 	//PCI_OFFSET_VENDORID
-	
-	Vendor = pciConfigReadWord ( bus, slot, 0, 0 );    
 
-	//Vendor inválido.
+    Vendor = pciConfigReadWord ( bus, slot, 0, 0 );    
 
     if ( Vendor == PCI_INVALID_VENDORID )
     {
         return (unsigned short) 0;
-    };
+    }
+
 
     return (unsigned short) Vendor; 
 }
 
 
-unsigned char pciGetClassCode ( unsigned char bus, unsigned char slot ){
+unsigned char 
+pciGetClassCode ( unsigned char bus, 
+                  unsigned char slot )
+{
+    unsigned char ClassCode;
 
-	unsigned char ClassCode;
-	
     ClassCode = (unsigned char) pciConfigReadWord ( bus, slot, 0, 
                                     PCI_OFFSET_CLASSCODE );
 
-	//#todo: Checar a validade do class code.
+	// #todo: 
+	// Checar a validade do class code.
 
     return (unsigned char) ClassCode;
 }
@@ -151,8 +156,7 @@ int pciInfo (){
     unsigned char i;
     unsigned char j;
 
-	//Offset 0.
-	//Offset 2.
+	// Offset 0 e 2.
 
 	unsigned short Vendor;    
 	unsigned short Device;    
@@ -193,6 +197,8 @@ int pciInfo (){
             //usar malloc pra alocar memoria pra estrutura. 
 		};
 	};
+
+
 
 	/*
 	// Checa vários slots no bus 0. 
@@ -264,8 +270,6 @@ int pciInfo (){
 //
 // Done.
 //
-
-//done:
 
     printf ("Done\n");
 

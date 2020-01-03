@@ -171,7 +171,7 @@ shellProcedure ( unsigned long window,
 				   else
 				   {
 				        g_cmd_status = 0;    //Ainda tem mais caractere.
-				   };				   
+				   };
                    break;               
             };
             break;
@@ -183,9 +183,9 @@ shellProcedure ( unsigned long window,
     };	
 
 //done:
-	
-    return (int) 0;	
-};  
+
+    return 0;
+}
 
 
 
@@ -200,11 +200,12 @@ int shellInitializePrompt (){
     int i;
     
 	//@todo: Usar 128.
-	
-	for ( i=0; i<250; i++){
-		
+
+    for ( i=0; i<250; i++)
+    {
         prompt[i] = (char) '\0';
     };
+
     
 	prompt[0] = (char) '\0';
 	prompt_pos = 0;
@@ -225,7 +226,9 @@ int shellInitializePrompt (){
 /*
  * shellWaitCmd: 
  *     Espera completar o comando com um [ENTER].
- *     @todo: Isso pode travar o Boot Loader?!
+ *     
+ * #bugbug: 
+ * Isso pode travar o Boot Loader?!
  */
  
 void shellWaitCmd (){
@@ -236,7 +239,7 @@ wcLoop:
 	{
        g_cmd_status = 0;
        return;
-    };	
+    }
 	
 	goto wcLoop;
 }

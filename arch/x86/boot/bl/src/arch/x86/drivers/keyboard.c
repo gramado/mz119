@@ -234,26 +234,27 @@ CPS|L,     0,     0,     0,     0,     0,     0,     0,		/* scan 64-71 */
  */
  
 void keyboardHandler (){
-	
-    //
-	// Step 0: Declarações.
-	//
-	
-    //Variáveis para armazenar valores que pegaremos.
-    
-	unsigned char scancode;
+
+
+    // Step 0: 
+    // Declarações.
+
+
+    // Variáveis para armazenar valores que pegaremos.
+
+    unsigned char scancode;
     unsigned long status;
-	
+
 	//@todo: ?? Por que esses valores ??
 	
     //Suporte ao envio de mensagens. 
-	
-	unsigned char *msg = (unsigned char *) 0x00090500;   
-    unsigned long mensagem; 	
-	
+
+    unsigned char *msg = (unsigned char *) 0x00090500;   
+    unsigned long mensagem; 
+
 	//Suporte ao envio de char.
-    
-	unsigned char *wParam  = ( unsigned char *) 0x00090120;       
+
+    unsigned char *wParam  = ( unsigned char *) 0x00090120;       
     unsigned long ch;
 
 
@@ -261,14 +262,14 @@ void keyboardHandler (){
 	// Uma biblioteca de video satisfatória deve existir no Boot Loader.
 	
 	//Tela para debug.
-	unsigned char *screen = (unsigned char *) 0x000B8000;   
+    unsigned char *screen = (unsigned char *) 0x000B8000;   
 
-    //
-    // Step1: Pegar o scancode.       
-    //	
-	
-	scancode = inportb(0x60); 
-	
+
+    // Step1: 
+    // Pegar o scancode.       
+
+    scancode = inportb (0x60); 
+
     //
     // Step 2: Trata a mensagem.
     //    
@@ -278,110 +279,121 @@ void keyboardHandler (){
     {
         //Analiza a tecla.
         status = map[scancode];  
-		
+
         //Se for teclas especiais, que são importantes para o sistema.         
-        if( status == KEY_ALT || 
-		    status == KEY_WINKEY || 
-			status == KEY_CTRL || 
-			status == KEY_SHIFT )
-		{     
+        if ( status == KEY_ALT || 
+             status == KEY_WINKEY || 
+             status == KEY_CTRL || 
+             status == KEY_SHIFT )
+        {     
               //Prepara.
               mensagem = MSG_SYSKEYUP;
               
               //Envia.
               key_status = mensagem;
-              msg[0] = mensagem;
-			  
+              msg[0] = mensagem;  
         }else{  //Se for tecla comum.
-            
-			//Prepara.
+
+            // Prepara.
             mensagem = MSG_KEYUP;
-            
+
             //Envia.
             key_status = mensagem;
             msg[0] = mensagem;
         };
-        
-        //Analiza.
-		//Se for do sistema usa o mapa de caracteres apropriado. 
-   		if(key_status == MSG_SYSKEYUP){
-		    ch = shift[scancode];  //Pega.
+
+    
+        // Analiza.
+        // Se for do sistema usa o mapa de caracteres apropriado. 
+        if (key_status == MSG_SYSKEYUP)
+        {
+            ch = shift[scancode];  //Pega.
             wParam[0] = ch;        //Envia.
-		};
-		
-		//Analiza.
-		//Se for tecla normal, pega o mapa de caracteres apropriado.
-		if(key_status == MSG_KEYUP){
-			ch = map[scancode];  //Pega.
-			wParam[0] = ch;  //Envia.
-		};
-	    //Nothing.
-	
-	}else{  //Se a tecla foi pressionada ---------------------
-		
-		
-		//Pegando status.   
+        }
+
+
+		// Analiza.
+		// Se for tecla normal, pega o mapa de caracteres apropriado.
+        if (key_status == MSG_KEYUP)
+        {
+            ch = map[scancode];  //Pega.
+            wParam[0] = ch;      //Envia.
+        }
+
+        //Nothing.
+
+    }else{  //Se a tecla foi pressionada ---------------------
+
+
+        // Pegando status.   
         status = map[scancode]; 
  
-        if( status == KEY_ALT || 
-		    status == KEY_WINKEY || 
-			status == KEY_CTRL || 
-			status == KEY_SHIFT )
-		{
+        if ( status == KEY_ALT || 
+             status == KEY_WINKEY || 
+             status == KEY_CTRL || 
+             status == KEY_SHIFT )
+        {
             //Pega.
             mensagem = MSG_SYSKEYDOWN;
             //Envia. 
             key_status = mensagem;   
             msg[0] = mensagem;  
         
-		}else{ 
+        }else{ 
             
-			//Pega.
+            // Pega.
             mensagem = MSG_KEYDOWN;
-		    //Envia.
+            // Envia.
             key_status = mensagem; 
-		    msg[0] = mensagem;
-		};
-		
-		//Analiza.
-		if (key_status == MSG_SYSKEYDOWN)
-		{
-			ch = shift[scancode];
-			wParam[0] = ch;         //Envia.
-		};
-		
-		//Analisa.
-		if (key_status == MSG_KEYDOWN)
-		{
-			ch = map[scancode];
-			wParam[0] = ch;    //Envia. 
-		};
-		
+            msg[0] = mensagem;
+       };
+
+
+        // Analiza.
+        if (key_status == MSG_SYSKEYDOWN)
+        {
+            ch = shift[scancode];
+            wParam[0] = ch;         //Envia.
+        }
+
+
+        // Analisa.
+        if (key_status == MSG_KEYDOWN)
+        {
+            ch = map[scancode];
+            wParam[0] = ch;    //Envia. 
+        };
+
 		//Nothing.
-	};
-	
-	
-	//
-	// Step 3: Debug support.
-	//
- 
-	//#debug: Envia um caractere pra tela.
-	
-	screen[76] = (char) ch;
-	screen[77] = (char) 9;     
+    };
 
 
-	//
-	// Step 4: Send message to Boot Loader procedure.
-	//
 
-    bl_procedure ( 0, (int) mensagem, (unsigned long) ch, 
+	// Step 3: 
+	// Debug support.
+
+
+	// #debug: 
+	// Envia um caractere pra tela.
+
+    // Haha!
+    screen[76] = (char) ch;
+    screen[77] = (char) 9;     
+
+
+
+	// Step 4: 
+	// Send message to Boot Loader procedure.
+
+
+    bl_procedure ( 0, 
+        (int) mensagem, 
+        (unsigned long) ch, 
         (unsigned long) status );
 
 
-	//
-	// Step 5: EOI.
-	//
+	// Step 5: 
+	// EOI.
 
     outportb ( 0x20, 0x20 );     
 }

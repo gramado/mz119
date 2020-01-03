@@ -486,7 +486,7 @@ Entry_770:
     taskman_page_directory[770] = taskman_page_directory[770] | 7;    //Configurando atributos.
 
 
-	//
+
 	// O que foi feito:
 	// ================
 	//    Foram criados 4 diretórios.
@@ -494,7 +494,6 @@ Entry_770:
 	//    As tabelas configuradas para 
 	//    o diretório kernel foram
 	//    reaproveitadas nos demais diretórios.
-	//
 
 
 // Done.

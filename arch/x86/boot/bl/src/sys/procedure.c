@@ -54,34 +54,40 @@ bl_procedure ( unsigned long window,
           
         case MSG_SYSKEYDOWN:                 
             switch (long1)	       
-            {   
-                //4 possibilidades apenas.
-				case VK_F1:
-				    printf("F1");
-					//Reboot ?
+            { 
+  
+                // 4 possibilidades apenas.
+                case VK_F1:
+                    printf ("F1");
+                    //Reboot ?
                     break;
+
                 case VK_F2:
-				    printf("F2");
+                    printf ("F2");
                     break;
+
                 case VK_F3:
-				    printf("F3");
+                    printf ("F3");
                     break;
+
                 case VK_F4:
-				    printf("F4");
+                    printf ("F4");
                     break;
 
                 default:
-				    //Nothing.
-                    break; 				
+                    // Nothing.
+                    break;
              };              
         break;
-		
-		default:
-		    //Nothing.
-			break;
+
+
+        default:
+            // Nothing.
+            break;
     };
-	
-    return (unsigned long) 0;	
+
+
+    return (unsigned long) 0;
 }
 
 

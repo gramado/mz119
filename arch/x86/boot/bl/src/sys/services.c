@@ -16,22 +16,24 @@
 
 void *blServices ( unsigned long arg1, 
                    unsigned long arg2,
-				   unsigned long arg3,
-				   unsigned long arg4 )
+                   unsigned long arg3,
+                   unsigned long arg4 )
 {
-	switch (arg1)
-	{
-		case 1:
-		    break;
+
+    switch (arg1)
+    {
+        case 1:
+            break;
 			
 		//case 2:
 		//    break;
 		
 		//...
-	}
-	
-	return NULL;
-};
+    }
+
+
+    return NULL;
+}
 
 
 /*
@@ -43,7 +45,7 @@ void system_services (){
 	
     //Nothing.
 	//return;   
-};
+}
 
 
 //

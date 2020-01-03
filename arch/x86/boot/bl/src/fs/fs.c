@@ -654,7 +654,7 @@ while(1)
     if ( cluster == 0xFFFF || cluster == 0xFFF8 )
     {
         goto done; 
-    };
+    }
 
 
 	//#debug.
@@ -682,7 +682,6 @@ fail:
 
 	// Done: 
 	// Arquivo carregado com sucesso.
-
 
 done:
 
