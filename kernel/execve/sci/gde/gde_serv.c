@@ -378,7 +378,19 @@ void *gde_extra_services ( unsigned long number,
 		debug_print ( (char *) arg2 );
         return NULL;
     }
-
+    
+    
+    // memory size
+    // baseado no valor passado pelo bl.bin
+    unsigned long __mm_size_mb = 0;
+    if ( number == 292 )
+    {
+		//see gdef.h
+		// ( (adress/1024)/1024) MB
+        __mm_size_mb = ( (blSavedLastValidAddress/0x400) / 0x400 );
+   
+        return (void *) __mm_size_mb;
+    }
 
     // Updates a status bar of a given window.
     if ( number == 300 )

@@ -40,13 +40,12 @@
 
 
 
-
-
- 
-
 ;
 ; Variáveis importadas.
 ;
+
+;;see: gdef.h
+extern _blSavedLastValidAddress
 
 
 ;Buffers (gdef.h)
@@ -161,13 +160,12 @@ KRN_ENTRYPOINT equ 0x00101000    ;Entry Point.
 ;    al = 'T' (Text Mode).
 ;    ebx = LFB.
 ;
-;   @todo: 
-;       ecx = BootBlock pointer.
-;       edx = LoaderBlock pointer.
+;    ecx = BootBlock pointer.
+;    edx = LoaderBlock pointer.
 ;
 ; Isso é chamado por boot.asm.
 ;
-
+    
 head_init:
 
 
@@ -274,6 +272,9 @@ head_init:
    
     ;BootBlock pointer.
 	;Ponteiro para o bootblock passado pelo Boot Manager.
+	
+    ;    ecx = BootBlock pointer.
+    ;    edx = LoaderBlock pointer.
 
     mov dword [_SavedBootBlock], edx
 
@@ -301,6 +302,13 @@ head_init:
     mov al, byte [edx +12]  
     mov dword [_SavedBPP], eax
 	
+	;; #importante
+    ;; last valid ram address.
+    ;; see: gdef.h
+	xor eax, eax
+	mov eax, dword [edx +16]    
+    mov dword [_blSavedLastValidAddress], eax
+
 
 	;; #importante:
 	;; Outras informações poderiam ser passadas 
@@ -619,6 +627,10 @@ _SavedY:
 global _SavedBPP
 _SavedBPP:
     dd 0	
+
+global _SavedLastValidAddress
+_SavedLastValidAddress:
+    dd 0
 
 
 

@@ -216,12 +216,11 @@ int init (){
     //__address = (unsigned long) init_testing_memory_size (1024);        
     
     //para testar na máquina real com 2048 mb instalado.
-    __address = (unsigned long) init_testing_memory_size (2050);        
+    __address = (unsigned long) init_testing_memory_size (2048);        
         
     printf ("init: address = %x \n", __address);
-
     refresh_screen();
-    while(1){}
+    //while(1){}
 
 //
 // ========================== memory ===============================
@@ -355,11 +354,18 @@ unsigned long init_testing_memory_size (int mb)
             printf ("__testing_memory_size: out of range with no exception! \n");
             printf ("__testing_memory_size: last valid address = %x \n", __last_valid_address);
             refresh_screen();
+            
+            
+            ____testing_memory_size_flag = 0;
+            return __last_valid_address;
+            
+            /*
             while(1)
             {
                 asm ("cli");
                 asm ("hlt");
             }
+            */
         }
     };
 

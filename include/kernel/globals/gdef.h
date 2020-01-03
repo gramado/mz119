@@ -105,6 +105,12 @@ dessa conta.
 
 
 
+// salvando o último endereço válido de memória ram.
+//usado em head.asm
+unsigned long blSavedLastValidAddress;
+
+
+
 
 /*
  * Os Type:

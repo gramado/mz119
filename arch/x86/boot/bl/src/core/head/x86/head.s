@@ -37,6 +37,10 @@ segment .head_x86
 [bits 32]
 
 
+;; See: gdef.h
+extern ___last_valid_address 
+
+
 
 ; Variáveis importadas.
 
@@ -295,21 +299,33 @@ StartKernelEntry:
 	;Height in pixel.
 	;bpp.
 
+
+    ; 0 - lfb
 	xor eax, eax
 	mov eax, dword [_SavedLFB]    
 	mov dword [BootBlock.lfb], eax
 	
+	; 4 - x
 	xor eax, eax
 	mov ax, word [_SavedX]       
 	mov dword [BootBlock.x], eax 
 	
+	; 8 - y
 	xor eax, eax
 	mov ax, word [_SavedY]       
 	mov dword [BootBlock.y], eax 
 	
+	; 12 - bpp
 	xor eax, eax
 	mov al, byte [_SavedBPP]     
 	mov dword [BootBlock.bpp], eax 
+
+
+    ; 16 - last valid address 
+	xor eax, eax
+	mov eax, dword [___last_valid_address]   ;;pega em gdef.h 
+	mov dword [BootBlock.last_valid_address], eax   ;;estrutura logo abaixo.
+
 
 	;Continua...
 
@@ -327,8 +343,8 @@ StartKernelEntry:
 	;Prepara a tabela.
 	mov ebp, dword BootBlock	
 
-	mov edx, ebp                 ;Tabela.	
-	mov ecx, ebp                 ;Tabela.
+	mov edx, ebp                 ;Tabela. (boot block)
+	mov ecx, ebp                 ;Tabela. (boot block)
 	mov ebx, dword [_SavedLFB]   ;LFB address.
 	xor eax, eax	
 	
@@ -383,12 +399,16 @@ blShellLoop:
 ;     LFB address.
 
 BootBlock:
-.lfb: dd 0    ;LFB address.
-.x:   dd 0    ;Width in pixels.
-.y:   dd 0    ;Height in pixel.
-.bpp: dd 0    ;bpp address.
+.lfb: dd 0    ; 0 - LFB address.
+.x:   dd 0    ; 4 - Width in pixels.
+.y:   dd 0    ; 8 - Height in pixel.
+.bpp: dd 0    ; 12 - bpp address.
+.last_valid_address: dd 0    ;; 16 - last valid ram address when finding mem size.
 ;...
 ;Continua...	
+
+
+
 
 ;;
 ;; Salvando alguns valores.

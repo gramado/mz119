@@ -111,9 +111,10 @@ START:
     ;    al = 'T' (Text Mode).
     ;    ebx = LFB.
     ;
-    ;   #todo: 
-    ;       ecx = BootBlock pointer.
-    ;       edx = LoaderBlock pointer.
+    ;    ecx = BootBlock pointer.
+    ;    edx = LoaderBlock pointer.
+    
+    
     
     ;; #importante
     ;; AL e EBX foram configurados pelo BL.BIN ??
