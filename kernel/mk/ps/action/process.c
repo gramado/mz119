@@ -709,11 +709,15 @@ do_clone:
         };
 
 
+        // Entry point para clonagem.
+		Clone->control->eip = 0x400000 + 0x1000;
 
 		//====
-		//#bugbug : Essa pilha está dentro da imagem. ...
-		//e se o aplicativo tiver mais que 63KB.???
-		Clone->control->eip = 0x400000 + 0x1000;
+		// #bugbug : 
+		// Essa pilha está dentro da imagem. ...
+		// e se o aplicativo tiver mais que 63KB.???
+		
+		//Clone->control->esp = 0x400000 + (1024 * 63);
 		Clone->control->esp = 0x400000 + (1024 * 200);   //#bugbug
 		//Clone->control->eip = Current->control->eip; //#bug fail
 		//Clone->control->esp = Current->control->esp; //#bug fail

@@ -412,13 +412,17 @@ int main ( int argc, char *argv[] ){
     //asm ("int $129 \n");
     
     
+    // Está funcionando e lançando os filhos.
+    gramado_system_call (900, (unsigned long)"launcher.bin", 0, 0);        
+    
+    
     //funciona.
     //gramado_system_call (900, (unsigned long)"gwm.bin", 0, 0);        
     //gramado_system_call (900, (unsigned long)"gramcode.bin", 0, 0);   
     //gramado_system_call (900, (unsigned long) "gfe.bin", 0, 0);                
         
     //falha ao abrir o child.    
-    gramado_system_call (900, (unsigned long)"noraterm.bin", 0, 0); 
+    //gramado_system_call (900, (unsigned long)"noraterm.bin", 0, 0); 
     //gramado_system_call (900, (unsigned long)"gws.bin", 0, 0);
 
     //fail
@@ -448,7 +452,7 @@ int main ( int argc, char *argv[] ){
     */
     
     //#debug
-    while(1){}
+   // while(1){}
 
 
 
