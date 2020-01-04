@@ -776,7 +776,27 @@ void *gde_extra_services ( unsigned long number,
     } 
     
     
+    // copia o prompt[] do terminal para o buffer do tty atual.
+    //size_t __prompt_size = 0;
+    if ( number == 810 )
+    {
+        //__prompt_size = (size_t) strlen (__prompt_size) + 1
+        
+        //copiando.
+        //strcpy ( CurrentTTY->stdout->_base, (const char *) arg3 );
+        memcpy ( (void *) CurrentTTY->stdout->_base, (const void *) arg3, 64 ); 
+        return NULL;
+    }
     
+    // copia do buffer do tty atual para o buffer do child do terminal.
+    if ( number == 811 )
+    {
+
+        //copiando.
+        //strcpy ( arg3,  (const char *) CurrentTTY->stdout->_base );
+        memcpy ( (void *) arg3, (const void *) CurrentTTY->stdout->_base, 64 );         
+        return NULL;
+    }
     
     // Get process stats given pid
     // IN: pid, number

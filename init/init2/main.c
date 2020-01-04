@@ -418,7 +418,7 @@ int main ( int argc, char *argv[] ){
     //gramado_system_call (900, (unsigned long) "gfe.bin", 0, 0);                
         
     //falha ao abrir o child.    
-    //gramado_system_call (900, (unsigned long)"noraterm.bin", 0, 0); 
+    gramado_system_call (900, (unsigned long)"noraterm.bin", 0, 0); 
     //gramado_system_call (900, (unsigned long)"gws.bin", 0, 0);
 
     //fail
@@ -429,7 +429,7 @@ int main ( int argc, char *argv[] ){
     
 
     //#testing
-    gramado_system_call (900, (unsigned long)"sysmon.bin", 0, 0);         
+    //gramado_system_call (900, (unsigned long)"sysmon.bin", 0, 0);         
 
 
 
