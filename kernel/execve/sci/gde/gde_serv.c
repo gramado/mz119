@@ -266,6 +266,7 @@ void *__do_111 ( unsigned long buffer ){
 		
 		    sc_again:
 		
+		    // get char from current_stdin.
 		    SC = (unsigned char) get_scancode ();
 		
 		    if ( SC == 0 )

@@ -149,7 +149,8 @@ void abnt2_keyboard_handler (void){
     // #bugbug
     // Checar a validade.
 
-    CurrentTTY->stdin->_base[keybuffer_tail++] = (char) scancode;
+    //CurrentTTY->stdin->_base[keybuffer_tail++] = (char) scancode;
+    current_stdin->_base[keybuffer_tail++] = (char) scancode;
     
     
     if ( keybuffer_tail >= current_stdin->_lbfsize )

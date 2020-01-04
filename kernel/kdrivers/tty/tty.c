@@ -82,6 +82,7 @@ int tty_get_current_virtual_console (void)
     return (int) current_vc;
 }
 
+
 void tty_init_virtual_console (int n)
 {
 

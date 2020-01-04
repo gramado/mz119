@@ -153,23 +153,11 @@ int pty_create_link ( struct tty_d *tty )
 */
 
 
-/*
-int pty_unlink ( struct tty_d *tty );
-int pty_unlink ( struct tty_d *tty )
-{
-	if ( (void *) pty == NULL )
-	{
-		return -1;
-	}
-	
-	pty->link = NULL;
-	
-	return 0;
-}
-*/
 
-/*
-int pty_link ( struct tty_d *master, struct tty_d *slave );
+
+
+
+//#test
 int pty_link ( struct tty_d *master, struct tty_d *slave )
 {
 	if ( (void *) master == NULL )
@@ -182,12 +170,27 @@ int pty_link ( struct tty_d *master, struct tty_d *slave )
 		return -1;
 	}
 	
+	// #todo
+	// Checar validade.
+	
 	master->link = slave;
 	
 	return 0;
 }
-*/
 
+
+//#test
+int pty_unlink ( struct tty_d *tty )
+{
+	if ( (void *) tty == NULL )
+	{
+		return -1;
+	}
+	
+	tty->link = NULL;
+	
+	return 0;
+}
 
 
 /*

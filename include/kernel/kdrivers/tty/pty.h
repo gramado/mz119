@@ -70,8 +70,8 @@ void pty_send_message_to_thread ( unsigned long msg_buffer, int tid );
 void pty_test_sendmessagetoterminal (void);
 
 
-
-
+int pty_link ( struct tty_d *master, struct tty_d *slave );
+int pty_unlink ( struct tty_d *tty );
 
 
  
