@@ -129,7 +129,9 @@ void fatLoadCluster( unsigned long sector,
 //
 
 int load_kernel();
-int load_files();					 
+
+
+ 
 				
 				
 //

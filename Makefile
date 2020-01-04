@@ -12,7 +12,7 @@
 VERSION = 1
 PATCHLEVEL = 21
 SUBLEVEL = 0
-EXTRAVERSION = -rc0
+EXTRAVERSION = -rc1
 NAME = 
 
 
@@ -496,6 +496,9 @@ vhd-copy-files:
 #
 
 
+#init/init2
+	sudo cp bin/INIT2.BIN      /mnt/gramadovhd
+
 #init/sys
 	sudo cp bin/GRAMMGR.BIN    /mnt/gramadovhd
 
@@ -635,9 +638,11 @@ vhd-copy-files:
 # principais.
 # Serão carregados por bl.bin. 
 	sudo cp bin/boot/KERNEL.BIN   /mnt/gramadovhd/BOOT
-	sudo cp bin/boot/INIT.BIN     /mnt/gramadovhd/BOOT
-	sudo cp bin/boot/SHELL.BIN    /mnt/gramadovhd/BOOT
-	sudo cp bin/boot/TASKMAN.BIN  /mnt/gramadovhd/BOOT
+
+#CANCELADO!
+	#sudo cp bin/boot/INIT.BIN     /mnt/gramadovhd/BOOT
+	#sudo cp bin/boot/SHELL.BIN    /mnt/gramadovhd/BOOT
+	#sudo cp bin/boot/TASKMAN.BIN  /mnt/gramadovhd/BOOT
 
 
 #colocaremos drivers e servidores na pasta boot/

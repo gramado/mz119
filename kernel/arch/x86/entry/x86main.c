@@ -267,12 +267,29 @@ void x86mainStartFirstThread ( void ){
 }
 
 
-//inicializa s'o o init em /init
-void x86StartInit (void){
+//inicializa só o init2.bin
+void x86StartInit2 (void){
     
     //
 	// ## INIT ##
 	//
+	
+	
+	// loading image.
+	
+    int fileret = -1;
+    
+    fileret = (unsigned long) fsLoadFile ( VOLUME1_FAT_ADDRESS, 
+                                  VOLUME1_ROOTDIR_ADDRESS, 
+                                  "INIT2   BIN", 
+                                  (unsigned long) 0x00400000 );
+
+
+    if ( fileret != 0 )
+    {
+        panic ("x86StartInit: fileret \n");
+    }
+
 
 	// Creating init process.
 	
@@ -346,264 +363,12 @@ void x86StartInit (void){
 
     ipccore_register ( (int) 0, 
         (struct process_d *) InitProcess, 
-        (struct thread_d *) IdleThread );
+        (struct thread_d *) IdleThread );        
 
 }
 
 
 
-// inicializa 3 processos do gramado/init/core
-// mais a thread em ring 0.
-
-void x86StartGramadoCore (void){
-
-	//
-	// ## INIT ##
-	//
-
-	// Creating init process.
-	
-	// > Cria um diretório que é clone do diretório do kernel base 
-	// Retornaremos o endereço virtual, para que a função create_process possa usar 
-	// tanto o endereço virtual quanto o físico.
-	
-	// > UPROCESS_IMAGE_BASE;
-
-    InitProcess = (void *) create_process ( NULL, NULL, NULL, 
-                               (unsigned long) 0x00400000, 
-                               PRIORITY_HIGH, 
-                               (int) KernelProcess->pid, 
-                               "INIT-PROCESS", 
-                               RING3, 
-                               (unsigned long ) CreatePageDirectory() );
-
-    if ( (void *) InitProcess == NULL )
-    {
-        panic ("x86main: InitProcess\n");
-
-    }else{
-
-        fs_initialize_process_pwd ( InitProcess->pid, "no-directory" );
-
-		//processor->IdleProcess = (void*) IdleProcess;	
-    };
-
-
-	//====================================================
-	//Create Idle Thread. tid=0. ppid=0.
-	
-    IdleThread = (void *) KiCreateIdle ();
-
-    if ( (void *) IdleThread == NULL )
-    {
-        panic ("x86main: IdleThread\n");
-
-    }else{
-
-        //IdleThread->ownerPID = (int) InitProcess->pid;
-
-		//#importante
-		//Thread.
-		
-        processor->CurrentThread = (void *) IdleThread;
-        processor->NextThread    = (void *) IdleThread;
-        processor->IdleThread    = (void *) IdleThread;
-
-
-        IdleThread->tss = current_tss;
-
-
-		//...
-
-		// ## importante ## 
-		// Temos aqui alguma configuração. 
-
-        current_thread = IdleThread->tid;
-        next_thread = IdleThread->tid;
-        idle = IdleThread->tid; 
-
-    };
-
-    InitProcess->Heap = (unsigned long) g_gramadocore_init_heap_va;
-
-    InitProcess->control = IdleThread;
-
-	//registra um dos servidores do gramado core.
-	//server_index, process, thread
-
-    ipccore_register ( (int) 0, 
-        (struct process_d *) InitProcess, 
-        (struct thread_d *) IdleThread );
-
-
-	//==============================================   
-
-
-	// #importante
-	// Daqui pra baixo temos a opção de criarmos ou não os processos
-	// e as threads. A configuração está em config.h
-
-#ifdef ENTRY_CREATE_SHELL
-
-    // Creating Shell process.
-    ShellProcess = (void *) create_process ( NULL, NULL, NULL, 
-                                (unsigned long) 0x00450000, 
-                                PRIORITY_HIGH, 
-                                (int) KernelProcess->pid, 
-                                "SHELL-PROCESS", 
-                                RING3, 
-                                (unsigned long )  CreatePageDirectory() );
-
-    if ( (void *) ShellProcess == NULL )
-    {
-        panic ("x86main: ShellProcess\n");
-
-    }else{
-
-       fs_initialize_process_pwd ( ShellProcess->pid, 
-           current_workingdiretory_string );
-
-        //...
-    };
-
-
-    //=============================================
-    // Create shell Thread. tid=1. 
-    ShellThread = (void *) KiCreateShell ();
-	
-    if( (void *) ShellThread == NULL )
-	{
-        panic ("x86main: ShellThread\n");
-
-    }else{
-
-        //ShellThread->ownerPID = (int) ShellProcess->pid;
-
-        ShellThread->tss = current_tss;
-		
-		//...
-    };
-
-
-    ShellProcess->Heap = (unsigned long) g_gramadocore_shell_heap_va;
-    ShellProcess->control = ShellThread; 
-		
-	//registra um dos servidores do gramado core.
-	//server_index, process, thread
-
-    ipccore_register ( (int) 1, 
-        (struct process_d *) ShellProcess, 
-        (struct thread_d *) ShellThread );
-
-#endif
-
-
-
-#ifdef ENTRY_CREATE_TASKMAN
-	
-    //Creating Taskman process. 
-    TaskManProcess = (void *) create_process ( NULL, NULL, NULL, 
-                                  (unsigned long) 0x004A0000, 
-                                  PRIORITY_LOW, 
-                                  KernelProcess->pid, 
-                                  "TASKMAN-PROCESS", 
-                                  RING3, 
-                                  (unsigned long )  CreatePageDirectory() ); 
-
-    if ( (void *) TaskManProcess == NULL ){
-
-        panic ("x86main: TaskManProcess\n");
-
-    }else{
-
-        fs_initialize_process_pwd ( TaskManProcess->pid, "no-directory" );
-
-        //...
-    };
-
-    //===================================
-    //Create taskman Thread. tid=2.   
-
-    TaskManThread = (void *) KiCreateTaskManager ();
-
-    if ( (void *) TaskManThread == NULL )
-    {
-        panic ("x86main: TaskManThread\n");
-
-    }else{
-
-        //TaskManThread->ownerPID = (int) TaskManProcess->pid;
-
-        TaskManThread->tss = current_tss;
-
-        //...
-    };
-
-    TaskManProcess->Heap = (unsigned long) g_gramadocore_taskman_heap_va;
-    TaskManProcess->control = TaskManThread;
-
-	//registra um dos servidores do gramado core.
-	//server_index, process, thread
-    ipccore_register ( (int) 2, 
-        (struct process_d *) TaskManProcess, 
-        (struct thread_d *) TaskManThread );
-
-#endif
-
-
-
-#ifdef ENTRY_CREATE_KERNELTHREAD_RING0
-
-    //===================================
-    // Cria uma thread em ring 0.
-    // Ok. isso funcionou bem.
-
-	// >>>>> Como essa thread pertence ao processo kernel, então mudaremos ela 
-	// um pouco pra cima, onde criamos o processo kernel.
-	// obs: Mesmo não sendo ela o primeiro TID.
-
-    RING0IDLEThread = (void *) KiCreateRing0Idle ();
-
-    if( (void *) RING0IDLEThread == NULL )
-    {
-        panic ("x86main: RING0IDLEThread\n");
-
-    }else{
-
-
-        //RING0IDLEThread->ownerPID =  (int) KernelProcess->pid; 
-
-		RING0IDLEThread->tss = current_tss;
-		
-		// priority and quantum.
-	    //set_thread_priority ( (struct thread_d *) RING0IDLEThread,
-	        //PRIORITY_HIGH4 );
-
-	    //set_thread_priority ( (struct thread_d *) RING0IDLEThread,
-	        //PRIORITY_LOW1 );
-
-
-	    //set_thread_priority ( (struct thread_d *) RING0IDLEThread,
-	        //PRIORITY_LOW3 );
-
-        // funcionou no mínimo.
-        // com multiplicador 3. quantum = (1*3=3)
-	    set_thread_priority ( (struct thread_d *) RING0IDLEThread,
-	        PRIORITY_MIN );
-
-
-		// #importante
-		// Sinalizando que ainda não podemos usar as rotinas que dependam
-		// de que o dead thread collector esteja funcionando.
-		// Esse status só muda quando a thread rodar.
-
-		dead_thread_collector_status = 0;
-		//...
-    };
-
-#endif
-
-}
 
 
 //
@@ -730,30 +495,65 @@ void x86main (void){
 
         //...
     };
+    
+    
+    // Criando thread em ring 0 (idle)
+    // pertence ao processo kernel.
+    
+    
+//#ifdef ENTRY_CREATE_KERNELTHREAD_RING0
+    //===================================
+    // Cria uma thread em ring 0.
+    // Ok. isso funcionou bem.
 
+	// >>>>> Como essa thread pertence ao processo kernel, então mudaremos ela 
+	// um pouco pra cima, onde criamos o processo kernel.
+	// obs: Mesmo não sendo ela o primeiro TID.
 
+    RING0IDLEThread = (void *) KiCreateRing0Idle ();
 
-#ifdef ENTRY_GRAMADO_CORE
-    gramado_core = 1;
-#endif
-
-
-    if ( gramado_core == 1 )
+    if( (void *) RING0IDLEThread == NULL )
     {
-		printf ("[x86] x86main: Starting all processes\n");
-	    
-		//varios processos.
-		x86StartGramadoCore ();
-		
+        panic ("x86main: RING0IDLEThread\n");
+
     }else{
 
-		printf ("[x86] x86main: Starting only init\n");
+
+        //RING0IDLEThread->ownerPID =  (int) KernelProcess->pid; 
+
+		RING0IDLEThread->tss = current_tss;
 		
-		//apenas o init.
-		x86StartInit ();
+		// priority and quantum.
+	    //set_thread_priority ( (struct thread_d *) RING0IDLEThread,
+	        //PRIORITY_HIGH4 );
+
+	    //set_thread_priority ( (struct thread_d *) RING0IDLEThread,
+	        //PRIORITY_LOW1 );
+
+
+	    //set_thread_priority ( (struct thread_d *) RING0IDLEThread,
+	        //PRIORITY_LOW3 );
+
+        // funcionou no mínimo.
+        // com multiplicador 3. quantum = (1*3=3)
+	    set_thread_priority ( (struct thread_d *) RING0IDLEThread,
+	        PRIORITY_MIN );
+
+
+		// #importante
+		// Sinalizando que ainda não podemos usar as rotinas que dependam
+		// de que o dead thread collector esteja funcionando.
+		// Esse status só muda quando a thread rodar.
+
+		dead_thread_collector_status = 0;
+		//...
     };
+//#endif
 
 
+
+	// Cria e inicializa apenas o init2.bin
+	x86StartInit2 ();
 
 	//
 	//===============================================

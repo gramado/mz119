@@ -1,6 +1,6 @@
 
-# Gramado Core - INIT
-# It's a init process for Gramado Core environment.
+# init2
+
 
 VERSION = 0
 PATCHLEVEL = 1
@@ -26,10 +26,10 @@ CFLAGS = -m32 \
 	
 
 
-API01   = ../../../lib/gramlibs/api02/include/
-APIOBJ  = ../../../lib/gramlibs/api02/obj
-LIBC    = ../../../lib/gramlibs/libc02/include/
-LIBCOBJ = ../../../lib/gramlibs/libc02/obj
+API01   = ../../lib/gramlibs/api02/include/
+APIOBJ  = ../../lib/gramlibs/api02/obj
+LIBC    = ../../lib/gramlibs/libc02/include/
+LIBCOBJ = ../../lib/gramlibs/libc02/obj
 
 
 	#
@@ -76,13 +76,13 @@ all-c:
 	cp $(LIBCOBJ)/stubs.o .
 
 shell-link:
-	ld -m elf_i386 -T link.ld -o INIT.BIN $(myObjects) -Map map.s
+	ld -m elf_i386 -T link.ld -o INIT2.BIN $(myObjects) -Map map.s
 
 finalize:
-	cp INIT.BIN ../../../bin/boot/
+	cp INIT2.BIN ../../bin/
 
 clean:
 	-rm *.o
-	-rm INIT.BIN 
+	-rm INIT2.BIN 
 	
 

@@ -2,8 +2,7 @@
  * File: main.c 
  *
  * Environment:
- *     Gramado Core - INIT
- *     ring 3.
+
  * 
  * Purpose:
  *     + To call interrupt 129 to enable maskable interrupts.
@@ -309,7 +308,7 @@ int main ( int argc, char *argv[] ){
     char runlevel_string[64];
 
 
-    __debug_print ("Gramado Core: Initializing init process ...\n");
+    __debug_print ("init2.bin: Initializing ...\n");
 
     //
     // Chamando a interrupção 129.
@@ -318,7 +317,7 @@ int main ( int argc, char *argv[] ){
 	//window, x, y, color, string.
     apiDrawText ( NULL, 
         0, 0, COLOR_YELLOW, 
-        "Gramado Core: Init is alive! Calling int 129" );
+        "init2.bin: Init is alive! Calling int 129" );
  
  
     //
@@ -411,6 +410,57 @@ int main ( int argc, char *argv[] ){
     
     enable_maskable_interrupts ();
     //asm ("int $129 \n");
+    
+    
+    //funciona.
+    //gramado_system_call (900, (unsigned long)"gwm.bin", 0, 0);        
+    //gramado_system_call (900, (unsigned long)"gramcode.bin", 0, 0);   
+    //gramado_system_call (900, (unsigned long) "gfe.bin", 0, 0);                
+        
+    //falha ao abrir o child.    
+    //gramado_system_call (900, (unsigned long)"noraterm.bin", 0, 0); 
+    //gramado_system_call (900, (unsigned long)"gws.bin", 0, 0);
+
+    //fail
+    //gramado_system_call (900, (unsigned long)"gdeshell.bin", 0, 0);     
+    //gramado_system_call (900, (unsigned long)"spr.bin", 0, 0); 
+    //gramado_system_call (900, (unsigned long)"sysmon.bin", 0, 0);         
+    
+    
+
+    //#testing
+    gramado_system_call (900, (unsigned long)"sysmon.bin", 0, 0);         
+
+
+
+
+    //fail
+    /*
+    int Execve_Ret = -1;
+    Execve_Ret = (int) gexecve ( "gwm.bin", 
+                           (const char *) 0, 
+                           (const char *) 0 );           
+
+    if ( Execve_Ret != 0 )
+    {
+		printf ("init2.bin: gexecve fail\n");
+    }
+    */
+    
+    //#debug
+    while(1){}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     goto done;

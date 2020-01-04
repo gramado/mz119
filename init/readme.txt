@@ -6,8 +6,7 @@
 
 Folders:
 
-    /core    
-        Main services to initialize the system.
+    /init2 -  init process.
     
     /grammgr - 
         Main program to manage the critical processes. 

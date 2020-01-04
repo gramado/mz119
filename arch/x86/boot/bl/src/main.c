@@ -10,7 +10,7 @@
  *
  * Atribuições:
  *    + Carregar o Kernel.
- *    + Carregar os módulos do kernel. (idle, shell, task manager).
+
  *    + Carregar os metafiles de inicialização.
  *    + Carregar os aplicativos.
  *    + Fazer a configuração inicial da paginação.
@@ -30,8 +30,6 @@
  * In this file:
  *     + BlMain        - Entrada da parte em C do boot loader. 
  *     + BlLoadKernel  - Carrega o kernel.
- *     + BlLoadFiles   - Carrega os módulos do Kernel, aplicativos e 
- *                       metafiles de inicilização.
  *     + BlSetupPaging - Configura a paginação.
  *     ...
  *
@@ -48,7 +46,6 @@
 // Protótipos de funções internas.
 unsigned long init_testing_memory_size (int mb);
 void BlLoadKernel();
-void BlLoadFiles();
 void BlSetupPaging();
 
 
@@ -272,14 +269,17 @@ void BlMain (){
 	// os outros arquivos e somente carregarmos o kernel.
 
 
-	//Loading files.
+ 
 
-	//if ( load_extra_files_flag == 1 )
-	//{
-	//    BlLoadFiles ();
-	//}
 
-    BlLoadFiles ();
+    // #todo
+    // Cancelado o carregamento dos arquivos do gramado core.
+    // Podemos usar esse esquema para carregarmos arquivos
+    // de configuração usados por esse bl.
+    // Podemos usar um arquivo para passarmos dados para o kernel.
+    // carregando o arquivo agora e escrevendo nele.
+
+    // BlLoadConfigFiles ();   // criar isso.
 
 
 	// Paging:
@@ -343,29 +343,7 @@ void BlLoadKernel (){
 }
 
 
-/*
- ****************************************************
- * BlLoadFiles:
- *     Carrega outros arquivos.
- * In this function:
- *     + Carrega tarefas do sistema, (idle, shell ...)
- *     + ...
- */ 
-
-void BlLoadFiles (){
-
-    int Status;
-
-	// Está em loader.c
-    Status = (int) load_files ();
-
-    if ( Status != 0 ){
-        printf ("BlLoadFiles:\n");
-        die ();
-    }
-}
-
-
+ 
 /*
  ********************************************************************
  * BlSetupPaging:
