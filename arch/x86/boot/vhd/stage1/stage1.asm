@@ -10,6 +10,8 @@
 ;;
 ;; Obs: Não mudar os endereços de segmento e offset usados para não arrumar problemas.
 ;;
+;; See: https://thestarman.pcministry.com/asm/mbr/PartTables.htm
+;;
 
 
 END_OF_CLUSTER EQU 0xFFFF
