@@ -916,15 +916,6 @@ static int print(char **out, int *varg);
 
 
 
-//
-// output on the console device;
-//
-
-//see: tty/cedge.c
-void outbyte(int c, int console_number);
-void _outbyte(int c, int console_number);
-void scroll(int console_number);
-
 
 
 /*
@@ -933,14 +924,13 @@ void scroll(int console_number);
  */
 
 
-int kclear(int color);
-int kclearClientArea(int color);
-
-//#todo:
-//insert_char
 
 
-int insert_line ( char *string, int line );
+
+ 
+
+
+
 
 //int getchar();
 
@@ -958,7 +948,6 @@ int setvbuf(FILE *stream, char *buf, int mode, size_t size);
 //inicializa os buffers do fluxo padrão em stdio.c
 int stdioInitialize (void);
 
-void REFRESH_STREAM ( FILE *stream );
 
 //
 // End.

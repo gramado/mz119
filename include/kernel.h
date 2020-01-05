@@ -78,7 +78,15 @@ extern void do_executa_new_task (void);
 #include <kernel/klibc/types.h>
 #include <kernel/klibc/sys/types.h>
 #include <kernel/klibc/limits.h>
+
+
+// klibc
 #include <kernel/klibc/stdio.h>
+
+// kdrivers
+#include <kernel/kdrivers/tty/console.h>
+
+
 #include <kernel/klibc/stdlib.h>
 #include <kernel/klibc/string.h>
 #include <kernel/klibc/ctype.h>

@@ -845,101 +845,10 @@ void scroll_screen_rect (void){
 
 
 
-/*
- ********************************
- * kclear:
- *     Limpa a tela em text mode.
- *     # isso não faz parte da lib c. Deletar.
- */
-
-int kclear (int color) {
-
-	int Status = -1;
-	
-	if ( VideoBlock.useGui == 1 )
-	{
-		backgroundDraw ( COLOR_BLUE );
-
-		TTY[current_vc].cursor_x = 0; //g_cursor_x = 0;
-		TTY[current_vc].cursor_y = 0; //g_cursor_y = 0;
-
-		Status = 0;
-
-	}else{
-		Status = -1;
-	};
-
-	return (int) Status;
-}
 
 
-/* 
- * kclearClientArea: 
- */
-
-// Limpa a tela em text mode.
-// Isso não faz parte da lib c. Deletar.
-
-int kclearClientArea (int color)
-{
-    return (int) kclear (color);
-}
 
 
-//#todo:
-//insert_char
-
-
-/*
- *************************************
- * insert_line:
- * 
- */
-
-// Incluir uma linha no buffer de linhas da estrutura do tty atual.
-// vamos copiar esse esquema do edito de textos em ring3.
-
-int insert_line ( char *string, int line ){
-	
-	/*
-	
-	int l;
-	struct tty_line_d *Line;
-	
-	//if ( (void *) string == NULL )
-	//	return -1;
-	
-    if ( (void *) CurrentTTY != NULL )
-	{
-        if ( CurrentTTY->used == 1 && CurrentTTY->magic == 1234 )
-		{
-			//Linha atual para se escrever no stdout do current tty
-		    l = CurrentTTY->current_line;
-			
-			//Pega o ponteiro para estrutura de linha da linha atual.
-			Line = (struct tty_line_d *) CurrentTTY->lines[l];
-			
-			if ( (void *) Line == NULL )
-				return -1;
-			
-			//Buffer pra colocar chars.
-		    //Line->CHARS[0]  
-			//Line->ATTRIBUTES[0] 
-				
-			//inicio do texto dentro da linha atual
-		    //CurrentTTY->left
-			
-			//fim do texto dentro da linha atual
-			//CurrentTTY->right
-			
-			//posição do ponteiro dentro da linha atual.
-			//CurrentTTY->pos
-		
-		}
-	};
-	*/
-    return (int) -1; 
-}
 
 
 
@@ -1192,6 +1101,18 @@ int printf ( const char *format, ... ){
 
     return (int) print ( 0, varg );
 }
+
+
+
+// print() is a helper function for this one.
+/*
+int vsprintf(char *string, const char *format, va_list ap);
+int vsprintf(char *string, const char *format, va_list ap)
+{
+}
+*/
+
+
 
 
 /*
@@ -1747,6 +1668,31 @@ int vfprintf ( FILE *stream, const char *format, stdio_va_list argptr )
 {
 }
 */
+
+
+/*
+ * Writes format output of a stdarg argument list to a file.
+ */
+
+/* 
+int vfprintf(FILE *stream, const char *format, va_list ap);
+int vfprintf(FILE *stream, const char *format, va_list ap)
+{
+	int n;             // Characters written. 
+	char buffer[1024]; // Buffer.             
+	
+	// Format string. 
+	n = vsprintf(buffer, format, ap);
+	
+	// Write formated string to file. 
+	if (n > 0)
+		fputs(buffer, stream);
+	
+	return (n);
+}
+*/
+
+
 
 
 /*
@@ -2345,61 +2291,6 @@ fail:
     panic ("stdio-stdioInitialize: fail\n");
 }
 
-
-/*
- *******************************************
- * REFRESH_STREAM:
- *     #IMPORTANTE
- *     REFRESH SOME GIVEN STREAM INTO TERMINAL CLIENT WINDOW !!
- */
-
-void REFRESH_STREAM ( FILE *stream ){
-
-    char *c;
-
-	 //#debug
-	 //sprintf ( stream->_base, "TESTING STDOUT ..." );
-
-    int i;
-    int j;
-
-    j = 80*25;
- 
-    c = stream->_base;
-
-
-    int cWidth = get_char_width ();
-    int cHeight = get_char_height ();
-
-
-    if ( cWidth == 0 || cHeight == 0 )
-    {
-		panic ("stdio-REFRESH_STREAM: char w h ");
-    }
-
-
-    // Seleciona o modo terminal.
-
-    //++
-    stdio_terminalmode_flag = 1;  
-    for ( i=0; i<j; i++ )
-    {
-		printf ("%c", *c );
-		
-	    //refresh_rectangle ( g_cursor_x * cWidth, g_cursor_y * cHeight, 
-		    //cWidth, cHeight );
-		    
-		    
-	    refresh_rectangle ( 
-	        TTY[current_vc].cursor_x * cWidth,     //g_cursor_x * cWidth, 
-	        TTY[current_vc].cursor_y * cHeight,    //g_cursor_y * cHeight, 
-		    cWidth, cHeight );
-		
-		c++;
-    };
-    stdio_terminalmode_flag = 0;  
-    //--
-}
 
 
 
