@@ -56,7 +56,7 @@ void kgws_terminal_putchar ( int c ){
 void kgws_outbyte ( int c ){
 	
 	// cedge.c
-    outbyte ( (int) c );
+    outbyte ( (int) c, current_vc );
 }
 
 

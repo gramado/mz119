@@ -844,79 +844,6 @@ void scroll_screen_rect (void){
 }
 
 
-/*
- ********************************************
- * scroll:
- *     Isso pode ser útil em full screen e na inicialização do kernel.
- *
- * *Importante: Um (retângulo) num terminal deve ser o lugar onde o buffer 
- * de linhas deve ser pintado. Obs: Esse retãngulo pode ser configurado através 
- * de uma função.
- *     Scroll the screen in text mode.
- *     Scroll the screen in graphical mode.
- *     @todo Poderiam ser duas funções: ex: gui_scroll(). 
- *    
- * * IMPORTANTE
- *   O que devemos fazer é reordenar as linhas nos buffers de linhas
- *     para mensagens de texto em algum terminal.
- * 
- * @todo: Ele não será feito dessa forma, termos uma disciplica de linhas
- * num array de linhas que pertence à uma janela.
- *
- * @todo: Fazer o scroll somente no stream stdin e depois mostrar ele pronto.
- *
- */
-
-void scroll (void){
-	
-	// #debug
-	// opção de suspender.
-	//return;
-
-	// Salvar cursor.
-    unsigned long OldX, OldY;
-
-    int i=0;
-	
-	// Se estamos em Modo gráfico (GUI).
-	
-    if ( VideoBlock.useGui == 1 )
-    {
-	
-		// copia o retângulo.
-		// #todo: olhar as rotinas de copiar retângulo.
-        scroll_screen_rect ();
-		
-        //Limpa a última linha.
-		
-		//salva cursor
-		OldX = TTY[current_vc].cursor_x;  //g_cursor_x;
-		OldY = TTY[current_vc].cursor_y;  //g_cursor_y;
-		
-		//cursor na ultima linha.
-		
-		//g_cursor_x = 0;
-		TTY[current_vc].cursor_x = TTY[current_vc].cursor_left;          //g_cursor_x = g_cursor_left;
-		TTY[current_vc].cursor_y = ( TTY[current_vc].cursor_bottom -1);  //g_cursor_y = (g_cursor_bottom-1);
-		
-		// limpa a linha.
-		
-		//for ( i = g_cursor_x; i < g_cursor_right; i++ )
-		for ( i = TTY[current_vc].cursor_x; i < TTY[current_vc].cursor_right; i++ )
-		{
-		    _outbyte (' '); 
-		};
-	
-		// Reposiciona o cursor na última linha.
-
-		TTY[current_vc].cursor_x = TTY[current_vc].cursor_left;   //g_cursor_x = g_cursor_left;
-		TTY[current_vc].cursor_y = OldY;   //g_cursor_y = OldY;
-		
-		refresh_screen ();
-	}
-}
-
-
 
 /*
  ********************************
@@ -1887,7 +1814,7 @@ static void printchar (char **str, int c)
 int putchar (int ch){ 
    
     //Em kgws/comp/cedge.c
-    outbyte (ch);
+    outbyte (ch,current_vc );
 
 
     return (int) ch;    
@@ -1938,7 +1865,7 @@ void stdio_ClearToEndOfLine()
 	//de onde o cursor está até o fim da linha.
 	for( u = g_cursor_x; u < g_cursor_right; u++ )
 	{
-       _outbyte(' ');
+       _outbyte(' ', current_vc);
     }
 	
     g_cursor_x = OldX;
@@ -1968,7 +1895,7 @@ void stdio_ClearToStartOfLine()
 	//de onde o cursor está até o fim da linha.
 	for( u = g_cursor_x; u < g_cursor_right; u++ )
 	{
-       _outbyte(' ');
+       _outbyte(' ',current_vc);
     }
 	
     g_cursor_x = OldX;

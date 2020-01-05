@@ -12,7 +12,7 @@
 VERSION = 1
 PATCHLEVEL = 21
 SUBLEVEL = 0
-EXTRAVERSION = -rc2
+EXTRAVERSION = -rc3
 NAME = 
 
 
@@ -324,10 +324,14 @@ compile-kernel:
 	gcc -c kernel/kdrivers/pci/pciscan.c  -I include/ $(CFLAGS) -o pciscan.o
 	gcc -c kernel/kdrivers/pci/pciinfo.c  -I include/ $(CFLAGS) -o pciinfo.o
 
+
+
 	# kdrivers/tty
-	gcc -c kernel/kdrivers/tty/tty.c  -I include/ $(CFLAGS) -o tty.o
-	gcc -c kernel/kdrivers/tty/pty.c  -I include/ $(CFLAGS) -o pty.o
-	
+	gcc -c kernel/kdrivers/tty/console.c -I include/ $(CFLAGS) -o cedge.o
+	gcc -c kernel/kdrivers/tty/tty.c   -I include/ $(CFLAGS) -o tty.o
+	gcc -c kernel/kdrivers/tty/pty.c   -I include/ $(CFLAGS) -o pty.o
+
+
 	# kdrivers/usb
 	gcc -c kernel/kdrivers/usb/usb.c  -I include/ $(CFLAGS) -o usb.o
 	
@@ -395,7 +399,6 @@ compile-kernel:
 	gcc -c kernel/kservers/kgws/kgws/comp/bg.c       -I include/ $(CFLAGS) -o bg.o
 	gcc -c kernel/kservers/kgws/kgws/comp/bmp.c      -I include/ $(CFLAGS) -o bmp.o
 	gcc -c kernel/kservers/kgws/kgws/comp/button.c   -I include/ $(CFLAGS) -o button.o
-	gcc -c kernel/kservers/kgws/kgws/comp/cedge.c    -I include/ $(CFLAGS) -o cedge.o
 	gcc -c kernel/kservers/kgws/kgws/comp/char.c     -I include/ $(CFLAGS) -o char.o
 	gcc -c kernel/kservers/kgws/kgws/comp/createw.c  -I include/ $(CFLAGS) -o createw.o
 	gcc -c kernel/kservers/kgws/kgws/comp/dtext.c    -I include/ $(CFLAGS) -o dtext.o
