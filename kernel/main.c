@@ -44,13 +44,13 @@ int kernel_main (void){
     //  Virtual Console
     //
 
-    // Só tem 2.
-    tty_set_current_virtual_console (0);
+    // Só tem 4.
+    console_set_current_virtual_console (0);
     
-    tty_init_virtual_console (0);
-    tty_init_virtual_console (1);
-    tty_init_virtual_console (2);
-    tty_init_virtual_console (3);   // window server.
+    console_init_virtual_console (0);
+    console_init_virtual_console (1);
+    console_init_virtual_console (2);
+    console_init_virtual_console (3);   // window server.
 
 
     

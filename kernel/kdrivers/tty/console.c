@@ -556,3 +556,54 @@ void REFRESH_STREAM ( FILE *stream ){
 
 
 
+
+void console_set_current_virtual_console ( int n )
+{
+    if ( n < 0 )
+    {
+        return;
+    }
+    
+    if ( n >= 4 )
+    {
+         return;
+    }
+    
+    current_vc = n;
+}
+
+
+int console_get_current_virtual_console (void)
+{
+    return (int) current_vc;
+}
+
+
+void console_init_virtual_console (int n)
+{
+
+    if ( n < 0 )
+    {
+        return;
+    }
+    
+    if ( n >= 4 )
+    {
+         return;
+    }
+
+    TTY[n].cursor_x = 0;
+    TTY[n].cursor_y = 0;
+    TTY[n].cursor_width = 80;
+    TTY[n].cursor_height = 80;
+    TTY[n].cursor_left = 0;
+    TTY[n].cursor_top = 0;
+    TTY[n].cursor_right = 80;
+    TTY[n].cursor_bottom = 80;
+    TTY[n].cursor_color = COLOR_TERMINALTEXT;
+}
+
+
+
+
+

@@ -345,13 +345,13 @@ void *gde_extra_services ( unsigned long number,
 
     if (number == 277 )
     {
-        return (void *) tty_get_current_virtual_console ();
+        return (void *) console_get_current_virtual_console ();
     }
 
     if (number == 278 )
     {
         //#todo: precisa de privilégio.
-        tty_set_current_virtual_console ( (int) arg2 );
+        console_set_current_virtual_console ( (int) arg2 );
         return NULL;
     }
     
