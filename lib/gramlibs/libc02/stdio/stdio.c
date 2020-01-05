@@ -1153,84 +1153,44 @@ int getchar (void){
  *     Inicializa stdio para usar o fluxo padrão.
  *     O retorno deve ser (int) e falhar caso dê algo errado.
  */
-void stdioInitialize (){
-	
-	//register int i;
-	int i;
-	
+ 
+void stdioInitialize ()
+{
+	FILE *_fp;
+
 	// Buffers para as estruturas.
 	unsigned char buffer0[BUFSIZ];
 	unsigned char buffer1[BUFSIZ];
 	unsigned char buffer2[BUFSIZ];
 	
-	
-	// Alocando espaço para as estruturas.
-	stdin = (FILE *) &buffer0[0];	
-	stdout = (FILE *) &buffer1[0];	
-	stderr = (FILE *) &buffer2[0];
+	int status = 0;
 
-    // A biblioteca tem 3 pequenos buffers,
-	// que serão usados como base para os stream.
-	// ?? Podemos almentar esses buffers ?? @todo: testar.
-
-	//stdin - Usando o buffer 'prompt[.]' como arquivo.
-	stdin->_base = &prompt[0];
-	stdin->_ptr = stdin->_base;
-	stdin->_bufsiz = PROMPT_MAX_DEFAULT; 
-	stdin->_cnt = stdin->_bufsiz;
-	stdin->_file = 0;
-	stdin->_tmpfname = "stdin";
-	//...
-	
-	//stdout - Usando o buffer 'prompt_out[.]' como arquivo.
-	stdout->_base = &prompt_out[0];
-	stdout->_ptr = stdout->_base;
-	stdout->_bufsiz = PROMPT_MAX_DEFAULT; 
-	stdin->_cnt = stdout->_bufsiz;
-	stdout->_file = 1;
-	stdout->_tmpfname = "stdout";
-	//...
-	
-	//stderr - Usando o buffer 'prompt_err[.]' como arquivo.
-	stderr->_base = &prompt_err[0];
-	stderr->_ptr = stderr->_base;
-	stderr->_bufsiz = PROMPT_MAX_DEFAULT; 
-	stdin->_cnt = stderr->_bufsiz;
-	stderr->_file = 2;
-	stderr->_tmpfname = "stderr";	
-	//...
-	
-	// Limpando os buffers.
-	
-	//#bugbug: Cuidado com o tamanho.
-	/*
-	for ( i=0; i<PROMPT_MAX_DEFAULT; i++ ){
-		
-		prompt[i] = (char) '\0';
-		prompt_out[i] = (char) '\0';
-		prompt_err[i] = (char) '\0';
-	}
-	*/
+	//register int i;
+    int i;
     
-	for ( i=0; i < BUFSIZ; i++ )
-	{
-	    stdin->_base[i] = (char) '\0';			
-	    stdout->_base[i] = (char) '\0';	
-	    stderr->_base[i] = (char) '\0';	
-	}			
+	//Os caracteres são colocados em stdout.
+    //__libc_output_mode = LIBC_NORMAL_MODE;
 	
-    stdin->_ptr = stdin->_base;	
-    stdin->_bufsiz = BUFSIZ; 		
-	stdin->_cnt = stdin->_bufsiz;
-	
-    stdout->_ptr = stdout->_base;	
-    stdout->_bufsiz = BUFSIZ; 		
-	stdout->_cnt = stdout->_bufsiz;
+	//Os caracteres são pintados na tela.
+	//__libc_output_mode = LIBC_DRAW_MODE;
 
-    stderr->_ptr = stderr->_base;	
-    stderr->_bufsiz = BUFSIZ; 		
-	stderr->_cnt = stderr->_bufsiz;			
-};
+	// Alocando espaço para as estruturas.
+	// Mas não usaremos a estrutura em ring3, somente o ponteiro.
+	// O ponteiro apontará para um estrutura em ring0.
+
+	stdin  = (FILE *) &buffer0[0];
+	stdout = (FILE *) &buffer1[0];
+	stderr = (FILE *) &buffer2[0];
+	
+    // pegando s stream na lista de arquivos do processo.
+    // O ponteiro apontará para um estrutura em ring0.
+    // service, pid, fd, 0.
+    
+    stdin  = (FILE *) gramado_system_call ( 167, getpid(), 0, 0 );
+    stdout = (FILE *) gramado_system_call ( 167, getpid(), 1, 0 );
+    stderr = (FILE *) gramado_system_call ( 167, getpid(), 2, 0 );
+
+}
 
 
 /* 

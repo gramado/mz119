@@ -26,8 +26,9 @@ CFLAGS = -m32 \
 	
 
 
-API01   = ../../lib/gramlibs/api02/include/
+API     = ../../lib/gramlibs/api02/include/
 APIOBJ  = ../../lib/gramlibs/api02/obj
+
 LIBC    = ../../lib/gramlibs/libc02/include/
 LIBCOBJ = ../../lib/gramlibs/libc02/obj
 
@@ -57,23 +58,28 @@ head.o:
 	# Nothing.
 
 crt0.o:
-	gcc  -c  crt0.c -I $(LIBC) -I $(API01) $(CFLAGS) -o crt0.o
+	gcc  -c  crt0.c -I $(LIBC) -I $(API) $(CFLAGS) -o crt0.o
 
 main.o:
-	gcc  -c  main.c -I $(LIBC) -I $(API01) $(CFLAGS) -o main.o
+	gcc  -c  main.c -I $(LIBC) -I $(API) $(CFLAGS) -o main.o
 
 all-c:
 
 # We need some api and libc objects.
 
-	cp $(APIOBJ)/api.o .
+#obs: estamos usando um crt0.o compilado aqui mesmo.
+	cp $(LIBCOBJ)/stubs.o .
+	
 	cp $(LIBCOBJ)/ctype.o .
 	cp $(LIBCOBJ)/stdio.o .
 	cp $(LIBCOBJ)/stdlib.o .
 	cp $(LIBCOBJ)/string.o .
 	cp $(LIBCOBJ)/conio.o .
 	cp $(LIBCOBJ)/unistd.o .
-	cp $(LIBCOBJ)/stubs.o .
+
+	cp $(APIOBJ)/api.o .
+
+
 
 shell-link:
 	ld -m elf_i386 -T link.ld -o INIT2.BIN $(myObjects) -Map map.s

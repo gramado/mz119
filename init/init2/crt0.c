@@ -44,15 +44,16 @@ void crt0 (){
 	// #debug
 	// Para certificarmos que o primeiro salto ocorreu, 
 	// vamos pedir para o kernel imprimir uma mensagem.
-
-    // ??
     system_call ( 69, 0, 0, 0 );
+    
+    
+    // lib/gramlibs.
+    // Inicializando o suporte a alocação dinâmica de memória.
+    // Inicializando o suporte ao fluxo padrão.
 
-	// Inicializando o suporte a alocação dinâmica de memória.
-	// Inicializando o suporte ao fluxo padrão.
+    libcInitRT ();
+    stdioInitialize ();
 
-	libcInitRT ();
-	stdioInitialize ();
 
     //
     // Calling main().
@@ -71,8 +72,7 @@ void crt0 (){
 
 __fatal_error:
 
-    printf ("Gramado Core: INIT\n");
-    printf ("crt0: exit_code=%d *hang!\n", ExitCode );
+    printf ("init2.bin-crt0: exit_code=%d *hang!\n", ExitCode );
 
     while (1)
     {
@@ -80,6 +80,7 @@ __fatal_error:
     };
     goto __fatal_error;
 }
+
 
 //
 // End.
