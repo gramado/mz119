@@ -1032,7 +1032,7 @@ int get_caller_process_id (void);
 
 int init_process_manager (void);
 
-									
+FILE *get_stream_from_fd ( int pid, int fd );
 //
 // End.
 //

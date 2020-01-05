@@ -321,11 +321,12 @@ void *__do_111 ( unsigned long buffer ){
     return NULL;
 }              
 
-                 
+
+
 void *gde_extra_services ( unsigned long number, 
-                     unsigned long arg2, 
-                     unsigned long arg3, 
-                     unsigned long arg4 )
+                           unsigned long arg2, 
+                           unsigned long arg3, 
+                           unsigned long arg4 )
 {
 
     // #todo
@@ -339,8 +340,6 @@ void *gde_extra_services ( unsigned long number,
 
 	//bmp file pointer.
     FILE *__bmfp;
-
-
 
 
     if (number == 277 )
@@ -2422,40 +2421,22 @@ void *gde_services ( unsigned long number,
             //IN:  ( service, buffer_address, option, option );	
 			break;
 
-        // 167 - SYS_GRAMADOCORE_INIT_EXECVE
-        // >>>> do_gexeve.
-        // serviço de suporte a chamada gexecve(), que executa
-        // no processo init.
-        // Executa um novo programa dentro do processo INIT 
-        // do ambiente Gramado Core.	
-        // #importante:
-        // Os argumentos recebidos aqui precisam ir para ipc/spawn.c 
-        // que serão enviados via registradores para o aplicativo.
-        // Obs: Não adianta enviar ponteiros para o aplicativo, 
-        // pois ele não pode pegar no kernel.
-        // 167:
-        // Executa elf .BIN com entrypoint em 0x401000.
-        // executive_gramado_core_init_execve (execve.c)
-        // See: execve/execve.c
-        // IN: serviço, name, (arg)(endereço da linha de comando), env.
-        //case SYS_GRAMADOCORE_INIT_EXECVE_BIN:
-        case 167:
-            return (void *) do_gexecve ( 0, 
-                                (const char *) arg2, 
-                                (const char *) arg3, 
-                                (const char *) arg4 ); 
-            break;
-
-
-
-		// 168
-		// Executa .EXE com entrypoint em 0x400400
-		// #Cancelada. Substituir por alguma rotina de execução 
-		// de formato binário como COFF;
-        case SYS_GRAMADOCORE_INIT_EXECVE_EXE: 
-			// #todo
-            break;
-
+ 
+       // pegando a stream dado um fd;
+       // see: process.c
+       case 167:
+           // IN: pid, fd
+           return (void *) get_stream_from_fd ( (int) arg2, (int) arg3 );
+           break;
+ 
+ 
+       //livre
+       case 168:
+           break;
+           
+       //livre    
+       case 169:
+           break;
 
 
 		//170
@@ -2663,6 +2644,9 @@ void *gde_services ( unsigned long number,
 		//219
         case SYS_DESTROYTERMINAL:
             break; 
+ 
+       //220 - reboot             #todo
+       //221 - execute a program. #todo
 
 
 		// 222 - Create timer.
@@ -2795,7 +2779,7 @@ void *gde_services ( unsigned long number,
             return (void *) do_execve ( 0, 
                                 (const char *) arg2, 
                                 (const char *) arg3, 
-                                (const char *) arg4 ); 	
+                                (const char *) arg4 ); 
 			break;
 
 

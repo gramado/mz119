@@ -3605,6 +3605,37 @@ int process_find_empty_stream_slot ( struct process_d *process ){
 */
 
 
+    
+//=============
+
+// Pega uma stream na lista de arquivos dado o fd.
+
+FILE *get_stream_from_fd ( int pid, int fd )
+{
+    FILE *fp;
+    struct process_d *p;
+
+
+    if ( pid < 0)
+        return NULL;
+
+
+    // Get process pointer.
+    p = (struct process_d *) processList[ pid ];
+
+
+
+    if (fd<0)
+        return NULL;
+
+    // Get fp from list of open files.
+    return ( FILE * ) p->Streams[fd];  
+}
+
+//===============
+  
+    
+
 //
 // End.
 //

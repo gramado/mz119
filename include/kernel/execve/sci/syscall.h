@@ -403,7 +403,7 @@
 #define	SYS_GETCURRENTDESKTOP       159 //desktop
 
 
-//network support
+// network support
 #define	SYS_160 160    //create socket (retorna o ponteiro para a estrutura)
 #define	SYS_161 161    //get socket IP	
 #define	SYS_162 162    //get socket port	
@@ -412,10 +412,19 @@
 #define	SYS_165 165    //netSocket
 #define	SYS_166 166    //netBuffer
 
-/*gramado core specials execve*/
-#define	SYS_GRAMADOCORE_INIT_EXECVE_BIN   167
-#define	SYS_GRAMADOCORE_INIT_EXECVE_EXE   168
+
+
+// OK.
+// Vamos reaproveitar isso.
+//#define	SYS_GRAMADOCORE_INIT_EXECVE_BIN   167
+//#define	SYS_GRAMADOCORE_INIT_EXECVE_EXE   168
 //#define	SYS_GRAMADOCORE_INIT_EXECVE_??    169  //RESERVADO PARA OUTRO FORMATO.
+
+#define  SYS_167  167
+#define  SYS_168  168
+#define  SYS_169  169 
+
+
 
 //#importante
 //fs - gerenciamento de arquivos e fs.
@@ -424,21 +433,25 @@
 #define	SYS_GETCURRENTVOLUMEID 171  // Get current volume id.
 #define	SYS_SETCURRENTVOLUMEID 172  // configura o id do volume atual.
 
+
 // Listar os arquivos do diretório. 
 // Dados ids de disco, volume e diretório.
 #define	SYS_LISTFILES     173  
 #define	SYS_SEARCHFILE    174  // Procurar arquivo. 
 
+
 //175 atualizar string no pathname do pwd. 
 #define	SYS_175 175  //#usado para atualiza pwd
 #define	SYS_176 176  //#usado para atualiza pwd
 
-//listando arquivos em um diretório dado o nome.
-#define	SYS_177 177  
 
-//pegando o tamanho de um arquivo.
-//bufbug: isso gasta memória carregando o diretório raiz.
-#define	SYS_178 178
+//listando arquivos em um diretório dado o nome.
+#define  SYS_177 177  
+
+
+// Pegando o tamanho de um arquivo.
+// bufbug: isso está gastando memória carregando o diretório raiz.
+#define  SYS_178 178
 
 
 // passando vetor de ponteiros,
@@ -446,166 +459,155 @@
 #define  SYS_179  179
 
 
-//Memory support.
-#define	SYS_CREATEPAGEDIRECTORY 180    //cria um pagedir.
-#define	SYS_CREATEPAGETABLE     181    //cria uma pagetable.
-#define	SYS_SHOWMEMORYSTRUCTS   182    //mostra estruturas de gerencia de memória.
-#define	SYS_SETCR3              183    //configura o cr3 do processo atual.
-#define	SYS_GETPROCESSHEAPPOINTER 184  //pega o heap pointer de um processo.
-#define	SYS_SETKERNELHEAP 185          //configura o heap do kernel.
-#define	SYS_ALLOCATEKERNELHEAP 186     //aloca heap do kernel.
-#define	SYS_FREEKERNELHEAP 187         //Libera heap do kernel.
-#define	SYS_GETPROCESSDIRECTORY 188    //get process directory.
-#define	SYS_SETPROCESSDIRECTORY 189    //set process directory.
-
-//memory support.
-#define	SYS_GETPAGEDIRVALUE 190  //get page dir value.
-//Aloca memória virtual para um processo.
-//Deve-se alocar memória dentro do heap do processo.
-#define	SYS_ALLOCATEVIRTUALMEMORY 191  //ALOCA MEMÓRIA VIRTUAL PARA UM PROCESSO.
-#define	SYS_192 192
+// Memory support.
+// Precisa de privilágios.
+#define  SYS_CREATEPAGEDIRECTORY    180  // cria um pagedir.
+#define  SYS_CREATEPAGETABLE        181  // cria uma pagetable.
+#define  SYS_SHOWMEMORYSTRUCTS      182  // mostra estruturas de gerencia de memória.
+#define  SYS_SETCR3                 183  // configura o cr3 do processo atual.
+#define  SYS_GETPROCESSHEAPPOINTER  184  // pega o heap pointer de um processo.
+#define  SYS_SETKERNELHEAP          185  // configura o heap do kernel.
+#define  SYS_ALLOCATEKERNELHEAP     186  // aloca heap do kernel.
+#define  SYS_FREEKERNELHEAP         187  // Libera heap do kernel.
+#define  SYS_GETPROCESSDIRECTORY    188  // get process directory.
+#define  SYS_SETPROCESSDIRECTORY    189  // set process directory.
 
 
-
-//libc suppport
-#define	SYS_193 193   //feof
-#define	SYS_194 194   //ferror
-#define	SYS_195 195   //fseek
-#define	SYS_196 196   //fputc
-
-
-
-//reservados para scroll de janelas.
-#define	SYS_197 197  //scroll de área de cliente de uma janela;
-#define	SYS_198 198
-
-#define	SYS_GC 199
+// memory support.
+// get page dir value.
+// #debug: provevelmente pega o endereço do diretório de páginas
+// de um processo.
+// Precisa de privilégios. 
+#define  SYS_GETPAGEDIRVALUE 190  
 
 
-//variados
-#define	SYS_SENDSIGNAL  200    //Envia um sinal para um processo.
-#define	SYS_WAIT4OBJECT 201    //Espera por um objeto
-#define	SYS_WAIT4EVENT  202    //ESPERA POR UM EVENTO.
-#define	SYS_WAIT4DEVICE 203    //ESPERA POR UM DISPOSITIVO.
-#define	SYS_WAIT4SIGNAL 204    //
+// Aloca memória virtual para um processo.
+// Deve-se alocar memória dentro do heap do processo.
+#define  SYS_ALLOCATEVIRTUALMEMORY 191  //ALOCA MEMÓRIA VIRTUAL PARA UM PROCESSO.
+#define  SYS_192 192
+
+
+
+// libc suppport
+#define  SYS_193 193   //feof
+#define  SYS_194 194   //ferror
+#define  SYS_195 195   //fseek
+#define  SYS_196 196   //fputc
+
+
+// Reservados para scroll de janelas.
+#define  SYS_197 197  //scroll de área de cliente de uma janela;
+#define  SYS_198 198
+
+
+// Garbage collector services. #todo.
+#define  SYS_GC 199
+
+
+// variados
+#define  SYS_SENDSIGNAL  200    //Envia um sinal para um processo.
+#define  SYS_WAIT4OBJECT 201    //Espera por um objeto
+#define  SYS_WAIT4EVENT  202    //ESPERA POR UM EVENTO.
+#define  SYS_WAIT4DEVICE 203    //ESPERA POR UM DISPOSITIVO.
+#define  SYS_WAIT4SIGNAL 204    //
+
 
 //block for a reason.
 //bloqueamos uma thead por um dos motivos indicados em argumento.
-#define	SYS_GENERICWAIT 205    
+#define  SYS_GENERICWAIT 205    
 
 
-// Agora temos rotinas de systime.
-#define	SYS_TIMERGETTICKCOUNT  206
-#define	SYS_TIMERGETTIMEOUT    207
-#define	SYS_TIMERSETTIMEOUT    208
+// Rotinas de systime.
+#define  SYS_TIMERGETTICKCOUNT  206
+#define  SYS_TIMERGETTIMEOUT    207
+#define  SYS_TIMERSETTIMEOUT    208
 
 
-#define	SYS_CALLIOSERVICES 209  //call i/o services. (io.c)
+//call i/o services. (io.c)
+#define  SYS_CALLIOSERVICES  209  
 
-//
-// Terminal
-//
 
+// #bugbug: 
+// Isso provavelmente são rotinas de console virtual
+// e não de pseudo terminal
 // Terminal emulator support.
-
-#define	SYS_CREATETERMINAL          210
-#define	SYS_GETCURRENTTERMINAL      211
-#define	SYS_SETCURRENTTERMINAL      212
-#define	SYS_GETTERMINALINPUTBUFFER  213
-#define	SYS_SETTERMINALINPUTBUFFER  214
-#define	SYS_GETTERMINALWINDOW       215
-#define	SYS_SETTERMINALWINDOW       216
-#define	SYS_GETTERMINALRECT         217
-#define	SYS_SETTERMINALRECT         218
-#define	SYS_DESTROYTERMINAL         219
-
+#define  SYS_CREATETERMINAL          210
+#define  SYS_GETCURRENTTERMINAL      211
+#define  SYS_SETCURRENTTERMINAL      212
+#define  SYS_GETTERMINALINPUTBUFFER  213
+#define  SYS_SETTERMINALINPUTBUFFER  214
+#define  SYS_GETTERMINALWINDOW       215
+#define  SYS_SETTERMINALWINDOW       216
+#define  SYS_GETTERMINALRECT         217
+#define  SYS_SETTERMINALRECT         218
+#define  SYS_DESTROYTERMINAL         219
 
 
 // Reboot.
 #define  SYS_REBOOT2  220
 
-
 // Execute program.
-
-#define SYS_EXECUTEPROGRAM 221
+#define  SYS_EXECUTEPROGRAM 221
 
 // Timer.
-
-#define	SYS_222  222    // create timer. 
-#define	SYS_223  223    // get sys time info.
+#define  SYS_222  222    // create timer. 
+#define  SYS_223  223    // get sys time info.
 
 
 //time date
-#define	SYS_GETTIME 224
-#define	SYS_GETDATE 225
-
+#define  SYS_GETTIME 224
+#define  SYS_GETDATE 225
 
 
 // Semaphore.
-
 #define  SYS_GET_KERNELSEMAPHORE    226  // Get.  
 #define  SYS_CLOSE_KERNELSEMAPHORE  227  // Close (0).
 #define  SYS_OPEN_KERNELSEMAPHORE   228  // Open  (1).
 
 
 //some kernel checks.
-
-#define	SYS_KERNELDEBUG 229    
+#define  SYS_KERNELDEBUG 229    
 
 
 // Logon and Logoff.
-
 #define  SYS_STARTLOGON   230
 #define  SYS_STARTLOGOFF  231
 
 
 // libc support.
-
 #define  SYS_232 232    // fclose
 #define  SYS_233 233    // fflush
 #define  SYS_234 234    // fprintf
 #define  SYS_235 235    // fputs
 
 
-//
-// tty support. 
-//
 
 // 236-239
 // Reservados para tty support.
+#define  SYS_236  236  // get tty id.
+#define  SYS_237  237  //
+#define  SYS_238  238  //
+#define  SYS_239  239  //
 
-#define	SYS_236    236  // get tty id.
-#define	SYS_237    237  //
-#define	SYS_238    238  //
-#define	SYS_239    239  //
 
 
-//
-// Cursor and pointer.
-//
-
-// 240-249 
-// Reservar próximos para gerenciamento de cursor e ponteiros.
-
-#define	SYS_GETCURSORX  240
-#define	SYS_GETCURSORY  241
-#define	SYS_242         242
-#define	SYS_243         243
-#define	SYS_244         244    // Enable text cursor.
-#define	SYS_245         245    // Disable text cursor.
+// Gerenciamento de cursor e ponteiros.
+#define  SYS_GETCURSORX  240
+#define  SYS_GETCURSORY  241
+#define  SYS_242         242
+#define  SYS_243         243
+#define  SYS_244         244    // Enable text cursor.
+#define  SYS_245         245    // Disable text cursor.
 
 
 // libc support.
-
 #define  SYS_246  246    // fopen
 #define  SYS_247  247    // pipe
 #define  SYS_248  248    // execve
 #define  SYS_249  249    // ftell
 
 
-
 // System info support.
-
 #define  SYS_GETSYSTEMMETRICS  250    // System metrics. 
 #define  SYS_SHOWDISKINFO      251    // Current disk.            
 #define  SYS_SHOWVOLUMEINFO    252    // Current volume.
