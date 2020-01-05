@@ -40,7 +40,7 @@ extern unsigned long SavedBPP;
 
 // Internas.
 
-//void scroll_screen_rect (void);
+ 
 
 
 /*
@@ -727,126 +727,6 @@ update_standard_stream ( int PID,
 
     return 0;
 }
-
-
-/*
- ************************* 
- * scroll_screen_rect:
- * 
- */
-
-//scroll test
-//função interna de suporta ao scroll()
-
-void scroll_screen_rect (void){
-
-    //unsigned long x = 0; 
-    //unsigned long y = 0; 
-    //unsigned long width = 0;  //800
-    //unsigned long height = 0;  //600
-
-	// #TEST
-    register unsigned int i;
-	// unsigned int i;
-
-    unsigned int line_size, lines;
-    unsigned int offset;
-    unsigned long Width = (unsigned long) screenGetWidth ();
-    unsigned long Height = (unsigned long) screenGetHeight ();
-
-	//line_size = (unsigned int) width; 
-	//lines = (unsigned int) height;
-
-    line_size = (unsigned int) Width; 
-    lines = (unsigned int) Height;
-	
-	// = 3; 
-	//24bpp
-    int bytes_count;
-
-    switch (SavedBPP)
-    {
-		case 32:
-		    bytes_count = 4;
-		    break;
-		
-		case 24:
-		    bytes_count = 3;
-			break;
-			
-		//...
-    };
-
-    int cHeight = get_char_height ();
-
-	//
-	// Origem e destino.
-	//
-
-
-	//destino
-    void *p = (void *) BACKBUFFER_ADDRESS;
-
-	// o y é a linha da origem. o deslocamento de ter a altura de um char.
-	// origem
-    const void *q = (const void *) BACKBUFFER_ADDRESS + ( bytes_count * SavedX * cHeight ) ;
-
-
-
-	// #atenção.
-	
-	//offset = (unsigned int) BUFFER_PIXEL_OFFSET( x, y );
-	
-	//offset = (unsigned int) ( (bytes_count*SavedX*(y)) + (bytes_count*(x)) );
-	
-	//p = (void *) (p + offset);    
-	//q = (const void *) (q + offset);    
-	 
-	// #bugbug
-	// Isso pode nos dar problemas.
-	// ?? Isso ainda é necessário nos dias de hoje ??
-	
-	//vsync ();
-
-	//(line_size * bytes_count) é o número de bytes por linha. 
-
-    int count; 
-
-	//#importante
-	//É bem mais rápido com múltiplos de 4.	
-	
-	//se for divisível por 4.
-    if ( ((line_size * bytes_count) % 4) == 0 )
-    {
-        count = ((line_size * bytes_count) / 4); 
-
-	    for ( i=0; i < lines; i++ )
-	    {
-		    //copia uma linha ou um pouco mais caso não seja divisível por 
-		    memcpy32 ( p, q, count );
-		    
-			q += (Width * bytes_count);
-	 		p += (Width * bytes_count);
-	    };
-    }
-
-	//se não for divisível por 4.
-    if ( ((line_size * bytes_count) % 4) != 0 )
-    {
-	    for ( i=0; i < lines; i++ )
-	    {
-		    memcpy ( (void *) p, (const void *) q, (line_size * bytes_count) );
-		    
-			q += (Width * bytes_count);
-		    p += (Width * bytes_count);
-	    };
-    }
-}
-
-
-
-
-
 
 
 
@@ -1759,9 +1639,15 @@ static void printchar (char **str, int c)
 
 int putchar (int ch){ 
    
-    //Em kgws/comp/cedge.c
-    outbyte (ch,current_vc );
+   
+    // Para virtual consoles.
+    // Em tty/console.c
+    console_outbyte (ch,current_vc );
 
+
+    // Para pseudo terminal (pts).
+    //Em tty/vt.c
+    //vt_outbyte (ch,tty );
 
     return (int) ch;    
 }

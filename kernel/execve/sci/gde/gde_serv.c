@@ -1747,8 +1747,13 @@ void *gde_services ( unsigned long number,
 		// alguma rotina do kgws para imprimir no terminal e isso deve 
 		// ficar explícito.
 
+
+
+
+        //see: tty/console.c
 		case SYS_KGWS_PUTCHAR:
-			kgws_terminal_putchar ( (int) arg2 );
+			console_putchar ( (int) arg2, current_vc );
+			//console_putchar ( (int) arg2, (int) arg3 );  //#todo
 			break;
 
 		//66 - reservado pra input de usuário.
@@ -3060,7 +3065,7 @@ unsigned long serviceCreateWindow ( char *message_buffer ){
 
 void servicesPutChar ( int c )
 {
-    terminalPutChar ( (int) c );
+    console_putchar ( (int) c, current_vc );
 }
 
 

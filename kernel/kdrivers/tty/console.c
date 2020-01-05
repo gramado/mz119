@@ -3,9 +3,14 @@
  *
  * 
  *     Writing on the console device.
- * 
- * 
  */
+
+
+// Esse console é full screen e não precisa de muitos recursos gráficos.
+// Somete o super user poderá usá-lo.
+// Só existem quatro consoles virtuais. Um deles será usado para
+// registrar o servidor gráfico.
+// Para pseudo terminais veja: vt.c
 
 
 #include <kernel.h>
@@ -13,7 +18,7 @@
 
 /*
  ***************************************
- * _outbyte:
+ * _console_outbyte:
  * 
  * 
  *    Outputs a char on the console device;
@@ -22,7 +27,7 @@
  
 
 // see stdio.h 
-void _outbyte (int c, int console_number){
+void _console_outbyte (int c, int console_number){
 	
     unsigned long i;
 	
@@ -118,10 +123,10 @@ void _outbyte (int c, int console_number){
  * @todo: Colocar no buffer de arquivo.
  */
 
-// #importante
-// Isso é rotina de terminal virtual.
+ 
+ 
 
-void outbyte (int c, int console_number){
+void console_outbyte (int c, int console_number){
 	
 	static char prev = 0;
 	
@@ -152,7 +157,7 @@ void outbyte (int c, int console_number){
 		//#todo: melhorar esse limite.
         if ( TTY[console_number].cursor_y >= (TTY[console_number].cursor_bottom-1) )
         {
-            scroll (console_number);
+            console_scroll (console_number);
 
             TTY[console_number].cursor_y = (TTY[console_number].cursor_bottom-1);
 
@@ -174,7 +179,7 @@ void outbyte (int c, int console_number){
     {
         if ( TTY[console_number].cursor_y >= (TTY[console_number].cursor_bottom-1) ){
 
-            scroll (console_number);
+            console_scroll (console_number);
             
             TTY[console_number].cursor_y = (TTY[console_number].cursor_bottom-1);
             prev = c;
@@ -311,7 +316,7 @@ void outbyte (int c, int console_number){
 	// Número máximo de linhas. (8 pixels por linha.)
     if ( TTY[console_number].cursor_y >= TTY[console_number].cursor_bottom )  
     { 
-        scroll (console_number);
+        console_scroll (console_number);
 
         TTY[console_number].cursor_y = TTY[console_number].cursor_bottom;
     };
@@ -324,7 +329,7 @@ void outbyte (int c, int console_number){
     // Imprime os caracteres normais.
 	// Atualisa o prev.
 
-    _outbyte (c, console_number);
+    _console_outbyte (c, console_number);
 
     prev = c;
 }
@@ -353,7 +358,7 @@ void outbyte (int c, int console_number){
  *
  */
 
-void scroll (int console_number){
+void console_scroll (int console_number){
 	
 	// #debug
 	// opção de suspender.
@@ -371,6 +376,7 @@ void scroll (int console_number){
 	
 		// copia o retângulo.
 		// #todo: olhar as rotinas de copiar retângulo.
+		//See: comp/rect.c
         scroll_screen_rect ();
 		
         //Limpa a última linha.
@@ -390,7 +396,7 @@ void scroll (int console_number){
 		//for ( i = g_cursor_x; i < g_cursor_right; i++ )
 		for ( i = TTY[console_number].cursor_x; i < TTY[console_number].cursor_right; i++ )
 		{
-		    _outbyte (' ',console_number); 
+		    _console_outbyte (' ',console_number); 
 		};
 	
 		// Reposiciona o cursor na última linha.
@@ -602,6 +608,63 @@ void console_init_virtual_console (int n)
     TTY[n].cursor_bottom = 80;
     TTY[n].cursor_color = COLOR_TERMINALTEXT;
 }
+
+
+//
+//=========
+//
+
+
+
+ 
+
+// #importante
+// Colocamos um caractere na tela de um terminal virtual.
+
+// #bugbug: Como essa rotina escreve na memória de vídeo,
+// então precisamos, antes de uma string efetuar a
+// sincronização do retraço vertical e não a cada char.
+
+void console_putchar ( int c, int console_number ){
+	
+	// Pegamos as dimensões do caractere.
+	
+	int cWidth = get_char_width ();
+	int cHeight = get_char_height ();
+	
+	if ( cWidth == 0 || cHeight == 0 )
+	{
+		printf ("terminalPutChar:");
+		die ();
+	}
+	
+	// flag on.
+	stdio_terminalmode_flag = 1;  
+
+    // Desenhar o char no backbuffer
+	
+	// #todo: Escolher um nome de função que reflita
+	// essa condição de desenharmos o char no backbuffer.
+	
+
+	console_outbyte  ( (int) c, console_number );
+
+	
+	// Copiar o retângulo na memória de vídeo.
+	
+	refresh_rectangle ( 
+	    TTY[console_number].cursor_x * cWidth, TTY[console_number].cursor_y * cHeight, 
+		cWidth, cHeight );
+	
+	// flag off.
+	stdio_terminalmode_flag = 0;  
+}
+
+
+ 
+
+
+
 
 
 

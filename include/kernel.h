@@ -220,6 +220,10 @@ extern void do_executa_new_task (void);
 #include <kernel/kdrivers/tty/ttydrv.h>
 #include <kernel/kdrivers/tty/tty.h>
 #include <kernel/kdrivers/tty/pty.h>
+
+
+#include <kernel/kdrivers/tty/vt.h>
+
 #include <kernel/kdrivers/x/i8042/i8042.h>
 #include <kernel/kdrivers/x/i8042/ps2mouse.h>
 #include <kernel/kdrivers/x/i8042/ps2kbd.h>

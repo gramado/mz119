@@ -146,11 +146,8 @@ struct terminal_d
 // Não precisamos de muitos.
 
 
-void terminalPutChar ( int c );
 
-void kgws_terminal_putchar ( int c );
 
-void kgws_outbyte ( int c );
 
 
 unsigned long 

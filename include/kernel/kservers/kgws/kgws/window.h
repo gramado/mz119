@@ -2055,8 +2055,8 @@ void *getClientAreaRect (void);
 void 
 setClientAreaRect ( unsigned long x, 
                     unsigned long y, 
-					unsigned long cx, 
-					unsigned long cy );
+                    unsigned long cx, 
+                    unsigned long cy );
 
 //
 // Background support.
@@ -2072,76 +2072,99 @@ void backgroundBackground (void);
 
 int backgroundInit (void);
 
+
+
+
 //
 // Char and String support.
 //
 
-void draw_string( unsigned long x, 
-                  unsigned long y, 
-				  unsigned long color, 
-				  unsigned char *string );
+void 
+draw_string ( unsigned long x, 
+              unsigned long y, 
+              unsigned long color, 
+              unsigned char *string );
 
-void draw_text( struct window_d *window,
-                unsigned long x,  
-                unsigned long y,  
-				unsigned long color, 
-				unsigned char *string );
-void my_buffer_char_blt( unsigned long x, 
-                         unsigned long y, 
-						 unsigned long color, 
-						 unsigned long c);
-						 
-void set_char_width( int width );	
-void set_char_height( int height );	
+
+void 
+draw_text ( struct window_d *window,
+            unsigned long x,  
+            unsigned long y,  
+            unsigned long color, 
+            unsigned char *string );
+
+
+void 
+my_buffer_char_blt ( unsigned long x, 
+                     unsigned long y, 
+                     unsigned long color, 
+                     unsigned long c);
+
+
+void set_char_width( int width );
+void set_char_height( int height );
 
 
 int get_char_width (void);
-int get_char_height (void);	
+int get_char_height (void);
 
-//desenha um caractere transparente.
-void drawchar_transparent( unsigned long x, 
-                           unsigned long y, 
-						   unsigned long color, 
-						   unsigned long c);
 
-//desenha um caractere.
-void draw_char( unsigned long x, 
-                unsigned long y,  
-				unsigned long c,
-				unsigned long fgcolor,
-				unsigned long bgcolor);						   
-						 
+// desenha um caractere transparente.
+void 
+drawchar_transparent ( unsigned long x, 
+                       unsigned long y, 
+                       unsigned long color, 
+                       unsigned long c);
+
+
+// desenha um caractere.
+void 
+draw_char ( unsigned long x, 
+            unsigned long y,  
+            unsigned long c,
+            unsigned long fgcolor,
+            unsigned long bgcolor);
+ 
+
+
 //
 // Pixel, line rect support.
-//						 
+//
 
 //pega um pixel no backbuffer
 unsigned long get_pixel( unsigned long x,  unsigned long y );
 
+
 //envia um pixel do backbuffer para o frontbuffer
 void refresh_pixel( unsigned long x,  unsigned long y );
 
-void refresh_horizontal_line( unsigned long x1,
-                              unsigned long y, 
-			  				  unsigned long x2 );
-							  
-//envia um retângulo do backbuffer para o frontbuffer
-void refresh_rectangle( unsigned long x, 
-                        unsigned long y, 
-						unsigned long width, 
-						unsigned long height );	
+
+void 
+refresh_horizontal_line ( unsigned long x1,
+                          unsigned long y, 
+                          unsigned long x2 );
+  
+
+
+// envia um retângulo do backbuffer para o frontbuffer
+void 
+refresh_rectangle ( unsigned long x, 
+                    unsigned long y, 
+                    unsigned long width, 
+                    unsigned long height );
+
 
 //envia um retângulo de um buffer para outro.
 void 
 refresh_rectangle2 ( unsigned long x, 
-                    unsigned long y, 
-				    unsigned long width, 
-				    unsigned long height,
-                    unsigned long buffer1,
-                    unsigned long buffer2 );	
+                     unsigned long y, 
+                     unsigned long width, 
+                     unsigned long height,
+                     unsigned long buffer1,
+                     unsigned long buffer2 );
 
 
-					
+
 //
 // ## salvando retângulos ##
 //
@@ -2159,7 +2182,7 @@ refresh_rectangle2 ( unsigned long x,
 struct saved_rect_d
 {
     void *buffer_address;
-	
+
     unsigned long x;
     unsigned long y;
     unsigned long width;
@@ -2167,15 +2190,15 @@ struct saved_rect_d
 
     int pixels;  //quantidade de pixels.
     int bytes;   //quantidade de bytes.
-	int bpp;     //bytes per pixel.
+    int bpp;     //bytes per pixel.
 	
-	//O buffer está cheio. 
-	//1 retângulo foi salvo nele.
-	
-	int full;    
-	
+	// O buffer está cheio. 
+	// 1 retângulo foi salvo nele.
+
+    int full;    
 };
 struct saved_rect_d *SavedRect;
+
 
 
 int initialize_saved_rect (void);
@@ -2184,11 +2207,13 @@ int initialize_saved_rect (void);
 // Salvar um retângulo no buffer será semelhante ao 
 // método de salvar um bmp em um arquivo.
 
-int save_rect ( unsigned long x, 
-                unsigned long y, 
-				unsigned long width, 
-				unsigned long height );	
-	
+int 
+save_rect ( unsigned long x, 
+            unsigned long y, 
+            unsigned long width, 
+            unsigned long height );
+
+
 //pintar no backbuffer o retângulo salvo vai ser semelhante ao processo 
 //de decodificar um bmp, copiando do arquivo para o backbuffer.
 // esses argumentos devem representar o posicionamentod esejado do 
@@ -2197,9 +2222,14 @@ int save_rect ( unsigned long x,
 int 
 show_saved_rect ( unsigned long x, 
                   unsigned long y, 
-				  unsigned long width, 
-				  unsigned long height );	
-	
+                  unsigned long width, 
+                  unsigned long height );
+
+
+void scroll_screen_rect (void);
+
+
+
 //
 //  ...
 //	

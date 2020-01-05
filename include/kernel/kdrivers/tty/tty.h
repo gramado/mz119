@@ -267,6 +267,7 @@ int current_vc;
 struct tty_d TTY[4];
 
 
+
 //
 // Pseudo terminais.
 //

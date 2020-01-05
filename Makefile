@@ -12,7 +12,7 @@
 VERSION = 1
 PATCHLEVEL = 21
 SUBLEVEL = 0
-EXTRAVERSION = -rc4
+EXTRAVERSION = -rc5
 NAME = 
 
 
@@ -149,7 +149,7 @@ ifeq ($(ARCH),x86)
 	ata.o atadma.o atainit.o atairq.o atapci.o hdd.o \
 	channel.o network.o nicintel.o nsocket.o \
 	pci.o pciinfo.o pciscan.o \
-	tty.o pty.o\
+	tty.o pty.o vt.o\
 	usb.o \
 	video.o vsync.o screen.o xproc.o \
 	i8042.o keyboard.o mouse.o ps2kbd.o ps2mouse.o ldisc.o \
@@ -331,6 +331,7 @@ compile-kernel:
 	gcc -c kernel/kdrivers/tty/tty.c   -I include/ $(CFLAGS) -o tty.o
 	gcc -c kernel/kdrivers/tty/pty.c   -I include/ $(CFLAGS) -o pty.o
 
+	gcc -c kernel/kdrivers/tty/vt.c   -I include/ $(CFLAGS) -o vt.o
 
 	# kdrivers/usb
 	gcc -c kernel/kdrivers/usb/usb.c  -I include/ $(CFLAGS) -o usb.o
