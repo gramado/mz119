@@ -12,32 +12,41 @@
  */
 
  
-//@todo: diminuir
-//Contagem de heap.
+// ??
+// Contagem de heap.
 #define HEAP_COUNT_MAX  8
 
 
 
 /*
  * Heap.
- * Salvamos aqui o Global Heap Pointer atual, ele pode pertencer ao kernel,
- * ao processo, ou ao desktop ao qual o processo pertence.
- *     Obs: Acrescentado static.
+ * Salvamos aqui o Global Heap Pointer atual, 
+ * ele pode pertencer ao kernel, ao processo, ou ao desktop ao qual 
+ * o processo pertence.
+ * 
  */
+
 static unsigned long Heap;
+
 //static unsigned long KernelHeapPointer;  //Kernel Heap pointer.
 //static unsigned long UserHeapPointer;    //User Heap pointer.
+
 
 
 /*
  * Kernel Heap support.
  */
 
-unsigned long heapCount;            //Conta os heaps do sistema.
-unsigned long kernel_heap_start;    //Start.
-unsigned long kernel_heap_end;      //End.
-unsigned long g_heap_pointer;       //Pointer.
-unsigned long g_available_heap;     //Available.
+unsigned long heapCount;            // Conta os heaps do sistema.
+
+unsigned long kernel_heap_start;    // Start.
+unsigned long kernel_heap_end;      // End.
+
+unsigned long g_heap_pointer;       // Pointer.
+unsigned long g_available_heap;     // Available.
+
+
+
 
 
 /*
@@ -68,7 +77,7 @@ struct HeapPointer
  *     Cada heap tem uma lista encadeada de blocos.  
  */  
 
-typedef struct heap_d heap_descriptor_t;
+//typedef struct heap_d heap_descriptor_t;
 
 struct heap_d 
 {
@@ -148,12 +157,10 @@ struct heap_d
 	//cada processo tem seu heap.
 	//struct heap_d *next;
 };
-heap_descriptor_t *KernelHeap;
-heap_descriptor_t *UserHeap;
-//heap_descriptor_t *CurrentHeap;
-//heap_descriptor_t *ProcessHeap;
-//heap_descriptor_t *IdleProcessHeap;
-//heap_descriptor_t *current_heap;
+//struct heap_d *CurrentHeap;
+struct heap_d *KernelHeap;
+struct heap_d *UserHeap;
+
 //...
 
 

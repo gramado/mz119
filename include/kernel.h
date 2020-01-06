@@ -259,12 +259,12 @@ extern void do_executa_new_task (void);
 
 
 // mk (^)
-#include <kernel/mk/ps/mm/x86/mmglobal.h>
-#include <kernel/mk/ps/mm/x86/heap.h>          //Heap pointer support.
-#include <kernel/mk/ps/mm/x86/aspace.h>        //Address Space, (data base account).
-#include <kernel/mk/ps/mm/x86/dspace.h>        //Disk Space, (data base account).
-#include <kernel/mk/ps/mm/x86/bank.h>          //Bank. database
-#include <kernel/mk/ps/mm/x86/mm.h>            //mm, memory manager support.
+#include <kernel/mk/ps/mm/x86/mmglobal.h>      // Deve ficar mais acima.
+#include <kernel/mk/ps/mm/x86/heap.h>          // Heap pointer support.
+#include <kernel/mk/ps/mm/x86/aspace.h>        // Address Space, (data base account).
+#include <kernel/mk/ps/mm/x86/dspace.h>        // Disk Space, (data base account).
+#include <kernel/mk/ps/mm/x86/bank.h>          // Bank. database
+#include <kernel/mk/ps/mm/x86/mm.h>            // mm, memory manager support.
 
 
 // kservers

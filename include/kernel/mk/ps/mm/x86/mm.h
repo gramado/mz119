@@ -157,14 +157,21 @@ kernel fica com o 1GB superior."
 
 
 
+
+
+
+
+
+
 //#define x86_copy_page(from,to) \
 //__asm__("cld ; rep ; movsl"::"S" (from),"D" (to),"c" (1024):"cx","di","si")
 
 
 //#define PAGE_SIZE 4096
 
-#define clear_page(page)	memset((page), 0, PAGE_SIZE)
-#define copy_page(to,from)	memcpy((to), (from), PAGE_SIZE) 
+#define clear_page(page)    memset((page), 0, PAGE_SIZE)
+#define copy_page(to,from)  memcpy((to), (from), PAGE_SIZE) 
+
 
 /*
 static inline void clear_page(void *page)
@@ -202,11 +209,8 @@ static inline void copy_page(void *to, void *from)
 //Obs: #bugbug No momento estamos usando apenas o diretório do 
 //porcesso kernel para tosos os aplicativos do ambiente Gramado Core.
 
-//#define KERNEL_PAGEDIRECTORY  (0x0009C000)                        
-//#define IDLE_PAGEDIRECTORY    (0x0009C000 + 4096)                
-//#define SHELL_PAGEDIRECTORY   (0x0009C000 + 4096 + 4096)         
-//#define TASKMAN_PAGEDIRECTORY (0x0009C000 + 4096 + 4096 + 4096)  
-//...
+//#define KERNEL_PAGEDIRECTORY  (0x0009C000)  
+                      
 
 
 //Quantas entradas de diretório de páginas cabem em uma página.
@@ -1220,13 +1224,20 @@ int init_stack (void);
 //Configura paginação.
 int SetUpPaging (void);    
 
-void SetCR3 (unsigned long address);
+
+// Coloca o endereço do diretório de páginas de um processo
+// no registrador cr3 da arquitetura Intel.
+void x86_SetCR3 (unsigned long pa);
+
 
 //mapeando o nic principal.
 //considerando que tenhamos mais de uma placa de rede, 
 //esse mapeamento só será válido para o primeiro.
-unsigned long mapping_nic1_device_address( unsigned long address );
-unsigned long mapping_ahci1_device_address ( unsigned long address );
+unsigned long 
+mapping_nic1_device_address ( unsigned long pa );
+
+//mapeando ahc1.
+unsigned long mapping_ahci1_device_address ( unsigned long pa );
 
 
 //
@@ -1276,10 +1287,12 @@ void *newPage (void);
 void testingPageAlloc (void);     //@todo: Rotina de teste. deletar.
 
 
+
+
 unsigned long 
 virtual_to_physical ( unsigned long virtual_address, 
-                      unsigned long dir_address ) ;
-					 
+                      unsigned long dir_va ) ;
+
 
 //
 // Debug support.

@@ -159,11 +159,12 @@ void *clone_kernel_page_directory (void){
 //isso é um improviso, precisamos de outro endereço.
 unsigned long table_pointer_heap_base = 0x1000;
 
-unsigned long get_table_pointer(void){
-	
+unsigned long 
+get_table_pointer (void)
+{
     table_pointer_heap_base =  table_pointer_heap_base + 0x1000;
-	
-	return table_pointer_heap_base;	
+
+    return table_pointer_heap_base;	
 }
 
 
@@ -336,10 +337,6 @@ void *CreatePageTable ( unsigned long directory_address_va,
 		panic ("CreatePageTable: directory_address_va\n");	
 	}
 
-    
-	
-	
-	
 
 	
 	//
@@ -379,14 +376,6 @@ void *CreatePageTable ( unsigned long directory_address_va,
 
 
 	
-	
-	
-	
-	
-	
-	
-	
-	
 	//
 	// ===================================
 	// ### dir_index  ###
@@ -400,10 +389,6 @@ void *CreatePageTable ( unsigned long directory_address_va,
 
 
 	
-	
-	
-	
-	
 	//
 	// ===============================
 	// ### region  ###
@@ -415,12 +400,6 @@ void *CreatePageTable ( unsigned long directory_address_va,
 		panic ("CreatePageTable: region_address\n");
 	}
 
-
-
-	
-	
-	
-	
 	
 	//
 	// ===================================
@@ -507,41 +486,45 @@ void *CreatePageTable ( unsigned long directory_address_va,
  
 
 /*
- * SetCR3:
- *     Configurando cr3.
- *     Obs: Precisa ser endereço físico.
- *     Obs: Chamamos uma rotina em assembly.
- *     @todo: Mudar para pagesSetCR3(.)
+ ************************************ 
+ * x86_SetCR3:
+ * 
  */
 
-//void pagesSetCR3(unsigned long address) 
+// Coloca o endereço do diretório de páginas de um processo
+// no registrador cr3 da arquitetura Intel.
 
-void SetCR3 (unsigned long address){
-	
-	if (address == 0){
-		return;
-	}
-	
-	asm volatile ("\n" :: "a"(address) );
-	
-	set_page_dir();
+void x86_SetCR3 (unsigned long pa)
+{
+
+    // Não podemos usar um diretório de páginas que esteja
+    // no início da memória RAM.
+    if (pa == 0)
+    {
+        panic ("x86_SetCR3: 0 is not a valid address!");
+    }
+
+
+    asm volatile ("\n" :: "a"(pa) );
+    
+    // ??
+    set_page_dir ();
 }
 
 
 /*
+ ************************************************************
  * mapping_ahci0_device_address:
  *     Mapeando um endereçi fícico usado pelo driver AHCI.    
  */
 
-//e, ???h ficará a pagetable para mapear o endereço físico em ????va
+unsigned long 
+mapping_ahci1_device_address ( unsigned long pa )
+{
 
-
-unsigned long mapping_ahci1_device_address ( unsigned long address ){
-	
-    int i;
-    
     unsigned long *page_directory = (unsigned long *) gKernelPageDirectoryAddress;      
 
+    int i;
 	
 	//##bugbug: 
 	//Esse endereço é improvisado. Parece que não tem nada nesse endereço.
@@ -564,31 +547,30 @@ unsigned long mapping_ahci1_device_address ( unsigned long address ){
 	// #todo:
 	// Ainda não calculamos o uso de memória física.
 	// Precisamos saber quanta memória física esse dispositivo está usando.
-	
-	for ( i=0; i < 1024; i++ )
-	{	
-		// 10=cache desable 8= Write-Through 0x002 = Writeable 0x001 = Present
-		// 0001 1011
-		ahci1_page_table[i] = (unsigned long) address | 0x1B; // 0001 1011
-		//nic0_page_table[i] = (unsigned long) address | 3;     
-	    
-		address = (unsigned long) address + 4096;  
+	// 10=cache desable 8= Write-Through 0x002 = Writeable 0x001 = Present
+	// 0001 1011
+
+    for ( i=0; i < 1024; i++ )
+    {
+        ahci1_page_table[i] = (unsigned long) pa | 0x1B; 
+        pa = (unsigned long) pa + 4096;  
     };
-	
+
 
 	//f0400000      961
-	
     page_directory[ENTRY_AHCI1_PAGES] = (unsigned long) &ahci1_page_table[0];
-    page_directory[ENTRY_AHCI1_PAGES] = (unsigned long) page_directory[ENTRY_AHCI1_PAGES] | 0x1B; // 0001 1011   		
-	
-	//(virtual)
-	return (unsigned long) AHCI1_VA;
+    page_directory[ENTRY_AHCI1_PAGES] = (unsigned long) page_directory[ENTRY_AHCI1_PAGES] | 0x1B;
+
+
+    // (virtual)
+    return (unsigned long) AHCI1_VA;
 }
 
 
 /*
+ ***********************************
  * mapping_nic0_device_address:
- *     Mapeando um endereçi fícico usado pelo NIC1.    
+ *     Mapeando um endereço fícico usado pelo NIC1.    
  */
 
 //82540 test
@@ -597,12 +579,13 @@ unsigned long mapping_ahci1_device_address ( unsigned long address ){
 //considerando que tenhamos mais de uma placa de rede, 
 //esse mapeamento só será válido para o primeiro.
 
-unsigned long mapping_nic1_device_address ( unsigned long address ){
-	
-    int i;    
-    
+unsigned long 
+mapping_nic1_device_address ( unsigned long pa )
+{
+
     unsigned long *page_directory = (unsigned long *) gKernelPageDirectoryAddress;      
 
+    int i;    
 	
 	//##bugbug: 
 	//Esse endereço é improvisado. Parece que não tem nada nesse endereço.
@@ -625,26 +608,23 @@ unsigned long mapping_nic1_device_address ( unsigned long address ){
 	// #todo:
 	// Ainda não calculamos o uso de memória física.
 	// Precisamos saber quanta memória física esse dispositivo está usando.
-	
-	for ( i=0; i < 1024; i++ )
-	{
-		// 10=cache desable 8= Write-Through 0x002 = Writeable 0x001 = Present
-		// 0001 1011
-		nic0_page_table[i] = (unsigned long) address | 0x1B; // 0001 1011
-		//nic0_page_table[i] = (unsigned long) address | 3;     
-	    
-		address = (unsigned long) address + 4096;  
-    };
-	
+	// 10=cache desable 8= Write-Through 0x002 = Writeable 0x001 = Present
+	// 0001 1011
 
-	//f0000000      960
-	
+    for ( i=0; i < 1024; i++ )
+    {
+        nic0_page_table[i] = (unsigned long) pa | 0x1B;
+        pa = (unsigned long) pa + 4096;  
+    };
+
+
+	// f0000000   960
     page_directory[ENTRY_NIC1_PAGES] = (unsigned long) &nic0_page_table[0];
-    page_directory[ENTRY_NIC1_PAGES] = (unsigned long) page_directory[ENTRY_NIC1_PAGES] | 0x1B; // 0001 1011   		
-    //page_directory[ENTRY_NIC1_PAGES] = (unsigned long) page_directory[ENTRY_NIC1_PAGES] | 3;   	
-	
-	//(virtual)
-	return (unsigned long) NIC1_VA;
+    page_directory[ENTRY_NIC1_PAGES] = (unsigned long) page_directory[ENTRY_NIC1_PAGES] | 0x1B; // 0001 1011 
+
+
+	// (virtual)
+    return (unsigned long) NIC1_VA;
 }
 
 
@@ -1447,37 +1427,31 @@ int SetUpPaging (void){
 	//while(1){};
 #endif
 
+
 	// Obs: 
 	// Podemos reaproveitas pagetables em diferentes processos.
 
-	// CR3:
-	// Salvando o endereço do diretório do processo Kernel no CR3. O diretório 
-	// do processo Kernel está agora dentro de uma área protegida. Está em 
-	// kernel mode.  
-	// Obs: Será rotineiro configurar isso cada vez que um processo for 
-	// executar ou for criado.
-	// Obs: Quando se troca o valor do cr3, a TLB é atualizada pra todas 
-	// as entradas. (?? automático)
 
-	SetCR3 ( (unsigned long) &page_directory[0] );
+    // Salvando o endereço do diretório do processo Kernel no CR3. 
 
-	//Debug:
-	//refresh_screen();
-	//while(1){}
+    x86_SetCR3 ( (unsigned long) &page_directory[0] );
+
 
 
     // LISTAS:
-	//    Configurando a lista de diretórios e 
-	//    a lista de tabelas de páginas.
-	//    Salvando na lista o endereço físico dos
-	// diretórios e das tabelas de páginas.
+    // Configurando a lista de diretórios e a lista de 
+    // tabelas de páginas.
+    // Salvando na lista o endereço físico dos diretórios e 
+    // das tabelas de páginas.
+
 
     //
-	// Inicializar a lista de diretórios de páginas.
-	// 
-	
-	for ( Index=0; Index < PAGEDIRECTORY_COUNT_MAX; Index++ ){
-		
+    // Inicializar a lista de diretórios de páginas.
+    // 
+
+
+	for ( Index=0; Index < PAGEDIRECTORY_COUNT_MAX; Index++ )
+	{
 	    pagedirectoryList[Index] = (unsigned long) 0;
 	};
 
@@ -1709,6 +1683,10 @@ void initializeFramesAlloc (void){
  * #bugbug: se estamos lidando com o endereço base vitual, então estamos 
  * lidando com páginas pre alocadas e não pageframes.
  */
+ 
+// #bugbug
+// Estamos alocando memória compartilhada?
+// então seria sh_allocPages() 
 
 void *allocPages (int size){
 	
@@ -1931,36 +1909,52 @@ tryAgain:
 			return (int) Base;
 		}
 	};
-	
-    return (int) -1;		
+
+
+    return (int) -1;
 }
 
 
+
+/*
+ ***************************************** 
+ * virtual_to_physical:
+ * 
+ */
+ 
 unsigned long 
 virtual_to_physical ( unsigned long virtual_address, 
-                      unsigned long dir_address ) 
+                      unsigned long dir_va ) 
 {
-	unsigned long tmp;
-	unsigned long address;
-	
-	unsigned long *dir = (unsigned long *) dir_address;
 
-	
-	int d = (int) virtual_address >> 22 & 0x3FF;
-    int t = (int) virtual_address >> 12 & 0x3FF;
-    int o = (int) (virtual_address & 0xFFF);
+    // Directory.
+    unsigned long *dir = (unsigned long *) dir_va;
 
-	//temos o endereço da pt junto com as flags.
-	tmp = (unsigned long) dir[d];
-	
-	unsigned long *pt = (unsigned long *) (tmp & 0xFFFFF000);
-	
-	//encontramos o endereço base do page frame.
-	tmp = (unsigned long) pt[t];	
-	
-	address = (tmp & 0xFFFFF000);
-	
-	return (unsigned long) (address + o);	
+    unsigned long tmp;
+    unsigned long address;
+
+
+    unsigned int d = (unsigned int) virtual_address >> 22 & 0x3FF;
+    unsigned int t = (unsigned int) virtual_address >> 12 & 0x3FF;
+    unsigned int o = (unsigned int) (virtual_address & 0xFFF);
+
+
+
+	// Temos o endereço da pt junto com as flags.
+    tmp = (unsigned long) dir[d];
+
+
+    // Page table.
+    unsigned long *pt = (unsigned long *) (tmp & 0xFFFFF000);
+
+
+	// Encontramos o endereço base do page frame.
+    tmp = (unsigned long) pt[t];
+
+    address = (tmp & 0xFFFFF000);
+
+
+    return (unsigned long) (address + o);
 }
 
 

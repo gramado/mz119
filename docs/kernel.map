@@ -2310,95 +2310,95 @@ Linker script and memory map
  .text          0x00000000c002e8a2      0x199 mmpool.o
                 0x00000000c002e8a2                _page
                 0x00000000c002e94a                _newPage
- .text          0x00000000c002ea3b     0x105e pages.o
+ .text          0x00000000c002ea3b     0x106c pages.o
                 0x00000000c002ea3b                _get_table_pointer
                 0x00000000c002ea54                _CreatePageDirectory
                 0x00000000c002eac3                _CreatePageTable
-                0x00000000c002ebdd                _SetCR3
-                0x00000000c002ebf6                _mapping_ahci1_device_address
-                0x00000000c002ec6b                _mapping_nic1_device_address
-                0x00000000c002ece0                _SetUpPaging
-                0x00000000c002f6d9                _initializeFramesAlloc
-                0x00000000c002f766                _allocPages
-                0x00000000c002f94d                _pEmpty
-                0x00000000c002f95c                _freePage
-                0x00000000c002f98c                _notfreePage
-                0x00000000c002f9bc                _firstSlotForAList
-                0x00000000c002fa23                _virtual_to_physical
- .text          0x00000000c002fa99       0xbe preempt.o
-                0x00000000c002fa99                _preempt
- .text          0x00000000c002fb57      0x15a priority.o
-                0x00000000c002fb57                _set_priority
-                0x00000000c002fb90                _KiSetPriority
-                0x00000000c002fb9d                _KiIncreasePriority
-                0x00000000c002fba7                _find_higher_priority
-                0x00000000c002fca7                _KiFindHigherPriority
- .text          0x00000000c002fcb1      0x226 sched.o
-                0x00000000c002fcb1                _pick_next_thread
-                0x00000000c002fdbc                _scheduler
-                0x00000000c002fe86                _scheduler_start
-                0x00000000c002fea1                _scheduler_lock
-                0x00000000c002feb1                _scheduler_unlock
-                0x00000000c002fec1                _scheduler_get_status
-                0x00000000c002fecb                _new_task_scheduler
-                0x00000000c002fed1                _init_scheduler
- .text          0x00000000c002fed7      0x8c2 schedi.o
-                0x00000000c002fed7                _do_waitpid
-                0x00000000c002ffcb                _wait_for_a_reason
-                0x00000000c0030068                _block_for_a_reason
-                0x00000000c00300dd                _wakeup_thread_reason
-                0x00000000c003024f                _wakeup_scan_thread_reason
-                0x00000000c00302da                _KiScheduler
-                0x00000000c0030312                _KiSelectNextThread
-                0x00000000c0030336                _KiDoThreadReady
-                0x00000000c003034d                _KiDoThreadRunning
-                0x00000000c0030364                _KiDoThreadSleeping
-                0x00000000c003037b                _KiDoThreadZombie
-                0x00000000c0030392                _KiDoThreadDead
-                0x00000000c00303a9                _KiNewTaskScheduler
-                0x00000000c00303af                _KiDispatchTask
-                0x00000000c00303b5                _KiSetCurrent
-                0x00000000c00303cc                _KiGetCurrent
-                0x00000000c00303d9                _KiGetCurrentTask
-                0x00000000c00303e6                _get_current
-                0x00000000c00303f0                _get_current_task
-                0x00000000c00303fa                _set_current
-                0x00000000c0030426                _do_thread_initialized
-                0x00000000c003045d                _do_thread_ready
-                0x00000000c0030494                _do_thread_running
-                0x00000000c00304e3                _do_thread_sleeping
-                0x00000000c003051a                _do_thread_zombie
-                0x00000000c003055a                _do_thread_dead
-                0x00000000c0030591                _wakeup_thread
-                0x00000000c00305ea                _SelectNextThread
-                0x00000000c00306a0                _check_for_standby
-                0x00000000c003072a                _check_quantum
- .text          0x00000000c0030799      0x4ac create.o
-                0x00000000c0030799                _KiCreateIdle
-                0x00000000c0030c31                _KiCreateShell
-                0x00000000c0030c3b                _KiCreateTaskManager
- .text          0x00000000c0030c45      0x41c mk.o
-                0x00000000c0030c45                _jobcontrol
-                0x00000000c0030d4d                _jobcheck
-                0x00000000c0030e1d                _microkernelTestLimit
-                0x00000000c0030e23                _sys_dead_thread_collector
-                0x00000000c0030e31                _sys_exit_process
-                0x00000000c0030e4b                _sys_exit_thread
-                0x00000000c0030e62                _sys_create_process
-                0x00000000c0030e90                _sys_create_thread
-                0x00000000c0030eb8                _sys_fork
-                0x00000000c0030ec5                _sys_getpid
-                0x00000000c0030ecf                _sys_getppid
-                0x00000000c0030f34                _init_microkernel
- .text          0x00000000c0031061      0x443 request.o
-                0x00000000c0031061                _KiRequest
-                0x00000000c0031095                _request
-                0x00000000c00312ac                _create_request
-                0x00000000c0031353                _clear_request
-                0x00000000c00313db                _do_request_12
-                0x00000000c00314a4                _code_end = .
+                0x00000000c002ebdd                _x86_SetCR3
+                0x00000000c002ec04                _mapping_ahci1_device_address
+                0x00000000c002ec79                _mapping_nic1_device_address
+                0x00000000c002ecee                _SetUpPaging
+                0x00000000c002f6e7                _initializeFramesAlloc
+                0x00000000c002f774                _allocPages
+                0x00000000c002f95b                _pEmpty
+                0x00000000c002f96a                _freePage
+                0x00000000c002f99a                _notfreePage
+                0x00000000c002f9ca                _firstSlotForAList
+                0x00000000c002fa31                _virtual_to_physical
+ .text          0x00000000c002faa7       0xbe preempt.o
+                0x00000000c002faa7                _preempt
+ .text          0x00000000c002fb65      0x15a priority.o
+                0x00000000c002fb65                _set_priority
+                0x00000000c002fb9e                _KiSetPriority
+                0x00000000c002fbab                _KiIncreasePriority
+                0x00000000c002fbb5                _find_higher_priority
+                0x00000000c002fcb5                _KiFindHigherPriority
+ .text          0x00000000c002fcbf      0x226 sched.o
+                0x00000000c002fcbf                _pick_next_thread
+                0x00000000c002fdca                _scheduler
+                0x00000000c002fe94                _scheduler_start
+                0x00000000c002feaf                _scheduler_lock
+                0x00000000c002febf                _scheduler_unlock
+                0x00000000c002fecf                _scheduler_get_status
+                0x00000000c002fed9                _new_task_scheduler
+                0x00000000c002fedf                _init_scheduler
+ .text          0x00000000c002fee5      0x8c2 schedi.o
+                0x00000000c002fee5                _do_waitpid
+                0x00000000c002ffd9                _wait_for_a_reason
+                0x00000000c0030076                _block_for_a_reason
+                0x00000000c00300eb                _wakeup_thread_reason
+                0x00000000c003025d                _wakeup_scan_thread_reason
+                0x00000000c00302e8                _KiScheduler
+                0x00000000c0030320                _KiSelectNextThread
+                0x00000000c0030344                _KiDoThreadReady
+                0x00000000c003035b                _KiDoThreadRunning
+                0x00000000c0030372                _KiDoThreadSleeping
+                0x00000000c0030389                _KiDoThreadZombie
+                0x00000000c00303a0                _KiDoThreadDead
+                0x00000000c00303b7                _KiNewTaskScheduler
+                0x00000000c00303bd                _KiDispatchTask
+                0x00000000c00303c3                _KiSetCurrent
+                0x00000000c00303da                _KiGetCurrent
+                0x00000000c00303e7                _KiGetCurrentTask
+                0x00000000c00303f4                _get_current
+                0x00000000c00303fe                _get_current_task
+                0x00000000c0030408                _set_current
+                0x00000000c0030434                _do_thread_initialized
+                0x00000000c003046b                _do_thread_ready
+                0x00000000c00304a2                _do_thread_running
+                0x00000000c00304f1                _do_thread_sleeping
+                0x00000000c0030528                _do_thread_zombie
+                0x00000000c0030568                _do_thread_dead
+                0x00000000c003059f                _wakeup_thread
+                0x00000000c00305f8                _SelectNextThread
+                0x00000000c00306ae                _check_for_standby
+                0x00000000c0030738                _check_quantum
+ .text          0x00000000c00307a7      0x4ac create.o
+                0x00000000c00307a7                _KiCreateIdle
+                0x00000000c0030c3f                _KiCreateShell
+                0x00000000c0030c49                _KiCreateTaskManager
+ .text          0x00000000c0030c53      0x41c mk.o
+                0x00000000c0030c53                _jobcontrol
+                0x00000000c0030d5b                _jobcheck
+                0x00000000c0030e2b                _microkernelTestLimit
+                0x00000000c0030e31                _sys_dead_thread_collector
+                0x00000000c0030e3f                _sys_exit_process
+                0x00000000c0030e59                _sys_exit_thread
+                0x00000000c0030e70                _sys_create_process
+                0x00000000c0030e9e                _sys_create_thread
+                0x00000000c0030ec6                _sys_fork
+                0x00000000c0030ed3                _sys_getpid
+                0x00000000c0030edd                _sys_getppid
+                0x00000000c0030f42                _init_microkernel
+ .text          0x00000000c003106f      0x443 request.o
+                0x00000000c003106f                _KiRequest
+                0x00000000c00310a3                _request
+                0x00000000c00312ba                _create_request
+                0x00000000c0031361                _clear_request
+                0x00000000c00313e9                _do_request_12
+                0x00000000c00314b2                _code_end = .
                 0x00000000c0032000                . = ALIGN (0x1000)
- *fill*         0x00000000c00314a4      0xb5c 
+ *fill*         0x00000000c00314b2      0xb4e 
 
 .iplt           0x00000000c0032000        0x0
  .iplt          0x00000000c0032000        0x0 boot.o
@@ -2572,19 +2572,19 @@ Linker script and memory map
  .rodata        0x00000000c003baa8      0x53e mminfo.o
  .rodata        0x00000000c003bfe6       0x27 mmpool.o
  *fill*         0x00000000c003c00d        0x3 
- .rodata        0x00000000c003c010      0x190 pages.o
- .rodata        0x00000000c003c1a0        0x5 preempt.o
- .rodata        0x00000000c003c1a5        0x5 priority.o
- *fill*         0x00000000c003c1aa        0x2 
- .rodata        0x00000000c003c1ac       0x4b sched.o
- *fill*         0x00000000c003c1f7        0x1 
- .rodata        0x00000000c003c1f8      0x174 schedi.o
- .rodata        0x00000000c003c36c       0x78 create.o
- .rodata        0x00000000c003c3e4       0x58 mk.o
- .rodata        0x00000000c003c43c      0x148 request.o
-                0x00000000c003c584                _rodata_end = .
+ .rodata        0x00000000c003c010      0x1b8 pages.o
+ .rodata        0x00000000c003c1c8        0x5 preempt.o
+ .rodata        0x00000000c003c1cd        0x5 priority.o
+ *fill*         0x00000000c003c1d2        0x2 
+ .rodata        0x00000000c003c1d4       0x4b sched.o
+ *fill*         0x00000000c003c21f        0x1 
+ .rodata        0x00000000c003c220      0x174 schedi.o
+ .rodata        0x00000000c003c394       0x78 create.o
+ .rodata        0x00000000c003c40c       0x58 mk.o
+ .rodata        0x00000000c003c464      0x148 request.o
+                0x00000000c003c5ac                _rodata_end = .
                 0x00000000c003d000                . = ALIGN (0x1000)
- *fill*         0x00000000c003c584      0xa7c 
+ *fill*         0x00000000c003c5ac      0xa54 
 
 .eh_frame       0x00000000c003d000     0x8c78
  .eh_frame      0x00000000c003d000       0x38 main.o

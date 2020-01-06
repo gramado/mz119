@@ -350,7 +350,6 @@ unsigned long heapAllocateMemory ( unsigned long size ){
 		// Aqui poderia parar o sistema e mostrar essa mensagem.
 
         printf ("heapAllocateMemory fail: g_available_heap={0}\n");
-		
         goto fail;
     };
 
