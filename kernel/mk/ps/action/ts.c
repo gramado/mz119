@@ -363,7 +363,9 @@ try_next:
 	if (ProcessorBlock.threads_counter == 1)
 	{		
 		//debug_print(" JUSTONE ");
-		Conductor = IdleThread;
+		
+		// #bugbug: queremos ____IDLE;
+		Conductor = InitThread;
 
 		goto go_ahead;
 	}

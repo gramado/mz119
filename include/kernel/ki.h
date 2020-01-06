@@ -35,20 +35,23 @@ void KiSpawnTask (int id);
 //## bugbug ##
 // Isso deveria estar no módulo /pc em microkernel.
 
-void *KiCreateIdle (void);
-void *KiCreateShell (void);
-void *KiCreateTaskManager (void);
 
-void *KiCreateRing0Idle (void);	
+void *createCreateInitThread (void);
+
+
+
+void *KiCreateRing0Idle (void);
+
+
 
 
 
 //@todo: Conferir se esse protótipo já está em outro lugar,
 //o lugar dele é aqui.
-void KiCpuFaults(unsigned long number);
+void KiCpuFaults (unsigned long number);
+
 
 // Finalizations support.
-
 void KiAbort (void); 
 
 

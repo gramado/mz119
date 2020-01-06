@@ -56,9 +56,9 @@
  * pick_next_thread:
  *     Selecionamos a 'next_thread' olhando nas filas em QUEUE[].
  *     QUEUE[] contém ponteiros para listas encadeadas.
- *     Se não tiver nada nas filas então usaremos a IdleThread.
+ *     Se não tiver nada nas filas então usaremos a InitThread.
  *
- *     #bugbug: Essa IdleThread está configurada corretamente. ?
+ *     #bugbug: Essa InitThread está configurada corretamente. ?
  *     #bugbug: E se não existir IfleThread? 
  */
 
@@ -115,9 +115,14 @@ struct thread_d *pick_next_thread (void){
 		//talvez ela esteja esperando alguma recurso,.
 		//quando ela acordar ir'a pra alguma fila.
 		
-		//selecionamos a idle.
 		
-        t = IdleThread;
+		
+		// #todo
+		// Mudar para ____IDLE;
+		// Selecionamos a idle.
+		// Isso está errado, estamos selecionando a thread de controle
+		// do processo init.bin, mas queremos a idle do kernel.
+        t = InitThread;
     };
 
 

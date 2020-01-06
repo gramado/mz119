@@ -11,15 +11,6 @@
  */
  
 
-struct thread_d *xxxClonedThread;
-
-
-//#define FIRST_THREAD theadList[0]
-//#define LAST_THREAD  threadList[THREAD_COUNT_MAX-1] 
- 
- 
-// Número máximo de threads.
-#define THREAD_COUNT_MAX 1024  
 
 //O primeiro índice na contagem das threads do sistema e o
 //primeiro índice na contagem das threads dos usuários.
@@ -612,51 +603,68 @@ struct thread_d
 	struct thread_d *Next;
 };
 
-/* Threads usadas na inicialização do kernel */
-struct thread_d *IdleThread;         // Idle Thread. TID=0
-struct thread_d *ShellThread;        // Shell Thread. TID=1
-struct thread_d *TaskManThread;      // TaskMan Thread. TID=2
-struct thread_d *RING0IDLEThread;    // RING0 IDLE Thread. TID=3
 
-//
-// Idle
-//
 
+// Ponteiro para a idle thread atual
+// Sempre que mudar a idle thread devemos usar esse ponteiro
+// para mostrar qual será a nova idle thread.
+// Cada idle thread pode prestar um serviço diferente, como o
+// gerenciamento de energia.
 struct thread_d *____IDLE;
 
 
+// Essa é a criada para o processo kernel.
+// Ela roda em ring0 e será usada como idle.
+// RING0 IDLE Thread. TID=3
+struct thread_d *RING0IDLEThread;    
+
+
+// Essa é a thread de controle do processo init2.bin
+// É o primeiro processo em ring3.
+// Idle Thread. TID=0
+struct thread_d *InitThread;         
+
+
+// Ponteiro para a thread usada na hora da clonagem de processos.
 struct thread_d *ClonedThread;
 
 
-/* Listas encadeadas de threads.
-   Usadas no gerenciamento de rounds */
 
+
+
+/* 
+ * Listas encadeadas de threads.
+ * Usadas no gerenciamento de rounds 
+ */
 struct thread_d *Conductor;
 struct thread_d *Conductor2;
 struct thread_d *rootConductor;
-
 int conductorIndex;
 
-/* Current */
-struct thread_d *Thread;             // Current.
 
-/* outros */
-//struct thread_d *CurrentThread;  
-struct thread_d *idle_thread;    // Iddle.
-struct thread_d *cur_thread;     // Current.
-struct thread_d *blocked_list_head;
-struct thread_d *waiting_list_head;
-struct thread_d *ready_list_head;
+
+// #todo
+// Podemos planejar o uso de listas nesse formato.
+// Mas estamos trabalhando em filas de tamanho fixo no formato de array.
+//struct thread_d *blocked_list_head;
+//struct thread_d *waiting_list_head;
+//struct thread_d *ready_list_head;
 
 
 
-/*
- * threadList:
- *   
- *   **** LONG-TERM SCHEDULER FOR THREADS ****
- */
+
+//
+// Thread list.
+//
+
+// #Atenção
+// Esse é a lista principal. Contém todas as threads.
+ 
+// Número máximo de threads.
+#define THREAD_COUNT_MAX 1024  
 
 unsigned long threadList[THREAD_COUNT_MAX];
+
 
 
 /* thread_list_d: */ 

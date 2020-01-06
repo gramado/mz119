@@ -317,7 +317,7 @@ format_ok:
 	//se ela estiver no estado ZOMBIE
 	
 	// #importante
-	// Esperamos que tenha limpado IdleThread antes de usarmos o ponteiro.
+	// Esperamos que tenha limpado InitThread antes de usarmos o ponteiro.
 	// Isso é trabalho do exit e do deadthread collector.
 	
 	// #bugbug
@@ -331,8 +331,8 @@ format_ok:
 
 	}else{
 
-        printf ("do_gexecve: IdleThread \n");
-        Thread = (struct thread_d *) IdleThread;
+        printf ("do_gexecve: InitThread \n");
+        Thread = (struct thread_d *) InitThread;
     };
 
 
@@ -816,7 +816,7 @@ format_ok:
 	//se ela estiver no estado ZOMBIE
 	
 	// #importante
-	// Esperamos que tenha limpado IdleThread antes de usarmos o ponteiro.
+	// Esperamos que tenha limpado InitThread antes de usarmos o ponteiro.
 	// Isso é trabalho do exit e do deadthread collector.
 	
 	// #bugbug
@@ -828,8 +828,8 @@ format_ok:
 		printf ("do_execve: ClonedThread \n");
 	    Thread = (struct thread_d *) ClonedThread; 
 	}else{
-		printf ("do_execve: IdleThread \n");
-	    Thread = (struct thread_d *) IdleThread;
+		printf ("do_execve: InitThread \n");
+	    Thread = (struct thread_d *) InitThread;
 	}
     */
 

@@ -935,7 +935,7 @@ int init_dispatcher (void){
 
 
 	//Idle.
-	dispatcherReadyList[0] = (unsigned long) IdleThread;
+	dispatcherReadyList[0] = (unsigned long) InitThread;
 
 
 	//

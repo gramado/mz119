@@ -98,7 +98,7 @@ void x86mainStartFirstThread ( void ){
 	// Sempre checar a validade da estrutura.
     
     
-    Thread = IdleThread; 
+    Thread = InitThread; 
     
 
     if ( (void *) Thread == NULL )
@@ -322,49 +322,53 @@ void x86StartInit2 (void){
 	//====================================================
 	//Create Idle Thread. tid=0. ppid=0.
 	
-    IdleThread = (void *) KiCreateIdle ();
+    InitThread = (void *) createCreateInitThread ();
 
-    if ( (void *) IdleThread == NULL )
+    if ( (void *) InitThread == NULL )
     {
         panic ("x86main: IdleThread\n");
 
     }else{
 
+        InitThread->tss = current_tss;
+        
         //IdleThread->ownerPID = (int) InitProcess->pid;
 
-		//#importante
-		//Thread.
-		
-        processor->CurrentThread = (void *) IdleThread;
-        processor->NextThread    = (void *) IdleThread;
-        processor->IdleThread    = (void *) IdleThread;
 
+        // processor
 
-        IdleThread->tss = current_tss;
-
+        processor->CurrentThread = (void *) InitThread;
+        processor->NextThread    = (void *) InitThread;
 
 		//...
 
 		// ## importante ## 
 		// Temos aqui alguma configuração. 
 
-        current_thread = IdleThread->tid;
-        next_thread = IdleThread->tid;
-        idle = IdleThread->tid; 
-
+        current_thread = InitThread->tid;
+        next_thread = InitThread->tid;
+        
+        // #bugbug
+        // Deletar essa variável 'idle'.
+        // usar ____IDLE;
+        idle = InitThread->tid; 
     };
+    
+    
 
     InitProcess->Heap = (unsigned long) g_gramadocore_init_heap_va;
 
-    InitProcess->control = IdleThread;
+
+    // #importante
+    // A thread de controle do processo init2.bin.
+    InitProcess->control = InitThread;
 
 	//registra um dos servidores do gramado core.
 	//server_index, process, thread
 
     ipccore_register ( (int) 0, 
         (struct process_d *) InitProcess, 
-        (struct thread_d *) IdleThread );        
-
+        (struct thread_d *) InitThread );   
 }
 
 
@@ -518,6 +522,10 @@ void x86main (void){
 
     }else{
 
+
+        // #todo
+        //processor->IdleThread  = (void *) RING0IDLEThread;    
+        //____IDLE = (void *) RING0IDLEThread;  
 
         //RING0IDLEThread->ownerPID =  (int) KernelProcess->pid; 
 

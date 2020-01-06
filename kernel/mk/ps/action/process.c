@@ -3241,7 +3241,14 @@ void exit_process ( pid_t pid, int code ){
     int i;
 
     struct process_d *Process;
+    
+    //tmp
+    struct thread_d *__Thread;    
+    
+    //lista.
     struct thread_d *Threads;
+    
+    
     struct thread_d *Next;
 	//...
 
@@ -3317,10 +3324,10 @@ void exit_process ( pid_t pid, int code ){
 	// Se o head da list não foi inicializado corretamente 
 	// dá page fault.
 
-    Thread = (void *) Process->threadListHead;
+    __Thread = (void *) Process->threadListHead;
 
     // Se não há nada na head.
-    if ( Thread == NULL )
+    if ( __Thread == NULL )
     {
 		// #todo: 
 		// Talvez haja mais o que fazer.
@@ -3347,12 +3354,12 @@ void exit_process ( pid_t pid, int code ){
 		refresh_screen ();
 		
 		// Salva o ponteiro para o próximo thread.
-		Next = (void *) Thread->Next;
+		Next = (void *) __Thread->Next;
 		
 		// Confere se chegamos ao fim da lista.
 		// 'Thread' fecha agora.
 		
-        if( Thread == NULL )
+        if( __Thread == NULL )
 		{
 		    goto done;
 		
@@ -3360,18 +3367,18 @@ void exit_process ( pid_t pid, int code ){
     
 #ifdef MK_VERBOSE    
 		    //fecha a thread.
-		    printf ("exit_process: Killing thread %d\n", Thread->tid );
+		    printf ("exit_process: Killing thread %d\n", __Thread->tid );
 #endif			
 			
 			// Kill !
 			
-			kill_thread ( Thread->tid ); 
+			kill_thread ( __Thread->tid ); 
 
 			// Prepara qual deve fechar agora.
 		    // Havíamos salvo e agora é vez dela.
 		    // Obs: Estamos reusando o ponteiro.
 			
-			Thread = (void *) Next;
+			__Thread = (void *) Next;
 		 };
         //Nothing.
     };
