@@ -189,7 +189,6 @@ void *createCreateInitThread (void){
 
 	InitThread->standbyCount = 0;
 	InitThread->runningCount = 0;    //Tempo rodando antes de parar.
-	
 	InitThread->readyCount = 0;      //Tempo de espera para retomar a execução.
 	
 	InitThread->initial_time_ms = get_systime_ms ();

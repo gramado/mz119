@@ -726,15 +726,10 @@ do_clone:
 		//#hackhack
 
 		// [pai]
-		Current->control->quantum = 50;
-		//Current->control->quantum = 100;		
-		//block_for_a_reason ( Current->control->tid, WAIT_REASON_BLOCKED );	
 		Current->control->state = READY;
 
-			
+
 		// [filho]
-		Clone->control->quantum = 50;		
-		//Clone->control->quantum = 200;		
 		Clone->control->saved = 0;
 		SelectForExecution (Clone->control);
 
