@@ -1070,10 +1070,11 @@ int g_mm_system_type;
 	unsigned long SMALL_frontbuffer_address;
 	unsigned long SMALL_backbuffer_address; 
 	unsigned long SMALL_pagedpool_address; 
-	unsigned long SMALL_heappool_address; 
-	unsigned long SMALL_gramadocore_init_heap_address;
-    unsigned long SMALL_gramadocore_shell_heap_address; 
-    unsigned long SMALL_gramadocore_taskman_heap_address; 
+	unsigned long SMALL_heappool_address;
+	 
+	unsigned long SMALL_extraheap1_address;
+    unsigned long SMALL_extraheap2_address; 
+    unsigned long SMALL_extraheap3_address; 
     //...
 
     // Medium systems.	
@@ -1085,9 +1086,10 @@ int g_mm_system_type;
 	unsigned long MEDIUM_backbuffer_address; 
 	unsigned long MEDIUM_pagedpool_address;  	
     unsigned long MEDIUM_heappool_address; 
-	unsigned long MEDIUM_gramadocore_init_heap_address; 	
-    unsigned long MEDIUM_gramadocore_shell_heap_address; 
-    unsigned long MEDIUM_gramadocore_taskman_heap_address; 
+    
+	unsigned long MEDIUM_extraheap1_address; 	
+    unsigned long MEDIUM_extraheap2_address; 
+    unsigned long MEDIUM_extraheap3_address; 
 	
     // Large systems.
 	unsigned long LARGE_kernel_address;
@@ -1098,9 +1100,10 @@ int g_mm_system_type;
 	unsigned long LARGE_backbuffer_address;
 	unsigned long LARGE_pagedpool_address; 
     unsigned long LARGE_heappool_address;
-	unsigned long LARGE_gramadocore_init_heap_address;
-    unsigned long LARGE_gramadocore_shell_heap_address; 
-    unsigned long LARGE_gramadocore_taskman_heap_address; 
+    
+	unsigned long LARGE_extraheap1_address;
+    unsigned long LARGE_extraheap2_address; 
+    unsigned long LARGE_extraheap3_address; 
 
 
 
@@ -1148,13 +1151,20 @@ unsigned long mm_used_heappool;     // start = 0x01000000 size = 4MB
 // os processos init, shell e taskman do gramado core são especiais
 // por isso receberão heaps especiais.
 
-//heap do processo gramado core init
-//heap do processo gramado core shell
-//heap do processo gramado core taskman
 
-unsigned long mm_used_gramadocore_init_heap;     // start = (0x01000000 + 0x400000) size = 4MB
-unsigned long mm_used_gramadocore_shell_heap;    // start = (0x01000000 + 0x800000) size = 4MB
-unsigned long mm_used_gramadocore_taskman_heap;  // start = (0x01000000 + 0xC00000) size = 4MB
+
+// Extra heaps.
+
+//unsigned long mm_used_gramadocore_init_heap;     // start = (0x01000000 + 0x400000) size = 4MB
+//unsigned long mm_used_gramadocore_shell_heap;    // start = (0x01000000 + 0x800000) size = 4MB
+//unsigned long mm_used_gramadocore_taskman_heap;  // start = (0x01000000 + 0xC00000) size = 4MB
+
+unsigned long mm_used_extraheap1;  // start = (0x01000000 + 0x400000) size = 4MB
+unsigned long mm_used_extraheap2;  // start = (0x01000000 + 0x800000) size = 4MB
+unsigned long mm_used_extraheap3;  // start = (0x01000000 + 0xC00000) size = 4MB
+
+
+
 
 unsigned long mm_used_lfb;          // start = ?? size = 4MB
 

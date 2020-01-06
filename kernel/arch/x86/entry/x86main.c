@@ -359,7 +359,7 @@ void x86StartInit2 (void){
     
     
 
-    InitProcess->Heap = (unsigned long) g_gramadocore_init_heap_va;
+    InitProcess->Heap = (unsigned long) g_extraheap1_va;
 
 
     // #importante

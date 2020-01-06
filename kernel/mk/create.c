@@ -226,15 +226,12 @@ void *createCreateInitThread (void){
     // #todo: 
     // Isso deve ser uma estrutura de contexto.
 
-    // #bugbug
-    // rever o nome dessas definições abaixo.
-
     // Stack frame.
 	InitThread->ss  = 0x23;                          //RING 3.
-	InitThread->esp = (unsigned long) GRAMADOCORE_IDLETHREAD_STACK; //0x0044FFF0;    //idleStack; (*** RING 3)
+	InitThread->esp = (unsigned long) INITTHREAD_STACK; //0x004FFFF0 (*** RING 3)
 	InitThread->eflags = 0x3200;  //0x3202, pois o bit 1 é reservado e está sempre ligado.
 	InitThread->cs = 0x1B;                                
-	InitThread->eip = (unsigned long) GRAMADOCORE_IDLETHREAD_ENTRYPOINT; //0x00401000;                                       
+	InitThread->eip = (unsigned long) INITTHREAD_ENTRYPOINT; //0x00401000;                                       
 	
 	InitThread->ds = 0x23; 
 	InitThread->es = 0x23; 

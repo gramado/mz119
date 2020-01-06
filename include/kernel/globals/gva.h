@@ -30,22 +30,16 @@
 #define PTE_BASE 0x0009C000
 
 
-// Os três primeiros gigas da memória virtual.
-//Os endereços virtuais aqui serão usados pelas aplicações.
+
+//
+// Init process support.
+//
 
 
-//idle thread. (init process) ( SIZE = 0x4FFF0 ) 319KB
-#define GRAMADOCORE_IDLETHREAD_STACK       0x0044FFF0  //pilha
-#define GRAMADOCORE_IDLETHREAD_ENTRYPOINT  0x00401000  //entrypoint
+//init thread. 1mb de tamaho ???
+#define INITTHREAD_ENTRYPOINT  0x00401000  //entrypoint
+#define INITTHREAD_STACK       0x004FFFF0  //pilha
 
-//shell thread (shell process) ( SIZE = 0x4FFF0 ) 319KB
-#define GRAMADOCORE_SHELLTHREAD_STACK       0x0049FFF0   //pilha
-#define GRAMADOCORE_SHELLTHREAD_ENTRYPOINT  0x00451000   //entry point
-
-
-//taskman thread (taskman process) ( SIZE = 0x5FFF0 ) 383KB
-#define GRAMADOCORE_TASKMANTHREAD_STACK       0x004FFFF0   //pilha
-#define GRAMADOCORE_TASKMANTHREAD_ENTRYPOINT  0x004A1000   //entry point
 
 
 //...
@@ -132,9 +126,13 @@
 
 #define XXXHEAPPOOL_VA 0xC1000000
 
-#define XXXGRAMADOCORE_INIT_HEAP_VA      0xC1400000
-#define XXXGRAMADOCORE_SHELL_HEAP_VA     0xC1800000
-#define XXXGRAMADOCORE_TASKMAN_HEAP_VA   0xC1C00000
+
+#define XXXEXTRAHEAP1_VA      0xC1400000
+#define XXXEXTRAHEAP2_VA     0xC1800000
+#define XXXEXTRAHEAP3_VA   0xC1C00000
+
+
+
 
 
 //Cache do sistema.

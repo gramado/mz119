@@ -1410,15 +1410,15 @@ unsigned long systemGetSystemMetrics ( int index ){
 
 
         case 65:
-            return (unsigned long) mm_used_gramadocore_init_heap;
+            return (unsigned long) mm_used_extraheap1;
             break;   
             
         case 66:
-            return (unsigned long) mm_used_gramadocore_shell_heap ;
+            return (unsigned long) mm_used_extraheap2 ;
             break;   
             
         case 67:
-            return (unsigned long) mm_used_gramadocore_taskman_heap;
+            return (unsigned long) mm_used_extraheap3;
             break;               
             
 

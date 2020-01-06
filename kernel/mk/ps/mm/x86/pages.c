@@ -694,10 +694,11 @@ int SetUpPaging (void){
     SMALL_frontbuffer_address = (unsigned long) SavedLFB;                    //frontbuffer
     SMALL_backbuffer_address = (unsigned long) SMALLSYSTEM_BACKBUFFER;       //backbuffer
     SMALL_pagedpool_address = (unsigned long) SMALLSYSTEM_PAGEDPOLL_START;   //PAGED POOL
-    SMALL_heappool_address = (unsigned long) SMALLSYSTEM_HEAPPOLL_START;		
-    SMALL_gramadocore_init_heap_address = (unsigned long) SMALLSYSTEM_GRAMADOCORE_INIT_HEAP_START;
-    SMALL_gramadocore_shell_heap_address = (unsigned long) SMALLSYSTEM_GRAMADOCORE_SHELL_HEAP_START;
-    SMALL_gramadocore_taskman_heap_address = (unsigned long) SMALLSYSTEM_GRAMADOCORE_TASKMAN_HEAP_START;	
+    SMALL_heappool_address = (unsigned long) SMALLSYSTEM_HEAPPOLL_START;
+    
+    SMALL_extraheap1_address = (unsigned long) SMALLSYSTEM_EXTRAHEAP1_START;
+    SMALL_extraheap2_address = (unsigned long) SMALLSYSTEM_EXTRAHEAP2_START;
+    SMALL_extraheap3_address = (unsigned long) SMALLSYSTEM_EXTRAHEAP3_START;
 	//...
 	//==============================================================
 	//                  ****    MEDIUM SYSTEMS    ****
@@ -710,9 +711,10 @@ int SetUpPaging (void){
     MEDIUM_backbuffer_address = (unsigned long) MEDIUMSYSTEM_BACKBUFFER;
     MEDIUM_pagedpool_address = (unsigned long) MEDIUMSYSTEM_PAGEDPOLL_START; 	
     MEDIUM_heappool_address = (unsigned long) MEDIUMSYSTEM_HEAPPOLL_START;
-    MEDIUM_gramadocore_init_heap_address = (unsigned long) MEDIUMSYSTEM_GRAMADOCORE_INIT_HEAP_START;	
-    MEDIUM_gramadocore_shell_heap_address = (unsigned long) MEDIUMSYSTEM_GRAMADOCORE_SHELL_HEAP_START;
-    MEDIUM_gramadocore_taskman_heap_address = (unsigned long) MEDIUMSYSTEM_GRAMADOCORE_TASKMAN_HEAP_START;	
+    
+    MEDIUM_extraheap1_address = (unsigned long) MEDIUMSYSTEM_EXTRAHEAP1_START;	
+    MEDIUM_extraheap2_address = (unsigned long) MEDIUMSYSTEM_EXTRAHEAP2_START;
+    MEDIUM_extraheap3_address = (unsigned long) MEDIUMSYSTEM_EXTRAHEAP3_START;	
 	//==============================================================
 	//                  ****    LARGE SYSTEMS    ****
 	//==============================================================	
@@ -724,11 +726,10 @@ int SetUpPaging (void){
     LARGE_backbuffer_address = (unsigned long) LARGESYSTEM_BACKBUFFER;
     LARGE_pagedpool_address = (unsigned long) LARGESYSTEM_PAGEDPOLL_START; 	
     LARGE_heappool_address = (unsigned long) LARGESYSTEM_HEAPPOLL_START;
-    LARGE_gramadocore_init_heap_address = (unsigned long) LARGESYSTEM_GRAMADOCORE_INIT_HEAP_START;	
-    LARGE_gramadocore_shell_heap_address = (unsigned long) LARGESYSTEM_GRAMADOCORE_SHELL_HEAP_START;
-    LARGE_gramadocore_taskman_heap_address = (unsigned long) LARGESYSTEM_GRAMADOCORE_TASKMAN_HEAP_START;	
-
-
+    
+    LARGE_extraheap1_address = (unsigned long) LARGESYSTEM_EXTRAHEAP1_START;	
+    LARGE_extraheap2_address = (unsigned long) LARGESYSTEM_EXTRAHEAP2_START;
+    LARGE_extraheap3_address = (unsigned long) LARGESYSTEM_EXTRAHEAP3_START;	
 
 
 
@@ -857,12 +858,16 @@ int SetUpPaging (void){
 	//um endereço físico para a pagetable que mapeará os buffers.
 	unsigned long *heappool_page_table = (unsigned long *) PAGETABLE_HEAPPOOL; 
 	
+	
+	
 	//#importante.
 	//Especiais esclusivo para o ambiente gramado core.
-	unsigned long *gramadocore_init_page_table = (unsigned long *) PAGETABLE_GRAMADOCORE_INIT_HEAP; 
-	unsigned long *gramadocore_shell_page_table = (unsigned long *) PAGETABLE_GRAMADOCORE_SHELL_HEAP; 
-	unsigned long *gramadocore_taskman_page_table = (unsigned long *) PAGETABLE_GRAMADOCORE_TASKMAN_HEAP; 
-	
+
+	unsigned long *extraheap1_page_table = (unsigned long *) PAGETABLE_EXTRAHEAP1; 
+	unsigned long *extraheap2_page_table = (unsigned long *) PAGETABLE_EXTRAHEAP2; 
+	unsigned long *extraheap3_page_table = (unsigned long *) PAGETABLE_EXTRAHEAP3; 
+
+
 	//...
 
 	//
@@ -1251,64 +1256,74 @@ int SetUpPaging (void){
     page_directory[ENTRY_HEAPPOOL_PAGES] = (unsigned long) page_directory[ENTRY_HEAPPOOL_PAGES] | 7;  	
 	
 	
-	
+
+
+
+
+
 	//+++++++
 	//gramado core init heap 
-	g_gramadocore_init_heap_va = (unsigned long) XXXGRAMADOCORE_INIT_HEAP_VA; //0xC1400000;
-	g_gramadocore_init_heap_size = G_DEFAULT_GRAMADOCORE_INIT_HEAP_SIZE;  //4MB
+	g_extraheap1_va = (unsigned long) XXXEXTRAHEAP1_VA; //0xC1400000;
+	g_extraheap1_size = G_DEFAULT_EXTRAHEAP_SIZE;  //4MB
 
-	mm_used_gramadocore_init_heap = (1024 * 4);  // 4096 KB = (4 MB).
+	mm_used_extraheap1 = (1024 * 4);  // 4096 KB = (4 MB).
 	
 	for ( i=0; i < 1024; i++ ){
 		
 	    // #importante:	
 		// O endereço físico e virtual são iguais para essa tabela.
-		gramadocore_init_page_table[i] = (unsigned long) SMALL_gramadocore_init_heap_address | 7;     
-	    SMALL_gramadocore_init_heap_address = (unsigned long) SMALL_gramadocore_init_heap_address + 4096;  
+		extraheap1_page_table[i] = (unsigned long) SMALL_extraheap1_address | 7;     
+	    SMALL_extraheap1_address = (unsigned long) SMALL_extraheap1_address + 4096;  
     };
 
-    page_directory[ENTRY_GRAMADOCORE_INIT_PAGES] = (unsigned long) &gramadocore_init_page_table[0];      
-    page_directory[ENTRY_GRAMADOCORE_INIT_PAGES] = (unsigned long) page_directory[ENTRY_GRAMADOCORE_INIT_PAGES] | 7;  		
+    page_directory[ENTRY_EXTRAHEAP1_PAGES] = (unsigned long) &extraheap1_page_table[0];      
+    page_directory[ENTRY_EXTRAHEAP1_PAGES] = (unsigned long) page_directory[ENTRY_EXTRAHEAP1_PAGES] | 7;  		
 	
 	
-	
+
+
+
+
 	//+++++++
 	//gramado core shell heap 
-	g_gramadocore_shell_heap_va = (unsigned long) XXXGRAMADOCORE_SHELL_HEAP_VA; //0xC1800000;
-	g_gramadocore_shell_heap_size = G_DEFAULT_GRAMADOCORE_SHELL_HEAP_SIZE;  //4MB
+	g_extraheap2_va = (unsigned long) XXXEXTRAHEAP2_VA; //0xC1800000;
+	g_extraheap2_size = G_DEFAULT_EXTRAHEAP_SIZE;  //4MB
 
-	mm_used_gramadocore_shell_heap = (1024 * 4);  // 4096 KB = (4 MB).
+	mm_used_extraheap2 = (1024 * 4);  // 4096 KB = (4 MB).
 	
 	for ( i=0; i < 1024; i++ ){
 		
 	    // #importante:	
 		// O endereço físico e virtual são iguais para essa tabela.
-		gramadocore_shell_page_table[i] = (unsigned long) SMALL_gramadocore_shell_heap_address | 7;     
-	    SMALL_gramadocore_shell_heap_address = (unsigned long) SMALL_gramadocore_shell_heap_address + 4096;  
+		extraheap2_page_table[i] = (unsigned long) SMALL_extraheap2_address | 7;     
+	    SMALL_extraheap2_address = (unsigned long) SMALL_extraheap2_address + 4096;  
     };
 
-    page_directory[ENTRY_GRAMADOCORE_SHELL_PAGES] = (unsigned long) &gramadocore_shell_page_table[0];      
-    page_directory[ENTRY_GRAMADOCORE_SHELL_PAGES] = (unsigned long) page_directory[ENTRY_GRAMADOCORE_SHELL_PAGES] | 7;  		
+    page_directory[ENTRY_EXTRAHEAP2_PAGES] = (unsigned long) &extraheap2_page_table[0];      
+    page_directory[ENTRY_EXTRAHEAP2_PAGES] = (unsigned long) page_directory[ENTRY_EXTRAHEAP2_PAGES] | 7;  		
 	
+
+
+
 
 
 	//+++++++
 	//gramado core taskman heap 
-	g_gramadocore_taskman_heap_va = (unsigned long) XXXGRAMADOCORE_TASKMAN_HEAP_VA; //0xC1C00000;
-	g_gramadocore_taskman_heap_size = G_DEFAULT_GRAMADOCORE_TASKMAN_HEAP_SIZE;  //4MB
+	g_extraheap3_va = (unsigned long) XXXEXTRAHEAP3_VA; //0xC1C00000;
+	g_extraheap3_size = G_DEFAULT_EXTRAHEAP_SIZE;  //4MB
 
-	mm_used_gramadocore_taskman_heap = (1024 * 4);  // 4096 KB = (4 MB).
+	mm_used_extraheap3 = (1024 * 4);  // 4096 KB = (4 MB).
 	
 	for ( i=0; i < 1024; i++ ){
 		
 	    // #importante:	
 		// O endereço físico e virtual são iguais para essa tabela.
-		gramadocore_taskman_page_table[i] = (unsigned long) SMALL_gramadocore_taskman_heap_address | 7;     
-	    SMALL_gramadocore_taskman_heap_address = (unsigned long) SMALL_gramadocore_taskman_heap_address + 4096;  
+		extraheap3_page_table[i] = (unsigned long) SMALL_extraheap3_address | 7;     
+	    SMALL_extraheap3_address = (unsigned long) SMALL_extraheap3_address + 4096;  
     };
 
-    page_directory[ENTRY_GRAMADOCORE_TASKMAN_PAGES] = (unsigned long) &gramadocore_taskman_page_table[0];      
-    page_directory[ENTRY_GRAMADOCORE_TASKMAN_PAGES] = (unsigned long) page_directory[ENTRY_GRAMADOCORE_TASKMAN_PAGES] | 7;  		
+    page_directory[ENTRY_EXTRAHEAP3_PAGES] = (unsigned long) &extraheap3_page_table[0];      
+    page_directory[ENTRY_EXTRAHEAP3_PAGES] = (unsigned long) page_directory[ENTRY_EXTRAHEAP3_PAGES] | 7;  		
 
 	
 	
@@ -1333,9 +1348,9 @@ int SetUpPaging (void){
 		mm_used_backbuffer + 
 		mm_used_pagedpool + 
 		mm_used_heappool + 
-		mm_used_gramadocore_init_heap +
-		mm_used_gramadocore_shell_heap +
-		mm_used_gramadocore_taskman_heap );
+		mm_used_extraheap1 +
+		mm_used_extraheap2 +
+		mm_used_extraheap3 );
 			
     memorysizeFree = memorysizeTotal - memorysizeUsed;
 

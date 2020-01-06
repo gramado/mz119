@@ -99,9 +99,11 @@ void memoryShowMemoryInfo (void){
 	printf (" backbuffer       = (%d KB)\n", mm_used_backbuffer );
 	printf (" paged pool       = (%d KB)\n", mm_used_pagedpool );	
 	printf (" heap pool        = (%d KB)\n", mm_used_heappool );
-	printf (" heap for init    = (%d KB)\n", mm_used_gramadocore_init_heap );
-	printf (" heap for shell   = (%d KB)\n", mm_used_gramadocore_shell_heap );
-	printf (" heap for taskman = (%d KB)\n", mm_used_gramadocore_taskman_heap );
+	
+
+	printf (" extraheap1 = (%d KB)\n", mm_used_extraheap1 );
+	printf (" extraheap2 = (%d KB)\n", mm_used_extraheap2 );
+	printf (" extraheap3 = (%d KB)\n", mm_used_extraheap3 );
 
 
 
@@ -124,9 +126,9 @@ void memoryShowMemoryInfo (void){
 		    printf("%x backbuffer \n", SMALL_backbuffer_address );
 		    printf("%x paged memory pool \n", SMALL_pagedpool_address );
 		    printf("%x heap pool \n", SMALL_heappool_address );
-		    printf("%x heap for init \n", SMALL_gramadocore_init_heap_address );
-		    printf("%x heap for shell \n", SMALL_gramadocore_shell_heap_address );
-		    printf("%x heap for taskman \n", SMALL_gramadocore_taskman_heap_address );
+		    printf("%x extraheap1 \n", SMALL_extraheap1_address );
+		    printf("%x extraheap2 \n", SMALL_extraheap2_address );
+		    printf("%x extraheap3 \n", SMALL_extraheap3_address );
 		    break;
 			
 		case stMediumSystem:
@@ -140,9 +142,9 @@ void memoryShowMemoryInfo (void){
 		    printf("%x backbuffer \n", MEDIUM_backbuffer_address );
 		    printf("%x paged memory pool \n", MEDIUM_pagedpool_address );
 		    printf("%x heap pool \n", MEDIUM_heappool_address );
-		    printf("%x heap for init \n", MEDIUM_gramadocore_init_heap_address );
-		    printf("%x heap for shell \n", MEDIUM_gramadocore_shell_heap_address );
-		    printf("%x heap for taskman \n", MEDIUM_gramadocore_taskman_heap_address );
+		    printf("%x extraheap1 \n", MEDIUM_extraheap1_address );
+		    printf("%x extraheap2 \n", MEDIUM_extraheap2_address );
+		    printf("%x extraheap3 \n", MEDIUM_extraheap3_address );
 			break;
 			
 		case stLargeSystem:
@@ -156,9 +158,10 @@ void memoryShowMemoryInfo (void){
 		    printf("%x backbuffer \n", LARGE_backbuffer_address );
 		    printf("%x paged memory pool \n", LARGE_pagedpool_address );
 		    printf("%x heap pool \n", LARGE_heappool_address );
-		    printf("%x heap for init \n", LARGE_gramadocore_init_heap_address );
-		    printf("%x heap for shell \n", LARGE_gramadocore_shell_heap_address );
-		    printf("%x heap for taskman \n", LARGE_gramadocore_taskman_heap_address );
+		    printf("%x extraheap1 \n", LARGE_extraheap1_address );
+		    printf("%x extraheap2 \n", LARGE_extraheap2_address );
+		    printf("%x extraheap3 \n", LARGE_extraheap3_address );
+
 			break;
 			
 		case stNull:
