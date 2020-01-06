@@ -413,7 +413,7 @@ int main ( int argc, char *argv[] ){
     
     
     // Está funcionando e lançando os filhos.
-    gramado_system_call (900, (unsigned long)"launcher.bin", 0, 0);        
+    //gramado_system_call (900, (unsigned long)"launcher.bin", 0, 0);        
     
     
     //funciona.
@@ -426,7 +426,7 @@ int main ( int argc, char *argv[] ){
     //gramado_system_call (900, (unsigned long)"gws.bin", 0, 0);
 
     //fail
-    //gramado_system_call (900, (unsigned long)"gdeshell.bin", 0, 0);     
+      gramado_system_call (900, (unsigned long)"gdeshell.bin", 0, 0);     
     //gramado_system_call (900, (unsigned long)"spr.bin", 0, 0); 
     //gramado_system_call (900, (unsigned long)"sysmon.bin", 0, 0);         
     
