@@ -11,26 +11,6 @@
  *     Version: 1.0, 2016 - Created.
  */
 
- 
-// ??
-// Contagem de heap.
-#define HEAP_COUNT_MAX  8
-
-
-
-/*
- * Heap.
- * Salvamos aqui o Global Heap Pointer atual, 
- * ele pode pertencer ao kernel, ao processo, ou ao desktop ao qual 
- * o processo pertence.
- * 
- */
-
-static unsigned long Heap;
-
-//static unsigned long KernelHeapPointer;  //Kernel Heap pointer.
-//static unsigned long UserHeapPointer;    //User Heap pointer.
-
 
 
 /*
@@ -50,27 +30,6 @@ unsigned long g_available_heap;     // Available.
 
 
 /*
- * HeapPointer:
- *     Estrutura para manipular o heap pointer
- *     do processo atual na função malloc.
- */
- /*
-struct HeapPointer
-{
-	unsigned int kernel_heap_poiter;	
-    unsigned int kernel_last_valid;
-    unsigned int kernel_last_size;
-	
-	unsigned int desktop_heap_poiter;	
-    unsigned int desktop_last_valid;
-	unsigned int desktop_last_size;
-	
-	int desktop_id;
-};
-*/
-
-
-/*
  * heap_d:
  *     Estrutura para heap.
  *     Cada processo tem seu heap.
@@ -81,20 +40,23 @@ struct HeapPointer
 
 struct heap_d 
 {
-	object_type_t objectType;
-	object_class_t objectClass;	
-	
-	int Id;      //*Importante.
-    int Used;
-    int Magic;
-    //int ObjectType; ?? //tipo de objeto ao qual pertence o heap.(process, ...)	
-	
-	unsigned long HeapStart;    //*Importante.             
-	unsigned long HeapEnd;
-	unsigned long HeapPointer;            
-	unsigned long AvailableHeap; 	
-	
-	
+    object_type_t objectType;
+    object_class_t objectClass;
+
+
+    int id;
+
+    int used;
+    int magic;
+
+
+    unsigned long HeapStart;  
+    unsigned long HeapEnd;
+    unsigned long HeapPointer; 
+    unsigned long AvailableHeap; 
+
+
+
 	// Ponteiro para a lista de blocos de um heap.
     // Lista encadeada de blocos que formam o heap.
 	// A estrutura para um bloco é: mmblock_d e está definida em mm.h
@@ -158,16 +120,18 @@ struct heap_d
 	//struct heap_d *next;
 };
 //struct heap_d *CurrentHeap;
-struct heap_d *KernelHeap;
-struct heap_d *UserHeap;
-
+//struct heap_d *KernelHeap;
+//struct heap_d *UserHeap;
 //...
 
 
-//Heap list.
-//heap pool.
-//obs:. heapList[0] = The Kernel Heap !!!    
+#define HEAP_COUNT_MAX  8
+
 unsigned long heapList[HEAP_COUNT_MAX];     
+
+
+
+
 
 
 //
@@ -176,7 +140,15 @@ unsigned long heapList[HEAP_COUNT_MAX];
 
 int init_heap (void);
 
-void SetKernelHeap ( unsigned long HeapStart, unsigned long HeapSize);
+
+struct heap_d *memory_create_new_head ( unsigned long start_va, 
+                                        unsigned long size );
+
+
+// Destrói um heap se as flags permitirem.
+void 
+memory_destroy_heap (struct heap_d *heap );
+
 
 //Pega o endereço do início do header da próxima alocação.
 unsigned long get_process_heap_pointer(int pid);

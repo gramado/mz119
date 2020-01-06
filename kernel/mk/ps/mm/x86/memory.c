@@ -185,75 +185,200 @@ fail:
 }
 
 
+
+
+// #todo
+/*
+int 
+memory_use_this_heap ( struct heap_d *heap );
+int 
+memory_use_this_heap ( struct heap_d *heap )
+{
+    if ( (void *) heap == NULL )
+    {
+        panic ("memory_use_this_heap: struct");
+    }else{
+
+        if ( heap->used != 1 || heap->magic != 1234 )
+        {
+            panic ("memory_use_this_heap: validation");
+        }
+
+        // #todo
+    };
+}
+*/
+
+
+
+
 /*
  ****************************************************
- * SetKernelHeap:
- *    Configura o heap do kernel.
- *    Reconfiguração total do heap do kernel.
- *    @todo: Salvar em estrutura de processo. 
- * O kernel tem seu processo.
+ * memory_create_new_head:
+ *     Cria um novo heap dado um endereço virtual válido.
+ *     #importante
+ *     Só podemos usar isso depois que configurarmos manualmente
+ *     o heap do kernel.
  */
 
-void 
-SetKernelHeap ( unsigned long HeapStart, 
-                unsigned long HeapSize )
+struct heap_d *memory_create_new_head ( unsigned long start_va, 
+                                        unsigned long size )
 {
-    struct heap_d *h;    //Kernel Heap struct.    
+    struct heap_d *h;  
 
-	
-	// Check limits.
-	
-	//if(HeapStart == 0){}
-	//if(HeapSize == 0){}
+
+    unsigned long __start;
+    unsigned long __end; 
+    unsigned long __available;
+    
+    // Slot support.
+    int i;
+    int __slot = -1;
+
+
+    // #todo
+    // Tem outros limites que precisam ser respeitados.
+
+    // No inpicio da memória virtual.
+    if ( start_va == 0 )
+    {
+        panic ("memory_create_new_head: Invalid address! (1)");
+    }
+
+    // Em cima da imágem do app.
+    if ( start_va >= 0x00400000 && start_va <= 0x007F0000 )
+    {
+        panic ("memory_create_new_head: Invalid address! (2)");
+    }
+    
+    // Em cima da imágem do kernel.
+    if ( start_va >= 0xC0000000 && start_va <= 0xC0100000 )
+    {
+        panic ("memory_create_new_head: Invalid address! (3)");
+    }
+   
+    
+    // Ajuste para o mínimo.
+    if ( size == 0 )
+        size = 32;
+
+
+    // Não pode ser maior que 4MB.
+    // Por enquanto.
+    //if ( size >= (1024*1024*4) )
+    if ( size >= (1024*1024*2) )
+    {
+        panic ("memory_create_new_head: Invalid size");
+    }
+ 
+    __start = start_va;
+    __end = (__start + size);  
+    __available = size;
+
 
     //
-    // Salvando em variáveis globais.
+    // Get slot;
     //
-	
-	//start, end, pointer, available.
-	
-	kernel_heap_start = (unsigned long) HeapStart; 
-	kernel_heap_end   = (unsigned long) (HeapStart + HeapSize);
-	
-	g_heap_pointer    = (unsigned long) kernel_heap_start;
-	g_available_heap  = (unsigned long) (kernel_heap_end - kernel_heap_start); 
-	
-	
-	//
-	// ?? Devemos checar a validade dessa estrutura ??
-	//
-	
-	//A estrutura fica no início do heap.??!!
-	h = (void *) kernel_heap_start;
-	
-	//Configurando a estrutura.
-	h->HeapStart = (unsigned long) kernel_heap_start;
-	h->HeapEnd   = (unsigned long) kernel_heap_end;
-	
-	h->HeapPointer   = (unsigned long) g_heap_pointer;
-	h->AvailableHeap = (unsigned long) g_available_heap;
-	
-	// Configura a estrutura global que guarda informações sobre o heap do 
-	// kernel. 'KernelHeap'
-	
-	KernelHeap = (void *) h;
-	
-	//
-	// Lista de heaps.
-	//
-	
-	//@todo: Um 'for' pode inicializar essa lista com '0' nesse momento.
-	//for(...)
-	
-	
-	//Configuração inicial da lista de heaps. Só temos 'um' ainda.
-	heapList[0] = (unsigned long) KernelHeap;  //Configura o heap do kernel.
-	heapList[1] = (unsigned long) 0;
-	heapList[2] = (unsigned long) 0;
-	//...
-	
-	//Contagem? ainda em zero.?!
+    
+    struct heap_d *tmp;
+
+    for ( i=0; i<HEAP_COUNT_MAX; i++ )
+    {
+        tmp = ( struct heap_d * ) heapList[i];
+        
+        // Ok.
+        if ( (void *) tmp == NULL )
+        {
+            __slot = i;
+            goto ok;
+        }
+    }
+
+    panic ("memory_create_new_head: Overflow");
+
+ok:
+
+    if ( __slot <= 0 || __slot >= HEAP_COUNT_MAX )
+    {
+        panic ("memory_create_new_head: __slot");
+    }
+    
+    
+    //
+    // Struct
+    //
+    
+    // Podemos alocar memória para a estrutura de heap
+    // porque já temos p heap do kernel que foi
+    // criado usando variáveis globais.
+    // As variáveis globais servem para o heap atual.
+
+    h = (void *) kmalloc ( size );
+
+    if ( (void *) h == NULL )
+    {
+        panic ("memory_create_new_head: struct");
+    }else{
+
+        //#todo
+        //h->objectType = 0;
+        //h->objectClass = 0;
+        
+        h->id = __slot;
+
+        h->used = 1;
+        h->magic = 1234;
+
+        h->HeapStart = (unsigned long) __start;
+        h->HeapEnd   = (unsigned long) __end;
+
+        h->HeapPointer   = (unsigned long) h->HeapStart;
+        h->AvailableHeap = (unsigned long) __available;
+
+
+        // Register.
+        heapList[__slot] = (unsigned long) h;
+        
+        return ( struct heap_d *) h;
+    };
+
+    // Fail.
+    return NULL;
 }
+
+
+// Destrói um heap se as flags permitirem.
+void 
+memory_destroy_heap (struct heap_d *heap )
+{
+
+    int __slot = -1;
+    
+    if ( (void *) heap == NULL )
+    {
+        return;
+    }else{
+
+        // Condição que permite destruir.
+        if ( heap->used != 216 || heap->magic != 4321 )
+        {
+            if ( heap->id >= 0 || heap->id < HEAP_COUNT_MAX )
+            {
+                __slot = heap->id;
+                
+                // Limpa a lista
+                heapList[__slot] = (unsigned long) 0;
+                
+                //#todo
+                // Limpar a estrutura.
+                
+                // Deleta a estrutura
+                heap = NULL;
+            }
+        }
+    };
+}
+
 
 
 /*
@@ -403,12 +528,11 @@ try_again:
 	// Temos um limite para a quantidade de índices na lista de blocos.	
 
     mmblockCount++;  
-        
-	if ( mmblockCount >= MMBLOCK_COUNT_MAX )
-	{
-        printf ("heapAllocateMemory: MMBLOCK_COUNT_MAX");
-        die ();
-    };
+  
+    if ( mmblockCount >= MMBLOCK_COUNT_MAX )
+    {
+        panic ("heapAllocateMemory: MMBLOCK_COUNT_MAX");
+    }
 
 	// #importante
     // A variável 'Header', no header do bloco, 
@@ -710,8 +834,8 @@ int init_heap (void){
     kernel_heap_end = (unsigned long) KERNEL_HEAP_END;  
 	
 	//Heap Pointer, Available heap and Counter.
-	g_heap_pointer = (unsigned long) kernel_heap_start;    	
-    g_available_heap = (unsigned long) (kernel_heap_end - kernel_heap_start);    	 
+	g_heap_pointer = (unsigned long) kernel_heap_start; 
+    g_available_heap = (unsigned long) (kernel_heap_end - kernel_heap_start);  
 	heapCount = 0;      
 	
 	// #importante
@@ -1104,10 +1228,10 @@ int gcEXECUTIVE (void){
 	    h = (void *) heapList[i];
 		
 		//ponteiro válido.
-	    if( (void *) h != NULL )
+	    if ( (void *) h != NULL )
 		{
 			//sinalizado para o GC.
-			if( h->Used == 216 && h->Magic == 4321 )
+			if( h->used == 216 && h->magic == 4321 )
 			{
 				goto clear_heap;
 			}
@@ -1164,16 +1288,16 @@ clear_heap:
 		// ?? O que fazer aqui ??
 		
 		//Limparemos mas não deletaremos.
-		//h->Used  = 1;
-		//h->Magic = 1234;
+		//h->used  = 1;
+		//h->magic = 1234;
 		
 		//#todo: 
 		//Por enquanto vamos desabilitar a estrutura cancelada 
 		//pelo sistema.
-		if ( h->Used == 216 && h->Magic == 4321 )
+		if ( h->used == 216 && h->magic == 4321 )
 		{
-			h->Used = 0;
-			h->Magic = 0;
+			h->used = 0;
+			h->magic = 0;
 			h = NULL;
 		}
 		
