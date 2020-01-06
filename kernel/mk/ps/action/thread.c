@@ -1241,16 +1241,23 @@ int GetThreadType (struct thread_d *Thread){
 void show_thread_information (void){
 	
 	struct thread_d *Current;	
-	
-	printf ("show_thread_information:\n");		
-	
+
+
+    printf ("show_thread_information:\n");		
+
+    
+    //
+    // Current thread.
+    //
+
+
 	//Limits.
 	
 	if ( current_thread < 0 || current_thread >= THREAD_COUNT_MAX )
 	{	
 		return;
 	}
-	
+
 	Current = (void *) threadList[current_thread];
 	
 	if( (void *) Current == NULL )
@@ -1263,8 +1270,31 @@ void show_thread_information (void){
 		printf ("currentTID=%d\n", current_thread );
 		//...
 	};
+
+	//
+	// Check idle
+	//
 	
-	printf (" idle=%d\n", idle );
+	if ( (void *) ____IDLE == NULL )
+	{
+	    panic ("dead_thread_collector: ____IDLE fail");
+	}else{
+
+        if ( ____IDLE->used != 1 || ____IDLE->magic != 1234 )
+        {
+		    panic ("dead_thread_collector: ____IDLE validation");
+	    }
+	    
+	   printf ("Idle thread = %d\n", ____IDLE->tid );
+	};
+
+	
+
+	
+	
+	//
+	// Slots.
+	//
 
 	//Mostra Slots. 
 	//threadi.c

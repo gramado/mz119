@@ -377,6 +377,25 @@ int KiScheduler (void){
     {
         return 0;
     }
+    
+    
+	//
+	// Check idle
+	//
+	
+	if ( (void *) ____IDLE == NULL )
+	{
+	    panic ("KiScheduler: ____IDLE fail");
+	}else{
+
+        if ( ____IDLE->used != 1 || ____IDLE->magic != 1234 )
+        {
+		    panic ("KiScheduler: ____IDLE validation");
+	    }
+	    // ...
+	};
+    
+    
 
 	// Retornaremos se tivermos apenas um thread rodando.
 	// Pois não há o que trocar.
@@ -384,8 +403,8 @@ int KiScheduler (void){
 
     if ( ProcessorBlock.threads_counter == 1 )
     { 
-        current_thread = idle;
-        return (int) idle;
+        current_thread = ____IDLE->tid;
+        return (int) current_thread;
     }
 
 

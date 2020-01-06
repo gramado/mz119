@@ -338,11 +338,12 @@ int current_group;
 //int current_room;
 //int current_desktop;
 
+
+
 // Organização dos processos
 int current_process;
 int current_thread;
-int idle; //true ring 0 idle tread id.
-int next_thread; //next user mode thread.
+int next_thread;     //next user mode thread.
 
 
 // Current runlevel. Used in init process.

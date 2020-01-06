@@ -348,10 +348,13 @@ void x86StartInit2 (void){
         current_thread = InitThread->tid;
         next_thread = InitThread->tid;
         
+        
+        
+        
         // #bugbug
         // Deletar essa variável 'idle'.
         // usar ____IDLE;
-        idle = InitThread->tid; 
+        //idle = InitThread->tid; 
     };
     
     

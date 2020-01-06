@@ -158,6 +158,7 @@ void KiInformation (void){
         ProcessorBlock.threads_counter );
 
 
+    // See: thread.c
     show_thread_information ();
 
 

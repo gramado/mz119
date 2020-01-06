@@ -935,57 +935,76 @@ void exit_thread (int tid){
     struct thread_d *Thread;
 
 
+    // Nem existe.
     if ( tid < 0 || tid >= THREAD_COUNT_MAX )
     {
-        goto fail;
+        return;
     }
 
-    if ( tid == idle )
-    {
-        goto fail;
-    }
+
+	
+	if ( (void *) ____IDLE == NULL )
+	{
+	    panic ("exit_thread: ____IDLE fail");
+	}else{
+
+        if ( ____IDLE->used != 1 || ____IDLE->magic != 1234 )
+        {
+		    panic ("exit_thread: ____IDLE validation");
+	    }
+	    
+	    // Se queremos deletar a idle.
+	    if ( tid == ____IDLE->tid )
+	    {
+		    panic ("exit_thread: Sorry, we can't kill the idle thread!");
+	    }
+
+	    // ...
+	};
+
 
 
     Thread = (void *) threadList[tid];
 
     if ( (void *) Thread == NULL )
     {
-        goto fail;
+		printf ("exit_thread: This thread doesn't exist! \n");
+		refresh_screen();
+		return;
+		
     }else{
 
-        if ( Thread->magic != THREAD_MAGIC )
+        if ( Thread->used !=1 || Thread->magic != 1234 )
         {
-            goto fail;
+		    printf ("exit_thread: validation \n");
+		    refresh_screen();
+		    return;
         }
 
-		//#bugbug 
-		//lembrando que se deixarmos no estado ZOMBIE o 
-		//deadthread collector vai destruir a estrutura.
+		// Lembrando que se deixarmos no estado ZOMBIE o 
+		// deadthread collector vai destruir a estrutura.
 
         Thread->state = ZOMBIE; 
+        
+        // Isso avisa o sistema que ele pode acordar o dead thread collector.
+        dead_thread_collector_flag = 1;        
+        
+        // se matamos a thread atual.         
+        if ( tid == current_thread )
+            scheduler ();
+
+        
+        // Se falhou o escalonamento.
+        if ( current_thread < 0 || 
+             current_thread >= THREAD_COUNT_MAX )
+        {
+            current_thread = ____IDLE->tid;
+        }   
     };
 
 
-	// # reavaliar isso.
-	// Se a thread fechada é a atual, 
-	// necessitamos de algum escalonamento.	
-	// #obs: Essa rotina de reescalonamento não trás problemas.
-
-    if ( tid = current_thread )
-    {
-        scheduler ();
-    }
-
-
-fail:
-    //Nothing.
-
 done:
-
-	// Isso avisa o sistema que ele pode acordar o dead thread collector.
-    dead_thread_collector_flag = 1;
-
-	return;
+    return;
 }
 
 
@@ -998,19 +1017,41 @@ done:
 
 void kill_thread (int tid){
 	
-    struct thread_d *Thread;
-	
+    struct thread_d *__Thread;
+
+
+
+
 	//Limits.
-	if ( tid < 0 || tid >= THREAD_COUNT_MAX ){
-		
-	    goto fail;	
-	}
+    if ( tid < 0 || tid >= THREAD_COUNT_MAX )
+    {
+       return;
+    }
+
+
 	
-	if ( tid == idle ){
-		
-		goto fail;
-	}
+	if ( (void *) ____IDLE == NULL )
+	{
+	    panic ("kill_thread: ____IDLE fail");
+	}else{
+
+        if ( ____IDLE->used != 1 || ____IDLE->magic != 1234 )
+        {
+		    panic ("kill_thread: ____IDLE validation");
+	    }
+	    
+	    // Se queremos deletar a idle.
+	    if ( tid == ____IDLE->tid )
+	    {
+		    panic ("kill_thread: Sorry, we can't kill the idle thread!");
+	    }
+
+	    // ...
+	};
 	
+
+	
+
 	
 	//
 	// @todo: 
@@ -1020,20 +1061,25 @@ void kill_thread (int tid){
 	// causar o fechamento do processo.	
     //
 	
-	Thread = (void *) threadList[tid];
+	__Thread = (void *) threadList[tid];
 	
-	if ( (void *) Thread == NULL )
+	
+	// A thread alvo nem existe,
+	// vamos apenas continuar.
+	if ( (void *) __Thread == NULL )
 	{
-		goto fail;
+		printf ("kill_thread: This thread doesn't exist!\n");
+		refresh_screen();
+		return;
 		
 	}else{
-		
-		
-	    //@todo pegar o id do pai e enviar um sinal e acorda-lo
+
+        // #todo 
+        // Pegar o id do pai e enviar um sinal e acorda-lo
         //se ele estiver esperando por filho.		
-        Thread->used = 0;
-        Thread->magic = 0; 		
-		Thread->state = DEAD; 
+        __Thread->used = 0;
+        __Thread->magic = 0; 		
+		__Thread->state = DEAD; 
 		//...
 		
 		ProcessorBlock.threads_counter--;
@@ -1043,22 +1089,25 @@ void kill_thread (int tid){
 		}		
 		
         threadList[tid] = (unsigned long) 0;
-        Thread = NULL;		
-	};
-	
-	// # reavaliar isso.
-	// Se a thread fechada é a atual, 
-	// necessitamos de algum escalonamento.	
-    if ( tid == current_thread )
-	    scheduler();
-	
-fail:	
-	
-    // Done.
-	
+        __Thread = NULL;		
+        
+         
+        // se matamos a thread atual.         
+        if ( tid == current_thread )
+            scheduler ();
+
+        
+        // Se falhou o escalonamento.
+        if ( current_thread < 0 || 
+             current_thread >= THREAD_COUNT_MAX )
+        {
+            current_thread = ____IDLE->tid;
+        }
+    };
+
+
 done:
-    current_thread = idle;
-	return;
+    return;
 }
 
 
@@ -1073,8 +1122,29 @@ void dead_thread_collector (void){
 	register int i = 0;
     
     struct process_d *p;         
-	struct thread_d *Thread;   	  
+	struct thread_d *Thread;  
 	
+	
+	//
+	// Check idle
+	//
+	
+	if ( (void *) ____IDLE == NULL )
+	{
+	    panic ("dead_thread_collector: ____IDLE fail");
+	}else{
+
+        if ( ____IDLE->used != 1 || ____IDLE->magic != 1234 )
+        {
+		    panic ("dead_thread_collector: ____IDLE validation");
+	    }
+	    // ...
+	};
+	
+
+
+
+
     // Scan
 	
 	for ( i=0; i < THREAD_COUNT_MAX; i++ )
@@ -1087,13 +1157,13 @@ void dead_thread_collector (void){
 			     Thread->used == 1 && 
 				 Thread->magic == 1234 )
 			{
-				
-				if( Thread->tid == idle )
-				{
-					printf("dead_thread_collector: we can't close idle\n");
-					die();
-				}
-				
+
+	            // Se queremos deletar a idle.
+	            if ( Thread->tid == ____IDLE->tid )
+	            {
+		            panic ("dead_thread_collector: Sorry, we can't kill the idle thread!");
+	            }
+
 				//kill_thread(Thread->tid);
 				Thread->used = 0;
 				Thread->magic = 0;
