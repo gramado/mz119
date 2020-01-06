@@ -1033,6 +1033,17 @@ int get_caller_process_id (void);
 int init_process_manager (void);
 
 FILE *get_stream_from_fd ( int pid, int fd );
+
+
+
+// cria um novo process, uma thread e carrega a imagem.
+int 
+__execute_new_process ( const char *filename, 
+                      char *argv[], 
+                      char *envp[] );
+
+
+
 //
 // End.
 //

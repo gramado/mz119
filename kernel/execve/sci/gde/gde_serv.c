@@ -2432,8 +2432,13 @@ void *gde_services ( unsigned long number,
  
        //livre
        case 168:
+           // IN: filename, argv, envp
+           return (void *) __execute_new_process ( (const char *) arg2, 
+                               (char **) arg3, 
+                               (char **) arg4 );
            break;
-           
+
+
        //livre    
        case 169:
            break;

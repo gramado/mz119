@@ -3634,6 +3634,102 @@ FILE *get_stream_from_fd ( int pid, int fd )
 
 //===============
   
+  
+  
+// cria um novo process, uma thread e carrega a imagem.
+int 
+__execute_new_process ( const char *filename, 
+                        char *argv[], 
+                        char *envp[] )
+{
+    struct process_d *p;
+    struct thread_d *t;
+    
+    
+    int __pid = (int) getNewPID ();
+    
+    if (__pid < 0)
+    {
+		panic ("__execute_new_process: pid");
+        return -1;
+    }
+    
+    p = (struct process_d *) create_process ( NULL, NULL, NULL, 
+                                   (unsigned long) 0x00400000, 
+                                   PRIORITY_HIGH, 
+                                   __pid,
+                                   (char *) filename, 
+                                   RING3, 
+                                   (unsigned long ) CreatePageDirectory() ); 
+
+    if ( (void *) p == NULL )
+    {
+		panic ("__execute_new_process: p");
+        return -1;
+    }
+    
+    t = (struct thread_d *) sys_create_thread ( 
+                                NULL,             // room ? 
+                                NULL,             // desktop
+                                NULL,             // w.
+                                (unsigned long) 0x00401000,                 // init eip
+                                (unsigned long) (0x00401000 + (1024*200)),   // init stack
+                                __pid,  // pid
+                                "new-thread" );    // name
+
+    if ( (void *) t == NULL )
+    {
+		panic ("__execute_new_process: t");
+        return -1;
+    }
+    
+    t->DirectoryPA = p->DirectoryPA;
+    
+    //load image.
+
+	// loading image.
+	
+    int fileret = -1;
+    
+    fileret = (unsigned long) fsLoadFile ( VOLUME1_FAT_ADDRESS, 
+                                  VOLUME1_ROOTDIR_ADDRESS, 
+                                  (unsigned char *) filename, 
+                                  (unsigned long) 0x00400000 );
+
+
+    if ( fileret != 0 )
+    {
+        panic ("__execute_new_process: fileret \n");
+    }
+    
+    //t->tss = current_tss;
+    SelectForExecution (t);    // >>standby
+    
+    
+    
+    printf ("__execute_new_process: done\n");
+
+    //debug
+    mostra_slot (t->tid);
+    mostra_reg  (t->tid);
+
+    printf ("__execute_new_process: *breakpoint { Work in progress } \n");    
+    refresh_screen();
+    while(1){}
+    
+    return 0;
+    //return __pid;
+    //...
+}
+      
+      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
     
 
 //
