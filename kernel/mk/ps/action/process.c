@@ -480,30 +480,26 @@ pid_t do_clone_execute_process (char *filename){
 do_clone:
 	
 	//Cria uma estrutura do tipo processo, mas não inicializada.
-	
-	Clone = (struct process_d *) processObject ();
-	
-	if ( (void *) Clone == NULL )
-	{
-		printf ("do_clone_execute_process: Clone struct fail \n");
-		
-		goto fail;
-	
-	} else {
-		
+
+    Clone = (struct process_d *) processObject ();
+
+    if ( (void *) Clone == NULL ){
+        printf ("do_clone_execute_process: Clone struct fail \n");
+        goto fail;
+
+    } else {
 		
 		// Obtêm um índice para um slot vazio na lista de processos.
 		
-	    PID = (int) getNewPID ();
-		
-		//if ( PID <= 0 ){
-			
+        PID = (int) getNewPID ();
+
+		//if ( PID <= 0 )
 		if ( PID == -1 || PID == 0 )
 		{	
 			printf ("do_clone_execute_process: getNewPID fail %d \n", PID );
 			goto fail;
 		}
-		
+
 		Clone->pid = PID;
 		
 		Clone->used = 1;
@@ -519,14 +515,18 @@ do_clone:
 		
 		processList[PID] = (unsigned long) Clone;
 		
+		
+		
+		
 		//
-		// ## clone  ##
+		// Clone.
 		//
 		
-		//copia a memória usada pela imagem do processo.
-		processCopyMemory ( Current );	
-		
-		
+		// Copia a memória usada pela imagem do processo.
+
+        processCopyMemory ( Current );
+
+
 		//
 		// Debug nessages
 		//
@@ -544,113 +544,17 @@ do_clone:
 		
 		
 		//
-        // Clone the process. 
+		// Clone the process. 
 		//
-		
-   		
+
+ 
 		// Isso cria um diretório de páginas para o processo clone;
 		
         Ret = processCopyProcess ( Current->pid, Clone->pid );
-		
-        if ( Ret != 0 )
-        {
+
+        if ( Ret != 0 ){
             panic ("do_clone_execute_process: processCopyProcess fail\n");
-
-			//#todo: retornar.
-            //goto fail;	
         }
-
-        CreatePageTable ( (unsigned long) Clone->DirectoryVA, 
-		    ENTRY_USERMODE_PAGES, Current->childImage_PA );		
-		
-				
-		//
-		// Current thread.
-		//
-		
-        // #test
-		// Vamos associar ao primeiro tty, mesmo que seja um aplicatibo GUI.
-		// Se ele for um aplicativo GUI ele irá atualizar o foco.
-		// Se for um aplicativo de terminal então terá uma janela 
-		// para rodar. Pois o ldisc manda mensagens para a thread de controle 
-		// da janela com foco de entrada. Vamos fazer isso manualmente.
-		
-		// ## bugbug:
-		// Essa rotina faz o input não funcionar quando retornamos para o pai.
-		
-		/*
-		if ( (void *) CurrentTTY != NULL )
-		{
-			if ( CurrentTTY->used == 1 && CurrentTTY->magic == 1234 )
-			{
-				current_tty = CurrentTTY->index;
-				
-				Clone->control->tty_id = current_tty;
-				
-				// #terminal window.
-				window_with_focus = CurrentTTY->window->id;
-                terminal_window = CurrentTTY->window->id;
-				
-				//#importante
-				//a thread de controle da janela, para qual
-				//serão enviadas as mensagens pelo ldisc
-				CurrentTTY->window->control = Clone->control;
-			}
-			
-		}else{
-		    //Thread->tty_id = 0; //-1
-        } 
-		*/
-		
-		
-				
-		//
-		// ## Debug messages ##
-		//
-		
-		
-		// mmShowPDEForAllProcesses (1);
-		
-		// show_thread_information (); 
-		
-		// printf ("\n");
-		
-		// [current]
-		// mostra_reg (Current->control->tid);
-		// printf ("Current.DirectoryVA = %x \n",Current->DirectoryVA);
-		// printf ("Current.DirectoryPA = %x \n",Current->DirectoryPA);
-		// printf ("Current.Image = %x \n",Current->Image);
-		// printf ("Current.ImagePA = %x \n",Current->ImagePA);
-		// Current->control->eipPA = (unsigned long) virtual_to_physical ( Current->control->eip, Current->DirectoryVA ); 
-		// printf ("Current.control.eipVA = %x \n",Current->control->eip);
-		// printf ("Current.control.ring0_eipVA = %x \n",Current->control->ring0_eip);
-		// printf ("Current.control.eipPA = %x \n",Current->control->eipPA);
-
-		
-		// [clone]
-		// mostra_reg (Clone->control->tid);
-		// printf ("Clone.DirectoryVA = %x \n",Clone->DirectoryVA);
-		// printf ("Clone.DirectoryPA = %x \n",Clone->DirectoryPA);
-		// printf ("Clone.Image = %x \n",Clone->Image);
-		// printf ("Clone.ImagePA = %x \n",Clone->ImagePA);
-		// #bugbug: Esse é o endereço lógico em que deve estar a imagem do clone
-		// na visão do diretório do clone.
-		// Clone->Image = 0x400000;
-		// Clone->ImagePA = (unsigned long) virtual_to_physical ( Clone->Image  , Clone->DirectoryVA ); 
-		// agora visto com o diretório do processo clone.
-		// printf ("Clone.Image = %x \n",Clone->Image);
-		// printf ("***Clone.ImagePA = %x \n",Clone->ImagePA);
-		// Clone->control->eipPA = (unsigned long) virtual_to_physical ( Clone->control->eip  , Clone->DirectoryVA ); 		
-		// printf ("Clone.control.eipVA = %x \n",Clone->control->eip);
-		// printf ("Clone.control.ring0_eipVA = %x \n",Clone->control->ring0_eip);
-		// printf ("Clone.control.eipPA = %x \n",Clone->control->eipPA);
-		
-		
-		// printf ("\n do fork process: *breakpoint");
-		// refresh_screen();
-		// while(1){}
-		
-
 
 
 		//
@@ -692,6 +596,7 @@ do_clone:
 	   // OK. O comando existe e o arquivo foi carregado, mas 
 	   // precisamos saber se a assinatura de ELF é válida.
        Status = (int) fsCheckELFFile ( (unsigned long) Clone->Image );
+       
        if ( Status != 0 )
        {
             // kill thread.
@@ -709,20 +614,100 @@ do_clone:
         };
 
 
+        //
+        // Page table.
+        //
+        
+        // #obs:
+        // Lembrando que ja criamos o diretório de páginas.
+
+        // #importante
+        // Remapeando a imagem, mas agora no diretório de páginas
+        // do processo filho.
+        // >> Esse número de entrada é para o endereço virtual padrão
+        // para aplicativos em ring3. = 0x400000
+     
+        CreatePageTable ( (unsigned long) Clone->DirectoryVA, 
+            ENTRY_USERMODE_PAGES, 
+            Clone->ImagePA );     //Current->childImage_PA );
+
+        Clone->Image = 0x400000; 
+
+
+        // name.
+
+        Clone->processName_len = (size_t) strlen ( (const char *) filename );
+        strcpy ( Clone->__processname, (const char *) filename );   
+        
+        //debug para len.
+        //printf ("len %d",Clone->processName_len); 
+        //refresh_screen();
+        //while(1){}
+
+
+
+        //
+        // eip
+        //
+
         // Entry point para clonagem.
 		Clone->control->eip = 0x400000 + 0x1000;
+
+
+
+        //
+        // esp
+        //
+
 
 		//====
 		// #bugbug : 
 		// Essa pilha está dentro da imagem. ...
 		// e se o aplicativo tiver mais que 63KB.???
-		
 		//Clone->control->esp = 0x400000 + (1024 * 63);
-		Clone->control->esp = 0x400000 + (1024 * 200);   //#bugbug
+		Clone->control->esp = 0x400000 + (1024 * 200);   //funciona
 		//Clone->control->eip = Current->control->eip; //#bug fail
 		//Clone->control->esp = Current->control->esp; //#bug fail
 		//====
+
+
+
+
+		//
+		// Debug
+		//
 		
+		
+		// mmShowPDEForAllProcesses (1);
+		// show_thread_information (); 
+
+		// [current]
+		// printf ("\n");
+		// mostra_reg (Current->control->tid);
+		// printf ("Current.DirectoryVA = %x \n",Current->DirectoryVA);
+		// printf ("Current.DirectoryPA = %x \n",Current->DirectoryPA);
+		// printf ("Current.Image = %x \n",Current->Image);
+		// printf ("Current.ImagePA = %x \n",Current->ImagePA);
+		// printf ("Current.control.eipVA = %x \n",Current->control->eip);
+
+
+		// [clone]
+		printf ("\n");
+		mostra_reg (Clone->control->tid);
+		printf ("Clone.DirectoryVA = %x \n",Clone->DirectoryVA);
+		printf ("Clone.DirectoryPA = %x \n",Clone->DirectoryPA);
+		printf ("Clone.Image = %x \n",Clone->Image);
+		printf ("Clone.ImagePA = %x \n",Clone->ImagePA);
+		printf ("Clone.control.eip = %x \n",Clone->control->eip);
+		printf ("Clone.control.esp = %x \n",Clone->control->esp);
+		// printf ("\n : *breakpoint");
+		refresh_screen();
+		//while(1){}
+
+
+
+
+
 		//#hackhack
 
 		// [pai]
@@ -757,8 +742,9 @@ do_clone:
 		// Igual acontece no fork().
 		
 		//pai
-		current_thread = Current->control->tid;
-		current_process = Current->pid;
+        current_thread = Current->control->tid;
+        current_process = Current->pid;
+
         return (pid_t) Clone->pid;
 	};
 
@@ -1781,12 +1767,13 @@ int processSendSignal (struct process_d *p, unsigned long signal){
 /*
  ****************************
  * processCopyMemory:
+ *     Copia a imagem.
  *     Usado no fork.
  */
 
 int processCopyMemory ( struct process_d *process ){
 
-    unsigned long new_base;
+    unsigned long __new_base;
 
 
 	// #todo: 
@@ -1807,14 +1794,15 @@ int processCopyMemory ( struct process_d *process ){
 	
 	// 200 KB.
 	// Alocando memória para a imagem do processo.
-	
-    new_base = (unsigned long) allocPages ( (1024*200)/4096 ); //>>  ring 3 ??.
+	//>>  ring 3 ??.
 
-    if ( new_base == 0 )
-    {
+    __new_base = (unsigned long) allocPages ( (1024*200)/4096 ); 
+
+    if ( __new_base == 0 ){
         printf ("processCopyMemory: fail\n");
         return -1;
     }
+
 
 	//
 	// Copying memory.
@@ -1824,11 +1812,13 @@ int processCopyMemory ( struct process_d *process ){
 	//printf ("copying memory ...\n");
 	
 	//copia 200 KB
-	memcpy ( (void *) new_base, (const void *) process->Image, ( 1024 * 200 ) );
-	
-	
+    memcpy ( (void *) __new_base, 
+             (const void *) process->Image, 
+             ( 1024 * 200 ) );
+
+
 	// Transformando o endereço virtual em físico.
-	unsigned long new_base_PA = (unsigned long) virtual_to_physical ( new_base, gKernelPageDirectoryAddress ); 
+	unsigned long new_base_PA = (unsigned long) virtual_to_physical ( __new_base, gKernelPageDirectoryAddress ); 
 	
 	
 	//#debug
@@ -1858,8 +1848,8 @@ int processCopyMemory ( struct process_d *process ){
 
 	// O processo está num novo endereço segundo o diretório 
 	// de páginas do kernel.
-    process->childImage = (unsigned long) new_base;
-    process->childImage_PA = (unsigned long) new_base_PA;	
+    process->childImage = (unsigned long) __new_base;
+    process->childImage_PA = (unsigned long) new_base_PA;
 
 
 
@@ -1883,15 +1873,19 @@ int processCopyMemory ( struct process_d *process ){
  *     Isso é chamado por do_fork_process.
  */
  
+// 1 = atual;
+// 2 = clone. 
+ 
 int processCopyProcess ( pid_t p1, pid_t p2 ){
 
-    int Status = 0;
     struct process_d *Process1;
     struct process_d *Process2;
 
+    int Status = 0;
 
-    if ( p1 == p2 )
-    {
+
+
+    if ( p1 == p2 ){
         printf ("processCopyProcess: same PID\n");
         goto fail;
     }
@@ -1905,6 +1899,7 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
     Process2 = (struct process_d *) processList[p2];
 
 
+    // Check Process1
     if ( (void *) Process1 == NULL )
     {
         printf ("processCopyProcess: Process1\n");
@@ -1920,6 +1915,7 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
     };
 
 
+    // Check Process2
     if ( (void *) Process2 == NULL )
     {
         printf ("processCopyProcess: Process1\n");
@@ -1934,18 +1930,22 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
     };
 
 
-//copy:
+    //
+    // Copy.
+    //
 
+    // Object.
     Process2->objectType = Process1->objectType;
     Process2->objectClass = Process1->objectClass;
 
 
 	//Identificadores.
-    Process2->pid  = (int) p2;          // PID.
-    Process2->ppid = Process1->ppid;    // PPID. 
+    Process2->pid  = (int) p2;          // PID.  O pid do clone.
+    Process2->ppid = Process1->pid;     // PPID. O parent do clone é o pid do pai. 
     Process2->uid  = Process1->uid;     // UID. 
     Process2->gid  = Process1->gid;     // GID. 
 
+    // validation.
     Process2->used = Process1->used;
     Process2->magic = Process1->magic;
 
@@ -1961,8 +1961,12 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 
     Process2->framepoolListHead = Process1->framepoolListHead;
 
+
+
+
+
 	//
-	// * page directory address
+	// Directory
 	//
 
 	// #bugbug
@@ -1984,21 +1988,22 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 	// Isso clona o diretório de páginas do kernel. Isso facilita as coisas.
 	// Retorna o endereço virtual do novo diretório de páginas.
 
-    Process2->DirectoryVA = (unsigned long) CreatePageDirectory ();
-
-    if ( (void *) Process2->DirectoryVA == NULL )
-    {
-        panic ("processCopyProcess: DirectoryVA fail");
-    }
-
-
 	// #importante:
 	// Vamos converter porque precisamos de endereço físico para colocarmos no cr3.
 	// Mas o taskswitch faz isso pegando o endereço que estiver na thread, então
 	// esse endereço precisa ir pra thread.
 
+    Process2->DirectoryVA = (unsigned long) CreatePageDirectory ();
+
+    if ( (void *) Process2->DirectoryVA == NULL ){
+        panic ("processCopyProcess: DirectoryVA fail");
+    }
+
     Process2->DirectoryPA = (unsigned long) virtual_to_physical ( Process2->DirectoryVA, 
                                                 gKernelPageDirectoryAddress ); 
+
+
+
 
 	// ??
 	// #bugbug
@@ -2009,6 +2014,11 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 	// que ele alocar memória para a imagem ele terá o
 	// endereço lógico retornado pelo alocador.
 
+    // #bugbug
+    // Conseguimos o endereço da imagem copiada,
+    // mas teremos que refazer isso mais a frente quando
+    // carregarmos, (isso no caso da rotina de clonagem)
+    // Isso é válido só para o fork.
 
 	//Process2->Image = Process1->Image;
     Process2->Image = Process1->childImage;
@@ -2070,7 +2080,12 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 	//{
 	//}
 	
-	
+
+
+    //
+    // Directory.
+    //
+
 	// #importante
 	// Um diretório de páginas para a thread de controle.
 	// O diretório de páginas da thread de controle será o mesmo
@@ -2080,6 +2095,8 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 
 
     Process2->control->DirectoryPA = Process2->DirectoryPA;
+
+
 
     Process2->control->ownerPID = Process2->pid;
 
@@ -2108,21 +2125,14 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
     Status = 0;
     goto done;
 
-//
-// Fail.
-//
+
 
 fail:
-
     Status = 1;
     printf ("processCopyProcess: fail\n");
 
-//
-// Done.
-//
 
 done:
-
     return (int) Status;
 }
 
