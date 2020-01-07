@@ -692,19 +692,17 @@ do_clone:
 
 
 		// [clone]
-		printf ("\n");
-		mostra_reg (Clone->control->tid);
-		printf ("Clone.DirectoryVA = %x \n",Clone->DirectoryVA);
-		printf ("Clone.DirectoryPA = %x \n",Clone->DirectoryPA);
-		printf ("Clone.Image = %x \n",Clone->Image);
-		printf ("Clone.ImagePA = %x \n",Clone->ImagePA);
-		printf ("Clone.control.eip = %x \n",Clone->control->eip);
-		printf ("Clone.control.esp = %x \n",Clone->control->esp);
+		//printf ("\n");
+		//mostra_reg (Clone->control->tid);
+		//printf ("Clone.DirectoryVA = %x \n",Clone->DirectoryVA);
+		//printf ("Clone.DirectoryPA = %x \n",Clone->DirectoryPA);
+		//printf ("Clone.Image = %x \n",Clone->Image);
+		//printf ("Clone.ImagePA = %x \n",Clone->ImagePA);
+		//printf ("Clone.control.eip = %x \n",Clone->control->eip);
+		//printf ("Clone.control.esp = %x \n",Clone->control->esp);
 		// printf ("\n : *breakpoint");
-		refresh_screen();
+		//refresh_screen();
 		//while(1){}
-
-
 
 
 
