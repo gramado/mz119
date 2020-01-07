@@ -72,16 +72,19 @@ int KiIncreasePriority (int pid)
  
 int find_higher_priority (void){
 
+    struct thread_d *t;
+    
     int i;              //Contador.
     unsigned long p;    //Prioridade.
 
     int Current; 
-    struct thread_d *t;
+
 
 
     // Only Idle? return.
 
-    if ( ProcessorBlock.threads_counter == 1 )
+    //if ( ProcessorBlock.threads_counter == 1 )
+    if ( UPProcessorBlock.threads_counter == 1 )
     {
 		//#bugbug, Nã devemos determinar o valor da thread idle dessa forma.
 		//tempos um ponteiro para a estrutura da thread idle.

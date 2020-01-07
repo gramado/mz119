@@ -360,7 +360,8 @@ try_next:
 	// #critério:
 	// Se tivermos apenas uma thread rodando.
 
-	if (ProcessorBlock.threads_counter == 1)
+	//if (ProcessorBlock.threads_counter == 1)
+	if (UPProcessorBlock.threads_counter == 1)
 	{		
 		//debug_print(" JUSTONE ");
 		
@@ -608,20 +609,23 @@ doneRET:
 
 void taskswitchRR (void)
 {
-	int i;
-	int Max = (int) ProcessorBlock.threads_counter;
 	struct thread_d *Current; //Thread atual.
+	
+	int i;
+	
+	//int Max = (int) ProcessorBlock.threads_counter;
+	int Max = (int) UPProcessorBlock.threads_counter;	
+
 	
 	//Filtro.
 	//if(current_thread ...){}
-	
-	Current = (void *) threadList[current_thread]; 
-	if((void *) Current == NULL)
-	{
-	    panic("taskswitchRR error: Struct");
-		//die();
-	};
-	
+
+    Current = (void *) threadList[current_thread]; 
+    if ((void *) Current == NULL){
+        panic ("taskswitchRR error: Struct");
+    }
+
+
 	//
 	//todo: Checar se a estrutura é válida. 
 	//

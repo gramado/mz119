@@ -760,10 +760,10 @@ oracle-virtual-box-test:
 #
 qemu-test:
 #	-debugcon stdio
-#	qemu-system-x86_64 -hda GRAMADO.VHD -m 128 -device e1000 -show-cursor
+	qemu-system-x86_64 -hda GRAMADO.VHD -m 128 -device e1000 -show-cursor
 #	qemu-system-x86_64 -hda GRAMADO.VHD -m 512 -device e1000 -show-cursor
 #	qemu-system-x86_64 -hda GRAMADO.VHD -m 1044 -device e1000 -show-cursor
-	qemu-system-x86_64 -hda GRAMADO.VHD -m 2048 -device e1000 -show-cursor
+#	qemu-system-x86_64 -hda GRAMADO.VHD -m 2048 -device e1000 -show-cursor
 
 
 

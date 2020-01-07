@@ -8,7 +8,7 @@
  *     2015 - Created by Fred Nora.
  *     2016 - Revision.
  */
- 
+
 
 #include <kernel.h>
 
@@ -154,8 +154,9 @@ void KiInformation (void){
         current_process, current_thread );
 
     printf ("# thread info #\n");
+
     printf ("{ %d } threads_counter\n\n", 
-        ProcessorBlock.threads_counter );
+        UPProcessorBlock.threads_counter );
 
 
     // See: thread.c

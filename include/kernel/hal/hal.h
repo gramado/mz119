@@ -229,10 +229,10 @@ struct ProcessorBlock_d
     //Continua ...
 };
 
-//Obs: Não tem ponteiro.
-//Pois se refere ao processador atual, quando temos apenas 
-//um processador.
-struct ProcessorBlock_d ProcessorBlock;    
+// Obs: 
+// Não tem ponteiro. Apenas para UniProcessor.
+
+struct ProcessorBlock_d UPProcessorBlock;    
   
 
 //lista de informações sobre os processadores.  
@@ -334,7 +334,7 @@ jmp_address ( unsigned long arg1,
               unsigned long arg2, 
               unsigned long arg3 , 
               unsigned long arg4); 
-				 
+
 
 
 int hal_init_machine (void); 
@@ -399,6 +399,7 @@ void hal_init_vectors_table (void);
 // Essas rotinas rodam depois da rotina básica em assembly.
 // 256 interrupções
 // 8 extras para handlers default.
+
 unsigned long HANDLERS[256+8];
 
 

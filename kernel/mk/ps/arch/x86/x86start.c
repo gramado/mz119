@@ -117,8 +117,9 @@ executa_tarefa ( int id,
 	// Running tasks 
 	// Incrementa o número de tarefas que estão rodando.
 	
-    ProcessorBlock.threads_counter++;   
-	
+    //ProcessorBlock.threads_counter++;   
+    UPProcessorBlock.threads_counter++;   
+
 	IncrementDispatcherCount(SELECT_ANY_COUNT);
 
 	// verbose.	

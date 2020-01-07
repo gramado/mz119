@@ -108,7 +108,10 @@ void faults ( unsigned long number ){
 	    printf ("Number={%d}\n", number);               
 
 	    printf ("TID %d Step %d \n", current_thread, t->step );
-	    printf ("Running Threads %d \n", ProcessorBlock.threads_counter ); 
+	    
+        //printf ("Running Threads %d \n", ProcessorBlock.threads_counter ); 
+        printf ("Running Threads %d \n", UPProcessorBlock.threads_counter ); 
+        
         
         //printf ("Init Phase %d \n", KeInitPhase);
 	    //printf ("logonStatus %d | guiStatus %d \n", logonStatus, guiStatus );

@@ -401,7 +401,8 @@ int KiScheduler (void){
 	// Pois não há o que trocar.
 	//Se só temos uma então devemos retornar a idle.
 
-    if ( ProcessorBlock.threads_counter == 1 )
+    //if ( ProcessorBlock.threads_counter == 1 )
+    if ( UPProcessorBlock.threads_counter == 1 )
     { 
         current_thread = ____IDLE->tid;
         return (int) current_thread;

@@ -417,6 +417,11 @@ void x86main (void){
 
     //x86_sse_init ();
 
+
+    // Inicializando a contagem de threads.
+    UPProcessorBlock.threads_counter = 0;
+
+
 	//
 	// ## system ##
 	//
@@ -516,6 +521,7 @@ void x86main (void){
 	// >>>>> Como essa thread pertence ao processo kernel, então mudaremos ela 
 	// um pouco pra cima, onde criamos o processo kernel.
 	// obs: Mesmo não sendo ela o primeiro TID.
+	// See: threadi.c
 
     RING0IDLEThread = (void *) KiCreateRing0Idle ();
 

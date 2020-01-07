@@ -112,9 +112,8 @@ void *createCreateInitThread (void){
 
 
     //Identificadores.
-	InitThread->tid = 0;
+	InitThread->tid = 1;
 	InitThread->ownerPID = (int) InitProcess->pid;  
-
 
 
 	InitThread->name_address = (unsigned long) ThreadName;   //Funciona.
@@ -265,7 +264,7 @@ void *createCreateInitThread (void){
 	//IdleThread->NextProcessor = 0;      //Próximo processador. 
 	
 	//Coloca na lista de estruturas.
-	threadList[0] = (unsigned long) InitThread;
+	threadList[ InitThread->tid ] = (unsigned long) InitThread;
 	
 	rootConductor = (struct thread_d *) InitThread;
 	
@@ -291,8 +290,8 @@ void *createCreateInitThread (void){
 	// A criação da thread idle vai inicializar o contador,
 	// para depois só incrementarmos.
 	
-    ProcessorBlock.threads_counter = (int) 1;
-	
+    //ProcessorBlock.threads_counter = (int) 1;
+    UPProcessorBlock.threads_counter++;
     
     // #bugbug
 	// Não há a necessidade de colocar na fila de inicializadas

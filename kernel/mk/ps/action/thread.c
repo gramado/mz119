@@ -403,13 +403,12 @@ struct thread_d *threadCopyThread ( struct thread_d *thread ){
 	
 	// A que vai ser copiada.
 
-    if ( (void *) thread == NULL )
-    {
+    if ( (void *) thread == NULL ){
         panic ("threadCopyThread: thread\n");
     }
 
 
-    clone = (struct thread_d *) sys_create_thread ( NULL,  // w. station
+    clone = (struct thread_d *) create_thread ( NULL,      // room
                                     NULL,                  // desktop
                                     NULL,                  // w
                                     0,                     // init eip
@@ -419,10 +418,10 @@ struct thread_d *threadCopyThread ( struct thread_d *thread ){
 
 	// A cópia.
 
-    if ( (void *) clone == NULL )
-    {
+    if ( (void *) clone == NULL ){
         panic ("threadCopyThread: clone\n");
     }
+
 
 	// Salvando.
 
@@ -816,7 +815,8 @@ get_next:
 		Thread->objectType = ObjectTypeThread;
 		Thread->objectClass = ObjectClassKernelObjects;
 	
-		//c,Put in list.
+		// c,Put in list.
+		// Iniciamos em 100. 
 		Thread->tid = (int) i;
 		
 		//if( Thread->tid < 0 ){
@@ -1057,7 +1057,7 @@ get_next:
 		Thread->Next = NULL;
 		
 		//Coloca na lista.
-		threadList[i] = (unsigned long) Thread;	
+		threadList[ Thread->tid ] = (unsigned long) Thread;	
 	};
 
  
@@ -1065,23 +1065,22 @@ get_next:
     // Contador de threads
     // Vamos atualizar o contador de threads, 
     // pois mais uma thread existe, mesmo que não esteja rodando ainda.
-    ProcessorBlock.threads_counter++;
-
+    //ProcessorBlock.threads_counter++;
+    UPProcessorBlock.threads_counter++;
+    
 	//limits 
-   if ( ProcessorBlock.threads_counter >= THREAD_COUNT_MAX )
-    {
+    //if ( ProcessorBlock.threads_counter >= THREAD_COUNT_MAX )
+    if ( UPProcessorBlock.threads_counter >= THREAD_COUNT_MAX ){
         panic ("create_thread: counter fail, cant create thread\n");
     }
 
-
-// Done.
 
 done:
     
 	// Warning !!! 
 	// ( NÃO COLOCAR PARA EXECUÇÃO, 
 	//   OUTRA FUNÇÃO DEVE COLOCAR PARA EXECUÇÃO )
-	
+
     //SelectForExecution(t);  //***MOVEMENT 1 (Initialized ---> Standby)
     return (void *) Thread;
 }
@@ -1331,8 +1330,11 @@ int init_threads (void){
 	
 	//Globais.	 
 	current_thread = 0;                        //Atual. 
-	ProcessorBlock.threads_counter = (int) 0;  //Número de threads no processador.	
-	old = 0;                                   //?
+	
+	//ProcessorBlock.threads_counter = (int) 0;  //Número de threads no processador.	
+	UPProcessorBlock.threads_counter = (int) 0;  //Número de threads no processador.	
+	
+    old = 0;                                   //?
     forkid = 0;                                //
     task_count = (unsigned long) 0;            //Zera o contador de tarefas criadas.
 	//...

@@ -153,7 +153,7 @@ void *KiCreateRing0Idle (void){
 
     //Identificadores      
 
-	t->tid = 3;  
+	t->tid = 0;  
 	t->ownerPID = (int) KernelProcess->pid;         
 
 
@@ -292,8 +292,8 @@ void *KiCreateRing0Idle (void){
 	//t->NextProcessor = 0;      //Próximo processador. 
 	
 	//Coloca na lista de estruturas.
-	threadList[3] = (unsigned long) t;
-	
+	threadList[ t->tid ] = (unsigned long) t;
+
 	t->Next = NULL;
 	
 	//
@@ -310,9 +310,11 @@ void *KiCreateRing0Idle (void){
 	// Se deixarmos de criar alguma das threads esse contador falha.
 	// #todo: Deveríamos apenas incrementá-lo.
 	
-	//ProcessorBlock.threads_counter = 4;
-	ProcessorBlock.threads_counter++;
-	
+
+	//ProcessorBlock.threads_counter++;
+    UPProcessorBlock.threads_counter++;
+    
+    
     queue_insert_data (queue, (unsigned long) t, QUEUE_INITIALIZED);
     
 	// * MOVEMENT 1 (Initialized --> Standby).
@@ -1082,12 +1084,20 @@ void kill_thread (int tid){
 		__Thread->state = DEAD; 
 		//...
 		
-		ProcessorBlock.threads_counter--;
-		if ( ProcessorBlock.threads_counter < 1 ){
+
+
+		//ProcessorBlock.threads_counter--;
+		//if ( ProcessorBlock.threads_counter < 1 ){
 			//#bugbug
-			panic("kill_thread: threads_counter");
-		}		
-		
+			//panic("kill_thread: threads_counter");
+		//}
+
+        UPProcessorBlock.threads_counter--;
+        if ( UPProcessorBlock.threads_counter < 1 ){
+            panic ("kill_thread: threads_counter");
+        }
+
+
         threadList[tid] = (unsigned long) 0;
         __Thread = NULL;		
         
@@ -1180,14 +1190,18 @@ void dead_thread_collector (void){
 				
                 //Thread = NULL;
 	            //threadList[i] = NULL;   //@todo: Liberar o espaço na lista.
-				
-				ProcessorBlock.threads_counter--;
-				
-				//#bugbug
-				if ( ProcessorBlock.threads_counter < 1 ){
-					panic("dead_thread_collector: threads_counter");
+
+
+				//ProcessorBlock.threads_counter--;
+				//if ( ProcessorBlock.threads_counter < 1 ){
+					//panic("dead_thread_collector: threads_counter");
+				//}
+
+				UPProcessorBlock.threads_counter--;
+				if ( UPProcessorBlock.threads_counter < 1 ){
+					panic ("dead_thread_collector: threads_counter");
 				}
-	
+
 			};
 			//Nothing.
 		};
