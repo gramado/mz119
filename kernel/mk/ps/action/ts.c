@@ -85,18 +85,19 @@ void taskswitchFlushTLB(){
 void KiTaskSwitch (void){
 	
 	//Limits.
-	
-    if ( current_thread < 0 || current_thread >= THREAD_COUNT_MAX )
-    {
+
+
+    if ( current_thread < 0 || current_thread >= THREAD_COUNT_MAX ){
         printf ("KiTaskSwitch: current_thread %d", current_thread ); 
         die ();
     }
 
-    if ( current_process < 0 || current_process >= PROCESS_COUNT_MAX )
-    {
+
+    if ( current_process < 0 || current_process >= PROCESS_COUNT_MAX ){
         printf ("KiTaskSwitch: current_thread %d", current_process );
         die ();
     }
+
 
 
 #ifdef SERIAL_DEBUG_VERBOSE
@@ -156,10 +157,12 @@ void task_switch (void){
 
 	// Current process. 
 
-    P = (void *) Current->process;
+    //P = (void *) Current->process;
+    
+    P = (void *) processList[ Current->ownerPID  ];
 
-    if ( (void *) P == NULL )
-    {
+
+    if ( (void *) P == NULL ){
         panic ("ts-task_switch: P");
     }
 
@@ -169,7 +172,6 @@ void task_switch (void){
 		{	
 			current_process = (int) P->pid;
 		}else{
-		
 		    //??
 			//? fail ??
 		};
