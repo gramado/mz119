@@ -209,9 +209,66 @@ struct tagProcessor *processor;
  
 
 
-//@todo: liberar essa lista. 
-//unsigned long processorList[32]; 
  
+/*
+ ******************************************************
+ * ProcessorBlock_d:
+ *     Processor Block.
+ *     Usado para task switch.
+ *     Contém informações sobre o processador. 
+ *     Que processo está nele.
+ *     #importante:
+ *     obs: talvez devamos ter um desses para cada 
+ * processador ??
+ *     +A contagem de thrads feita aqui refere-se somente a um processador ?
+ */
+
+struct ProcessorBlock_d
+{
+    object_type_t objectType;
+	object_class_t objectClass;	
+	
+    //
+	// Processor Info. 
+	//
+	
+	int Id;
+	int Used;
+	struct tagProcessor *processorInfo; //informações sobre o processador. 
+	
+	//
+	// Process.
+	//
+	
+	//int running_processes;
+	int processes_counter;
+	
+	struct process_d *CurrentProcess;  
+	struct process_d *KernelProcess;  
+	//struct process_d *CurrentProcess;  
+	
+	//
+	// Threads.
+	//
+
+	//Número de threads rodando nesse processador.
+	//não importa o estado que elas estejam, então 
+	//talvez esse nome não seja apropriado, pois 
+	//dá a impressão que a trhead está no rodando no momento.
+	
+	//int running_threads;   
+    int threads_counter;
+	
+	struct thread_d *CurrentThread;    
+    struct thread_d *NextThread;
+    struct thread_d *IdleThread;	
+	//...	
+	
+    //Continua ...
+};
+
+
+
 
 
 /*

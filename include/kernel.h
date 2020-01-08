@@ -173,8 +173,14 @@ extern void do_executa_new_task (void);
 #include <kernel/kdrivers/ahci/sata.h>
 #include <kernel/kdrivers/usb/usb.h>
 
+
+
 // hal (^)
+#include <kernel/hal/up.h>
+#include <kernel/hal/mp.h>
 #include <kernel/hal/hal.h>
+
+
 
 
 // mk (^)
