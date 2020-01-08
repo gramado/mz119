@@ -53,17 +53,22 @@
 //Informações sobre um processador.  
 struct tagProcessor   
 {
-	object_type_t objectType;
-	object_class_t objectClass;	
-	
-	// struct validation.
-	
-	int used;
-	int magic;
-	
-	
-	
-	//@todo: Processor State ???
+
+    // Object
+    object_type_t objectType;
+    object_class_t objectClass;
+
+
+    int id;
+
+    // Struct validation.
+    int used;
+    int magic;
+
+
+
+	// #todo: 
+	// Processor State ???
 	
 	
 	//@todo: Reservar espaço ???
@@ -74,12 +79,7 @@ struct tagProcessor
 	// ULONG   InterruptCount;             // per precessor counts
 	
 	
-	//
-	// Processor information:
-	//
-	
-    unsigned char Id;	
-	unsigned char Type;
+    unsigned char Type;
 	
 	//@todo: ULONG MHz;
 	
@@ -186,24 +186,15 @@ struct tagProcessor
 	
 	unsigned long Gdt;
 	unsigned long Idt;
-	unsigned long Tss;	
-	
-	//
-    // Threads.
-	//
-	
-	
-	struct thread_d *IdleThread;       //ponteiro para estrutura.
-	struct thread_d *CurrentThread;    //ponteiro para estrutura.
-	struct thread_d *NextThread;       //ponteiro para estrutura.
-	
-	//...
-	
-	//
-	// Next.
-	//
+	unsigned long Tss;
 
-    struct tagProcessor *next;	
+
+
+	//...
+
+
+	// Next.
+    struct tagProcessor *next;
 };
 struct tagProcessor *processor;
  
@@ -213,60 +204,69 @@ struct tagProcessor *processor;
 /*
  ******************************************************
  * ProcessorBlock_d:
+ * 
  *     Processor Block.
- *     Usado para task switch.
- *     Contém informações sobre o processador. 
- *     Que processo está nele.
- *     #importante:
- *     obs: talvez devamos ter um desses para cada 
- * processador ??
- *     +A contagem de thrads feita aqui refere-se somente a um processador ?
+ *     Used in the task switch routines.
+ *     It handles information about CPU and the process running
+ * into the CPU.
+ *     It handles the running threads count.
  */
 
 struct ProcessorBlock_d
 {
+	// Object
     object_type_t objectType;
-	object_class_t objectClass;	
-	
-    //
-	// Processor Info. 
+    object_class_t objectClass;	
+
+
+    int id;
+
+    int used;
+    int magic;
+
+
+    // Processor Info. 
+    // see: cpu.h
+
+    struct tagProcessor *processorInfo;
+
+
 	//
-	
-	int Id;
-	int Used;
-	struct tagProcessor *processorInfo; //informações sobre o processador. 
-	
-	//
-	// Process.
+	// ==== Process ====
 	//
 	
 	//int running_processes;
-	int processes_counter;
-	
-	struct process_d *CurrentProcess;  
-	struct process_d *KernelProcess;  
-	//struct process_d *CurrentProcess;  
-	
+    int processes_counter;
+
+    struct process_d *CurrentProcess;  
+    struct process_d *KernelProcess;  
+    //struct process_d *CurrentProcess;  
+
+
 	//
-	// Threads.
+	// ==== Threads ====
 	//
 
-	//Número de threads rodando nesse processador.
-	//não importa o estado que elas estejam, então 
-	//talvez esse nome não seja apropriado, pois 
-	//dá a impressão que a trhead está no rodando no momento.
-	
-	//int running_threads;   
+
+    // Number of total threads in this processor.
     int threads_counter;
-	
-	struct thread_d *CurrentThread;    
+    
+    // Number of threads running in this processor.
+    //int running_threads;   
+
+    // more for other states.
+    // ...
+
+
+    // special threads.
+    struct thread_d *CurrentThread;    
     struct thread_d *NextThread;
-    struct thread_d *IdleThread;	
-	//...	
-	
+    struct thread_d *IdleThread;
+    //...	
+
+
     //Continua ...
 };
-
 
 
 

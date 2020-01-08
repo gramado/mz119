@@ -314,9 +314,8 @@ void x86StartInit2 (void){
     }else{
 
         fs_initialize_process_pwd ( InitProcess->pid, "no-directory" );
-
-		//processor->IdleProcess = (void*) IdleProcess;	
     };
+
 
 
 	//====================================================
@@ -330,31 +329,20 @@ void x86StartInit2 (void){
 
     }else{
 
-        InitThread->tss = current_tss;
-        
+
         //IdleThread->ownerPID = (int) InitProcess->pid;
 
-
-        // processor
-
-        processor->CurrentThread = (void *) InitThread;
-        processor->NextThread    = (void *) InitThread;
-
-		//...
-
-		// ## importante ## 
-		// Temos aqui alguma configuração. 
-
+        InitThread->tss = current_tss;
+        
         current_thread = InitThread->tid;
         next_thread = InitThread->tid;
-        
-        
-        
         
         // #bugbug
         // Deletar essa variável 'idle'.
         // usar ____IDLE;
         //idle = InitThread->tid; 
+
+		//...
     };
     
     
