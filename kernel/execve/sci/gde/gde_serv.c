@@ -2548,12 +2548,15 @@ void *gde_services ( unsigned long number,
 		case 195:	
 		    return (void *) sys_fseek ( (FILE *) arg2, (long) arg3, (int) arg4 );
             break;
-			
-		// fputc
-		case 196:	
-		    return (void *) sys_fputc ( (int) arg2 , (FILE *) arg3 );
+
+
+
+        // fputc
+        case 196:
+            return (void *) sys_fputc ( (int) arg2 , (FILE *) arg3 );
             break;
-			
+
+
         //197
 		//scroll de área de cliente de uma janela;
         case 197:

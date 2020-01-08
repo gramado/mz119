@@ -472,6 +472,102 @@ size_t fwrite (const void *ptr, size_t size, size_t n, FILE *fp){
 }
 
 
+// interna por enquanto.
+// Mudar os nomes dos elementos da estrutura.
+// para ficarem iguais aos nossos.
+int __do_fflush (FILE *stream);
+int __do_fflush (FILE *stream)
+{
+	// #todo
+	// Isso parece ser bem çlegal.
+	
+
+    char *buf;    // Buffer.              
+    ssize_t n;    // Byte count to flush. 
+
+
+    //Not writable. 
+    //if (!(stream->_flags & _IOWRITE))
+        //return (0);
+
+
+    // Not buffered.
+    // se não tem buffer então usamos a _base. 
+    if (stream->_flags & _IONBF)
+    {
+		// #todo usar a _base.
+
+	    // Nothing to flushed. 
+	    // na sistuação de estarmos usando a base.
+        if ((n = stream->_p - stream->_base) == 0)
+            return (0);
+
+        //reset
+        stream->_p = stream->_base;
+        //stream->_cnt = (stream->_flags & _IOLBF) ? 0 : stream->_lbfsize - 1;
+        
+        /*
+	    if (write(fileno(stream), stream->_base, n) != n)
+	    {
+		    stream->flags |= _IOERROR;
+		    return (EOF);
+	    }
+        */
+
+        return (0);
+    }
+    
+    //
+    // Com buffer !!  
+    //
+
+    /*
+
+    // A estrutura do buffer,
+    if ( (void *) stream->_bf == NULL )
+    {
+        return 0;
+    }else{
+ 
+        //if ( (void *) stream._bf->_base == NULL )
+        //{ return 0; }
+        
+        //if ( stream->_p < stream._bf->_base )
+            //return 0;
+            
+        //if ((n = stream->_p - stream._bf->_base) == 0)
+            //return (0);
+
+        //reset
+        //stream->_p = stream._bf->_base;
+        //stream->_cnt = (stream->_flags & _IOLBF) ? 0 : stream->_lbfsize - 1;
+        
+        //
+        // Flush. 
+        //
+    
+        // #todo
+        // Já temos a função write(...) ?
+
+        
+	    //if (write ( fileno(stream), stream._bf->_base, n) != n )
+	    //{
+		   // stream->_flags |= _IOERROR;
+		   // return (EOF);
+	   // }
+        
+        
+        
+         return (0);
+    };
+    
+    */
+
+
+     return (-1);
+}
+
+
 /* 
  *********************************************
  * fflush: (ring 0)
@@ -503,156 +599,50 @@ size_t fwrite (const void *ptr, size_t size, size_t n, FILE *fp){
 */
 
 int fflush ( FILE *stream ){
-	
-	//printf ("fflush: suspenso \n");
-	//refresh_screen ();
-	//return -1;
 
-	// vamos pegar o conteudo dessa stream
-	// e copiarmos na stream do processo.
-	// se for null temos que copiar todos os stream.
-	
-	
-	// #importante
-	// o argumento pode ter passado uma stream de ring3,
-	// então devemos copiar essa stream para o fluxo padrão
-	// em ring0 usando as stream do fluxo padrão na estrutura
-	// do processo.
-	
-	//ponteiros para as streams da estrutura do processo.
-	
-	//FILE *p_stdin;
-	//FILE *p_stdout;
-	//FILE *p_stderr;
+    int __ret;
+    
+    struct process_d *__P;
+  
+    int i;
+    FILE *__tmp_stream;
 
 
-    FILE *p_stream;
 
-    struct process_d *p;
-    //struct thread_d *t;
-
-    register int i = 0;
-    int j;
-
-
-    if ( (void *) stream == NULL )
+	//Flush all streams.
+    if (stream == NULL)
     {
-        panic ("fflush: stream is NULL \n");
-        //refresh_screen ();
-        //return -1;
-    }
+        __ret = 0;
 
-
-	// Limits.
-	// Se o buffer tiver vazio ou for maior que o limite.
-
-
-	/*
-	if ( stream->_bufsiz == 0 || stream->_bufsiz > BUFSIZ )
-	{	
-		printf ("fflush: buffer size limits %d \n", stream->_bufsiz);
-		stream->_bufsiz = BUFSIZ;
-		refresh_screen ();
-		return (int) (-1);
-	}
-	*/
-
-
-
-	//
-	//  process
-	//
-
-    p = (struct process_d *) processList[current_process];
-
-    if ( (void *) p == NULL )
-    {
-        panic ("fflush: p\n");
-        //refresh_screen ();
-        //return (int) (-1);
-
-    }else{
-
-	    //p_stdin = (FILE *) p->Streams[0];  
-	    //p_stdout = (FILE *) p->Streams[1]; 
-	    //p_stderr = (FILE *) p->Streams[2]; 
-
-
-        for ( i=0; i<32; i++ )
+        __P = (struct process_d *) processList[current_process];
+        
+        if ( (void *) __P == NULL )
         {
-            p_stream = (FILE *) p->Streams[i];
-
-			// Found.
-            if ( stream == p_stream )
+			//#debug 
+            panic ("fflush: __P\n");
+            
+            return (int) -1;
+        }
+         
+         
+        for (i=0; i<32; i++)
+        {
+            __tmp_stream = (FILE *) __P->Streams[i];
+            
+            if ( (void *) __tmp_stream != NULL )
             {
-                goto found;   
+                __ret |= __do_fflush (__tmp_stream);
             }
         }
 
-        goto not_found;
-    };
 
+        return (int) __ret;
+    }
 
-
-found:
-
-    switch (i)
-    {
-        case 0:
-			//printf ("fflush: The index is 0\n");
-			//stdin = stream;
-			goto done;
-			break;
-
-        case 1:
-			//printf ("fflush: The index is 1\n");
-			//fprintf (stdout, stream->_base );
-			//for ( j=0; j < stdout->_bufsiz; j++ )
-			//{
-			//	stdout->_ptr[j] = stream->_base[j];	
-			//}
-			//stdout = stream;
-			//stdio_file_write ( FILE *stream, char *string, int len );
-			goto print_stdout;
-			break;
-
-        case 2:
-			//printf ("fflush: The index is 2\n");
-			//fprintf (stderr, stream->_base );
-			//for ( j=0; j < stderr->_bufsiz; j++ )
-			//{
-			//	stderr->_ptr[j] = stream->_base[j];	
-			//}			
-			//stderr = stream;
-			//stdio_file_write ( FILE *stream, char *string, int len );
-			goto done;
-			break;
-			
-        default:
-			printf ("fflush: default index\n");
-			refresh_screen ();
-	        goto done;
-			break;
-    };
-	
-	
-print_stdout:
-    goto done;
-
-
-not_found:
-    printf ("fflush: not found\n");
-    refresh_screen ();
-    //goto done;
-
-
-done:
-
-	//vamos pintar mesmo que não tenhamos encontrado um '\n'
-    CurrentTTY->print_pending = 1;
-
-    return 0;
+    // Para apenas uma stream.
+    return (int) __do_fflush (stream);
 }
+
 
 
 
@@ -1346,9 +1336,9 @@ int fgetc ( FILE *stream ){
 		    //Pega o char no posicionamento absoluto do arquivo
 		    ch = (int) *stream->_p;
 				
-			stream->_p++;
-		    stream->_cnt--;
-			
+            stream->_p++;
+            stream->_cnt--;
+
 		    return (int) ch;
 		
 		}
@@ -1483,10 +1473,11 @@ done:
 
 int fputc ( int ch, FILE *stream ){
 
+
     if ( (void *) stream == NULL )
     {
-	    return (int) (-1);
-		
+        return (int) (-1);
+
     }else{
 
 		// se tivermos um posicionamento válido de escrita no buffer ou
@@ -1506,16 +1497,41 @@ int fputc ( int ch, FILE *stream ){
 		// if ( stream->_w-- >= 0 || 
 		//      ( stream->_w >= stream->_lbfsize && (char) ch != '\n' ) )
 
-		
-		sprintf ( stream->_p, "%c", ch);
-		stream->_p++;
-		stream->_w++;
-		stream->_cnt--;
-		
+        // Buffer is not full.
+        // Quanto falta para acabar.
+        if ( stream->_cnt > 0 && ch != '\n' )
+        {    
+             stream->_cnt--;
+
+             sprintf ( stream->_p, "%c", ch);
+             stream->_p++;
+            
+             stream->_w++; 
+             
+             return (int) ch;  
+        }
+        
+        // se o buffer está cheio.
+        
+        /*
+        //Now writing. 
+        if (stream->flags & _IORW)
+        {
+            stream->flags &= ~_IOREAD;
+            stream->flags |= _IOWRITE;
+        }
+        */        
+        
+        //File is not writable. 
+        //if (!(stream->flags & _IOWRITE))
+             //return (EOF);        
+        
+        
+        // ...
     };
 
-
-    return 0;
+    //fail
+    return (int) (-1);
 }
 
 

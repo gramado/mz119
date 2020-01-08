@@ -529,10 +529,13 @@ typedef __off_t fpos_t;
  * by a three-character attempt at a mnemonic.
  */
 
+
 /* stdio buffers */
+
 struct __sbuf {
-	unsigned char *_base;
-	int	_size;
+
+    unsigned char *_base;
+    int _size;
 };
 
 
@@ -553,65 +556,66 @@ struct _iobuf
 	// #importante
 	// Vamos tornar a estrutura em kernel mode igual a estrutura de ring3;
 	
-	int used;
-	int magic;
-	
-	int iopl;	
-	
+    int used;
+    int magic;
+
+    int iopl;
+
 	//Current position of file pointer (absolute address).
-	unsigned char *_p;    
-	
+    unsigned char *_p;    
+
 	// read space left for getc()
-	int	_r;
-	
+    int _r;
+
 	// write space left for putc()
-	int	_w;	
-	
+    int _w;
+
 	// flags, below; this FILE is free if 0 	
 	// Flags (see FileFlags). the state of the stream
-	short	_flags;		    
-	
+    short _flags;
+
+
 	// fileno, if Unix descriptor, else -1
 	// UNIX System file descriptor
-	short	_file;	
+    short _file;
 
-	
+
 	// the buffer (at least 1 byte, if !NULL)
-	struct	__sbuf _bf;	           
-		
+    struct __sbuf _bf;
+
 	// 0 or -_bf._size, for inline putc 
-	int	_lbfsize;	 	
+    int _lbfsize;
 
 	//operations 
 	//#todo: olhar __P em sys/cdefs.h
-	void	*_cookie;	                 // cookie passed to io functions 
-	int	(*_close) __P((void *));
-	int	(*_read)  __P((void *, char *, int));
-	fpos_t	(*_seek)  __P((void *, fpos_t, int));
-	int	(*_write) __P((void *, const char *, int));
-	
+    void *_cookie;                 // cookie passed to io functions 
+    int (*_close) __P((void *));
+    int (*_read)  __P((void *, char *, int));
+    fpos_t (*_seek)  __P((void *, fpos_t, int));
+    int (*_write) __P((void *, const char *, int));
+
 	//file extension 
-	struct	__sbuf _ext;	
-	
+    struct __sbuf _ext;
+
 	// separate buffer for long sequences of ungetc() 
 	// saved _p when _p is doing ungetc data 
-	unsigned char *_up;
+    unsigned char *_up;
 	// saved _r when _r is counting ungetc data
-	int	_ur;		         	
-	
+    int _ur;
+
 	
 	// tricks to meet minimum requirements even when malloc() fails 
-	unsigned char _ubuf[3];	// guarantee an ungetc() buffer 
-	unsigned char _nbuf[1];	// guarantee a getc() buffer 	
+    unsigned char _ubuf[3];   // guarantee an ungetc() buffer 
+    unsigned char _nbuf[1];   // guarantee a getc() buffer 	
 	
 	
 	//separate buffer for fgetln() when line crosses buffer boundary 
-	struct	__sbuf _lb;	// buffer for fgetln() 
+    struct __sbuf _lb;	// buffer for fgetln() 
 
 	//Unix stdio files get aligned to block boundaries on fseek() 
-	int	_blksize;	    // stat.st_blksize (may be != _bf._size) 
-	fpos_t	_offset;	// current lseek offset 		
-	
+    int _blksize;       // stat.st_blksize (may be != _bf._size) 
+    fpos_t _offset;     // current lseek offset 		
+
 
     // 1= is a device; 0= is a file.
     // Se é um dispositivo ou não.
@@ -626,11 +630,12 @@ struct _iobuf
 	// isso pertence a estrutura no formato antigo
 	// e os elementos ainda estão presentes em várias rotinas.
 	//No futuro vamos deletar isso. (Talvez não.)
-	int   _cnt;
-	unsigned char *_base;    
-	int   _charbuf;
-	char *_tmpfname;
+    int   _cnt;
+    unsigned char *_base;    
+    int   _charbuf;
+    char *_tmpfname;
 };
+
 /*
     Fluxo padrão. Também conhecidos como descritores padrão.
 
