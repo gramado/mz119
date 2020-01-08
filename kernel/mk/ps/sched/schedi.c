@@ -86,8 +86,9 @@ int do_waitpid (pid_t pid, int *status, int options){
 	//aqui precisamos dar informações sobre o status 
 	//do processo
 
+    // #bugbug: Isso pode ter falhado.
     //fake value. 
-    *status = 1; 
+    //*status = 1; 
 
 
     printf ("do_waitpid: done. \n");
