@@ -52,22 +52,6 @@ ARCH ?= x86
 # include/kernel/config/config.h for the kernel.
 
 
-#funciona
-#CFLAGS = -m32 \
-#	--std=gnu89 \
-#	-nodefaultlibs \
-#	-nostdinc \
-#	-nostdlib \
-#	-static \
-#	-fgnu89-inline \
-#	-ffreestanding \
-#	-fno-builtin \
-#	-fno-pie \
-#	-no-pie \
-#	-fleading-underscore \
-#	-fno-stack-protector \
-#	-s   
-
 
 #tests
 CFLAGS = -m32 \
@@ -85,30 +69,6 @@ CFLAGS = -m32 \
 	-fno-stack-protector \
 	-s \
 	-Werror=strict-prototypes 
-
-
-	#importante:
-	##todo estamos incluindo essa flag, para isso temos que editar 
-	#os argumentos em muitas funções ainda..
-	#-Werror=strict-prototypes  
-
-
-
-#testando esses
-#	-Wno-trigraphs \
-#	-Wno-format-security \
-#	-fno-strict-aliasing \
-#    -Werror=implicit-int \
-#	-Werror=implicit-function-declaration \
-#	-fshort-wchar \
-#	-Wundef 	
-#testing ...
-#-Wall                        fail
-#-fno-common                  fail
-#-Werror=strict-prototypes    fail	 Warn for functions declared or defined without specified argument types.
-#-E                           fail
-#-Wunused-function
-#-Wmissing-prototypes
 
 
 
@@ -488,7 +448,7 @@ vhd-x86:
 # Copy content to disk
 # 1) BM, BL 
 # 2) KERNEL 
-# 3) INIT, SHELL, TASKMAN
+# 3) INIT
 vhd-copy-files:
 
 
