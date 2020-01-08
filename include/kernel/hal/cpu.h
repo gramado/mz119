@@ -14,30 +14,24 @@
  */
  
 
-/*
- * Processors support.
- */
 
+// Supported brands.
 #define Processor_NULL  0 
 #define Processor_INTEL 1
 #define Processor_AMD   2
-//#define Processor_ARM   3
+
+// #todo:
+// More brands.
+// #define Processor_ARM   3
 //...
 
 
 
-/* 
- * System Modes support.
- */
-
-// #todo
-// Esses modos são específicos da arquitetura Intel.
-// Deve mudar de pasta.
-
-#define SI_RM 0    //Real Mode.
-#define SI_PM 1    //Protected Mode.
-#define SI_LM 2    //Long Mode.
-#define SI_SM 3    //SMM.
+// Intel modes.
+#define SI_RM 0    // Real Mode.
+#define SI_PM 1    // Protected Mode.
+#define SI_LM 2    // Long Mode.
+#define SI_SM 3    // SMM.
 
 
 
@@ -262,10 +256,9 @@ struct ProcessorBlock_d
     struct thread_d *CurrentThread;    
     struct thread_d *NextThread;
     struct thread_d *IdleThread;
-    //...	
+    //...
 
-
-    //Continua ...
+    // ...
 };
 
 

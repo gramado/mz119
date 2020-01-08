@@ -1,13 +1,19 @@
  
   This is the folder for the kernelbase's source code.
   Everything here is gonna run in ring 0, 32bit protected mode.
+
+
+	2020 - Fred Nora
  
  
  List of folders:
  ================
 
-/arch/x86/entry
-    Entry point for x86 archtechture.
+/arch
+    Entry point for different archtechtures.
+
+/devices
+    Device manager support.
 
 /execve
     Executive layer inside the kernel base.
@@ -36,8 +42,4 @@
     It runs on ring 0, inside the kernel base.
     The main parts are, ipc, memory management and scheduler.
     	    
-/system
-    Some system management support.
 
-
-	2019 - Fred Nora.
