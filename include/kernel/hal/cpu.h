@@ -40,11 +40,10 @@
  * Structures.
  */  
   
-// #bugbug
-// Os elementos dessa estrutura são específicos da Intel
-// ou pertencem à todos os processadores.
-  
-//Informações sobre um processador.  
+ 
+// processor info
+// #bugbug: This is only for Intel.
+
 struct tagProcessor   
 {
 
@@ -80,7 +79,7 @@ struct tagProcessor
 	
 	//0x0.
 	//cpuid vars.
-	unsigned long Vendor[4];
+    unsigned long Vendor[4];
 
 
 	//0x1(eax)
@@ -118,7 +117,7 @@ struct tagProcessor
 	//6 PAE Physical Address Extensions
 	//7 MCE Machine Check Exception
 	//8 CX8 CMPXCHG8B Inst.
-	unsigned long isApic;    //O processador suporta APIC.	
+    unsigned long isApic;    //O processador suporta APIC.	
 	//10 n/a Reserved
 	//11 SEP SYSENTER and SYSEXIT
 	//12 MTRR Memory Type Range Registers
@@ -149,26 +148,26 @@ struct tagProcessor
     unsigned long MaxFeatureId;
 	
     //0x80000002,0x80000003,0x80000004 (Brand name)	
-	unsigned long BrandName[4*3];
+    unsigned long BrandName[4*3];
 	
 	//0x80000006(ecx) (L2 cache information (Intel)).
-	unsigned long L2LineSize;
-	unsigned long L2Associativity;
-	unsigned long L2Cachesize;
-	
-	unsigned long L1LineSize; 	
-	unsigned long L3LineSize;
-	
-	unsigned long L1Associativity;
-	unsigned long L3Associativity;
-	
-	unsigned long L1Cachesize;
-	unsigned long L3Cachesize;
-	
+    unsigned long L2LineSize;
+    unsigned long L2Associativity;
+    unsigned long L2Cachesize;
+
+    unsigned long L1LineSize;
+    unsigned long L3LineSize;
+
+    unsigned long L1Associativity;
+    unsigned long L3Associativity;
+
+    unsigned long L1Cachesize;
+    unsigned long L3Cachesize;
+
 	
 	//0x80000008(eax??) (Virtual and physical memory sizes.)
-	unsigned long Physical_Address_Size;
-	unsigned long Virtual_Address_Size;
+    unsigned long Physical_Address_Size;
+    unsigned long Virtual_Address_Size;
 	//...
 	
 	
@@ -177,10 +176,10 @@ struct tagProcessor
 	
 	// cada processador tem sua gdt, idt, tss.
 	// #todo usar ponteiro para estrutura.
-	
-	unsigned long Gdt;
-	unsigned long Idt;
-	unsigned long Tss;
+
+    unsigned long Gdt;
+    unsigned long Idt;
+    unsigned long Tss;
 
 
 
