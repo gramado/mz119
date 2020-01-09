@@ -10,10 +10,10 @@
 # We will have a new name just when the release changes.
 
 VERSION = 1
-PATCHLEVEL = 21
+PATCHLEVEL = 22
 SUBLEVEL = 0
-EXTRAVERSION = 0
-NAME = Userland
+EXTRAVERSION = -rc0
+NAME = 
 
 
 
