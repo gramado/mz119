@@ -12,8 +12,8 @@
 VERSION = 1
 PATCHLEVEL = 21
 SUBLEVEL = 0
-EXTRAVERSION = -rc12
-NAME = 
+EXTRAVERSION = 0
+NAME = Userland
 
 
 
@@ -459,49 +459,31 @@ vhd-copy-files:
 # ======== Files in the root dir. ========
 #
 
-
-#init/init2
-	sudo cp bin/INIT2.BIN      /mnt/gramadovhd
-
-#init/sys
-	sudo cp bin/GRAMMGR.BIN    /mnt/gramadovhd
-
-
 # bin/boot
 	sudo cp bin/boot/BM.BIN       /mnt/gramadovhd
 	sudo cp bin/boot/BL.BIN       /mnt/gramadovhd
 
-# user/config
-	sudo cp user/config/USER.TXT     /mnt/gramadovhd
-	sudo cp user/config/INIT.TXT     /mnt/gramadovhd
-	sudo cp user/config/GUI.TXT      /mnt/gramadovhd
-	sudo cp user/config/GRAMADO.TXT  /mnt/gramadovhd
+
+#userland
+	sudo cp userland/bin/INIT2.BIN      /mnt/gramadovhd
+	sudo cp userland/bin/GRAMMGR.BIN    /mnt/gramadovhd
+	sudo cp userland/bin/NC2.FON        /mnt/gramadovhd
+	sudo cp userland/GUI.TXT            /mnt/gramadovhd
+	sudo cp userland/GRAMADO.TXT        /mnt/gramadovhd
+	sudo cp userland/INIT.TXT           /mnt/gramadovhd
+	sudo cp userland/USER.TXT           /mnt/gramadovhd
+	sudo cp  userland/bmp/APP.BMP       /mnt/gramadovhd
+	sudo cp  userland/bmp/BMP1.BMP      /mnt/gramadovhd
+	sudo cp  userland/bmp/CURSOR.BMP    /mnt/gramadovhd
+	-sudo cp userland/bmp/DENNIS.BMP    /mnt/gramadovhd
+	sudo cp  userland/bmp/FILE.BMP      /mnt/gramadovhd
+	sudo cp  userland/bmp/FOLDER.BMP    /mnt/gramadovhd
+	-sudo cp userland/bmp/GRAMADO.BMP   /mnt/gramadovhd
+	sudo cp  userland/bmp/MOUSE.BMP     /mnt/gramadovhd
+	sudo cp  userland/bmp/TERMINAL.BMP  /mnt/gramadovhd
 
 
-
-# bitmaps
-	sudo cp kernel/kservers/kgws/bmp/APP.BMP       /mnt/gramadovhd
-	sudo cp kernel/kservers/kgws/bmp/BMP1.BMP      /mnt/gramadovhd
-	sudo cp kernel/kservers/kgws/bmp/CURSOR.BMP    /mnt/gramadovhd
-	-sudo cp kernel/kservers/kgws/bmp/DENNIS.BMP   /mnt/gramadovhd
-	sudo cp kernel/kservers/kgws/bmp/FILE.BMP      /mnt/gramadovhd
-	sudo cp kernel/kservers/kgws/bmp/FOLDER.BMP    /mnt/gramadovhd
-	-sudo cp kernel/kservers/kgws/bmp/GRAMADO.BMP  /mnt/gramadovhd
-	sudo cp kernel/kservers/kgws/bmp/MOUSE.BMP     /mnt/gramadovhd
-	sudo cp kernel/kservers/kgws/bmp/TERMINAL.BMP  /mnt/gramadovhd
-
-
-
-# fonts
-	sudo cp bin/NC2.FON /mnt/gramadovhd
-
-
-
-
-# Get available apps.
-
-
-# garden/apps
+# garden
 
 	#gwin
 	-sudo cp ../garden/bin/GWINMGR.BIN   /mnt/gramadovhd
@@ -528,7 +510,7 @@ vhd-copy-files:
 #	-sudo cp ../garden/bin/GDETM.BIN     /mnt/gramadovhd 
 
 
-# atacama/cmd
+# atacama
 	-sudo cp ../atacama/bin/TRUE.BIN      /mnt/gramadovhd
 	-sudo cp ../atacama/bin/FALSE.BIN     /mnt/gramadovhd
 #	-sudo cp ../atacama/bin/CAT.BIN       /mnt/gramadovhd
@@ -561,6 +543,9 @@ vhd-copy-files:
 	-sudo cp ../atacama/gt/tests/TEST2.C    /mnt/gramadovhd
 	-sudo cp ../atacama/gt/tests/TEST3.C    /mnt/gramadovhd
 	-sudo cp ../atacama/gt/tests/*.LUA      /mnt/gramadovhd
+
+
+
 
 
 #
@@ -599,14 +584,9 @@ vhd-copy-files:
 # ======== Files in the /BOOT/ folder. ========
 #
 
-# principais.
-# Serão carregados por bl.bin. 
 	sudo cp bin/boot/KERNEL.BIN   /mnt/gramadovhd/BOOT
-
-#CANCELADO!
-	#sudo cp bin/boot/INIT.BIN     /mnt/gramadovhd/BOOT
-	#sudo cp bin/boot/SHELL.BIN    /mnt/gramadovhd/BOOT
-	#sudo cp bin/boot/TASKMAN.BIN  /mnt/gramadovhd/BOOT
+	sudo cp bin/boot/BM.BIN       /mnt/gramadovhd/BOOT
+	sudo cp bin/boot/BL.BIN       /mnt/gramadovhd/BOOT
 
 
 #colocaremos drivers e servidores na pasta boot/

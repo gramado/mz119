@@ -34,7 +34,7 @@ CFLAGS = -m32 \
 
 #all: main.o all-c jackpot-link finalize clean
 all: main.o all-c nc2-link finalize clean
-	@echo "Ok?"
+	@echo "nc2 Ok?"
 
 main.o:
 #	gcc  -c  gde.c $(CFLAGS) -o gde.o
@@ -50,7 +50,8 @@ nc2-link:
 	ld -m elf_i386 -T link.ld -o NC2.FON nc2.o -Map map.s
 
 finalize:
-	-cp NC2.FON ../../../bin/
+	#userland/bin
+	-cp NC2.FON ../../bin/
 	
 clean:
 	-rm *.o

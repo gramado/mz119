@@ -25,10 +25,15 @@ CFLAGS = -m32 \
 	
 
 
-API     = ../../lib/uapi/libgui/include/
-APIOBJ  = ../../lib/uapi/libgui/obj
-LIBC    = ../../lib/uapi/libc/include/
-LIBCOBJ = ../../lib/uapi/libc/obj
+#API     = ../../lib/uapi/libgui/include/
+#APIOBJ  = ../../lib/uapi/libgui/obj
+#LIBC    = ../../lib/uapi/libc/include/
+#LIBCOBJ = ../../lib/uapi/libc/obj
+
+API     = ../../uapi/libgui/include/
+APIOBJ  = ../../uapi/libgui/obj
+LIBC    = ../../uapi/libc/include/
+LIBCOBJ = ../../uapi/libc/obj
 
 
 	#
@@ -81,6 +86,7 @@ shell-link:
 	ld -m elf_i386 -T link.ld -o GRAMMGR.BIN $(myObjects) -Map map.s
 
 finalize:
+	#userland/bin
 	cp GRAMMGR.BIN ../../bin/
 
 clean:

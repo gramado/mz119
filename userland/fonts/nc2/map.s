@@ -24,14 +24,9 @@ Linker script and memory map
 .eh_frame       0x0000000000001000       0x38
  .eh_frame      0x0000000000001000       0x38 nc2.o
 
-.note.gnu.property
-                0x0000000000001038       0x1c
- .note.gnu.property
-                0x0000000000001038       0x1c nc2.o
-
-.rel.dyn        0x0000000000001054        0x0
- .rel.got       0x0000000000001054        0x0 nc2.o
- .rel.iplt      0x0000000000001054        0x0 nc2.o
+.rel.dyn        0x0000000000001038        0x0
+ .rel.got       0x0000000000001038        0x0 nc2.o
+ .rel.iplt      0x0000000000001038        0x0 nc2.o
 
 .data           0x0000000000002000     0x1000
                 0x0000000000002000                data = .
@@ -64,9 +59,9 @@ Linker script and memory map
 LOAD nc2.o
 OUTPUT(NC2.FON elf32-i386)
 
-.comment        0x0000000000000000       0x1a
- .comment       0x0000000000000000       0x1a nc2.o
-                                         0x1b (size before relaxing)
+.comment        0x0000000000000000       0x11
+ .comment       0x0000000000000000       0x11 nc2.o
+                                         0x12 (size before relaxing)
 
 .note.GNU-stack
                 0x0000000000000000        0x0
