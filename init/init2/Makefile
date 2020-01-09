@@ -26,11 +26,11 @@ CFLAGS = -m32 \
 	
 
 
-API     = ../../lib/gramlibs/api02/include/
-APIOBJ  = ../../lib/gramlibs/api02/obj
+API     = ../../lib/uapi/libgui/include/
+APIOBJ  = ../../lib/uapi/libgui/obj
 
-LIBC    = ../../lib/gramlibs/libc02/include/
-LIBCOBJ = ../../lib/gramlibs/libc02/obj
+LIBC    = ../../lib/uapi/libc/include/
+LIBCOBJ = ../../lib/uapi/libc/obj
 
 
 	#

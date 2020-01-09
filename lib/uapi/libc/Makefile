@@ -48,7 +48,7 @@ CFLAGS = -m32 \
 
 #all: main.o all-c jackpot-link finalize clean
 all: main.o all-c libc-link finalize clean
-	@echo "Ok?"
+	@echo "libc Ok?"
 
 main.o:
 #	nothing...
@@ -82,16 +82,16 @@ all-c:
 	
 	
 # outros	
-	gcc  -c  conio.c   $(CFLAGS) -I. -I include/ -o conio.o
-	gcc  -c  string.c  $(CFLAGS) -I. -I include/ -o string.o	
-	gcc  -c  time.c    $(CFLAGS) -I. -I include/ -o time.o	
-	gcc  -c  wait.c    $(CFLAGS) -I. -I include/ -o wait.o		
-	gcc  -c  math.c    $(CFLAGS) -I. -I include/ -o math.o			
-	
-	gcc  -c  strtoul.c    $(CFLAGS) -I. -I include/ -o strtoul.o			
-	gcc  -c  strtol.c    $(CFLAGS) -I. -I include/ -o strtol.o			
+	gcc  -c  conio.c    $(CFLAGS) -I. -I include/ -o conio.o
+	gcc  -c  string.c   $(CFLAGS) -I. -I include/ -o string.o
+	gcc  -c  time.c     $(CFLAGS) -I. -I include/ -o time.o
+	gcc  -c  wait.c     $(CFLAGS) -I. -I include/ -o wait.o
+	gcc  -c  math.c     $(CFLAGS) -I. -I include/ -o math.o
+	gcc  -c  strtoul.c  $(CFLAGS) -I. -I include/ -o strtoul.o
+	gcc  -c  strtol.c   $(CFLAGS) -I. -I include/ -o strtol.o
 #...	
 
+ 
  
 # test
 # entry point para a biblioteca compartilhada. .so
@@ -112,15 +112,15 @@ all-c:
 
 #create 'ar'
 libc-link:
-	ar rc LIBC02.A $(OBJECTS)
-	ld -m elf_i386 socrt0.o somain.o -nostdlib -T elf_ia32_efi.lds -shared -znocombreloc -Bsymbolic -L . -l:LIBC02.A -o LIBC02.SO -Map map.s
+	ar rc LIBC.A $(OBJECTS)
+	ld -m elf_i386 socrt0.o somain.o -nostdlib -T elf_ia32_efi.lds -shared -znocombreloc -Bsymbolic -L . -l:LIBC.A -o LIBC.SO -Map map.s
+
 
 finalize:
-#	cp JACKPOT.BIN  ../../../bin
-	-mkdir obj/
-	-cp *.o obj/
-	-cp LIBC02.A obj/
-	-cp LIBC02.SO obj/
+	-mkdir       obj/
+	-cp *.o      obj/
+	-cp LIBC.A   obj/
+	-cp LIBC.SO  obj/
 	
 	
 	

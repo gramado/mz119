@@ -9,5 +9,6 @@ Folders:
     /fonts 
         fonts used by gramado.
 
-    /lib/gramlibs
-        Libs usadas pelo gramado.
+    /uapi
+        ring 3 libs.
+        used by init.bin and some other gramado apps in ring 3.

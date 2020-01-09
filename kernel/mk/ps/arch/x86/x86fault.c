@@ -9,6 +9,12 @@
  */
 
 
+// See: 
+// https://wiki.osdev.org/Exceptions
+// ...
+
+
+
 #include <kernel.h>
 
 
@@ -62,11 +68,12 @@ void faults ( unsigned long number ){
         
     
 	//
-	//   ## Thread ##
+	// Thread.
 	//
 	
 	// #test
 	// Filtrar current_thread.
+	// #todo max.
 	
 	if ( current_thread < 0 )
 	{

@@ -178,7 +178,7 @@ Linker script and memory map
                 0x000000000040335e                apiGetSysTimeInfo
                 0x000000000040337c                apiShowWindow
  .text          0x0000000000403398        0x0 ctype.o
- .text          0x0000000000403398     0x23d9 stdio.o
+ .text          0x0000000000403398     0x23d5 stdio.o
                 0x00000000004033e0                stdio_atoi
                 0x00000000004034a7                stdio_fntos
                 0x00000000004035d1                fclose
@@ -193,134 +193,134 @@ Linker script and memory map
                 0x0000000000403c41                printf2
                 0x0000000000403dc6                sprintf
                 0x0000000000403e1b                putchar
-                0x0000000000403e3c                outbyte
-                0x0000000000403ffa                _outbyte
-                0x0000000000404029                input
-                0x0000000000404186                getchar
-                0x00000000004041a1                stdioInitialize
-                0x0000000000404229                fflush
-                0x000000000040424a                fprintf
-                0x000000000040426b                fputs
-                0x000000000040428c                gets
-                0x000000000040431b                ungetc
-                0x0000000000404325                ftell
-                0x000000000040432f                fileno
-                0x0000000000404339                fgetc
-                0x000000000040435a                feof
-                0x000000000040437b                ferror
-                0x000000000040439c                fseek
-                0x00000000004043bd                fputc
-                0x00000000004043de                stdioSetCursor
-                0x00000000004043f9                stdioGetCursorX
-                0x0000000000404414                stdioGetCursorY
-                0x000000000040442f                scanf
-                0x00000000004045d0                sscanf
-                0x000000000040478b                kvprintf
-                0x00000000004055f5                printf
-                0x000000000040561f                vfprintf
-                0x0000000000405694                vprintf
-                0x00000000004056b3                stdout_printf
-                0x00000000004056df                stderr_printf
-                0x000000000040570b                perror
-                0x0000000000405722                rewind
-                0x000000000040575d                snprintf
- .text          0x0000000000405771     0x105e stdlib.o
-                0x000000000040578e                rtGetHeapStart
-                0x0000000000405798                rtGetHeapEnd
-                0x00000000004057a2                rtGetHeapPointer
-                0x00000000004057ac                rtGetAvailableHeap
-                0x00000000004057b6                heapSetLibcHeap
-                0x0000000000405869                heapAllocateMemory
-                0x0000000000405a9b                FreeHeap
-                0x0000000000405aa5                heapInit
-                0x0000000000405c38                stdlibInitMM
-                0x0000000000405c9b                libcInitRT
-                0x0000000000405cbd                rand
-                0x0000000000405cda                srand
-                0x0000000000405ce8                xmalloc
-                0x0000000000405d1a                stdlib_die
-                0x0000000000405d50                malloc
-                0x0000000000405d8c                realloc
-                0x0000000000405dc9                free
-                0x0000000000405dcf                calloc
-                0x0000000000405e15                zmalloc
-                0x0000000000405e51                system
-                0x0000000000406215                stdlib_strncmp
-                0x0000000000406278                __findenv
-                0x0000000000406343                getenv
-                0x0000000000406370                atoi
-                0x0000000000406437                reverse
-                0x000000000040649f                itoa
-                0x000000000040654d                abs
-                0x000000000040655d                strtod
-                0x000000000040678e                strtof
-                0x00000000004067aa                strtold
-                0x00000000004067bd                atof
- .text          0x00000000004067cf      0x774 string.o
-                0x00000000004067cf                memcmp
-                0x0000000000406834                strdup
-                0x0000000000406886                strndup
-                0x00000000004068e7                strrchr
-                0x0000000000406922                strtoimax
-                0x000000000040692c                strtoumax
-                0x0000000000406936                strcasecmp
-                0x000000000040699e                strncpy
-                0x00000000004069f4                strcmp
-                0x0000000000406a59                strncmp
-                0x0000000000406abc                memset
-                0x0000000000406b03                memoryZeroMemory
-                0x0000000000406b2a                memcpy
-                0x0000000000406b67                strcpy
-                0x0000000000406b9b                strcat
-                0x0000000000406bca                bcopy
-                0x0000000000406bf7                bzero
-                0x0000000000406c18                strlen
-                0x0000000000406c46                strnlen
-                0x0000000000406c7a                strcspn
-                0x0000000000406d19                strspn
-                0x0000000000406db8                strtok_r
-                0x0000000000406e9f                strtok
-                0x0000000000406eb7                strchr
-                0x0000000000406ee3                strstr
- .text          0x0000000000406f43       0x89 conio.o
-                0x0000000000406f43                putch
-                0x0000000000406f67                cputs
-                0x0000000000406f9c                getch
-                0x0000000000406fb4                getche
- .text          0x0000000000406fcc      0x208 unistd.o
-                0x0000000000406fcc                gexecve
-                0x000000000040702b                exit
-                0x000000000040704b                fork
-                0x0000000000407063                setuid
-                0x000000000040706d                getpid
-                0x0000000000407085                getppid
-                0x000000000040709d                getgid
-                0x00000000004070a7                dup
-                0x00000000004070b1                dup2
-                0x00000000004070bb                dup3
-                0x00000000004070c5                fcntl
-                0x00000000004070cf                nice
-                0x00000000004070d9                pause
-                0x00000000004070e3                mkdir
-                0x00000000004070f7                rmdir
-                0x0000000000407101                link
-                0x000000000040710b                mlock
-                0x0000000000407115                munlock
-                0x000000000040711f                mlockall
-                0x0000000000407129                munlockall
-                0x0000000000407133                sysconf
-                0x000000000040713d                fsync
-                0x0000000000407147                fdatasync
-                0x0000000000407151                fpathconf
-                0x000000000040715b                pathconf
-                0x0000000000407165                ioctl
-                0x000000000040716f                open
-                0x0000000000407195                close
-                0x00000000004071b3                pipe
- .text          0x00000000004071d4       0x28 stubs.o
-                0x00000000004071d4                gramado_system_call
+                0x0000000000403e38                outbyte
+                0x0000000000403ff6                _outbyte
+                0x0000000000404025                input
+                0x0000000000404182                getchar
+                0x000000000040419d                stdioInitialize
+                0x0000000000404225                fflush
+                0x0000000000404246                fprintf
+                0x0000000000404267                fputs
+                0x0000000000404288                gets
+                0x0000000000404317                ungetc
+                0x0000000000404321                ftell
+                0x000000000040432b                fileno
+                0x0000000000404335                fgetc
+                0x0000000000404356                feof
+                0x0000000000404377                ferror
+                0x0000000000404398                fseek
+                0x00000000004043b9                fputc
+                0x00000000004043da                stdioSetCursor
+                0x00000000004043f5                stdioGetCursorX
+                0x0000000000404410                stdioGetCursorY
+                0x000000000040442b                scanf
+                0x00000000004045cc                sscanf
+                0x0000000000404787                kvprintf
+                0x00000000004055f1                printf
+                0x000000000040561b                vfprintf
+                0x0000000000405690                vprintf
+                0x00000000004056af                stdout_printf
+                0x00000000004056db                stderr_printf
+                0x0000000000405707                perror
+                0x000000000040571e                rewind
+                0x0000000000405759                snprintf
+ .text          0x000000000040576d     0x105e stdlib.o
+                0x000000000040578a                rtGetHeapStart
+                0x0000000000405794                rtGetHeapEnd
+                0x000000000040579e                rtGetHeapPointer
+                0x00000000004057a8                rtGetAvailableHeap
+                0x00000000004057b2                heapSetLibcHeap
+                0x0000000000405865                heapAllocateMemory
+                0x0000000000405a97                FreeHeap
+                0x0000000000405aa1                heapInit
+                0x0000000000405c34                stdlibInitMM
+                0x0000000000405c97                libcInitRT
+                0x0000000000405cb9                rand
+                0x0000000000405cd6                srand
+                0x0000000000405ce4                xmalloc
+                0x0000000000405d16                stdlib_die
+                0x0000000000405d4c                malloc
+                0x0000000000405d88                realloc
+                0x0000000000405dc5                free
+                0x0000000000405dcb                calloc
+                0x0000000000405e11                zmalloc
+                0x0000000000405e4d                system
+                0x0000000000406211                stdlib_strncmp
+                0x0000000000406274                __findenv
+                0x000000000040633f                getenv
+                0x000000000040636c                atoi
+                0x0000000000406433                reverse
+                0x000000000040649b                itoa
+                0x0000000000406549                abs
+                0x0000000000406559                strtod
+                0x000000000040678a                strtof
+                0x00000000004067a6                strtold
+                0x00000000004067b9                atof
+ .text          0x00000000004067cb      0x774 string.o
+                0x00000000004067cb                memcmp
+                0x0000000000406830                strdup
+                0x0000000000406882                strndup
+                0x00000000004068e3                strrchr
+                0x000000000040691e                strtoimax
+                0x0000000000406928                strtoumax
+                0x0000000000406932                strcasecmp
+                0x000000000040699a                strncpy
+                0x00000000004069f0                strcmp
+                0x0000000000406a55                strncmp
+                0x0000000000406ab8                memset
+                0x0000000000406aff                memoryZeroMemory
+                0x0000000000406b26                memcpy
+                0x0000000000406b63                strcpy
+                0x0000000000406b97                strcat
+                0x0000000000406bc6                bcopy
+                0x0000000000406bf3                bzero
+                0x0000000000406c14                strlen
+                0x0000000000406c42                strnlen
+                0x0000000000406c76                strcspn
+                0x0000000000406d15                strspn
+                0x0000000000406db4                strtok_r
+                0x0000000000406e9b                strtok
+                0x0000000000406eb3                strchr
+                0x0000000000406edf                strstr
+ .text          0x0000000000406f3f       0x89 conio.o
+                0x0000000000406f3f                putch
+                0x0000000000406f63                cputs
+                0x0000000000406f98                getch
+                0x0000000000406fb0                getche
+ .text          0x0000000000406fc8      0x208 unistd.o
+                0x0000000000406fc8                gexecve
+                0x0000000000407027                exit
+                0x0000000000407047                fork
+                0x000000000040705f                setuid
+                0x0000000000407069                getpid
+                0x0000000000407081                getppid
+                0x0000000000407099                getgid
+                0x00000000004070a3                dup
+                0x00000000004070ad                dup2
+                0x00000000004070b7                dup3
+                0x00000000004070c1                fcntl
+                0x00000000004070cb                nice
+                0x00000000004070d5                pause
+                0x00000000004070df                mkdir
+                0x00000000004070f3                rmdir
+                0x00000000004070fd                link
+                0x0000000000407107                mlock
+                0x0000000000407111                munlock
+                0x000000000040711b                mlockall
+                0x0000000000407125                munlockall
+                0x000000000040712f                sysconf
+                0x0000000000407139                fsync
+                0x0000000000407143                fdatasync
+                0x000000000040714d                fpathconf
+                0x0000000000407157                pathconf
+                0x0000000000407161                ioctl
+                0x000000000040716b                open
+                0x0000000000407191                close
+                0x00000000004071af                pipe
+ .text          0x00000000004071d0       0x28 stubs.o
+                0x00000000004071d0                gramado_system_call
                 0x0000000000408000                . = ALIGN (0x1000)
- *fill*         0x00000000004071fc      0xe04 
+ *fill*         0x00000000004071f8      0xe08 
 
 .iplt           0x0000000000408000        0x0
  .iplt          0x0000000000408000        0x0 crt0.o

@@ -147,5 +147,5 @@ LOAD somain.o
  .comment       0x0000000000000000       0x11 socrt0.o
                                          0x12 (size before relaxing)
  .comment       0x0000000000000011       0x12 somain.o
-LOAD ./LIBC02.A
-OUTPUT(LIBC02.SO elf32-i386)
+LOAD ./LIBC.A
+OUTPUT(LIBC.SO elf32-i386)
