@@ -1466,6 +1466,41 @@ done:
 }
 
 
+
+// bsd stuff
+/*
+ * Various output routines call wsetup to be sure it is safe to write,
+ * because either _flags does not include __SWR, or _buf is NULL.
+ * _wsetup returns 0 if OK to write, nonzero otherwise.
+ */
+/*
+int __swsetup(FILE *fp)
+int __swsetup(FILE *fp)
+{
+    return -1;
+}
+*/
+
+
+/*
+ * Write the given character into the (probably full) buffer for
+ * the given file.  Flush the buffer out if it is or becomes full,
+ * or if c=='\n' and the file is line buffered.
+ */
+
+// #importante
+// Isso é usado em __sputc no bsd.
+
+/*
+int __swbuf (int c, FILE *fp);
+int __swbuf (int c, FILE *fp)
+{
+    return -1;
+}
+*/
+
+
+
 /*
  *****************************************
  * fputc:
