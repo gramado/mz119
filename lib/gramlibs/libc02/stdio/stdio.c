@@ -757,19 +757,21 @@ int sprintf ( char *out, const char *format, ... ){
 
 
 static void printchar ( char **str, int c ){
-	
-	if (str) 
+
+    if (str) 
     {
 		**str = c;
 		
 		++(*str);
-	
-	}else (void) putchar(c);
-};
+
+
+    }else (void) putchar(c);
+}
+
 
 
 /*
- **********
+ ***********************************************
  * putchar:
  *     Put a char in the screen.
  *     Obs: Isso funciona bem. 
@@ -799,11 +801,18 @@ int putchar (int ch){
 	//stdio_system_call ( 65, (unsigned long) ch, (unsigned long) ch, 
 	//	(unsigned long) ch );
 	
-	gramado_system_call ( 65, (unsigned long) ch, (unsigned long) ch, 
-		(unsigned long) ch );
-	
-	return (int) ch;    
-};
+	//gramado_system_call ( 65, (unsigned long) ch, (unsigned long) ch, 
+		//(unsigned long) ch );
+
+    //#todo: IN: ch, virtual,console id.
+    gramado_system_call ( 65, 
+        (unsigned long) ch,   // ch
+        (unsigned long) 0,    // console id. 0.
+        (unsigned long) 0 );
+
+
+    return (int) ch;    
+}
 
 
 /*
@@ -2191,13 +2200,11 @@ kvprintf ( char const *fmt,
 
 
 static void xxxputchar ( int c, void *arg ){
-	
-	/* add your putchar here */
-	
-	//printf("%c",c);
-	putchar ( (int) c );
-};
 
+    /* add your putchar here */
+
+    putchar ( (int) c );
+}
 
 /*
  *===========================================
@@ -2311,17 +2318,17 @@ int stderr_printf (const char *format, ...)
     va_end (arg);
 
     return done;
-};
+}
 
  
 void perror (const char *str){
 	
     stderr_printf (str);	
-};
+}
  
  
 //#test 
-//?? coisa do c++ 
+// #bugbug: não mexer nos elementos em ring3.
 
 void rewind ( FILE * stream ){
 	

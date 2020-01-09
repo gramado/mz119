@@ -1211,17 +1211,23 @@ void *gde_services ( unsigned long number,
 	// Declarações.
 	//
 
-	//Args. (strings)
-    unsigned char *stringZ = (unsigned char *) arg2;
-    unsigned char *stringZZ = (unsigned char *) arg3;
 
+    // array de longs.
     unsigned long *a2 = (unsigned long*) arg2;
     unsigned long *a3 = (unsigned long*) arg3;
     unsigned long *a4 = (unsigned long*) arg4;
 
+
+	//Args. (strings)
+    unsigned char *stringZ = (unsigned char *) arg2;
+    unsigned char *stringZZ = (unsigned char *) arg3;
+
+    //para strings
     char *aa2 = (char *) arg2;
     char *aa3 = (char *) arg3;
     char *aa4 = (char *) arg4;
+
+
 
     char *tokenList[8];
 
@@ -1327,6 +1333,9 @@ void *gde_services ( unsigned long number,
 
 
 
+    int __len;  //usado para strings.
+    int __i;    //usado na string
+    
     //
     // Profiler
     //
@@ -1747,17 +1756,42 @@ void *gde_services ( unsigned long number,
 		// ficar explícito.
 
 
-
-
         //see: tty/console.c
+        //IN: ch, console id.
 		case SYS_KGWS_PUTCHAR:
-			console_putchar ( (int) arg2, current_vc );
-			//console_putchar ( (int) arg2, (int) arg3 );  //#todo
+			//console_putchar ( (int) arg2, current_vc ); //funciona.
+			console_putchar ( (int) arg2, (int) arg3 );  //#testando
 			break;
 
-		//66 - reservado pra input de usuário.
-		//case 66:
-		//	break;
+
+		// 66
+		// Isso funcionou.
+		// é usado pelas rotinas de prompt em libc03 do atacama.
+		// não deletar :)
+		//IN: string, len 
+        case 66:
+            // Imprime uma string no console atual.
+            // IN: string
+            //printf ("%s", (char *) arg2); //funciona, mas falta refresh.
+            
+            //pega o tamanho da string.
+            __len = strlen( (const char *) arg2 );
+            
+            //compara com o len enviado.
+            if( __len > arg4){ __len = arg4; }
+            if( __len > 128){ __len = 128; }   //tamanho da linha.
+                           
+            for ( __i=0; __i<__len; __i++ )
+            {
+				//IN: ch, console id.
+                console_putchar ( (int) aa2[__i], (int) arg3 );
+                //console_putchar ( (int) arg2[i], (int) arg3 );
+            }
+            //pular linha depois de imprimir a string do buffer.
+            console_putchar ( '\n', (int) arg3);
+            return NULL;
+            break;
+
 
 		//67- reservado pra input de usuário.
 		//case 67:
@@ -2441,6 +2475,10 @@ void *gde_services ( unsigned long number,
 
        //livre    
        case 169:
+           // IN: fd, buf, count.
+           return (void *) sys_write ( (unsigned int) arg2, 
+                               (char *) arg3, 
+                               (int) arg4 );
            break;
 
 

@@ -200,7 +200,9 @@
 #define	SYS_KGWS_PUTCHAR  65
 #define	SYS_PUTCHAR 65
 
-#define	SYS_66 66  //reservado
+
+// r0_printf
+#define  SYS_66  66    
 
 #define	SYS_67 67  //reservado
 
