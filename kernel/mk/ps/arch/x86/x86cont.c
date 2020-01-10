@@ -185,7 +185,7 @@ void save_current_context (void){
 	//
 	// Flag. ??? Saved.
 	//
-};
+}
 
 
 
@@ -293,7 +293,7 @@ void restore_current_context (void){
 	//
 	//flag ??...
 	//
-};
+}
 
 
 /*
@@ -307,6 +307,7 @@ int contextCheckThreadRing0Context (int tid){
  
 
 // Checar um contexto válido para threads em ring 3. 
+// #bugbug: Não usaremos mais isso.
 
 int contextCheckThreadRing3Context (int tid){
 	

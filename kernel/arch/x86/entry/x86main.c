@@ -541,9 +541,11 @@ void x86main (void){
 
         // funcionou no mínimo.
         // com multiplicador 3. quantum = (1*3=3)
-	    set_thread_priority ( (struct thread_d *) RING0IDLEThread,
-	        PRIORITY_MIN );
+        set_thread_priority ( (struct thread_d *) RING0IDLEThread,
+            PRIORITY_MIN );
 
+        //set_thread_priority ( (struct thread_d *) RING0IDLEThread,
+            //PRIORITY_NORMAL );
 
 		// #importante
 		// Sinalizando que ainda não podemos usar as rotinas que dependam

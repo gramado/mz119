@@ -12,7 +12,7 @@ o que dá, à cada 100 milisegundos.
 
 
 #define QUANTUM_BASE   (PRIORITY_NORMAL*TIMESLICE_MULTIPLIER)
-#define QUANTUM_LIMIT  (PRIORITY_REALTIME*TIMESLICE_MULTIPLIER)
+#define QUANTUM_LIMIT  (PRIORITY_MAX *TIMESLICE_MULTIPLIER)
 
 
  As quatro fases da rotina de interrupção com timer:

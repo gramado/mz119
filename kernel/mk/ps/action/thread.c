@@ -882,8 +882,8 @@ get_next:
 		// A prioridade básica da thread é igual a prioridade básica do processo.
 		// Process->base_priority;
 		// priority; A prioridade dinâmica da thread foi passada por argumento.
-		Thread->base_priority = (unsigned long) KernelProcess->base_priority; 
-		Thread->priority = (unsigned long) Thread->base_priority; 			
+		Thread->base_priority = (unsigned long) PRIORITY_NORMAL; 
+		Thread->priority = (unsigned long) Thread->base_priority;			
 		
 		//IOPL.
 		//Se ela vai rodar em kernel mode ou user mode.
@@ -903,7 +903,7 @@ get_next:
 	    // quantum_limit - (9*2);  O boost não deve ultrapassar o limite. 
 		Thread->step = 0;                           
         Thread->quantum = QUANTUM_BASE;    
-        Thread->quantum_limit = QUANTUM_LIMIT; 			
+        Thread->quantum_limit = QUANTUM_LIMIT; 
 		
 		
 		// runningCount - Tempo rodando antes de parar.

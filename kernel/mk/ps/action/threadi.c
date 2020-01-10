@@ -205,8 +205,8 @@ void *KiCreateRing0Idle (void){
 	t->type = TYPE_SYSTEM;  
 	t->state = INITIALIZED; 
 
-	t->base_priority = KernelProcess->base_priority;  //básica.   
-  	t->priority = t->base_priority;                   //dinâmica.
+    t->base_priority = PRIORITY_NORMAL;     //básica.   
+    t->priority = t->base_priority;         //dinâmica.
 	
 	t->iopl = RING0;
 	t->saved = 0;
@@ -220,8 +220,8 @@ void *KiCreateRing0Idle (void){
 
 	//Temporizadores.
 	t->step = 0;
-	t->quantum = QUANTUM_BASE;
-	t->quantum_limit = QUANTUM_LIMIT;	
+    t->quantum = QUANTUM_BASE;
+    t->quantum_limit = QUANTUM_LIMIT;
    
     //Contadores.
 	t->standbyCount = 0;
@@ -292,7 +292,7 @@ void *KiCreateRing0Idle (void){
 	//t->NextProcessor = 0;      //Próximo processador. 
 	
 	//Coloca na lista de estruturas.
-	threadList[ t->tid ] = (unsigned long) t;
+    threadList[ t->tid ] = (unsigned long) t;
 
 	t->Next = NULL;
 	
@@ -311,7 +311,6 @@ void *KiCreateRing0Idle (void){
 	// #todo: Deveríamos apenas incrementá-lo.
 	
 
-	//ProcessorBlock.threads_counter++;
     UPProcessorBlock.threads_counter++;
     
     

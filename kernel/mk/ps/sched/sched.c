@@ -298,9 +298,14 @@ int scheduler (void){
    //#debug
  // printf ("scheduler: 3\n"); 
 	
+	
 	//Next thread.
-    Conductor2->Next = (void *) threadList[next_thread];
-
+    //Conductor2->Next = (void *) threadList[next_thread];
+    Conductor2->Next = (void *) ____IDLE;
+    
+    
+    
+    
 	//
 	//  ## MARCADOR GLOBAL ##
 	//

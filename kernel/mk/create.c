@@ -123,7 +123,7 @@ void *createCreateInitThread (void){
 
 
 	// Page Directory
-	InitThread->DirectoryPA = (unsigned long ) InitProcess->DirectoryPA;	
+	InitThread->DirectoryPA = (unsigned long ) InitProcess->DirectoryPA;
 
 
     // Wait reason.

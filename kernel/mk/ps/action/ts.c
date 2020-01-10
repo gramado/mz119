@@ -368,8 +368,9 @@ try_next:
 		//debug_print(" JUSTONE ");
 		
 		// #bugbug: queremos ____IDLE;
-		Conductor = InitThread;
-
+		//Conductor = InitThread;
+        Conductor = ____IDLE;
+         
 		goto go_ahead;
 	}
 
@@ -412,6 +413,7 @@ try_next:
 	// Se ainda temos threads na lista encadeada, então selecionaremos
 	// a próxima da lista.
 	// #BUGBUG: ISSO PODE SER UM >>> ELSE <<< DO IF ACIMA.
+
 	
     if ( (void *) Conductor->Next != NULL )
     {
