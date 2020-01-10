@@ -6,8 +6,6 @@
 #     2019 - Fred Nora.
 #     2019 - Luciano Gonçalez.
 
-# important
-# We will have a new name just when the release changes.
 
 VERSION = 1
 PATCHLEVEL = 22
@@ -16,10 +14,34 @@ EXTRAVERSION = -rc0
 NAME = 
 
 
+# First of all, lemme discribe this documment!
+# We just have two parts. The kernel and the extra stuff.
+
+## The kernel stuff.
+## Step1 KERNEL.BIN         - Creating the kernel image.
+## Step2 kernel-image-link  - Linking the kernel image.
+## Step3 /mnt/gramadovhd    - Creating the directory to mount the VHD.
+## Step4 vhd-create         - Creating a VHD in Assembly language.
+## Step5 vhd-mount          - Mounting the VHD.
+## Step6 vhd-copy-files     - Copying files into the mounted VHD.
+## Step7 vhd-unmount        - Unmounting the VHD.
+## Step8 clean              - Deleting the object files.           
+
+## The extra stuff.
+## 1) ISO support.
+## 2) HDD support.
+## 3) VM support.
+## 4) Serial debug support.
+## 5) Clean files support.
+## 6) Usage support.
+
 
 # That's our default target when none is given on the command line
 PHONY := _all
-_all: xxx_x86
+_all: all
+
+#Final message.
+	@echo "That's all!"
 
 
 ARCH ?= x86
@@ -153,17 +175,33 @@ ifeq ($(ARCH),arm)
    # NOTHING FOR NOW
 endif
 
+#
+# Begin.
+#
 
-xxx_x86: /mnt/gramadovhd compile-kernel link-x86 vhd-x86 vhd-mount vhd-copy-files vhd-unmount clean
+## =============================================================================
+## The kernel stuff.
+## Step1 KERNEL.BIN         - Creating the kernel image.
+## Step2 kernel-image-link  - Linking the kernel image.
+## Step3 /mnt/gramadovhd    - Creating the directory to mount the VHD.
+## Step4 vhd-create         - Creating a VHD in Assembly language.
+## Step5 vhd-mount          - Mounting the VHD.
+## Step6 vhd-copy-files     - Copying files into the mounted VHD.
+## Step7 vhd-unmount        - Unmounting the VHD.
+## Step8 clean              - Deleting the object files.           
 
-#final message.
+PHONY := all
+
+all: KERNEL.BIN kernel-image-link /mnt/gramadovhd  vhd-create vhd-mount vhd-copy-files vhd-unmount clean
+
 	@echo "Gramado $(VERSION) $(PATCHLEVEL) $(SUBLEVEL) $(EXTRAVERSION) $(NAME) "
 	@echo "Arch x86"
 
 
-compile-kernel:
-
-	@echo "Compiling kernel ..."
+## Step1 KERNEL.BIN         - Creating the kernel image.
+KERNEL.BIN: 
+	@echo "================================="
+	@echo "(Step 1) Creating the kernel image ..."
 
 	# /entry
 	
@@ -389,70 +427,46 @@ compile-kernel:
 	gcc -c kernel/kservers/kgws/kgws.c  -I include/ $(CFLAGS) -o kgws.o
 
 
+## Step2 link-kernel-image  - Linking the kernel image.
+kernel-image-link:
+	@echo "================================="
+	@echo "(Step 2) Linking the kernel image ..."
 
-
-
-link-x86:
 	ld -m elf_i386 -T kernel/link.ld -o KERNEL.BIN $(OBJECTS) -Map docs/kernel.map
-
-#move
 	mv KERNEL.BIN bin/boot/
 
 
 
-#
-# ======== HDD ========
-#
-
-danger-hdd-clone-vhd:
-	sudo dd if=./GRAMADO.VHD of=/dev/sda
-#	sudo dd if=./GRAMADO.VHD of=/dev/sdb
-	
-hdd-mount:
-	-sudo umount /mnt/gramadohdd
-	sudo mount -t vfat -o loop,offset=32256 /dev/sda /mnt/gramadohdd/
-#	sudo mount -t vfat -o loop,offset=32256 /dev/sdb /mnt/gramadohdd/
-	
-hdd-unmount:
-	-sudo umount /mnt/gramadohdd
-	
-hdd-copy-kernel:
-	sudo cp bin/boot/KERNEL.BIN /mnt/gramadohdd/BOOT 
-
-
-#
-# ======== VHD ========
-#
-
-vhd-mount:
-	@echo "Mounting VHD ..."
-	-sudo umount /mnt/gramadovhd
-	sudo mount -t vfat -o loop,offset=32256 GRAMADO.VHD /mnt/gramadovhd/
-
-# umount
-vhd-unmount:
-	@echo "Unmounting VHD ..."
-	sudo umount /mnt/gramadovhd
-
+## Step3 /mnt/gramadovhd    - Creating the directory to mount the VHD.
 /mnt/gramadovhd:
+	@echo "================================="
+	@echo "(Step 3) Creating the directory to mount the VHD ..."
+
 	sudo mkdir /mnt/gramadovhd
 
-vhd-x86:
 
-	@echo "Creating VHD ..."
+## Step4 vhd-create         - Creating a VHD in Assembly language.
+vhd-create:
+	@echo "================================="
+	@echo "(Step 4) Creating a VHD in Assembly language ..."
 
 	nasm -I arch/x86/boot/vhd/stage1/ \
 	-I arch/x86/boot/vhd/vbr/ \
 	-I arch/x86/boot/vhd/footer/ arch/x86/boot/vhd/main.asm  -o  GRAMADO.VHD
 
-# Copy content to disk
-# 1) BM, BL 
-# 2) KERNEL 
-# 3) INIT
+## Step5 vhd-mount          - Mounting the VHD.
+vhd-mount:
+	@echo "================================="
+	@echo "(Step 5) Mounting the VHD ..."
+
+	-sudo umount /mnt/gramadovhd
+	sudo mount -t vfat -o loop,offset=32256 GRAMADO.VHD /mnt/gramadovhd/
+
+
+## Step6 vhd-copy-files     - Copying files into the mounted VHD.
 vhd-copy-files:
-
-
-
+	@echo "================================="
+	@echo "(Step 6) Copying files into the mounted VHD ..."
 
 
 #
@@ -654,13 +668,38 @@ vhd-copy-files:
 
 	-sudo cp arch/x86/boot/vhd/tests/TEST1.ASM  /mnt/gramadovhd/TMP
 
+
+
+## Step7 vhd-unmount        - Unmounting the VHD.
+vhd-unmount:
+	@echo "================================="
+	@echo "(Step 7) Unmounting the VHD ..."
+
+	sudo umount /mnt/gramadovhd
+
+
+## Step8 clean              - Deleting the object files.           
+clean:
+	@echo "================================="
+	@echo "(Step 8) Deleting the object files ..."
+
+	-rm *.o
+	@echo "Success?"
+
+
+## ====================================================================================
+## The extra stuff.
+## 1) ISO support.
+## 2) HDD support.
+## 3) VM support.
+## 4) Serial debug support.
+## 5) Clean files support.
+## 6) Usage support.
 	
 #
 # ======== ISO ======== 
 #
 
-	
-	
 # test
 # todo
 # Create a .ISO file using nasm.
@@ -688,16 +727,41 @@ geniso-x86:
 	@echo "iso Success?"	
 
 
+
+
 #
-# ======== Oracle Virtual Box ======== 
+# ======== HDD ========
 #
+
+	
+hdd-mount:
+	-sudo umount /mnt/gramadohdd
+	sudo mount -t vfat -o loop,offset=32256 /dev/sda /mnt/gramadohdd/
+#	sudo mount -t vfat -o loop,offset=32256 /dev/sdb /mnt/gramadohdd/
+	
+hdd-unmount:
+	-sudo umount /mnt/gramadohdd
+	
+hdd-copy-kernel:
+	sudo cp bin/boot/KERNEL.BIN /mnt/gramadohdd/BOOT 
+
+danger-hdd-clone-vhd:
+	sudo dd if=./GRAMADO.VHD of=/dev/sda
+#	sudo dd if=./GRAMADO.VHD of=/dev/sdb
+
+
+
+
+#
+# ======== VM ========
+#
+
+
+# Oracle Virtual Box 
 oracle-virtual-box-test:
 	VBoxManage startvm "Gramado"
 
-
-#
-# ======== qemu ======== 
-#
+# qemu 
 qemu-test:
 #	-debugcon stdio
 	qemu-system-x86_64 -hda GRAMADO.VHD -m 128 -device e1000 -show-cursor
@@ -706,23 +770,39 @@ qemu-test:
 #	qemu-system-x86_64 -hda GRAMADO.VHD -m 2048 -device e1000 -show-cursor
 
 
-
 #install-kvm-qemu:
 #	sudo pacman -S virt-manager qemu vde2 ebtables dnsmasq bridge-utils openbsd-netcat
 
-#
-# ======== Clean ======== 
-#
 
-clean:
-	-rm *.o
-	@echo "Success?"
-	
-clean2:
-	-rm *.ISO
-	-rm *.VHD
-	
+
+#
+# ======== SERIAL DEBUG ========
+#
 
 serial-debug:
 	cat ./docs/sdebug.txt
 	
+
+#
+# ======== CLEAN ========
+#
+
+clean2:
+	-rm *.ISO
+	-rm *.VHD
+
+
+#
+# ======== USAGE ========
+#
+
+usage:
+	@echo "> make"
+	@echo "> make clean"
+	@echo "> make clean2"
+	@echo "> make qemu-test"
+	@echo "> make oracle-virtual-box-test"
+	@echo "> make vhd-mount"
+	@echo "> make vhd-unmount"
+	@echo "..."
+
