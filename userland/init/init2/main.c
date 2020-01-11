@@ -260,6 +260,22 @@ int main ( int argc, char *argv[] ){
     //asm ("int $129 \n");
     
     
+    //
+    // =============
+    //
+    
+    
+    
+    // #debug
+    // Testando a inicialização da libc usada pelo init.
+    
+    //printf ("init2: Testing printf ...\n");
+    
+    //fprintf (stdout,"init2: Testing stdout ...");
+    //fflush (stdout);
+
+
+    
     // Está funcionando e lançando os filhos.
     //gramado_system_call (900, (unsigned long)"launcher.bin", 0, 0);        
     
@@ -304,27 +320,19 @@ int main ( int argc, char *argv[] ){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-    goto done;
-
-
-//
 // ===============================================
-//
+__loop:
 
+    while (1){
+        asm ("pause");
+    }
 
-// fail 1.
+    goto __loop;
+
+// ===============================================
 fail1:
+
+    __debug_print ("init2: fail \n");
 
     // serial debug
     // __debug_print ("Gramado Core: Run level fail");
@@ -332,31 +340,10 @@ fail1:
 	//window, x, y, color, string.
     apiDrawText ( NULL, 
         0, 0, COLOR_YELLOW, 
-        "Gramado Core: Run level fail" );
+        "init2: fail" );
 
-
-    // Não sairemos, ficaremos no loop.
-    // Isso porque o gramado core executará um novo processo
-    // usando o processo INIT.
-
-
-done:
-
-    __debug_print ("Gramado Core: init done.\n");
-
- 
-    while (1)
-    {
-        asm ("pause");
-    }
-
-    //
-    // Not reached!
-    //
-    
-    return (int) -1;
+    return -1;
 }
-
 
 
 //

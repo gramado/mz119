@@ -36,6 +36,11 @@ extern int main ( int argc, char *argv[] );
  *     feita nessa trhead.
  */
 
+
+// obs:
+// Isso é para o init.
+// Nunca retorna para o kernel.
+
 void crt0 (){
 
     int ExitCode;
@@ -44,6 +49,11 @@ void crt0 (){
 	// #debug
 	// Para certificarmos que o primeiro salto ocorreu, 
 	// vamos pedir para o kernel imprimir uma mensagem.
+	
+	// #bugbug
+	// temos que parar de fazer isso pra aproveitarmos
+	// esse número pra outra coisa.
+
     system_call ( 69, 0, 0, 0 );
     
     
@@ -69,17 +79,20 @@ void crt0 (){
     // #importante
     // O processo init não pode retornar.
     // Qualquer tipo de retorno é inaceitável.
-
+    // Podemos exivir essa mensagem?
+    
 __fatal_error:
 
     printf ("init2.bin-crt0: exit_code=%d *hang!\n", ExitCode );
 
-    while (1)
-    {
+    while (1){
         asm ("pause");
     };
+
     goto __fatal_error;
 }
+
+
 
 
 //

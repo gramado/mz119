@@ -1967,12 +1967,20 @@ input_done:
  * inicialização da paginação.
  */
  
+// Estamos no kernel base em ring 0.
+// Queremos que as streams sejam acessíveis para as rotinas
+// da libc em ring3. Para a libc alterar os elementos
+// da estrutura.
+// #bugbug: Talvez seja possível criar essas estruturas
+// em memória compartilhada, usado o alocaro apropriado.
+// kmalloc com certeza e ring0.
+
 int stdioInitialize (void){
 
     int Status = 0;
     int i;
 
-	// Buffers para as estruturas.
+    // Buffers para as estruturas.
     unsigned char *buffer0;
     unsigned char *buffer1;
     unsigned char *buffer2;
@@ -1981,19 +1989,11 @@ int stdioInitialize (void){
     int cHeight = get_char_height ();
 
 
-    if ( cWidth == 0 || cHeight == 0 )
-    {
-		panic ("stdioInitialize: Char info");
+    if ( cWidth == 0 || cHeight == 0 ){
+        panic ("klibc-stdioInitialize: Char info");
     }
 
 
-	// #todo
-	// podemos usar esse alocador ?? Ainda não ??
-	
-	//stdin = (void *) kmalloc( sizeof(FILE) );
-	//stdout = (void *) kmalloc( sizeof(FILE) );
-	//stderr = (void *) kmalloc( sizeof(FILE) );	
-	
 
 	// #bugbug:
 	//  4KB alocados para cada estrutura. Isso é muito.
@@ -2006,44 +2006,60 @@ int stdioInitialize (void){
 	// 4KB size.
 	// #importante
 	// Obs: Essas páginas são alocadas em user mode.
-	
-	
+
+    // #obs:
+    // Esse alocador usou memória compartilhada ?
+
 	//4KB
     buffer0 = (unsigned char *) newPage (); 
-    if ( (unsigned char *) buffer0 == NULL )
-    {
-		printf ("buffer0\n");
-        goto fail;
+    
+    if ( (unsigned char *) buffer0 == NULL ){
+        panic ("klibc-stdioInitialize: buffer0 \n");
     }
 
 
 	//4KB
     buffer1 = (unsigned char *) newPage ();
-    if ( (unsigned char *) buffer1 == NULL )
-    {
-		printf ("buffer1\n");
-        goto fail;
+
+    if ( (unsigned char *) buffer0 == NULL ){
+        panic ("klibc-stdioInitialize: buffer1 \n");
     }
 
 
 	//4KB
     buffer2 = (unsigned char *) newPage ();
-    if ( (unsigned char *) buffer2 == NULL )
-    {
-		printf ("buffer2\n");
-        goto fail;
+
+    if ( (unsigned char *) buffer0 == NULL ){
+        panic ("klibc-stdioInitialize: buffer2 \n");
     }
 
 
-	//
 	// Alocando memória para o fluxo padrão do 
 	// processo kernel.
 	// Estamos apenas alocando memória para a estrutura.
-	//
-	
-	stdin = (FILE *) &buffer0[0];
-	stdout = (FILE *) &buffer1[0];
-	stderr = (FILE *) &buffer2[0];
+
+    stdin  = (FILE *) &buffer0[0];
+    stdout = (FILE *) &buffer1[0];
+    stderr = (FILE *) &buffer2[0];
+    
+    
+    //
+    // prompt[]
+    //
+
+    // Esses prompts são usados como arquivos.
+    // São buffers para as streams.
+    //See: include/kernel/stdio.h
+    
+    for ( i=0; i<PROMPT_SIZE; i++ )
+    {
+		prompt[i]     = (char) '\0';
+		prompt_out[i] = (char) '\0';
+		prompt_err[i] = (char) '\0';
+    };
+
+    prompt_pos = 0;
+
 
 
     // Configurando a estrutura de stdin. 
@@ -2057,8 +2073,9 @@ int stdioInitialize (void){
 	stdin->_w = 0;
 	stdin->_cnt = PROMPT_SIZE;
 	stdin->_file = 0;
-	stdin->_tmpfname = "k-stdin";
+	stdin->_tmpfname = "kstdin";
 	//...
+
 
     // Configurando a estrutura de stdout.
 	stdout->used = 1;
@@ -2071,9 +2088,10 @@ int stdioInitialize (void){
 	stdout->_w = 0;
 	stdout->_cnt = PROMPT_SIZE;
 	stdout->_file = 1;
-	stdout->_tmpfname = "k-stdout";
+	stdout->_tmpfname = "kstdout";
 	//...
-	
+
+
     // Configurando a estrutura de stderr.
 	stderr->used = 1;
 	stderr->magic = 1234;
@@ -2085,14 +2103,16 @@ int stdioInitialize (void){
 	stderr->_w = 0;
 	stderr->_cnt = PROMPT_SIZE;
 	stderr->_file = 2;
-	stderr->_tmpfname = "k-stderr";
+	stderr->_tmpfname = "kstderr";
 	//...
 
 
     // #importante
     // Salvando os ponteiros na lista de arquivos.
+    // Essas estruturas estão em memória compartilhada ??
+    // A libc em ring3 poderá acessar os elementos dessa estrutura ?
 
-    Streams[__KERNEL_STREAM_STDIN] = (unsigned long) stdin;
+    Streams[__KERNEL_STREAM_STDIN]  = (unsigned long) stdin;
     Streams[__KERNEL_STREAM_STDOUT] = (unsigned long) stdout;
     Streams[__KERNEL_STREAM_STDERR] = (unsigned long) stderr;
 
@@ -2103,96 +2123,53 @@ int stdioInitialize (void){
 	//...
 
 
-
-    //Configurando o array global para ser o 
-    //mesmo que o array local.	
+    // Configurando o array global para ser o 
+    // mesmo que o array local.	
 	gStreams = (unsigned long *) &Streams[0];
-	
+
+
 	//Número de streams no array global
 	g_nstream = NUMBER_OF_FILES;
-	
-	//
+
+
 	// Flag para o tipo de input.
 	// # Multiplas linhas.
-	//
+
 	
 	g_inputmode = INPUT_MODE_MULTIPLE_LINES;
 	
-	
-	//  ## Cursor ##
-	
-	// Inicializa o cursor com margens bem abertas.
-	
-	TTY[current_vc].cursor_left = 0;  //g_cursor_left = (0);
-	TTY[current_vc].cursor_top = 0;  //g_cursor_top = (0); 
 
-	//@todo:
-	//Isso é complicado.
-	//Temos que pegar esses valores.
-	//g_cursor_width = ?;
-	//g_cursor_height = ?;	
-	
-	//#bugbug 
-	//#todo: precisamos as dimensões do char com base na fonte antes de tudo.
-	//?? Talvez aqui devamos inicializar a fonte e as dimensões de char..
-	//pois estamos na inicialização da libc. Mas isso ja pode ter acontecido na 
-	//inicialização do kernel, quando era necessário algum tipo de fonte para 
-	//mensagens de debug.
-	//?? será que já configuramos as dimensões da tela. Devemos usar as variáveis.
-	//?? se as dimensões da tela foram configuradas na inicialização,
-	//então podemos usar as variáveis aqui.
-	
-	//precisamos saber as dimensões da tela e do char.
-	//g_cursor_right = (800/8);
-	//g_cursor_bottom = (600/8);
-	
-	TTY[current_vc].cursor_right = (SavedX/cWidth);    //g_cursor_right = (SavedX/cWidth);
-	TTY[current_vc].cursor_bottom = (SavedY/cHeight);  //g_cursor_bottom = (SavedY/cHeight);
-	
-	
-	
-    //x e y.
-	TTY[current_vc].cursor_x = TTY[current_vc].cursor_left;  //g_cursor_x = g_cursor_left; 
-	TTY[current_vc].cursor_y = TTY[current_vc].cursor_top;   //g_cursor_y = g_cursor_top; 
-
-
-	// Default color.
-	// Não sabemos se o esquema de cores do sistema já
-	// está configurado, então usaremos uma cor padrão.
-	// A QUALQUER HORA O KERNEL PODE ESCREVER NO TERMINAL 
-	// E PARA USARMOS JANELAS PRETAS TEMOS QUE CONFIGURA A 
-	// COR DA FONTE, ENTÃO JANELAS TERÃO FONTE PRETA.
-
-	TTY[current_vc].cursor_color = COLOR_TERMINALTEXT;    //g_cursor_color = COLOR_TERMINALTEXT;
-
-	
-	// #importante:
-	// Preenche os arquivos do fluxo padrão do kernel base
-	// com 'zeros'.
-
-    //See: include/kernel/stdio.h
+    //
+    // Virtual console.
+    //
     
-    //for ( i=0; i<PROMPT_MAX_DEFAULT; i++ )
-    for ( i=0; i<PROMPT_SIZE; i++ )
+    // Configurando o cursor para todos os consoles.
+
+    // See:
+    // tty.h
+    // console.h
+
+    for (i=0; i<4; i++)
     {
-		prompt[i] = (char) '\0';
-		prompt_out[i] = (char) '\0';
-		prompt_err[i] = (char) '\0';
+        TTY[i].cursor_x = 0;   
+        TTY[i].cursor_y = 0;     
+        TTY[i].cursor_left = 0; 
+        TTY[i].cursor_top = 0;  
+        TTY[i].cursor_right  = (SavedX/cWidth);    
+        TTY[i].cursor_bottom = (SavedY/cHeight);  
+
+        TTY[i].cursor_color = COLOR_TERMINALTEXT;  
     };
 
 
-	// Inicializa o deslocamento dentro do arquivo de entrada.
-	// #bugbug @todo: Poderíamos ter posicionamento dentro 
-	// dos 3 arquivos. Mas isso reflete apenas o posicionamento 
-	// dentro de stdin por enquanto.
-	
-    prompt_pos = 0;
-	
-	
+
 	//
-	// ## keyboard support ##
+	// Keyboard
 	//
-	
+
+
+
+
 	//fluxo padrao
 	
 	//#importante
