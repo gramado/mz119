@@ -1187,9 +1187,6 @@ void stdioInitialize ()
 
 int fflush ( FILE *stream ){
 
-    if ( (void *) stream == NULL )
-        return EOF;
-        
     return (int) gramado_system_call ( 233, 
                      (unsigned long) stream, 
                      (unsigned long) stream, 

@@ -51,6 +51,9 @@ extern unsigned long SavedBPP;
 
 int fclose (FILE *stream){
 
+    //if ( (void *) stream == NULL )
+       //return EOF;
+
     if ( (void *) stream == NULL )
     {
         return (int) (-1);
@@ -342,6 +345,11 @@ fail:
 
 size_t fread (void *ptr, size_t size, size_t n, FILE *fp){
 
+
+    //if ( (void *) fp == NULL )
+        //return (size_t) -1;
+
+
 	//tamanho do bloco. char short long ...
 	//if ( size <= 0 )
 	    //return -1;
@@ -426,6 +434,11 @@ size_t fread (void *ptr, size_t size, size_t n, FILE *fp){
 
 size_t fwrite (const void *ptr, size_t size, size_t n, FILE *fp){
 
+
+   // if ( (void *) fp == NULL )
+      // return -1;
+
+
 	//tamanho do bloco. char short long ...
 	//if ( size <= 0 )
 	    //return -1;
@@ -479,7 +492,7 @@ int __do_fflush (FILE *stream);
 int __do_fflush (FILE *stream)
 {
 	// #todo
-	// Isso parece ser bem çlegal.
+	// Isso parece ser bem legal.
 	
 
     char *buf;    // Buffer.              
@@ -1164,7 +1177,7 @@ int stdio_file_write ( FILE *stream, char *string, int len ){
 
   
     if ( (void *) stream == NULL )
-        return -1;
+       return EOF;
 
 
     for (i=0; i<len; i++)
@@ -1232,6 +1245,11 @@ int sys_write (unsigned int fd,char *buf,int count)
 int fputs ( const char *str, FILE *stream ){
 
     int size = 0;
+    
+
+    //if ( (void *) stream == NULL )
+      // return EOF;
+
 
     if ( (void *) stream == NULL )
     {
@@ -1272,9 +1290,7 @@ int ungetc ( int c, FILE *stream ){
 
 
     if ( (void *) stream == NULL )
-    {
-		return (int) EOF;
-    }
+       return EOF;
 
 	//@todo: flag oef.
 	//stream->flags = (stream->flags & ~_IOEOF);
@@ -1297,12 +1313,7 @@ long ftell (FILE *stream){
 
 
     if ( (void *) stream == NULL )
-	{
-		printf ("ftell fail\n");
-		refresh_screen();
-		return (long) -1; 
-    }
-
+       return EOF;
 
     return (long) (stream->_p - stream->_base);
 }
@@ -1317,9 +1328,7 @@ long ftell (FILE *stream){
 int fileno ( FILE *stream ){
 
     if ( (void *) stream == NULL )
-    {
-		return (long) -1; 
-    }
+       return EOF;
 
     // fd
     return (int) stream->_file;  
@@ -1450,10 +1459,7 @@ int feof ( FILE *stream ){
 int ferror ( FILE *stream ){
 
     if ( (void *) stream == NULL )
-    {
-		
-		return (int) (-1);
-    }
+       return EOF;
 
 
     return (int) ( ( stream->_flags & _IOERR ) );
@@ -1558,6 +1564,9 @@ int __swbuf (int c, FILE *fp)
 
 int fputc ( int ch, FILE *stream ){
 
+    //if ( (void *) stream == NULL )
+       //return EOF;
+
 
     if ( (void *) stream == NULL )
     {
@@ -1634,6 +1643,10 @@ int fputc ( int ch, FILE *stream ){
 
 int fscanf (FILE *stream, const char *format, ... )
 {
+	
+    if ( (void *) stream == NULL )
+       return EOF;
+
     // #obs:
     // Existe um scanf completo em ring3.
     // Talvez não precisamos de outro aqui.
@@ -2336,7 +2349,10 @@ void setbuffer (FILE *stream, char *buf, size_t size){
  
 void setlinebuf (FILE *stream)
 {
+    if ( (void *) stream == NULL )
+       return;
 }
+
 
 
 /*
