@@ -502,7 +502,7 @@ vhd-copy-files:
 	#gwin
 	-sudo cp ../garden/bin/GWINMGR.BIN   /mnt/gramadovhd
 	-sudo cp ../garden/bin/GWS.BIN       /mnt/gramadovhd
-	-sudo cp ../garden/bin/GWM.BIN       /mnt/gramadovhd
+#	-sudo cp ../garden/bin/GWM.BIN       /mnt/gramadovhd
 
 	#ili
 	-sudo cp ../garden/bin/ILIINIT.BIN   /mnt/gramadovhd
@@ -522,6 +522,7 @@ vhd-copy-files:
 	-sudo cp ../garden/bin/WINTEST.BIN   /mnt/gramadovhd 
 #	-sudo cp ../garden/bin/GDEINIT.BIN   /mnt/gramadovhd 
 #	-sudo cp ../garden/bin/GDETM.BIN     /mnt/gramadovhd 
+	-sudo cp ../garden/bin/GDEWM.BIN     /mnt/gramadovhd
 
 
 # atacama
