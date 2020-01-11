@@ -10,7 +10,7 @@
 VERSION = 1
 PATCHLEVEL = 22
 SUBLEVEL = 0
-EXTRAVERSION = -rc1
+EXTRAVERSION = -rc2
 NAME = 
 
 
@@ -275,22 +275,17 @@ KERNEL.BIN:
 	# /execve
 	gcc -c kernel/execve/execve.c  -I include/ $(CFLAGS) -o execve.o
 
-	# crts
-	
-	#klibc/pipe
-	gcc -c kernel/execve/crts/klibc/pipe/pipe.c  -I include/ $(CFLAGS) -o pipe.o
-	
-	#klibc/socket
-	gcc -c kernel/execve/crts/klibc/socket/socket.c   -I include/ $(CFLAGS) -o socket.o
 
-	# klibc
-	gcc -c kernel/execve/crts/klibc/ctype.c   -I include/ $(CFLAGS) -o ctype.o
-	gcc -c kernel/execve/crts/klibc/stdlib.c  -I include/ $(CFLAGS) -o stdlib.o
-	gcc -c kernel/execve/crts/klibc/stdio.c   -I include/ $(CFLAGS) -o stdio.o
-	gcc -c kernel/execve/crts/klibc/string.c  -I include/ $(CFLAGS) -o string.o
-	gcc -c kernel/execve/crts/klibc/unistd.c  -I include/ $(CFLAGS) -o unistd.o
+	# crts/libcore
+	gcc -c kernel/execve/crts/libcore/pipe/pipe.c      -I include/ $(CFLAGS) -o pipe.o
+	gcc -c kernel/execve/crts/libcore/socket/socket.c  -I include/ $(CFLAGS) -o socket.o
+	gcc -c kernel/execve/crts/libcore/ctype.c   -I include/ $(CFLAGS) -o ctype.o
+	gcc -c kernel/execve/crts/libcore/stdio.c   -I include/ $(CFLAGS) -o stdio.o
+	gcc -c kernel/execve/crts/libcore/stdlib.c  -I include/ $(CFLAGS) -o stdlib.o
+	gcc -c kernel/execve/crts/libcore/string.c  -I include/ $(CFLAGS) -o string.o
+	gcc -c kernel/execve/crts/libcore/unistd.c  -I include/ $(CFLAGS) -o unistd.o
 
-	
+
 	gcc -c kernel/kdrivers/apic.c    -I include/ $(CFLAGS) -o apic.o
 	gcc -c kernel/kdrivers/pic.c     -I include/ $(CFLAGS) -o pic.o
 	gcc -c kernel/kdrivers/rtc.c     -I include/ $(CFLAGS) -o rtc.o

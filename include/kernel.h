@@ -14,7 +14,7 @@
  * *                                       *
  * * ;----------------------------------;  *
  * * ;                                  ;  *
- * * ;               kgws               ;  *
+ * * ;              kgws                ;  *
  * * ;                                  ;  *
  * * ;----------------------------------;  *
  * * ;----------------------------------;  *
@@ -72,32 +72,33 @@ extern void do_executa_new_task (void);
 #include <kernel/globals/gdevice.h>
 #include <kernel/globals/spinlocks.h>
 
-// klibc 
-#include <kernel/klibc/sys/cdefs.h>
-#include <kernel/klibc/stddef.h>
-#include <kernel/klibc/types.h>
-#include <kernel/klibc/sys/types.h>
-#include <kernel/klibc/limits.h>
+// libcore
+#include <kernel/libcore/sys/cdefs.h>
+#include <kernel/libcore/stddef.h>
+#include <kernel/libcore/types.h>
+#include <kernel/libcore/sys/types.h>
+#include <kernel/libcore/limits.h>
 
 
-// klibc
-#include <kernel/klibc/stdio.h>
+// libcore
+#include <kernel/libcore/stdio.h>
 
 // kdrivers
 #include <kernel/kdrivers/tty/console.h>
 
 
-#include <kernel/klibc/stdlib.h>
-#include <kernel/klibc/string.h>
-#include <kernel/klibc/ctype.h>
-#include <kernel/klibc/iso646.h>
-#include <kernel/klibc/signal.h>
-#include <kernel/klibc/unistd.h>
-#include <kernel/klibc/fcntl.h>
-#include <kernel/klibc/sys/socket.h>
-#include <kernel/klibc/sys/ioctl.h>
-#include <kernel/klibc/sys/ioctls.h>
-//#include <kernel/klibc/termios.h> //#todo
+// libcore
+#include <kernel/libcore/stdlib.h>
+#include <kernel/libcore/string.h>
+#include <kernel/libcore/ctype.h>
+#include <kernel/libcore/iso646.h>
+#include <kernel/libcore/signal.h>
+#include <kernel/libcore/unistd.h>
+#include <kernel/libcore/fcntl.h>
+#include <kernel/libcore/sys/socket.h>
+#include <kernel/libcore/sys/ioctl.h>
+#include <kernel/libcore/sys/ioctls.h>
+//#include <kernel/libcore/termios.h> //#todo
 //...
 
 
