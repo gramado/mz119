@@ -199,6 +199,24 @@ the Pointer is used to access the Configuration Space.
 //  
 
 
+
+// VIA CN896 - North bridge.
+// 1106 c364 CN896/VN896/P4M900 PCI to PCI Bridge Controller
+// 1106 7364 CN896/VN896/P4M900 Host Bridge
+// 1106 6364 CN896/VN896/P4M900 Security Device
+
+// VIA VT8237 - South bridge
+// 1106 287e  VT8237/8251 Ultra VLINK Controller
+// 1106 b198  VT8237/VX700 PCI Bridge
+// 1106 337b  VT8237A Host Bridge
+// 1106 3337  VT8237A PCI to ISA Bridge
+// 1106 337a  VT8237A PCI to PCI Bridge
+// 1106 5372  VT8237/8251 Serial ATA Controller
+// 1106 0591  VT8237A SATA 2-Port Controller
+
+//1106	VIA Technologies, Inc.	0571	VT82C586A/B/VT82C686/A/B/VT823x/A/C PIPC Bus Master IDE
+
+
 //
 //0x27B9, Intel(R) ICH7M/U LPC Interface Controller	0x8086.
 //(Intel)Only the following class of devices may be connected to the LPC interface:
@@ -608,17 +626,18 @@ Class Code	Description
 //Oracle Corporation - InnoTek Systemberatung GmbH 0x80EE
 
 //Em ordem alfabética.
-#define PCI_VENDOR_ID_AMD					0x1022
-#define PCI_VENDOR_ID_APPLE					0x106B  //0x05ac
-#define PCI_VENDOR_ID_ATI					0x1002
-#define PCI_VENDOR_ID_ATMEL_CORPORATION     0x1114  //Atmel Corp. 0x1114
-#define PCI_VENDOR_ID_INTEL					0x8086
-#define PCI_VENDOR_ID_NVIDIA				0x10DE
-#define PCI_VENDOR_ID_ORACLE_CORPORATION    0x80EE 
-#define PCI_VENDOR_ID_REALTEK				0x10EC
-#define PCI_VENDOR_ID_TEXAS_INSTRUMENTS 	0x104C
-#define PCI_VENDOR_ID_VIA					0x1106
+#define PCI_VENDOR_ID_AMD                 0x1022
+#define PCI_VENDOR_ID_APPLE               0x106B  //0x05ac
+#define PCI_VENDOR_ID_ATI                 0x1002
+#define PCI_VENDOR_ID_ATMEL_CORPORATION   0x1114  //Atmel Corp. 0x1114
+#define PCI_VENDOR_ID_INTEL               0x8086
+#define PCI_VENDOR_ID_NVIDIA              0x10DE
+#define PCI_VENDOR_ID_ORACLE_CORPORATION  0x80EE 
+#define PCI_VENDOR_ID_REALTEK             0x10EC
+#define PCI_VENDOR_ID_TEXAS_INSTRUMENTS   0x104C
+#define PCI_VENDOR_ID_VIA                 0x1106
 //...
+
 
 //------------------
 			   

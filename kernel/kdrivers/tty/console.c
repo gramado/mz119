@@ -335,6 +335,70 @@ void console_outbyte (int c, int console_number){
 }
 
 
+
+// #importante
+// Colocamos um caractere na tela de um terminal virtual.
+
+// #bugbug: Como essa rotina escreve na memória de vídeo,
+// então precisamos, antes de uma string efetuar a
+// sincronização do retraço vertical e não a cada char.
+
+void console_putchar ( int c, int console_number ){
+	
+	// Pegamos as dimensões do caractere.
+	
+	int cWidth = get_char_width ();
+	int cHeight = get_char_height ();
+	
+	if ( cWidth == 0 || cHeight == 0 )
+	{
+		printf ("terminalPutChar:");
+		die ();
+	}
+	
+	// flag on.
+	stdio_terminalmode_flag = 1;  
+
+    // Desenhar o char no backbuffer
+	
+	// #todo: Escolher um nome de função que reflita
+	// essa condição de desenharmos o char no backbuffer.
+	
+
+	console_outbyte  ( (int) c, console_number );
+
+	
+	// Copiar o retângulo na memória de vídeo.
+	
+	refresh_rectangle ( 
+	    TTY[console_number].cursor_x * cWidth, TTY[console_number].cursor_y * cHeight, 
+		cWidth, cHeight );
+	
+	// flag off.
+	stdio_terminalmode_flag = 0;  
+}
+
+
+
+
+size_t 
+console_write ( const char *data, 
+                size_t size, 
+                int console_number )
+{
+
+    if (!size)
+        return 0;
+
+    size_t i;
+    for (i=0; i<size; i++)
+        console_putchar( (int) data[i], console_number);
+        
+    return size;    
+}
+
+
+
 /*
  ********************************************
  * scroll:
@@ -615,53 +679,22 @@ void console_init_virtual_console (int n)
 //
 
 
-
- 
-
-// #importante
-// Colocamos um caractere na tela de um terminal virtual.
-
-// #bugbug: Como essa rotina escreve na memória de vídeo,
-// então precisamos, antes de uma string efetuar a
-// sincronização do retraço vertical e não a cada char.
-
-void console_putchar ( int c, int console_number ){
-	
-	// Pegamos as dimensões do caractere.
-	
-	int cWidth = get_char_width ();
-	int cHeight = get_char_height ();
-	
-	if ( cWidth == 0 || cHeight == 0 )
-	{
-		printf ("terminalPutChar:");
-		die ();
-	}
-	
-	// flag on.
-	stdio_terminalmode_flag = 1;  
-
-    // Desenhar o char no backbuffer
-	
-	// #todo: Escolher um nome de função que reflita
-	// essa condição de desenharmos o char no backbuffer.
-	
-
-	console_outbyte  ( (int) c, console_number );
-
-	
-	// Copiar o retângulo na memória de vídeo.
-	
-	refresh_rectangle ( 
-	    TTY[console_number].cursor_x * cWidth, TTY[console_number].cursor_y * cHeight, 
-		cWidth, cHeight );
-	
-	// flag off.
-	stdio_terminalmode_flag = 0;  
+/*
+int console_can_read( void);
+int console_can_read( void)
+{
+   return 0;  //false
 }
+*/
 
+/*
+int console_can_write( void);
+int console_can_write( void)
+{
+   return 1;  //true
+}
+*/
 
- 
 
 
 

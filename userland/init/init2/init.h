@@ -10,7 +10,6 @@
 #include <stubs/gramado.h>
 
 
-int initMain (void);
 
 int main ( int argc, char *argv[] );
 

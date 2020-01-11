@@ -88,12 +88,9 @@ struct idle
 // Protótipos.
 //
 
-//funções internas.
-void idleLoop();
-void driverInitialize();      // processo sendo considerado um driver servidor.
-void driverUninitialize();    // desinicializa.
-int idleInit();               // processo sendo consideredo cliente.
-unsigned long idleServices(unsigned long number);  //Principal.
+
+
+
 
 //...
 void enable_maskable_interrupts();
@@ -131,156 +128,7 @@ static inline void rep_nop (void){
 #define cpu_relax()  rep_nop()
 
 
-//Another loop.
-void idleLoop (){
-	
-    while (1){
-		
-		pause();
-		pause();
-		pause();
-		pause();
-		//pause();
-		
-		cpu_relax();
-	}	
-};
-
  
-
-/*
- ************************
- * initMain:
- *     main().
- */ 
-
-int initMain (void){
-	
-loop:
-	while (1){}
-	
-	return 0;
-}
-
-/*
- *********************************************************
- * driverInitialize:
- *     O Kernel solicitou a rotina de inicialização do processo Idle na forma 
- * de driver. Faremos uma chamada ao Kernel dizendo que o driver está 
- * inicializado. Na chamada passaremos alguns parâmetros, como: O número do 
- * serviço, 129 e o código de confirmação, 1234. 4321.
- */
-
-void driverInitialize (){
-	
-	// Inicializando o servidor.
-	ServerStatus = 1;
-		
-	//printf("Idle: Initializing driver ...\n");
-	//system_call( 129, 4321, 4321, 4321 );	
-	
-	printf("IDLE.BIN: Initialized\n");
-};
-
-
-/*
- *********************************************************
- * driverUninitialize:
- *     This method is called to uninitialize the driver object. In a real 
- * driver, this is where the driver would clean up any resources held by 
- * this driver. (m$)
- */
-
-void driverUninitialize (){
-	
-	// Finalizando o servidor.
-	ServerStatus = 0;
-	
-	//
-	// Dúvidas??
-	// Devemos nos preparar para desinicializar o driver.
-	// Desalocaremos os recursos usadados pelo driver, como memória, 
-	// arquivos abertos ...
-	// Obs: Não sei se atribuição do próprio driver liberar os recursos.
-	// Mas de toda forma, no mínimo devemos avisar o Kernel que os recursos 
-	// não são mais necessários.
-	// @todo: Podemos enviar um comando para o kernel pedindo pra que ele não 
-	// link esse driver ao sistema, ou que deixe ele não inicializado.
-	//
-
-	//printf("Idle: Unitializing driver ...\n");
-	
-	//Faremos uma chamada para o Kernel 'deslinkar' o driver.
-	//talvez 128. 127 126..???
-	//system_call( ?? , 4321, 4321, 4321 ); 		
-	
-	printf("IDLE.BIN: Uninitialized\n");
-};
-
-
-/*
- *****************************************************************************
- * idleServices:
- *     Essa função oferece serviços de acordo com o número passado via 
- * argumento.
- * Essa deve ficar por último e ter acesso à qualquer rotina acima ou em
- * bibliotecas incluídas.
- */
-unsigned long idleServices (unsigned long number){
-  
-    //
-    //  ## O servidor precisa estar inicializado ##
-    //
-	
-	// Checando se o servidor está inicializado.
-	if (ServerStatus != 1)
-	{
-		// Erro !
-		return (unsigned long) 1;    
-	};
-	
-	
-	// Selecionar o serviço.
-	
-    switch (number)
-    {
-		case 0:
-		    printf("Idle Driver: NULL service.\n");
-		    idleLoop();
-			break;
-			
-		case 1:
-		    printf("Idle Driver: service 1.\n");
-		    //idleLoop();
-			break;
-
-        //...			
-		
-		default:
-		    printf("Idle Driver: default service.\n");        
-			//idleLoop();
-			break;
-	};	
-	
-    return (unsigned long) 0;	
-}
-
-
-/*
- * idleInit:
- *     Inicializando a aplicação Idle.
- */
-
-int idleInit (){
-	
-	idleStatus = 0;
-	idleError = 0;
-	
-	//printf("Idle: Initializing idle application ..\n");
-
-	//...
-	return 0;
-}
 
 
 // interna
@@ -417,7 +265,7 @@ int main ( int argc, char *argv[] ){
     
     
     //funciona.
-    //gramado_system_call (900, (unsigned long)"gwm.bin", 0, 0);        
+     //gramado_system_call (900, (unsigned long)"gwm.bin", 0, 0);        
     //gramado_system_call (900, (unsigned long)"gramcode.bin", 0, 0);   
     //gramado_system_call (900, (unsigned long) "gfe.bin", 0, 0);                
         
