@@ -493,7 +493,6 @@ int __do_fflush (FILE *stream)
 {
 	// #todo
 	// Isso parece ser bem legal.
-	
 
     char *buf;    // Buffer.              
     ssize_t n;    // Byte count to flush. 
