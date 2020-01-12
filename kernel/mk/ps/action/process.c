@@ -561,13 +561,23 @@ do_clone:
 		// Load file.
 		//
 
+
+        printf ("do_clone_execute_process: %s\n",filename);
+
+
         // #importante: 
         // Carregando a imagem do porcesso filho.
         // Se o carregamento falhar, temos que abortar a clonagem
         // caso contrário executa a cópia da imagem do pai.
 
+        // #bugbug
+        // Essa rotina começou a falhar aqui.
+        // Convertendo num formato errado.
+        
         read_fntos ( (char *) filename );
 
+        printf ("do_clone_execute_process: %s\n",filename);
+        
         Status = (int) fsLoadFile ( VOLUME1_FAT_ADDRESS, 
                               VOLUME1_ROOTDIR_ADDRESS, 
                               filename, 

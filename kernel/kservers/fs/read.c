@@ -53,7 +53,8 @@ void read_fntos ( char *name ){
     // Transforma em maiúscula enquanto não achar um ponto.
     // #bugbug: E se a string já vier maiúscula teremos problemas.
 
-    while ( *name && *name != '.' )
+    //while ( *name && *name != '.' )
+    while ( *name && *name != '.' )     // # testing
     {
         if ( *name >= 'a' && *name <= 'z' )
             *name -= 0x20;
@@ -62,6 +63,17 @@ void read_fntos ( char *name ){
         ns++;
     };
 
+ 
+    if ( name[0] == '\0' && ns <= 8 )
+    {
+        ext[0] = 'B';
+        ext[1] = 'I';
+        ext[2] = 'N';
+        ext[3] = '\0';        
+        goto _complete; //completa nome.
+    }
+
+    //if ( name[0] == '.' && ns < 8 )
 
     // Aqui name[0] é o ponto.
     // Então constrói a extensão colocando
@@ -87,6 +99,8 @@ void read_fntos ( char *name ){
         }
     };
 
+
+_complete:
 
 	//Acrescentamos ' ' até completarmos as oito letras do nome.
 

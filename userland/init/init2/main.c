@@ -185,14 +185,14 @@ int main ( int argc, char *argv[] ){
 		// 0 	Halt 	
 		// Shuts down the system. 
         case 0:
-            __debug_print ("Gramado Core: RUNLEVEL 0\n");
+            __debug_print ("init: RUNLEVEL 0\n");
             //do_reboot();
             break;
 
 		// 1 	Single-user mode 	
 		// Mode for administrative tasks.
         case 1:
-            __debug_print ("Gramado Core: RUNLEVEL 1\n");
+            __debug_print ("init: RUNLEVEL 1\n");
             //do_single_usermode();
             break;
 
@@ -200,7 +200,7 @@ int main ( int argc, char *argv[] ){
 		// Does not configure network interfaces and 
 		// does not export networks services.
         case 2:
-            __debug_print ("Gramado Core: RUNLEVEL 2\n");
+            __debug_print ("init: RUNLEVEL 2\n");
             //do_mu_no_network();
             break;
 
@@ -208,14 +208,14 @@ int main ( int argc, char *argv[] ){
 		// Starts the system normally.
         // Full multi-user text mode.
         case 3:
-            __debug_print ("Gramado Core: RUNLEVEL 3\n");
+            __debug_print ("init: RUNLEVEL 3\n");
             //do_mu_with_network();
             break;
 
 		// 4 	Not used/user-definable 	
 		// For special purposes.
         case 4:
-            __debug_print ("Gramado Core: RUNLEVEL 4\n");
+            __debug_print ("init: RUNLEVEL 4\n");
             //do_special();
             break;
 
@@ -224,13 +224,13 @@ int main ( int argc, char *argv[] ){
 		// Same as runlevel 3 + display manager. 
 		// Full multi-user graphical mode.
         case 5:
-            __debug_print ("Gramado Core: RUNLEVEL 5\n");
+            __debug_print ("init: RUNLEVEL 5\n");
             //do_mu_full ();
             break;    
 
 		// 6 	Reboot 	Reboots the system. 
         case 6:
-             __debug_print ("Gramado Core: RUNLEVEL 6\n");
+             __debug_print ("init: RUNLEVEL 6\n");
             //do_reboot();
             break;   
             
