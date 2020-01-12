@@ -351,6 +351,14 @@ void *gde_extra_services ( unsigned long number,
     }
 
 
+    // Ligar duas tty dados os pids dos processos que possuem as tty.
+    // IN: master pid, slave pid.
+    if (number == 267)
+    {
+        return (void *) pty_link_by_pid ( (int) arg2, (int) arg3 );
+    }
+
+
     if (number == 277 )
     {
         return (void *) console_get_current_virtual_console ();

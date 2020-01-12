@@ -512,6 +512,16 @@ _ok:
         __tty->used = 1;
         __tty->magic = 1234;
         
+        // register
+        
+        // #debug
+        if ( i >= 64){
+            panic ("tty_create: Overflow\n");
+        }
+        
+        ttyList[i] = (unsigned long) __tty;
+        
+        
         return (struct tty_d *) __tty;
     };
 

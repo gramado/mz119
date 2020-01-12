@@ -70,6 +70,10 @@ void pty_send_message_to_thread ( unsigned long msg_buffer, int tid );
 void pty_test_sendmessagetoterminal (void);
 
 
+//Ligar duas tty dados os pids dos processos que possuem as tty.
+// isso será usado pelo terminal se ele tiver o pid do filho.
+int pty_link_by_pid ( int master_pid, int slave_pid );
+
 int pty_link ( struct tty_d *master, struct tty_d *slave );
 int pty_unlink ( struct tty_d *tty );
 

@@ -154,28 +154,143 @@ int pty_create_link ( struct tty_d *tty )
 
 
 
+//Ligar duas tty dados os pids dos processos que possuem as tty.
+// isso será usado pelo terminal se ele tiver o pid do filho.
+int pty_link_by_pid ( int master_pid, int slave_pid )
+{
+	// O slave é o terminal. pts. remember ?!
 
+    struct tty_d *__master;
+    struct tty_d *__slave;    
+
+    struct process_d *pm;   //process master
+    struct process_d *ps;   //process slave
+    
+    int master_tty_id = -1;
+    int slave_tty_id = -1;
+
+
+    //
+    // Process
+    //
+
+    if ( master_pid < 0 || slave_pid < 0 )
+    {
+        printf ("pty_link_by_pid: pid\n");
+        refresh_screen();
+        return -1; 
+    }
+
+
+    pm = ( struct process_d *) processList[master_pid];
+
+    if ( (void *) pm == NULL )
+    {
+        printf ("pty_link_by_pid: pm\n");
+        refresh_screen();
+        return -1; 
+    }
+
+
+    ps = ( struct process_d *) processList[slave_pid];
+
+    if ( (void *) ps == NULL )
+    {
+        printf ("pty_link_by_pid: ps\n");
+        refresh_screen();
+        return -1; 
+    }
+
+
+
+
+    //
+    // tty
+    //
+    
+    if ( ( void * ) pm->tty == NULL || 
+         ( void * ) ps->tty == NULL )
+    {
+        printf ("pty_link_by_pid: tty\n");
+        refresh_screen();
+        return -1; 
+    }
+    
+
+    master_tty_id = pm->tty->index;
+    slave_tty_id  = ps->tty->index;
+
+
+    if ( master_tty_id < 0 || slave_tty_id < 0 )
+    {
+        printf ("pty_link_by_pid: tty id\n");
+        refresh_screen();
+        return -1; 
+    }
+
+
+    __master = ( struct tty_d *) ttyList[master_tty_id];
+ 
+    if ( (void *) __master == NULL ) 
+    {
+        printf ("pty_link_by_pid: * __master\n");
+        refresh_screen();
+        return -1; 
+    }
+
+        
+        
+    __slave = ( struct tty_d *) ttyList[slave_tty_id];
+ 
+    if ( (void *) __slave == NULL ) 
+    {
+        printf ("pty_link_by_pid: __slave\n");
+        refresh_screen();
+        return -1; 
+    }
+
+        
+   
+    // Link !
+    return (int) pty_link ( __master, __slave );
+}
 
 
 //#test
 int pty_link ( struct tty_d *master, struct tty_d *slave )
 {
-	if ( (void *) master == NULL )
-	{
-		return -1;
-	}
 
-	if ( (void *) slave == NULL )
-	{
-		return -1;
-	}
-	
+    if ( (void *) master == NULL )
+    {
+        printf ("pty_link: master\n");
+        refresh_screen();
+        return -1; 
+    }
+
+    if ( (void *) slave == NULL )
+    {
+        printf ("pty_link: slave\n");
+        refresh_screen();
+        return -1; 
+    }
+
+
 	// #todo
 	// Checar validade.
 	
 	master->link = slave;
 	
-	return 0;
+	
+	//#debug
+
+    printf ("pty_link: Linked. m=%d s=%d\n", 
+        master->index,
+        master->link->index );
+
+    refresh_screen();
+
+
+    return 0;
 }
 
 
