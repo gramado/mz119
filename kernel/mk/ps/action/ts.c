@@ -101,7 +101,8 @@ void KiTaskSwitch (void){
 
 
 #ifdef SERIAL_DEBUG_VERBOSE
-	debug_print ("ts ");
+	debug_print (".");
+	//debug_print ("ts ");
 #endif
 
 
