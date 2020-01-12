@@ -1046,13 +1046,22 @@ int init_mm (void){
 	// base, other, extended.
 	// RTC só consegue perceber 64MB de memória.
 	
-	memorysizeBaseMemory = (unsigned long) rtcGetBaseMemory();  
-	memorysizeOtherMemory = (unsigned long) (1024 - memorysizeBaseMemory);
-	memorysizeExtendedMemory = (unsigned long) rtcGetExtendedMemory(); 
-    
-	memorysizeTotal = (unsigned long) ( memorysizeBaseMemory + memorysizeOtherMemory + memorysizeExtendedMemory );
-	
-	
+    memorysizeBaseMemory = (unsigned long) rtcGetBaseMemory();  
+    memorysizeOtherMemory = (unsigned long) (1024 - memorysizeBaseMemory);
+
+    // #todo
+    // New we have a new value from boot.
+    // We're gonna use this new value instead the one from cmos.
+
+    unsigned long __total_memory_in_kb = (blSavedLastValidAddress/0x400);
+
+    // extended memory from cmos.
+    //memorysizeExtendedMemory = (unsigned long) rtcGetExtendedMemory(); 
+    memorysizeExtendedMemory =  (__total_memory_in_kb - memorysizeBaseMemory - memorysizeOtherMemory);
+
+    memorysizeTotal = (unsigned long) ( memorysizeBaseMemory + memorysizeOtherMemory + memorysizeExtendedMemory );
+
+
 	// #IMPORTANTE 
 	// Determinar o tipo de sistema de memória.
 	// small   pelo menos 32mb

@@ -342,6 +342,15 @@ void *gde_extra_services ( unsigned long number,
     FILE *__bmfp;
 
 
+    // Pega o número da tty de um processo, dado o pid.
+    // IN: PID.
+    // OUT: tty id.
+    if (number == 266)
+    {
+        return (void *) process_get_tty ( (int) arg2 );
+    }
+
+
     if (number == 277 )
     {
         return (void *) console_get_current_virtual_console ();
@@ -379,7 +388,7 @@ void *gde_extra_services ( unsigned long number,
         return NULL;
     }
     
-    
+    /*    
     // memory size
     // baseado no valor passado pelo bl.bin
     unsigned long __mm_size_mb = 0;
@@ -391,6 +400,15 @@ void *gde_extra_services ( unsigned long number,
    
         return (void *) __mm_size_mb;
     }
+    */
+
+    unsigned long __mm_size_mb = 0;
+    if ( number == 292 )
+    {
+        __mm_size_mb = ( memorysizeTotal/0x400);
+        return (void *) __mm_size_mb;
+    }
+
 
     // Updates a status bar of a given window.
     if ( number == 300 )

@@ -1044,6 +1044,9 @@ __execute_new_process ( const char *filename,
 
 
 
+// Pega o número da tty de um processo, dado o pid.
+int process_get_tty ( int pid );
+
 //
 // End.
 //

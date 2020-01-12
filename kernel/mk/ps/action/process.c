@@ -663,9 +663,14 @@ do_clone:
 		//====
 		// #bugbug : 
 		// Essa pilha está dentro da imagem. ...
+		// Como o gramado core não existe mais. Vamos
+		// aproveitar para colocar a pilha num lugar mais confotável
+		// dentro dos 4MB da área de aplicativo.
+		// veja o exemplo da thread do processo init.
 		// e se o aplicativo tiver mais que 63KB.???
 		//Clone->control->esp = 0x400000 + (1024 * 63);
-		Clone->control->esp = 0x400000 + (1024 * 200);   //funciona
+		//Clone->control->esp = 0x400000 + (1024 * 200);   //funciona
+		Clone->control->esp = 0x004FFFF0; // funcionou.
 		//Clone->control->eip = Current->control->eip; //#bug fail
 		//Clone->control->esp = Current->control->esp; //#bug fail
 		//====
@@ -1871,7 +1876,7 @@ int processCopyMemory ( struct process_d *process ){
  *     Isso é chamado por do_fork_process.
  */
  
-// 1 = atual;
+// 1 = atual.
 // 2 = clone. 
  
 int processCopyProcess ( pid_t p1, pid_t p2 ){
@@ -2115,6 +2120,18 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
     //Process2->long2  = Process1->long2;     //arg4.
 
 
+
+    //++
+    // tty support
+    Process2->tty = ( struct tty_d *) tty_create ();  
+       
+    if ( (void *) Process2->tty == NULL ){
+         panic ("processCopyProcess: Couldn't create tty\n");
+    }
+    tty_start (Process2->tty);
+    //--
+
+
     Process2->exit_code = Process1->exit_code;
 
     Process2->prev = Process1->prev; 
@@ -2171,6 +2188,9 @@ done:
  * criar um processo do jeito que for necessário
  */
 
+// Cria uma estrutura de processo.
+// Cria uma tty pra esse processo.
+
 struct process_d *create_process ( struct room_d *room,
                                    struct desktop_d *desktop,
                                    struct window_d *window,
@@ -2182,14 +2202,14 @@ struct process_d *create_process ( struct room_d *room,
                                    unsigned long directory_address )
 {
 
-    int i=0;
-
     pid_t PID;
-
     struct process_d *Process;
+    
 
     // Para a entrada vazia no array de processos.
     struct process_d *Empty; 
+    
+    int i=0;
 
 	// @todo:
 	// Melhorar esse esquema de numeração e 
@@ -2202,16 +2222,19 @@ struct process_d *create_process ( struct room_d *room,
     }
 
 
-    PID = (int) processNewPID;
+
+    //
+    // Process.
+    //
 
     Process = (void *) kmalloc ( sizeof(struct process_d) );
 
-    if ( (void *) Process == NULL )
-    {
+	// #todo: 
+	// Aqui pode retornar NULL.
+    if ( (void *) Process == NULL ){
         panic ("process-create_process: Process");
-		// #todo: 
-		// Aqui pode retornar NULL.
     }
+
 
 
 	// Loop.
@@ -2244,28 +2267,28 @@ get_next:
 	// Get empty.
 	// Obtêm um índice para um slot vazio na lista de processos.
 
+    PID = (int) processNewPID;  // deletar!!
+    
     PID = (int) getNewPID ();
 
-    if ( PID == -1 || PID == 0 )
-    {
+    // #todo: Limits. Max ?
+    
+    if ( PID == -1 || PID == 0 ){
         printf ("create_process: getNewPID fail %d \n", PID);
-
-        // #todo Slow stuff.
         refresh_screen ();
-
         return NULL;
     }
 
 
-    Empty = (void *) processList[PID];
 
 	//Se o slot estiver ocupado tentaremos o próximo.
 	//Na verdade podemos usar aquela função que procura por um vazio. 
 
 
+    Empty = (void *) processList[PID];
+
     if ( (void *) Empty != NULL )
     {
-
         goto get_next;
 
     }else{
@@ -2626,16 +2649,17 @@ get_next:
         //Process->long1 = 0;        //arg3.
         //Process->long2 = 0;        //arg4.
 
-        //
+
         // tty support
-        //
-        
+
         Process->tty = ( struct tty_d *) tty_create ();  
        
-        if ( (void *) Process->tty == NULL )
-        {
-            panic ("create_process: couldn't create tty\n");
+        if ( (void *) Process->tty == NULL ){
+            panic ("create_process: Couldn't create tty\n");
         }
+
+        tty_start (Process->tty);
+
 
         Process->prev = NULL; 
         Process->next = NULL; 
@@ -3732,12 +3756,60 @@ __execute_new_process ( const char *filename,
     //...
 }
       
-      
+ 
+
+// Pega o número da tty de um processo, dado o pid.
+int process_get_tty ( int pid )
+{
+    // Usada para debug.
+
+    
+    struct process_d *p;
+    struct tty_d *tty;
+
+
+    //3debug
+	//printf ("process_get_tty: pid %d \n", pid);
+	//refresh_screen();
+
+
+    // #todo
+    // Overflow ?
+    
+    if ( pid < 0 )
+    {
+		//printf ("pid fail\n");
+		//refresh_screen();
+        return -1;
+    }
+
+    p = (struct process_d *) processList[pid];
+
+    if ( (void *) p == NULL )
+    {
+		//printf ("p fail\n");
+		//refresh_screen();
+        return -1;
+    }
+
+    tty = p->tty;    
+
+
+    if ( (void *) tty == NULL )
+    {
+		//printf ("tty fail\n");
+		//refresh_screen();
+        return -1;
+    }
+
+
+    //printf ("tty %d belongs to %d\n", tty->index, p->pid );
+    //refresh_screen ();
+
+    return (int) tty->index;
+}                   
                       
-                      
-                      
-                      
-                      
+ 
                       
                       
     

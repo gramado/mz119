@@ -114,14 +114,14 @@ struct tty_d
     int stopped;
 
 	// #importante: #TODO
-	//see: termios.h
-	struct termios *termios;
+	// see: termios.h
+    struct termios *termios;
 
-	
+
 	//
 	// User
 	//
-	
+
     struct user_info_d *user_info;
 	
 	//
@@ -326,6 +326,11 @@ int pty_write(struct tty_d *tty, const char *buf, int c)
 {}
 */
 
+
+
+
+void tty_stop (struct tty_d *tty);
+void tty_start (struct tty_d *tty);
 
 
 //

@@ -182,33 +182,35 @@ void tty_intr (struct tty_d *tty, int signal)
 
 
 
-/*
-void __stop_tty (struct tty_d *tty);
-void __stop_tty (struct tty_d *tty)
+
+
+void tty_stop (struct tty_d *tty)
 {
-	
+
+    if ( (void *) tty == NULL )
+        return;
+
     //se ela já está parada.
     if (tty->stopped == 1)
         return;
 
-
     tty->stopped = 1;
 }
-*/
 
-/*
-void __start_tty (struct tty_d *tty);
-void __start_tty (struct tty_d *tty)
+
+void tty_start (struct tty_d *tty)
 {
+    if ( (void *) tty == NULL )
+        return;
 
     //Se não está parada.
     if (tty->stopped == 0)
         return;
 
-
     tty->stopped = 0;
 }
-*/
+
+
 
 /*
 void tty_reset_termios ( struct tty_d *tty );
@@ -480,7 +482,24 @@ int ttydrv_delete ( struct ttydrv_d *tty_driver )
 struct tty_d *tty_create (void) 
 {
     struct tty_d *__tty;
+    int i;
+
+
+    //encontra slot um vazio.
+    for(i=0; i<64; i++)
+    {
+		// Lista de tty e não de console.
+        __tty = (struct tty_d *) ttyList[i];
+        
+        if ( (void *) __tty == NULL )
+            goto _ok;
+    };
     
+_fail:    
+    return NULL;
+
+_ok:
+
     __tty = (struct tty_d *) kmalloc ( sizeof(struct tty_d) );
     
     if ( (void *) __tty == NULL )
@@ -488,13 +507,18 @@ struct tty_d *tty_create (void)
         return NULL;
     }else{
 
+        __tty->index = i;
+        
         __tty->used = 1;
         __tty->magic = 1234;
+        
+        return (struct tty_d *) __tty;
     };
 
 
-    return (struct tty_d *) __tty;
+    return NULL;
 }
+
 
 
 
@@ -512,6 +536,10 @@ int tty_delete ( struct tty_d *tty )
          
          //reusar
          tty->magic = 216;
+         
+         tty_stop(tty);
+         
+         //...
     };
     
     return 0;

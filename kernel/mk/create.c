@@ -91,9 +91,8 @@ void *createCreateInitThread (void){
 
     __initStack = (void *) kmalloc (4*1024);
 
-    if ( (void *) __initStack == NULL )
-    {
-        panic ("createCreateInitThread: idleStack\n");
+    if ( (void *) __initStack == NULL ){
+        panic ("createCreateInitThread: __initStack\n");
     }
 
 
