@@ -163,10 +163,10 @@ void create_logon (void){
 	
 	    //iniciar a tty 0.
 	
-	    printf ("create_logon: ttyInit\n");
-	    ttyInit (0);
-		
-		
+        printf ("create_logon: ttyInit\n");
+        //ttyInit (0);
+        ttyInit (10);  // os primeiros tty são reservados para os consoles virtuais.
+
 		
 	// =========
 	//

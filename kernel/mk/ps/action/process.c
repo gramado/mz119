@@ -2660,15 +2660,18 @@ get_next:
         //Process->long2 = 0;        //arg4.
 
 
+
+
         // tty support
 
-        Process->tty = ( struct tty_d *) tty_create ();  
-       
+        Process->tty = ( struct tty_d *) tty_create ();         
         if ( (void *) Process->tty == NULL ){
+			
+			//printf ("pid %d \n",Process->pid );
             panic ("create_process: Couldn't create tty\n");
         }
-
         tty_start (Process->tty);
+
 
 
         Process->prev = NULL; 

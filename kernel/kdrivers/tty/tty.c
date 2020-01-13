@@ -657,7 +657,7 @@ struct tty_d *tty_create (void)
     // Porque os primeiros 4 dispositivos são reservados para console virtual
     // podemos reservar os 10 primeiros.
     
-    for(i=10; i<64; i++)
+    for(i=10; i<256; i++)
     {
 		// Lista de tty e não de console.
         __tty = (struct tty_d *) ttyList[i];
@@ -665,9 +665,12 @@ struct tty_d *tty_create (void)
         if ( (void *) __tty == NULL )
             goto _ok;
     };
-    
-_fail:    
-    return NULL;
+
+
+_fail: 
+    panic ("tty_create: No more slots!\n");   
+    //return NULL;
+
 
 _ok:
 
@@ -675,7 +678,8 @@ _ok:
     
     if ( (void *) __tty == NULL )
     {
-        return NULL;
+        panic ("tty_create: __tty kmalloc fail \n");   
+        //return NULL;
     }else{
 
         __tty->index = i;
@@ -717,7 +721,8 @@ _ok:
     };
 
 
-    return NULL;
+    panic ("tty_create: Crazy error!\n");   
+    //return NULL;
 }
 
 
@@ -851,8 +856,11 @@ int ttyInit (int tty_id){
 	    //fazer o mesmo para os outros dois arquivos.
 	    //...	    
 	    
-	
-        for (i=0; i<8; i++)
+	   //
+	   // Limpando a lista!
+	   //
+	   
+        for (i=0; i<256; i++)
 	    {
 		    ttyList[i] = 0;
 	    }
