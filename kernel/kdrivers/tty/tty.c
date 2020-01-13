@@ -16,6 +16,58 @@
 
 
 
+// Ponteiros para os dispositivos
+// que a tty atua.
+// sendo que o primeiro dispositivo (canal) é o console.
+unsigned long tty_table[ 32 ];
+
+
+
+
+// escreve o conteúdo de um buffer em um dispositivo.
+// os primeiros são consoles virtuais.
+int 
+tty_write ( unsigned int channel, 
+            char *buf, 
+            int nr )
+{
+
+    // número de dispositivos que atendem a chamada write.
+    // tty_table[]
+    if ( channel >= 32 )
+    {
+        printf ("tty_write: Invalid device\n");
+        refresh_screen();
+        return -1;
+    }
+
+
+    if ( channel < 4 )
+    {
+        // retorna size
+        // IN: buf, size, console number.
+        return (int) console_write ( (const char *) buf, 
+                         (size_t) nr, 
+                         (int) channel);        
+    }
+
+
+    // #todo
+    // para os outros canais escreveremos em outros dispositivos,
+    // como no disco, ou sei lá.
+    
+    // podemos simplesmente escrever na nossa tty
+    // depois o processo pai lê aqui, já que ele conhece nossa tty
+    // pois está conectado tty->link
+    
+
+
+    printf ("tty_write: Invalid device\n");
+    refresh_screen();
+    
+    return  -1;
+}
+
 
 /*
  #todo

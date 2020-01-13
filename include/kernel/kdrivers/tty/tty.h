@@ -333,6 +333,13 @@ void tty_stop (struct tty_d *tty);
 void tty_start (struct tty_d *tty);
 
 
+// escreve o conteúdo de um buffer em um dispositivo.
+// os primeiros são consoles virtuais.
+int 
+tty_write ( unsigned int channel, 
+            char *buf, 
+            int nr );
+
 //
 // End.
 //

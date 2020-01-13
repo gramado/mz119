@@ -387,12 +387,26 @@ console_write ( const char *data,
                 int console_number )
 {
 
+    // size:
+    // temos que confiar no valor enviado.
+    // o usuário tem que saber o quanto quer enviar para 
+    // o dispositivo console.
+    // O limite aqui é uma linha.
+    
+    //printf ("size=%d \n", size );
+    //refresh_screen();
+    
     if (!size)
         return 0;
 
+    //linha
+    //if (size >= 80)
+        //size = 80; 
+ 
+
     size_t i;
     for (i=0; i<size; i++)
-        console_putchar( (int) data[i], console_number);
+        console_putchar ( (int) data[i], console_number);
         
     return size;    
 }

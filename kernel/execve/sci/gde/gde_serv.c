@@ -2499,12 +2499,14 @@ void *gde_services ( unsigned long number,
            break;
 
 
-       //livre    
+
+       // write
+       // See: unistd.c em garden/lib/libcore.
        case 169:
-           // IN: fd, buf, count.
-           return (void *) sys_write ( (unsigned int) arg2, 
-                               (char *) arg3, 
-                               (int) arg4 );
+           // IN: fd, buf, count.         
+           return (void *) tty_write ( (unsigned int) arg2,  //channel 
+                               (char *) arg3,                //buf
+                               (int) arg4 );                 //nr
            break;
 
 
