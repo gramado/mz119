@@ -43,7 +43,7 @@ main.o:
 
 all-c:
 
-	gcc  -c  api.c   $(CFLAGS) -I ../libc/include/ -o api.o
+	gcc  -c  api.c   $(CFLAGS) -I ../libcore/include/ -o api.o
 	
 
 
