@@ -10,8 +10,8 @@
 VERSION = 1
 PATCHLEVEL = 22
 SUBLEVEL = 0
-EXTRAVERSION = -rc5
-NAME = 
+EXTRAVERSION = 
+NAME = Terminal
 
 
 # First of all, lemme discribe this documment!
