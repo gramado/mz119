@@ -8,10 +8,10 @@
 
 
 VERSION = 1
-PATCHLEVEL = 22
+PATCHLEVEL = 23
 SUBLEVEL = 0
-EXTRAVERSION = 
-NAME = Terminal
+EXTRAVERSION = -rc0
+NAME = 
 
 
 # First of all, lemme discribe this documment!

@@ -175,8 +175,11 @@ int close (int fd);
 int pipe ( int pipefd[2] );
 
 
-
-
+//  SVr4, 4.3BSD, POSIX.1-2001.
+//  write - write to a file descriptor
+ssize_t write (int fd, const void *buf, size_t count);
+//  SVr4, 4.3BSD, POSIX.1-2001.
+ssize_t read (int fd, const void *buf, size_t count);
 
 #endif /* _UNISTD_H */
 

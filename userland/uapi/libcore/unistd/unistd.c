@@ -455,6 +455,34 @@ int pipe ( int pipefd[2] )
 }
 
 
+//  SVr4, 4.3BSD, POSIX.1-2001.
+//  write - write to a file descriptor
+ssize_t write (int fd, const void *buf, size_t count)
+{
+	if (fd<0)
+	    return -1;
+	
+    return (ssize_t) gramado_system_call ( 169, 
+                         (unsigned long) fd,      // dispositivo.
+                         (unsigned long) buf, 
+                         (unsigned long) count ); 
+}
+
+
+//  SVr4, 4.3BSD, POSIX.1-2001.
+ssize_t read (int fd, const void *buf, size_t count)
+{
+	if (fd<0)
+	    return -1;
+	
+    return (ssize_t) gramado_system_call ( 268, 
+                         (unsigned long) fd,      // dispositivo.
+                         (unsigned long) buf, 
+                         (unsigned long) count ); 
+}
+
+
+
 
 
 
