@@ -357,6 +357,19 @@ void *gde_extra_services ( unsigned long number,
     {
         return (void *) pty_link_by_pid ( (int) arg2, (int) arg3 );
     }
+    
+    
+     // read
+    // See: unistd.c em garden/lib/libcore.           
+    if (number == 268)
+    {
+           // IN: fd, buf, count.         
+           return (void *) tty_read ( (unsigned int) arg2,  //channel 
+                               (char *) arg3,                //buf
+                               (int) arg4 );                 //nr
+    }
+
+
 
 
     if (number == 277 )
@@ -780,7 +793,7 @@ void *gde_extra_services ( unsigned long number,
     {
 		return (void *) __setusername ( (const char *) arg2); 
     }
-    
+
 
     // #todo
     // supporting ptsname libc function

@@ -19,27 +19,67 @@
 // Ponteiros para os dispositivos
 // que a tty atua.
 // sendo que o primeiro dispositivo (canal) é o console.
-unsigned long tty_table[ 32 ];
+
+unsigned long tty_table[4];  //os 4 consoles virtuais.
 
 
+
+
+
+int 
+tty_read ( unsigned int channel, 
+           char *buf, 
+           int nr )
+{
+    struct tty_d *tty;
+
+
+    // Range para terminais virtuais.
+    // os terminais precisam ler seus tty de entrada.
+    
+    if (channel >= 10  && channel < 40)
+    {
+        tty = (struct tty_d *) ttyList[channel];
+        
+        //tty
+        if ( (void *) tty == NULL )
+        {
+            printf ("tty_read: Invalid tty\n");
+            refresh_screen();
+            return -1;
+        }
+            
+        //stream de leitura
+        if ( (void *) tty->stdin == NULL )
+        {
+            printf ("tty_read: Invalid tty stdin\n");
+            refresh_screen();
+            return -1;
+        }
+
+        // copia da tty de leitura para o buffer indicado pelo aplicativo.
+        memcpy ( (void *) buf, (const void *) tty->stdin->_base, nr ); 
+        
+        return nr;    
+     };
+     
+     printf ("tty_read: Invalid device\n");
+    refresh_screen();
+    
+    return  -1;    
+}
 
 
 // escreve o conteúdo de um buffer em um dispositivo.
 // os primeiros são consoles virtuais.
+
+// 0 ~ 3 usa a tty_table para os consoles.
+
 int 
 tty_write ( unsigned int channel, 
             char *buf, 
             int nr )
 {
-
-    // número de dispositivos que atendem a chamada write.
-    // tty_table[]
-    if ( channel >= 32 )
-    {
-        printf ("tty_write: Invalid device\n");
-        refresh_screen();
-        return -1;
-    }
 
 
     if ( channel < 4 )
@@ -52,15 +92,90 @@ tty_write ( unsigned int channel,
     }
 
 
-    // #todo
-    // para os outros canais escreveremos em outros dispositivos,
-    // como no disco, ou sei lá.
+   // escrever no buffer de uma tty qualquer
+   // da ttyList
+   
+    struct tty_d *master;
+    struct tty_d *slave;
     
-    // podemos simplesmente escrever na nossa tty
-    // depois o processo pai lê aqui, já que ele conhece nossa tty
-    // pois está conectado tty->link
+    // número de dispositivos que atendem a chamada write.
+    // ttyList[]
+    if ( channel >= 64 )
+    {
+        printf ("tty_write: Invalid device\n");
+        refresh_screen();
+        return -1;
+    }
+
     
 
+    // Range para terminais virtuais.
+    if (channel >= 10  && channel < 40)
+    {
+		
+		printf ("tty_write: ... channel %d \n",channel );
+		            
+		//colocando numa stream que pertence a uma tty
+		//o número da tty é o número do dispositivo na ttyList
+
+        // pega a tty dado o número dela.
+        // agora o processo filho consegue isso quando se conecta ao pai atraves de suas ttys.
+        
+        // se o aplicativo filho tem o número da tty do pai, que é slave
+        // então ele pode escrever diretamente one o pai vai ler, tty->stdin->_base
+        
+        master = (struct tty_d *) ttyList[channel];
+        
+        //tty
+        if ( (void *) master == NULL )
+        {
+            printf ("tty_write: Invalid master\n");
+            refresh_screen();
+            return -1;
+        }
+            
+        //stream
+        if ( (void *) master->stdout == NULL )
+        {
+            printf ("tty_write: Invalid master stdout\n");
+            refresh_screen();
+            return -1;
+        }
+
+        // coloca em sua própria tty
+        memcpy ( (void *) master->stdout->_base, (const void *) buf, nr ); 
+            
+        // copia para a tty slave.
+        // no caso pode ser um terminal virtual    
+        
+        slave = master->link;    
+
+
+        //tty
+        if ( (void *) slave == NULL )
+        {
+            printf ("tty_write: Invalid slave\n");
+            refresh_screen();
+            return -1;
+        }
+            
+        //stream
+        if ( (void *) master->stdin == NULL )
+        {
+            printf ("tty_write: Invalid slave stdin\n");
+            refresh_screen();
+            return -1;
+        }
+
+        // coloca também na tty slave para leitura.
+        memcpy ( (void *) slave->stdin->_base, (const void *) buf, nr ); 
+        
+        printf( "DONE\n");
+        refresh_screen();        
+     
+        return nr;
+    }
+    
 
     printf ("tty_write: Invalid device\n");
     refresh_screen();
@@ -537,8 +652,12 @@ struct tty_d *tty_create (void)
     int i;
 
 
-    //encontra slot um vazio.
-    for(i=0; i<64; i++)
+    // Encontra slot um vazio.
+    // Mas começando em 10.
+    // Porque os primeiros 4 dispositivos são reservados para console virtual
+    // podemos reservar os 10 primeiros.
+    
+    for(i=10; i<64; i++)
     {
 		// Lista de tty e não de console.
         __tty = (struct tty_d *) ttyList[i];
@@ -563,6 +682,26 @@ _ok:
         
         __tty->used = 1;
         __tty->magic = 1234;
+        
+        __tty->stdin  = (FILE *) newPage (); 
+        __tty->stdout = (FILE *) newPage (); 
+        __tty->stderr = (FILE *) newPage (); 
+        
+        if ( (void *) __tty->stdin == NULL   ||
+             (void *) __tty->stdout == NULL  ||
+             (void *) __tty->stderr == NULL  )
+        {
+            panic ("tty_create: streams fail\n");
+        }
+
+        //precisa validar as 3 stream.        
+        __tty->stdin->used = 1;
+        __tty->stdin->magic = 1234;
+        __tty->stdout->used = 1;
+        __tty->stdout->magic = 1234;
+        __tty->stderr->used = 1;
+        __tty->stderr->magic = 1234;
+        
         
         // register
         
