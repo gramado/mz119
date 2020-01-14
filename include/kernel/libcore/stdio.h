@@ -878,8 +878,11 @@ int printf(const char *format, ...);
 int sprintf(char *str, const char *format, ...);
 int fprintf(FILE *stream, const char *format, ...);
 int putchar( int ch );
-void panic( const char *format, ... );
 //...
+
+
+
+
 
 
 
@@ -937,19 +940,31 @@ void rewind ( FILE * stream );
 
 int puts ( const char *str );
 
+
+
+
 /*
  * Funções internas para o padrão C.
  */
-static void printchar(char **str, int c);
-static int prints(char **out, const char *string, int width, int pad);
-static int printi(char **out, int i, int b, int sg, int width, int pad, int letbase);
-static int print(char **out, int *varg);
 
-//int printf_main(void);    //#suspensa
+void printchar (char **str, int c);
 
+int 
+prints ( char **out, 
+         const char *string, 
+         int width, 
+         int pad );
 
+int 
+printi ( char **out, 
+         int i, 
+         int b, 
+         int sg, 
+         int width, 
+         int pad, 
+         int letbase );
 
-
+int print (char **out, int *varg);
 
 
 

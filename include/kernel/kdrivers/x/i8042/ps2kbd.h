@@ -250,11 +250,6 @@ int KbGetMessage(int tid);
 unsigned long KbGetLongParam1(int tid);
 unsigned long KbGetLongParam2(int tid);
 
-/*
- * Reboot via Keyboard port.
- */
-void reboot (void);
-
 
 //get status 
 int get_alt_status (void);

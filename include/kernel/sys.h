@@ -1,15 +1,14 @@
 
 
-//   sm/sys.h (System Management)
+//   sys.h 
 
-// classe de interfaces para rotinas de sistema.
-// INTERFACES PARA ROTINAS QUE AUXILIAM O GERENCIAMENTO DO SISTEMA.
-// ex: ligamentos, desligamentos, criação, destruição ...
+
 
 
 //
 // PROCESSES
 //
+
 
 void *sys_create_process ( struct room_d *room,
                            struct desktop_d  *desktop,
@@ -24,12 +23,13 @@ void *sys_create_process ( struct room_d *room,
 
 
 int sys_getpid (void);
-
 int sys_getppid (void);
 
 int sys_fork (void);
 
 void sys_exit_process (int pid, int code);
+
+
 
 
 //
@@ -47,7 +47,6 @@ void *sys_create_thread ( struct room_d *room,
 void sys_exit_thread (int tid);
 
 void sys_dead_thread_collector (void);
-
 
 
 //Sincronização do retraço vertical.

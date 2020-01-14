@@ -10,7 +10,7 @@
 VERSION = 1
 PATCHLEVEL = 23
 SUBLEVEL = 0
-EXTRAVERSION = -rc0
+EXTRAVERSION = -rc1
 NAME = 
 
 
@@ -159,6 +159,9 @@ ifeq ($(ARCH),x86)
 
 
 	REQUEST_OBJECTS := request.o 
+	PANIC_OBJECTS := panic.o 
+	REBOOT_OBJECTS := reboot.o 
+	SYS_OBJECTS := sys.o 
 	
 	OBJECTS := $(ENTRY_OBJECTS) \
 	$(EXECVE_OBJECTS) \
@@ -166,7 +169,11 @@ ifeq ($(ARCH),x86)
 	$(KDRIVERS_OBJECTS) \
 	$(KSERVERS_OBJECTS) \
 	$(MK_OBJECTS) \
-	$(REQUEST_OBJECTS)
+	$(REQUEST_OBJECTS) \
+	$(PANIC_OBJECTS) \
+	$(REBOOT_OBJECTS) \
+	$(SYS_OBJECTS)    
+	
 	
 endif
 
@@ -268,9 +275,11 @@ KERNEL.BIN:
 	#mk
 	gcc -c kernel/mk/create.c  -I include/  $(CFLAGS) -o create.o
 
-	#kernel/request
+	#kernel
 	gcc -c  kernel/request.c  -I include/ $(CFLAGS) -o request.o
-
+	gcc -c  kernel/panic.c    -I include/ $(CFLAGS) -o panic.o
+	gcc -c  kernel/reboot.c   -I include/ $(CFLAGS) -o reboot.o
+	gcc -c  kernel/sys.c      -I include/ $(CFLAGS) -o sys.o
 
 	# /execve
 	gcc -c kernel/execve/execve.c  -I include/ $(CFLAGS) -o execve.o

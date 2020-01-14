@@ -750,8 +750,12 @@ update_standard_stream ( int PID,
  *     Rotina de suporta a printf. 
  */
 
-static int prints ( char **out, const char *string, int width, int pad ){
-
+int 
+prints ( char **out, 
+         const char *string, 
+         int width, 
+         int pad )
+{
     register int pc = 0, padchar = ' ';
 
     if (width > 0) 
@@ -800,7 +804,7 @@ static int prints ( char **out, const char *string, int width, int pad ){
  *     Rotina de suporta a printf.
  */
 
-static int 
+int 
 printi ( char **out, 
          int i, 
          int b, 
@@ -874,7 +878,7 @@ printi ( char **out,
  *     Rotina de suporta a printf.
  */
 
-static int print ( char **out, int *varg ){
+int print ( char **out, int *varg ){
 
     register int width, pad;
     register int pc = 0;
@@ -1009,21 +1013,6 @@ int puts ( const char *str )
 }
 
 
-
-/*
- *************************************************
- * panic:
- *     klibc function to show a formated string and hang the system.
- */
- 
-void panic ( const char *format, ... ){
-
-    register int *varg = (int *) (&format);
-
-    printf ("panic: KERNEL PANIC\n");
-    print ( 0, varg );
-    die ();
-}
 
 
 /*
@@ -1714,7 +1703,7 @@ void rewind ( FILE * stream )
  * Essa rotina é chamada pelas funções: /print/printi/prints.
  */
 
-static void printchar (char **str, int c)
+void printchar (char **str, int c)
 {
 	// #importante
 	// Se a string existe colocamos nela,

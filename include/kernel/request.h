@@ -1,5 +1,5 @@
 /*
- * File: gramado/request.h 
+ * File: kernel/request.h 
  *
  * Descrição:
  *     ( Deferred Kernel Service )

@@ -176,9 +176,11 @@ do_thread:
 
 fail:
     return (int) -1;
+
 done:
-    return (int) 0;	
+    return 0;
 }
+
 
 
 /*
@@ -246,142 +248,8 @@ done:
 	return;	
 	
 	*/
-};
-
-
-
-void sys_dead_thread_collector (void)
-{	
-    dead_thread_collector ();
 }
 
-
-//exit process.
-//serviço do sistema.
-
-void sys_exit_process ( int pid, int code ){
-	
-	//if ( pid < 0 )
-	//    return;
-	
-	exit_process ( pid, code );
-};
-
-
-//exit thread.
-void sys_exit_thread (int tid){
-
-	//if ( pid < 0 )
-	//    return;
-	
-    exit_thread (tid);
-};
-
-
-/*
- *****************************************************
- * sys_create_process:
- *     Create process system interface.
- */
-
-void *sys_create_process ( struct room_d *room,
-                           struct desktop_d  *desktop,
-                           struct window_d *window,
-                           unsigned long init_eip, 
-                           unsigned long priority, 
-					       int ppid, 
-					       char *name,
-						   unsigned long iopl, 
-						   unsigned long directory_address )
-{
-    //
-	// @todo: Create some interface routine.
-	//
-	
-	//@todo: Filtros para ponteiros NULL.
-	
-	// Create process.
-	
-    return (void *) create_process ( room, desktop, window, init_eip, 
-	                   priority, ppid, name, iopl, 
-					   (unsigned long) directory_address);
-}
-
-
-/*
- *********************************************************
- * sys_create_thread:
- *     Create thread system interface.
- */
-
-void *sys_create_thread( struct room_d *room,
-                         struct desktop_d  *desktop,
-                         struct window_d *window,
-                         unsigned long init_eip, 
-                         unsigned long priority, 
-					     int ppid, 
-					     char *name )
-{
-    //
-	// @todo: Create some interface routine.
-	//
-	
-	//@todo filtros, para ponteiros NULL.
-	
-	
-	// Create thread.
-    return (void *) create_thread ( room, desktop, window, init_eip, priority, ppid, name ); 
-}
-
-
-/*
- *********************************************
- * sys_fork:
- *     
- */
- 
-int sys_fork (void){
-	
-	return (int) fork ();
-}
-
-
-//Pega o id do processo atual.
-int sys_getpid (void){
-	
-	return (int) current_process;
-}
-
-
-//Pega o ID do processo pai do processo atual.
-int sys_getppid (void){
-	
-    int pid;
-	int ppid;
-	
-	struct process_d *p;
-	
-	pid = (int) current_process;
-	
-	if ( pid >= 0 && pid < PROCESS_COUNT_MAX )
-	{
-		p = (void *) processList[pid]; 		
-		
-		if ( (void *) p == NULL )
-		{
-			return (int) -1;
-		}
-		
-		if ( p->used != 1 || p->magic != 1234 ){
-		    
-			return (int) -1;	
-		}
-		
-		return (int) p->ppid;
-	}
-
-    return (int) -1;	
-}
 
 
  

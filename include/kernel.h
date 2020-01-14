@@ -259,7 +259,7 @@ extern void do_executa_new_task (void);
 #include <kernel/execve/sci/syscall.h>            //system calls.
 #include <kernel/execve/sm/modules.h>             //module manager.
 #include <kernel/execve/sm/debug.h>
-#include <kernel/execve/sm/sys.h>                 //system calls 2.
+
 #include <kernel/execve/sm/system.h>              //system manager.
 #include <kernel/execve/sm/init.h>
 #include <kernel/execve/execve.h>    
@@ -294,7 +294,9 @@ extern void do_executa_new_task (void);
 #include <kernel/ke.h>
 #include <kernel/ki.h>
 #include <kernel/request.h>
-
+#include <kernel/panic.h>
+#include <kernel/reboot.h>
+#include <kernel/sys.h> 
 // =========================================================
 
 

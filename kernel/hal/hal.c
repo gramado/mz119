@@ -382,30 +382,6 @@ hal_lfb_putpixel ( unsigned long ax,
 }
 
 
-/*
- * sys_vsync:
- *     Sincroniza o retraço vertical do monitor.
- *     ? Isso ainda está em uso ?
- */
-
-void sys_vsync (void){
-
-    hal_vsync ();
-}
-
-
-/*
- * sys_showpciinfo:
- *     Mostra informações encontradas na interface PCI.
- */
-
-int sys_showpciinfo (void){
-
-    return (int) hal_showpciinfo ();
-}
-
-
-
 
 
 /*
