@@ -1498,6 +1498,71 @@ int threadmanagerInit()
 */
 
 
+/*
+int 
+thread_queue_put ( struct thread_d *thread,
+                   struct mdg_d *msg );
+                   
+int 
+thread_queue_put ( struct thread_d *thread,
+                   struct mdg_d *msg )
+{
+
+    if ( (void *) thread == NULL )
+        return -1;
+        
+
+    if ( (void *) msg == NULL )
+        return -1;
+        
+    //coloca no tail    
+    thread->MsgQueue[thread->MsgQueueTail] = (unsigned long) msg;
+        
+    //circula
+    if ( thread->MsgQueueTail >= 32 )
+        thread->MsgQueueTail = 0;
+    
+    
+    // O processo não está respondendo.
+    //if ( thread->MsgQueueTail == thread->MsgQueueHead )
+        //return -1;
+        
+    // Ok;
+    return 0
+}
+*/
+
+
+/*
+struct msg_d *
+thread_queue_get ( struct thread_d *thread );
+
+struct msg_d * 
+thread_queue_get ( struct thread_d *thread )
+{
+
+    struct msg_d *msg;
+
+    if ( (void *) thread == NULL )
+        return NULL;
+        
+
+      
+    //pega de head    
+    msg = (struct msg_d *) thread->MsgQueue[thread->MsgQueueHead];
+        
+    //circula
+    if ( thread->MsgQueueHead >= 32 )
+        thread->MsgQueueHead = 0;
+    
+    
+ 
+    // Ok;
+    return (struct msg_d *) msg;
+}
+*/
+
+
 //
 // End.
 //
