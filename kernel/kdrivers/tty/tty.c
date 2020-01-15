@@ -57,14 +57,24 @@ tty_read ( unsigned int channel,
             return -1;
         }
 
-        // copia da tty de leitura para o buffer indicado pelo aplicativo.
-        memcpy ( (void *) buf, (const void *) tty->stdin->_base, nr ); 
-        
-        return nr;    
+ 
+        // Se não pode ler
+        // Isso deixa o app (terminal) num loop.
+        //if ( (tty->stdin->_flags & __SRD) == 0 )
+
+       //if ( (tty->stdin->_flags & __SRD) == 1 )
+
+           // copia da tty de leitura para o buffer indicado pelo aplicativo.
+           memcpy ( (void *) buf, (const void *) tty->stdin->_base, nr ); 
+           
+           
+           //tty->stdin->_flags &= ~( tty->stdin->_flags & __SRD);	       
+          return nr; //-1;    
      };
      
+ 
      printf ("tty_read: Invalid device\n");
-    refresh_screen();
+     refresh_screen();
     
     return  -1;    
 }
@@ -169,6 +179,10 @@ tty_write ( unsigned int channel,
 
         // coloca também na tty slave para leitura.
         memcpy ( (void *) slave->stdin->_base, (const void *) buf, nr ); 
+        
+       //autoriza a ler. 
+       printf (" tty_write: altoriza ler \n");
+       //slave->stdin->_flags = (slave->stdin->_flags | __SRD);
         
         printf( "DONE\n");
         refresh_screen();        

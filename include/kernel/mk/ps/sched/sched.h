@@ -67,12 +67,7 @@ int KiSelectNextThread (int current);
 void KiDispatchTask (void);	
 
 
-//Interaface para manipulação de estado de thread.
-void KiDoThreadReady (int id);
-void KiDoThreadRunning (int id);
-void KiDoThreadSleeping (int id);
-void KiDoThreadZombie (int id);
-void KiDoThreadDead (int id);
+
 
 
 
@@ -139,13 +134,37 @@ void set_task_status (unsigned long status);
 unsigned long get_task_status (void);   //ts.c
 
 
+//0
+void do_thread_initialized (int tid);
 
-void do_thread_initialized (int id);
-void do_thread_ready (int id);
-void do_thread_running (int id);
-void do_thread_sleeping (int id);
-void do_thread_zombie (int id);
-void do_thread_dead (int id);
+//1
+void do_thread_standby (int tid);
+
+//2
+void do_thread_zombie (int tid);
+
+//3
+void do_thread_dead (int tid);
+
+//4
+void do_thread_ready (int tid);
+
+//5
+void do_thread_running (int tid);
+
+
+//6
+void do_thread_waiting (int tid);
+
+//7
+void do_thread_blocked (int tid);
+
+
+// Desiste do tempo de processamento.
+// cooperativo.
+// Muda o seu tempo executando para: Próximo de acabar.
+
+void yield (int tid);
 
 void check_for_standby (void);
 

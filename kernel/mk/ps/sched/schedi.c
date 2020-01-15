@@ -260,9 +260,7 @@ int wakeup_thread_reason ( int tid, int reason ){
 					     current_dead_process == t->wait4pid )
 					{
 					    t->wait_reason[reason] = 0;
-					    KiDoThreadReady (tid);
-					    //KiDoThreadRunning (tid);
-					    
+					    do_thread_ready (tid);
 					}
 					break;
 					
@@ -274,15 +272,13 @@ int wakeup_thread_reason ( int tid, int reason ){
 					     current_dead_thread == t->wait4tid )
 					{
 					    t->wait_reason[reason] = 0;
-					    KiDoThreadReady (tid);
-					    //KiDoThreadRunning (tid);
-					    
+					    do_thread_ready (tid);
 					}
 					break;
 					
 				case WAIT_REASON_TEST:
 					t->wait_reason[reason] = 0;
-					KiDoThreadReady (tid);
+					do_thread_ready (tid);
 				    break;
 			    
                 // ...
@@ -441,34 +437,8 @@ int KiSelectNextThread (int current ){
 }
 
 
-void KiDoThreadReady (int id)
-{
-    do_thread_ready (id);
-}
 
 
-void KiDoThreadRunning (int id)
-{
-    do_thread_running (id);
-}
-
-
-void KiDoThreadSleeping (int id)
-{
-    do_thread_sleeping (id);
-}
-
-
-void KiDoThreadZombie (int id)
-{
-    do_thread_zombie (id);
-}
-
-
-void KiDoThreadDead (int id)
-{
-    do_thread_dead (id);
-}
 
  
 /*
@@ -586,82 +556,158 @@ void set_current (int id){
 }
 
 
-
-void do_thread_initialized (int id){
+//0
+void do_thread_initialized (int tid){
 
     struct thread_d *t; 
 
 
-    if (id < 0 || id >= THREAD_COUNT_MAX)
+    if (tid < 0 || tid >= THREAD_COUNT_MAX)
     {
         return;
     }
 
 
-    t = (void *) threadList[id];
+    t = (void *) threadList[tid];
 
     if ( (void *) t != NULL )
     {
-		//if ( t->used == 1 && t->magic == 1234 )
-
+        //if ( t->used == 1 && t->magic == 1234 )
         t->state = INITIALIZED;
     }
 }
 
 
-/* 
- * do_thread_ready: 
- *     #todo: 
- *     Mudar o argumento para tid. 
- */
-  
-void do_thread_ready (int id){
-	
+//1
+void do_thread_standby (int tid)
+{
     struct thread_d *t; 
 
-    if (id < 0 || id >= THREAD_COUNT_MAX)
+
+    if (tid < 0 || tid >= THREAD_COUNT_MAX)
+    {
+        return;
+    }
+
+    t = (void *) threadList[tid];
+
+    if ( (void *) t != NULL)
+    {
+        t->state = STANDBY;
+    }
+}
+
+
+// 2
+void do_thread_zombie (int tid){
+
+    struct thread_d *t; 
+
+ 
+    if (tid < 0 || tid >= THREAD_COUNT_MAX)
+    {
+        return;
+    }
+
+    t = (void *) threadList[tid]; 
+
+
+    if ( (void *) t == NULL )
+    {
+        return;
+    }else{
+
+        if ( tid != IDLE )
+        {
+            t->state = ZOMBIE;
+        }
+    };
+}
+
+
+//3
+void do_thread_dead (int tid){
+
+    struct thread_d *t; 
+
+
+    if (tid < 0 || tid >= THREAD_COUNT_MAX)
     {
         return;
     }
 
 
-    t = (void *) threadList[id];
+    t = (void *) threadList[tid];
 
     if ( (void *) t != NULL )
     {
-		//if ( t->used == 1 && t->magic == 1234 )
+        t->state = DEAD;
+    }
+}
 
+
+//4  
+void do_thread_ready (int tid){
+
+    struct thread_d *t; 
+
+    if (tid < 0 || tid >= THREAD_COUNT_MAX)
+    {
+        return;
+    }
+
+
+    t = (void *) threadList[tid];
+
+    if ( (void *) t != NULL )
+    {
+        //if ( t->used == 1 && t->magic == 1234 )
         t->state = READY;
     }
 }
 
 
-/* 
- * do_thread_running: 
- *     #todo: 
- *     Mudar o argumento para tid. 
- */
-
-void do_thread_running (int id){
+//5
+void do_thread_running (int tid){
 
     struct thread_d *t; 
 
 
-    if (id < 0 || id >= THREAD_COUNT_MAX)
+    if (tid < 0 || tid >= THREAD_COUNT_MAX)
     {
         return;
     }
 
 
-    t = (void *) threadList[id];
+    t = (void *) threadList[tid];
 
     if ( (void *) t != NULL )
     {
-		if ( t->used == 1 && t->magic == 1234 )
-		{
-		    t->state = RUNNING;
-		}
-    };
+        if ( t->used == 1 && t->magic == 1234 )
+        {
+            t->state = RUNNING;
+        }
+    }
+}
+
+
+//6
+void do_thread_waiting (int tid)
+{
+    struct thread_d *t; 
+
+
+    if (tid < 0 || tid >= THREAD_COUNT_MAX)
+    {
+        return;
+    }
+
+    t = (void *) threadList[tid];
+
+    if ( (void *) t != NULL)
+    {
+        t->state = WAITING;
+    }
 }
 
 
@@ -672,18 +718,18 @@ void do_thread_running (int id){
  *     @todo: Mudar o nome da função para do_thread_blocked.
  */
 
-void do_thread_sleeping (int id){
+// 7
+void do_thread_blocked (int tid){
 
     struct thread_d *t; 
 
 
-    if (id < 0 || id >= THREAD_COUNT_MAX)
+    if (tid < 0 || tid >= THREAD_COUNT_MAX)
     {
         return;
     }
 
-    // Struct.
-    t = (void *) threadList[id];
+    t = (void *) threadList[tid];
 
     if ( (void *) t != NULL)
     {
@@ -692,61 +738,36 @@ void do_thread_sleeping (int id){
 }
 
 
-/* 
- * do_thread_zombie: 
- *     #todo: 
- *     Mudar o argumento para tid 
- */
 
-void do_thread_zombie (int id){
+
+
+
+// Desiste do tempo de processamento.
+// cooperativo.
+// Muda o seu tempo executando para: Próximo de acabar.
+
+void yield (int tid){
 
     struct thread_d *t; 
 
- 
-    if (id < 0 || id >= THREAD_COUNT_MAX)
+
+    if (tid < 0 || tid >= THREAD_COUNT_MAX)
     {
         return;
     }
 
 
-    t = (void *) threadList[id]; 
-
-    if ( (void *) t == NULL )
-    {
-        return;
-    }else{
-
-        if ( id != IDLE ){
-            t->state = ZOMBIE;
-        }
-    };
-}
-
-
-/* 
- * do_thread_dead: 
- *     #todo: 
- *     Mudar o argumento para tid. 
- */
-
-void do_thread_dead (int id){
-
-    struct thread_d *t; 
-
-
-    if (id < 0 || id >= THREAD_COUNT_MAX)
-    {
-        return;
-}
-
-
-    t = (void *) threadList[id];
+    t = (void *) threadList[tid];
 
     if ( (void *) t != NULL )
     {
-        t->state = DEAD;
+        if ( t->used == 1 && t->magic == 1234 )
+        {
+            t->runningCount = (t->quantum - 2);
+        }
     }
 }
+
 
 
 /*

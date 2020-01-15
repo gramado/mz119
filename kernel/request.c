@@ -204,10 +204,10 @@ int request (void){
             break;
 
 
-	    //2 - faz a current_thread dormir. 
-   	    case KR_SLEEP:   
-		    do_thread_sleeping ( (int) REQUEST.target_tid );
-	        break;
+        //2 - faz a current_thread dormir. 
+        case KR_SLEEP:   
+            do_thread_blocked ( (int) REQUEST.target_tid );
+            break;
 
 
 	    //3 - acorda a current_thread.

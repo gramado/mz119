@@ -342,6 +342,16 @@ void *gde_extra_services ( unsigned long number,
     FILE *__bmfp;
 
 
+
+    // yield the current thread.
+    // O seu tempo rodando vai para perto do fim.
+    if (number == 265)
+    {
+        yield (current_thread);
+        return NULL;
+    }
+
+
     // Pega o número da tty de um processo, dado o pid.
     // IN: PID.
     // OUT: tty id.
@@ -359,7 +369,7 @@ void *gde_extra_services ( unsigned long number,
     }
     
     
-     // read
+     // read()
     // See: unistd.c em garden/lib/libcore.           
     if (number == 268)
     {
@@ -369,6 +379,10 @@ void *gde_extra_services ( unsigned long number,
                                (int) arg4 );                 //nr
     }
 
+    //#todo
+    // mudar o tty_write para cá;
+    //ele está lá em baixo.
+    //if (number == 269)
 
 
 

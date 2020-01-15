@@ -534,8 +534,8 @@ vhd-copy-files:
 	-sudo cp ../atacama/bin/FALSE.BIN     /mnt/gramadovhd
 #	-sudo cp ../atacama/bin/CAT.BIN       /mnt/gramadovhd
 #	-sudo cp ../atacama/bin/DUMPIT.BIN    /mnt/gramadovhd
-#	-sudo cp ../atacama/bin/HELLO.BIN     /mnt/gramadovhd
-#	-sudo cp ../atacama/bin/HELLO2.BIN    /mnt/gramadovhd
+	-sudo cp ../atacama/bin/HELLO.BIN     /mnt/gramadovhd
+	-sudo cp ../atacama/bin/HELLO2.BIN    /mnt/gramadovhd
 	-sudo cp ../atacama/bin/HELLO3.BIN    /mnt/gramadovhd
 #	-sudo cp ../atacama/bin/JACKPOT.BIN   /mnt/gramadovhd
 #	-sudo cp ../atacama/bin/LISP.BIN      /mnt/gramadovhd
