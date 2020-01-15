@@ -58,6 +58,26 @@ tty_read ( unsigned int channel,
         }
 
  
+       printf ("tty_read: copiando para buf \n");
+       refresh_screen();
+
+ 
+         if ( (void *) tty->stdin->_base == NULL )
+        {
+            printf ("tty_read: invalid _base \n");
+            refresh_screen();
+            return -1;
+        }
+
+        if ( (void *) buf == NULL )
+        {
+            printf ("tty_read: invalid buf \n");
+            refresh_screen();
+            return -1;
+        }
+
+
+ 
         // Se não pode ler
         // Isso deixa o app (terminal) num loop.
         //if ( (tty->stdin->_flags & __SRD) == 0 )
@@ -152,6 +172,23 @@ tty_write ( unsigned int channel,
             return -1;
         }
 
+        printf ("tty_write: copiando para master->stdout->_base \n");
+        refresh_screen();
+        
+        if ( (void *) master->stdout->_base == NULL )
+        {
+            printf ("tty_write: * invalid _base \n");
+            refresh_screen();
+            return -1;
+        }
+
+        if ( (void *) buf == NULL )
+        {
+            printf ("tty_write: invalid buf \n");
+            refresh_screen();
+            return -1;
+        }
+
         // coloca em sua própria tty
         memcpy ( (void *) master->stdout->_base, (const void *) buf, nr ); 
             
@@ -170,9 +207,26 @@ tty_write ( unsigned int channel,
         }
             
         //stream
-        if ( (void *) master->stdin == NULL )
+        if ( (void *) slave->stdin == NULL )
         {
             printf ("tty_write: Invalid slave stdin\n");
+            refresh_screen();
+            return -1;
+        }
+
+        printf ("tty_write: copiando para slave->stdout->_base \n");
+        refresh_screen();
+
+        if ( (void *) slave->stdin->_base == NULL )
+        {
+            printf ("tty_write: invalid _base \n");
+            refresh_screen();
+            return -1;
+        }
+
+        if ( (void *) buf == NULL )
+        {
+            printf ("tty_write: invalid buf \n");
             refresh_screen();
             return -1;
         }
@@ -181,7 +235,7 @@ tty_write ( unsigned int channel,
         memcpy ( (void *) slave->stdin->_base, (const void *) buf, nr ); 
         
        //autoriza a ler. 
-       printf (" tty_write: altoriza ler \n");
+       //printf (" tty_write: altoriza ler \n");
        //slave->stdin->_flags = (slave->stdin->_flags | __SRD);
         
         printf( "DONE\n");
@@ -720,6 +774,12 @@ _ok:
         __tty->stderr->used = 1;
         __tty->stderr->magic = 1234;
         
+
+        __tty->stdin->_base  = (char *) newPage (); 
+        __tty->stdout->_base = (char *) newPage (); 
+        __tty->stderr->_base = (char *) newPage (); 
+
+        //#todo cheacar, e inicializar os outros elementos.
         
         // register
         
