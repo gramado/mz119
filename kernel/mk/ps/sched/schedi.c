@@ -746,7 +746,8 @@ void do_thread_blocked (int tid){
 // cooperativo.
 // Muda o seu tempo executando para: Próximo de acabar.
 
-void yield (int tid){
+void yield (int tid)
+{
 
     struct thread_d *t; 
 
@@ -763,7 +764,12 @@ void yield (int tid){
     {
         if ( t->used == 1 && t->magic == 1234 )
         {
-            t->runningCount = (t->quantum - 2);
+	        // flag. 
+	        // 1 = Sinaliza que a thread está dando a preferência
+	        // e que deve sair quando for seguro fazer isso.
+            // Agenda o yield.
+            // >>> O ts.c vai fazer isso na hora certa.
+            t->_yield = 1;    
         }
     }
 }

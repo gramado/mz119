@@ -230,27 +230,43 @@ void task_switch (void){
 		
 		save_current_context ();
 		Current->saved = 1;
-		
+
+		// #obs:
+		// A preempção acontecerá por dois possíveis motivos.
+		// + Se o timeslice acabar.
+		// + Se a flag de yield foi acionada.
+
+
 		// #importante:
 		// Se a thread ainda não esgotou seu quantum, 
 		// então ela continua usando o processador.
 		
 		if ( Current->runningCount < Current->quantum )
 		{
+
+            // yield support.
+            if ( Current->state == RUNNING && Current->_yield == 1 )
+            {
+                Current->state = READY;
+                Current->_yield = 0;
+                goto try_next;
+            }
+
 			IncrementDispatcherCount (SELECT_CURRENT_COUNT);
 			return; 
 		
 		// #importante
-		// Nesse momento a thread esgotou seu quantum, então sofrerá preempção
-		// e outra thread será colocada para rodar de acordo com a ordem 
-		// estabelecida pelo escalonador.
-			
+		// Nesse momento a thread [esgotou] seu quantum, 
+		// então sofrerá preempção e outra thread será colocada 
+		// para rodar de acordo com a ordem estabelecida 
+		// pelo escalonador.
+
 		}else{
 			
 			//
 			// ======== ## PREEMPT ## ========
 			//
-		
+
 			// * MOVEMENT 3 (Running --> Ready).
 			
 			if ( Current->state == RUNNING )

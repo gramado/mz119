@@ -80,19 +80,20 @@ int find_higher_priority (void){
     int Current; 
 
 
-
     // Only Idle? return.
-
-    //if ( ProcessorBlock.threads_counter == 1 )
     if ( UPProcessorBlock.threads_counter == 1 )
     {
-		//#bugbug, Nã devemos determinar o valor da thread idle dessa forma.
+		
+		//#bugbug, 
+		// Nã0 devemos determinar o valor da thread idle dessa forma.
 		//tempos um ponteiro para a estrutura da thread idle.
 		
-	    if (current_thread == 0)
-		{
-			return (int) next_thread;
-		}
+	    //if (current_thread == 0)
+		//{
+			//return (int) next_thread;
+		//}
+		
+		return (int) ____IDLE->tid;
 		
 		//@todo: E caso a única thread que está rodando não seja a thread idle??
     }
@@ -132,7 +133,6 @@ int find_higher_priority (void){
         Current++;
 
 		//Circula.
-
         if (Current >= THREAD_COUNT_MAX)
         {
             Current = (int) 0;
@@ -142,10 +142,13 @@ int find_higher_priority (void){
         
         if ( (void *) t != NULL )
         {
-		    //A tarefa rodando de maior prioridade.  
+	        // Done! 
+	        // Encontramos uma thread de prioridade maior.
+		    // A tarefa rodando de maior prioridade.  
             if ( (t->state == READY) && (t->priority >= p ) )
             {
-                break;
+                return (int) Current;
+                //break;
             }
 			//Nothing.
         }  
@@ -158,17 +161,10 @@ int find_higher_priority (void){
 
     if ( i >= (2*THREAD_COUNT_MAX) )
     {
-        return (int) next_thread;
+        return (int) ____IDLE->tid;
     }
 
-
-	// Nothing ?!
-
-
-	// Done! 
-	// Encontramos uma tarefa de prioridade maior.
-
-    return (int) Current;
+    return (int) ____IDLE->tid;
 }
 
 

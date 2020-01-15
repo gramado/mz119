@@ -320,6 +320,9 @@ int main ( int argc, char *argv[] ){
 
 
 
+        //yield. test
+        gramado_system_call ( 265,0,0,0); 
+        
 // ===============================================
 __loop:
 

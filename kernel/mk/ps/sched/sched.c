@@ -123,6 +123,7 @@ struct thread_d *pick_next_thread (void){
 		// Isso está errado, estamos selecionando a thread de controle
 		// do processo init.bin, mas queremos a idle do kernel.
         t = InitThread;
+        //t = ____IDLE;
     };
 
 

@@ -223,7 +223,14 @@ struct thread_d
 	thread_type_t type;	
 	
 	thread_state_t state;    //flag, Estado atual da tarefa. ( RUNNING, DEAD ...).	
-	
+
+
+	// flag. 
+	// 1 = Sinaliza que a thread está dando a preferência
+	// e que deve sair quando for seguro fazer isso.
+    int _yield;
+
+
 	// error. @todo:
 	//unsigned long error;
 	
