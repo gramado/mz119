@@ -7,6 +7,91 @@
 #include <kernel.h>
 
 
+
+/*
+ * stdio_file_write: 
+ *     Escreve no arquivo uma certa quantidade de caracteres de uma 
+ *     dada string.
+ */
+
+int stdio_file_write ( FILE *stream, char *string, int len ){
+
+    int i;
+    char *p;
+
+  
+    p = string;
+
+  
+    if ( (void *) stream == NULL )
+       return EOF;
+
+
+    for (i=0; i<len; i++)
+    {
+        fputc ( ( int ) *p, stream );
+        p++;
+    };
+
+
+    return 0;
+}
+
+
+
+// copiar um buffer para uma stream.
+// dado o fd.
+int sys_write (unsigned int fd,char *buf,int count)
+{
+    struct process_d *__P;
+    FILE *stream;
+    int len;
+    
+    
+    if (fd<0)
+        return -1;
+        
+    if (fd >= 32)
+        return -1;
+
+
+    // len
+    len = strlen( (const char *) buf );
+    
+    if (len > count )
+        len = count;
+    
+    if (len > 64 )
+        len = 64;
+    
+    
+    
+    
+    __P = (struct process_d *) processList[current_process];
+
+    if ( (void *) __P == NULL )
+        return -1;
+
+    stream = ( FILE * ) __P->Streams[fd];
+
+    if ( (void *) stream == NULL )
+        return -1;
+
+    // Escreve em uma stream uma certa quantidade de chars.
+    stdio_file_write ( (FILE *) stream, (char *) buf, (int) count );
+    
+    return 0;
+}
+
+
+//todo
+int sys_read (unsigned int fd,char *buf,int count)
+{
+    return -1;
+}
+
+
+
 //SVr4,  4.3BSD,  POSIX.1-2001. 
 
 int open (const char *pathname, int flags, mode_t mode ){

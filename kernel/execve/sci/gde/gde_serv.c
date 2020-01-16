@@ -342,29 +342,28 @@ void *gde_extra_services ( unsigned long number,
     FILE *__bmfp;
 
 
-    /*
-    // read()
+    
+    // read()   #todo;
     //usam a lista de arquivos abertos do processo. p->Streams[i]
     if ( number == 260 )
     {
         return (void *) sys_read ( 
-                            (int) arg2, 
-                            (const void *) arg3, 
-                            (size_t) arg4 );
+                            (unsigned int) arg2, 
+                            (char *) arg3, 
+                            (int) arg4 );
     }
-    */ 
+     
     
-    /*
-    // write() 
+    
+    // write() #implementada! (revisar!)
     //usam a lista de arquivos abertos do processo. p->Streams[i]
     if ( number == 261 )
     {
         return (void *) sys_write ( 
-                            (int) arg2, 
-                            (const void *) arg3, 
-                            (size_t) arg4 );
+                            (unsigned int) arg2, 
+                            (char *) arg3, 
+                            (int) arg4 );
     }
-    */
 
 
 
