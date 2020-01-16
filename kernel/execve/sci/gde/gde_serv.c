@@ -343,6 +343,20 @@ void *gde_extra_services ( unsigned long number,
 
 
 
+    // write on virtual console!
+    // range: 0 ~ 3
+    // chamado por write_VC em ring3.
+    // IN: fd, buf, count
+    if ( number == 263 )
+    {
+        return (void *) __console_write ( 
+                            (int) arg2, 
+                            (const void *) arg3, 
+                            (size_t) arg4 );
+    }
+
+
+
     // yield the current thread.
     // O seu tempo rodando vai para perto do fim.
     if (number == 265)

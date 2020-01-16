@@ -380,7 +380,7 @@ void console_putchar ( int c, int console_number ){
 
 
 
-
+//deletar.
 size_t 
 console_write ( const char *data, 
                 size_t size, 
@@ -409,6 +409,27 @@ console_write ( const char *data,
         console_putchar ( (int) data[i], console_number);
         
     return size;    
+}
+
+
+ssize_t __console_write (int console_number, const void *buf, size_t count)
+{
+
+   if ( console_number < 0 || console_number > 3 )
+       return -1;
+
+    if (!count)
+        return -1;
+        
+        
+    char *data = (char *) buf;
+        
+    size_t i;
+    for (i=0; i<count; i++)
+        console_putchar ( (int) data[i], console_number);
+        
+    return count;    
+
 }
 
 
