@@ -24,7 +24,19 @@ int stdio_file_write ( FILE *stream, char *string, int len ){
 
   
     if ( (void *) stream == NULL )
-       return EOF;
+    {
+		printf ("stdio_file_write: stream\n");
+		refresh_screen();
+        return EOF; 
+    }
+
+    if ( (void *) p == NULL )
+    {
+		printf ("stdio_file_write: p\n");
+		refresh_screen();
+        return EOF; 
+    }
+
 
 
     for (i=0; i<len; i++)
@@ -70,12 +82,22 @@ int sys_write (unsigned int fd,char *buf,int count)
     __P = (struct process_d *) processList[current_process];
 
     if ( (void *) __P == NULL )
-        return -1;
+    {
+		printf ("sys_write: __P\n");
+		refresh_screen();
+        return -1; 
+    }
+
 
     stream = ( FILE * ) __P->Streams[fd];
 
     if ( (void *) stream == NULL )
-        return -1;
+    {
+		printf ("sys_write: stream\n");
+		refresh_screen();
+        return -1; 
+    }
+
 
     // Escreve em uma stream uma certa quantidade de chars.
     stdio_file_write ( (FILE *) stream, (char *) buf, (int) count );
