@@ -100,27 +100,13 @@ tty_read ( unsigned int channel,
 }
 
 
-// escreve o conteúdo de um buffer em um dispositivo.
-// os primeiros são consoles virtuais.
 
-// 0 ~ 3 usa a tty_table para os consoles.
-
+// o descritor seleciona uma tty em ttyList e escreve em tty->stdout->_base
 int 
 tty_write ( unsigned int channel, 
             char *buf, 
             int nr )
 {
-
-
-    if ( channel < 4 )
-    {
-        // retorna size
-        // IN: buf, size, console number.
-        return (int) console_write ( (const char *) buf, 
-                         (size_t) nr, 
-                         (int) channel);        
-    }
-
 
    // escrever no buffer de uma tty qualquer
    // da ttyList

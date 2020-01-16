@@ -383,7 +383,8 @@ void *gde_extra_services ( unsigned long number,
     }
     
     
-     // read()
+
+    // read_ttyList
     // See: unistd.c em garden/lib/libcore.           
     if (number == 268)
     {
@@ -393,11 +394,14 @@ void *gde_extra_services ( unsigned long number,
                                (int) arg4 );                 //nr
     }
 
-    //#todo
-    // mudar o tty_write para cá;
-    //ele está lá em baixo.
-    //if (number == 269)
-
+    // write_ttyList
+    if (number == 269)
+    {
+        // IN: fd, buf, count.         
+        return (void *) tty_write ( (unsigned int) arg2,  //channel 
+                            (char *) arg3,                //buf
+                            (int) arg4 );                 //nr
+    }
 
 
     if (number == 277 )
@@ -2558,10 +2562,12 @@ void *gde_services ( unsigned long number,
        // write
        // See: unistd.c em garden/lib/libcore.
        case 169:
+           //essa rotina mudou de número.
+           return NULL;
            // IN: fd, buf, count.         
-           return (void *) tty_write ( (unsigned int) arg2,  //channel 
-                               (char *) arg3,                //buf
-                               (int) arg4 );                 //nr
+           //return (void *) tty_write ( (unsigned int) arg2,  //channel 
+             //                  (char *) arg3,                //buf
+               //                (int) arg4 );                 //nr
            break;
 
 
