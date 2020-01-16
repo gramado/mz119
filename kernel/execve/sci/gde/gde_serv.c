@@ -343,13 +343,28 @@ void *gde_extra_services ( unsigned long number,
 
 
 
+    // read on virtual console!
+    // range: 0 ~ 3
+    // chamado por read_VC em ring3.
+    // IN: fd, buf, count
+
+
+    if ( number == 262 )
+    {
+        return (void *) console_read ( 
+                            (int) arg2, 
+                            (const void *) arg3, 
+                            (size_t) arg4 );
+    }
+
     // write on virtual console!
     // range: 0 ~ 3
     // chamado por write_VC em ring3.
     // IN: fd, buf, count
+    
     if ( number == 263 )
     {
-        return (void *) __console_write ( 
+        return (void *) console_write ( 
                             (int) arg2, 
                             (const void *) arg3, 
                             (size_t) arg4 );
@@ -382,9 +397,10 @@ void *gde_extra_services ( unsigned long number,
         return (void *) pty_link_by_pid ( (int) arg2, (int) arg3 );
     }
     
-    
 
-    // read_ttyList
+
+
+    // read_ttyList em ring3 vai chamar isso.
     // See: unistd.c em garden/lib/libcore.           
     if (number == 268)
     {
@@ -394,7 +410,7 @@ void *gde_extra_services ( unsigned long number,
                                (int) arg4 );                 //nr
     }
 
-    // write_ttyList
+    // write_ttyList em ring3  vai chamar isso.
     if (number == 269)
     {
         // IN: fd, buf, count.         
@@ -402,6 +418,8 @@ void *gde_extra_services ( unsigned long number,
                             (char *) arg3,                //buf
                             (int) arg4 );                 //nr
     }
+
+
 
 
     if (number == 277 )

@@ -380,39 +380,17 @@ void console_putchar ( int c, int console_number ){
 
 
 
-//deletar.
-size_t 
-console_write ( const char *data, 
-                size_t size, 
-                int console_number )
+
+
+ssize_t console_read (int console_number, const void *buf, size_t count)
 {
-
-    // size:
-    // temos que confiar no valor enviado.
-    // o usuário tem que saber o quanto quer enviar para 
-    // o dispositivo console.
-    // O limite aqui é uma linha.
-    
-    //printf ("size=%d \n", size );
-    //refresh_screen();
-    
-    if (!size)
-        return 0;
-
-    //linha
-    //if (size >= 80)
-        //size = 80; 
- 
-
-    size_t i;
-    for (i=0; i<size; i++)
-        console_putchar ( (int) data[i], console_number);
-        
-    return size;    
+    return -1;  //todo
 }
 
 
-ssize_t __console_write (int console_number, const void *buf, size_t count)
+
+
+ssize_t console_write (int console_number, const void *buf, size_t count)
 {
 
    if ( console_number < 0 || console_number > 3 )

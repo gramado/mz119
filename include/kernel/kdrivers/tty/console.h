@@ -11,13 +11,12 @@ void console_outbyte (int c, int console_number);
 
 void console_putchar ( int c, int console_number );
 
-//deletar.
-size_t
-console_write ( const char *data, 
-                size_t size, 
-                int console_number ); 
-                
-ssize_t __console_write (int console_number, const void *buf, size_t count);
+
+
+
+ssize_t console_read (int console_number, const void *buf, size_t count);                
+ssize_t console_write (int console_number, const void *buf, size_t count);
+
 
 void console_scroll (int console_number);
 
