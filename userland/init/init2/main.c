@@ -151,7 +151,8 @@ void enable_maskable_interrupts()
 // Uma interrupção para habilitar as interrupções mascaráveis.
 // Só depois disso a interrupção de timer vai funcionar.
  
-int main ( int argc, char *argv[] ){
+int main3 ( int argc, char *argv[] );
+int main3 ( int argc, char *argv[] ){
 
     char runlevel_string[64];
 
@@ -348,6 +349,41 @@ fail1:
     return -1;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+int main ( int argc, char *argv[] ){
+
+    __debug_print ("init2.bin: Initializing ...\n");
+
+    apiDrawText ( NULL, 
+        0, 0, COLOR_YELLOW, 
+        "init2.bin: Init is alive! Calling int 129" );
+    refresh_screen ();
+
+    //
+    // Habilita as interrupções mascaraveis.
+    //
+    
+    enable_maskable_interrupts ();
+    //asm ("int $129 \n");
+    
+    
+     gramado_system_call (900, (unsigned long)"gdeshell.bin", 0, 0);     
+
+     while (1){
+        asm ("pause");
+    }   
+}
 
 //
 // End.

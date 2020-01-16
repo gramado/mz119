@@ -57,7 +57,7 @@ void crt0 (){
     system_call ( 69, 0, 0, 0 );
     
     
-    // lib/gramlibs.
+    // lib/
     // Inicializando o suporte a alocação dinâmica de memória.
     // Inicializando o suporte ao fluxo padrão.
 
@@ -83,7 +83,7 @@ void crt0 (){
     
 __fatal_error:
 
-    printf ("init2.bin-crt0: exit_code=%d *hang!\n", ExitCode );
+    //printf ("init2.bin-crt0: exit_code=%d *hang!\n", ExitCode );
 
     while (1){
         asm ("pause");

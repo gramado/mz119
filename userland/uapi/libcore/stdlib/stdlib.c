@@ -589,7 +589,7 @@ fail:
 	*/
     
 	return (int) 1;
-};
+}
 
 
 /*
@@ -642,7 +642,7 @@ int stdlibInitMM (){
 	//	
 
     return (int) Status;	
-}; 
+}
 
 
 /*

@@ -1133,9 +1133,9 @@ int getchar (void){
  
 void stdioInitialize ()
 {
-    //FILE *_fp;
+    // #obs:
+    // malloc já está inicializado.
 
-    int status = 0;
 
     // Buffers para as estruturas.
     // ring3.
@@ -1144,8 +1144,17 @@ void stdioInitialize ()
     unsigned char buffer2[BUFSIZ];
 
 
-	//register int i;
+    unsigned char buffer0_data[BUFSIZ];
+    unsigned char buffer1_data[BUFSIZ];
+    unsigned char buffer2_data[BUFSIZ];
+
+
+    int status = 0;
     int i;
+    
+            
+    //FILE *_fp;
+
 
 
 
@@ -1160,10 +1169,25 @@ void stdioInitialize ()
 	// Mas não usaremos a estrutura em ring3, somente o ponteiro.
 	// O ponteiro apontará para um estrutura em ring0.
 
-	//stdin  = (FILE *) &buffer0[0];
-	//stdout = (FILE *) &buffer1[0];
-	//stderr = (FILE *) &buffer2[0];
+	stdin  = (FILE *) &buffer0[0];
+	stdout = (FILE *) &buffer1[0];
+	stderr = (FILE *) &buffer2[0];
 	
+	
+	stdin->_base    = &buffer0_data[0];
+	stdout->_base   = &buffer1_data[0];
+	stderr->_base   = &buffer2_data[0];
+
+    stdin->_ptr  = stdin->_base;
+    stdout->_ptr = stdout->_base;
+    stderr->_ptr = stderr->_base;
+    
+    
+    stdin->_cnt  = BUFSIZ;
+    stdout->_cnt = BUFSIZ;
+    stderr->_cnt = BUFSIZ;
+
+    
     // pegando s stream na lista de arquivos do processo.
     // O ponteiro apontará para um estrutura em ring0.
     // service, pid, fd, 0.
@@ -1173,9 +1197,11 @@ void stdioInitialize ()
     // pois os processo filhos herdariam estruturas 
     // que estão em ring0.
     
-    stdin  = (FILE *) gramado_system_call ( 167, getpid(), 0, 0 );
-    stdout = (FILE *) gramado_system_call ( 167, getpid(), 1, 0 );
-    stderr = (FILE *) gramado_system_call ( 167, getpid(), 2, 0 );
+    // Estruturas em ring3. O kernel não saberá disso.
+    // então tem que inicializar os elementos.
+    //stdin  = (FILE *) gramado_system_call ( 167, getpid(), 0, 0 );
+    //stdout = (FILE *) gramado_system_call ( 167, getpid(), 1, 0 );
+    //stderr = (FILE *) gramado_system_call ( 167, getpid(), 2, 0 );
 }
 
 

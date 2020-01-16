@@ -622,37 +622,42 @@ void *gde_extra_services ( unsigned long number,
 	// 605 - fileno
     if ( number == 605 )
     {
-        return (void *) fileno ( (FILE *) arg2 );
+		return NULL;
+        //return (void *) fileno ( (FILE *) arg2 );
     }
 
     // 606 - ungetc
     if ( number == 606 )
     {
-        return (void *) ungetc ( (int) arg2, (FILE *) arg3 );
+		return NULL;
+        //return (void *) ungetc ( (int) arg2, (FILE *) arg3 );
     }
 
 	// 607 - fread
     if ( number == 607 )
     {
+		return NULL;
 		//return (void *) fread ( (void *) ptr, (size_t) 1, (size_t) n, (FILE *) fp );
-        return (void *) fread ( (void *) arg2, (size_t) 1, (size_t) arg3, (FILE *) arg4 );
+        //return (void *) fread ( (void *) arg2, (size_t) 1, (size_t) arg3, (FILE *) arg4 );
     }
 
 
 	//608 - fwrite
     if ( number == 608 )
     {
+		return NULL;
         //size_t fwrite (const void *ptr, size_t size, size_t n, FILE *fp) 
-        return (void *) fwrite ( (const void *) arg2, 
-                            (size_t) 1, 
-                            (size_t) arg3, 
-                            (FILE *) arg4 );
+        //return (void *) fwrite ( (const void *) arg2, 
+          //                  (size_t) 1, 
+            //                (size_t) arg3, 
+              //              (FILE *) arg4 );
     }
 
 	//609
     if ( number == 609 )
     {
-        rewind ( (FILE *) arg2 );
+		return NULL;
+        //rewind ( (FILE *) arg2 );
         return NULL;
     }
 
@@ -661,7 +666,7 @@ void *gde_extra_services ( unsigned long number,
     if ( number == 610 )
     {
 		//void setbuf(FILE *stream, char *buf);
-        setbuf ( (FILE *) arg2, (char *) arg3 );
+        //setbuf ( (FILE *) arg2, (char *) arg3 );
         return NULL;
     }
 
@@ -669,7 +674,7 @@ void *gde_extra_services ( unsigned long number,
     if ( number == 611 )
     {
 		//void setbuffer(FILE *stream, char *buf, size_t size);
-        setbuffer ( (FILE *) arg2, (char *) arg3, (size_t) arg4 );
+        //setbuffer ( (FILE *) arg2, (char *) arg3, (size_t) arg4 );
         return NULL;
     }
 
@@ -677,7 +682,7 @@ void *gde_extra_services ( unsigned long number,
     if ( number == 612 )
     {
 		//void setlinebuf(FILE *stream);
-        setlinebuf ( (FILE *) arg2 );
+        //setlinebuf ( (FILE *) arg2 );
         return NULL;
     }
 
@@ -686,27 +691,29 @@ void *gde_extra_services ( unsigned long number,
 	//#todo: precisamos do argumento size.
     if ( number == 613 )
     {
+		return NULL;
 		//int setvbuf(FILE *stream, char *buf, int mode, size_t size);
-        return (void *) setvbuf ( (FILE *) arg2, (char *) arg3, (int) arg4, (size_t) 512 );
+        //return (void *) setvbuf ( (FILE *) arg2, (char *) arg3, (int) arg4, (size_t) 512 );
     }
 
 
      //write
     //libc ssize_t write (int fd, const void *buf, size_t count)
     //#todo: essa rotina pode virar write(...) da libc
-    FILE *____stream;
-    struct process_d *____p;
+    //FILE *____stream;
+    //struct process_d *____p;
     if ( number == 614 )
     {
-		____p = (void *) processList[current_process];
-		____stream = (void *) ____p->Streams[arg2];
+		return NULL;
+		//____p = (void *) processList[current_process];
+		//____stream = (void *) ____p->Streams[arg2];
 		
         // coloca no buffer dp fd do processo atual se o arquivo estuiver aberto.
         // obter um ponteiro de estrutura dado um fd.
-        return (void *) fwrite ( (const void *) arg3, 
-                            (size_t) 0, 
-                            (size_t) arg4, 
-                            (FILE *) ____stream );
+        //return (void *) fwrite ( (const void *) arg3, 
+          //                  (size_t) 0, 
+            //                (size_t) arg4, 
+              //              (FILE *) ____stream );
     }
     
     
@@ -714,11 +721,12 @@ void *gde_extra_services ( unsigned long number,
 	// 700 - atualiza o fluxo padrão do processo atual
     if ( number == 700 )
     {
+		return NULL;
 		//stdio.c
-        return (void *) update_standard_stream ( (int) current_process, 
-                            (FILE *) arg2, 
-                            (FILE *) arg3, 
-                            (FILE *) arg4 );
+        //return (void *) update_standard_stream ( (int) current_process, 
+          //                  (FILE *) arg2, 
+            //                (FILE *) arg3, 
+              //              (FILE *) arg4 );
     }
     
     
@@ -926,10 +934,11 @@ void *gde_extra_services ( unsigned long number,
     //um descritor de soquete é enviado via argumento.
     if ( number == 966 )
     {
-        return (void *) network_procedure ( NULL,
-                        (int) 1000,//enviando descritor para atualizar a stream
-                        (unsigned long) arg2,   //fd
-                        (unsigned long) arg3 );  //fd
+		return NULL;
+        //return (void *) network_procedure ( NULL,
+          //              (int) 1000,//enviando descritor para atualizar a stream
+            //            (unsigned long) arg2,   //fd
+              //          (unsigned long) arg3 );  //fd
     }
 
 
@@ -976,10 +985,10 @@ void *gde_extra_services ( unsigned long number,
 
     if ( number == 1001 )
     {
-		printf ("service1001: Configurando CurrentTTY->stdout \n",
-		    arg2 );
-		CurrentTTY->stdout = (FILE *) arg2;
-		stdout = (FILE *) arg2;
+		//printf ("service1001: Configurando CurrentTTY->stdout \n",
+		  //  arg2 );
+		//CurrentTTY->stdout = (FILE *) arg2;
+		//stdout = (FILE *) arg2;
         return NULL;
     }
 
@@ -991,6 +1000,9 @@ void *gde_extra_services ( unsigned long number,
 	// mas o terminal precisa ser alertado de que tem mensagens
 	//para ele o tty, então modemos enviar uma MSG_TTY?? vaisando que
 	//o terminal pode pegar sua mensagem na tty através dessa chamada aqui.
+
+
+    // NÃO enviaram uma stream. 
 
     int __xxx_ch;
     if ( number == 1002 )
@@ -1134,7 +1146,7 @@ void *gde_extra_services ( unsigned long number,
         return NULL;
     }
 
-     //api - load file
+     //api - load file (string ???)
      //#todo: Tem que retornar algum identificador para a api.
      //poderia ser um indice na tabela de arquivos abertos pelo processo.
     if ( number == 4002 )
@@ -1143,7 +1155,7 @@ void *gde_extra_services ( unsigned long number,
     }
 
 
-    //api - load file
+    //api - load file (string ??)
     //#todo: Tem que retornar algum identificador para a api.
     //#bugbug: Podemos retornar o endereço base. Isso pode dar problemas?
     if ( number == 4003 )
@@ -2331,7 +2343,8 @@ void *gde_services ( unsigned long number,
 		//136
 		//fgetc
 		case 136:
-			return (void *) sys_fgetc ( (FILE *) arg2 );
+			return NULL;
+			//return (void *) sys_fgetc ( (FILE *) arg2 );
 			break;
 
 
@@ -2512,8 +2525,9 @@ void *gde_services ( unsigned long number,
        // pegando a stream dado um fd;
        // see: process.c
        case 167:
+           return NULL;
            // IN: pid, fd
-           return (void *) get_stream_from_fd ( (int) arg2, (int) arg3 );
+           //return (void *) get_stream_from_fd ( (int) arg2, (int) arg3 );
            break;
  
  
@@ -2629,24 +2643,28 @@ void *gde_services ( unsigned long number,
 
 		// feof	
 		case 193:	
-		    return (void *) sys_feof ( (FILE *) arg2 );
+		    return NULL;
+		    //return (void *) sys_feof ( (FILE *) arg2 );
             break;
 			
 		//ferror	
 		case 194:	
-		    return (void *) sys_ferror ( (FILE *) arg2 );
+		    return NULL;
+		    //return (void *) sys_ferror ( (FILE *) arg2 );
             break;
 			
 		//fseek	
 		case 195:	
-		    return (void *) sys_fseek ( (FILE *) arg2, (long) arg3, (int) arg4 );
+		    return NULL;
+		    //return (void *) sys_fseek ( (FILE *) arg2, (long) arg3, (int) arg4 );
             break;
 
 
 
         // fputc
         case 196:
-            return (void *) sys_fputc ( (int) arg2 , (FILE *) arg3 );
+            return NULL;
+            //return (void *) sys_fputc ( (int) arg2 , (FILE *) arg3 );
             break;
 
 
@@ -2802,22 +2820,26 @@ void *gde_services ( unsigned long number,
 
 		//232 - fclose
 		case 232:
-			return (void *) sys_fclose ( (FILE *) arg2);
+			return NULL;
+			//return (void *) sys_fclose ( (FILE *) arg2);
 			break;
 			
 		// 233 - fflush.
 		case 233:
-			return (void *) sys_fflush ( (FILE *) arg2);
+			return NULL;
+			//return (void *) sys_fflush ( (FILE *) arg2);
 			break;
 			
 		// 234 - fprintf.	
 		case 234:
-			return (void *) sys_fprintf ( (FILE *) arg2, (const char *) arg3 );
+			return NULL;
+			//return (void *) sys_fprintf ( (FILE *) arg2, (const char *) arg3 );
 			break;
 			
 		//235 - fputs
 		case 235:
-			return (void *) sys_fputs ( (const char *) arg2, (FILE *) arg3 );
+			return NULL;
+			//return (void *) sys_fputs ( (const char *) arg2, (FILE *) arg3 );
 			break;
 			
 		// tty ... 236 237 238 239.	
@@ -2886,7 +2908,8 @@ void *gde_services ( unsigned long number,
 
 		// 249 - ftell
 		case 249:
-            return (void *) ftell ( (FILE *) arg2 );
+            return NULL;
+            //return (void *) ftell ( (FILE *) arg2 );
 			break;
 			
 			

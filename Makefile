@@ -10,8 +10,8 @@
 VERSION = 1
 PATCHLEVEL = 23
 SUBLEVEL = 0
-EXTRAVERSION = -rc2
-NAME = 
+EXTRAVERSION = 
+NAME = Stream
 
 
 # First of all, lemme discribe this documment!
