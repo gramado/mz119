@@ -212,7 +212,7 @@ int MOUSE_BAT_TEST (void){
 
     for (i=0; i<99000; i++)
     {
-        wait_ns (200);
+        wait_ns (400);
     };
 
 
@@ -239,7 +239,8 @@ int MOUSE_BAT_TEST (void){
             mouse_write (0xFE);       
     };
 
-
+    // #bugbug:
+    // Não podemos exibir essa mensagem repetidas vezes.
     printf ("MOUSE_BAT_TEST %d times\n", i );
 }
 

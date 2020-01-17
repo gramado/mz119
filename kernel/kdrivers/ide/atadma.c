@@ -142,9 +142,6 @@ ide_dma_data ( void *addr,
 
     data = inb ( ata.bus_master_base_address + ide_dma_reg_status );
     outb ( ata.bus_master_base_address + ide_dma_reg_status, data &~6 );
-
-//done:
-    //return;	
 }
 
 
@@ -177,9 +174,6 @@ void ide_dma_stop (void){
     data = inb ( ata.bus_master_base_address + ide_dma_reg_status );
 	
     outb ( ata.bus_master_base_address + ide_dma_reg_status, data &~6);
-	
-//done:	
-    //return;	
 }
 
 

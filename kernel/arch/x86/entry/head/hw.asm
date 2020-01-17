@@ -416,14 +416,18 @@ _irq1:
 	;;; e se o handler bagunçar outros registradores.??
 	
 	cli
-	
-	;pushad
+
+	;; precisaremos para o eoi.
 	push dword eax
-	push ds
-	push es
-	push fs
-	push gs	
-    
+	
+    pushad    ;;tudo.
+    push ds
+    push es
+    push fs
+    push gs
+
+
+
 	;
 	;preparando os registradores, para funcionarem em kernel mode.
 	xor eax, eax
@@ -443,34 +447,36 @@ _irq1:
 	;Chamando módulo dentro do kernel base.
 	call _KiKeyboard
 	
-	
-	pop gs
-	pop fs
-	pop es
-	pop ds
-	pop eax
-	;popad
-	
-	
+
+    pop gs
+    pop fs
+    pop es
+    pop ds
+    popad
+
+
     ; send EOI to XT keyboard
+
     ;in      al, 061h
     ;mov     ah, al
     ;or      al, 080h
     ;out     061h, al
     ;mov     al, ah
     ;out     061h, al	
-	
-	;
-	;OBSERVAÇÃO: O EOI foi chamado na rotina teclado_handler_main().
-	;
-	
-	MOV AL, 020h
-	;OUT 0A0h, AL
-	OUT 020h, AL
 
-    sti	
-	iretd
-	
+    xor eax, eax 
+
+    ;; #bugbug: AL SUJO!!
+    MOV AL, 020h
+    ;OUT 0A0h, AL
+    OUT 020h, AL
+
+    ;; o eoi sujou isso.
+    pop eax
+
+    sti
+    iretd
+
 	
 ;------------
 ; _irq2 - IRQ 2 – cascaded signals from IRQs 8–15 
@@ -653,18 +659,18 @@ _nic_handler:
 ;audio.
 global _irq11
 _irq11:
+
     cli
-	pushad
+    pushad
 	
 	;call _KiPciHandler2
-	
-	mov al, 0x20
+    mov al, 0x20
     out 0xA0, al  
     out 0x20, al
 
-	
-	popad
-	sti
+    popad
+    sti
+
     iretd
 	
 	
@@ -674,19 +680,19 @@ _irq11:
 global _irq12
 _irq12:
     
-	cli	
+    cli
+
 	pushad
-	
 	push ds
 	push es
 	push fs
-	push gs	
+	push gs
 	push ss 
-	
-	;unb/mouse.c
-	call _mouse_handler
-	
-	mov al, 0x20
+
+	;mouse.c
+    call _mouse_handler
+
+    mov al, 0x20
     out 0xA0, al  
     out 0x20, al
 
@@ -696,9 +702,9 @@ _irq12:
 	pop fs 
 	pop es 
 	pop ds
-	
 	popad
-	sti
+
+    sti
 
     iretd
 	
@@ -711,17 +717,18 @@ _irq12:
 
 global _irq13
 _irq13:
+
     cli
-	push ax 
-	
-	;call _coprocessorHandler
-	mov al, 0x20
+    push ax 
+
+    ;call _coprocessorHandler
+    mov al, 0x20
     out 0xA0, al  
     out 0x20, al
 
-	
-	pop ax
-	sti
+    pop ax
+    sti
+
     iretd
 	
 	
@@ -738,18 +745,21 @@ extern _diskATAIRQHandler1
 global _irq14
 _irq14:
    
-	cli 	
-	PUSH AX
-	
-	call _diskATAIRQHandler1
-	
-	MOV AL,020h
-	OUT 0A0h,AL
-	OUT 020h,AL
-	
-	POP AX
-	sti
-	IRETD
+    cli 
+    PUSHAD
+    ;PUSH EAX
+
+    call _diskATAIRQHandler1
+
+    MOV AL,020h
+    OUT 0A0h,AL
+    OUT 020h,AL
+
+    POPAD
+    ;POP EAX
+    sti
+
+    IRETD
 
 	
 ;=================================================	
@@ -763,19 +773,21 @@ extern _diskATAIRQHandler2
 global _irq15
 _irq15:
 
-	cli	
-	PUSH AX
-	
-	call _diskATAIRQHandler2
-	
-	MOV AL, 020h
-	OUT 0A0h, AL
-	OUT 020h, AL
-	
-	POP AX
-	sti
+    cli
+    ;PUSH AX
+    PUSHAD
 
-	IRETD
+    call _diskATAIRQHandler2
+
+    MOV AL, 020h
+    OUT 0A0h, AL
+    OUT 020h, AL
+
+    POPAD
+    ;POP AX
+    sti
+
+    IRETD
 
 
 ;========================================
@@ -790,14 +802,14 @@ _irq15:
 unhandled_irq:
 
     cli
-	push eax
+    push eax
 
-	mov al, 0x20
+    mov al, 0x20
     out 0xA0, al  
     out 0x20, al
 
-	pop eax
-	sti 
+    pop eax
+    sti 
 
     iretd
 ;--

@@ -35,8 +35,6 @@ void ps2 (void){
 	printf ("ps2: Initializing..\n");
 	refresh_screen();
 
-
-
  
 	// DESATIVANDO AS DUAS PORTAS 
 	// Desativar dispositivos PS/2 , isto evita que os 

@@ -102,7 +102,7 @@ unsigned char ata_wait_irq (void){
         // ns
         if (--tmp)
         { 
-            ata_wait (100);
+            ata_wait (400);
         }else{
 
             ata_irq_invoked = 0;
@@ -111,9 +111,7 @@ unsigned char ata_wait_irq (void){
 
     };
 
-
     ata_irq_invoked = 0;
-    
 
     return 0;
 }
@@ -154,7 +152,7 @@ int disk_ata_wait_irq (void){
         //ns
         if (tmp--)
         {
-            ata_wait (100);
+            ata_wait (400);
         
         }else{
 

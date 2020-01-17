@@ -106,8 +106,9 @@ unsigned char ata_wait_drq (void){
  
 void ata_soft_reset (void){
 
-    unsigned char data = inb ( ata.ctrl_block_base_address + 2 );
-
+    //unsigned char data = inb ( ata.ctrl_block_base_address + 2 );
+    unsigned char data = inb ( ata.ctrl_block_base_address );
+    
     outb ( ata.ctrl_block_base_address, data | 0x4 );
     outb ( ata.ctrl_block_base_address, data & 0xfb );
 }
@@ -223,7 +224,7 @@ int ide_identify_device ( uint8_t nport ){
 
 	//Sem unidade no canal
 
-	ata_wait (400);
+    ata_wait (400);
     
     if ( ata_status_read() == 0 )
     {  

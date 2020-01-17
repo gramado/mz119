@@ -608,7 +608,7 @@ uint8_t keyboard_read (void){
 	
 	uint8_t val = inportb (0x60);
     
-	wait_ns (200);
+	wait_ns (400);
     
 	return (uint8_t) val;
 }
@@ -627,7 +627,7 @@ void keyboard_write (uint8_t write){
 	
 	outb ( 0x60, write );
     
-	wait_ns (200);
+	wait_ns (400);
 }
 
 
@@ -646,7 +646,7 @@ int BAT_TEST (void){
 
     for (i=0; i<99000; i++)
     {
-        wait_ns (200);
+        wait_ns (400);
     };
 
 
@@ -836,7 +836,7 @@ void ps2kbd_initialize_device (void){
 	kbdc_wait (1);
 	outb ( 0x60, 0xFF );
 	
-	wait_ns (200);
+	wait_ns (400);
 	
 	// #bugbug
 	// Isso pode travar ??
