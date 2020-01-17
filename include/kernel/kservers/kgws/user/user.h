@@ -389,25 +389,24 @@ typedef enum {
 typedef struct user_info_d user_info_t;
 struct user_info_d
 {
-	object_type_t objectType;
-	object_class_t objectClass;
-	
+
+    object_type_t objectType;
+    object_class_t objectClass;
+
+
     //Id. 
     int userId;
 
     int used;
     int magic;
 
-	//File.
-    //FILE userinfo;  //User info file.
-	//FILE *userinfo; //?? NÃO SERIA ASSIM ??
 
-    char *path;  // '/root/user/(name)'
 
+    char *path;             // '/root/user/(name)'
     char __username[64];    // HOSTNAME_BUFFER_SIZE
     size_t userName_len;    // len 
 
-	
+
 	//
 	// *** Bancos de Dados ***
 	//

@@ -1581,6 +1581,9 @@ do_clone:
        for (i=0; i<NUMBER_OF_FILES; i++)
        {  Clone->Streams[i] = Current->Streams[i]; }
        
+       for (i=0; i<64; i++)
+       {  Clone->Objects[i] = Current->Objects[i]; }
+
 
 		//ok
 		//printf ("Current: %s\n", Current->Image + 0x1000);
@@ -2356,6 +2359,12 @@ get_next:
         Process->Streams[0] = (unsigned long) stdin;
         Process->Streams[1] = (unsigned long) stdout;
         Process->Streams[2] = (unsigned long) stderr;
+
+
+        for ( i=0; i<64; i++ )
+        {
+            Process->Objects[i] = 0;
+        }
 
 
 		//Process->terminal =

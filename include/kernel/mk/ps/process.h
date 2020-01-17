@@ -285,16 +285,23 @@ struct process_info_d
 
 struct process_d 
 {
+    // Controle do objeto do tipo processo.
+ 
     object_type_t objectType;
     object_class_t objectClass;
-
-	//object control
     struct object_d *object;
 
     int used;  
     int magic; 
+    
 
-	//callback 
+    // Objetos abertos pelo processo.
+    unsigned long Objects[64];
+
+    // Usado para pipes sem nome por exemplo.
+    unsigned long Streams[NUMBER_OF_FILES];
+
+
 
 	//
 	//  Identificadores.
@@ -314,12 +321,6 @@ struct process_d
 
     uid_t uid;
     gid_t gid;
-
-	// #importante
-	// TABELA DE ARQUIVOS ABERTOS PELO PROCESSO.
-	// Tem necessariamente um limite.
-
-    unsigned long Streams[NUMBER_OF_FILES];
 
 	// State.
 	// flag ?

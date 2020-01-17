@@ -216,53 +216,44 @@
  * dos processos e threads.
  * 
  */
- 
-//typedef struct object_d object_t;
-typedef struct object_d object_descriptor_t;
-typedef struct object_d object_t;
 
 struct object_d 
 {
-	//@todo: 
-    //?? Não sei se isso é necessário para essa estrutura em particular. ?? 
-	object_type_t objectType;
-	object_class_t objectClass;	
-    
-	//@todo: fazer isso para todas as estrututras.
-	//medir quantos bytes tem cada estrutura.
-	//int object_size;  	
-	
-   //identificadores
-   int id;            // Id do objeto.
-   
-   
-   //char *name;
-   
-   unsigned long name_address;
-   char name[16];	  // Nome do objeto com 16 chars. @todo: usar ponteiro para nome.
-   
-   int used;          // Se o slot esta sendo usado.
-   int magic;         // Número mágico pra ver se o slot não esta corrompido.
-   
-   
-   //Lista de processos que possuem o objeto.
-   int pidList[32];
-   int pidCount;
-   int currentPID;
+    // haha !!
+    // Objeto do tipo objeto.
+    object_type_t objectType;
+    object_class_t objectClass;
+
+
+    int id; 
+ 
+    int used;  
+    int magic; 
+
+
+    char *path;             // '/root/user/(name)'
+    char __username[64];    // HOSTNAME_BUFFER_SIZE
+    size_t userName_len;    // len 
+  
+
+    //Lista de processos que possuem o objeto.
+    int pidList[32];
+    int pidCount;
+    int currentPID;
    
  
-   //endereços
-   unsigned long obj_address;
-   unsigned long obj_procedure;
+    //endereços
+    unsigned long obj_address;
+    unsigned long obj_procedure;
    
     //
 	// Status do objeto.
 	//   
 	 
-	int token; //algum processo 'pegou' o objeto e esta usando.
-    
-	int task_id; //id da tarefa que pegou o processo.
-	
+    int token; //algum processo 'pegou' o objeto e esta usando.
+
+    int task_id; //id da tarefa que pegou o processo.
+
     
 	//int signaled;
 	//struct process_d *waitListHead;
@@ -275,21 +266,15 @@ struct object_d
 	//continua...
 };
 
-object_t *object;  //object
-//object_descriptor_t *object;  //object
 
-//...
-
-
-//
-// @todo: Essas listas ocupam muito espaço, precisa ser alocado dinamicamente.
-//        Porém é certo que manipularemos muitos objetos.  
-//
+// ??
+// Repensar isso.
+struct object_d objects_km[256+1];  //objetos em kernel mode.
+struct object_d objects_um[256+1];  //objetos em user mode. 
+struct object_d objects_gui[256+1]; //objetos gráficos. 
 
 
-object_descriptor_t objects_km[256+1];  //objetos em kernel mode.
-object_descriptor_t objects_um[256+1];  //objetos em user mode. 
-object_descriptor_t objects_gui[256+1]; //objetos gráficos. 
+
 
 
 /*
@@ -304,7 +289,10 @@ int g_current_object;
 // object_km, object_um, object_gui. 
 int g_current_list;
 
-					   
+
+
+
+  
 int init_object_manager (void);
 
 
