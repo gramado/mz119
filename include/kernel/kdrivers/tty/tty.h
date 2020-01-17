@@ -91,14 +91,20 @@ struct tty_line_d
 
 struct tty_d
 {
-	//#todo: object header.
+
+    object_type_t objectType;
+    object_class_t objectClass;
 
     int index;
 
     int used;
     int magic;
 
-    char name[64];
+    //char name[64];
+    
+    char __ttyname[64];    // 
+    size_t ttyName_len;    // len 
+    
     
     // linux-like
     short type;       // type of tty

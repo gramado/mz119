@@ -70,7 +70,9 @@ extern void do_executa_new_task (void);
 #include <kernel/globals/gentry.h>
 #include <kernel/globals/gdef.h>
 #include <kernel/globals/gdevice.h>
-#include <kernel/globals/spinlocks.h>
+#include <kernel/globals/gobject.h>
+#include <kernel/globals/gspin.h>
+
 
 // libcore
 #include <kernel/libcore/sys/cdefs.h>

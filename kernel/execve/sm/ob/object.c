@@ -75,18 +75,10 @@ int init_object_manager (void){
 	//printf("Initializing Object Manager..\n");
 //#endif	
     
+    // ??
 	g_current_object = 0;         //objeto numero 0
-    g_current_list = OBJECTS_KM;  //lista de objetos em kernel mode.
+    g_current_list = 0;            //lista de objetos em kernel mode.
 	
-	//test
-	//@todo: Não usar array de estrutura.
-	// Usar um array simples tipo Objects[];
-	//Onde ficarão armazenas os ponteiros para as estruturas.
-    
-	//objects_km[0].id = 0;    
-    //objects_km[0].used = 1;    
-    //objects_km[0].magic = 1234;    
-	//...
 	
 	
 	//@todo: initialize object List.

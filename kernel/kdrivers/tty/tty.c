@@ -736,6 +736,10 @@ _ok:
         //return NULL;
     }else{
 
+        // Object control;
+        __tty->objectType = ObjectTypeTTY;
+        __tty->objectClass = ObjectClassKernelObjects;
+
         __tty->index = i;
         
         __tty->used = 1;
