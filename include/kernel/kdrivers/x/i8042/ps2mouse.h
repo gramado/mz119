@@ -99,10 +99,9 @@ unsigned long g_mousepointer_height;
 
 
 void expect_ack (void);
-void prepare_for_input (void);
-void prepare_for_output (void);
-unsigned char wait_then_read (int port);
-void wait_then_write ( int port, int data );
+
+
+
 
 
 

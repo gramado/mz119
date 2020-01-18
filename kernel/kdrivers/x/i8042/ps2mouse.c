@@ -245,6 +245,123 @@ int MOUSE_BAT_TEST (void){
 }
 
 
+
+/*
+ ***********************************************
+ * ps2_mouse_globals_initialize:
+ *     Inicializando o mouse no controlador 8042.
+ *     Carregando o bmp para o curso do mouse.
+ * 
+ * History:
+ *     2018 - Created by Fred Nora.  
+ */
+
+int ps2_mouse_globals_initialize (void){
+
+    unsigned char response = 0;
+    unsigned char deviceId = 0;
+    int i = 0; 
+    int bruto = 1;  //Método.
+    int mouse_ret = 0;
+
+
+	//printf("ps2_mouse_globals_initialize: inicializando estrutura\n");
+	//refresh_screen ();
+
+
+	//user.h
+    ioControl_mouse = (struct ioControl_d *) kmalloc ( sizeof(struct ioControl_d) );
+
+    if ( (void *) ioControl_mouse == NULL )
+    {
+        panic ("ps2_mouse_globals_initialize: ioControl_mouse fail\n");
+
+    }else{
+
+        ioControl_mouse->id = 0;
+        ioControl_mouse->used = 1;
+        ioControl_mouse->magic = 1234;
+
+		//Qual thread está usando o dispositivo.
+        ioControl_mouse->tid = 0;  
+        //ioControl_mouse->
+    };
+
+
+	//printf("ps2_mouse_globals_initialize: inicializando variaveis\n");
+	//refresh_screen ();
+
+    // #importante
+    // habilitando o mouse ps2.
+    ps2_mouse_status = 1;
+
+
+	// Estamos espaço para o buffer de mensagens de mouse.
+	// mousemsg = ( unsigned char *) kmalloc(32);
+
+
+	//Inicializando as variáveis usadas na rotina em Assemly
+	//em hardwarelib.inc
+
+    //#todo:
+    //Podemos inicialziar com o mouse no centro da tela.
+
+	//Coordenadas do cursor.
+    g_mousepointer_x = (unsigned long) 0;
+    g_mousepointer_y = (unsigned long) 0;
+    mouse_x = 0;
+    mouse_y = 0;
+
+
+	// #bugbug: 
+	// Essa inicialização está travando o mouse.
+	// Fazer com cuidado.
+
+
+	//#bugbug. Cuidado com essa inicializaçao.
+    g_mousepointer_width = 16;
+    g_mousepointer_height = 16;
+
+
+    //Bytes do controlador.
+    //mouse_packet_data = 0;
+    //mouse_packet_x = 0;
+    //mouse_packet_y = 0;
+    //mouse_packet_scroll = 0;
+
+
+	//
+	// ## BMP ##
+	//
+
+
+	//printf ("ps2_mouse_globals_initialize: carregando bmp\n");
+	//refresh_screen();
+
+	// Carregando o bmp do disco para a memória
+	// e apresentando pela primeira vez.
+
+    mouse_ret = (int) load_mouse_bmp ();
+
+    if (mouse_ret != 0)
+    {
+        panic ("ps2_mouse_globals_initialize: load_mouse_bmp\n");
+    }
+
+
+
+	//printf("ps2_mouse_globals_initialize: done\n");
+	//refresh_screen ();
+
+    //initialized = 1;
+    //return (kernelDriverRegister(mouseDriver, &defaultMouseDriver));
+
+
+    return 0;
+}
+
+
+
 /*
  ******************************************************
  * ps2mouse_initialize_device
@@ -256,81 +373,99 @@ void ps2mouse_initialize_device (void){
     __breaker_ps2mouse_initialized = 0;
 
     unsigned char status = 0;
+    
+    
+    //
+    // Globals first.
+    //
+    
+    // Inicializa variáveis de gerenciamento do driver.
+    ps2_mouse_globals_initialize();
 
-    // Enable interrupts
-    wait_then_write (0x64,I8042_READ);  //0x20
+
+//__enable_second_port :
+
+    //++
+    //======================================================
     
- 
-    // Enable the PS/2 mouse IRQ (12).
-    // NOTE: 
-    // The keyboard uses IRQ 1 (and is enabled by bit 0 in this register).
-    
+    // #obs:
+    // A rotina abaixo habilita o segundo dispositivo. O mouse.
+
+    // Dizemos para o controlador entrar no modo leitura.
+    // Esperamos para ler e lemos.
+    wait_then_write (0x64,I8042_READ);    // I8042_READ = 0x20    
     status = wait_then_read(0x60) | 2;
-    wait_then_write (0x64,I8042_WRITE);
+
+    // Dizemos para o controlador entrar no modo escrita.
+    // Esperamos para escrever e escrevemos.
+    // Enable the PS/2 mouse IRQ (12).
+    // The keyboard uses IRQ 1 (and is enabled by bit 0 in this register).
+    wait_then_write (0x64,I8042_WRITE);   // I8042_WRITE = 0x60
     wait_then_write (0x60,status);   
     
+    //======================================================
+    //--    
+
+
 
 	// 0xFF
 	// Espera o dados descer (ACK)
 	// Basic Assurance Test (BAT)
 
 
-    /*
-    //
-    // Resetamos e conferimos se o reset funcionou.
-    // #todo: talvez possamos não fazer isso.
-    //
-    mouse_write (0xFF);
-    while ( mouse_read() != 0xFA);
-    if ( MOUSE_BAT_TEST() != 0) 
-    {
-        printf ("mouse_install: [WARMING] MOUSE_BAT_TEST ignored\n");
-    }
-    */
+
+//__set_default:
+
+    //++
+    //=================================================
     
-    //
-    // Set default
-    //
-
-
-	// Use mouse default
-	//Espera o dados descer (ACK)
-
-    //mouse_write (0xF6); //PS2MOUSE_SET_DEFAULTS
-    //while( mouse_read() != 0xFA);
+    // #obs:
+    // A rotina abaixo faz o mouse ficar com sua coniguração padrão.
 
     // Set default settings.
     mouse_write (PS2MOUSE_SET_DEFAULTS);
     expect_ack();
 
+    //=================================================
+    //--
+    
+    
+    
+//__enable_streaming:    
+
+    //++
+    //=================================================
+    
+    // #obs:
+    // A rotina abaixo configura o modo streaming do mouse.
 
 
-    //
-    // Streaming
-    //
-
-
-	// habilita o mouse. (streaming)
-	// Espera o dados descer (ACK)
-    //mouse_write (0xF4);
-    //while( mouse_read() != 0xFA);
-
-   // Enable.
+    // Enable streaming.
     mouse_write(PS2MOUSE_ENABLE_PACKET_STREAMING);
     expect_ack();
     
-    //test++ =================
+    //=================================================
+    //--    
     
-    //
+    
+    
+//__enable_wheel:    
+  
+    //++
+    //=================================================
+  
+    // #obs:
+    // A rotina abaixo habilita a rodinha, se o dispositivo possui.
+    // Credits: Serenity OS.    
+
     // Pega o device id e faz configurações de wheel.
-    //
-    
     mouse_write(PS2MOUSE_GET_DEVICE_ID);
     expect_ack();
+    
     unsigned char device_id = mouse_read(); 
     
     if (device_id != PS2MOUSE_INTELLIMOUSE_ID){
-		
+
         // Send magical wheel initiation sequence.
         mouse_write(PS2MOUSE_SET_SAMPLE_RATE);
         expect_ack();
@@ -351,23 +486,22 @@ void ps2mouse_initialize_device (void){
     }
 
     if (device_id == PS2MOUSE_INTELLIMOUSE_ID) {
-		
+
         //m_has_wheel = true;
         ps2_mouse_has_wheel = 1;
         kprintf ("mouse_install: Mouse wheel enabled!\n");
         
     } else {
         kprintf ("mouse_install: No mouse wheel detected!\n");
-    }
+    };
 
-    //test-- ================
+    //=================================================
+    //--
 
-
-
-	// Espera nossa controladora terminar.
-	//printf ("mouse_install: 4\n");
-	//refresh_screen();
-
+    // Wait for nothing!
+    kbdc_wait (1);
+    kbdc_wait (1);
+    kbdc_wait (1);
     kbdc_wait (1);
     
     __breaker_ps2mouse_initialized = 1;
@@ -1033,143 +1167,7 @@ void expect_ack  (void){
 }
 
 
-void prepare_for_input (void){
 
-    kbdc_wait(0);
-}
-
-void prepare_for_output (void){
-
-    kbdc_wait (1);
-}
-
-unsigned char wait_then_read (int port){
-
-    prepare_for_input();
-    return (unsigned char) inportb (port);
-}
-
-void wait_then_write ( int port, int data ){
-
-    prepare_for_output();
-    outportb ( port, data );
-}
-
-
-
-/*
- ***********************************************
- * ps2_mouse_globals_initialize:
- *     Inicializando o mouse no controlador 8042.
- *     Carregando o bmp para o curso do mouse.
- * 
- * History:
- *     2018 - Created by Fred Nora.  
- */
-
-int ps2_mouse_globals_initialize (void){
-
-    unsigned char response = 0;
-    unsigned char deviceId = 0;
-    int i = 0; 
-    int bruto = 1;  //Método.
-    int mouse_ret = 0;
-
-
-	//printf("ps2_mouse_globals_initialize: inicializando estrutura\n");
-	//refresh_screen ();
-
-
-	//user.h
-    ioControl_mouse = (struct ioControl_d *) kmalloc ( sizeof(struct ioControl_d) );
-
-    if ( (void *) ioControl_mouse == NULL )
-    {
-        panic ("ps2_mouse_globals_initialize: ioControl_mouse fail\n");
-
-    }else{
-
-        ioControl_mouse->id = 0;
-        ioControl_mouse->used = 1;
-        ioControl_mouse->magic = 1234;
-
-		//Qual thread está usando o dispositivo.
-        ioControl_mouse->tid = 0;  
-        //ioControl_mouse->
-    };
-
-
-	//printf("ps2_mouse_globals_initialize: inicializando variaveis\n");
-	//refresh_screen ();
-
-    // #importante
-    // habilitando o mouse ps2.
-    ps2_mouse_status = 1;
-
-
-	// Estamos espaço para o buffer de mensagens de mouse.
-	// mousemsg = ( unsigned char *) kmalloc(32);
-
-
-	//Inicializando as variáveis usadas na rotina em Assemly
-	//em hardwarelib.inc
-
-    //#todo:
-    //Podemos inicialziar com o mouse no centro da tela.
-
-	//Coordenadas do cursor.
-    g_mousepointer_x = (unsigned long) 0;
-    g_mousepointer_y = (unsigned long) 0;
-    mouse_x = 0;
-    mouse_y = 0;
-
-
-	// #bugbug: 
-	// Essa inicialização está travando o mouse.
-	// Fazer com cuidado.
-
-
-	//#bugbug. Cuidado com essa inicializaçao.
-    g_mousepointer_width = 16;
-    g_mousepointer_height = 16;
-
-
-    //Bytes do controlador.
-    //mouse_packet_data = 0;
-    //mouse_packet_x = 0;
-    //mouse_packet_y = 0;
-    //mouse_packet_scroll = 0;
-
-
-	//
-	// ## BMP ##
-	//
-
-
-	//printf ("ps2_mouse_globals_initialize: carregando bmp\n");
-	//refresh_screen();
-
-	// Carregando o bmp do disco para a memória
-	// e apresentando pela primeira vez.
-
-    mouse_ret = (int) load_mouse_bmp ();
-
-    if (mouse_ret != 0)
-    {
-        panic ("ps2_mouse_globals_initialize: load_mouse_bmp\n");
-    }
-
-
-
-	//printf("ps2_mouse_globals_initialize: done\n");
-	//refresh_screen ();
-
-    //initialized = 1;
-    //return (kernelDriverRegister(mouseDriver, &defaultMouseDriver));
-
-
-    return 0;
-}
 
 
 void set_ps2_mouse_status(int status)

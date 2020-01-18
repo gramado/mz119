@@ -222,6 +222,9 @@ unsigned long keyboard_handler_address;
 int KEYBOARD_SEND_MESSAGE ( unsigned char SC );
 
 
+
+
+int ps2kbd_globals_initialize (void);
 void ps2kbd_initialize_device (void);
 
 void ldisc_init_modifier_keys (void);

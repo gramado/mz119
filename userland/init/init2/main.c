@@ -8,10 +8,7 @@
  *     + To call interrupt 129 to enable maskable interrupts.
  *     + Hang forever. Some new process will reuse this process.
  * 
- * Descrição: 
- *     Arquivo principal de IDLE.BIN.
- *     IDLE.BIN é um processo com apenas uma thread.
- *     IDLE.BIN é um aplicativo de 32bit em user mode. 
+
  *
  *     Esse programa deverá ser chamado sempre que o sistema estiver ocioso,
  * ou com falta de opções viáveis. Então esse programa deve ficar responsável 
@@ -353,14 +350,6 @@ fail1:
 
 
 
-
-
-
-
-
-
-
-
 int main ( int argc, char *argv[] ){
 
     __debug_print ("init2.bin: Initializing ...\n");
@@ -378,12 +367,15 @@ int main ( int argc, char *argv[] ){
     //asm ("int $129 \n");
     
     
-     gramado_system_call (900, (unsigned long)"gdeshell.bin", 0, 0);     
+    gramado_system_call (900, (unsigned long)"gdeshell.bin", 0, 0);     
 
-     while (1){
-        asm ("pause");
-    }   
+
+
+	while (1){
+		asm ("pause");
+	}   
 }
+
 
 //
 // End.

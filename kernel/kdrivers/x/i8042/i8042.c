@@ -12,6 +12,29 @@
 
 
 
+void 
+prepare_for_input (void){
+    kbdc_wait(0);
+}
+void 
+prepare_for_output (void){
+    kbdc_wait (1);
+}
+
+
+unsigned char 
+wait_then_read (int port){
+    prepare_for_input();
+    return (unsigned char) inportb (port);
+}
+void 
+wait_then_write ( int port, int data ){
+    prepare_for_output();
+    outportb ( port, data );
+}
+
+
+
 /*
  ***************
  * ps2:
@@ -28,68 +51,48 @@
 void ps2 (void){
 
 
-
 	// #debug
-	// #todo: 
-	// Deletar isso.
 	printf ("ps2: Initializing..\n");
 	refresh_screen();
 
- 
-	// DESATIVANDO AS DUAS PORTAS 
-	// Desativar dispositivos PS/2 , isto evita que os 
-	// dispositivos PS/2 envie dados no momento da configuração.
-
-	kbdc_wait(1);
-	outportb(0x64,0xAD);  
-
-	kbdc_wait(1);
-	outportb(0x64,0xA7); 
 
 
-    //
+    // ======================================
+    // Deactivate ports!
+    wait_then_write (0x64,0xAD);
+    wait_then_write (0x64,0xA7); 
+
+
     // Keyboard.
-    //
-
-    // Inicializa o dispositivo.
+    printf ("ps2: Initializing keyboard ..\n");
+    refresh_screen();
     ps2kbd_initialize_device ();
 
 
-
-
-    //
     // Mouse.
-    //
-
-    // Inicializa variáveis de gerenciamento do driver.
-    ps2_mouse_globals_initialize();
-
-    // Inicializa o dispositivo.
+    printf ("ps2: Initializing keyboard ..\n");
+    refresh_screen();
     ps2mouse_initialize_device ();
 
 
-    //
-    // Activate.
-    //
-
-	//Agora temos dois dispositivos sereais teclado e mouse (PS/2).
-
-    // Ativar a primeira porta PS/2.
+    // ======================================
+    // Reactivate ports!
     wait_then_write (0x64,0xAE);
-
-    // Ativar a segunda porta PS/2.
     wait_then_write (0x64,0xA8);
+
+
+    // Wait for nothing!
+    kbdc_wait (1);
+    kbdc_wait (1);
+    kbdc_wait (1);
+    kbdc_wait (1);
 
 
 // Done.
 
-    // Wait for nothing.
-    kbdc_wait(1);
-
-
     //#debug
-	printf("ps2: done\n");
-	refresh_screen();
+    printf ("ps2: done\n");
+    refresh_screen();
 }
 
 

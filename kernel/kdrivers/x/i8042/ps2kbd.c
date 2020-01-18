@@ -684,24 +684,12 @@ int BAT_TEST (void){
 }
 
 
-/*
- **********************************
- * ps2kbd_initialize_device
- *     Inicializa o driver de teclado.
- *
- * #todo: 
- * Enviar para o driver de teclado o que for de lá.
- * Criar a variável keyboard_type ;;; ABNT2 
- * 2018 - Fred Nora.
- */
 
-void ps2kbd_initialize_device (void){
+int ps2kbd_globals_initialize (void){
 
-    __breaker_ps2keyboard_initialized = 0;
 
     int i;
-
-
+    
 	//user.h
     ioControl_keyboard = (struct ioControl_d *) kmalloc ( sizeof(struct ioControl_d) );
 
@@ -804,80 +792,106 @@ void ps2kbd_initialize_device (void){
     capslock_status = 0;
     scrolllock_status = 0;
     numlock_status = 0;
-	//...
+    //...
 
 
-	//test
-	//0xAB	Test first PS/2 port
-	//0x00 test passed
-	//0x01 clock line stuck low 
-	//0x02 clock line stuck high
-	//0x03 data line stuck low
-	//0x04 data line stuck high
-	
+	//Debug support.
+	scStatus = 0;    
+    
+    return 0;
+}
 
+/*
+ **********************************
+ * ps2kbd_initialize_device
+ *     Inicializa o driver de teclado.
+ *
+ * #todo: 
+ * Enviar para o driver de teclado o que for de lá.
+ * Criar a variável keyboard_type ;;; ABNT2 
+ * 2018 - Fred Nora.
+ */
+
+void ps2kbd_initialize_device (void){
+
+    __breaker_ps2keyboard_initialized = 0;
+
+
+    ps2kbd_globals_initialize ();
+
+//
+// ==========================================
+//
+
+
+//__reset_keyboard:
+
+    //++
+    //=================================================
+    
+    // #obs:
+    // A rotina abaixo reseta o teclado.
+    
+    wait_then_write ( 0x60, 0xFF );
+
+	// ACK
+    wait_ns (400);
+    wait_ns (400);
+    while ( keyboard_read() != 0xFA );
+
+    //=================================================
+    //--
+
+
+//__BasicAssuranceTest:
+
+    //++
+    //=================================================
+        
+    // #obs:
+    // Essa é uma rotina de auto-teste.
+    // Conhecida como: Basic Assurance Test - (BAT).
+
+    if ( BAT_TEST () != 0 ){
+        printf ("[WARMING] ps2kbd.c:  BAT_TEST ignored\n");
+    }  
+
+    //=================================================
+    //--
+
+
+
+//__BasicAssuranceTest:
+
+    //++
+    //=================================================
+
+    // #obs:
+    // Configurando leds do teclado.
+    
 	//Leds.
 	//LED_SCROLLLOCK 
 	//LED_NUMLOCK 
 	//LED_CAPSLOCK 
 	//keyboard_set_leds(LED_NUMLOCK);
-	
- 	
-	//#debug
-	//Tentando suprimir esse delay. OK
-	//printf ("ps2_keyboard_initialize: 3\n");
-	//refresh_screen();	
 
-    //#imporante:
-	//não habilitaremos e não resetaremos o dispositivo.
-    //habilitar e resetar fica para a inicialização do ps2.
-	
-	
-	//Reseta o teclado
-	
-	kbdc_wait (1);
-	outb ( 0x60, 0xFF );
-	
-	wait_ns (400);
-	
-	// #bugbug
-	// Isso pode travar ??
-	// Espera os dados descer, ACK
-    while ( keyboard_read() != 0xFA );
-	
 
-	// #debug
-	// Tentando suprimir esse delay. 
-	//printf ("ps2_keyboard_initialize: 4\n");
-	//refresh_screen();	
-	
-	//#bugbug
-	//esse delay 'e necess'ario par aa rotina de auto teste funcionar na ma'quina real.
-	// Ele foi movido para dentro da rotina de autotest.
-	
-	/*
-	for (i=0; i<99000; i++)
-	{
-		wait_ns(200);
-	}
-	*/
-	
-	// Basic Assurance Test - (BAT)
-    // Aqui precisaremos de criar uma rotina de tratamento de erro do teclado.
-	
-	if ( BAT_TEST () != 0 ) 
-	{
-        printf ("[WARMING] ps2kbd.c:  BAT_TEST ignored\n");
-		// #todo: tratamento do erro.
-    }  
+    //=================================================
+    //--
 
-	
-    // Espera nossa controladora termina
-	kbdc_wait (1);
-	
-	//Debug support.
-	scStatus = 0;
-	
+
+    // Wait for nothing!
+    kbdc_wait (1);
+    kbdc_wait (1);
+    kbdc_wait (1);
+    kbdc_wait (1);
+
+
+
+//
+// ==========================================
+//
+
     g_driver_keyboard_initialized = (int) 1;
     
     __breaker_ps2keyboard_initialized = 1;
