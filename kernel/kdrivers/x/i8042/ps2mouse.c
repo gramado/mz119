@@ -121,8 +121,8 @@ int MOUSE_BAT_TEST (void);
  *     Send a mouse message. 
  */
 
-// Pegamos os tres char do inout de mouse e transformamos em uma mensagem 
-// que será enviada para uma thread.
+// Pegamos os tres char do inout de mouse e 
+// transformamos em uma mensagem que será enviada para uma thread.
 
 int MOUSE_SEND_MESSAGE (void *buffer) {
 
@@ -138,11 +138,9 @@ int MOUSE_SEND_MESSAGE (void *buffer) {
     //char char3 = (char) &chars[3];
     //...
 
-	//
+
 	// #todo
 	// Colocar esses dados em uma mesnagem e enviar para thread.
-	//
-
 
     return (int) -1;
 }
@@ -156,6 +154,7 @@ int MOUSE_SEND_MESSAGE (void *buffer) {
  */
 
 //mudar o arg para data;
+
 void mouse_write (unsigned char write){
 
     //kbdc_wait (1);
@@ -165,10 +164,10 @@ void mouse_write (unsigned char write){
     //outportb (0x60,write);
 
     prepare_for_output();
-    outportb(I8042_STATUS, 0xd4);
+    outportb (I8042_STATUS, 0xd4);
 
     prepare_for_output();
-    outportb(I8042_BUFFER, write);
+    outportb (I8042_BUFFER, write);
 }
 
 
@@ -203,7 +202,8 @@ unsigned char mouse_read (void){
 int MOUSE_BAT_TEST (void){
 
     int val = -1;
-    int i;
+    int i = 0;
+
 
 	// #todo:
 	// Cuidado.
@@ -233,10 +233,10 @@ int MOUSE_BAT_TEST (void){
             return (int) -1; 
         };
     
-        	// Reenviar o comando. 
-        	// OBS: este comando não é colocado em buffer
+        // Reenviar o comando. 
+        // OBS: este comando não é colocado em buffer
 
-            mouse_write (0xFE);       
+        mouse_write (0xFE);       
     };
 
     // #bugbug:
@@ -252,15 +252,18 @@ int MOUSE_BAT_TEST (void){
  */
 
 void ps2mouse_initialize_device (void){
-	
-	
-	    unsigned char status;
+
+
+    unsigned char status = 0;
+
     // Enable interrupts
     wait_then_write (0x64,I8042_READ);  //0x20
     
  
-     // Enable the PS/2 mouse IRQ (12).
-    // NOTE: The keyboard uses IRQ 1 (and is enabled by bit 0 in this register).
+    // Enable the PS/2 mouse IRQ (12).
+    // NOTE: 
+    // The keyboard uses IRQ 1 (and is enabled by bit 0 in this register).
+    
     status = wait_then_read(0x60) | 2;
     wait_then_write (0x64,I8042_WRITE);
     wait_then_write (0x60,status);   
@@ -296,7 +299,7 @@ void ps2mouse_initialize_device (void){
     //while( mouse_read() != 0xFA);
 
     // Set default settings.
-    mouse_write(PS2MOUSE_SET_DEFAULTS);
+    mouse_write (PS2MOUSE_SET_DEFAULTS);
     expect_ack();
 
 
@@ -373,8 +376,9 @@ void ps2mouse_initialize_device (void){
  ***************************************************
  * getMouseData:
  *     Essa função é usada pela rotina kernelPS2MouseDriverReadData.
- * Input a value from the keyboard controller's data port, after checking
- * to make sure that there's some mouse data there for us.
+ * Input a value from the keyboard controller's data port, 
+ * after checking to make sure that there's some mouse data 
+ * there for us.
  */
 
 static unsigned char getMouseData (void){
@@ -423,8 +427,8 @@ void kernelPS2MouseDriverReadData (void)
 int load_mouse_bmp (void){
 
     int Status = 1;
-    int Index; 
-    unsigned long fileret;
+    int Index = 0; 
+    unsigned long fileret = 0;
 
 
 #ifdef KERNEL_VERBOSE
@@ -717,84 +721,81 @@ void ps2mouse_change_and_show_pointer_bmp ( int number ){
     }
 }
 
+
 // #todo: 
 // Isso aqui deveria colocar um pacote na fila
 // para o window server pegar depois.
 void ps2mouse_parse_data_packet (void)
 {
 
-			// A partir de agora já temos os três chars.
-			// Colocando os três chars em variáveis globais.
-			// Isso ficará assim caso não haja overflow.
+	// A partir de agora já temos os três chars.
+	// Colocando os três chars em variáveis globais.
+	// Isso ficará assim caso não haja overflow.
 
-            mouse_packet_data = buffer_mouse[0];    // Primeiro char
-            mouse_packet_x    = buffer_mouse[1];    // Segundo char.
-            mouse_packet_y    = buffer_mouse[2];    // Terceiro char.
-            
+    mouse_packet_data = buffer_mouse[0];    // Primeiro char
+    mouse_packet_x    = buffer_mouse[1];    // Segundo char.
+    mouse_packet_y    = buffer_mouse[2];    // Terceiro char.
             
     //
     // ==== Posicionamento ====
     //            
-            
-            
+  
 
-			// Salvando o antigo antes de atualizar.
-			// Para poder apagar daqui a pouco.
-			// Atualizando.
-            saved_mouse_x = mouse_x;
-            saved_mouse_y = mouse_y;
-            update_mouse (); 
+	// Salvando o antigo antes de atualizar.
+	// Para poder apagar daqui a pouco.
+	// Atualizando.
+    saved_mouse_x = mouse_x;
+    saved_mouse_y = mouse_y;
+    update_mouse (); 
  
-            // Agora vamos manipular os valores obtidos através da 
-            // função de atualização dos valores.
-            // A função de atualização atualizou os valores de
-            // mouse_x e mouse_y.
-            mouse_x = (mouse_x & 0x000003FF );
-            mouse_y = (mouse_y & 0x000003FF );
+    // Agora vamos manipular os valores obtidos através da 
+    // função de atualização dos valores.
+    // A função de atualização atualizou os valores de
+    // mouse_x e mouse_y.
+    mouse_x = (mouse_x & 0x000003FF );
+    mouse_y = (mouse_y & 0x000003FF );
 
-			// #importante:
-			// Checando limites.
-			// Isso é provisório.
+	// #importante:
+	// Checando limites.
+	// Isso é provisório.
 
-            if ( mouse_x < 1 ){ mouse_x = 1; }
-            if ( mouse_y < 1 ){ mouse_y = 1; }
-            if ( mouse_x > (SavedX-16) ){ mouse_x = (SavedX-16); }
-            if ( mouse_y > (SavedY-16) ){ mouse_y = (SavedY-16); }
+    if ( mouse_x < 1 ){ mouse_x = 1; }
+    if ( mouse_y < 1 ){ mouse_y = 1; }
+    if ( mouse_x > (SavedX-16) ){ mouse_x = (SavedX-16); }
+    if ( mouse_y > (SavedY-16) ){ mouse_y = (SavedY-16); }
 
-
-            // Comparando o novo com o antigo, pra saber se o mouse se moveu.
-            // #obs: Pra quem mandaremos a mensagem de moving ??
-            if ( saved_mouse_x != mouse_x || saved_mouse_y != mouse_y )
-            {
-				// flag: o mouse está se movendo.
-				// usaremos isso no keydown.
-				// >> na hora de enviarmos uma mensagem de mouse se movendo
-				// se o botão estiver pressionado então temos um drag (carregar.)
-				// um release cancela o carregar.
-				
-				ps2_mouse_moving = 1;
-
-                // draw
-
-                // Apaga o antigo.
-                // + Copia no LFB um retângulo do backbuffer 
-                // para apagar o ponteiro antigo.
-                //refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
-                
-                // Acende o novo.
-                //+ Decodifica o mouse diretamente no LFB.
-                // Copiar para o LFB o antigo retângulo  
-                // para apagar o ponteiro que está no LFB.
-                //bmpDisplayMousePointerBMP ( mouseBMPBuffer, mouse_x, mouse_y );   
-                         
-            }else{
-				
-				
-				// Não redesenhamos quando o evento for um click, sem movimento.
-			    ps2_mouse_moving = 0;
-			}; 
-			
+    // Comparando o novo com o antigo, pra saber se o mouse se moveu.
+    // #obs: Pra quem mandaremos a mensagem de moving ??
+    if ( saved_mouse_x != mouse_x || saved_mouse_y != mouse_y )
+    {
+		// flag: o mouse está se movendo.
+		// usaremos isso no keydown.
+		// >> na hora de enviarmos uma mensagem de mouse se movendo
+		// se o botão estiver pressionado então temos um drag (carregar.)
+		// um release cancela o carregar.
 		
+        ps2_mouse_moving = 1;
+
+       // draw
+
+       // Apaga o antigo.
+       // + Copia no LFB um retângulo do backbuffer 
+       // para apagar o ponteiro antigo.
+       refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
+                
+       // Acende o novo.
+       //+ Decodifica o mouse diretamente no LFB.
+       // Copiar para o LFB o antigo retângulo  
+       // para apagar o ponteiro que está no LFB.
+       bmpDisplayMousePointerBMP ( mouseBMPBuffer, mouse_x, mouse_y );   
+                         
+    }else{
+		
+		// Não redesenhamos quando o evento for um click, sem movimento.
+        ps2_mouse_moving = 0;
+    }; 
+
+
     //
     // ==== Botão ====
     //            
@@ -816,12 +817,11 @@ void ps2mouse_parse_data_packet (void)
         
         //mudamos sempre que pressionar.
         //todo: mudaremos sempre que pressionar numa title bar.
-	    refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
-	    bmpDisplayMousePointerBMP ( mouseBMPBuffer, mouse_x, mouse_y ); 
-
+        //refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
+        //bmpDisplayMousePointerBMP ( mouseBMPBuffer, mouse_x, mouse_y ); 
 
     }else if( ( mouse_packet_data & MOUSE_LEFT_BUTTON ) != 0 )
-        {
+     {
 		    //pressionada.
 		    //Não tem como pressionar mais de um botão por vez.
             mouse_buttom_1 = 1;
@@ -831,10 +831,9 @@ void ps2mouse_parse_data_packet (void)
             
             //mudamos sempre que pressionar.
             //todo: mudaremos sempre que pressionar numa title bar.
-	        refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
-	        bmpDisplayMousePointerBMP ( appIconBuffer, mouse_x, mouse_y ); 
-
-        };
+            //refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
+            //bmpDisplayMousePointerBMP ( appIconBuffer, mouse_x, mouse_y ); 
+     };
 
 
 
@@ -873,6 +872,8 @@ void ps2mouse_parse_data_packet (void)
 	        mouse_buttom_3 = 1;
 	        ps2_button_pressed = 1;
         };
+
+
 
 
 	// ===
@@ -1022,6 +1023,7 @@ void mouseHandler (void){
     };
 }
 
+
 void expect_ack  (void){
 
     while ( mouse_read() != 0xFA);
@@ -1066,9 +1068,9 @@ int ps2_mouse_globals_initialize (void){
 
     unsigned char response = 0;
     unsigned char deviceId = 0;
-    int i; 
+    int i = 0; 
     int bruto = 1;  //Método.
-    int mouse_ret;
+    int mouse_ret = 0;
 
 
 	//printf("ps2_mouse_globals_initialize: inicializando estrutura\n");
@@ -1080,7 +1082,6 @@ int ps2_mouse_globals_initialize (void){
 
     if ( (void *) ioControl_mouse == NULL )
     {
-
         panic ("ps2_mouse_globals_initialize: ioControl_mouse fail\n");
 
     }else{

@@ -68,258 +68,13 @@ unsigned long cwArg12;     // WindowColor
 // ====
 //
 
-void *__do_35 ( unsigned long buffer );
-void *__do_111 ( unsigned long buffer );
 void *gde_extra_services ( unsigned long number, 
                      unsigned long arg2, 
                      unsigned long arg3, 
                      unsigned long arg4 );
                      
                      
-//
-// ======
-//
 
-/*
- *********************** 
- * __do_111: 
- *     Getting message from thread's queue.
- */
-
-    // #todo: 
-    // 35 - Getting message from the thread's queue. 
-    // Vamos pegar uma mensagem na fila de mesagens da thread
-    // e colocarmos nos elementos de single message para o aplicativo pegar.
-
-void *__do_35 ( unsigned long buffer ){
-
-    unsigned long *message_address = (unsigned long *) buffer;
-    
-    unsigned char SC;
-    
-    struct thread_d *t;
-    
-
-
-    // ==================================
-    //             STOPPED !!!
-    // ==================================
-
-    // #todo
-    // Trabalhando nessa rotina de servir uma mensagem que está na fila.
-    // Ainda nem existe a rotina que coloca a mensagem na fila.
-    
-    // #debug breakpoint.
-    panic ("gde_serv-__do_32: #todo");
-
-    // ==================================
-    //             STOPPED !!!
-    // ==================================
-  
-    
-    
-    if ( (void *) t == NULL )
-    {
-         panic ("__do_35: t");;
-    }
-
-
-    //
-    // Trying ...
-    //
-  
-    
-    struct msg_d *msg;
-    
-    
-    //
-    // #todo
-    //
-    
-    // Vamos pegar uma mensagem na fila de mesagens da thread
-    // e colocarmos nos elementos de single message para o aplicativo pegar.    
-    // msg = (struct msg_d *) t->MsgQueue[ t->MsgQueueHead++ ]
-    
-    
-    // pega o ponteiro da estrutura.
-    msg = ( struct msg_d * ) t->MsgQueue[ t->MsgQueueHead ];
-    
-
-    // Ok temos uma mensagem
-    // ja pegamos vamos limpar a fila, mesmo que a mensagem não preste.
-
-    //limpa elemento da fila.
-    t->MsgQueue[ t->MsgQueueHead ] = (unsigned long) 0;
-    
-    // avança
-    t->MsgQueueHead++;
-    
-    // circula.
-    if ( t->MsgQueueHead >= 32 )
-    {
-        t->MsgQueueHead = 0;
-    }
-
-    
-    // #todo
-    // Checar validade da estrutura de mensagem.
-    // Checar validade da estrutura de thread;.    
-    
-    // A estrutura é inválida ou não há mensagens
-    if ( (void *) msg == NULL )
-    {
-        return NULL;
-    } else {
-    
-        if ( msg->used != 1 || msg->magic != 1234 )
-        {
-            panic ("__do_35: msg struct");
-        }
-        
-
-        // #todo
-        // Se o head for igual ao tail, então o processo não está respondendo.
-        // Exceto na inicialização.
-    
-        // #todo
-        // Pegar os elementos da estrutura de mensagem e colocar
-        // no buffer me single message usado para pegar uma mensagem.
-    
-	    //padrão
-	    message_address[0] = (unsigned long) msg->window;
-	    message_address[1] = (unsigned long) msg->msg;
-	    message_address[2] = (unsigned long) msg->long1;
-	    message_address[3] = (unsigned long) msg->long2;
- 
-	    //sinalizamos que a mensagem foi consumida.
-	    //#todo: nesse momento a estrutura da thread também precisa ser limpa.
-        t->newmessageFlag = 0;    
-        return (void *) 1;    
-    };
-}
-
-
-
-/*
- *********************** 
- * __do_111: 
- *     Getting single message. No queue.
- */
- 
-// Getting single message.
-// No queue.
-// See: thread structure.
-
-	// #importante:
-	// Esse é o get message usado pelos aplicativos.
-	// O aplicativo envia um endereço de array e devemos colocar 4 longs 
-	// como mensagem.
-	// Isso funcionou. 
-	// Esse será o padrão até usarmos ponteiro para estrutura.
-	// A intenção agora é pegar a mensagem na estrutura de thread atual.
-	// Desse modo cada aplicativo, quando estiver rodando, pegará as 
-	// suas mensagens em sua própria fila.  
-	// Se não houver mensagem na estrutura da thread, então tentaremos colocar alguma.
-	// Vamos colocar alguma coisa do buffer de teclado.
-
-void *__do_111 ( unsigned long buffer ){
-
-    unsigned long *message_address = (unsigned long *) buffer;
-    
-    unsigned char SC;
-    
-    struct thread_d *t;
-
-   //
-   // Buffer
-   // Se o buffer for inválido, não há o que fazer.
-   //
-   
-   // #deletar.
-   // refazemos isso logo abaixo.
-   if ( buffer == 0 )
-   {
-       panic ("gde_serv-__do_111: buffer");
-   }
-
-   // Se o buffer for inválido.
-   if ( &message_address[0] == 0 )
-   {
-       panic ("gde_serv-__do_111: buffer");
-   }else{
-
-        t = (void *) threadList[current_thread];
-
-        if ( (void *) t == NULL )
-            { return NULL; }
-
-		// Se não existe uma mensagem na thread, então vamos
-		// pegar uma mensagem de teclado no buffer de teclado (stdin).
-		// Mas e se retornar o valor zero, pois não tem nada no buffer?
-		// Nesse caso vamos retornar essa função dizendo que não temos mensagem
-		// ou tentaremos pegar mensagens em outro arquivo de input.
-		// #teste Do mesmo modo, se o scancode for um prefixo, podemos
-		// pegar o próximo scancode para termos uma mensagem.
-		
-        if ( t->newmessageFlag != 1 )
-        {
-		
-		    sc_again:
-		
-		    // get char from current_stdin.
-		    SC = (unsigned char) get_scancode ();
-		
-		    if ( SC == 0 )
-		        { return NULL; }
-		
-            // teclas do teclado extendido.
-		
-		    if ( SC == 0xE0 )
-		    {
-		        ke0 = 1;
-			    goto sc_again;
-		    }
-			
-		    if ( SC == 0xE1 )
-		    {
-			    ke0 = 2;
-			    goto sc_again;
-		    }
-			
-		    //#obs:
-		    //o scancode é enviado para a rotina,
-		    //mas ela precisa conferir ke0 antes de construir a mensagem,
-		    //para assim usar o array certo.
-	        KEYBOARD_SEND_MESSAGE (SC);
-			
-		    ke0 = 0;
-	    }
-	
-		//pegando a mensagem.
- 
-		//padrão
-		message_address[0] = (unsigned long) t->window;
-	    message_address[1] = (unsigned long) t->msg;
-	    message_address[2] = (unsigned long) t->long1;
-	    message_address[3] = (unsigned long) t->long2;
-
-		//extra. Usado pelos servidores e drivers.
-		message_address[4] = (unsigned long) t->long3;
-		message_address[5] = (unsigned long) t->long4;
-		message_address[6] = (unsigned long) t->long5;
-		message_address[7] = (unsigned long) t->long6;
-		//...	
-                    
-		//sinalizamos que a mensagem foi consumida.
-		//#todo: nese momento a estrutura da thread também precisa ser limpa.
-        t->newmessageFlag = 0; 
-   
-		//sinaliza que há mensagem
-        return (void *) 1; 
-    };
-
-    return NULL;
-}              
 
 
 
@@ -1714,6 +1469,7 @@ void *gde_services ( unsigned long number,
         // 35 - Getting message from the thread's queue. 
         // Vamos pegar uma mensagem na fila de mesagens da thread
         // e colocarmos nos elementos de single message para o aplicativo pegar.
+        // See: ps2kbd.c
         case 35:
             return (void *) __do_35 ( (unsigned long) &message_address[0] );
             break;
@@ -2123,7 +1879,7 @@ void *gde_services ( unsigned long number,
 
         // 110 - Reboot.
         case SYS_REBOOT: 
-            sys_systemReboot ();
+            sys_reboot ();
             break;
 
 
@@ -2131,7 +1887,7 @@ void *gde_services ( unsigned long number,
         // No queue. See: thread structure.
         // rotina interna, veja nesse documento.
         // IN: buffer para mensagens.
-
+        // // See: ps2kbd.c
         case 111:
             return (void *) __do_111 ( (unsigned long) &message_address[0] );
             break;
@@ -3018,18 +2774,19 @@ void *gde_services ( unsigned long number,
 			sys_KiInformation ();
 			//refresh_screen ();
 			break;
-			
-		// @todo:
+
+
+
+		// #todo:
 		// Need to check the system call ID to ensure it's valid 
 		// If it s invalid, return ENOSYS Function not implemented error
-		
-		default:	
-			printf ("services: Default {%d}\n", number );
-			//#todo: retorno.
-			//return NULL;
-			break;
-	};
 
+        default:
+            printf ("services: Default {%d}\n", number );
+            refresh_screen ();
+            return NULL;
+            break;
+    };
 
 
 	//Debug.

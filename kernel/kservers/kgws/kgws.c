@@ -74,7 +74,7 @@ int kgws_mouse_scan_windows (void){
 
 	// #importante:
 	// Essa será a thread que receberá a mensagem.
-	struct thread_d *t;
+    struct thread_d *t;
 
 
 	// #importante:
@@ -82,10 +82,9 @@ int kgws_mouse_scan_windows (void){
 	// ID de janela.
 
     struct window_d *Window;
-    int wID;
+    int wID = -1;
 
-    
-    
+
     //
     // Chamar o driver de mouse ps2 pra pegar as informações
     // sobre o mouse;
@@ -172,7 +171,7 @@ int kgws_mouse_scan_windows (void){
     //Não há porque sondar janelas se tivermos em full screen.
     //pois somente teremos a área de cliente de uma das janelas.
 
-    int __saved;
+    int __saved = 0;
     
     
     /*
@@ -201,7 +200,7 @@ int kgws_mouse_scan_windows (void){
     // Estamos sempre recebendo a janela gui->screen
 
     //================
-    // Se não temos uma janela.
+    // -1 = Se não temos uma janela.
 
     if ( wID == -1 )
     { 
@@ -243,10 +242,16 @@ int kgws_mouse_scan_windows (void){
 	// uma janela. Então essa janela deve estar associada à uma thread para qual 
 	// mandaremos a mensagem. Caso a thread for null ... apenas não enviamos.
 	// A janela tem uma thread de controle, igual ao processo.
+	
+	// #importante
+	// Mandaremos mensagem para a thread de controle da janela
+	// ao qual o mouse está passando por cima.
+	// Isso está funcionando. Mas qual é a thread das janelas filhas?
+	// Elas herdam a thread de controle ??
 
      //============================ 
     //Se estamos sobre uma janela válida.
-    if ( wID > -1 )
+    if ( wID >= 0 )  //if ( wID > -1 )
     {
 		//printf ("w ");
 
@@ -324,7 +329,7 @@ int kgws_mouse_scan_windows (void){
 						// houve alteração no estado do botão 1 e estamos em cima de uma janela.
                         if ( (void *) Window != NULL )
                         {
-							ps2mouse_change_and_show_pointer_bmp(4); //folder bmp
+							//ps2mouse_change_and_show_pointer_bmp(4); //folder bmp
 							//pegamos o total tick
 							kgws_current_totalticks = (unsigned long) get_systime_totalticks();
                             kgws_delta_totalticks = (kgws_current_totalticks - kgws_last_totalticks); 
@@ -695,12 +700,11 @@ int kgws_mouse_scan_windows (void){
         
 
 
-
-
     };
     //--
     
-    //return -1;
+    //fail!
+    return -1;
 }
 
 

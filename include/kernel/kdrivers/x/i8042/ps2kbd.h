@@ -215,9 +215,6 @@ unsigned long scrolllock_status;
 unsigned long keyboard_handler_address;
 
 
-//keyboard extended
-int ke0;
-
 // Send message.				  
 // Pega um scancode, transforma em caractere e envia na forma de mensagem
 // para a thread de controle associada com a janela que tem o foco de entrada.
@@ -267,6 +264,16 @@ unsigned long keyboardGetKeyState (unsigned char key);
 uint8_t keyboard_read (void);
 
 void keyboard_write (uint8_t write);
+
+
+// Service
+// Chamado por gde_serv.c
+void *__do_35 ( unsigned long buffer );
+
+// Service
+// Chamado por gde_serv.c
+void *__do_111 ( unsigned long buffer );
+
 
 
 
