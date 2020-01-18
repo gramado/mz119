@@ -864,7 +864,11 @@ unsigned char *dma_addr;
  */
  
 int diskATAInitialize ( int ataflag ){
+	
 
+    __breaker_ata1_initialized = 0;
+    __breaker_ata2_initialized = 0;
+    
     int Status = 1;  
     int port;
 
@@ -1096,6 +1100,7 @@ int diskATAInitialize ( int ataflag ){
     // Ok
     
     Status = 0;
+    
     goto done;
 
 
@@ -1111,7 +1116,12 @@ done:
     //refresh_screen();
 //#endif 
 
-
+    if ( Status == 0)
+    {
+        __breaker_ata1_initialized = 1;    
+        __breaker_ata2_initialized = 1;        
+    }
+    
     return (int) Status;
 }
  

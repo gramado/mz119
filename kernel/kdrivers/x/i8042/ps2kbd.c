@@ -697,6 +697,8 @@ int BAT_TEST (void){
 
 void ps2kbd_initialize_device (void){
 
+    __breaker_ps2keyboard_initialized = 0;
+
     int i;
 
 
@@ -877,6 +879,8 @@ void ps2kbd_initialize_device (void){
 	scStatus = 0;
 	
     g_driver_keyboard_initialized = (int) 1;
+    
+    __breaker_ps2keyboard_initialized = 1;
 }
 
 

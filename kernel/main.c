@@ -58,8 +58,9 @@ int kernel_main (void){
 	// Serial debug
 	//
 
-	init_serial (COM1_PORT);
-
+    // Inicia todas as portas.
+    serial_init();
+    
 	debug_print("[Kernel] kernel_main:\n");
 
 

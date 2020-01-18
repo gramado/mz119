@@ -65,7 +65,13 @@ int rtcError;
 
 void KiRtcIrq (void){
 	
-	
+
+	// Se o rtc não estiver inicializado !
+    if ( __breaker_rtc_initialized == 0 )
+        return;
+
+
+
 	// Contando as interrupções desse tipo.
 	g_profiler_ints_irq8++;	
 	
@@ -351,7 +357,10 @@ void *get_cmos_info (void){
  */
 
 int init_clock (void){
-	
+
+
+    __breaker_rtc_initialized = 0;
+
 	/*
 	 * @todo: criar uma estrutura para RTC.
 	 */
@@ -376,45 +385,11 @@ int init_clock (void){
 	
 	printf("Done!\n");	
 	
-	return 0;
+    __breaker_rtc_initialized = 1;
+
+    return 0;
 }
 
-
-/*
-int init_rtc();
-int init_rtc()
-{
-init_clock();
-    return 0;
-};
-*/
-
-
-/*
-int rtcInit();
-int rtcInit()
-{
-    rtcTicks = 0;
-    rtcStatus = 0;
-    rtcError = 0;
-
-
-	init_clock();
-	
-	//Essa rotina deve ser chamada apenas uma vez na inicialização 
-	//do módulo.
-    //get_cmos_info()
-	
-					//rtc test.
-					init_clock();
-					get_cmos_info();
-					printf("ExtendedMemory={%d} KB\n", rtcGetExtendedMemory());
-					printf("time={%d}\n", get_time());
-					printf("date={%d}\n", get_date());	
-	
-    return (int) 0;	
-};
-*/
 
 //
 // End.

@@ -484,7 +484,7 @@ _irq1:
 
 
 ;=======================================================
-; IRQ 3 – serial port controller for serial port 2 
+; IRQ 3 - serial port controller for serial port 2 
 ; (shared with serial port 4, if present)
 
 extern _serial2_handler
@@ -508,7 +508,7 @@ _irq3:
 
 	
 ;====================================================
-; IRQ 4 – serial port controller for serial port 1 
+; IRQ 4 - serial port controller for serial port 1 
 ;(shared with serial port 3, if present)
 
 extern _serial1_handler
@@ -529,10 +529,9 @@ _irq4:
 	sti
     iretd	
 
-	
-	
+
 ;--------------
-; IRQ 5 – parallel port 2 and 3  or  sound card
+; IRQ 5 - parallel port 2 and 3  or  sound card
 ;_irq5:
 ;    iretd
 
@@ -545,7 +544,7 @@ _irq4:
 
 
 ;===================================================
-;IRQ 7 – parallel port 1. It is used for printers 
+;IRQ 7 parallel port 1. It is used for printers 
 ; or for any parallel port 
 ;if a printer is not present. It can also be potentially 
 ; be shared with a secondary sound card with careful 
@@ -568,7 +567,7 @@ _irq7:
 ;================================================
 ; _irq8:
 ;     System CMOS, Realtime clock.
-;     IRQ 8 – real-time clock (RTC)
+;     IRQ 8 - real-time clock (RTC)
 ;
 global _irq8
 _irq8:

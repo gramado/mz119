@@ -11,6 +11,12 @@
 
 void serial1_handler (void)
 {
+	
+	// Se a porta não estiver inicializado !
+    if ( __breaker_com1_initialized == 0 )
+        return;
+	
+	
     //
     // profiler
     //
@@ -22,6 +28,10 @@ void serial1_handler (void)
 
 void serial2_handler (void)
 {
+	// Se a porta não estiver inicializado !
+    if ( __breaker_com2_initialized == 0 )
+        return;
+
     //
     // profiler
     //
@@ -33,12 +43,22 @@ void serial2_handler (void)
 
 //#todo
 void serial3_handler (void)
-{}
+{
+	// Se a porta não estiver inicializado !
+    if ( __breaker_com3_initialized == 0 )
+        return;
+	
+}
 
 
 //#todo
 void serial4_handler (void)
-{}
+{
+	// Se a porta não estiver inicializado !
+    if ( __breaker_com4_initialized == 0 )
+        return;
+
+}
 
 
 
@@ -51,18 +71,49 @@ void serial_write_char ( char data ) {
 }
 
 
-void init_serial ( uint16_t port ){
-	
-	outportb (port + 1, 0x00);								// Disable all interrupts
-	outportb (port + 3, 0x80);								// Enable DLAB (set baud rate divisor)
-	outportb (port + 0, 0x03);								// Set divisor to 3 (lo byte) 38400
+void serial_init_port ( uint16_t port ){
+
+    // ??
+    // Qual foi inicializada ??
+    
+    outportb (port + 1, 0x00);								// Disable all interrupts
+    outportb (port + 3, 0x80);								// Enable DLAB (set baud rate divisor)
+    outportb (port + 0, 0x03);								// Set divisor to 3 (lo byte) 38400
 															// baud (hi byte)
-	outportb (port + 1, 0x00);
-	outportb (port + 3, 0x03);								// 8 bits, no parity, one stop bit
-	outportb (port + 2, 0xC7);								// Enable FIFO, clear then with
+    outportb (port + 1, 0x00);
+    outportb (port + 3, 0x03);								// 8 bits, no parity, one stop bit
+    outportb (port + 2, 0xC7);								// Enable FIFO, clear then with
 															// 14-byte threshold
-	outportb (port + 4, 0x0B);								// IRQs enables, RTS/DSR set
+    outportb (port + 4, 0x0B);								// IRQs enables, RTS/DSR set
+
+
 }
+
+
+// inicializa todas as portas.
+int serial_init (void)
+{
+
+    __breaker_com1_initialized = 0;
+    __breaker_com2_initialized = 0;
+    __breaker_com3_initialized = 0;
+    __breaker_com4_initialized = 0;
+    
+    serial_init_port (COM1_PORT);
+    serial_init_port (COM2_PORT);
+    serial_init_port (COM3_PORT);
+    serial_init_port (COM4_PORT);
+
+
+    __breaker_com1_initialized = 1;
+    __breaker_com2_initialized = 1;
+    __breaker_com3_initialized = 1;
+    __breaker_com4_initialized = 1;
+
+    return 0;
+}
+
+
 
 
 

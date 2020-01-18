@@ -253,6 +253,7 @@ int MOUSE_BAT_TEST (void){
 
 void ps2mouse_initialize_device (void){
 
+    __breaker_ps2mouse_initialized = 0;
 
     unsigned char status = 0;
 
@@ -368,6 +369,8 @@ void ps2mouse_initialize_device (void){
 	//refresh_screen();
 
     kbdc_wait (1);
+    
+    __breaker_ps2mouse_initialized = 1;
 }
 
 

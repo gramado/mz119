@@ -183,7 +183,13 @@ void abnt2_keyboard_handler (void){
 	// Não aqui ... pois cada driver deve ser para um tipo de teclado.
 
 void KiKeyboard (void){
-	
+
+
+	// Se o teclado ps2 não estiver inicializado !
+    if ( __breaker_ps2keyboard_initialized == 0 )
+        return;
+
+
 	// Contando as interrupções desse tipo.
 	g_profiler_ints_irq1++;
 

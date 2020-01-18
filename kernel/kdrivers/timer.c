@@ -122,6 +122,11 @@ void timer (void);
  
 void KiTimer (void){
 	
+	// Se o timer não estiver inicializado !
+    if ( __breaker_timer_initialized == 0 )
+        return;
+
+
 	//
 	// Profiler
 	//
@@ -743,8 +748,10 @@ int timerTimer (void){
  */
 
 int timerInit (void){
-	
-	int i;
+
+    __breaker_timer_initialized = 0;
+
+    int i;
 	
 	//Constructor.
 	timerTimer();
@@ -817,8 +824,11 @@ int timerInit (void){
 //#ifdef EXECVE_VERBOSE
 //    printf("timerInit: Done\n");
 //#endif
-	
-	return 0;
+
+
+    __breaker_timer_initialized = 1;
+        
+    return 0;
 }
 
 

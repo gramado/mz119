@@ -181,6 +181,7 @@ extern void do_executa_new_task (void);
 // hal (^)
 #include <kernel/hal/up.h>
 #include <kernel/hal/mp.h>
+#include <kernel/hal/breaker.h>
 #include <kernel/hal/hal.h>
 
 

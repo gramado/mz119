@@ -27,6 +27,12 @@ void disk_reset_ata_irq_invoked (void);
 
 void ata_handler1 (void)
 {
+	
+	// Se o ata1 não estiver inicializado !
+    if ( __breaker_ata1_initialized == 0 )
+        return;
+
+	
     //
     // profiler
     //
@@ -46,6 +52,10 @@ void ata_handler1 (void)
 
 void ata_handler2 (void)
 {
+	// Se o ata2 não estiver inicializado !
+    if ( __breaker_ata2_initialized == 0 )
+        return;
+
     //
     // profiler
     //
@@ -55,6 +65,9 @@ void ata_handler2 (void)
 	
     ata_irq_invoked = 1; 
 }
+
+
+
 
 
 int disk_get_ata_irq_invoked (void)
