@@ -6,7 +6,7 @@
  * Suporte a disco, usado no kernel base.
  *
  * History: 
- *     2018 - Created by Nelson Cole. <nelsoncole72@gmail.com>
+ *     2018 - Created by Nelson Cole.
  *     2019 - Revision by Fred Nora.
  *     ...
  */
@@ -16,30 +16,11 @@
 #define __ATA_H__
 
 
-void diskATAIRQHandler1 (void);
-void diskATAIRQHandler2 (void);
+//
+// Defines.
+//
 
-int g_current_ide_channel;  //primary or secondary.
-int g_current_ide_device;   //master or slave
-
-/*
- **************************************************************
- * ata_pci:
- *     Estrutura para dispositivos PCI.
- *
- * #importante
- + esssa é uma estrutura do gramado, definida em pci.h
- */
-
-struct pci_device_d *ata_pci;
-
-
-int ATAFlag;
 #define FORCEPIO 1234
-
-
-// IO Delay.
-#define io_delay() asm("out %%al,$0x80"::);
 
 
 //#bugbug 
@@ -163,6 +144,31 @@ int ATAFlag;
 
 
 
+//
+// Variables.
+//
+
+int ATAFlag;
+unsigned short  *ata_identify_dev_buf;
+
+unsigned char ata_record_dev;
+unsigned char ata_record_channel;
+
+int g_current_ide_channel;  //primary or secondary.
+int g_current_ide_device;   //master or slave
+
+
+/*
+ **************************************************************
+ * ata_pci:
+ *     Estrutura para dispositivos PCI.
+ *     #importante
+ *     Esssa é uma estrutura do gramado, definida em pci.h
+ */
+
+struct pci_device_d *ata_pci;
+
+
 /*
  * dev_nport:
  *     AHCI ports;
@@ -266,17 +272,18 @@ typedef struct st_dev
 }st_dev;
 
 
-/*************************** variáves *************************************/
-
-
-unsigned short  *ata_identify_dev_buf;
-
-unsigned char ata_record_dev;
-unsigned char ata_record_channel;
 
 
 
-/**************************** Libs ***************************************/
+//
+// Prototypes.
+//
+
+
+void ata_handler1 (void);
+void ata_handler2 (void);
+
+
 
 // ata_dev.c
 
@@ -293,7 +300,10 @@ void set_ata_addr(int channel);
 
 // ata.c
 int ide_identify_device(uint8_t nport);
+
+
 void ata_wait(int val);
+void ata_delay (void);
 
 
 unsigned char ata_wait_not_busy (void);

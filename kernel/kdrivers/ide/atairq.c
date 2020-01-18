@@ -9,7 +9,7 @@
 
 
 
- 
+static unsigned long ata_irq_invoked = 0; 
 
 
 int disk_get_ata_irq_invoked (void);
@@ -17,16 +17,15 @@ void disk_reset_ata_irq_invoked (void);
 
 
 
-static unsigned long ata_irq_invoked = 0;
 
 
 /*
  ***********************************
- * diskATAIRQHandler1
+ * ata_handler1
  *     irq 14 handler
  */
 
-void diskATAIRQHandler1 (void)
+void ata_handler1 (void)
 {
     //
     // profiler
@@ -41,11 +40,11 @@ void diskATAIRQHandler1 (void)
 
 /*
  ***********************************
- * diskATAIRQHandler2
+ * ata_handler2
  *     irq 15 handler
  */
 
-void diskATAIRQHandler2 (void)
+void ata_handler2 (void)
 {
     //
     // profiler

@@ -131,6 +131,12 @@
 // Definições.
 //
  
+ 
+// IO Delay.
+#define io_delay() asm("out %%al,$0x80"::);
+ 
+ 
+ 
 
 //
 // @todo: Criar a estrutura e o objeto do tipo porta.
@@ -182,6 +188,7 @@ int kernelProcessorInPort32(int port,int data);
 int kernelProcessorOutPort32(int port,int data);
 
 
+void __x86_io_delay (void);
 void wait_ns(int count);
 
 

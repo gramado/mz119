@@ -735,56 +735,57 @@ _irq13:
 ;=================================================	
 ; _irq14:
 ;     Tratador de interrupções para unidade master.
-;     IRQ 14 – primary ATA channel 
-;     (ATA interface usually serves hard disk 
-; drives and CD drives) 
-; ;O timer precisa ser desbilitado. ??
-; \3rdparty\kernel\disk\disk1.c
+;     IRQ 14 - primary ATA channel 
+;     ( ATA interface usually serves hard disk drives and CD drives ) 
+;     O timer precisa ser desbilitado. ??
 ;
-extern _diskATAIRQHandler1
+
+extern _ata_handler1
+
 global _irq14
 _irq14:
    
     cli 
+    push eax
     PUSHAD
-    ;PUSH EAX
 
-    call _diskATAIRQHandler1
+    call _ata_handler1
 
     MOV AL,020h
     OUT 0A0h,AL
     OUT 020h,AL
 
     POPAD
-    ;POP EAX
+    pop eax
     sti
 
     IRETD
 
-	
+
 ;=================================================	
 ; _irq15:
 ;     Tratador de interrupções para unidade slave.
-;     IRQ 15 – secondary ATA channel
-; ; ;O timer precisa ser desbilitado. ??
-; \3rdparty\kernel\disk\disk1.c
+;     IRQ 15 - secondary ATA channel
+;     O timer precisa ser desbilitado. ??
 ;
-extern _diskATAIRQHandler2
+
+extern _ata_handler2
+
 global _irq15
 _irq15:
 
     cli
-    ;PUSH AX
+    push eax
     PUSHAD
 
-    call _diskATAIRQHandler2
+    call _ata_handler2
 
     MOV AL, 020h
     OUT 0A0h, AL
     OUT 020h, AL
 
     POPAD
-    ;POP AX
+    pop eax
     sti
 
     IRETD

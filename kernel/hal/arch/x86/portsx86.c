@@ -257,12 +257,22 @@ int kernelProcessorOutPort32 (int port,int data){
 };
 
 
-void wait_ns (int count)
+void __x86_io_delay (void)
 {
-	count /= 100;	 
-	while(--count)io_delay();
+    asm ("xorl %%eax, %%eax" ::);
+    asm ("outb %%al, $0x80" ::);
+    return;
 }
 
+
+
+void wait_ns (int count)
+{
+    count /= 100; 
+
+    while (--count)
+        io_delay ();
+}
 
 
 unsigned long portsx86_IN ( int bits, unsigned long port ){

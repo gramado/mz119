@@ -57,8 +57,20 @@ void ata_wait (int val){
     while (val--)
     {
         io_delay ();
-    }
+    };
 }
+
+
+// Forces a 400 ns delay.
+void ata_delay (void)
+{
+    int i;
+
+    // Waste some time.
+    for (i = 0; i < 5; i++)
+        __x86_io_delay ();
+}
+
 
 
 // TODO: 
