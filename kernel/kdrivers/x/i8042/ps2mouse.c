@@ -818,7 +818,7 @@ void ps2mouse_change_and_show_pointer_bmp ( int number ){
     {
 		
 		case 1:
-	      refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
+	       refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
 	       bmpDisplayMousePointerBMP ( mouseBMPBuffer, mouse_x, mouse_y ); 		
 		   break;
 		   
@@ -828,7 +828,7 @@ void ps2mouse_change_and_show_pointer_bmp ( int number ){
 		   break;		
 		
 		case 3:
-	      refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
+	       refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
 	       bmpDisplayMousePointerBMP (fileIconBuffer, mouse_x, mouse_y ); 		
 		   break;
 
@@ -838,7 +838,7 @@ void ps2mouse_change_and_show_pointer_bmp ( int number ){
 		   break;
 
 		case 5:
-	      refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
+	       refresh_rectangle ( saved_mouse_x, saved_mouse_y, 20, 20 );
 	       bmpDisplayMousePointerBMP (terminalIconBuffer, mouse_x, mouse_y ); 		
 		   break;
 		   

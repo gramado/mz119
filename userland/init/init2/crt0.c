@@ -49,10 +49,6 @@ void crt0 (){
 	// #debug
 	// Para certificarmos que o primeiro salto ocorreu, 
 	// vamos pedir para o kernel imprimir uma mensagem.
-	
-	// #bugbug
-	// temos que parar de fazer isso pra aproveitarmos
-	// esse número pra outra coisa.
 
     system_call ( 69, 0, 0, 0 );
     

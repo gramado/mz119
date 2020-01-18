@@ -70,7 +70,7 @@ void ps2 (void){
 
 
     // Mouse.
-    printf ("ps2: Initializing keyboard ..\n");
+    printf ("ps2: Initializing mouse ..\n");
     refresh_screen();
     ps2mouse_initialize_device ();
 

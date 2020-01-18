@@ -1683,11 +1683,15 @@ void *gde_services ( unsigned long number,
 		//	break;
 
 
+        //#usando para debug 
 		// 69 - Reservado pra input de teclado.
-		case 69:
-			printf ("Service 69: #todo\n");
-			break;
+        case 69:
+            printf ("Service 69: #todo\n");
 
+            // #obs: Isso é bem pesado. Mas funciona.
+            //refresh_rectangle ( 0, 0, 20, 20 );
+            //bmpDisplayMousePointerBMP (terminalIconBuffer, 0, 0 ); 		
+            break;
 
         //
         // ## EXIT ##
