@@ -224,6 +224,33 @@ void timer (void){
 	}
 
 
+    // Whatch dogs
+    if ( sys_time_ticks_total % 100 == 0 )
+    {
+       // Incrementa o tempo em que o usuário está sem digitar.
+        ____whatchdog_ps2_keyboard++;
+        
+        // Incrementa o tempo em que o usuário está sem usar o mouse. 
+        ____whatchdog_ps2_mouse++;
+        
+        
+        if ( ____whatchdog_ps2_keyboard > 80 )
+        {
+            ____whatchdog_ps2_keyboard = 0;
+            printf ("whatchdog timer: keyboard!\n");
+            refresh_screen();
+        }
+
+        if ( ____whatchdog_ps2_mouse > 200 )
+        {
+            ____whatchdog_ps2_mouse = 0;
+            printf ("whatchdog timer: mouse!\n");
+            refresh_screen();        
+        }
+        
+    }
+
+
 
 	//
 	//  ## extra ## 
@@ -231,17 +258,23 @@ void timer (void){
 	
 	// Aciona uma flag para que o ts.c realize atividades extras,
 	// como gc, dead thread collector, request.
-	
-	if ( sys_time_ticks_total % 100 == 0 )
-	{
-		extra = 1;
-	}
+
+    // #todo
+    // Podemos fazer isso com menos frequência.
+
+    if ( sys_time_ticks_total % 100 == 0 )
+    {
+        extra = 1;
+    }
 
 
 	//
 	// ## mouse blink ##
 	//
-		
+	
+	//#todo:
+	//podemos chamar uma função
+	
 	//#todo rever isso.
 	//de tempos em tempos atualiza o cursor
 	//a cada segundo. sendo ele 100 ou 1000 ... tanto faz.
@@ -278,12 +311,14 @@ void timer (void){
 	
 mouseExit:	
 
-    //podemos percorrer a lista de timer e decrementar,
-	//quando um timer chegar a 0, mandamos uma mensagem
-	//para a thread de input da janela à qual ele pertence.
-	
-	for ( i=0; i<32; i++ )
-	{
+    // Lista de timers.
+    // Podemos percorrer a lista de timer e decrementar,
+    // quando um timer chegar a 0, mandamos uma mensagem
+    // para a thread associada à esse timer..
+
+
+    for ( i=0; i<32; i++ )
+    {
 		//pega um da lista
 	    t = (struct timer_d *) timerList[i];
 
@@ -314,7 +349,7 @@ mouseExit:
 		                        t->thread->long1 = t->times;   //quantas vezes esse timer se esgotou.      
 		                        t->thread->long2 = t->status;  //?/status.     
 		
-		                        t->thread->newmessageFlag = 1;													
+		                        t->thread->newmessageFlag = 1;			
 								
 							}
 							
@@ -814,6 +849,17 @@ int timerInit (void){
     //timeout 
 	 
 	set_timeout (0);
+	
+	
+    // Initializing whatchdogs.
+    // Eles serão zerados pelas interrupções dos dipositivos e
+    // incrementados pelo timer.
+    // A condição crítica é alcançar um limite, um timeout.
+    ____whatchdog_ps2_keyboard = 0;
+    ____whatchdog_ps2_mouse = 0;
+    //...
+
+
 	
 	//Continua...
 	

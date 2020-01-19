@@ -72,7 +72,7 @@ extern void do_executa_new_task (void);
 #include <kernel/globals/gdevice.h>
 #include <kernel/globals/gobject.h>
 #include <kernel/globals/gspin.h>
-
+#include <kernel/globals/gwd.h>   //whatch dogs
 
 // libcore
 #include <kernel/libcore/sys/cdefs.h>

@@ -131,10 +131,17 @@ unsigned long get_scancode (void){
 
 void abnt2_keyboard_handler (void){
 
+    // ??
+    // See: Serenity os.
+    //u8 status = IO::in8(I8042_STATUS);
+    //if (!(((status & I8042_WHICH_BUFFER) == I8042_KEYBOARD_BUFFER) && (status & I8042_BUFFER_FULL)))
+        //return;
+
+
 	//não precisamos perguntar para o controlador se
 	//podemos ler, porque foi uma interrupção que nos trouxe aqui.
 
-    unsigned char scancode = inportb (0x60);
+    unsigned char __raw = inportb (0x60);
 
 
 	// #todo: 
@@ -149,8 +156,8 @@ void abnt2_keyboard_handler (void){
     // #bugbug
     // Checar a validade.
 
-    //CurrentTTY->stdin->_base[keybuffer_tail++] = (char) scancode;
-    current_stdin->_base[keybuffer_tail++] = (char) scancode;
+    //CurrentTTY->stdin->_base[keybuffer_tail++] = (char) __raw;
+    current_stdin->_base[keybuffer_tail++] = (char) __raw;
     
     
     if ( keybuffer_tail >= current_stdin->_lbfsize )
@@ -193,6 +200,18 @@ void KiKeyboard (void){
 	// Contando as interrupções desse tipo.
 	g_profiler_ints_irq1++;
 
+
+
+    // #debug
+    // Testando se o teclado continua funcionando.
+    // Pois ele pode estar enviando sc para o buffer
+    // mas não tem thread para pegar.
+    // >> na máquina real.
+    
+    //refresh_rectangle ( 0, 0, 20, 20 );
+    //bmpDisplayMousePointerBMP (terminalIconBuffer, 0, 0 ); 
+
+    ____whatchdog_ps2_keyboard = 0;
 
     // #todo
     // O driver de teclado precisa escrever em seu fluxo padrão,

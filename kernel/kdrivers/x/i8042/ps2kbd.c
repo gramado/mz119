@@ -10,6 +10,11 @@
  */
 
 
+// See:
+// http://www.brokenthorn.com/Resources/OSDev19.html
+
+
+
 #include <kernel.h>
 
 
@@ -26,6 +31,117 @@
  */
 
 
+/*
+enum KYBRD_ENCODER_IO {
+ 
+	KYBRD_ENC_INPUT_BUF	=	0x60,
+	KYBRD_ENC_CMD_REG	=	0x60
+};
+ 
+enum KYBRD_CTRL_IO {
+ 
+	KYBRD_CTRL_STATS_REG	=	0x64,
+	KYBRD_CTRL_CMD_REG	=	0x64
+};
+*/
+
+
+// Keyboard Encoder Commands
+/*
+Command	Descripton
+0xED	Set LEDs
+0xEE	Echo command. Returns 0xEE to port 0x60 as a diagnostic test
+0xF0	Set alternate scan code set
+0xF2	Send 2 byte keyboard ID code as the next two bytes to be read from port 0x60
+0xF3	Set autrepeat delay and repeat rate
+0xF4	Enable keyboard
+0xF5	Reset to power on condition and wait for enable command
+0xF6	Reset to power on condition and begin scanning keyboard
+0xF7	Set all keys to autorepeat (PS/2 only)
+0xF8	Set all keys to send make code and break code (PS/2 only)
+0xF9	Set all keys to generate only make codes
+0xFA	Set all keys to autorepeat and generate make/break codes
+0xFB	Set a single key to autorepeat
+0xFC	Set a single key to generate make and break codes
+0xFD	Set a single key to generate only break codes
+0xFE	Resend last result
+0xFF	Reset keyboard to power on state and start self test
+*/
+
+
+//Return Codes
+/*
+Value	Descripton
+0x0	Internal buffer overrun
+0x1-0x58, 0x81-0xD8	Keypress scan code
+0x83AB	Keyboard ID code returned from F2 command
+0xAA	Returned during Basic Assurance Test (BAT) after reset. Also L. shift key make code
+0xEE	Returned from the ECHO command
+0xF0	Prefix of certain make codes (Does not apply to PS/2)
+0xFA	Keyboard acknowledge to keyboard command
+0xFC	Basic Assurance Test (BAT) failed (PS/2 only)
+0xFD	Diagonstic failure (Except PS/2)
+0xFE	Keyboard requests for system to resend last command
+0xFF	Key error (PS/2 only)
+*/
+
+
+
+// Onboard Keyboard Controller Commands
+// Command Listing
+/*
+Command	Descripton
+Common Commands
+0x20	Read command byte
+0x60	Write command byte
+0xAA	Self Test
+0xAB	Interface Test
+0xAD	Disable Keyboard
+0xAE	Enable Keyboard
+0xC0	Read Input Port
+0xD0	Read Output Port
+0xD1	Write Output Port
+0xE0	Read Test Inputs
+0xFE	System Reset
+0xA7	Disable Mousr Port
+0xA8	Enable Mouse Port
+0xA9	Test Mouse Port
+0xD4	Write To Mouse
+Non Standard Commands
+0x00-0x1F	Read Controller RAM
+0x20-0x3F	Read Controller RAM
+0x40-0x5F	Write Controller RAM
+0x60-0x7F	Write Controller RAM
+0x90-0x93	Synaptics Multiplexer Prefix
+0x90-0x9F	Write port 13-Port 10
+0xA0	Read Copyright
+0xA1	Read Firmware Version
+0xA2	Change Speed
+0xA3	Change Speed
+0xA4	Check if password is installed
+0xA5	Load Password
+0xA6	Check Password
+0xAC	Disagnostic Dump
+0xAF	Read Keyboard Version
+0xB0-0xB5	Reset Controller Line
+0xB8-0xBD	Set Controller Line
+0xC1	Continuous input port poll, low
+0xC2	Continuous input port poll, high
+0xC8	Unblock Controller lines P22 and P23
+0xC9	Block Controller lines P22 and P23
+0xCA	Read Controller Mode
+0xCB	Write Controller Mode
+0xD2	Write Output Buffer
+0xD3	Write Mouse Output Buffer
+0xDD	Disable A20 address line
+0xDF	Enable A20 address line
+0xF0-0xFF	Pulse output bit
+*/
+
+
+
+
+int __has_e0_prefix = 0;
 
 
 int BAT_TEST (void);
@@ -875,10 +991,23 @@ void ps2kbd_initialize_device (void){
 	//LED_CAPSLOCK 
 	//keyboard_set_leds(LED_NUMLOCK);
 
-
     //=================================================
     //--
 
+
+
+//__empty_buffer:
+
+    //++
+    //=================================================
+
+    // Clean buffer
+    
+    //while (IO::in8(I8042_STATUS) & I8042_BUFFER_FULL)
+        //IO::in8(I8042_BUFFER);
+
+    //=================================================
+    //--
 
     // Wait for nothing!
     kbdc_wait (1);
@@ -1027,8 +1156,11 @@ void ldisc_init_lock_keys (void){
 
 void keyboardEnable (void){
 
-	// Wait for bit 1 of status reg to be zero.
 
+    // #bugbug
+    // Dizem que isso pode travar o sistema.
+
+	// Wait for bit 1 of status reg to be zero.
     while ( (inportb(0x64) & 2) != 0 )
     {
 		//Nothing.
@@ -1501,15 +1633,10 @@ void *__do_111 ( unsigned long buffer ){
 
     unsigned long *message_address = (unsigned long *) buffer;
     
-    unsigned char SC = 0;
+    unsigned char __RAW = 0;
     
     struct thread_d *t;
 
-
-    // keyboard extended
-    // Nesse caso pegaremos dois sc da fila.
-    // isso deve ser global, nesse documento.
-    int ke0 = 0;
 
 
     // Buffer
@@ -1551,38 +1678,46 @@ void *__do_111 ( unsigned long buffer ){
 		// ou tentaremos pegar mensagens em outro arquivo de input.
 		// #teste Do mesmo modo, se o scancode for um prefixo, podemos
 		// pegar o próximo scancode para termos uma mensagem.
-		
+
         if ( t->newmessageFlag != 1 )
         {
+
+            // #bugbug
+            // Podemos ter loop infinito ?
             sc_again:
 
-            // get char from current_stdin.
-            SC = (unsigned char) get_scancode ();
+            // Get char from current_stdin.
+            __RAW = (unsigned char) get_scancode ();
 
-            if ( SC == 0 )
+            //unsigned ch = raw & 0x7f;
+            //int pressed = !(raw & 0x80);
+            
+            if ( __RAW == 0 )
                 { return NULL; }
 
             // teclas do teclado extendido.
-		
-            if ( SC == 0xE0 )
+            // Nesse caso pegaremos dois sc da fila.
+    
+            if ( __RAW == 0xE0 )
             {
-		        ke0 = 1;
-			    goto sc_again;
-		    }
-			
-		    if ( SC == 0xE1 )
-		    {
-			    ke0 = 2;
-			    goto sc_again;
-		    }
-			
+                __has_e0_prefix = 1;
+                goto sc_again;
+            }
+
+            //if ( __RAW == 0xE1 )
+            //{
+                //ke0 = 2;
+                //goto sc_again;
+            //}
+
+
 		    //#obs:
 		    //o scancode é enviado para a rotina,
 		    //mas ela precisa conferir ke0 antes de construir a mensagem,
 		    //para assim usar o array certo.
-	        KEYBOARD_SEND_MESSAGE (SC);
+	        KEYBOARD_SEND_MESSAGE (__RAW);
 			
-		    ke0 = 0;
+		    __has_e0_prefix = 0;
         }
 
 

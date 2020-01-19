@@ -271,14 +271,16 @@ global _int128
 _int128:  
 
 ;;_system_call:
-	cli 
-	;pushad 
-    
+
+    cli 
+    pushad 
+
     push ds
     push es
     push fs
-	push gs
-	
+    push gs
+
+
 	;;#bugbug
 	;;precisamos fazer isso, mas como fica depois ???
 	;;teste: esperamos que os pops restaurem os registradores de segmento.
@@ -297,16 +299,15 @@ _int128:
 	;;pois todos os registradores são salvos.
 	;;--------------------
 	
-	;;#bugbug: ISSO FALHA !!!
+
+;
+	;preparando os registradores, para funcionarem em kernel mode.
 	;xor eax, eax
-	;mov ax, word 0x10
+	;mov ax, word 0x10    ;Kernel mode segment.	
 	;mov ds, ax
 	;mov es, ax
-	;mov fs, ax  ;*   
-	;mov gs, ax  ;*  	
-    ;mov ss, ax
-	;mov eax, 0x003FFFF0 
-	;mov esp, eax 
+	;mov fs, ax  ;Usar seletor 0.
+	;mov gs, ax  ;Usar seletor 0.
 
     ;Argumentos.	
     push dword edx    ;arg4.
@@ -324,23 +325,25 @@ _int128:
 ;; resume_userspace:
 
 	;Argumentos.
-	pop eax	
+    pop eax
     pop ebx
     pop ecx
     pop edx 
-	
-	pop gs
+
+
+    pop gs
     pop fs
     pop es
     pop ds
-	
-	;; #importante
-	;; Não pode ter eoi.
 
-	;popad	
-	mov eax, dword [.int128Ret] 
-	sti
-	iretd
+    ;; #importante
+    ;; Não pode ter eoi.
+
+    popad	
+    mov eax, dword [.int128Ret] 
+    
+    sti
+    iretd
 .int128Ret: dd 0
 ;--  
   
