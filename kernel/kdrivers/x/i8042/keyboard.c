@@ -139,6 +139,7 @@ unsigned long get_scancode (void){
 
 void abnt2_keyboard_handler (void){
 
+
     // ??
     // See: Serenity os.
     //u8 status = IO::in8(I8042_STATUS);
@@ -152,27 +153,123 @@ void abnt2_keyboard_handler (void){
     unsigned char __raw = inportb (0x60);
 
 
-	// #todo: 
-	// Aqui podemos retornar.
+    // #obs:
+    // O byte pode ser uma resposta à um comando ou 
+    // um scancode.
 
-
-    if ( (void *) current_stdin == NULL )
+    switch (__raw)
     {
+        // O controlador solicitou um resend. :)
+        // case RESEND:        
+        // break;
+        
+        // O controlador avisa que recenheceu o comando anterior.
+        // case ACKNOWLEDGE:   
+        // break;        
+        
+        // O scancoude.
+        default: 
+            break;           
+    };
+
+
+
+
+
+//__queue:
+
+    // #todo: 
+    // Aqui podemos retornar.
+    // Pois vamos precisar dessa estrtuura pora o buffer.
+    if ( (void *) current_stdin == NULL ){
         panic ("abnt2_keyboard_handler: current_stdin \n");
     }
 
     // #bugbug
     // Checar a validade.
 
-    //CurrentTTY->stdin->_base[keybuffer_tail++] = (char) __raw;
     current_stdin->_base[keybuffer_tail++] = (char) __raw;
     
-    
-    if ( keybuffer_tail >= current_stdin->_lbfsize )
-    {
+    if ( keybuffer_tail >= current_stdin->_lbfsize ){
         keybuffer_tail = 0;
     }
+    
+    
+    // #bugbug
+    // Porque estamos usando estrutura de thread dentro do driver.
+    // #todo
+    // Indicaremos a thread se precisarmos enviar esses dados.
+    // Mas o driver de i8042 vai ficar dentro do kernel base
+    // por enquanto.
+    
+    
+//__thread:
+
+    struct thread_d *t;
+    
+    t = (void *) threadList[current_thread];
+
+    if ( (void *) t == NULL ){
+        panic ("abnt2_keyboard_handler: Invalid thread calling \n");
+    }    
+    //{ return NULL; }
+            
+    if ( t->used != 1 || t->magic != 1234 ){
+        panic ("abnt2_keyboard_handler: Validation. Invalid thread calling \n");
+    }    
+    //{ return NULL; }
+
+
+	// Se não existe uma mensagem na thread, então vamos
+	// pegar uma mensagem de teclado no buffer de teclado (stdin).
+	// Mas e se retornar o valor zero, pois não tem nada no buffer?
+	// Nesse caso vamos retornar essa função dizendo que não temos mensagem
+	// ou tentaremos pegar mensagens em outro arquivo de input.
+	// #teste Do mesmo modo, se o scancode for um prefixo, podemos
+	// pegar o próximo scancode para termos uma mensagem.
+
+
+            // #bugbug
+            // Podemos ter loop infinito ?
+sc_again:
+
+     // Get char from current_stdin.
+     __raw = (unsigned char) get_scancode ();
+
+     //unsigned ch = raw & 0x7f;
+     //int pressed = !(raw & 0x80);
+            
+     if ( __raw == 0 )
+     { return; }
+
+     // teclas do teclado extendido.
+     // Nesse caso pegaremos dois sc da fila.
+    
+     if ( __raw == 0xE0 )
+     {
+         __has_e0_prefix = 1;
+         goto sc_again;
+     }
+
+     //if ( __RAW == 0xE1 )
+     //{
+          __has_e1_prefix = 1;
+          //goto sc_again;
+     //}
+
+
+    //#obs:
+    //o scancode é enviado para a rotina,
+    //mas ela precisa conferir ke0 antes de construir a mensagem,
+    //para assim usar o array certo.
+
+    KEYBOARD_SEND_MESSAGE (__raw);
+
+    // Clean the mess
+    __has_e0_prefix = 0;
+    __has_e1_prefix = 0;
 }
+
 
 
 /*

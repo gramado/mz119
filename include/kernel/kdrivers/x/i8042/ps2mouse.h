@@ -34,8 +34,11 @@
 
 
 // 8042 mouse responses.
-#define MOUSE_COMPLETE  0xAA
-#define MOUSE_ID_BYTE   0x00
+#define MOUSE_ID_BYTE       0x00
+#define WHEELMOUSE_ID_BYTE  0x03 
+#define MOUSE_COMPLETE      0xAA 
+//...
+ 
  
  
 // Generic PS/2 Mouse Packet Bits

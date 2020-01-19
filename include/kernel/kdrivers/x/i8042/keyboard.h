@@ -12,6 +12,12 @@
 //
 
 
+static int __has_e0_prefix = 0;
+static int __has_e1_prefix = 0;
+//...
+
+
+
 void abnt2_keyboard_handler (void);
 
 

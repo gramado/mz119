@@ -142,7 +142,7 @@ Non Standard Commands
 
 
 
-int __has_e0_prefix = 0;
+
 
 
 int BAT_TEST (void);
@@ -1634,11 +1634,8 @@ void *__do_111 ( unsigned long buffer ){
 
     unsigned long *message_address = (unsigned long *) buffer;
     
-    unsigned char __RAW = 0;
-    
+
     struct thread_d *t;
-
-
 
     // Buffer
     // Se o buffer for inválido, não há o que fazer.
@@ -1657,68 +1654,25 @@ void *__do_111 ( unsigned long buffer ){
        panic ("__do_111: buffer");
    }else{
 
+
         t = (void *) threadList[current_thread];
 
-        if ( (void *) t == NULL )
-        {
+        if ( (void *) t == NULL ){
             panic ("__do_111: Invalid thread calling \n");
         }    
         //{ return NULL; }
             
-        if ( t->used != 1 || t->magic != 1234 )
-        {
+        if ( t->used != 1 || t->magic != 1234 ){
             panic ("__do_111: Validation. Invalid thread calling \n");
         }    
         //{ return NULL; }
 
 
 		// Se não existe uma mensagem na thread, então vamos
-		// pegar uma mensagem de teclado no buffer de teclado (stdin).
-		// Mas e se retornar o valor zero, pois não tem nada no buffer?
-		// Nesse caso vamos retornar essa função dizendo que não temos mensagem
-		// ou tentaremos pegar mensagens em outro arquivo de input.
-		// #teste Do mesmo modo, se o scancode for um prefixo, podemos
-		// pegar o próximo scancode para termos uma mensagem.
+        // Vmaos voltar.
 
-        if ( t->newmessageFlag != 1 )
-        {
-
-            // #bugbug
-            // Podemos ter loop infinito ?
-            sc_again:
-
-            // Get char from current_stdin.
-            __RAW = (unsigned char) get_scancode ();
-
-            //unsigned ch = raw & 0x7f;
-            //int pressed = !(raw & 0x80);
-            
-            if ( __RAW == 0 )
-                { return NULL; }
-
-            // teclas do teclado extendido.
-            // Nesse caso pegaremos dois sc da fila.
-    
-            if ( __RAW == 0xE0 )
-            {
-                __has_e0_prefix = 1;
-                goto sc_again;
-            }
-
-            //if ( __RAW == 0xE1 )
-            //{
-                //ke0 = 2;
-                //goto sc_again;
-            //}
-
-
-		    //#obs:
-		    //o scancode é enviado para a rotina,
-		    //mas ela precisa conferir ke0 antes de construir a mensagem,
-		    //para assim usar o array certo.
-	        KEYBOARD_SEND_MESSAGE (__RAW);
-			
-		    __has_e0_prefix = 0;
+        if ( t->newmessageFlag != 1 ){
+            return NULL;  
         }
 
 
