@@ -363,9 +363,20 @@ int main ( int argc, char *argv[] ){
     // Habilita as interrupções mascaraveis.
     //
     
+    
+    // #DEBUG
+    // Olhando eflags.
+    // asm ("int $3 \n");
+    
     enable_maskable_interrupts ();
     //asm ("int $129 \n");
     
+
+    // #DEBUG
+    // Olhando eflags.
+    //asm ("int $3 \n");
+
+
     
     gramado_system_call (900, (unsigned long)"gdeshell.bin", 0, 0);     
 

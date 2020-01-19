@@ -649,9 +649,9 @@ void mostra_slot (int id){
 
         // Show one slot.
         printf ("\n");
-        printf ("TID   PID   pdPA  Prio  State Quan ms    initial_eip   tName \n");
-        printf ("====  ====  ====  ====  ===== ==== ====  ==========    ===== \n");
-        printf ("%d    %d    %x    %d    %d    %d    %d    %x           %s \n", 
+        printf ("TID   PID   pdPA  Prio  State Quan ms    initial_eip eflags   tName \n");
+        printf ("====  ====  ====  ====  ===== ==== ====  ==========  ======  ===== \n");
+        printf ("%d    %d    %x    %d    %d    %d   %d    %x          %x      %s \n", 
             t->tid, 
             t->ownerPID,
             t->DirectoryPA,
@@ -660,6 +660,7 @@ void mostra_slot (int id){
             t->quantum,
             t->total_time_ms,
             t->initial_eip,
+            t->eflags,
             t->name_address );
     };
 

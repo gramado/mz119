@@ -234,18 +234,23 @@ void timer (void){
         ____whatchdog_ps2_mouse++;
         
         
-        if ( ____whatchdog_ps2_keyboard > 80 )
+        if ( ____whatchdog_ps2_keyboard > 100 )
         {
             ____whatchdog_ps2_keyboard = 0;
             printf ("whatchdog timer: keyboard!\n");
+            mostra_slot (current_thread);
+            mostra_reg (current_thread);
             refresh_screen();
+            
+            // mostra os registrador da thread, em sua fase ring0.
+            //asm ("int $3 \n");
         }
 
         if ( ____whatchdog_ps2_mouse > 200 )
         {
             ____whatchdog_ps2_mouse = 0;
-            printf ("whatchdog timer: mouse!\n");
-            refresh_screen();        
+            //printf ("whatchdog timer: mouse!\n");
+            //refresh_screen();        
         }
         
     }

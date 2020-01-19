@@ -63,6 +63,7 @@ void faults ( unsigned long number ){
 	
 	asm ("cli");
     
+    kprintf ("\n\n ======================= \n");
     kprintf ("\n x86fault-faults: *FAULTS: totalticks=%d \n\n", 
         sys_time_ticks_total );
         
@@ -109,26 +110,26 @@ void faults ( unsigned long number ){
 	    }
         */
         
+        // salvando os registradores
+        // que refletem o momento em que houve a exceção.
+        // Isso é perfeito para a int 3.
         printf ("faults: Saving context\n");
-		save_current_context ();            
-        
-	    printf ("Number={%d}\n", number);               
-
-	    printf ("TID %d Step %d \n", current_thread, t->step );
-	    
-        //printf ("Running Threads %d \n", ProcessorBlock.threads_counter ); 
-        printf ("Running Threads %d \n", UPProcessorBlock.threads_counter ); 
-        
-        
+        save_current_context ();            
+ 
+ 
+        printf ("Number={%d}\n", number);               
+        printf ("TID %d Step %d \n", current_thread, t->step );
+        printf ("Running Threads %d \n", UPProcessorBlock.threads_counter );  
         //printf ("Init Phase %d \n", KeInitPhase);
-	    //printf ("logonStatus %d | guiStatus %d \n", logonStatus, guiStatus );
-		
-		refresh_screen (); 
-	};
-	
+        //printf ("logonStatus %d | guiStatus %d \n", logonStatus, guiStatus );
+
+        refresh_screen (); 
+    };
+
+
     // OPÇÃO. 
-	// KiInformation ();
-	
+    // KiInformation ();
+
 	
 	// Mostra erro de acordo com o número.
 	
@@ -136,10 +137,16 @@ void faults ( unsigned long number ){
 	{
 	    //EXCEPTION
 		case 1:
-		case 3:
 		    printf("EXCEPTION\n");
 		    mostra_reg(current_thread);
 			break;
+		
+		// Debug breakpoint interrupt.
+		case 3:
+			printf("BREAKPOINT\n");
+			mostra_slot(current_thread);
+			mostra_reg(current_thread);
+		    break;
 		
 		//DOUBLE FAULT
 	    case 8:
