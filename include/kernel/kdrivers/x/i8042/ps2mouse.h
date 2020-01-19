@@ -18,18 +18,35 @@
 //0xE9	None	Status Request
 
 
-#define MOUSE_RESET  0xFF
-#define MOUSE_RESEND 0xFE
-#define MOUSE_SET_DEFAULTS 0xF6
-//#define MOUSE_
-//#define MOUSE_
-#define MOUSE_ENABLE_DATA_REPORTING          0xF4
 
 
-//RESPONSES 
+// 8042 mouse commands.
+#define MOUSE_SET_RESOLUTION           0xE8
+#define MOUSE_READ_STATUS              0xE9
+#define MOUSE_GET_DEVICE_ID            0xF2
+#define MOUSE_SET_SAMPLING_RATE        0xF3
+#define MOUSE_ENABLE_DATA_REPORTING    0xF4  // Enable mouse transmition.
+#define MOUSE_SET_DEFAULTS             0xF6
+#define MOUSE_RESEND                   0xFE
+#define MOUSE_RESET                    0xFF
 
+
+
+
+// 8042 mouse responses.
 #define MOUSE_COMPLETE  0xAA
 #define MOUSE_ID_BYTE   0x00
+ 
+ 
+// Generic PS/2 Mouse Packet Bits
+#define  MOUSE_LEFT_BUTTON    0x01
+#define  MOUSE_RIGHT_BUTTON   0x02
+#define  MOUSE_MIDDLE_BUTTON  0x04
+#define  MOUSE_X_DATA_SIGN    0x10
+#define  MOUSE_Y_DATA_SIGN    0x20
+#define  MOUSE_X_OVERFLOW     0x40
+#define  MOUSE_Y_OVERFLOW     0x80
+ 
  
 //=======================================================
 //++ Usadas pelo mouse.

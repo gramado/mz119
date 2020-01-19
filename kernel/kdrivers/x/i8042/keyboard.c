@@ -42,6 +42,14 @@
  
 #include <kernel.h>
 
+
+
+
+
+//#define QUEUE_SIZE 32
+
+
+
 //
 // Obs: um driver de teclado precisa ter acesso as portas, 
 // As opções são:

@@ -46,23 +46,31 @@
 //0xFF	Reset keyboard to power on state and start self test
 
 
-//RESPONSES
 
-#define KEYBOARD_COMPLETE_SUCCESS  0xAA
-#define KEYBOARD_COMPLETE_FAILURE  0xFC
-#define KEYBOARD_RESET             0xFF
+// keyboard commands.
+#define  KEYBOARD_SET_LEDS       0xED    // Set keyboard leds.
+#define  KEYBOARD_ECHO           0xEE
+//#define KEYBOARD_SELECT_SCAN_CODE_SET     0xF0
+#define  KEYBOARD_GET_ID         0xF2    // get keyboard ID.
+#define  KEYBOARD_SET_RATE       0xF3    // Set typematic rate.
+#define  KEYBOARD_ENABLE         0xF4    // Enable scanning.
+#define  KEYBOARD_RESET_DISABLE  0xF5    // reset and disable scanning.
+#define  KEYBOARD_RESET_ENABLE   0xF6    // reset and enable scanning.
+#define  KEYBOARD_RESET          0xFF    // Reset.
 
-//issso pertence à inicialização do teclado. deve ficar no driver de teclado.
-/* Keyboard Commands */
-#define KEYBOARD_SET_LEDS	    0xED	// Set keyboard leds.
-#define KEYBOARD_ECHO     	    0xEE
-#define KEYBOARD_GET_ID 	    0xF2	// get keyboard ID.
-#define KEYBOARD_SET_RATE	    0xF3	// Set typematic rate.
-#define KEYBOARD_ENABLE		    0xF4	// Enable scanning.
-#define KEYBOARD_RESET_DISABLE	0xF5	// reset and disable scanning.
-#define KEYBOARD_RESET_ENABLE   0xF6    // reset and enable scanning.
-#define KEYBOARD_RESET		    0xFF	// Reset.
-//#define RESET  0xFE
+
+
+
+// keyboard responses.
+#define  KEYBOARD_COMPLETE_SUCCESS  0xAA
+#define  KEYBOARD_COMPLETE_FAILURE  0xFC
+#define  KEYBOARD_BREAK_CODE        0xF0
+//#define  KEYBOARD_DEBUG_HOTKEY_ENH  0x37 
+//#define  KEYBOARD_DEBUG_HOTKEY_AT   0x54 
+//...
+
+
+
 
 
 /*
@@ -113,6 +121,8 @@ uint8_t kybrd_ctrl_read_status () {
 	return inportb (KYBRD_CTRL_STATS_REG);
 }
 */
+
+
 
 
 //

@@ -68,6 +68,9 @@ int ps2_mouse_drag_status;
 //====================================================================
 // update_mouse support
 
+
+
+// i8042 mouse status bit.
 #define MOUSE_LEFT_BTN    0x01
 #define MOUSE_RIGHT_BTN   0x02
 #define MOUSE_MIDDLE_BTN  0x04
@@ -75,6 +78,8 @@ int ps2_mouse_drag_status;
 #define MOUSE_Y_SIGN      0x20
 #define MOUSE_X_OVERFLOW  0x40
 #define MOUSE_Y_OVERFLOW  0x80
+
+
 
 long mouse_x = 0;
 long mouse_y = 0;

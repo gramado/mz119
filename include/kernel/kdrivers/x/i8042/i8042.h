@@ -14,13 +14,32 @@
 //Step 10: Reset Devices
 
 
+// x86
+//#define KEYBOARD_VECTOR 1
+//#define MOUSE_VECTOR  12
+
+
+
 #define I8042_DATAPORT          0x60	//Read/Write
 #define I8042_STATUSREGISTER    0x64	//Read
 #define I8042_COMMANDREGISTER   0x64	//Write
 
-#define I8042_READ   0x20
-#define I8042_WRITE  0x60
 
+// i8042 commands.
+#define I8042_READ                 0x20
+#define I8042_WRITE                0x60
+#define I8042_DISABLE_SECOND_PORT  0xA7  // Disable second PS/2 port (only if 2 PS/2 ports supported)
+#define I8042_ENABLE_SECOND_PORT   0xA8  // Enable second PS/2 port (only if 2 PS/2 ports supported)
+#define I8042_TEST_SECOND_PORT     0xA9  // Test second PS/2 port (only if 2 PS/2 ports supported)
+#define I8042_TEST_FIRST_PORT      0xAB  // Test first PS/2 port
+#define I8042_DISABLE_FIRST_PORT   0xAD  // Disable first PS/2 port
+#define I8042_ENABLE_FIRST_PORT    0xAE  // Enable first PS/2 port
+//...
+
+
+
+
+// i8042 responses.
 #define I8042_ACKNOWLEDGE         0xFA        
 #define I8042_RESEND              0xFE
 
@@ -29,38 +48,27 @@
 #define I8042_TESTCONTROLLER_PASSED  0x55  // test passed
 #define I8042_TESTCONTROLLER_FAILED  0xFC  // test failed
 
-#define I8042_DISABLE_FIRST_PORT  0xAD	//Disable first PS/2 port
-#define I8042_ENABLE_FIRST_PORT   0xAE	//Enable first PS/2 port
+
  
 //TESTING FIRST PORT.
-#define I8042_TEST_FIRST_PORT  0xAB             //Test first PS/2 port
-#define I8042_TEST_FIRST_PORT_PASSED  0x00      //test passed
+#define I8042_TEST_FIRST_PORT_PASSED      0x00  //test passed
 #define I8042_TEST_FIRST_PORT_CLOCK_LOW   0x01  //clock line stuck low
 #define I8042_TEST_FIRST_PORT_CLOCK_HIGH  0x02  //clock line stuck high
 #define I8042_TEST_FIRST_PORT_DATA_LOW    0x03  //data line stuck low
 #define I8042_TEST_FIRST_PORT_DATA_HIGH   0x04  //data line stuck high
 
-#define I8042_DISABLE_SECOND_PORT  0xA7  //Disable second PS/2 port (only if 2 PS/2 ports supported)
-#define I8042_ENABLE_SECOND_PORT   0xA8  //Enable second PS/2 port (only if 2 PS/2 ports supported)
+
 
 //TESTING SECOND PORT.
-#define I8042_TEST_SECOND_PORT  0xA9             //Test second PS/2 port (only if 2 PS/2 ports supported)
-#define I8042_TEST_SECOND_PORT_PASSED  0x00      //test passed
+#define I8042_TEST_SECOND_PORT_PASSED      0x00  //test passed
 #define I8042_TEST_SECOND_PORT_CLOCK_LOW   0x01  //clock line stuck low
 #define I8042_TEST_SECOND_PORT_CLOCK_HIGH  0x02  //clock line stuck high
 #define I8042_TEST_SECOND_PORT_DATA_LOW    0x03  //data line stuck low
 #define I8042_TEST_SECOND_PORT_DATA_HIGH   0x04  //data line stuck high
 
 
-//Generic PS/2 Mouse Packet Bits
-#define MOUSE_LEFT_BUTTON   0x01
-#define MOUSE_RIGHT_BUTTON  0x02
-#define MOUSE_MIDDLE_BUTTON 0x04
-//0x08 ??
-#define MOUSE_X_DATA_SIGN        0x10
-#define MOUSE_Y_DATA_SIGN        0x20
-#define MOUSE_X_OVERFLOW         0x40
-#define MOUSE_Y_OVERFLOW         0x80
+
+
 
 // Configuration Byte
 //Bit  Meaning
