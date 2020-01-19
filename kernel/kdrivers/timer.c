@@ -237,11 +237,16 @@ void timer (void){
         if ( ____whatchdog_ps2_keyboard > 100 )
         {
             ____whatchdog_ps2_keyboard = 0;
-            printf ("whatchdog timer: keyboard!\n");
-            mostra_slot (current_thread);
-            mostra_reg (current_thread);
-            refresh_screen();
-            
+            //printf ("whatchdog timer: keyboard!\n");
+            //mostra_slot (current_thread);
+            //mostra_reg (current_thread);
+            //refresh_screen();
+
+            // Isso não surtiu efeito na máquina real.
+            // printf ("whatchdog timer: Reinitializing ps2 controller ...\n");
+            // refresh_screen();
+            // ps2 ();
+
             // mostra os registrador da thread, em sua fase ring0.
             //asm ("int $3 \n");
         }

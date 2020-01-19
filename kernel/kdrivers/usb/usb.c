@@ -5,6 +5,10 @@
  */
 
 
+// See:
+// https://wiki.osdev.org/Universal_Serial_Bus
+
+
 
 //int usbInit()
 

@@ -8,6 +8,12 @@
  */
 
  
+// When the keyboard and mouse are USB devices, the BIOS uses SMM code 
+// to emulate PS/2 devices. 
+// I see mentioned that the USB devices should halt ps/2 emulation 
+// once they've been initialized (or at least their host hub?)
+
+
 #include <kernel.h>
 
 
