@@ -1,0 +1,4 @@
+
+/cmd
+
+   Terminal  mode apps.
