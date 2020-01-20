@@ -29,6 +29,10 @@
 
 
 
+// ?? 
+#define SECTOR_SIZE 512  
+//#define SECTOR_SIZE 4096  
+
 
 // string support
 #define  FS_STRING_TERMINATOR  "\0" 

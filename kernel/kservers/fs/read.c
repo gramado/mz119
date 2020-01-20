@@ -25,6 +25,12 @@
 #include <kernel.h>
 
 
+//#define read_ToUpper(C) ((((C) >= 'a') && ((C) <= 'z')) ? (C) - 'a' + 'A' : (C))
+//#define read_Minimum(X,Y) ((X) < (Y) ? (X) : (Y))
+//#define read_Maximum(X,Y) ((X) < (Y) ? (Y) : (X))
+
+
+
 /*
  ************************************************
  * read_fntos:
@@ -120,106 +126,6 @@ _complete:
 }
 
 
-
-/*
- ************************************************
- * read_fntos2:
- *     rotina interna de support.
- *     isso deve ir para bibliotecas depois.
- *     não tem protótipo ainda.
- *     Credits: Luiz Felipe 
- */
- 
- // #bugbug
- // Isso modifica a string lá em ring3.
- // prejudicando uma segunda chamada com a mesma string
- // pois já virá formatada.
- 
-//vamos retornar o ponteiro para o novo buffer
-//da string formatada.
- 
-/* 
-char *read_fntos2 ( char *name ); 
-char *read_fntos2 ( char *name ){
-	
-    
-    //buffer temporário para não 
-    //bagunçarmos a string original lá em ring3.
-    char buffer[13];
-    char *__name = (char *) &buffer[0];
-    
-    int  i, ns = 0;
-    char ext[4];
-	
-	ext[0] = 0;
-	ext[1] = 0;
-	ext[2] = 0;
-	ext[3] = 0;
-	
-	//copia.
-	for ( i=0; i<11; i++)
-	    __name[i] = name[i];
-	
-		
-    // Transforma em maiúscula enquanto não achar um ponto.
-    // #bugbug: E se a string já vier maiúscula teremos problemas.
-	
-	while ( *__name && *__name != '.' )
-	{
-        if ( *__name >= 'a' && *__name <= 'z' )
-            *__name -= 0x20;
-
-        __name++;
-        ns++;
-    };
-
-    // Aqui name[0] é o ponto.
-	// Então constrói a extensão colocando
-	// as letras na extensão.
-	
-	for ( i=0; i < 3 && __name[i+1]; i++ )
-	{
-		//Transforma uma letra da extensão em maiúscula.
-        
-		//if (name[i+1] >= 'a' && name[i+1] <= 'z')
-        //    name[i+1] -= 0x20;
-
-        //ext[i] = name[i+1];
-    
-	
-	    //#testando
-	    //Se não for letra então não colocamos no buffer de extensão;
-		if ( __name[i+1] >= 'a' && __name[i+1] <= 'z' )
-		{
-			__name[i+1] -= 0x20;
-		    
-		    ext[i] = __name[i+1];
-		}
-	};
-
-	//Acrescentamos ' ' até completarmos as oito letras do nome.
-	
-    while (ns < 8)
-	{	
-        *__name++ = ' ';
-        ns++;
-    };
-
-	//Acrescentamos a extensão
-	
-    for (i=0; i < 3; i++)
-        *__name++ = ext[i];
-
-    *__name = '\0';
-
-    //return (char *) &__name[0];    
-    return (char *) __name;
-}
-*/
-
-	
-	
-	
 /*
  ***********************
  * fatClustToSect:
@@ -278,7 +184,8 @@ fatLoadCluster ( unsigned long sector,
  *****************************************************************
  * read_lba:
  *     Carrega um um setor na memória, dado o LBA.
- *     Obs: Talvez essa rotina tenha que ter algum retorno no caso de falhas. 
+ *     Obs: 
+ *     Talvez essa rotina tenha que ter algum retorno no caso de falhas. 
  */
  
 void read_lba ( unsigned long address, unsigned long lba ){
@@ -426,49 +333,39 @@ fsLoadFile ( unsigned long fat_address,
     unsigned long n = 0;       //Deslocamento no nome.
 
 
-    // #bugbug:
-    // Problemas na string do nome.
-    // ??Nome.
-
-    char NameX[13];
+    char tmpName[13];
 
     //Cluster inicial
     unsigned short cluster;    
 
-	//?? Primeiro setor do cluster.
+    // ?? 
+    // Primeiro setor do cluster.
     unsigned long S;  
 
     int Spc;
 
+    
+    // Updating fat address and __dir address.
 
-
-
-	// Updating fat address and root address.
-
-    // #todo
-    // Checar a validade dos endereços.
-    // Mudar de 'root' para '__dir',
-
-    unsigned short *fat = (unsigned short *) fat_address;   
-    unsigned short *root = (unsigned short *) dir_address;
+    unsigned short *  fat = (unsigned short *) fat_address;   
     unsigned short *__dir = (unsigned short *) dir_address;
 
 
 
 
 	// Lock ??.
-	
 	//taskswitch_lock();
 	//scheduler_lock();
-	
-	// Root dir.
-	//Carrega o diretório raiz na memória.
 
-//loadRoot:
 
-#ifdef KERNEL_VERBOSE
-    debug_print ("fsLoadFile:\n");
-#endif
+    //
+    // ==== DIR ====
+    //
+
+    // Carrega o diretório na memória.
+    // #bugbug
+    // Como não sabemos o tamanho do diretório,
+    // estamos usando o tamanho do doretório raiz. 
 
 	//#importante
 	//Não carregaremos mais um diretório nesse momento,
@@ -477,6 +374,14 @@ fsLoadFile ( unsigned long fat_address,
 	//Na inicialização é preciso carregar o diretório raiz
 	//antes de chamar essa função. E para caregar o diretório raiz
 	//precisa inicializar o sistema de arquivos e o controlador IDE.
+
+
+//load_DIR:
+
+
+#ifdef KERNEL_VERBOSE
+    debug_print ("fsLoadFile:\n");
+#endif
 
 	//#test
 	//funcionou
@@ -493,40 +398,49 @@ fsLoadFile ( unsigned long fat_address,
 	
 	//#todo:
 	//precisamos na verdade carregarmos o diretório corrente.
-	
-	
-	//Checa se é válida a estrutura do sistema de arquivos.
-	
-	if ( (void *) filesystem == NULL )
-	{
-	    printf ("fsLoadFile: filesystem\n");
-		goto fail;
-	
-	}else{
-		
-	    //Setores por cluster.
-	    Spc = filesystem->spc;
-		
-	    if (Spc <= 0)
-		{
-	        printf ("fsLoadFile: Spc\n");
-		    goto fail;
-	    };
-	
-	    //Max entries ~ Número de entradas no rootdir.
-		//#bugbug: Devemos ver o número de entradas no diretório corrente.
-	    max = filesystem->rootdir_entries;
-		
-	    if (max <= 0)
-		{
-	        printf ("fsLoadFile: max\n");
-			goto fail;
-	    };
-		
-	    // More?! 
-		// ...
-	};
-	
+
+    //
+    // File system structure.
+    //
+
+    // Checa se é válida a estrutura do sistema de arquivos.
+    // Pega a quantidade de setores pot cluster.
+    // Pega o tamanho do diretório raiz.
+    // Ou seja, pega o número máximo de entradas.
+    // ...
+
+    if ( (void *) filesystem == NULL )
+    {
+        printf ("fsLoadFile: filesystem\n");
+        goto fail;
+
+    }else{
+
+        Spc = filesystem->spc;
+
+        if (Spc <= 0){
+            printf ("fsLoadFile: Spc\n");
+            goto fail;
+        }
+
+        // Max entries 
+        // Número de entradas no rootdir.
+        // #bugbug: 
+        // Devemos ver o número de entradas no diretório corrente.
+
+        max = filesystem->rootdir_entries;
+
+        if (max <= 0){
+            printf ("fsLoadFile: max\n");
+            goto fail;
+        }
+
+
+        // More?! 
+    };
+
+
+
 	// Continua ... 
 	// Pegar mais informações sobre o sistema de arquivos.
 	// Busca simples pelo arquivo no diretório raiz.
@@ -537,31 +451,31 @@ fsLoadFile ( unsigned long fat_address,
 	// $ = entrada de arquivo deletado.
 	// outros ...
 	// ATENÇÃO:
-	// Na verdade a variável 'root' é do tipo short.	  
+	// Na verdade a variável 'root' é do tipo short.
 	 
-	i = 0; 
-	
-	
+
+
     //
     // file name
     //
     
     //#debug
     //vamos mostrar a string.
-    
     printf ("fsLoadFile: file_name={%s}\n", file_name);
-		
+
+
+    // name size.
+    // Se o tamanho da string falhar, vamos ajustar.
+
     size_t size = (size_t) strlen (file_name); 
-    
-    
-    // o tamanho da string falhou
-    //vamos ajustar.
-    if ( size > 11 )
-    {
-	     printf ("fsLoadFile: size fail %d\n",size );   
-	     size = 11;
-	}
-	
+
+    if ( size > 11 ){
+         printf ("fsLoadFile: size fail %d\n", size ); 
+         size = 11;
+    }
+
+
+
 	//
 	// Compare.
 	//
@@ -572,97 +486,125 @@ fsLoadFile ( unsigned long fat_address,
     // entradas no diretório raiz. Mas precisamos considerar
     // o número de entradas no diretório atual.
 
-	// Procura o arquivo no diretório raiz.
-	
-	while ( i < max )
-	{
-		//Se a entrada não for vazia.
-		if ( __dir[z] != 0 )
+
+    // Descrição da rotina:
+    // Procura o arquivo no diretório raiz.
+    // Se a entrada não for vazia.
+    // Copia o nome e termina incluindo o char '0'.
+    // Compara 'n' caracteres do nome desejado, 
+    // com o nome encontrado na entrada atual.
+    // Cada entrada tem 16 words.
+    // (32/2) próxima entrada! (16 words) 512 vezes!
+    
+    i = 0; 
+                    
+    while ( i < max )
+    {
+        if ( __dir[z] != 0 )
         {
-			// Copia o nome e termina incluindo o char 0.
-			memcpy ( NameX, &__dir[z], size );
-			NameX[size] = 0;
-			
-            // Compara 11 caracteres do nome desejado, 
-			// com o nome encontrado na entrada atual.
-			Status = strncmp ( file_name, NameX, size );
-			
-            if ( Status == 0 ){ goto found; }
-			// Nothing.
+            memcpy ( tmpName, &__dir[z], size );
+            tmpName[size] = 0;
+
+            Status = strncmp ( file_name, tmpName, size );
+
+            if ( Status == 0 )
+            { 
+                goto __found; 
+            }
         }; 
-		
-		//(32/2) próxima entrada! (16 words) 512 vezes!
         z += 16;    
         i++;        
     }; 
-	
-	// Sai do while. O arquivo não foi encontrado.
-	
-    // O arquivo não foi encontrado.	
+
+
+    //
+    // Not found.
+    //
+
+    // Sai do while. 
+    // O arquivo não foi encontrado.
+    // O arquivo não foi encontrado.
+
 //notFound:
 
-    //#debug
-    printf ("fsLoadFile: %s not found\n", file_name );  
-	printf ("fsLoadFile: %s not found\n", NameX );  
-	 
-	//#debug
-    //printf ("fs-read-fsLoadFile: %s not found\n", NameX );
-	//printf("root: %s ",root);	
+    printf ("1 fsLoadFile: %s not found\n", file_name );  
     goto fail;
     
     //
     // Found.
     //
     
-	
-    // O arquivo foi encontrado.	
-found:
+    // O arquivo foi encontrado.
+
+__found:
 
     // #debug
-    // printf("arquivo encontrado\n");
+    // printf ("file FOUND!\n");
     // refresh_screen();
-	// while(1){}
-	
-    //Pega o cluster inicial. (word)
-	cluster = __dir[ z+13 ];    //(0x1A/2) = 13.
-	
-	
-	// Cluster Limits.
+    // while(1){}
+
+    //
+    // Get the initial cluster. 
+    //
+    
+    // (word). 
+    // (0x1A/2) = 13.
+
+    cluster = __dir[ z+13 ];    
+
+
+    //
+    // Cluster Limits.
+    //
+
 	// Checar se 'cluster' está fora dos limites.
 	// +São 256 entradas de FAT por setor. 
 	// +São 64 setores por FAT. 
 	// Isso varia de acordo com o tamanho do disco.
 	// O número máximo do cluster nesse caso é (256*64).
-	
-	if ( cluster <= 0 || cluster > 0xFFF0 )
-	{	
-	    printf ("fsLoadFile: Cluster limits %x \n", cluster );
-		goto fail;
-	}	
-	
+
+    // #todo
+    // Na verdade os dois primeiros clusters estão indisponíveis.
+    
+    if ( cluster <= 0 || cluster > 0xFFF0 ){
+        printf ("fsLoadFile: Cluster limits %x \n", cluster );
+        goto fail;
+    }
+
+
+
 	//
 	// FAT
 	//
-	
-//loadFAT:
-	
+
     //Carrega fat na memória.
-	
+
+//loadFAT:
+
+
 //#ifdef KERNEL_VERBOSE		
 	//printf ("loading FAT..\n");
 //#endif 
-	
+
+
 	//=============================
-	//#bugbug: 
-	//Não devemos carregar a FAT na memória toda vez que 
-	//formos carregar um arquivo. 
-	//Talvez ela deva ficar sempre na memória.
-	//precisamos de estruturas para volumes que nos dê esse tipo de informação
-	
-	fs_load_fatEx();
-	
+	// #bugbug: 
+	// Não devemos carregar a FAT na memória toda vez que 
+	// formos carregar um arquivo. 
+	// Talvez ela deva ficar sempre na memória.
+	// precisamos de estruturas para volumes que nos dê esse tipo de informação
+
+    fs_load_fatEx ();
+    
+    
+    
+    //
+    // CLUSTERS
+    //
+
     // Carregar o arquivo, cluster por cluster.
-    // @todo: Por enquanto, um cluster é igual à um setor, 512 bytes.
+    // #todo: 
+    // Por enquanto, um cluster é igual à um setor, 512 bytes.
  
 
 //#ifdef KERNEL_VERBOSE		
@@ -676,10 +618,15 @@ found:
 	//
 	// Carregar o arquivo.
 	//
-	
-//Loop.	
-next_entry:
-	
+
+
+// Loop.
+__loop_next_entry:
+
+    // #todo
+    // Para o caso de termos mais de um setor por cluster.
+    // Mas não é nosso caso até o momento.
+
 	/*
 	while(1)
 	{	
@@ -699,50 +646,58 @@ next_entry:
 		//Nothing.
     };
 	*/
-	
-	read_lba ( file_address, VOLUME1_DATAAREA_LBA + cluster -2 ); 
-	
-	//Incrementa o buffer. +512;
-	//SECTOR_SIZE;
-	file_address = (unsigned long) file_address + 512; 
-	
-	
-	//Pega o próximo cluster na FAT.
-	next = (unsigned short) fat[cluster];
-	
-	//Configura o cluster atual.
-	cluster = (unsigned short) next;
-	
-	//Ver se o cluster carregado era o último cluster do arquivo.
-	
-	if ( cluster == 0xFFFF || cluster == 0xFFF8 )
-	{ 
-	    goto done; 
-	}
 
-	// ## Loop ## 
-	// Vai para próxima entrada na FAT.
-	
-	goto next_entry;
-	
-	//Nothing.
-	
-//Falha ao carregar o arquivo.
+    //
+    // Read LBA.
+    //
+
+    read_lba ( file_address, VOLUME1_DATAAREA_LBA + cluster -2 ); 
+
+
+    // Caution!
+    // Increment buffer base address.
+    // Pega o próximo cluster na FAT.
+    // Configura o cluster atual.
+    // Ver se o cluster carregado era o último cluster do arquivo.
+    // Vai para próxima entrada na FAT.
+
+    file_address = (unsigned long) file_address + SECTOR_SIZE; 
+
+    next = (unsigned short) fat[cluster];
+
+    cluster = (unsigned short) next;
+
+    if ( cluster == 0xFFFF || cluster == 0xFFF8 ){ 
+        goto done; 
+    }
+
+    goto __loop_next_entry;
+
+
+
+    //
+    // Fail!
+    //
+
 fail:
-    
-	printf ("fsLoadFile fail: file={%s}\n", file_name );
+
+    printf ("fsLoadFile fail: file={%s}\n", file_name );
     refresh_screen ();
-	
-	return (unsigned long) 1;
-	
+    return (unsigned long) 1;
+
+    //
+    // Done.
+    //
+
 done:
-    
-	//#debug support
-	//printf("fsLoadFile: done\n");
-	//refresh_screen(); 
-    
-	return (unsigned long) 0;
+
+    // #debug support
+    // printf("fsLoadFile: done\n");
+    // refresh_screen(); 
+
+    return (unsigned long) 0;
 }
+
 
 
 /*
