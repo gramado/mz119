@@ -60,7 +60,7 @@ _irq0:
 	;Mas a troca de contexto não será implementada.
 	;cli
 	mov al, 20h
-    out 20h, al  	
+    out 20h, al
 	sti
 	iretd  
 
@@ -110,7 +110,9 @@ _irq14:
 	PUSH AX
 	MOV AL, 020h
 	OUT 0A0h, AL
+	IODELAY
 	OUT 020h, AL
+	IODELAY
 	POP AX
 	IRETD
 	
@@ -125,7 +127,9 @@ _irq15:
 	PUSH AX
 	MOV AL, 020h
 	OUT 0A0h, AL
+	IODELAY
 	OUT 020h, AL
+	IODELAY
 	POP AX
 	IRETD
 

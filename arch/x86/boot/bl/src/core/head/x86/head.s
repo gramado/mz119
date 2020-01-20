@@ -83,6 +83,13 @@ KRN_ENTRYPOINT  equ  0x00101000    ;Entry point no endereço fisico.
 global _bootloader_entry_point
 _bootloader_entry_point:
 
+
+   JMP ____START
+
+    %include "header.inc"
+
+____START:
+
     ; #debug.
     ; text mode.
 
@@ -185,27 +192,37 @@ _bootloader_entry_point:
 	cli
 	mov al, 00010001b    ;Begin PIC 1 initialization.
 	out 0x20, al
+	IODELAY
 	mov al, 00010001b    ;Begin PIC 2 initialization.
 	out 0xA0, al	
+	IODELAY
 	mov al, 0x20		 ;IRQ 0-7: interrupts 20h-27h.
 	out 0x21, al
+	IODELAY
 	mov al, 0x28		 ;IRQ 8-15: interrupts 28h-2Fh.
 	out 0xA1, al
+	IODELAY
 	mov al, 4
 	out 0x21, al
+	IODELAY
 	mov al, 2
 	out 0xA1, al
+	IODELAY
 	mov al, 1
 	out 0x21, al
+	IODELAY
 	out 0xA1, al
+	IODELAY
 	cli
 	
 	;unmask all interrupts
 
     mov al, 0
     out 0xa1, al 
+    IODELAY
     out 0x21, al 
-
+    IODELAY
+    
     ;; Calling C part of the kernel base.
 
 ;.callBlMain:

@@ -415,27 +415,37 @@ dummyJmpAfterLTR:
 	;xor eax, eax
 	mov al, 00010001b    ;begin PIC1 initialization.
 	out 0x20, al
+	IODELAY
 	mov al, 00010001b    ;begin PIC2 initialization.
-	out 0xA0, al	
-	mov al, 0x20	     ;IRQ 0-7: interrupts 20h-27h.
+	out 0xA0, al
+	IODELAY
+	mov al, 0x20         ;IRQ 0-7: interrupts 20h-27h.
 	out 0x21, al
-	mov al, 0x28	     ;IRQ 8-15: interrupts 28h-2Fh.
+	IODELAY
+	mov al, 0x28        ;IRQ 8-15: interrupts 28h-2Fh.
 	out 0xA1, al
+	IODELAY
 	mov al, 4
 	out 0x21, al
+	IODELAY
 	mov al, 2
 	out 0xA1, al
+	IODELAY
 
    ;mov al, 00010001b    ;11 sfnm 80x86 support.
 	mov al, 00000001b    ;01 80x86 support.
 	out 0x21, al
+	IODELAY
 	out 0xA1, al
+	IODELAY
 
     ;mascara todas as interrupções.
 	cli
 	mov  al, 255
 	out  0xa1, al
+	IODELAY
 	out  0x21, al
+	IODELAY
 	
 
 	;; Com todas as interrupções mascaradas, é hora de 
@@ -456,11 +466,14 @@ dummyJmpAfterLTR:
 	mov al, byte 0x36
 	mov dx, word 0x43
 	out dx, al
+	IODELAY
 	mov eax, dword 11931
 	mov dx, word 0x40
 	out dx, al
+	IODELAY
 	mov al, ah
 	out dx, al
+	IODELAY
 	
 	
 	;; #todo:
@@ -496,14 +509,16 @@ dummyJmpAfterLTR:
 	;unmask the timer interrupt.
 	mov dx, word 0x21
 	in  al, dx
+	IODELAY
 	and al, byte 0xfe
 	out dx, byte al
-
+    IODELAY
 	;unmask all interrupts.	
 	mov  al, 0
 	out  0xa1, al
+	IODELAY
 	out  0x21, al
-
+    IODELAY
 	
 	;;
 	;; Configurando alguns registradores.

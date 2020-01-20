@@ -565,6 +565,7 @@ IDE_RESET_DISK:
 	inc dx               ;dx is now 01F7h, port address of command register
 	mov byte [lastcommand], 10h ; Tell our ISR what we are doing
 	out dx,al           ; Recalibrate!
+	IODELAY
 
 	mov ax,0FFFFh       ; loop var = 0FFFFh
 	xor dl,dl
@@ -615,7 +616,8 @@ delay_do_fred:
 Small_Delay:
     push ecx
     mov  ecx, 0xfffff
-BusyDelay3a:                                  
+BusyDelay3a:
+    IODELAY                                  
     nop
     nop
     nop
@@ -639,6 +641,6 @@ BusyDelay3a:
 ;
 	
 ;
-;fim.
+; End
 ;
 

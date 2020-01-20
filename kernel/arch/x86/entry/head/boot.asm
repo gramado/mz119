@@ -99,6 +99,9 @@ mboot_end:
 
 align 4
 
+    %include "header.inc"
+    ;; ...
+
 ; Restart the boot routine.
 START:
 

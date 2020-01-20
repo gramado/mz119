@@ -190,28 +190,34 @@ ata_lba_read:
     shr eax, 24          ; Get bit 24 - 27 in al
     or al, 11100000b     ; Set bit 6 in al for LBA mode
     out dx, al
+    IODELAY
  
     mov edx, 0x01F2      ; Port to send number of sectors
     mov al, cl           ; Get number of sectors from CL
     out dx, al
+    IODELAY
  
     mov edx, 0x1F3       ; Port to send bit 0 - 7 of LBA
     mov eax, ebx         ; Get LBA from EBX
     out dx, al
+    IODELAY
  
     mov edx, 0x1F4       ; Port to send bit 8 - 15 of LBA
     mov eax, ebx         ; Get LBA from EBX
     shr eax, 8           ; Get bit 8 - 15 in AL
     out dx, al
+    IODELAY
  
     mov edx, 0x1F5       ; Port to send bit 16 - 23 of LBA
     mov eax, ebx         ; Get LBA from EBX
     shr eax, 16          ; Get bit 16 - 23 in AL
     out dx, al
+    IODELAY
  
     mov edx, 0x1F7       ; Command port
     mov al, 0x20         ; Read with retry.
     out dx, al
+    IODELAY
  
 .still_going:  
     in al, dx
@@ -263,29 +269,35 @@ ata_lba_write:
     shr eax, 24          ; Get bit 24 - 27 in al
     or al, 11100000b     ; Set bit 6 in al for LBA mode
     out dx, al
+    IODELAY
  
     mov edx, 0x01F2      ; Port to send number of sectors
     mov al, cl           ; Get number of sectors from CL
     out dx, al
+    IODELAY
  
     mov edx, 0x1F3       ; Port to send bit 0 - 7 of LBA
     mov eax, ebx         ; Get LBA from EBX
     out dx, al
+    IODELAY
  
     mov edx, 0x1F4       ; Port to send bit 8 - 15 of LBA
     mov eax, ebx         ; Get LBA from EBX
     shr eax, 8           ; Get bit 8 - 15 in AL
     out dx, al
+    IODELAY
  
     mov edx, 0x1F5       ; Port to send bit 16 - 23 of LBA
     mov eax, ebx         ; Get LBA from EBX
     shr eax, 16          ; Get bit 16 - 23 in AL
     out dx, al
+    IODELAY
  
     mov edx, 0x1F7       ; Command port
     mov al, 0x30         ; Write with retry.
     out dx, al
- 
+    IODELAY
+     
 .still_going:  
     in al, dx
     test al, 8           ; the sector buffer requires servicing.
@@ -352,12 +364,14 @@ IDE_RESET_DISK:
 	
 	mov dx, 01F6h        ;dx = drive/head regsiter port address.
 	out dx, al           ;write to drive/head register.
+	IODELAY
 	
 	mov al, 10h          ;Command 1xh: Recalibrate.
 	inc dx                         ;dx is now 01F7h, port address of command register.
 	mov byte [lastcommand], 10h    ;Tell our ISR what we are doing.
 	out dx, al                     ;Recalibrate.
-
+    IODELAY
+    
 	mov ax,0FFFFh                 ;loop var = 0FFFFh.
 	xor dl,dl
 	mov byte [commanddone], dl    ;init commanddone with 0.
@@ -421,21 +435,27 @@ _CMOS_GET_DATE:
 	; get the "second" byte.
 	MOV  al, 0x00           
     OUT  0x70, AL
+    IODELAY
     IN   AL, 0x71 
+    IODELAY
 	CALL  BCD2bin
     MOV  BYTE [_second], AL
 		
     ; get the "minute" byte.
-	MOV  AL, 0x02           
+    MOV  AL, 0x02           
     OUT  0x70, AL
+    IODELAY
     IN   AL, 0x71
+    IODELAY
     CALL  BCD2bin
     MOV  BYTE [_minute], AL	
 		
 	; get the "hour" byte.	
     MOV  AL, 0x04           
     OUT  0x70, AL
+    IODELAY
     IN  AL, 0x71
+    IODELAY
     CALL  BCD2bin
     MOV  BYTE [_hour], AL
 	

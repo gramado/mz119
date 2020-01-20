@@ -194,6 +194,7 @@ _irq0:
 dummy_flush:
 	;TLB.
     mov EAX, CR3  
+    IODELAY         ;; #test
     nop
     nop
     nop
@@ -470,7 +471,7 @@ _irq1:
     MOV AL, 020h
     ;OUT 0A0h, AL
     OUT 020h, AL
-
+    
     ;; o eoi sujou isso.
     pop eax
 
@@ -675,7 +676,7 @@ _irq11:
 	
 	
 ;=======================================
-;IRQ 12 – mouse on PS/2 connector
+;IRQ 12 mouse on PS/2 connector
 global _irq12
 _irq12:
     
@@ -692,9 +693,10 @@ _irq12:
     call _mouse_handler
 
     mov al, 0x20
-    out 0xA0, al  
+    out 0xA0, al 
+    IODELAY 
     out 0x20, al
-
+    IODELAY 
 	
 	pop ss
 	pop gs 
@@ -752,8 +754,10 @@ _irq14:
 
     MOV AL,020h
     OUT 0A0h,AL
+    IODELAY
     OUT 020h,AL
-
+    IODELAY
+    
     POPAD
     pop eax
     sti
@@ -781,8 +785,10 @@ _irq15:
 
     MOV AL, 020h
     OUT 0A0h, AL
+    IODELAY
     OUT 020h, AL
-
+    IODELAY
+    
     POPAD
     pop eax
     sti
@@ -805,9 +811,11 @@ unhandled_irq:
     push eax
 
     mov al, 0x20
-    out 0xA0, al  
+    out 0xA0, al
+    IODELAY  
     out 0x20, al
-
+    IODELAY
+    
     pop eax
     sti 
 
