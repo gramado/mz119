@@ -34,6 +34,10 @@
 //#define SECTOR_SIZE 4096  
 
 
+// short.
+//#define FS_I386_IMAGE  0x014C
+
+
 // string support
 #define  FS_STRING_TERMINATOR  "\0" 
 

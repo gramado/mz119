@@ -310,9 +310,12 @@ const char *break_path (const char *pathname, char *filename)
  *     Endereço do arquivo.
  */
 
-// #bugbug:
-// Problemas na string do nome.
-// Vamos limitar a 11.
+
+// #obs
+// Rotina específica para FAT16.
+// Podemos mudar o nome para fsFat16LoadFile().
+// Ou fs_Fat16_SFN_LoadFile()
+
 
 // IN: ??
 // OUT: 1=fail 0=ok.
@@ -325,8 +328,10 @@ fsLoadFile ( unsigned long fat_address,
 {
     int Status;
 
-    int i;
+    int i = 0;
+    int SavedDirEntry = 0;
     unsigned short next;
+
 
     unsigned long max = 64;    //?? @todo: rever. Número máximo de entradas.
     unsigned long z = 0;       //Deslocamento do rootdir 
@@ -335,6 +340,10 @@ fsLoadFile ( unsigned long fat_address,
 
     char tmpName[13];
 
+
+    //int IsDirectory;
+
+
     //Cluster inicial
     unsigned short cluster;    
 
@@ -342,9 +351,11 @@ fsLoadFile ( unsigned long fat_address,
     // Primeiro setor do cluster.
     unsigned long S;  
 
+    // Usado junto com o endereço do arquivo.
+    unsigned long SectorSize;
+
     int Spc;
 
-    
     // Updating fat address and __dir address.
 
     unsigned short *  fat = (unsigned short *) fat_address;   
@@ -356,6 +367,23 @@ fsLoadFile ( unsigned long fat_address,
 	// Lock ??.
 	//taskswitch_lock();
 	//scheduler_lock();
+
+
+    //
+    // Initialize variables.
+    //
+
+
+    /*
+    if (____IsCdRom) {
+        SectorSize = 2048;
+    } else {
+        SectorSize = SECTOR_SIZE;
+    }
+    */
+
+    SectorSize = SECTOR_SIZE;
+    // ...
 
 
     //
@@ -459,6 +487,23 @@ fsLoadFile ( unsigned long fat_address,
     // file name
     //
     
+    // #todo
+    // Ponteiro inválido para o nome do arquivo.
+    // if ( (void *) file_name == NULL ){
+    //    return 1;
+    // }
+    
+    
+    // Se o path começa com / então é absoluto.
+    // Devemos começar pelo diretório raiz.
+    //if ( *file_name == '/' )
+    //{
+        //Absolute = 1;
+        //file_name++;
+    //}
+        
+
+    
     //#debug
     //vamos mostrar a string.
     printf ("fsLoadFile: file_name={%s}\n", file_name);
@@ -493,6 +538,7 @@ fsLoadFile ( unsigned long fat_address,
     // Copia o nome e termina incluindo o char '0'.
     // Compara 'n' caracteres do nome desejado, 
     // com o nome encontrado na entrada atual.
+    // Se for encontrado o nome, então salvamos o número da entreda.
     // Cada entrada tem 16 words.
     // (32/2) próxima entrada! (16 words) 512 vezes!
     
@@ -508,7 +554,8 @@ fsLoadFile ( unsigned long fat_address,
             Status = strncmp ( file_name, tmpName, size );
 
             if ( Status == 0 )
-            { 
+            {
+                SavedDirEntry = i; 
                 goto __found; 
             }
         }; 
@@ -647,6 +694,10 @@ __loop_next_entry:
     };
 	*/
 
+    // #todo
+    // Poderia ter uma versão dessa função para ler
+    // um dado número de setores consecutivos.
+
     //
     // Read LBA.
     //
@@ -661,7 +712,7 @@ __loop_next_entry:
     // Ver se o cluster carregado era o último cluster do arquivo.
     // Vai para próxima entrada na FAT.
 
-    file_address = (unsigned long) file_address + SECTOR_SIZE; 
+    file_address = (unsigned long) file_address + SectorSize; 
 
     next = (unsigned short) fat[cluster];
 

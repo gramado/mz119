@@ -454,9 +454,12 @@ vhd-create:
 	@echo "================================="
 	@echo "(Step 4) Creating a VHD in Assembly language ..."
 
-	nasm -I arch/x86/boot/vhd/stage1/ \
-	-I arch/x86/boot/vhd/vbr/ \
-	-I arch/x86/boot/vhd/footer/ arch/x86/boot/vhd/main.asm  -o  GRAMADO.VHD
+#	nasm -I arch/x86/boot/vhd/stage1/ \
+#	-I arch/x86/boot/vhd/vbr/ \
+#	-I arch/x86/boot/vhd/footer/ arch/x86/boot/vhd/main.asm  -o  GRAMADO.VHD
+
+	nasm -I arch/x86/boot/vhd arch/x86/boot/vhd/main.asm -o GRAMADO.VHD 
+
 
 ## Step5 vhd-mount          - Mounting the VHD.
 vhd-mount:
