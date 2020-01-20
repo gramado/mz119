@@ -8,10 +8,10 @@
 
 
 VERSION = 1
-PATCHLEVEL = 24
+PATCHLEVEL = 25
 SUBLEVEL = 0
-EXTRAVERSION = 
-NAME = Carrot
+EXTRAVERSION = -rc0
+NAME = 
 
 
 # First of all, lemme discribe this documment!
@@ -453,10 +453,6 @@ kernel-image-link:
 vhd-create:
 	@echo "================================="
 	@echo "(Step 4) Creating a VHD in Assembly language ..."
-
-#	nasm -I arch/x86/boot/vhd/stage1/ \
-#	-I arch/x86/boot/vhd/vbr/ \
-#	-I arch/x86/boot/vhd/footer/ arch/x86/boot/vhd/main.asm  -o  GRAMADO.VHD
 
 	nasm -I arch/x86/boot/vhd arch/x86/boot/vhd/main.asm -o GRAMADO.VHD 
 
