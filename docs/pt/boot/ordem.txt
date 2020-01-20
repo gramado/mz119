@@ -6,7 +6,7 @@ Descrição resumida da ordem de inicialização.
 
 + BM.BIN chama o programa BL.BIN e passa o comando para ele.
 
-+ BL.BIN carrega os programas KERNEL.BIN, INIT.BIN, SHELL.BIN e TASKMAN.BIN,
++ BL.BIN carrega o programa KERNEL.BIN.
   logo em seguida passa o comando para o programa KERNEL.BIN.
   
 + KERNEL.BIN cria algumas threads, inicializa elas e passa o comando para
