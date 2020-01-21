@@ -12,6 +12,31 @@
 ;
 
 
+;; See:
+;; https://wiki.osdev.org/8259_PIC#Spurious_IRQs
+;;
+
+
+;; from interwebs: "
+;; There are several reasons for the interrupt to disappear. 
+;; In my experience the most common reason is software sending an 
+;; EOI at the wrong time. Other reasons include noise on IRQ lines
+;; (or the INTR line). "
+
+;; For a spurious IRQ, there is no real IRQ and the PIC chip's 
+;; ISR (In Service Register) flag for the corresponding IRQ will 
+;; not be set. 
+;; This means that the interrupt handler must not send an EOI back to 
+;; the PIC to reset the ISR flag. 
+
+;; Also note that some operating systems (e.g. Linux) 
+;; keep track of the number of spurious IRQs that have occurred 
+;; (e.g. by incrementing a counter when a spurious IRQ occurs). 
+;; This can be useful for detecting problems in software 
+;; (e.g. sending EOIs at the wrong time) and detecting problems in
+;; hardware (e.g. line noise). 
+
+
 
 ;
 ; Funções importadas.
@@ -544,27 +569,70 @@ _irq4:
 ;    iretd
 
 
+
+
+
 ;===================================================
 ;IRQ 7 parallel port 1. It is used for printers 
 ; or for any parallel port 
 ;if a printer is not present. It can also be potentially 
 ; be shared with a secondary sound card with careful 
 ; management of the port.
+
+;; The correct way to handle an IRQ 7 is to first check the master PIC 
+;; chip's ISR to see if the IRQ is a spurious IRQ or a real IRQ. 
+;; If it is a real IRQ then it is treated the same as any other real 
+;; IRQ. If it is a spurious IRQ then you ignore it 
+;; (and do not send the EOI). 
+
+
+
 global _irq7
 _irq7:
     cli
 	pushad
-	
-	;call _first_parallel_port_Handler
-	mov al, 0x20
-    ;out 0xA0, al  
-    out 0x20, al
 
-	
-	popad
-	sti
-    iretd	
-	
+
+    ;call _first_parallel_port_Handler
+
+    ;; ++
+    ;; ================================================
+    ;; #test
+    ;; testando o tratamento de interrupção espúria.
+
+    xor eax, eax
+    mov  al, 03h    ; PIC.OCW3 set function to read ISR (In Service Register)
+    out  23h, al    ; write to PIC.OCW3 master
+    in   al, 20h    ; read ISR master.
+    test al, 80h         ; if the in-service register does not have IR7 bit set
+    jz short __RETURN_Spurious   ; this would be a spurious interrupt.
+    
+    ;; ================================================
+    ;; --
+
+;; Not spurious
+
+    ;; master.
+    ;; for irq7
+    mov al, 0x20
+    out 0x20, al   
+
+__RETURN_Spurious:
+
+    ;; No eoi for irq 7 spurious
+    
+    popad
+    sti
+    iretd
+
+
+
+
+
+
+
+
+
 ;================================================
 ; _irq8:
 ;     System CMOS, Realtime clock.
@@ -772,6 +840,16 @@ _irq14:
 ;     O timer precisa ser desbilitado. ??
 ;
 
+;; The correct way to handle an IRQ 15 is similar, but a little trickier 
+;; due to the interaction between the slave PIC and the master PIC. 
+;; First check the slave PIC chip's ISR to see if the IRQ is a spurious 
+;; IRQ or a real IRQ. If it is a real IRQ then it is treated the same 
+;; as any other real IRQ. If it's a spurious IRQ then don't send the 
+;; EOI to the slave PIC; however you will still need to send the EOI 
+;; to the master PIC because the master PIC itself won't know that it 
+;; was a spurious IRQ from the slave. 
+
+
 extern _ata_handler2
 
 global _irq15
@@ -782,6 +860,12 @@ _irq15:
     PUSHAD
 
     call _ata_handler2
+    
+    
+    ;; #bugbug
+    ;; #todo
+    ;; Spurious int for irq15.
+    ;; It's different from irq7
 
     MOV AL, 020h
     OUT 0A0h, AL
