@@ -745,10 +745,13 @@ system_procedure ( struct window_d *window,
 
                 // Usada para testes.
                 case VK_F6:
+                
+                    pciInfo();
+                    refresh_screen();
                     
                     // testando o 'refresh all windows'
                     // do compositor.
-                    redraw_screen ();
+                    //redraw_screen ();
                     
                     //VAMOS ACORDAR TODO MUNDO QUE ESPEROU POR ESSE MOTIVO.
                     //wakeup_scan_thread_reason (WAIT_REASON_TEST);

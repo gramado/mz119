@@ -359,12 +359,11 @@ e1000_init_nic ( unsigned char bus,
 	{
 		cmd |= 0x04;
 
+        // ??
 		//(bus, slot, func, PCI_COMMAND, cmd);
-
 		diskWritePCIConfigAddr ( (int) bus, (int) dev, (int) fun, 
 			(int) 0x04, (int) cmd ); 
 	};
-
 
 
     printf ("Done\n");
@@ -1108,7 +1107,7 @@ int e1000_reset_controller (void){
 
 	// Linkup
 	
-	uint32_t val = E1000ReadCommand (currentNIC, 0);											
+	uint32_t val = E1000ReadCommand (currentNIC, 0);	
 	
 	//(1 << 6)
 	
@@ -1128,11 +1127,11 @@ E1000WriteCommand ( struct intel_nic_info_d *d,
 	//if (dev->use_io) 
 	//{
 	//  Yes
-	//	PortOutLong(dev->io_base, addr);											
+	//	PortOutLong(dev->io_base, addr);	
 	//	PortOutLong(dev->io_base + 4, val);
 	//} else {
 	//  No
-	//	*( (volatile unsigned int *)(d->mem_base + addr)) = val;							
+	//	*( (volatile unsigned int *)(d->mem_base + addr)) = val;	
 	//}
 	
 	*( (volatile unsigned int *)(d->mem_base + addr)) = val;
@@ -1348,7 +1347,7 @@ uint32_t E1000ReadEEPROM ( struct intel_nic_info_d *d, uint8_t addr ){
 	// Nope...	
 	} else {
 		
-		E1000WriteCommand ( d, 0x14, 1 | (addr << 2) );								
+		E1000WriteCommand ( d, 0x14, 1 | (addr << 2) );
 		
 		//#bugbug
 		//#obs: loop

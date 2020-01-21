@@ -33,7 +33,11 @@
 */
 
 
-
+int 
+serial_bus_controller_init ( unsigned char bus, 
+                         unsigned char dev, 
+                         unsigned char fun, 
+                         struct pci_device_d *pci_device );
 
 void usbInit (void);
 

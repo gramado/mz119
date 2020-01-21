@@ -830,13 +830,13 @@ static __inline void pci_write_dword(int busno, int devno, int funcno, int addr,
 /*
  * pciConfigReadByte:
  *     Read com retorno do tipo unsigned char.
- */	
+ */
 
 unsigned char 
 pciConfigReadByte ( unsigned char bus, 
-					unsigned char slot, 
-					unsigned char func, 
-					unsigned char offset )
+                    unsigned char slot, 
+                    unsigned char func, 
+                    unsigned char offset )
 {
 	// Montando uma unsigned long.
 	// Bus, Device and Function.
@@ -862,6 +862,7 @@ pciConfigReadByte ( unsigned char bus,
 	// Write out the address. (0x0CF8).
 
     outportl (PCI_ADDRESS_PORT, address);
+    io_delay();
 
 	// getData:
 	// Read in the data port. (0x0CFC).
@@ -870,7 +871,9 @@ pciConfigReadByte ( unsigned char bus,
     // int inport8(int port) 
 
     Ret = (unsigned char) (( inportl(PCI_DATA_PORT) >> ((offset & 3) * 8)) & 0xff); 
-
+    io_delay();
+    
+    
     // Obs: 
     // (offset & 2) * 8) = 0 Will choose the first word of the 32 bits register.    
 
@@ -935,7 +938,7 @@ pciConfigReadWord ( unsigned char bus,
 	// Write out the address. (0x0CF8).
 
     outportl (PCI_ADDRESS_PORT, address);
-
+    io_delay();
 
 	// getData:
 	// Read in the data port. (0x0CFC).
@@ -945,7 +948,7 @@ pciConfigReadWord ( unsigned char bus,
 
     Ret = (unsigned short) (( inportl(PCI_DATA_PORT) >> ((offset & 2) * 8)) & 0xffff);
 	//Ret = (unsigned short)(  inport16(PCI_DATA_PORT) );
-
+    io_delay();
 
     // Obs: 
     // (offset & 2) * 8) = 0 Will choose the first word of the 32 bits register.   
@@ -990,14 +993,15 @@ pciConfigReadDWord ( unsigned char bus,
 	// Write out the address. (0x0CF8).
 
     outportl (PCI_ADDRESS_PORT, address);
-    
+    io_delay();
 
 	// getData:
 	// Read in the data port. (0x0CFC).
 
 	// Parece ser o certo.
 	Ret = (unsigned long) ( inportl(PCI_DATA_PORT) ); 
-
+    io_delay();
+    
     // Obs: 
     // (offset & 2) * 8) = 0 Will choose the first word of the 32 bits register.
 
@@ -1015,9 +1019,11 @@ pciConfigReadDWord ( unsigned char bus,
 	// Nesse momento não há nenhume busca por fuction.
 	// Vendor.
 
-unsigned short pciCheckVendor (unsigned char bus, unsigned char slot){
-
-    return (unsigned short) pciConfigReadWord ( bus, slot, 0, PCI_OFFSET_VENDORID );  
+unsigned short 
+pciCheckVendor (unsigned char bus, unsigned char slot)
+{
+    return (unsigned short) pciConfigReadWord ( bus, slot, 0, 
+                                PCI_OFFSET_VENDORID );  
 }
 
 
@@ -1030,9 +1036,11 @@ unsigned short pciCheckVendor (unsigned char bus, unsigned char slot){
 	// Nesse momento não há nenhume busca por fuction. 
 	// Device.
 
-unsigned short pciCheckDevice (unsigned char bus, unsigned char slot){
-
-    return (unsigned short) pciConfigReadWord ( bus, slot, 0, PCI_OFFSET_DEVICEID ); 
+unsigned short 
+pciCheckDevice (unsigned char bus, unsigned char slot)
+{
+    return (unsigned short) pciConfigReadWord ( bus, slot, 0, 
+                                PCI_OFFSET_DEVICEID ); 
 }
 
 
@@ -1044,9 +1052,11 @@ unsigned short pciCheckDevice (unsigned char bus, unsigned char slot){
 // #todo: 
 // Nesse momento não há nenhume busca por fuction.
 
-unsigned char pciGetClassCode (unsigned char bus, unsigned char slot){
-
-    return (unsigned char) pciConfigReadByte ( bus, slot, 0, PCI_OFFSET_CLASSCODE );
+unsigned char 
+pciGetClassCode (unsigned char bus, unsigned char slot)
+{
+    return (unsigned char) pciConfigReadByte ( bus, slot, 0, 
+                               PCI_OFFSET_CLASSCODE );
 }
 
 
@@ -1058,9 +1068,11 @@ unsigned char pciGetClassCode (unsigned char bus, unsigned char slot){
 	// #todo: 
 	// Nesse momento não há nenhume busca por fuction.
 
-unsigned char pciGetSubClass (unsigned char bus, unsigned char slot){
-
-    return (unsigned char) pciConfigReadByte ( bus, slot, 0, PCI_OFFSET_SUBCLASS );
+unsigned char 
+pciGetSubClass (unsigned char bus, unsigned char slot)
+{
+    return (unsigned char) pciConfigReadByte ( bus, slot, 0, 
+                               PCI_OFFSET_SUBCLASS );
 }
 
 
@@ -1072,9 +1084,11 @@ unsigned char pciGetSubClass (unsigned char bus, unsigned char slot){
 // #todo: 
 // Nesse momento não há nenhuma busca por fuction.
 
-unsigned char pciGetHeaderType (unsigned char bus, unsigned char slot){
-
-    return (unsigned char) pciConfigReadByte ( bus, slot, 0, PCI_OFFSET_HEADERTYPE );
+unsigned char 
+pciGetHeaderType (unsigned char bus, unsigned char slot)
+{
+    return (unsigned char) pciConfigReadByte ( bus, slot, 0, 
+                               PCI_OFFSET_HEADERTYPE );
 }
 
 
@@ -1118,13 +1132,12 @@ pciGetBAR ( unsigned char bus,
             unsigned char slot, 
             int number )
 {
-    unsigned long BAR;
+    unsigned long BAR = 0;
 
 	// #todo: 
 	// Filtros para argumentos.
 
-    if ( number <0 || number > 5 )
-    {
+    if ( number <0 || number > 5 ){
         return 0;
     }
 
@@ -1204,8 +1217,9 @@ done:
  *     (Read an write register).
  */
 
-unsigned char pciGetInterruptLine ( unsigned char bus, 
-                                    unsigned char slot )
+unsigned char 
+pciGetInterruptLine ( unsigned char bus, 
+                      unsigned char slot )
 {
     return (unsigned char) pciConfigReadByte ( bus, slot, 0, 
                                PCI_OFFSET_INTERRUPTLINE );
@@ -1218,8 +1232,9 @@ unsigned char pciGetInterruptLine ( unsigned char bus,
  *     Get interrupt pin offser 3d (Read only).
  */
 
-unsigned char pciGetInterruptPin ( unsigned char bus, 
-                                   unsigned char slot )
+unsigned char 
+pciGetInterruptPin ( unsigned char bus, 
+                     unsigned char slot )
 {
     return (unsigned char) pciConfigReadByte ( bus, slot, 0, 
                               PCI_OFFSET_INTERRUPTPIN );
@@ -1298,8 +1313,8 @@ pciHandleDevice ( unsigned char bus,
 		//D->classCode = (unsigned char) pciGetClassCode(bus, dev);
 		//D->subclass = (unsigned char) pciGetSubClass(bus, dev); 
 
-		D->irq_line = (unsigned char) pciGetInterruptLine(bus, dev);
-		D->irq_pin = (unsigned char) pciGetInterruptPin(bus, dev);
+		D->irq_line = (unsigned char) pciGetInterruptLine (bus, dev);
+		D->irq_pin = (unsigned char) pciGetInterruptPin (bus, dev);
 
 		D->next = NULL;   //Next device.
 
@@ -1348,7 +1363,61 @@ pciHandleDevice ( unsigned char bus,
 
                 panic ("pciHandleDevice: #debug NIC");
             };
+        };
+
+
+        //
+        // 
+        //
+
+        // 8086:1237
+        // 440FX - 82441FX PMC [Natoma] - Intel Corporation
+        //if ( (D->Vendor == 0x8086)  && 
+             //(D->Device == 0x1237 ) && 
+             //(D->classCode == PCI_CLASSCODE_BRIDGE) )
+        //{}
+
+        // 8086:7000
+        // 82371SB PIIX3 ISA [Natoma/Triton II] - Intel Corporation
+        //if ( (D->Vendor == 0x8086)  && 
+             //(D->Device == 0x7000 ) && 
+             //(D->classCode == PCI_CLASSCODE_BRIDGE) )
+        //{}
+
+         
+        // serial controller.
+        // desejamos a subclasse 3 que é usb. 
+        if ( (D->Vendor == 0x8086)  && 
+             (D->Device == 0x7000 ) && 
+             (D->classCode == PCI_CLASSCODE_SERIALBUS ) )
+        {
+            //serial debug
+            debug_print ("0x8086:0x7000 found \n");  
+
+            // See: usb.c
+            Status = (int) serial_bus_controller_init ( (unsigned char) D->bus, 
+                               (unsigned char) D->dev, 
+                               (unsigned char) D->func, 
+                               (struct pci_device_d *) D );
+                               
+             if (Status == 0)
+             {
+				 //...
+             }else{
+                 panic ("pciHandleDevice: #debug Serial controller\n");
+             }     
         }
+
+
+        // Display controller on qemu.
+        //if ( (D->Vendor == 0x1234)  && 
+             //(D->Device == 0x1111 ) && 
+             //(D->classCode == PCI_CLASSCODE_DISPLAY) )
+        //{}
+
+
+
+       
 
 
 		//Colocar a estrutura na lista.
@@ -1433,18 +1502,21 @@ int init_pci (void){
 
     debug_print ("init_pci:\n");
 
-    // ??
+    // Is PCI supported ?
+    
     outportl ( 0xCF8, 0x80000000);
-
+    io_delay();
+    
     data = (unsigned long) inportl (0xCF8);
- 
+    io_delay();
+    
+	//#todo:
+	//Fazer alguma coisa pra esse caso.
+	//Talvez seja um 386 ou 486 sem suporte a PCI.
+	//Talvez ISA.
+
     if ( data != 0x80000000 )
     {
-		//#todo:
-		//Fazer alguma coisa pra esse caso.
-		//Talvez seja um 386 ou 486 sem suporte a PCI.
-		//Talvez ISA.
-
         pci_supported = 0;
 
         //STATUS_NOT_SUPPORTED
@@ -1471,19 +1543,13 @@ int init_pci (void){
 	//==========
 
 
+    // Initialise PCI device list.
+    // Initialise the offset.
 
-    // Initializa PCI device list.
- 
-    //@todo: Criar um construtor que faça isso.
-    //Exemplo: pciPci().
-
-    for ( Index=0; Index<Max; Index++ )
-    {
+    for ( Index=0; Index<Max; Index++ ){
         pcideviceList[Index] = (unsigned long) 0;
     };
 
-
-	// Indice para a lista de dispositivos PCI.
     pciListOffset = 0;
 
 
@@ -1492,10 +1558,10 @@ int init_pci (void){
 
     Status = (int) pci_setup_devices (); 
 
-    if (Status != 0)
-    {
+    if (Status != 0){
         panic ("init_pci:\n");
     }
+
 
 
     //...
