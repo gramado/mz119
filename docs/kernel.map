@@ -794,6 +794,7 @@ _g_profiler_ints_gde_services
                     0x4               main.o
 ___breaker_rtc_initialized
                     0x4               main.o
+_jiffies            0x4               main.o
 _escape_status      0x4               main.o
 _LARGE_heappool_address
                     0x4               main.o
@@ -995,8 +996,6 @@ _terminal_window    0x4               main.o
 _mainButton2        0x4               main.o
 _CurrentScreen      0x4               main.o
 _g_extraheap1_va    0x4               main.o
-_sys_time_ticks_total
-                    0x4               main.o
 _notification_status
                     0x4               network.o
 _g_profiler_ints_irq6
@@ -1059,21 +1058,21 @@ Linker script and memory map
 .text           0x00000000c0001000    0x32000
                 0x00000000c0001000                _code_begin = .
  *(.head_x86)
- .head_x86      0x00000000c0001000      0x21e boot.o
+ .head_x86      0x00000000c0001000      0x21d boot.o
                 0x00000000c0001000                _kernel_begin
-                0x00000000c00011f2                _SavedBootBlock
-                0x00000000c00011f6                _SavedLFB
-                0x00000000c00011fa                _SavedX
-                0x00000000c00011fe                _SavedY
-                0x00000000c0001202                _SavedBPP
-                0x00000000c0001206                _SavedLastValidAddress
-                0x00000000c000120a                _SavedBootMode
-                0x00000000c000120e                _kArg1
-                0x00000000c0001212                _kArg2
-                0x00000000c0001216                _kArg3
-                0x00000000c000121a                _kArg4
+                0x00000000c00011f1                _SavedBootBlock
+                0x00000000c00011f5                _SavedLFB
+                0x00000000c00011f9                _SavedX
+                0x00000000c00011fd                _SavedY
+                0x00000000c0001201                _SavedBPP
+                0x00000000c0001205                _SavedLastValidAddress
+                0x00000000c0001209                _SavedBootMode
+                0x00000000c000120d                _kArg1
+                0x00000000c0001211                _kArg2
+                0x00000000c0001215                _kArg3
+                0x00000000c0001219                _kArg4
  *(.text)
- *fill*         0x00000000c000121e        0x2 
+ *fill*         0x00000000c000121d        0x3 
  .text          0x00000000c0001220     0x60d0 boot.o
                 0x00000000c0001220                _gdt
                 0x00000000c0001258                _end_gdt
@@ -2139,289 +2138,289 @@ Linker script and memory map
                 0x00000000c0027fe8                _init_dispatcher
                 0x00000000c0028091                _IncrementDispatcherCount
  .text          0x00000000c0028145        0x0 pheap.o
- .text          0x00000000c0028145     0x28fb process.o
+ .text          0x00000000c0028145     0x290b process.o
                 0x00000000c0028145                ___GetProcessStats
                 0x00000000c002843e                _getprocessname
                 0x00000000c00284a5                _do_clone_execute_process
-                0x00000000c00287f5                _do_fork_process2
-                0x00000000c0028f10                _do_fork_process
-                0x00000000c00297cf                _processObject
-                0x00000000c0029803                _getNewPID
-                0x00000000c002983e                _processTesting
-                0x00000000c0029884                _processSendSignal
-                0x00000000c00298b4                _processCopyMemory
-                0x00000000c002994d                _processCopyProcess
-                0x00000000c0029d27                _create_process
-                0x00000000c002a18d                _CloseAllProcesses
-                0x00000000c002a1f9                _KeSaveCurrentContext
-                0x00000000c002a1ff                _KeRestoreCurrentContext
-                0x00000000c002a205                _KeCpuFaults
-                0x00000000c002a21c                _KeSpawnTask
-                0x00000000c002a233                _KeSelectNextThread
-                0x00000000c002a249                _KeCheckTaskContext
-                0x00000000c002a25f                _KeExecProcess
-                0x00000000c002a269                _KeDispatchProcess
-                0x00000000c002a26f                _KeDoProcessReady
-                0x00000000c002a275                _KeDoProcessRunning
-                0x00000000c002a27b                _KeDoProcessSleeping
-                0x00000000c002a281                _KeDoProcessZombie
-                0x00000000c002a287                _KeDoProcessDead
-                0x00000000c002a28d                _KeStartProcess
-                0x00000000c002a293                _KeWakeupProcess
-                0x00000000c002a299                _KeProcessExit
-                0x00000000c002a29f                _KeKillProcess
-                0x00000000c002a2a5                _KeNewProcessScheduler
-                0x00000000c002a2ab                _KeSetPriority
-                0x00000000c002a2b5                _KeIncreasePriority
-                0x00000000c002a2bf                _KeSaveContextOfNewTask
-                0x00000000c002a2c5                _KeSetQuantum
-                0x00000000c002a2cb                _KeGetQuantum
-                0x00000000c002a2d5                _KeSetCurrentQuantum
-                0x00000000c002a2db                _KeGetCurrentQuantum
-                0x00000000c002a2e5                _KeSetNextQuantum
-                0x00000000c002a2eb                _KeGetNextQuantum
-                0x00000000c002a2f5                _KeSetFocus
-                0x00000000c002a2fb                _KeGetFocus
-                0x00000000c002a305                _KeShowTasksParameters
-                0x00000000c002a30b                _KeShowPreemptedTask
-                0x00000000c002a311                _show_currentprocess_info
-                0x00000000c002a454                _show_process_information
-                0x00000000c002a56a                _SetProcessDirectory
-                0x00000000c002a582                _GetProcessDirectory
-                0x00000000c002a59d                _GetPageDirValue
-                0x00000000c002a5aa                _init_task
-                0x00000000c002a5b4                _init_tasks
-                0x00000000c002a5c2                _init_processes
-                0x00000000c002a60e                _exit_process
-                0x00000000c002a76a                _get_caller_process_id
-                0x00000000c002a774                _set_caller_process_id
-                0x00000000c002a782                _init_process_manager
-                0x00000000c002a7a0                _GetProcessHeapStart
-                0x00000000c002a7f9                _GetProcessPageDirectoryAddress
-                0x00000000c002a852                _get_stream_from_fd
-                0x00000000c002a88e                ___execute_new_process
-                0x00000000c002a9f2                _process_get_tty
- .text          0x00000000c002aa40     0x1065 queue.o
-                0x00000000c002aa40                _init_queue
-                0x00000000c002ae95                _queue_insert_data
-                0x00000000c002b32d                _queue_insert_head
-                0x00000000c002b4cd                _queue_get_data
-                0x00000000c002b7a0                _show_queue_information
-                0x00000000c002b834                _ScanReadyQueue
-                0x00000000c002b8ed                _feed_ready_queue
- .text          0x00000000c002baa5      0x23b spawn.o
-                0x00000000c002bab1                _KiSpawnTask
-                0x00000000c002baff                _spawn_thread
- .text          0x00000000c002bce0        0xc tasks.o
-                0x00000000c002bce0                _task0
-                0x00000000c002bce6                _task1
- .text          0x00000000c002bcec       0x1b theap.o
-                0x00000000c002bcec                _GetThreadHeapStart
- .text          0x00000000c002bd07     0x10d9 thread.o
-                0x00000000c002bd07                ___GetThreadStats
-                0x00000000c002bf7d                _getthreadname
-                0x00000000c002bfdf                _thread_profiler
-                0x00000000c002c162                _thread_get_profiler_percentage
-                0x00000000c002c18e                _thread_show_profiler_info
-                0x00000000c002c22d                _threadCopyThread
-                0x00000000c002c608                _create_thread
-                0x00000000c002ca65                _GetCurrentThreadId
-                0x00000000c002ca6f                _GetCurrentThread
-                0x00000000c002cab2                _FindReadyThread
-                0x00000000c002cb10                _SelectForExecution
-                0x00000000c002cb42                _GetThreadState
-                0x00000000c002cb5a                _GetThreadType
-                0x00000000c002cb72                _show_thread_information
-                0x00000000c002cc64                _init_threads
-                0x00000000c002cce5                _thread_getchar
- .text          0x00000000c002cde0      0xcac threadi.o
-                0x00000000c002cde0                _xxxRing0Idle
-                0x00000000c002cde7                _KiCreateRing0Idle
-                0x00000000c002d1f3                _fork
-                0x00000000c002d1fd                _KiFork
-                0x00000000c002d207                _KiShowPreemptedTask
-                0x00000000c002d20d                _KiSetTaskStatus
-                0x00000000c002d224                _KiGetTaskStatus
-                0x00000000c002d231                _KiSaveContextOfNewTask
-                0x00000000c002d237                _KiSetQuantum
-                0x00000000c002d23d                _KiGetQuantum
-                0x00000000c002d247                _KiSetCurrentQuantum
-                0x00000000c002d24d                _KiGetCurrentQuantum
-                0x00000000c002d257                _KiSetNextQuantum
-                0x00000000c002d25d                _KiGetNextQuantum
-                0x00000000c002d267                _KiSetFocus
-                0x00000000c002d26d                _KiGetFocus
-                0x00000000c002d277                _KiDebugBreakpoint
-                0x00000000c002d27d                _KiShowTasksParameters
-                0x00000000c002d283                _KiMostraSlots
-                0x00000000c002d291                _KiMostraSlot
-                0x00000000c002d2a8                _KiMostraReg
-                0x00000000c002d2ae                _KiShowThreadList
-                0x00000000c002d2bc                _mostra_slots
-                0x00000000c002d329                _mostra_slot
-                0x00000000c002d445                _mostra_reg
-                0x00000000c002d577                _set_thread_priority
-                0x00000000c002d612                _SetThreadDirectory
-                0x00000000c002d62c                _GetThreadDirectory
-                0x00000000c002d647                _show_preempted_task
-                0x00000000c002d64d                _show_tasks_parameters
-                0x00000000c002d653                _release
-                0x00000000c002d69d                _exit_thread
-                0x00000000c002d7c4                _kill_thread
-                0x00000000c002d904                _dead_thread_collector
-                0x00000000c002da14                _kill_all_threads
-                0x00000000c002da45                _check_for_dead_thread_collector
- .text          0x00000000c002da8c      0x6a1 ts.o
-                0x00000000c002da8c                _KiTaskSwitch
-                0x00000000c002dafa                _task_switch
-                0x00000000c002dfb2                _taskswitchRR
-                0x00000000c002e0f5                _set_task_status
-                0x00000000c002e103                _get_task_status
-                0x00000000c002e10d                _taskswitch_lock
-                0x00000000c002e11d                _taskswitch_unlock
- .text          0x00000000c002e12d       0x1b tstack.o
-                0x00000000c002e12d                _GetThreadStackStart
- .text          0x00000000c002e148        0x0 callout.o
- .text          0x00000000c002e148        0x0 callfar.o
- .text          0x00000000c002e148       0x24 ipc.o
-                0x00000000c002e148                _ipcProcedure
-                0x00000000c002e152                _ipcProcedureEx
-                0x00000000c002e15c                _ipc_dispatch_message
-                0x00000000c002e166                _init_ipc
- .text          0x00000000c002e16c      0x364 ipccore.o
-                0x00000000c002e16c                _ipcore_services
-                0x00000000c002e1e2                _ipccore_open
-                0x00000000c002e2d1                _ipccore_close
-                0x00000000c002e412                _ipccore_register
- .text          0x00000000c002e4d0       0xe0 sem.o
-                0x00000000c002e4d0                _init_semaphore
-                0x00000000c002e4f0                _Down
-                0x00000000c002e538                _Up
-                0x00000000c002e572                _semaphore_down
-                0x00000000c002e583                _semaphore_up
-                0x00000000c002e594                _create_semaphore
-                0x00000000c002e59e                _delete_semaphore
-                0x00000000c002e5a4                _open_semaphore
-                0x00000000c002e5aa                _close_semaphore
- .text          0x00000000c002e5b0      0x9b0 memory.o
-                0x00000000c002e5b0                _get_process_heap_pointer
-                0x00000000c002e652                _memory_create_new_head
-                0x00000000c002e7d5                _memory_destroy_heap
-                0x00000000c002e83a                _heapAllocateMemory
-                0x00000000c002ea10                _FreeHeap
-                0x00000000c002ead0                _init_heap
-                0x00000000c002ec17                _init_stack
-                0x00000000c002ec81                _init_mm
-                0x00000000c002edbc                _gcGRAMADO
-                0x00000000c002edc6                _gcEXECUTIVE
-                0x00000000c002eeeb                _gcMICROKERNEL
-                0x00000000c002eef5                _gcHAL
-                0x00000000c002eeff                _gc
- .text          0x00000000c002ef60      0x90d mminfo.o
-                0x00000000c002ef60                _mmShowPDE
-                0x00000000c002effb                _mmShowPDEForAllProcesses
-                0x00000000c002f077                _memoryShowMemoryInfo
-                0x00000000c002f63f                _show_memory_structs
-                0x00000000c002f6c9                _testingPageAlloc
-                0x00000000c002f7f7                _showFreepagedMemory
- .text          0x00000000c002f86d      0x199 mmpool.o
-                0x00000000c002f86d                _page
-                0x00000000c002f915                _newPage
- .text          0x00000000c002fa06     0x106c pages.o
-                0x00000000c002fa06                _get_table_pointer
-                0x00000000c002fa1f                _CreatePageDirectory
-                0x00000000c002fa8e                _CreatePageTable
-                0x00000000c002fba8                _x86_SetCR3
-                0x00000000c002fbcf                _mapping_ahci1_device_address
-                0x00000000c002fc44                _mapping_nic1_device_address
-                0x00000000c002fcb9                _SetUpPaging
-                0x00000000c00306b2                _initializeFramesAlloc
-                0x00000000c003073f                _allocPages
-                0x00000000c0030926                _pEmpty
-                0x00000000c0030935                _freePage
-                0x00000000c0030965                _notfreePage
-                0x00000000c0030995                _firstSlotForAList
-                0x00000000c00309fc                _virtual_to_physical
- .text          0x00000000c0030a72       0xbe preempt.o
-                0x00000000c0030a72                _preempt
- .text          0x00000000c0030b30      0x15e priority.o
-                0x00000000c0030b30                _set_priority
-                0x00000000c0030b69                _KiSetPriority
-                0x00000000c0030b76                _KiIncreasePriority
-                0x00000000c0030b80                _find_higher_priority
-                0x00000000c0030c84                _KiFindHigherPriority
- .text          0x00000000c0030c8e      0x220 sched.o
-                0x00000000c0030c8e                _pick_next_thread
-                0x00000000c0030d99                _scheduler
-                0x00000000c0030e5d                _scheduler_start
-                0x00000000c0030e78                _scheduler_lock
-                0x00000000c0030e88                _scheduler_unlock
-                0x00000000c0030e98                _scheduler_get_status
-                0x00000000c0030ea2                _new_task_scheduler
-                0x00000000c0030ea8                _init_scheduler
- .text          0x00000000c0030eae      0x94d schedi.o
-                0x00000000c0030eae                _do_waitpid
-                0x00000000c0030f99                _wait_for_a_reason
-                0x00000000c0031036                _block_for_a_reason
-                0x00000000c00310ab                _wakeup_thread_reason
-                0x00000000c003121d                _wakeup_scan_thread_reason
-                0x00000000c00312a8                _KiScheduler
-                0x00000000c003132a                _KiSelectNextThread
-                0x00000000c003134e                _KiNewTaskScheduler
-                0x00000000c0031354                _KiDispatchTask
-                0x00000000c003135a                _KiSetCurrent
-                0x00000000c0031371                _KiGetCurrent
-                0x00000000c003137e                _KiGetCurrentTask
-                0x00000000c003138b                _get_current
-                0x00000000c0031395                _get_current_task
-                0x00000000c003139f                _set_current
-                0x00000000c00313cb                _do_thread_initialized
-                0x00000000c0031402                _do_thread_standby
-                0x00000000c0031439                _do_thread_zombie
-                0x00000000c0031479                _do_thread_dead
-                0x00000000c00314b0                _do_thread_ready
-                0x00000000c00314e7                _do_thread_running
-                0x00000000c0031536                _do_thread_waiting
-                0x00000000c003156d                _do_thread_blocked
-                0x00000000c00315a4                _yield
-                0x00000000c00315f3                _wakeup_thread
-                0x00000000c003164c                _SelectNextThread
-                0x00000000c0031702                _check_for_standby
-                0x00000000c003178c                _check_quantum
- .text          0x00000000c00317fb      0x4a1 create.o
-                0x00000000c00317fb                _createCreateInitThread
- .text          0x00000000c0031c9c      0x30b mk.o
-                0x00000000c0031c9c                _jobcontrol
-                0x00000000c0031da4                _jobcheck
-                0x00000000c0031e74                _microkernelTestLimit
-                0x00000000c0031e7a                _init_microkernel
- .text          0x00000000c0031fa7      0x449 request.o
-                0x00000000c0031fa7                _KiRequest
-                0x00000000c0031fdb                _request
-                0x00000000c00321f2                _create_request
-                0x00000000c0032299                _clear_request
-                0x00000000c0032321                _do_request_12
- .text          0x00000000c00323f0       0x33 panic.o
-                0x00000000c00323f0                _panic
- .text          0x00000000c0032423       0x13 reboot.o
-                0x00000000c0032423                _reboot
- .text          0x00000000c0032436      0x169 sys.o
-                0x00000000c0032436                _sys_create_process
-                0x00000000c0032464                _sys_getpid
-                0x00000000c003246e                _sys_getppid
-                0x00000000c00324d6                _sys_fork
-                0x00000000c00324e3                _sys_exit_process
-                0x00000000c0032505                _sys_create_thread
-                0x00000000c003252d                _sys_exit_thread
-                0x00000000c003254c                _sys_dead_thread_collector
-                0x00000000c003255a                _sys_vsync
-                0x00000000c0032568                _sys_showkernelinfo
-                0x00000000c0032576                _sys_showpciinfo
-                0x00000000c0032583                _sys_reboot
-                0x00000000c0032591                _sys_shutdown
-                0x00000000c003259f                _code_end = .
+                0x00000000c0028805                _do_fork_process2
+                0x00000000c0028f20                _do_fork_process
+                0x00000000c00297df                _processObject
+                0x00000000c0029813                _getNewPID
+                0x00000000c002984e                _processTesting
+                0x00000000c0029894                _processSendSignal
+                0x00000000c00298c4                _processCopyMemory
+                0x00000000c002995d                _processCopyProcess
+                0x00000000c0029d37                _create_process
+                0x00000000c002a19d                _CloseAllProcesses
+                0x00000000c002a209                _KeSaveCurrentContext
+                0x00000000c002a20f                _KeRestoreCurrentContext
+                0x00000000c002a215                _KeCpuFaults
+                0x00000000c002a22c                _KeSpawnTask
+                0x00000000c002a243                _KeSelectNextThread
+                0x00000000c002a259                _KeCheckTaskContext
+                0x00000000c002a26f                _KeExecProcess
+                0x00000000c002a279                _KeDispatchProcess
+                0x00000000c002a27f                _KeDoProcessReady
+                0x00000000c002a285                _KeDoProcessRunning
+                0x00000000c002a28b                _KeDoProcessSleeping
+                0x00000000c002a291                _KeDoProcessZombie
+                0x00000000c002a297                _KeDoProcessDead
+                0x00000000c002a29d                _KeStartProcess
+                0x00000000c002a2a3                _KeWakeupProcess
+                0x00000000c002a2a9                _KeProcessExit
+                0x00000000c002a2af                _KeKillProcess
+                0x00000000c002a2b5                _KeNewProcessScheduler
+                0x00000000c002a2bb                _KeSetPriority
+                0x00000000c002a2c5                _KeIncreasePriority
+                0x00000000c002a2cf                _KeSaveContextOfNewTask
+                0x00000000c002a2d5                _KeSetQuantum
+                0x00000000c002a2db                _KeGetQuantum
+                0x00000000c002a2e5                _KeSetCurrentQuantum
+                0x00000000c002a2eb                _KeGetCurrentQuantum
+                0x00000000c002a2f5                _KeSetNextQuantum
+                0x00000000c002a2fb                _KeGetNextQuantum
+                0x00000000c002a305                _KeSetFocus
+                0x00000000c002a30b                _KeGetFocus
+                0x00000000c002a315                _KeShowTasksParameters
+                0x00000000c002a31b                _KeShowPreemptedTask
+                0x00000000c002a321                _show_currentprocess_info
+                0x00000000c002a464                _show_process_information
+                0x00000000c002a57a                _SetProcessDirectory
+                0x00000000c002a592                _GetProcessDirectory
+                0x00000000c002a5ad                _GetPageDirValue
+                0x00000000c002a5ba                _init_task
+                0x00000000c002a5c4                _init_tasks
+                0x00000000c002a5d2                _init_processes
+                0x00000000c002a61e                _exit_process
+                0x00000000c002a77a                _get_caller_process_id
+                0x00000000c002a784                _set_caller_process_id
+                0x00000000c002a792                _init_process_manager
+                0x00000000c002a7b0                _GetProcessHeapStart
+                0x00000000c002a809                _GetProcessPageDirectoryAddress
+                0x00000000c002a862                _get_stream_from_fd
+                0x00000000c002a89e                ___execute_new_process
+                0x00000000c002aa02                _process_get_tty
+ .text          0x00000000c002aa50     0x1065 queue.o
+                0x00000000c002aa50                _init_queue
+                0x00000000c002aea5                _queue_insert_data
+                0x00000000c002b33d                _queue_insert_head
+                0x00000000c002b4dd                _queue_get_data
+                0x00000000c002b7b0                _show_queue_information
+                0x00000000c002b844                _ScanReadyQueue
+                0x00000000c002b8fd                _feed_ready_queue
+ .text          0x00000000c002bab5      0x23b spawn.o
+                0x00000000c002bac1                _KiSpawnTask
+                0x00000000c002bb0f                _spawn_thread
+ .text          0x00000000c002bcf0        0xc tasks.o
+                0x00000000c002bcf0                _task0
+                0x00000000c002bcf6                _task1
+ .text          0x00000000c002bcfc       0x1b theap.o
+                0x00000000c002bcfc                _GetThreadHeapStart
+ .text          0x00000000c002bd17     0x10d9 thread.o
+                0x00000000c002bd17                ___GetThreadStats
+                0x00000000c002bf8d                _getthreadname
+                0x00000000c002bfef                _thread_profiler
+                0x00000000c002c172                _thread_get_profiler_percentage
+                0x00000000c002c19e                _thread_show_profiler_info
+                0x00000000c002c23d                _threadCopyThread
+                0x00000000c002c618                _create_thread
+                0x00000000c002ca75                _GetCurrentThreadId
+                0x00000000c002ca7f                _GetCurrentThread
+                0x00000000c002cac2                _FindReadyThread
+                0x00000000c002cb20                _SelectForExecution
+                0x00000000c002cb52                _GetThreadState
+                0x00000000c002cb6a                _GetThreadType
+                0x00000000c002cb82                _show_thread_information
+                0x00000000c002cc74                _init_threads
+                0x00000000c002ccf5                _thread_getchar
+ .text          0x00000000c002cdf0      0xcac threadi.o
+                0x00000000c002cdf0                _xxxRing0Idle
+                0x00000000c002cdf7                _KiCreateRing0Idle
+                0x00000000c002d203                _fork
+                0x00000000c002d20d                _KiFork
+                0x00000000c002d217                _KiShowPreemptedTask
+                0x00000000c002d21d                _KiSetTaskStatus
+                0x00000000c002d234                _KiGetTaskStatus
+                0x00000000c002d241                _KiSaveContextOfNewTask
+                0x00000000c002d247                _KiSetQuantum
+                0x00000000c002d24d                _KiGetQuantum
+                0x00000000c002d257                _KiSetCurrentQuantum
+                0x00000000c002d25d                _KiGetCurrentQuantum
+                0x00000000c002d267                _KiSetNextQuantum
+                0x00000000c002d26d                _KiGetNextQuantum
+                0x00000000c002d277                _KiSetFocus
+                0x00000000c002d27d                _KiGetFocus
+                0x00000000c002d287                _KiDebugBreakpoint
+                0x00000000c002d28d                _KiShowTasksParameters
+                0x00000000c002d293                _KiMostraSlots
+                0x00000000c002d2a1                _KiMostraSlot
+                0x00000000c002d2b8                _KiMostraReg
+                0x00000000c002d2be                _KiShowThreadList
+                0x00000000c002d2cc                _mostra_slots
+                0x00000000c002d339                _mostra_slot
+                0x00000000c002d455                _mostra_reg
+                0x00000000c002d587                _set_thread_priority
+                0x00000000c002d622                _SetThreadDirectory
+                0x00000000c002d63c                _GetThreadDirectory
+                0x00000000c002d657                _show_preempted_task
+                0x00000000c002d65d                _show_tasks_parameters
+                0x00000000c002d663                _release
+                0x00000000c002d6ad                _exit_thread
+                0x00000000c002d7d4                _kill_thread
+                0x00000000c002d914                _dead_thread_collector
+                0x00000000c002da24                _kill_all_threads
+                0x00000000c002da55                _check_for_dead_thread_collector
+ .text          0x00000000c002da9c      0x6a1 ts.o
+                0x00000000c002da9c                _KiTaskSwitch
+                0x00000000c002db0a                _task_switch
+                0x00000000c002dfc2                _taskswitchRR
+                0x00000000c002e105                _set_task_status
+                0x00000000c002e113                _get_task_status
+                0x00000000c002e11d                _taskswitch_lock
+                0x00000000c002e12d                _taskswitch_unlock
+ .text          0x00000000c002e13d       0x1b tstack.o
+                0x00000000c002e13d                _GetThreadStackStart
+ .text          0x00000000c002e158        0x0 callout.o
+ .text          0x00000000c002e158        0x0 callfar.o
+ .text          0x00000000c002e158       0x24 ipc.o
+                0x00000000c002e158                _ipcProcedure
+                0x00000000c002e162                _ipcProcedureEx
+                0x00000000c002e16c                _ipc_dispatch_message
+                0x00000000c002e176                _init_ipc
+ .text          0x00000000c002e17c      0x364 ipccore.o
+                0x00000000c002e17c                _ipcore_services
+                0x00000000c002e1f2                _ipccore_open
+                0x00000000c002e2e1                _ipccore_close
+                0x00000000c002e422                _ipccore_register
+ .text          0x00000000c002e4e0       0xe0 sem.o
+                0x00000000c002e4e0                _init_semaphore
+                0x00000000c002e500                _Down
+                0x00000000c002e548                _Up
+                0x00000000c002e582                _semaphore_down
+                0x00000000c002e593                _semaphore_up
+                0x00000000c002e5a4                _create_semaphore
+                0x00000000c002e5ae                _delete_semaphore
+                0x00000000c002e5b4                _open_semaphore
+                0x00000000c002e5ba                _close_semaphore
+ .text          0x00000000c002e5c0      0x9b0 memory.o
+                0x00000000c002e5c0                _get_process_heap_pointer
+                0x00000000c002e662                _memory_create_new_head
+                0x00000000c002e7e5                _memory_destroy_heap
+                0x00000000c002e84a                _heapAllocateMemory
+                0x00000000c002ea20                _FreeHeap
+                0x00000000c002eae0                _init_heap
+                0x00000000c002ec27                _init_stack
+                0x00000000c002ec91                _init_mm
+                0x00000000c002edcc                _gcGRAMADO
+                0x00000000c002edd6                _gcEXECUTIVE
+                0x00000000c002eefb                _gcMICROKERNEL
+                0x00000000c002ef05                _gcHAL
+                0x00000000c002ef0f                _gc
+ .text          0x00000000c002ef70      0x90d mminfo.o
+                0x00000000c002ef70                _mmShowPDE
+                0x00000000c002f00b                _mmShowPDEForAllProcesses
+                0x00000000c002f087                _memoryShowMemoryInfo
+                0x00000000c002f64f                _show_memory_structs
+                0x00000000c002f6d9                _testingPageAlloc
+                0x00000000c002f807                _showFreepagedMemory
+ .text          0x00000000c002f87d      0x199 mmpool.o
+                0x00000000c002f87d                _page
+                0x00000000c002f925                _newPage
+ .text          0x00000000c002fa16     0x106c pages.o
+                0x00000000c002fa16                _get_table_pointer
+                0x00000000c002fa2f                _CreatePageDirectory
+                0x00000000c002fa9e                _CreatePageTable
+                0x00000000c002fbb8                _x86_SetCR3
+                0x00000000c002fbdf                _mapping_ahci1_device_address
+                0x00000000c002fc54                _mapping_nic1_device_address
+                0x00000000c002fcc9                _SetUpPaging
+                0x00000000c00306c2                _initializeFramesAlloc
+                0x00000000c003074f                _allocPages
+                0x00000000c0030936                _pEmpty
+                0x00000000c0030945                _freePage
+                0x00000000c0030975                _notfreePage
+                0x00000000c00309a5                _firstSlotForAList
+                0x00000000c0030a0c                _virtual_to_physical
+ .text          0x00000000c0030a82       0xbe preempt.o
+                0x00000000c0030a82                _preempt
+ .text          0x00000000c0030b40      0x15e priority.o
+                0x00000000c0030b40                _set_priority
+                0x00000000c0030b79                _KiSetPriority
+                0x00000000c0030b86                _KiIncreasePriority
+                0x00000000c0030b90                _find_higher_priority
+                0x00000000c0030c94                _KiFindHigherPriority
+ .text          0x00000000c0030c9e      0x220 sched.o
+                0x00000000c0030c9e                _pick_next_thread
+                0x00000000c0030da9                _scheduler
+                0x00000000c0030e6d                _scheduler_start
+                0x00000000c0030e88                _scheduler_lock
+                0x00000000c0030e98                _scheduler_unlock
+                0x00000000c0030ea8                _scheduler_get_status
+                0x00000000c0030eb2                _new_task_scheduler
+                0x00000000c0030eb8                _init_scheduler
+ .text          0x00000000c0030ebe      0x94d schedi.o
+                0x00000000c0030ebe                _do_waitpid
+                0x00000000c0030fa9                _wait_for_a_reason
+                0x00000000c0031046                _block_for_a_reason
+                0x00000000c00310bb                _wakeup_thread_reason
+                0x00000000c003122d                _wakeup_scan_thread_reason
+                0x00000000c00312b8                _KiScheduler
+                0x00000000c003133a                _KiSelectNextThread
+                0x00000000c003135e                _KiNewTaskScheduler
+                0x00000000c0031364                _KiDispatchTask
+                0x00000000c003136a                _KiSetCurrent
+                0x00000000c0031381                _KiGetCurrent
+                0x00000000c003138e                _KiGetCurrentTask
+                0x00000000c003139b                _get_current
+                0x00000000c00313a5                _get_current_task
+                0x00000000c00313af                _set_current
+                0x00000000c00313db                _do_thread_initialized
+                0x00000000c0031412                _do_thread_standby
+                0x00000000c0031449                _do_thread_zombie
+                0x00000000c0031489                _do_thread_dead
+                0x00000000c00314c0                _do_thread_ready
+                0x00000000c00314f7                _do_thread_running
+                0x00000000c0031546                _do_thread_waiting
+                0x00000000c003157d                _do_thread_blocked
+                0x00000000c00315b4                _yield
+                0x00000000c0031603                _wakeup_thread
+                0x00000000c003165c                _SelectNextThread
+                0x00000000c0031712                _check_for_standby
+                0x00000000c003179c                _check_quantum
+ .text          0x00000000c003180b      0x4a1 create.o
+                0x00000000c003180b                _createCreateInitThread
+ .text          0x00000000c0031cac      0x30b mk.o
+                0x00000000c0031cac                _jobcontrol
+                0x00000000c0031db4                _jobcheck
+                0x00000000c0031e84                _microkernelTestLimit
+                0x00000000c0031e8a                _init_microkernel
+ .text          0x00000000c0031fb7      0x449 request.o
+                0x00000000c0031fb7                _KiRequest
+                0x00000000c0031feb                _request
+                0x00000000c0032202                _create_request
+                0x00000000c00322a9                _clear_request
+                0x00000000c0032331                _do_request_12
+ .text          0x00000000c0032400       0x33 panic.o
+                0x00000000c0032400                _panic
+ .text          0x00000000c0032433       0x13 reboot.o
+                0x00000000c0032433                _reboot
+ .text          0x00000000c0032446      0x169 sys.o
+                0x00000000c0032446                _sys_create_process
+                0x00000000c0032474                _sys_getpid
+                0x00000000c003247e                _sys_getppid
+                0x00000000c00324e6                _sys_fork
+                0x00000000c00324f3                _sys_exit_process
+                0x00000000c0032515                _sys_create_thread
+                0x00000000c003253d                _sys_exit_thread
+                0x00000000c003255c                _sys_dead_thread_collector
+                0x00000000c003256a                _sys_vsync
+                0x00000000c0032578                _sys_showkernelinfo
+                0x00000000c0032586                _sys_showpciinfo
+                0x00000000c0032593                _sys_reboot
+                0x00000000c00325a1                _sys_shutdown
+                0x00000000c00325af                _code_end = .
                 0x00000000c0033000                . = ALIGN (0x1000)
- *fill*         0x00000000c003259f      0xa61 
+ *fill*         0x00000000c00325af      0xa51 
 
 .iplt           0x00000000c0033000        0x0
  .iplt          0x00000000c0033000        0x0 boot.o
@@ -2453,166 +2452,166 @@ Linker script and memory map
  *fill*         0x00000000c00344a3        0x1 
  .rodata        0x00000000c00344a4       0x8d abort.o
  *fill*         0x00000000c0034531        0x3 
- .rodata        0x00000000c0034534      0x1c6 info.o
- *fill*         0x00000000c00346fa        0x2 
- .rodata        0x00000000c00346fc      0x121 io.o
- .rodata        0x00000000c003481d        0x5 modules.o
- .rodata        0x00000000c0034822        0x5 signal.o
- .rodata        0x00000000c0034827        0x5 sm.o
- .rodata        0x00000000c003482c      0x5cf init.o
- *fill*         0x00000000c0034dfb        0x1 
- .rodata        0x00000000c0034dfc      0x58b system.o
- *fill*         0x00000000c0035387        0x1 
- .rodata        0x00000000c0035388      0x237 execve.o
- .rodata        0x00000000c00355bf        0x5 cpuamd.o
- .rodata        0x00000000c00355c4        0x5 portsx86.o
- .rodata        0x00000000c00355c9        0x5 syscall.o
- *fill*         0x00000000c00355ce        0x2 
- .rodata        0x00000000c00355d0      0x258 x86.o
- .rodata        0x00000000c0035828       0x53 detect.o
- *fill*         0x00000000c003587b        0x1 
- .rodata        0x00000000c003587c       0xdb hal.o
- *fill*         0x00000000c0035957        0x1 
- .rodata        0x00000000c0035958      0x1d1 ahci.o
- *fill*         0x00000000c0035b29        0x3 
- .rodata        0x00000000c0035b2c      0x25f ata.o
- .rodata        0x00000000c0035d8b        0x5 atadma.o
- .rodata        0x00000000c0035d90       0x1a atainit.o
- .rodata        0x00000000c0035daa        0x5 atairq.o
- *fill*         0x00000000c0035daf        0x1 
- .rodata        0x00000000c0035db0      0x321 atapci.o
- .rodata        0x00000000c00360d1       0x37 hdd.o
- .rodata        0x00000000c0036108        0x5 channel.o
- *fill*         0x00000000c003610d        0x3 
- .rodata        0x00000000c0036110      0x4c5 network.o
- *fill*         0x00000000c00365d5        0x3 
- .rodata        0x00000000c00365d8      0x2b5 nicintel.o
- *fill*         0x00000000c003688d        0x3 
- .rodata        0x00000000c0036890       0x29 nsocket.o
- *fill*         0x00000000c00368b9        0x3 
- .rodata        0x00000000c00368bc     0x16fe pci.o
- *fill*         0x00000000c0037fba        0x2 
- .rodata        0x00000000c0037fbc      0x226 pciinfo.o
- .rodata        0x00000000c00381e2       0x50 pciscan.o
- *fill*         0x00000000c0038232        0x2 
- .rodata        0x00000000c0038234      0x2be tty.o
- *fill*         0x00000000c00384f2        0x2 
- .rodata        0x00000000c00384f4      0x228 pty.o
- .rodata        0x00000000c003871c       0x55 vt.o
- *fill*         0x00000000c0038771        0x3 
- .rodata        0x00000000c0038774       0x2a video.o
- .rodata        0x00000000c003879e        0x5 vsync.o
- .rodata        0x00000000c00387a3       0x11 screen.o
- .rodata        0x00000000c00387b4      0x254 xproc.o
- .rodata        0x00000000c0038a08       0x62 i8042.o
- *fill*         0x00000000c0038a6a        0x2 
- .rodata        0x00000000c0038a6c       0xb8 keyboard.o
- .rodata        0x00000000c0038b24        0x5 mouse.o
- *fill*         0x00000000c0038b29        0x3 
- .rodata        0x00000000c0038b2c      0x507 ps2kbd.o
- *fill*         0x00000000c0039033        0x1 
- .rodata        0x00000000c0039034      0x1d0 ps2mouse.o
- .rodata        0x00000000c0039204       0x2f ldisc.o
- .rodata        0x00000000c0039233        0x5 apic.o
- .rodata        0x00000000c0039238        0x5 pic.o
- .rodata        0x00000000c003923d       0x5f rtc.o
- .rodata        0x00000000c003929c        0x5 serial.o
- *fill*         0x00000000c00392a1        0x3 
- .rodata        0x00000000c00392a4       0xef timer.o
- *fill*         0x00000000c0039393        0x1 
- .rodata        0x00000000c0039394      0x11e cf.o
- .rodata        0x00000000c00394b2        0x5 format.o
- *fill*         0x00000000c00394b7        0x1 
- .rodata        0x00000000c00394b8      0x5cd fs.o
- *fill*         0x00000000c0039a85        0x3 
- .rodata        0x00000000c0039a88      0x1d0 read.o
- .rodata        0x00000000c0039c58       0x41 search.o
- *fill*         0x00000000c0039c99        0x3 
- .rodata        0x00000000c0039c9c      0x160 write.o
- .rodata        0x00000000c0039dfc       0x78 cedge.o
- .rodata        0x00000000c0039e74        0x5 bg.o
- .rodata        0x00000000c0039e79       0x3b bmp.o
- .rodata        0x00000000c0039eb4       0x6a button.o
- .rodata        0x00000000c0039f1e        0x5 char.o
- *fill*         0x00000000c0039f23        0x1 
- .rodata        0x00000000c0039f24      0x13d createw.o
- .rodata        0x00000000c003a061       0x1f dtext.o
- .rodata        0x00000000c003a080       0x3b font.o
- *fill*         0x00000000c003a0bb        0x1 
- .rodata        0x00000000c003a0bc      0x105 grid.o
- .rodata        0x00000000c003a1c1        0x5 line.o
- *fill*         0x00000000c003a1c6        0x2 
- .rodata        0x00000000c003a1c8      0x25c menu.o
- .rodata        0x00000000c003a424      0x10d menubar.o
- .rodata        0x00000000c003a531       0x23 pixel.o
- .rodata        0x00000000c003a554       0xc5 rect.o
- *fill*         0x00000000c003a619        0x3 
- .rodata        0x00000000c003a61c       0xd0 sbar.o
- .rodata        0x00000000c003a6ec       0x98 toolbar.o
- .rodata        0x00000000c003a784      0x62b wm.o
- .rodata        0x00000000c003adaf       0x21 logoff.o
- .rodata        0x00000000c003add0      0x253 logon.o
- .rodata        0x00000000c003b023        0x5 input.o
- .rodata        0x00000000c003b028        0x5 terminal.o
- .rodata        0x00000000c003b02d       0x3a desktop.o
- .rodata        0x00000000c003b067       0x4f room.o
- *fill*         0x00000000c003b0b6        0x2 
- .rodata        0x00000000c003b0b8      0x114 userenv.o
- .rodata        0x00000000c003b1cc       0xb2 usession.o
- *fill*         0x00000000c003b27e        0x2 
- .rodata        0x00000000c003b280      0x23c kgwm.o
- .rodata        0x00000000c003b4bc       0x28 kgws.o
- .rodata        0x00000000c003b4e4      0x108 vfs.o
- .rodata        0x00000000c003b5ec      0x11a x86cont.o
- *fill*         0x00000000c003b706        0x2 
- .rodata        0x00000000c003b708      0x17d x86fault.o
- *fill*         0x00000000c003b885        0x3 
- .rodata        0x00000000c003b888       0xa1 x86start.o
- *fill*         0x00000000c003b929        0x3 
- .rodata        0x00000000c003b92c      0x150 dispatch.o
- .rodata        0x00000000c003ba7c        0x5 pheap.o
- *fill*         0x00000000c003ba81        0x3 
- .rodata        0x00000000c003ba84      0x8d2 process.o
- *fill*         0x00000000c003c356        0x2 
- .rodata        0x00000000c003c358      0x175 queue.o
- *fill*         0x00000000c003c4cd        0x3 
- .rodata        0x00000000c003c4d0       0xe0 spawn.o
- .rodata        0x00000000c003c5b0        0x5 tasks.o
- .rodata        0x00000000c003c5b5        0x5 theap.o
- *fill*         0x00000000c003c5ba        0x2 
- .rodata        0x00000000c003c5bc      0x2b2 thread.o
- *fill*         0x00000000c003c86e        0x2 
- .rodata        0x00000000c003c870      0x44f threadi.o
- *fill*         0x00000000c003ccbf        0x1 
- .rodata        0x00000000c003ccc0      0x218 ts.o
- .rodata        0x00000000c003ced8        0x5 tstack.o
- .rodata        0x00000000c003cedd        0x5 callout.o
- .rodata        0x00000000c003cee2        0x5 ipc.o
- .rodata        0x00000000c003cee7       0x47 ipccore.o
- .rodata        0x00000000c003cf2e        0x5 sem.o
- *fill*         0x00000000c003cf33        0x1 
- .rodata        0x00000000c003cf34      0x3bf memory.o
- *fill*         0x00000000c003d2f3        0x1 
- .rodata        0x00000000c003d2f4      0x522 mminfo.o
- .rodata        0x00000000c003d816       0x27 mmpool.o
- *fill*         0x00000000c003d83d        0x3 
- .rodata        0x00000000c003d840      0x1b8 pages.o
- .rodata        0x00000000c003d9f8        0x5 preempt.o
- .rodata        0x00000000c003d9fd        0x5 priority.o
- *fill*         0x00000000c003da02        0x2 
- .rodata        0x00000000c003da04       0x4b sched.o
- *fill*         0x00000000c003da4f        0x1 
- .rodata        0x00000000c003da50      0x1b0 schedi.o
- .rodata        0x00000000c003dc00       0x85 create.o
- *fill*         0x00000000c003dc85        0x3 
- .rodata        0x00000000c003dc88       0x58 mk.o
- .rodata        0x00000000c003dce0      0x148 request.o
- .rodata        0x00000000c003de28       0x1a panic.o
- .rodata        0x00000000c003de42        0x5 reboot.o
- .rodata        0x00000000c003de47        0x5 sys.o
-                0x00000000c003de4c                _rodata_end = .
+ .rodata        0x00000000c0034534      0x1ca info.o
+ *fill*         0x00000000c00346fe        0x2 
+ .rodata        0x00000000c0034700      0x121 io.o
+ .rodata        0x00000000c0034821        0x5 modules.o
+ .rodata        0x00000000c0034826        0x5 signal.o
+ .rodata        0x00000000c003482b        0x5 sm.o
+ .rodata        0x00000000c0034830      0x5cf init.o
+ *fill*         0x00000000c0034dff        0x1 
+ .rodata        0x00000000c0034e00      0x58b system.o
+ *fill*         0x00000000c003538b        0x1 
+ .rodata        0x00000000c003538c      0x237 execve.o
+ .rodata        0x00000000c00355c3        0x5 cpuamd.o
+ .rodata        0x00000000c00355c8        0x5 portsx86.o
+ .rodata        0x00000000c00355cd        0x5 syscall.o
+ *fill*         0x00000000c00355d2        0x2 
+ .rodata        0x00000000c00355d4      0x258 x86.o
+ .rodata        0x00000000c003582c       0x53 detect.o
+ *fill*         0x00000000c003587f        0x1 
+ .rodata        0x00000000c0035880       0xdb hal.o
+ *fill*         0x00000000c003595b        0x1 
+ .rodata        0x00000000c003595c      0x1d1 ahci.o
+ *fill*         0x00000000c0035b2d        0x3 
+ .rodata        0x00000000c0035b30      0x25f ata.o
+ .rodata        0x00000000c0035d8f        0x5 atadma.o
+ .rodata        0x00000000c0035d94       0x1a atainit.o
+ .rodata        0x00000000c0035dae        0x5 atairq.o
+ *fill*         0x00000000c0035db3        0x1 
+ .rodata        0x00000000c0035db4      0x321 atapci.o
+ .rodata        0x00000000c00360d5       0x37 hdd.o
+ .rodata        0x00000000c003610c        0x5 channel.o
+ *fill*         0x00000000c0036111        0x3 
+ .rodata        0x00000000c0036114      0x4c5 network.o
+ *fill*         0x00000000c00365d9        0x3 
+ .rodata        0x00000000c00365dc      0x2b5 nicintel.o
+ *fill*         0x00000000c0036891        0x3 
+ .rodata        0x00000000c0036894       0x29 nsocket.o
+ *fill*         0x00000000c00368bd        0x3 
+ .rodata        0x00000000c00368c0     0x16fe pci.o
+ *fill*         0x00000000c0037fbe        0x2 
+ .rodata        0x00000000c0037fc0      0x226 pciinfo.o
+ .rodata        0x00000000c00381e6       0x50 pciscan.o
+ *fill*         0x00000000c0038236        0x2 
+ .rodata        0x00000000c0038238      0x2be tty.o
+ *fill*         0x00000000c00384f6        0x2 
+ .rodata        0x00000000c00384f8      0x228 pty.o
+ .rodata        0x00000000c0038720       0x55 vt.o
+ *fill*         0x00000000c0038775        0x3 
+ .rodata        0x00000000c0038778       0x2a video.o
+ .rodata        0x00000000c00387a2        0x5 vsync.o
+ .rodata        0x00000000c00387a7       0x11 screen.o
+ .rodata        0x00000000c00387b8      0x254 xproc.o
+ .rodata        0x00000000c0038a0c       0x62 i8042.o
+ *fill*         0x00000000c0038a6e        0x2 
+ .rodata        0x00000000c0038a70       0xb8 keyboard.o
+ .rodata        0x00000000c0038b28        0x5 mouse.o
+ *fill*         0x00000000c0038b2d        0x3 
+ .rodata        0x00000000c0038b30      0x507 ps2kbd.o
+ *fill*         0x00000000c0039037        0x1 
+ .rodata        0x00000000c0039038      0x1d0 ps2mouse.o
+ .rodata        0x00000000c0039208       0x2f ldisc.o
+ .rodata        0x00000000c0039237        0x5 apic.o
+ .rodata        0x00000000c003923c        0x5 pic.o
+ .rodata        0x00000000c0039241       0x5f rtc.o
+ .rodata        0x00000000c00392a0        0x5 serial.o
+ *fill*         0x00000000c00392a5        0x3 
+ .rodata        0x00000000c00392a8       0xef timer.o
+ *fill*         0x00000000c0039397        0x1 
+ .rodata        0x00000000c0039398      0x11e cf.o
+ .rodata        0x00000000c00394b6        0x5 format.o
+ *fill*         0x00000000c00394bb        0x1 
+ .rodata        0x00000000c00394bc      0x5cd fs.o
+ *fill*         0x00000000c0039a89        0x3 
+ .rodata        0x00000000c0039a8c      0x1d0 read.o
+ .rodata        0x00000000c0039c5c       0x41 search.o
+ *fill*         0x00000000c0039c9d        0x3 
+ .rodata        0x00000000c0039ca0      0x160 write.o
+ .rodata        0x00000000c0039e00       0x78 cedge.o
+ .rodata        0x00000000c0039e78        0x5 bg.o
+ .rodata        0x00000000c0039e7d       0x3b bmp.o
+ .rodata        0x00000000c0039eb8       0x6a button.o
+ .rodata        0x00000000c0039f22        0x5 char.o
+ *fill*         0x00000000c0039f27        0x1 
+ .rodata        0x00000000c0039f28      0x13d createw.o
+ .rodata        0x00000000c003a065       0x1f dtext.o
+ .rodata        0x00000000c003a084       0x3b font.o
+ *fill*         0x00000000c003a0bf        0x1 
+ .rodata        0x00000000c003a0c0      0x105 grid.o
+ .rodata        0x00000000c003a1c5        0x5 line.o
+ *fill*         0x00000000c003a1ca        0x2 
+ .rodata        0x00000000c003a1cc      0x25c menu.o
+ .rodata        0x00000000c003a428      0x10d menubar.o
+ .rodata        0x00000000c003a535       0x23 pixel.o
+ .rodata        0x00000000c003a558       0xc5 rect.o
+ *fill*         0x00000000c003a61d        0x3 
+ .rodata        0x00000000c003a620       0xd0 sbar.o
+ .rodata        0x00000000c003a6f0       0x98 toolbar.o
+ .rodata        0x00000000c003a788      0x62b wm.o
+ .rodata        0x00000000c003adb3       0x21 logoff.o
+ .rodata        0x00000000c003add4      0x253 logon.o
+ .rodata        0x00000000c003b027        0x5 input.o
+ .rodata        0x00000000c003b02c        0x5 terminal.o
+ .rodata        0x00000000c003b031       0x3a desktop.o
+ .rodata        0x00000000c003b06b       0x4f room.o
+ *fill*         0x00000000c003b0ba        0x2 
+ .rodata        0x00000000c003b0bc      0x114 userenv.o
+ .rodata        0x00000000c003b1d0       0xb2 usession.o
+ *fill*         0x00000000c003b282        0x2 
+ .rodata        0x00000000c003b284      0x23c kgwm.o
+ .rodata        0x00000000c003b4c0       0x28 kgws.o
+ .rodata        0x00000000c003b4e8      0x108 vfs.o
+ .rodata        0x00000000c003b5f0      0x11a x86cont.o
+ *fill*         0x00000000c003b70a        0x2 
+ .rodata        0x00000000c003b70c      0x191 x86fault.o
+ *fill*         0x00000000c003b89d        0x3 
+ .rodata        0x00000000c003b8a0       0xa1 x86start.o
+ *fill*         0x00000000c003b941        0x3 
+ .rodata        0x00000000c003b944      0x150 dispatch.o
+ .rodata        0x00000000c003ba94        0x5 pheap.o
+ *fill*         0x00000000c003ba99        0x3 
+ .rodata        0x00000000c003ba9c      0x8d2 process.o
+ *fill*         0x00000000c003c36e        0x2 
+ .rodata        0x00000000c003c370      0x175 queue.o
+ *fill*         0x00000000c003c4e5        0x3 
+ .rodata        0x00000000c003c4e8       0xe0 spawn.o
+ .rodata        0x00000000c003c5c8        0x5 tasks.o
+ .rodata        0x00000000c003c5cd        0x5 theap.o
+ *fill*         0x00000000c003c5d2        0x2 
+ .rodata        0x00000000c003c5d4      0x2b2 thread.o
+ *fill*         0x00000000c003c886        0x2 
+ .rodata        0x00000000c003c888      0x44f threadi.o
+ *fill*         0x00000000c003ccd7        0x1 
+ .rodata        0x00000000c003ccd8      0x218 ts.o
+ .rodata        0x00000000c003cef0        0x5 tstack.o
+ .rodata        0x00000000c003cef5        0x5 callout.o
+ .rodata        0x00000000c003cefa        0x5 ipc.o
+ .rodata        0x00000000c003ceff       0x47 ipccore.o
+ .rodata        0x00000000c003cf46        0x5 sem.o
+ *fill*         0x00000000c003cf4b        0x1 
+ .rodata        0x00000000c003cf4c      0x3bf memory.o
+ *fill*         0x00000000c003d30b        0x1 
+ .rodata        0x00000000c003d30c      0x522 mminfo.o
+ .rodata        0x00000000c003d82e       0x27 mmpool.o
+ *fill*         0x00000000c003d855        0x3 
+ .rodata        0x00000000c003d858      0x1b8 pages.o
+ .rodata        0x00000000c003da10        0x5 preempt.o
+ .rodata        0x00000000c003da15        0x5 priority.o
+ *fill*         0x00000000c003da1a        0x2 
+ .rodata        0x00000000c003da1c       0x4b sched.o
+ *fill*         0x00000000c003da67        0x1 
+ .rodata        0x00000000c003da68      0x1b0 schedi.o
+ .rodata        0x00000000c003dc18       0x85 create.o
+ *fill*         0x00000000c003dc9d        0x3 
+ .rodata        0x00000000c003dca0       0x58 mk.o
+ .rodata        0x00000000c003dcf8      0x148 request.o
+ .rodata        0x00000000c003de40       0x1a panic.o
+ .rodata        0x00000000c003de5a        0x5 reboot.o
+ .rodata        0x00000000c003de5f        0x5 sys.o
+                0x00000000c003de64                _rodata_end = .
                 0x00000000c003e000                . = ALIGN (0x1000)
- *fill*         0x00000000c003de4c      0x1b4 
+ *fill*         0x00000000c003de64      0x19c 
 
 .eh_frame       0x00000000c003e000     0x8df0
  .eh_frame      0x00000000c003e000       0x38 main.o
@@ -3665,10 +3664,11 @@ Linker script and memory map
                 0x00000000c00931a0                _file_cluster_list
                 0x00000000c00939a0                _g_profiler_ints_gde_services
                 0x00000000c00939a4                ___breaker_rtc_initialized
-                0x00000000c00939a8                _escape_status
-                0x00000000c00939ac                _LARGE_heappool_address
-                0x00000000c00939b0                _memorysizeOtherMemory
-                0x00000000c00939b4                _IpcProcedureEx
+                0x00000000c00939a8                _jiffies
+                0x00000000c00939ac                _escape_status
+                0x00000000c00939b0                _LARGE_heappool_address
+                0x00000000c00939b4                _memorysizeOtherMemory
+                0x00000000c00939b8                _IpcProcedureEx
                 0x00000000c00939c0                _mmblockList
                 0x00000000c009b9c0                _g_driver_timer_initialized
                 0x00000000c009b9c4                _ClonedThread
@@ -3798,18 +3798,17 @@ Linker script and memory map
                 0x00000000c009e3c4                _mainButton2
                 0x00000000c009e3c8                _CurrentScreen
                 0x00000000c009e3cc                _g_extraheap1_va
-                0x00000000c009e3d0                _sys_time_ticks_total
-                0x00000000c009e3d4                _g_profiler_ints_irq6
-                0x00000000c009e3d8                _ttyLineCounter
-                0x00000000c009e3dc                _g_char_attrib
-                0x00000000c009e3e0                _HumilityColorScheme
-                0x00000000c009e3e4                _memorysizeUsed
-                0x00000000c009e3e8                _window_mouse_over
-                0x00000000c009e3ec                _file_tmp
-                0x00000000c009e3f0                _ctrl_status
-                0x00000000c009e3f4                _e1000_irq_count
-                0x00000000c009e3f8                _g_module_shell_initialized
-                0x00000000c009e3fc                _g_next_proc
+                0x00000000c009e3d0                _g_profiler_ints_irq6
+                0x00000000c009e3d4                _ttyLineCounter
+                0x00000000c009e3d8                _g_char_attrib
+                0x00000000c009e3dc                _HumilityColorScheme
+                0x00000000c009e3e0                _memorysizeUsed
+                0x00000000c009e3e4                _window_mouse_over
+                0x00000000c009e3e8                _file_tmp
+                0x00000000c009e3ec                _ctrl_status
+                0x00000000c009e3f0                _e1000_irq_count
+                0x00000000c009e3f4                _g_module_shell_initialized
+                0x00000000c009e3f8                _g_next_proc
                 0x00000000c009e400                _semaphoreList
                 0x00000000c009e484                _file_CWE
                 0x00000000c009e488                _winkey_status

@@ -94,11 +94,13 @@ void KiInformation (void){
     printf ("\n Screen Resolution: W=%d H=%d \n",
         g_device_screen_width, g_device_screen_height );
 
-	//timing
-	
-    printf ("%d Hz | sys time %d ms | ticks %d \n", 
-        sys_time_hz, sys_time_ms, sys_time_ticks_total );
-	
+
+	// Timing
+
+    printf ("jiffies %d | %d HZ | sys time %d ms  \n", 
+        jiffies, sys_time_hz, sys_time_ms );
+
+
 	//
 	// ## User ##
 	//

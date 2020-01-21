@@ -349,7 +349,8 @@ head_init:
 	; GDT.
 	
 	lgdt [_GDT_register] 
-	
+
+
 	; IDT.
 	
 	call setup_idt        ;Aponta tudo para uma isr só. 'unhandled_int'.
@@ -357,10 +358,14 @@ head_init:
 	call setup_vectors    ;Configura outros vetores.
 	lidt [_IDT_register] 
 
-	; LDT.
-	
-	xor ax, ax
-	lldt ax
+
+    ;; LDT.
+    ;; Clear LDT
+
+    xor eax, eax    
+    lldt ax
+
+
 
 	;
 	; TR. (tss)

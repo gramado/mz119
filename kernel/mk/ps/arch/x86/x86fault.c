@@ -55,19 +55,15 @@ void do_pagefault (void);
  */
  
 void faults ( unsigned long number ){
-	
+
     struct thread_d *t;
-	
-	// #bugbug
-	// Isso não é necessário, pois já foi feito antes.
-	
-	asm ("cli");
-    
-    kprintf ("\n\n ======================= \n");
-    kprintf ("\n x86fault-faults: *FAULTS: totalticks=%d \n\n", 
-        sys_time_ticks_total );
-        
-    
+
+    asm ("cli");
+
+    kprintf ("\n\n ======================= \n\n");
+    kprintf ("x86fault-faults: *FAULTS: totalticks=%d \n\n", jiffies );
+
+
 	//
 	// Thread.
 	//
@@ -78,7 +74,7 @@ void faults ( unsigned long number ){
 	
 	if ( current_thread < 0 )
 	{
-		printf ("x86fault: current_thread fail\n");
+		printf ("x86fault-faults: current_thread fail\n");
 		goto fail;
 	}
 
@@ -86,7 +82,7 @@ void faults ( unsigned long number ){
 	
 	if( (void *) t == NULL )
 	{
-		printf ("x86fault: t fail\n");
+		printf ("x86fault-faults: t fail\n");
 		goto fail;
 	
     }else{
@@ -113,7 +109,7 @@ void faults ( unsigned long number ){
         // salvando os registradores
         // que refletem o momento em que houve a exceção.
         // Isso é perfeito para a int 3.
-        printf ("faults: Saving context\n");
+        printf ("x86fault-faults: Saving context\n");
         save_current_context ();            
  
  

@@ -174,7 +174,7 @@ void timer (void){
     //Contador de ticks.
 	//Incrementa o Tempo total de funcionamento do kernel.
 	
-    sys_time_ticks_total++;
+    jiffies++;
 
 	//
 	// ## sys time ##
@@ -213,7 +213,7 @@ void timer (void){
 	//apenas incremente.
 	thread_profiler (1);
 	    
-    if ( sys_time_ticks_total % profiler_ticks_limit == 0 )
+    if ( jiffies % profiler_ticks_limit == 0 )
 	{   
 	    //quantidade de frames num determinado período de tempo.
 	    // mm_profiler (); 
@@ -225,7 +225,7 @@ void timer (void){
 
 
     // Whatch dogs
-    if ( sys_time_ticks_total % 100 == 0 )
+    if ( jiffies % 100 == 0 )
     {
        // Incrementa o tempo em que o usuário está sem digitar.
         ____whatchdog_ps2_keyboard++;
@@ -272,7 +272,7 @@ void timer (void){
     // #todo
     // Podemos fazer isso com menos frequência.
 
-    if ( sys_time_ticks_total % 100 == 0 )
+    if ( jiffies % 100 == 0 )
     {
         extra = 1;
     }
@@ -289,9 +289,9 @@ void timer (void){
 	//de tempos em tempos atualiza o cursor
 	//a cada segundo. sendo ele 100 ou 1000 ... tanto faz.
 	//#todo: mas poderia ser exatamente o hz configurado par ao mouse
-	//if ( sys_time_ticks_total % mouse_cursor_hz == 0 )
-	//if ( sys_time_ticks_total % sys_time_hz == 0 )	
-	if ( sys_time_ticks_total % 70 == 0 )
+	//if ( jiffies % mouse_cursor_hz == 0 )
+	//if ( jiffies % sys_time_hz == 0 )	
+	if ( jiffies % 70 == 0 )
 	{
 		//Se o cursor piscante está habilitado.
 		//Essa flag é acionada pelo aplicativo.
@@ -678,11 +678,20 @@ unsigned long get_systime_ms (void){
 
 
 /* get_systime_totalticks: */
-unsigned long get_systime_totalticks (void){
-	
-    return (unsigned long) sys_time_ticks_total;
+unsigned long get_systime_totalticks (void)
+{
+    return (unsigned long) jiffies;
 }
 
+
+//#todo
+/*
+unsigned long get_jiffies (void);
+unsigned long get_jiffies (void)
+{
+    return (unsigned long) jiffies;
+}
+*/
 
 /*
  ***********************
@@ -757,19 +766,18 @@ unsigned long get_timeout (void){
  */
 
 int timerTimer (void){
-	
-	//Apenas inicializando, isso será atualizado.  
-	//ms
-	//Inicializa ticks.
-	
-	
-	sys_time_hz = 0;
-	
-    sys_time_ms = 0;	
-	
-	sys_time_ticks_total = 0;	
-    
-    
+
+    //
+    //   Jiffies !!!
+    //
+
+    jiffies = 0;
+
+
+    sys_time_hz = 0;
+    sys_time_ms = 0;
+
+
     //
     // Profiler
     //
@@ -778,8 +786,8 @@ int timerTimer (void){
     profiler_ticks_limit = PROFILER_TICKS_DEFAULT_LIMIT;
     
     //...
-	
-	return 0;
+
+    return 0;
 }
 
 

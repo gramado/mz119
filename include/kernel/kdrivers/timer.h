@@ -7,8 +7,20 @@
  *
  * Versão 1.0, 2015.
  */
- 
- 
+
+//
+// Count support variables.
+//
+
+
+
+
+#define  HZ  100
+
+
+unsigned long jiffies;
+
+
  
 //
 // Working set support.
@@ -40,12 +52,11 @@ unsigned long profiler_percentage_all_normal_threads;
  
 unsigned long profiler_percentage_idle_thread;
  
- 
-//
-// Count support variables.
-//
 
-#define  HZ  100
+
+
+ 
+
 
 
 //Usado no Linux. 
@@ -54,10 +65,6 @@ unsigned long profiler_percentage_idle_thread;
 //... 
 
 
-
-//
-//
-//
 
 // Em que tempo estávamos quando iniciamos a contagem;
 //#define TIMER_PROFILE_TICKS_DEADLINE 1000
@@ -71,9 +78,6 @@ unsigned long profiler_percentage_idle_thread;
 unsigned long sys_time_hz;
 unsigned long sys_time_ms;
 
-//Saving the total ticks the kernel is running.
-//unsigned long kernel_tick_total;
-unsigned long sys_time_ticks_total;
 
 
 //Counting how much ticks the kernel is running.

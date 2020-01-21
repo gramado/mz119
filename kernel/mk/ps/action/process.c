@@ -579,21 +579,29 @@ do_clone:
         printf ("do_clone_execute_process: %s\n",filename);
         
         Status = (int) fsLoadFile ( VOLUME1_FAT_ADDRESS, 
-                              VOLUME1_ROOTDIR_ADDRESS, 
-                              filename, 
-                              (unsigned long) Clone->Image );
+                           VOLUME1_ROOTDIR_ADDRESS, 
+                           filename, 
+                           (unsigned long) Clone->Image );
 
        // Se falhou o carregamento.
        if ( Status != 0 )
        {
+
+            // #bugbug
+            // Isso não está funcionando direito.
+            // E uma thread defeituosa fica remanescente quando
+            // digitamos um comando errado.
+            
+            
             // kill thread.
             Clone->control->used = 0;
             Clone->control->magic = 0;
+            Clone->control->state = DEAD;
             Clone->control == NULL;
             
             // kill process.
             Clone->used = 0;
-            Clone->magic = 0;            
+            Clone->magic = 0;  
             Clone = NULL;
             
             printf ("do_clone_execute_process: Couldn't load the file %s\n", 
