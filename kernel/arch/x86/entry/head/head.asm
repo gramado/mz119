@@ -413,7 +413,8 @@ dummyJmpAfterLTR:
 		
 ;.setupPICMODE:	
 	
-	;PIC.
+	; PIC.
+	; Early PIC initialization.
 	
 	cli
 	
@@ -467,6 +468,9 @@ dummyJmpAfterLTR:
 	; APIC timer      = 3,579,545 / 100 = 35796  3.5 MHz.
 	; 11931    ; (1193181.6666 / 100 = 11930) timer frequency 100 HZ
 	
+	; PIT
+	; Early PIT initialization.
+	
 	;xor	eax, eax
 	mov al, byte 0x36
 	mov dx, word 0x43
@@ -518,7 +522,8 @@ dummyJmpAfterLTR:
 	and al, byte 0xfe
 	out dx, byte al
     IODELAY
-	;unmask all interrupts.	
+    
+	;unmask all interrupts.
 	mov  al, 0
 	out  0xa1, al
 	IODELAY

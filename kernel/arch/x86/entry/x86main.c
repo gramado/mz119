@@ -165,7 +165,7 @@ void x86mainStartFirstThread ( void ){
 
 	//timerInit8253 ( HZ );
 	//timerInit8253 ( 800 );
-    timerInit8253 ( 900 );
+    // timerInit8253 ( 900 );
 
 	//nesse momento usaremos o mapeamento do processo alvo ..
 	//no mapeamento do processo alvo tambem tem o kernel
@@ -617,8 +617,21 @@ void x86main (void){
 
 
     debug_print ("[x86] x86main: ps2\n");    
-    ps2 ();
+    
+    
+    
+    // #todo: 
+    // Essa inicialização deve ser adiada.
+    // deixando para o processo init fazer isso.
+    
+    //ps2 ();
 
+
+    // #todo:
+    // Chamaremos essa inicialização básica nesse momento.
+    // A inicialização completa será chamada pelo processo init.
+    
+    early_ps2_init ();
 
 
 	//

@@ -190,9 +190,9 @@ void KiTimer (void);
 
 //Global para inicialização do módulo interno.
 
+int early_timer_init (void);
 int timerInit (void);
 int timerTimer (void);
-
 void timerInit8253 ( unsigned long hz ); 
 
 //...

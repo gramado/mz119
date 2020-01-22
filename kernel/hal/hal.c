@@ -685,11 +685,23 @@ int init_hal (void){
 	// TIMER - Cria e inicializa estrutura do timer.
 #ifdef HAL_VERBOSE	
 	printf("init_hal: Timer\n");
-#endif    
-	timerInit();	
-	
+#endif
 
-	//Mouse components
+
+    // #todo: 
+    // Essa inicialização deve ser adiada.
+    // deixando para o processo init fazer isso.
+
+    //timerInit ();
+
+    
+    // #todo:
+    // Chamaremos essa inicialização básica nesse momento.
+    // A inicialização completa será chamada pelo processo init.
+    
+    early_timer_init ();
+    
+    
 
 	//
 	// Detecta fabricantes específicos suportados pelo núcleo.  

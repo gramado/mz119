@@ -102,6 +102,65 @@ void ps2 (void){
 }
 
 
+void early_ps2_init (void)
+{
+    // mas simples...
+    // apenas teclado.
+
+	// #debug
+	printf ("early_ps2_init: Initializing..\n");
+	refresh_screen();
+
+
+
+    // ======================================
+    // Deactivate ports!
+    wait_then_write (0x64,0xAD);
+    wait_then_write (0x64,0xA7); 
+
+
+    // Keyboard.
+    printf ("early_ps2_init: Initializing keyboard ..\n");
+    refresh_screen();
+    ps2kbd_initialize_device ();
+
+
+    // Mouse.
+    //printf ("ps2: Initializing mouse ..\n");
+    //refresh_screen();
+    //ps2mouse_initialize_device ();
+
+
+    // ======================================
+    // Reactivate ports!
+    wait_then_write (0x64,0xAE);
+    //wait_then_write (0x64,0xA8);
+
+
+    // Wait for nothing!
+    kbdc_wait (1);
+    kbdc_wait (1);
+    kbdc_wait (1);
+    kbdc_wait (1);
+
+
+// Done.
+
+    //#debug
+    printf ("early_ps2_init: done\n");
+    refresh_screen();
+
+
+}
+
+
+
+
+
+
+
+
+
 //
 // End.
 //

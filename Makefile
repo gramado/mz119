@@ -10,8 +10,8 @@
 VERSION = 1
 PATCHLEVEL = 25
 SUBLEVEL = 0
-EXTRAVERSION = -rc3
-NAME = 
+EXTRAVERSION = 
+NAME = ps2
 
 
 # First of all, lemme discribe this documment!

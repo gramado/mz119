@@ -113,6 +113,8 @@ wait_then_write ( int port, int data );
 
 
 void ps2 (void);
+void early_ps2_init (void);
+
 
 //
 // End.

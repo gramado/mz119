@@ -834,7 +834,6 @@ int timerInit (void){
 	// e isso irá atualizar a variável que inicializamos agora.
 	
 	sys_time_hz = (unsigned long) HZ;
-	
 	timerInit8253 ( sys_time_hz );
    
    
@@ -894,6 +893,66 @@ int timerInit (void){
         
     return 0;
 }
+
+
+
+// #todo
+int early_timer_init (void)
+{
+    __breaker_timer_initialized = 0;
+
+    int i;
+	
+	//Constructor.
+	timerTimer();
+	
+	
+	for ( i=0; i<32; i++ ){
+		timerList[i] = (unsigned long) 0;
+	}
+
+	sys_time_hz = (unsigned long) HZ;
+	
+	//timerInit8253 ( sys_time_hz );
+
+	set_current_quantum (QUANTUM_BASE);
+	
+	set_next_quantum (QUANTUM_BASE);
+    
+	set_quantum (QUANTUM_BASE);
+
+    //timeout 
+	 
+	set_timeout (0);
+	
+	
+    // Initializing whatchdogs.
+    // Eles serão zerados pelas interrupções dos dipositivos e
+    // incrementados pelo timer.
+    // A condição crítica é alcançar um limite, um timeout.
+    ____whatchdog_ps2_keyboard = 0;
+    ____whatchdog_ps2_mouse = 0;
+    //...
+
+
+	
+	//Continua...
+	
+    //Done.
+
+    g_driver_timer_initialized = (int) 1;
+	
+//#ifdef EXECVE_VERBOSE
+//    printf("timerInit: Done\n");
+//#endif
+
+
+    __breaker_timer_initialized = 1;
+        
+	return 0;
+}
+
+
 
 
 /*
