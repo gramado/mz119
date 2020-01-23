@@ -161,6 +161,16 @@ __local_ps2kbd_procedure ( struct window_d *window,
                            unsigned long long2 )
 {
 
+   // #test
+   // Testando uma rotina de pintura que usa escape sequance.
+   // Queremos que ela funcione na máquina real.
+   // Vamos testar os ponteiros.
+   
+   char buffer[64];
+   
+   sprintf (buffer,"My super \x1b[8C string!!\n"); 
+
+
     switch (msg)
     {
         case MSG_SYSKEYUP: 
@@ -179,6 +189,7 @@ __local_ps2kbd_procedure ( struct window_d *window,
                 // Test 1.
                 case VK_F7:
                     // refresh_screen();
+                    console_write_escape_sequence(0, buffer,62);
                     break;
 
                 // Test 2.

@@ -447,7 +447,16 @@ int main ( int argc, char *argv[] )
             
     // escreverá em stdout;
     // mas write enciará para o console virtual 0.       
-    printf ("hello.bin: \x1b[H Writing into the virtual console 0!\n");   
+    printf ("hello.bin: Writing into the virtual console 0!\n");   
+    
+    //printf ("\x1b[8A test\n");   // Cursor Up
+    //printf ("\x1b[8B test\n");   // Cursor Down
+    printf ("\x1b[8C Cursor Forward\n");   // Cursor Forward
+    //printf ("\x1b[8D test\n");   // Cursor Backward
+    //printf ("\x1b[8E test\n");   // Cursor Next Line
+    //printf ("\x1b[8F test\n");   // Cursor Previous Line
+    
+    
     
     //Torvalds_printf("hello.bin: \x1b[H Writing into the virtual console 0!\n");
     

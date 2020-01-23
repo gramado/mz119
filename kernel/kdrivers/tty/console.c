@@ -31,6 +31,9 @@ static unsigned long __state = 0;
 #define NPAR 16
 static unsigned long npar, par[NPAR];
 static unsigned long ques=0;
+static unsigned char attr=0x07;
+
+
 
 void __local_ri (void)
 {
@@ -81,16 +84,119 @@ void __respond (int console_number)
 static int saved_x=0;
 static int saved_y=0;
 
-void __local_save_cur (int current_console)
+void __local_save_cur (int console_number)
 {
-	saved_x = TTY[current_console].cursor_x;
-	saved_y = TTY[current_console].cursor_y;
+	saved_x = TTY[console_number].cursor_x;
+	saved_y = TTY[console_number].cursor_y;
 }
 
-void __local_restore_cur (int current_console)
+void __local_restore_cur (int console_number)
 {
-	TTY[current_console].cursor_x = saved_x;
-	TTY[current_console].cursor_y = saved_y;
+	TTY[console_number].cursor_x = saved_x;
+	TTY[console_number].cursor_y = saved_y;
+}
+
+
+// See:
+// https://en.wikipedia.org/wiki/Control_character
+// https://en.wikipedia.org/wiki/C0_and_C1_control_codes#Device_control
+
+void __local_insert_char ( int console_number )
+{
+
+	//int i=x;
+	//unsigned short tmp,old=0x0720;
+	//unsigned short * p = (unsigned short *) pos;
+
+/*
+	while (i++ < columns) {
+
+		// Salvo o char da posição atual.
+		tmp = *p;
+
+        // coloco o char de controle na posição atual
+        // ou o caractere salvo anteriomente.
+		*p=old;
+
+        // coloco o caractere salvo para uso futuro.
+		old=tmp;
+
+        //avança até o fim da linha.
+		p++;
+	}
+*/
+
+    //int i = TTY[console_number].cursor_x;
+    //int tmp;
+    //int old = 0x20;
+    
+    // #bugbug
+    // Não é possível fazer essa rotina pois não temos um buffer e chars.
+
+    //while (i++ < TTY[console_number].cursor_height ) {};
+    
+    console_putchar (0x20, console_number);
+}
+
+void __local_insert_line(int console_number)
+{
+
+	int oldtop,oldbottom;
+
+	oldtop    = TTY[console_number].cursor_top;
+	oldbottom = TTY[console_number].cursor_bottom;
+
+	TTY[console_number].cursor_top    = TTY[console_number].cursor_y;
+	TTY[console_number].cursor_bottom = TTY[console_number].cursor_bottom;
+	
+    console_scroll (console_number);
+
+	TTY[console_number].cursor_top    = oldtop;
+	TTY[console_number].cursor_bottom = oldbottom;
+}
+
+
+void __local_delete_char(int console_number)
+{
+	
+	console_putchar ( ' ', console_number);
+	    
+/*
+	int i;
+	unsigned short * p = (unsigned short *) pos;
+
+	if (x >= columns)
+		return;
+
+	i = x;
+	while (++i < columns) 
+	{
+		*p = *(p+1);
+		p++;
+	}
+	*p=0x0720;
+*/
+}
+
+
+void __local_delete_line(int console_number)
+{
+
+    int oldtop,oldbottom;
+
+	oldtop    = TTY[console_number].cursor_top;
+	oldbottom = TTY[console_number].cursor_bottom;
+
+	
+	TTY[console_number].cursor_top    = TTY[console_number].cursor_y;
+	TTY[console_number].cursor_bottom = TTY[console_number].cursor_bottom;
+
+    //#todo
+	//scrup();
+
+	TTY[console_number].cursor_top    = oldtop;
+	TTY[console_number].cursor_bottom = oldbottom;
+
 }
 
 
@@ -164,72 +270,81 @@ void csi_K(int par)
 
 void csi_m(void)
 {
-	/*
-	int i;
+    int i;
 
 	for (i=0;i<=npar;i++)
 		switch (par[i]) {
-			case 0:attr=0x07;break;
-			case 1:attr=0x0f;break;
-			case 4:attr=0x0f;break;
-			case 7:attr=0x70;break;
-			case 27:attr=0x07;break;
+			
+			case 0:
+			    attr=0x07;
+			    break;
+			case 1:
+			    attr=0x0f;
+			    break;
+			case 4:
+			    attr=0x0f;
+			    break;
+			case 7:
+			    attr=0x70;
+			    break;
+			case 27:
+			    attr=0x07;
+			    break;
 		}
-
-   */
 }
 
 
-void csi_M(int nr)
+void csi_M ( int nr, int console_number )
 {
-	/*
-	if (nr>lines)
-		nr=lines;
+
+	if ( nr > TTY[console_number].cursor_height )
+		nr = TTY[console_number].cursor_height;
 	else if (!nr)
 		nr=1;
 	while (nr--)
-		delete_line();
-   */
+		__local_delete_line(console_number);
+   
 }
 
 
-void csi_L(int nr)
+void csi_L (int nr, int console_number)
 {
-	/*
-	if (nr>lines)
-		nr=lines;
+
+	if (nr > TTY[console_number].cursor_height)
+		nr = TTY[console_number].cursor_height;
 	else if (!nr)
 		nr=1;
 	while (nr--)
-		insert_line();
-   */
+		__local_insert_line(console_number);
+
 }
 
-void csi_P(int nr)
+
+void csi_P (int nr, int console_number)
 {
-	/*
-	if (nr>columns)
-		nr=columns;
+
+	if (nr > TTY[console_number].cursor_right -1 )
+		nr = TTY[console_number].cursor_right -1 ;
 	else if (!nr)
 		nr=1;
 	while (nr--)
-		delete_char();
-   */
+		__local_delete_char(console_number);
+
 }
 
 
-void csi_at(int nr)
+void csi_at (int nr, int console_number)
 {
-	/*
-	if (nr>columns)
-		nr=columns;
+
+	if (nr > TTY[console_number].cursor_right -1 )
+		nr = TTY[console_number].cursor_right -1 ;
 	else if (!nr)
 		nr=1;
 	while (nr--)
-		insert_char();
+		__local_insert_char(console_number);
 
-    */
 }
+
 
 
 
@@ -605,18 +720,16 @@ ssize_t console_read (int console_number, const void *buf, size_t count)
 }
 
 
-
-
+// Não tem escape sequence
+// Funciona na máquina real
 ssize_t console_write (int console_number, const void *buf, size_t count)
 {
-
    if ( console_number < 0 || console_number > 3 )
        return -1;
 
     if (!count)
         return -1;
-        
-        
+
     char *data = (char *) buf;
        
     char ch; 
@@ -626,10 +739,66 @@ ssize_t console_write (int console_number, const void *buf, size_t count)
     //   
        
     // original - backup
-    //size_t i;
-    //for (i=0; i<count; i++)
-        //console_putchar ( (int) data[i], console_number);
+    size_t __i;
+    for (__i=0; __i<count; __i++)
+        console_putchar ( (int) data[__i], console_number);
     
+    return count;
+
+}
+
+
+// Tem escape sequence
+// Não funciona na máquina real.
+ssize_t 
+console_write_escape_sequence (int console_number, const void *buf, size_t count)
+{
+
+   if ( console_number < 0 || console_number > 3 )
+   {
+       printf ("console_write_escape_sequence: console_number\n");
+       refresh_screen();
+       return -1;
+   }
+
+
+    if (!count)
+   {
+       printf ("console_write_escape_sequence: count\n");
+       refresh_screen();
+       return -1;
+   }
+
+
+    if ( (void *) buf == NULL )
+   {
+       printf ("console_write_escape_sequence: buf\n");
+       refresh_screen();
+       return -1;
+   }
+    
+
+        
+        
+    char *data = (char *) buf;
+       
+    char ch; 
+    
+    
+    // #debug
+    console_putchar ( '@',console_number);
+    console_putchar ( ' ',console_number);
+    //...       
+           
+           
+    //
+    // Write string
+    //   
+       
+    
+    // #debug
+    // Ok, libc do atacama usa essa rotina. 
+    // console_putchar ( '@', console_number);
  
     int i=0;  
         
@@ -639,9 +808,7 @@ ssize_t console_write (int console_number, const void *buf, size_t count)
         i++;
         
         switch (__state){
-            
-            
-            
+                 
             // State 0
             case 0:
 
@@ -750,16 +917,16 @@ ssize_t console_write (int console_number, const void *buf, size_t count)
 						csi_K (par[0]);
 						break;
 					case 'L':
-						csi_L (par[0]);
+						csi_L (par[0], console_number);
 						break;
 					case 'M':
-						csi_M (par[0]);
+						csi_M (par[0], console_number );
 						break;
 					case 'P':
-						csi_P (par[0]);
+						csi_P (par[0], console_number);
 						break;
 					case '@':
-						csi_at (par[0]);
+						csi_at (par[0], console_number);
 						break;
 					case 'm':
 						csi_m ();
@@ -785,7 +952,13 @@ ssize_t console_write (int console_number, const void *buf, size_t count)
     
         };
     };    
-        
+
+
+
+   printf ("console_write_escape_sequence: done\n");
+   refresh_screen();
+
+
     return count;    
 
 }
