@@ -12,16 +12,17 @@ void console_outbyte (int c, int console_number);
 void console_putchar ( int c, int console_number );
 
 
+// Não tem escape sequence
+// Funciona na máquina real
+ssize_t __console_write (int console_number, const void *buf, size_t count);
+
+
 
 ssize_t console_read (int console_number, const void *buf, size_t count);                
 
-// Não tem escape sequence
-// Funciona na máquina real
-ssize_t console_write (int console_number, const void *buf, size_t count);
 
 // Tem escape sequence
-// Não funciona na máquina real.
-ssize_t console_write_escape_sequence (int console_number, const void *buf, size_t count);
+ssize_t console_write (int console_number, const void *buf, size_t count);
 
 
 void console_scroll (int console_number);

@@ -710,19 +710,9 @@ void console_putchar ( int c, int console_number ){
 	stdio_terminalmode_flag = 0;  
 }
 
-
-
-
-
-ssize_t console_read (int console_number, const void *buf, size_t count)
-{
-    return -1;  //todo
-}
-
-
 // Não tem escape sequence
 // Funciona na máquina real
-ssize_t console_write (int console_number, const void *buf, size_t count)
+ssize_t __console_write (int console_number, const void *buf, size_t count)
 {
    if ( console_number < 0 || console_number > 3 )
        return -1;
@@ -748,15 +738,23 @@ ssize_t console_write (int console_number, const void *buf, size_t count)
 }
 
 
+
+
+
+ssize_t console_read (int console_number, const void *buf, size_t count)
+{
+    return -1;  //todo
+}
+
+
+
 // Tem escape sequence
-// Não funciona na máquina real.
-ssize_t 
-console_write_escape_sequence (int console_number, const void *buf, size_t count)
+ssize_t console_write (int console_number, const void *buf, size_t count)
 {
 
    if ( console_number < 0 || console_number > 3 )
    {
-       printf ("console_write_escape_sequence: console_number\n");
+       printf ("console_write: console_number\n");
        refresh_screen();
        return -1;
    }
@@ -764,7 +762,7 @@ console_write_escape_sequence (int console_number, const void *buf, size_t count
 
     if (!count)
    {
-       printf ("console_write_escape_sequence: count\n");
+       printf ("console_write: count\n");
        refresh_screen();
        return -1;
    }
@@ -772,7 +770,7 @@ console_write_escape_sequence (int console_number, const void *buf, size_t count
 
     if ( (void *) buf == NULL )
    {
-       printf ("console_write_escape_sequence: buf\n");
+       printf ("console_write: buf\n");
        refresh_screen();
        return -1;
    }
@@ -786,8 +784,9 @@ console_write_escape_sequence (int console_number, const void *buf, size_t count
     
     
     // #debug
-    console_putchar ( '@',console_number);
-    console_putchar ( ' ',console_number);
+    //console_putchar ( '@',console_number);
+    //console_putchar ( ' ',console_number);
+    //console_putchar ( '\n',console_number);
     //...       
            
            
@@ -800,17 +799,24 @@ console_write_escape_sequence (int console_number, const void *buf, size_t count
     // Ok, libc do atacama usa essa rotina. 
     // console_putchar ( '@', console_number);
  
-    int i=0;  
-        
-    while (count--) {
+    // Inicializando.
+    // Dão dá mais pra confiar !
+    __state = 0; 
+ 
+ 
+    int i;  
+    for (i=0; i<count; i++){
 
         ch = data[i];
-        i++;
-        
+                
         switch (__state){
                  
             // State 0
             case 0:
+            // #debug
+            //console_putchar ( '@',console_number);
+            //console_putchar ( '0',console_number);
+            //console_putchar ( '\n',console_number);
 
                // Printable ?
                if (ch >31 && ch <127) {
@@ -834,6 +840,11 @@ console_write_escape_sequence (int console_number, const void *buf, size_t count
             
             // State 1
             case 1:
+            // #debug
+            //console_putchar ( '@',console_number);
+            //console_putchar ( '1',console_number);
+            //console_putchar ( '\n',console_number);
+            
                 __state=0;
                 
                 if (ch=='[')
@@ -855,6 +866,11 @@ console_write_escape_sequence (int console_number, const void *buf, size_t count
 			
 			//State 2
 			case 2:
+            // #debug
+            //console_putchar ( '@',console_number);
+            //console_putchar ( '2',console_number);
+            //console_putchar ( '\n',console_number);
+            
 			    // Clean
 				for ( npar=0; npar<NPAR; npar++ )
 					par[npar]=0;
@@ -862,7 +878,13 @@ console_write_escape_sequence (int console_number, const void *buf, size_t count
 				__state=3;  // Next state.
 				if ( ques = ( ch == '?' ) ) 
 					break;
+					
             case 3:
+            // #debug
+            //console_putchar ( '@',console_number);
+            //console_putchar ( '3',console_number);
+            //console_putchar ( '\n',console_number);
+            
 				if ( ch==';' && npar<NPAR-1) {
 					npar++;
 					break;
@@ -870,7 +892,13 @@ console_write_escape_sequence (int console_number, const void *buf, size_t count
 					par[npar] = 10 * par[npar] + ch -'0';
 					break;
 				} else __state=4;
+
 			case 4:
+            // #debug
+            //console_putchar ( '@',console_number);
+            //console_putchar ( '4',console_number);
+            //console_putchar ( '\n',console_number);
+            
 				__state=0;
 				switch (ch) {
 					case 'G': case '`':
@@ -946,17 +974,21 @@ console_write_escape_sequence (int console_number, const void *buf, size_t count
 					case 'u':
 						__local_restore_cur (console_number);
 						break;
-				}; // switch ?    
-    
-    
-    
+				};  
+                break;
+
+            default:
+                printf ("console_write: default\n");
+                refresh_screen();
+                return -1;
+                break;
         };
     };    
 
 
 
-   printf ("console_write_escape_sequence: done\n");
-   refresh_screen();
+   //printf ("console_write: done\n");
+   //refresh_screen();
 
 
     return count;    
