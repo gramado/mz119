@@ -166,7 +166,7 @@ __local_ps2kbd_procedure ( struct window_d *window,
    // Queremos que ela funcione na máquina real.
    // Vamos testar os ponteiros.
    
-   char buffer[64];
+   char buffer[128];
    sprintf (buffer,"My super \x1b[8C string!!\n"); 
 
 

@@ -2646,22 +2646,26 @@ int __serenity_fputc (int ch, FILE *stream)
        return -1;
     } 
 
-    if (stream->_w > stream->_lbfsize)
+    //if (stream->_w > stream->_lbfsize)
+    if (stream->_w > BUFSIZ)
     {   
        debug_print( "__serenity_fputc: overflow\n");
        return -1;
     } 
     
     stream->_base[stream->_w++] = ch;
-    
-    if (stream->_w >= stream->_lbfsize)
+
+    if (stream->_w >= BUFSIZ)
     {
         __serenity_fflush(stream);
+        return ch;
     }
     
-    if (stream->_flags == _IONBF || (stream->_flags == _IOLBF && ch == '\n'))
+    //if (stream->_flags == _IONBF || (stream->_flags == _IOLBF && ch == '\n'))
+    if ( ch == '\n')
     {    
 		__serenity_fflush (stream);
+		return ch;
     }
     
 
@@ -4676,10 +4680,22 @@ void stdioInitialize (){
     stdout->_p = stdout->_base;
     stderr->_p = stderr->_base;
     
-    stdin->_cnt  = BUFSIZ;
-    stdout->_cnt = BUFSIZ;
-    stderr->_cnt = BUFSIZ;    
+    //stdin->_cnt  = BUFSIZ;
+    //stdout->_cnt = BUFSIZ;
+    //stderr->_cnt = BUFSIZ;    
     
+    //stdin->_lbfsize  = 128;
+    //stdout->_lbfsize = 128;
+    //stderr->_lbfsize = 128;    
+
+    //stdin->_w  = 0;
+    //stdout->_w = 0;
+    //stderr->_w = 0;    
+
+    //stdin->_r  = 0;
+    //stdout->_r = 0;
+    //stderr->_r = 0;    
+
     
     // o kernel ainda não sabe disso.
     stdin->_file = 0;

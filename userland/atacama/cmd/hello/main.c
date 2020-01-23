@@ -451,7 +451,7 @@ int main ( int argc, char *argv[] )
     
     //printf ("\x1b[8A test\n");   // Cursor Up
     //printf ("\x1b[8B test\n");   // Cursor Down
-    printf ("\x1b[8C Cursor Forward\n");   // Cursor Forward
+    printf ("hello.bin: My super \x1b[8C string!\n");   // Cursor Forward
     //printf ("\x1b[8D test\n");   // Cursor Backward
     //printf ("\x1b[8E test\n");   // Cursor Next Line
     //printf ("\x1b[8F test\n");   // Cursor Previous Line
