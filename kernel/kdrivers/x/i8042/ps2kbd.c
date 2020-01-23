@@ -140,12 +140,66 @@ Non Standard Commands
 */
 
 
-
-
-
-
+// propotypes
 
 int BAT_TEST (void);
+
+
+
+
+
+
+unsigned long 
+__local_ps2kbd_procedure ( struct window_d *window, 
+                           int msg, 
+                           unsigned long long1, 
+                           unsigned long long2 ); 
+unsigned long 
+__local_ps2kbd_procedure ( struct window_d *window, 
+                           int msg, 
+                           unsigned long long1, 
+                           unsigned long long2 )
+{
+
+    switch (msg)
+    {
+        case MSG_SYSKEYUP: 
+            switch (long1)  
+            {
+                // Reboot
+                case VK_F5:
+                    reboot ();
+                    //do_clone_execute_process ("init2.bin");
+                    break;
+
+                // Switch focus.
+                case VK_F6:
+                    break;
+
+                // Test 1.
+                case VK_F7:
+                    // refresh_screen();
+                    break;
+
+                // Test 2.
+                case VK_F8:
+                    // testNIC ();
+                    pciInfo ();
+                    // ahciSATAInitialize (1);
+                    refresh_screen();
+                    break;
+
+            }
+    };
+
+
+    return 0;
+}
+
+
+
+
+
 
 
 
@@ -195,11 +249,10 @@ int KEYBOARD_SEND_MESSAGE ( unsigned char SC ){
 	// estar em user mode.
 
 
-    //Debug stuff.
-    //Show the scancode if the flag is enabled.
+    // Debug stuff.
+    // Show the scancode if the flag is enabled.
 
-    if (scStatus == 1)
-    {
+    if (scStatus == 1){
         kprintf ("{%d,%x} ", scancode, scancode );
     }
 
@@ -550,7 +603,7 @@ done:
 
     if ( (ctrl_status == 1) && (alt_status == 1) && (ch == KEY_DELETE) )
     {
-        //gde_services ( SYS_REBOOT, 0, 0, 0 );
+        // reboot ();
     }
 
 
@@ -604,6 +657,12 @@ done:
 
 
 check_WindowWithFocus:
+
+
+    //
+    // Window.
+    //
+
 	
 	// #importante
 	// Mas como o wm já está presente aqui no kernel, então
@@ -619,8 +678,7 @@ check_WindowWithFocus:
 
     }else{
 
-        if ( w->used != 1 || w->magic != 1234 )
-        {
+        if ( w->used != 1 || w->magic != 1234 ){
             panic ("KEYBOARD_LINE_DISCIPLINE: w validation");
         }
 
@@ -642,67 +700,89 @@ check_WindowWithFocus:
 		// talvez seja trabalho da libc inicialziar p input
 		// talvez utilizando a janela do terminal
 		// sem terminal, sem input.
-		
+
+
+        //
+        // Thread.
+        //
+
         t = (void *) w->control;
 
-        if ( (void *) t == NULL )
-        {
+        if ( (void *) t == NULL ){
             panic ("KEYBOARD_LINE_DISCIPLINE: t \n");
         }
 
-        if ( t->used != 1 || t->magic != 1234 )
-        {
+        if ( t->used != 1 || t->magic != 1234 ){
             panic ("KEYBOARD_LINE_DISCIPLINE: t validation \n");
         }        
 
 
-		//
-		//  ## Message ##
-		//
 
-		
+        //
+        // Scan code.
+        //
+
+        unsigned long tmp_sc;
+        tmp_sc = (unsigned long) scancode;
+        tmp_sc = (unsigned long) ( tmp_sc & 0x000000FF );
+
+        //
+        // Message.
+        //
+
 		// #importante:
 		// A janela com o foco de entrada deve receber input de teclado.
 		// Então a mensagem vai para a thread associada com a janela que tem 
 		// o foco de entrada.
 		// Como o scancode é um char, precisamos converte-lo em unsigned long.
 
-        unsigned long tmp;
+        t->window = w;
+        t->msg = message;
+        t->long1 = ch;     // Key.
+        t->long2 = tmp_sc;    // Scan code.
 
-		tmp = (unsigned long) scancode;
-		tmp = (unsigned long) ( tmp & 0x000000FF );
-		
-		t->window = w;
-		t->msg = message;
-		t->long1 = ch;     // Key.
-		t->long2 = tmp;    // Scan code.
+        t->newmessageFlag = 1;
 
-		t->newmessageFlag = 1;
 
-		// F5 F6 F7 F8
-		// Teclas para teste.
-		// Teclas usadas exclusivamente pelo 
-		// procedimento de janelas do sistema.
-		// Os aplicativos não devem usar essas teclas por enquanto.
-		// Então Essas teclas funcionarão mesmo que os aplicativos 
-		// estejam com problema.
+        //
+        // Special message.
+        //
 
+        // F5 F6 F7 F8
+        // These messages are used by the developer.
+        // + Reboot system
+        // + Switch focus.
+        // + Test 1
+        // + Test 2
+        
         switch (message)
         {
-			case MSG_SYSKEYDOWN: 
-			    switch (ch){
-					case VK_F5:
-					case VK_F6:
-					case VK_F7:
-					case VK_F8:
-						system_procedure (  w, 
-						    (int) message, 
-					        (unsigned long) ch, 
-					        (unsigned long) tmp );
-						break;
-				}
-			    break;
-		};
+            case MSG_SYSKEYUP: 
+
+                switch (ch){
+
+                    case VK_F5:
+                    case VK_F6:
+                    case VK_F7:
+                    case VK_F8:
+                    
+                        // Handle the message.
+                        __local_ps2kbd_procedure (  w, 
+                            (int) message, 
+                            (unsigned long) ch, 
+                            (unsigned long) tmp_sc );
+                        
+                        // Clean.
+                        t->window = NULL;
+                        t->msg = 0;
+                        t->long1 = 0;
+                        t->long2 = 0;
+                        t->newmessageFlag = 0;
+
+                        break;
+                }
+                break;
+        };
     };
 
 

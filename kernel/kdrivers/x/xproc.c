@@ -653,210 +653,19 @@ system_procedure ( struct window_d *window,
                 // Usadas pelos aplicativos.
                 case VK_F1:
                 case VK_F2:
+                case VK_F3:
                 case VK_F4:
                     break;
 
-                //
-                // F5
-                //
-   
-				// Usada para testes.
-				FILE *bmfp;
-				case VK_F5:
-				
-				    testNIC ();
-
-					//printf("F5:\n");
-					
-					// load and show bmp
-					//sys_fopen ( (const char *) arg2, (const char *) arg3 );
-					//bmfp = sys_fopen ( "folder.bmp", "r+" );
-					
-					//decodificando no backbuffer.
-					//bmpDisplayBMP ( bmfp->_base, 100, 100 );
-					
-					//bmp_change_color_flag = BMP_CHANGE_COLOR_TRANSPARENT;
-					//bmp_selected_color = COLOR_WHITE;
-					//bmpDirectDisplayBMP ( bmfp->_base, 100, 100 );
-					//bmp_change_color_flag = 0;
-					//bmp_selected_color = 0;
-					
-					//refresh_rectangle ( 100, 100, 200, 200 ); 
-					
-					//process info
-					//show_process_information ();	
-					
-					//testando driver ahci
-					//ahciSATAInitialize (1);
-					//refresh_screen();
-					
-					//mostra informações sobre as portas ide.
-					//vamos ver os valores obtidos nas BARs.
-					//show_ide_info ();
-					refresh_screen();
-					
-					//mostra as estruturas de pagina usadas para paginação no pagedpool.
-					//número de entradas.
-					//showFreepagedMemory (32);
-					//showFreepagedMemory (64);
-					
-					//Hz - testando ajuste de precisão.
-					//timerInit8253 ( (unsigned long) 100 );
-						
-					//shell gws
-					//xxxtestSHELLServer();
-					
-					//sprintf ( current_stdout->_base, "Testing refresh current_stdout ..." );
-					//REFRESH_STREAM (current_stdout);
-					
-				   //xxxtestlibcSTDOUT();
-                    
-					//interna
-					//no inci'cio do arquivo
-					//xxxtestlibc();
-					
-					//show_ide_info ();		 //execve/dd/disk1.c
-	                //show_ideports_info();    //execve/sm/disk/diskvol.c
-					
-					//#test testando inicialização do IDE, #funcionou.
-					//ata_initialize();
-				
-					// NIC test
-					//testNIC();
-
-					//init_nic ();  //intel.c (obs: essa rotina tambem reseta o controlador.)
-					//refresh_screen();
-					//testSend();
-					//vamos testar a rotina de configuração da transmissão.
-					//nic_i8254x_transmit();
-					//refresh_screen(); 
-					//vamos mostrar informações antes obtidas pelo sistema.
-					//show_network_info ();
-					//refresh_screen();
-
-					//pci_info();     //PCI information.
-				
-					//systemShowDevicesInfo();
-                    break;
-
-                //
-                // F6
-                //
-
-                // Usada para testes.
+                // F1, F2, F3, F4
+                // Os testes que estavam aqui foram pra outro lugar.
+                // See: ps2kbd.c 
+                case VK_F5:
                 case VK_F6:
-                
-                    pciInfo();
-                    refresh_screen();
-                    
-                    // testando o 'refresh all windows'
-                    // do compositor.
-                    //redraw_screen ();
-                    
-                    //VAMOS ACORDAR TODO MUNDO QUE ESPEROU POR ESSE MOTIVO.
-                    //wakeup_scan_thread_reason (WAIT_REASON_TEST);
-                    
-                    //thread_show_profiler_info ();
-
-                    //printf("%d Hz | sys time %d ms | ticks %d \n", 
-	                //     sys_time_hz, sys_time_ms, sys_time_ticks_total );
-	                //refresh_screen();
-	                 
-                    //show_process_information ();
-                    //kgws_create_menubar ( (struct window_d *) windowList[window_with_focus]  );
-           
-                     //See: network.c
-                     //testNIC ();
-
-                    //test_move_window();
-                    //test_move_window_2();
-                    
-                    //hal_test_speaker();
-
-					//#test
-					//fsList("volume1");
-					
-					//testando listar os arquivos de um diretório que está na memória.
-					//obs: isso funcionou.
-					//fsFAT16ListFiles ( "directory default name:\n", 
-					//    (unsigned short *) VOLUME1_ROOTDIR_ADDRESS,
-					//	256 );
-						
-					//memoryShowMemoryInfo();
-					
-				    //vfsListFiles();
-					//vfsShowVFSInfo();
-					
-					//habilitando o cursor.
-					//timer_cursor_used = 1;
-					//timer_cursor_status = 0;
-					
-					
-				    //testingPageAlloc();
-					
-				    //init_clock(); //clock information
-					//get_cmos_info();
-					//printf( (const char*) stdout->_ptr );
-
-					
-					//Obs: Não usa janelas, isso não mudará o foco.
-					//windowShowWWFMessageBuffers();
-					
-					//printf("F6: Testando linkar um driver ...\n");
-					//procedureLinkDriverTest();
-                    break;
-
-                //
-                // F7
-                //
-
-                // Usada para testes.
-				case VK_F7:
-					
-					//clonar o pai e executar o filho dado o nome do filho.
-					do_clone_execute_process ("noraterm.bin");
-					
-					//mostra_reg (0);
-					//mostra_reg (101);					
-					//mostrando a entrada 1 de todos os processos.
-					//mmShowPDEForAllProcesses (1);
-					
-
-					
-					//enviando uma mensagem para o terminal virtual
-					//pty_test_sendmessagetoterminal ();
-					
-					//indicamos de onde a rotina de pintura deve começar.
-					//CurrentTTY->stdout_last_ptr = stdout->_ptr;
-					//CurrentTTY->stdout_status = 1;
-					
-					//fprintf (stdout, "Testando stdout 1234...\n");
-					//fprintf (stdout, "C");
-					//fprintf (stdout, "String 2\n");
-					//fflush (stdout);
-					
-					//CurrentTTY->stdout_status = 1;
-					//CurrentTTY->stdout_update_what = 1; //mostra char
-                    //CurrentTTY->stdout_update_what = 3;   //mostra tudo (string)
-                    break;
-
-                //
-                // F8
-                //
-
-
-                // Usada para testes.
-                // Faz uma reinicialização de algumas funcionalidades básicas.
+                case VK_F7:
                 case VK_F8:
-                    ldisc_init_modifier_keys();
-					ldisc_init_lock_keys();
-					videoInit ();
-					SetFocus (gui->main);
-					refresh_screen();
-					goto done;
                     break;
 
-                
                 // Usadas pelos aplicativos.
                 case VK_F9:
                 case VK_F10:
@@ -866,66 +675,57 @@ system_procedure ( struct window_d *window,
 
 
                 // Nothing for now!
-				case VK_CAPITAL:
-				    break;
-
+                case VK_CAPITAL:
+                    break;
 
                 // Nothing for now!
                 case VK_LMENU:
-				    break;
+                    break;
 
-
-				// Nothing for now!
+                // Nothing for now!
                 case VK_LCONTROL: 
-					break;
+                    break;
 
-
-				// Nothing for now!
-				case VK_LSHIFT:   
-				    break;
-
+                // Nothing for now!
+                case VK_LSHIFT:   
+                    break;
 
                 // Num Lock.
                 case VK_NUMLOCK:
-				    if (numlock_status == 1)
-				    {
-					    keyboard_set_leds(LED_NUMLOCK);  
-					    break;
-				    };
-			        break;
+                    if (numlock_status == 1){
+                        keyboard_set_leds (LED_NUMLOCK);  
+                        break;
+                    }
+                    break;
 
 
-			    //Scroll Lock.	
-		        case VK_SCROLL:
-				    if (scrolllock_status == 1)
-				    {
-		                keyboard_set_leds(LED_SCROLLLOCK);
-					    break;
-				    };
-			        break;
+                // Scroll Lock.
+                case VK_SCROLL:
+                    if (scrolllock_status == 1){
+                        keyboard_set_leds (LED_SCROLLLOCK);
+                        break;
+                    }
+                    break;
 
-                //#test
-                //mouse up
+                // #test
+                // mouse up
                 case 31:
                     switch (long1)
                     {
-						//botaõ 1
+                        // Button 1.
                         case 1:
-                            if ( window == gui->screen )
-                            {
+                            if ( window == gui->screen ){
                                 printf ("system_pocedure: Clicking on root screen\n");
                                 refresh_screen ();
                             }
                             break;
-                    }
+                    };
                     break;
                 
                 default: 
-				    break;
-		    };              
+                    break;
+            };
         break;
-
-
 
 
 

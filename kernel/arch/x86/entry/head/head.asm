@@ -410,49 +410,50 @@ dummyJmpAfterLTR:
 		
     ;; Todos os componentes APIC são ignorados e o sistema opera
     ;; no modo single-thread usando LINT0.
-		
-;.setupPICMODE:	
-	
-	; PIC.
-	; Early PIC initialization.
-	
-	cli
-	
-	;xor eax, eax
-	mov al, 00010001b    ;begin PIC1 initialization.
-	out 0x20, al
-	IODELAY
-	mov al, 00010001b    ;begin PIC2 initialization.
-	out 0xA0, al
-	IODELAY
-	mov al, 0x20         ;IRQ 0-7: interrupts 20h-27h.
-	out 0x21, al
-	IODELAY
-	mov al, 0x28        ;IRQ 8-15: interrupts 28h-2Fh.
-	out 0xA1, al
-	IODELAY
-	mov al, 4
-	out 0x21, al
-	IODELAY
-	mov al, 2
-	out 0xA1, al
-	IODELAY
 
-   ;mov al, 00010001b    ;11 sfnm 80x86 support.
-	mov al, 00000001b    ;01 80x86 support.
-	out 0x21, al
-	IODELAY
-	out 0xA1, al
-	IODELAY
 
-    ;mascara todas as interrupções.
-	cli
-	mov  al, 255
-	out  0xa1, al
-	IODELAY
-	out  0x21, al
-	IODELAY
-	
+
+;.setupPICMODE:
+
+    ; PIC.
+    ; Early PIC initialization.
+
+    cli
+
+    ;xor eax, eax
+    mov al, 00010001b    ;begin PIC1 initialization.
+    out 0x20, al
+    IODELAY
+    mov al, 00010001b    ;begin PIC2 initialization.
+    out 0xA0, al
+    IODELAY
+    mov al, 0x20         ;IRQ 0-7: interrupts 20h-27h.
+    out 0x21, al
+    IODELAY
+    mov al, 0x28        ;IRQ 8-15: interrupts 28h-2Fh.
+    out 0xA1, al
+    IODELAY
+    mov al, 4
+    out 0x21, al
+    IODELAY
+    mov al, 2
+    out 0xA1, al
+    IODELAY
+    ;mov al, 00010001b    ;11 sfnm 80x86 support.
+    mov al, 00000001b     ;01 80x86 support.
+    out 0x21, al
+    IODELAY
+    out 0xA1, al
+    IODELAY
+
+    ;Mask all interrupts.
+    cli
+    mov  al, 255
+    out  0xa1, al
+    IODELAY
+    out  0x21, al
+    IODELAY
+
 
 	;; Com todas as interrupções mascaradas, é hora de 
 	;; configurarmos os timers.
@@ -471,20 +472,20 @@ dummyJmpAfterLTR:
 	; PIT
 	; Early PIT initialization.
 	
-	;xor	eax, eax
-	mov al, byte 0x36
-	mov dx, word 0x43
-	out dx, al
-	IODELAY
-	mov eax, dword 11931
-	mov dx, word 0x40
-	out dx, al
-	IODELAY
-	mov al, ah
-	out dx, al
-	IODELAY
-	
-	
+    ;xor eax, eax
+    mov al, byte 0x36
+    mov dx, word 0x43
+    out dx, al
+    IODELAY
+    mov eax, dword 11931
+    mov dx, word 0x40
+    out dx, al
+    IODELAY
+    mov al, ah
+    out dx, al
+    IODELAY
+
+
 	;; #todo:
 	;; Init RTC.
 
@@ -510,73 +511,75 @@ dummyJmpAfterLTR:
 	;todo: Aqui  é um bom lugar para isso.
 	;teclado ide, lfb ...
 	
-	
-    ;;
-	;; Desmascarando intrrupções.
-	;;
 
-	;unmask the timer interrupt.
-	mov dx, word 0x21
-	in  al, dx
-	IODELAY
-	and al, byte 0xfe
-	out dx, byte al
-    IODELAY
+    ;;
+    ;; Desmascarando intrrupções.
+    ;;
+
+    ; Unmask only the timer interrupt.
+    ;mov dx, word 0x21
+    ;in  al, dx
+    ;IODELAY
+    ;and al, byte 0xfe
+    ;out dx, byte al
+    ;IODELAY
     
-	;unmask all interrupts.
-	mov  al, 0
-	out  0xa1, al
-	IODELAY
-	out  0x21, al
+    ; Unmask all interrupts.
+    mov al, 0
+    out 0xa1, al
     IODELAY
-	
+    out 0x21, al
+    IODELAY
+
+	; #IMPORTANTE.
+	; Desbilita as interrupções. 
+	cli
+
+
 	;;
 	;; Configurando alguns registradores.
 	;;
-		
-	; #IMPORTANTE.
-	; Desbilita as interrupções. 
-	
-	cli
 	
 	; Debug.
 	; Debug: Disable break points.
 	
-	xor eax, eax
-	mov dr7, eax
+    xor eax, eax
+    ;mov dr2, eax
+    mov dr7, eax
 
-	;mov dr2, eax	
-	
-	
+
+
 	;Segmentos de dados em ring0.
 	
-	mov ax, word 0x10   
-	mov ds, ax
-	mov es, ax
-
+    mov ax, word 0x10   
+    mov ds, ax
+    mov es, ax
+    ;; ...
+    
+ 
 	;;
-	;; ## STACK ##
+	;; STACK
 	;;
 
-	;Stack	(atualiza o ponteiro para a variável global).
+	; Stack
+	; (atualiza o ponteiro para a variável global).
 	
 	; (o mesmo endereço indicado na TSS ??)
-	
-	mov eax, 0x003FFFF0 
-	mov esp, eax 
+
+    mov eax, 0x003FFFF0 
+    mov esp, eax 
     
-    ;salva.	
-	
-	mov dword [_kernel_stack_start_pa], 0x003FFFF0   
-	mov dword [_kernel_stack_start],    0x003FFFF0 
-	
+    ; Salva.
+    mov dword [_kernel_stack_start_pa], 0x003FFFF0   
+    mov dword [_kernel_stack_start],    0x003FFFF0 
+
 
 	; Muda o status do kernel.
 	; #todo: 
 	; Porque mudou para um se KeMain() muda para 0?
 	; +deletar isso. 
-	
-	mov dword [_KernelStatus], dword 1
+
+    mov dword [_KernelStatus], dword 1
 	
 	
     ;Debug:
