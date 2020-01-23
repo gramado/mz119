@@ -447,7 +447,9 @@ int main ( int argc, char *argv[] )
             
     // escreverá em stdout;
     // mas write enciará para o console virtual 0.       
-    printf ("hello.bin: Writing into the virtual console 0!\n");   
+    printf ("hello.bin: \x1b[H Writing into the virtual console 0!\n");   
+    
+    //Torvalds_printf("hello.bin: \x1b[H Writing into the virtual console 0!\n");
     
     //isso vai escrever na stream 1 do processo
     // em p->Streams[1];

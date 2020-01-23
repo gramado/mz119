@@ -13,7 +13,225 @@
 // Para pseudo terminais veja: vt.c
 
 
+// #todo:
+// Control Sequence Introducer (CSI) 
+// See:
+// https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences
+//
+
+
+
+
 #include <kernel.h>
+
+
+// Usado para manipular csi
+static unsigned long __state = 0;
+
+#define NPAR 16
+static unsigned long npar, par[NPAR];
+static unsigned long ques=0;
+
+void __local_ri (void)
+{
+    //#todo
+}
+
+void __local_gotoxy ( int new_x, int new_y, int console_number )
+{
+
+   //deletar.
+	//if (new_x>=columns || new_y>=lines)
+		//return;
+	//x=new_x;
+	//y=new_y;
+	//pos=origin+((y*columns+x)<<1);
+		
+     if ( new_x >= (TTY[console_number].cursor_right-1) )
+         return;
+         
+    
+    if ( new_y >= (TTY[console_number].cursor_bottom-1) )
+        return;
+        
+
+    TTY[console_number].cursor_x = new_x; 
+    TTY[console_number].cursor_y = new_y;
+}
+
+
+
+// #bugbug
+// Isso tá errado.
+#define __RESPONSE "\033[?1;2c"
+void __respond (int console_number)
+{
+    char * p = __RESPONSE;
+
+    while (*p) {
+        
+        //PUTCH(*p,tty->read_q);
+        console_putchar ( (int) *p, console_number );
+        p++;
+    }
+
+	//copy_to_cooked(tty);
+}
+
+static int saved_x=0;
+static int saved_y=0;
+
+void __local_save_cur (int current_console)
+{
+	saved_x = TTY[current_console].cursor_x;
+	saved_y = TTY[current_console].cursor_y;
+}
+
+void __local_restore_cur (int current_console)
+{
+	TTY[current_console].cursor_x = saved_x;
+	TTY[current_console].cursor_y = saved_y;
+}
+
+
+
+void csi_J (int par)
+{
+	/*
+	long count __asm__("cx");
+	long start __asm__("di");
+
+	switch (par) {
+		case 0:   //erase from cursor to end of display 
+			count = (scr_end-pos)>>1;
+			start = pos;
+			break;
+		case 1:	//erase from start to cursor 
+			count = (pos-origin)>>1;
+			start = origin;
+			break;
+		case 2: // erase whole display 
+			count = columns*lines;
+			start = origin;
+			break;
+		default:
+			return;
+	}
+	__asm__("cld\n\t"
+		"rep\n\t"
+		"stosw\n\t"
+		::"c" (count),
+		"D" (start),"a" (0x0720)
+		:"cx","di");
+		
+	*/
+}
+
+
+void csi_K(int par)
+{
+   /*
+	long count __asm__("cx");
+	long start __asm__("di");
+
+	switch (par) {
+		case 0:	   //erase from cursor to end of line 
+			if (x>=columns)
+				return;
+			count = columns-x;
+			start = pos;
+			break;
+		case 1:	//erase from start of line to cursor 
+			start = pos - (x<<1);
+			count = (x<columns)?x:columns;
+			break;
+		case 2: //erase whole line 
+			start = pos - (x<<1);
+			count = columns;
+			break;
+		default:
+			return;
+	}
+	__asm__("cld\n\t"
+		"rep\n\t"
+		"stosw\n\t"
+		::"c" (count),
+		"D" (start),"a" (0x0720)
+		:"cx","di");
+   */
+}
+
+
+void csi_m(void)
+{
+	/*
+	int i;
+
+	for (i=0;i<=npar;i++)
+		switch (par[i]) {
+			case 0:attr=0x07;break;
+			case 1:attr=0x0f;break;
+			case 4:attr=0x0f;break;
+			case 7:attr=0x70;break;
+			case 27:attr=0x07;break;
+		}
+
+   */
+}
+
+
+void csi_M(int nr)
+{
+	/*
+	if (nr>lines)
+		nr=lines;
+	else if (!nr)
+		nr=1;
+	while (nr--)
+		delete_line();
+   */
+}
+
+
+void csi_L(int nr)
+{
+	/*
+	if (nr>lines)
+		nr=lines;
+	else if (!nr)
+		nr=1;
+	while (nr--)
+		insert_line();
+   */
+}
+
+void csi_P(int nr)
+{
+	/*
+	if (nr>columns)
+		nr=columns;
+	else if (!nr)
+		nr=1;
+	while (nr--)
+		delete_char();
+   */
+}
+
+
+void csi_at(int nr)
+{
+	/*
+	if (nr>columns)
+		nr=columns;
+	else if (!nr)
+		nr=1;
+	while (nr--)
+		insert_char();
+
+    */
+}
+
+
 
 
 /*
@@ -267,8 +485,7 @@ void console_outbyte (int c, int console_number){
     //};
     
  
-    //Delete. 
-    //#bugbug: Limits.
+    // backspace ??
     if ( c == 8 )  
     {
         TTY[console_number].cursor_x--; 
@@ -401,10 +618,173 @@ ssize_t console_write (int console_number, const void *buf, size_t count)
         
         
     char *data = (char *) buf;
+       
+    char ch; 
+       
+    //
+    // Write string
+    //   
+       
+    // original - backup
+    //size_t i;
+    //for (i=0; i<count; i++)
+        //console_putchar ( (int) data[i], console_number);
+    
+ 
+    int i=0;  
         
-    size_t i;
-    for (i=0; i<count; i++)
-        console_putchar ( (int) data[i], console_number);
+    while (count--) {
+
+        ch = data[i];
+        i++;
+        
+        switch (__state){
+            
+            
+            
+            // State 0
+            case 0:
+
+               // Printable ?
+               if (ch >31 && ch <127) {
+
+                    console_putchar ( ch, console_number );
+               
+               // Escape.
+               } else if (ch==27) 
+                   __state=1;
+               else if (ch==10 || ch==11 || ch==12)
+                   console_putchar ( ch, console_number );  // \n ???
+               else if (ch==13)    
+                   console_putchar ( ch, console_number );  //cr \n
+               else if (ch==8) {
+                   console_putchar ( ch, console_number );  // backspace.
+               } else if (ch==9) {
+                   console_putchar ( ch, console_number );  // horizontal tab
+               }
+               break;
+            
+            
+            // State 1
+            case 1:
+                __state=0;
+                
+                if (ch=='[')
+					__state=2;
+				else if (ch=='E') 
+					__local_gotoxy ( 0, (TTY[console_number].cursor_y + 1), console_number );
+				else if (ch=='M')
+					__local_ri ();   //scroll. deixa pra depois. kkk
+				else if (ch=='D')
+					console_putchar ( ch, console_number );  //lf();
+				else if (ch=='Z')
+					__respond (console_number);    //test
+				else if ( TTY[console_number].cursor_x == '7')   //?? What L.T.
+					__local_save_cur (console_number);
+				else if ( TTY[console_number].cursor_x == '8' )  //?? What L.T.
+					__local_restore_cur (console_number);
+				break;
+			
+			
+			//State 2
+			case 2:
+			    // Clean
+				for ( npar=0; npar<NPAR; npar++ )
+					par[npar]=0;
+				npar=0;
+				__state=3;  // Next state.
+				if ( ques = ( ch == '?' ) ) 
+					break;
+            case 3:
+				if ( ch==';' && npar<NPAR-1) {
+					npar++;
+					break;
+				} else if ( ch >= '0' && ch <='9') {
+					par[npar] = 10 * par[npar] + ch -'0';
+					break;
+				} else __state=4;
+			case 4:
+				__state=0;
+				switch (ch) {
+					case 'G': case '`':
+						if (par[0]) par[0]--;
+						__local_gotoxy (par[0], TTY[console_number].cursor_y, console_number);
+						break;
+					case 'A':
+						if (!par[0]) par[0]++;
+						__local_gotoxy ( TTY[console_number].cursor_x,  TTY[console_number].cursor_y - par[0], console_number);
+						break;
+					case 'B': case 'e':
+						if (!par[0]) par[0]++;
+						__local_gotoxy ( TTY[console_number].cursor_x, TTY[console_number].cursor_y + par[0], console_number);
+						break;
+					case 'C': case 'a':
+						if (!par[0]) par[0]++;
+						__local_gotoxy ( TTY[console_number].cursor_x + par[0], TTY[console_number].cursor_y, console_number);
+						break;
+					case 'D':
+						if (!par[0]) par[0]++;
+						__local_gotoxy ( TTY[console_number].cursor_x - par[0], TTY[console_number].cursor_y, console_number);
+						break;
+					case 'E':
+						if (!par[0]) par[0]++;
+						__local_gotoxy (0, TTY[console_number].cursor_y + par[0], console_number);
+						break;
+					case 'F':
+						if (!par[0]) par[0]++;
+						__local_gotoxy (0, TTY[console_number].cursor_y - par[0], console_number);
+						break;
+					case 'd':
+						if (par[0]) par[0]--;
+						__local_gotoxy ( TTY[console_number].cursor_x, par[0], console_number);
+						break;
+					case 'H': case 'f':
+						if (par[0]) par[0]--;
+						if (par[1]) par[1]--;
+						__local_gotoxy (par[1],par[0], console_number);
+						break;
+					case 'J':
+						csi_J (par[0]);
+						break;
+					case 'K':
+						csi_K (par[0]);
+						break;
+					case 'L':
+						csi_L (par[0]);
+						break;
+					case 'M':
+						csi_M (par[0]);
+						break;
+					case 'P':
+						csi_P (par[0]);
+						break;
+					case '@':
+						csi_at (par[0]);
+						break;
+					case 'm':
+						csi_m ();
+						break;
+					case 'r':
+						if (par[0]) par[0]--;
+						if (!par[1]) par[1] = TTY[console_number].cursor_height;  //?? da fuck
+						if (par[0] < par[1] &&
+						    par[1] <= TTY[console_number].cursor_height ) {
+							TTY[console_number].cursor_top =par[0];
+							TTY[console_number].cursor_bottom = par[1];
+						}
+						break;
+					case 's':
+					    __local_save_cur( console_number );
+						break;
+					case 'u':
+						__local_restore_cur (console_number);
+						break;
+				}; // switch ?    
+    
+    
+    
+        };
+    };    
         
     return count;    
 
