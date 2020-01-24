@@ -10,7 +10,7 @@
 VERSION = 1
 PATCHLEVEL = 26
 SUBLEVEL = 0
-EXTRAVERSION = -rc1
+EXTRAVERSION = -rc2
 NAME = 
 
 
@@ -487,12 +487,14 @@ vhd-copy-files:
 	sudo cp userland/bin/GRAMMGR.BIN    /mnt/gramadovhd
 
 
-
-#base	ini files
-	sudo cp base/GUI.TXT            /mnt/gramadovhd
+#base
 	sudo cp base/GRAMADO.TXT        /mnt/gramadovhd
-	sudo cp base/INIT.TXT           /mnt/gramadovhd
-	sudo cp base/USER.TXT           /mnt/gramadovhd
+	
+#base	ini files
+	sudo cp base/ini/GUI.INI         /mnt/gramadovhd
+	sudo cp base/ini/INIT.INI        /mnt/gramadovhd
+	sudo cp base/ini/USER.INI        /mnt/gramadovhd
+
 
 #base fonts
 	sudo cp  base/res/fonts/NC2.FON        /mnt/gramadovhd
