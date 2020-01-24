@@ -896,9 +896,18 @@ int timerInit (void){
 
 
 
-// #todo
-int early_timer_init (void)
-{
+/*
+ * early_timer_init:
+ *     Inicialização prévia do módulo timer.
+ *     Uma outra inicialização mais aourada poderá ser feita
+ * posteriormente.
+ *     Porém ainda existe uma inicialização feita em Assembly
+ * quando o kernel é inicialazado.
+ * 
+ */
+ 
+int early_timer_init (void){
+
     __breaker_timer_initialized = 0;
 
     int i;
@@ -911,9 +920,13 @@ int early_timer_init (void)
 		timerList[i] = (unsigned long) 0;
 	}
 
-	sys_time_hz = (unsigned long) HZ;
+
+    // 400:
+    // 100 deixa a digitação muito lenta.
+
+	sys_time_hz = (unsigned long) HZ * 4;
 	
-	//timerInit8253 ( sys_time_hz );
+	timerInit8253 ( sys_time_hz );
 
 	set_current_quantum (QUANTUM_BASE);
 	

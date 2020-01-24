@@ -611,8 +611,8 @@ do_clone:
        
 
        // Check ELF signature.
-	   // OK. O comando existe e o arquivo foi carregado, mas 
-	   // precisamos saber se a assinatura de ELF é válida.
+       // OK. O comando existe e o arquivo foi carregado, mas 
+       // precisamos saber se a assinatura de ELF é válida.
        Status = (int) fsCheckELFFile ( (unsigned long) Clone->Image );
        
        if ( Status != 0 )
@@ -669,8 +669,7 @@ do_clone:
         //
 
         // Entry point para clonagem.
-		Clone->control->eip = 0x400000 + 0x1000;
-
+        Clone->control->eip = 0x400000 + 0x1000;
 
 
         //

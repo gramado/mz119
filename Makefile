@@ -485,20 +485,43 @@ vhd-copy-files:
 #userland
 	sudo cp userland/bin/INIT2.BIN      /mnt/gramadovhd
 	sudo cp userland/bin/GRAMMGR.BIN    /mnt/gramadovhd
-	sudo cp userland/bin/NC2.FON        /mnt/gramadovhd
-	sudo cp userland/GUI.TXT            /mnt/gramadovhd
-	sudo cp userland/GRAMADO.TXT        /mnt/gramadovhd
-	sudo cp userland/INIT.TXT           /mnt/gramadovhd
-	sudo cp userland/USER.TXT           /mnt/gramadovhd
-	sudo cp  userland/bmp/APP.BMP       /mnt/gramadovhd
-	sudo cp  userland/bmp/BMP1.BMP      /mnt/gramadovhd
-	sudo cp  userland/bmp/CURSOR.BMP    /mnt/gramadovhd
-	-sudo cp userland/bmp/DENNIS.BMP    /mnt/gramadovhd
-	sudo cp  userland/bmp/FILE.BMP      /mnt/gramadovhd
-	sudo cp  userland/bmp/FOLDER.BMP    /mnt/gramadovhd
-	-sudo cp userland/bmp/GRAMADO.BMP   /mnt/gramadovhd
-	sudo cp  userland/bmp/MOUSE.BMP     /mnt/gramadovhd
-	sudo cp  userland/bmp/TERMINAL.BMP  /mnt/gramadovhd
+
+
+
+#base	ini files
+	sudo cp base/GUI.TXT            /mnt/gramadovhd
+	sudo cp base/GRAMADO.TXT        /mnt/gramadovhd
+	sudo cp base/INIT.TXT           /mnt/gramadovhd
+	sudo cp base/USER.TXT           /mnt/gramadovhd
+
+#base fonts
+	sudo cp  base/res/fonts/NC2.FON        /mnt/gramadovhd
+	
+#base Cursors
+	sudo cp  base/res/cursors/CURSOR.BMP    /mnt/gramadovhd
+	sudo cp  base/res/cursors/MOUSE.BMP     /mnt/gramadovhd
+	
+#base Icons
+	sudo cp  base/res/icons/APP.BMP       /mnt/gramadovhd
+	sudo cp  base/res/icons/BMP1.BMP      /mnt/gramadovhd
+	sudo cp  base/res/icons/FILE.BMP      /mnt/gramadovhd
+	sudo cp  base/res/icons/FOLDER.BMP    /mnt/gramadovhd
+	sudo cp  base/res/icons/TERMINAL.BMP  /mnt/gramadovhd
+
+
+#base Images
+#	-sudo cp base/res/images/DENNIS.BMP    /mnt/gramadovhd
+#	-sudo cp base/res/images/DENNIS2.BMP   /mnt/gramadovhd
+
+
+#base  Tests
+	-sudo cp base/tests/*.C      /mnt/gramadovhd
+	-sudo cp base/tests/*.LUA    /mnt/gramadovhd
+
+
+#base Wallpapers
+#	-sudo cp base/res/wall/GRAMADO.BMP   /mnt/gramadovhd
+
 
 
 # garden
@@ -557,14 +580,6 @@ vhd-copy-files:
 #...
 
 
-# c test suite
-	-sudo cp userland/atacama/gt/tests/TEST1.C    /mnt/gramadovhd
-	-sudo cp userland/atacama/gt/tests/TEST2.C    /mnt/gramadovhd
-	-sudo cp userland/atacama/gt/tests/TEST3.C    /mnt/gramadovhd
-	-sudo cp userland/atacama/gt/tests/*.LUA      /mnt/gramadovhd
-
-
-
 
 
 #
@@ -618,25 +633,25 @@ vhd-copy-files:
 #
 
 # TTY SERIAL DEVICES
-	-sudo cp user/config/TTYS0     /mnt/gramadovhd/DEV
-	-sudo cp user/config/TTYS1     /mnt/gramadovhd/DEV
-	-sudo cp user/config/TTYS2     /mnt/gramadovhd/DEV
-	-sudo cp user/config/TTYS3     /mnt/gramadovhd/DEV
+#	-sudo cp user/config/TTYS0     /mnt/gramadovhd/DEV
+#	-sudo cp user/config/TTYS1     /mnt/gramadovhd/DEV
+#	-sudo cp user/config/TTYS2     /mnt/gramadovhd/DEV
+#	-sudo cp user/config/TTYS3     /mnt/gramadovhd/DEV
 
 # VIRTUAL CONSOLES
-	-sudo cp user/config/TTY0     /mnt/gramadovhd/DEV
-	-sudo cp user/config/TTY1     /mnt/gramadovhd/DEV
-	-sudo cp user/config/TTY2     /mnt/gramadovhd/DEV
-	-sudo cp user/config/TTY3     /mnt/gramadovhd/DEV
+#	-sudo cp user/config/TTY0     /mnt/gramadovhd/DEV
+#	-sudo cp user/config/TTY1     /mnt/gramadovhd/DEV
+#	-sudo cp user/config/TTY2     /mnt/gramadovhd/DEV
+#	-sudo cp user/config/TTY3     /mnt/gramadovhd/DEV
 # ...
 
 # NULL
-	-sudo cp user/config/NULL     /mnt/gramadovhd/DEV
+#	-sudo cp user/config/NULL     /mnt/gramadovhd/DEV
 
 # PSEUDO TERMINAL
-	-sudo cp user/config/0        /mnt/gramadovhd/DEV/PTS
-	-sudo cp user/config/1        /mnt/gramadovhd/DEV/PTS
-	-sudo cp user/config/PTMX     /mnt/gramadovhd/DEV/PTS
+#	-sudo cp user/config/0        /mnt/gramadovhd/DEV/PTS
+#	-sudo cp user/config/1        /mnt/gramadovhd/DEV/PTS
+#	-sudo cp user/config/PTMX     /mnt/gramadovhd/DEV/PTS
 
 
 #
@@ -651,7 +666,7 @@ vhd-copy-files:
 #
 
 #garden
-	-sudo cp arch/x86/boot/vhd/tests/TEST1.ASM  /mnt/gramadovhd/GARDEN
+#	-sudo cp arch/x86/boot/vhd/tests/TEST1.ASM  /mnt/gramadovhd/GARDEN
 #	-sudo cp userland/garden/bin/*                    /mnt/gramadovhd/GARDEN/BIN 
 
 
@@ -659,19 +674,19 @@ vhd-copy-files:
 # ======== Files in the /LIB/ folder. ========
 #	
 	
-	-sudo cp arch/x86/boot/vhd/tests/TEST1.ASM  /mnt/gramadovhd/LIB
+#	-sudo cp arch/x86/boot/vhd/tests/TEST1.ASM  /mnt/gramadovhd/LIB
 	
 
 #
 # ======== Files in the SBIN/ folder. ========
 #
-	-sudo cp userland/atacama/bin/HELLO3.BIN  /mnt/gramadovhd/SBIN 
+#	-sudo cp userland/atacama/bin/HELLO3.BIN  /mnt/gramadovhd/SBIN 
 
 #
 # ======== Files in the /TMP/ folder. ========
 #	
 
-	-sudo cp arch/x86/boot/vhd/tests/TEST1.ASM  /mnt/gramadovhd/TMP
+	-sudo cp base/tests/TEST1.C  /mnt/gramadovhd/TMP
 
 
 
