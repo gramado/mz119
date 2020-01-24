@@ -498,6 +498,7 @@ vhd-copy-files:
 
 #base fonts
 	sudo cp  base/res/fonts/NC2.FON        /mnt/gramadovhd
+	sudo cp  base/res/fonts/LIN8X8.FON     /mnt/gramadovhd
 	
 #base Cursors
 	sudo cp  base/res/cursors/CURSOR.BMP    /mnt/gramadovhd

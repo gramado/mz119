@@ -10,8 +10,6 @@
  *     The type is 'hybrid'.
  *     The entry point is in 'head.s'.
  *
- * The first three system utilities are: 
- * IDLE.BIN, SHELL.BIN and TASKMAN.BIN.
  *
  * The Kernel area is the first 4MB of real memory.
  * The image was loaded in the address 0x00100000 and the entry point is in 
@@ -672,8 +670,10 @@ void x86main (void){
 	// Testando font NelsonCole2
 	// #todo: Isso pode ficar no módulo gws ?
 
-    gwsInstallFont ("NC2     FON");
-    //gwsInstallFont ("NC3     FON");
+    //gwsInstallFont ("NC2     FON");
+    gwsInstallFont ("LIN8X8  FON");
+    //...
+
 
     // #todo:
     // Temos que configurar informações sobre a fonte.
