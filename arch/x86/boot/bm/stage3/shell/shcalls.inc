@@ -24,7 +24,7 @@
 
 exit:
     jmp do_boot
-	jmp $
+    jmp $
 ;--
 
 

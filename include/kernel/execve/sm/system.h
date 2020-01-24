@@ -478,12 +478,6 @@ SendMessage ( struct window_d *window,
 void procedureHelp (void);
 
 
-/*
- * systemAbort:
- *     Abort system.
- */
-
-void systemAbort (void);
 
 
 /*

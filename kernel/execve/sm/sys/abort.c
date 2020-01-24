@@ -11,50 +11,17 @@
 #include <kernel.h>
 
 
-/*
- * KeAbort:
- *     Interface para chamar módulo externo.
- *     Aborta o sistema atravéz de chamada à módulo externo.
- *     Chama um módulo externo para operações de finalização
- *     do sistema.
- *     Chama módulo externo (Server em user mode).
- */
-/*
-void KeAbort (){
-	
-    printf("KeAbort:");
-    die();
-};
-*/
-
-
-
-/*
- * systemAbort:
- *     Chama interface pra abortar todo o sistema
- *     inclusive o kernel.
- */
-
-void systemAbort (void){
-	
-    KiAbort (); 
-    
-	//
-	// Sem retorno !
-	//
-}
-
-
 
 /*
  * KiAbort:
- *     Interface para abortar o kernel..
- *     Sem retorno !
+ *     Interface to abort the system.
  */
 
-void KiAbort (void){
+void KiAbort (void)
+{
+    abort ();
     
-    abort ();	
+    // Not reached!
 }
 
 

@@ -227,16 +227,17 @@ int fsList ( const char *dir_name ){
     {
         dir_name = current_target_dir.name;
 
-        if ( dir_name == 0 )
-        {
+        if ( dir_name == 0 ){
             printf ("current_target_dir.name fail\n");
         }
     }
 
+
 	// name, dir address, number of entries
 
     fsFAT16ListFiles ( (const char *) dir_name,         
-        (unsigned short *) current_target_dir.current_dir_address, 256 );
+        (unsigned short *) current_target_dir.current_dir_address, 
+        256 );
 
 
     return 0;
@@ -301,23 +302,6 @@ fsFAT16ListFiles ( const char *dir_name,
 }
 
 
-/*
- * KeLoadFile:
- *     Carraga um arquivo na memória.
- *     @todo: Ke_ não é o certo, pois ke é chamadas 
- *            à rotinas externas. 
- *
- * #bugbug a estrutura de canal será usada para troca 
- * de mensagens S|----|S
- */
-
-int 
-KeLoadFile ( struct channel_d *channel, 
-             unsigned char *file_name, 
-			 unsigned long file_address )
-{
-	return -1;  //#bugbug ??
-}
 
 
 /*

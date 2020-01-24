@@ -10,7 +10,7 @@
  * 
  * In this file:
  *     + load_kernel: Carrega o KERNEL.BIN.
- *     + load_files: Carrega IDLE.BIN, SHELL.BIN, TASKMAN.BIN.
+ *     + load_files: 
  *
  * Históry:
  *     2015 - Created by Fred Nora.
@@ -46,59 +46,71 @@ void updateProgressBar();
 */
 
 
-/* load_kernel: 
- * Carrega o KERNEL.BIN na memória. */
+
+/* 
+ ******************************************** 
+ * load_kernel: 
+ *     Carrega o KERNEL.BIN na memória. 
+ */
  
 int load_kernel (){
-	
-    int Status;
 
-	//Address.
-	
-	unsigned long kernel_pa = KERNEL_ADDRESS;                    //0x00100000.
-	unsigned long kernel_va = KERNEL_VA;                         //0xC0000000.
-	
-	unsigned char *kernel = (unsigned char *) KERNEL_ADDRESS;    //0x00100000.  
-	
-	//Name.
-	char *kernel_name = "KERNEL.BIN";
-	
+    int Status = -1;
+
+    // Address.
+    // pa = 0x00100000.
+    // va = 0xC0000000.
+    
+    unsigned long kernel_pa = KERNEL_ADDRESS;  
+    unsigned long kernel_va = KERNEL_VA;      
+
+    // Buffer.
+    // 0x00100000.
+    
+    unsigned char *kernel = (unsigned char *) KERNEL_ADDRESS;      
+
+
+	// Name.
+    char *kernel_name = "KERNEL.BIN";
+
 	//Message.
-	
+
 #ifdef BL_VERBOSE	
-	printf ("load_kernel: Loading %s .. PA=%x | VA=%x \n", 
-	    kernel_name, kernel_pa, kernel_va );
+    printf ("load_kernel: Loading %s .. PA=%x | VA=%x \n", 
+        kernel_name, kernel_pa, kernel_va );
 #endif
 
 
-    //Carregando KERNEL.BIN no endereço físico.
-	
-	//isso funciona.
-	//Status = (int) fsLoadFile ("KERNEL  BIN", kernel_pa, FAT16_ROOTDIR_ADDRESS );
-	
-	//#test
-	Status = (int) load_path ( "BOOT       /KERNEL  BIN", 
-	                   (unsigned long) kernel_pa );
+    // Carregando KERNEL.BIN no endereço físico.
+
+    //isso funciona.
+    //Status = (int) fsLoadFile ("KERNEL  BIN", kernel_pa, FAT16_ROOTDIR_ADDRESS );
+
+    // #test
+    // Carregador usando path.
+    // Isso só suporta dois níveis por enquanto.
+    // Caso não for encontrado no subdiretório, tenta no diretório raiz.
+        
+    Status = (int) load_path ( "BOOT       /KERNEL  BIN", 
+                       (unsigned long) kernel_pa );
     
-	if ( Status != 0 )
-	{
-		//isso funciona.
-	    Status = (int) fsLoadFile ( "KERNEL  BIN", 
-	                       kernel_pa, 
-	                       FAT16_ROOTDIR_ADDRESS );
-	}
-	
-	if (Status != 0 )
-	{
+    if ( Status != 0 ){
+
+        Status = (int) fsLoadFile ( "KERNEL  BIN", 
+                           kernel_pa, FAT16_ROOTDIR_ADDRESS );
+    }
+
+
+    if (Status != 0 ){
         printf("load_kernel fail: Load\n");  
         goto fail;    
-	};
+    }
 
 
-    // Update progress bar
-    // updateProgressBar();
+
 
 	// Check for .ELF file. 0x7f 0x45 0x4c 0x46 (.ELF)	
+
     if ( kernel[0] != 0x7F || 
          kernel[1] != 'E' || 
          kernel[2] != 'L' || 

@@ -64,70 +64,65 @@ faults.o
 all-bl: bl-x86 link-x86 finalize clean
 
 bl-x86:
+
+    #head.s
+	nasm -I src/core/head/x86/ src/core/head/x86/head.s -f elf -o head.o
+
 	gcc -c src/main.c -I include/ $(CFLAGS) -o main.o 
 	
-    #echo -{ ...
-    #echo -{ Boot Loader - (BL.BIN)
-
-    #rem echo -{ ...
-    #echo -{ Loader	
-	gcc -c src/loader/loader.c -I include/ $(CFLAGS) -o loader.o	
-	
-    #rem echo -{ ...
-    #echo -{ Core
-    #rem head.s
-	nasm -I src/core/head/x86/ src/core/head/x86/head.s -f elf -o head.o
-	
-	#rem c. 
+	#c. 
 	gcc -c src/core/faults.c  -I include/ $(CFLAGS) -o faults.o
 	gcc -c src/core/pages.c   -I include/ $(CFLAGS) -o pages.o	
 	gcc -c src/core/heap.c    -I include/ $(CFLAGS) -o heap.o
-	
-    #rem echo -{ ...
-    #echo -{ Libc
+
+
+    #Libc
 	gcc -c src/libc/stdio.c   -I include/ $(CFLAGS) -o stdio.o
 	gcc -c src/libc/string.c  -I include/ $(CFLAGS) -o string.o
 	gcc -c src/libc/stdlib.c  -I include/ $(CFLAGS) -o stdlib.o
 		
-    #rem echo -{ ...
-    #echo -{ Init
-	gcc -c src/init/init.c -I include/ $(CFLAGS) -o init.o 		
+
+    #Init
+	gcc -c src/init.c -I include/ $(CFLAGS) -o init.o 
+
+
+    #Sys
+	gcc -c src/procedure.c -I include/ $(CFLAGS) -o procedure.o
+	gcc -c src/services.c  -I include/ $(CFLAGS) -o services.o
+	gcc -c src/abort.c     -I include/ $(CFLAGS) -o abort.o
 	
-    #rem echo -{ ...
-    #echo -{ Sys
-	gcc -c src/sys/procedure.c -I include/ $(CFLAGS) -o procedure.o	
-	gcc -c src/sys/services.c  -I include/ $(CFLAGS) -o services.o		
-	gcc -c src/sys/abort.c     -I include/ $(CFLAGS) -o abort.o		
-	
-    #rem echo -{ ...
-    #echo -{ Arch
+
+    #Arch
 	gcc -c src/arch/x86/x86.c               -I include/ $(CFLAGS)  -o x86.o
 	gcc -c src/arch/x86/ports.c             -I include/ $(CFLAGS)  -o ports.o 
 	gcc -c src/arch/x86/drivers/pci.c       -I include/ $(CFLAGS)  -o pci.o		
 	gcc -c src/arch/x86/drivers/keyboard.c  -I include/ $(CFLAGS)  -o keyboard.o
 	gcc -c src/arch/x86/drivers/timer.c     -I include/ $(CFLAGS)  -o timer.o	
 	
-    #rem echo -{ ...
-    #echo -{ Fs
-	gcc -c src/fs/fs.c -I include/ $(CFLAGS) -o fs.o						
 
-    #rem echo -{ ...
-    #echo -{ Shell
-	gcc -c src/shell/shell.c -I include/ $(CFLAGS) -o shell.o
-	
-	
-	#
-	# #test
-	# tentando dar suporte ai controlador IDE.
-	# 
+    #Fs
+	gcc -c src/fs.c -I include/ $(CFLAGS) -o fs.o
 
-	gcc -c src/arch/x86/drivers/ide/hdd.c  -I include/ $(CFLAGS)  -o hdd.o				
-	gcc -c src/arch/x86/drivers/ide/ide.c  -I include/ $(CFLAGS)  -o ide.o				
+
+
+    #Loader
+	gcc -c src/loader.c -I include/ $(CFLAGS) -o loader.o
+
+
+    #Shell
+	gcc -c src/shell.c -I include/ $(CFLAGS) -o shell.o
 
 	
+
+
+	# Suporte ao controlador IDE.
+	gcc -c src/arch/x86/drivers/ide/hdd.c  -I include/ $(CFLAGS)  -o hdd.o
+	gcc -c src/arch/x86/drivers/ide/ide.c  -I include/ $(CFLAGS)  -o ide.o
+
 	#backup
 	#gcc -c src/arch/x86/drivers/hdd.c       -I include/ $(CFLAGS)  -o hdd.o		
 	
+
 	
 link-x86:
 	ld -m i386pe -T link.ld -o BL.BIN $(myObjects) -Map blmap.s

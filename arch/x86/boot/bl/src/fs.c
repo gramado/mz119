@@ -126,9 +126,11 @@ fatLoadCluster ( unsigned long sector,
  *     Mudar para fsFormat();.
  */
  
-void fs_format (){
-	
-	printf ("fs_format:\n");
+// #todo deletar. 
+ 
+void fs_format ()
+{
+	//nothing.
 }
 
 
@@ -136,9 +138,9 @@ void fs_format (){
  * fs_search_empty_entry: 
  *     Encontrar uma entrada vazia em um dado diretório. */
 
-unsigned long fs_search_empty_entry (unsigned long id){
-	
-    return 0; 	
+unsigned long fs_search_empty_entry (unsigned long id)
+{
+    return 0; 
 }
 
 
@@ -666,11 +668,8 @@ while(1)
 
 
 
-   //
    // Fail: 
    // O arquivo não pode ser carregado.
-   //
-
 
 fail:
 	
@@ -705,7 +704,8 @@ done:
  *     Carrega nesse endereço o arquivo que está nesse path.
  */
 
-// Esse é o endereço do arquivo, que é o último nível do path.
+// IN:
+// path de dois níveis, andereço onde carregar.
 
 int load_path ( unsigned char *path, unsigned long address ){
 
@@ -718,14 +718,9 @@ int load_path ( unsigned char *path, unsigned long address ){
 
     int Ret = -1;    // fail. Usado na função que carrega o arquivo.
 
-	//#bugbug
-	//isso pode dar problema, é muito grande.
-	//vamos tentar malloc.
-	//512 entradas de 32 bytes
-	//char dir[512*32];
-	
-	//diretório do primeiro nível.
-	void *__dir;                  
+
+    // Diretório do primeiro nível.
+    void *__dir;                  
 
 
     // #obs:
@@ -733,138 +728,150 @@ int load_path ( unsigned char *path, unsigned long address ){
     // o endereço do arquivo no segundo nível deve ser passado via argumento.
 
 
-	//diretório do primeiro nível.
-	__dir = (void *) malloc (512*32);
-    if ( (void *) __dir == NULL )
-    {
-        printf ("load_path: dir malloc fail");
-        abort();
+    // Diretório do primeiro nível.
+
+    __dir = (void *) malloc (512*32);
+    
+    if ( (void *) __dir == NULL ){
+        printf ("load_path: __dir\n");
+        abort ();
     }
 
+    // Address
 
-	if (address == 0)
-	{
-	    printf ("load_path: file address");
-		abort();
-	}
+    if (address == 0){
+        printf ("load_path: address\n");
+        abort ();
+    }
 
 
     p = path;
 
-
     level = 0;
+
+    //
+    // Loop.
+    //
     
     for (;;){
 
     switch (level)
     {
-		//level0:	
+        
+        // Level 0.
         case 0:
             i=0;
-			printf ("\n[LEVEL 0]\n\n");
-			for ( i=0; i<12; i++ )
-			{
-				//#debug
-				printf ("%c", (char) *p);
-				
-				buffer[i] = (char) *p;
-				if ( *p == '/' )
-				{
+            printf ("\n[LEVEL 0]\n\n");
+            for ( i=0; i<12; i++ )
+            {
+                // #debug
+                printf ("%c", (char) *p);
+
+                buffer[i] = (char) *p;
+                if ( *p == '/' )
+                {
+                    // Finaliza a string no buffer.
+                    buffer[i] = 0;
+
 					//#DEBUG
 					//printf (" DELIMITER FOUND ");
-					
-					//finaliza;
-					buffer[i] = 0;
-					
+
 					// Carregando o diretório do primeiro nível.
 					// arg1 = nome do diretório a ser carregado, 
 					// arg2 = endereço onde carregar o diretório, 
 					// arg3 = endereço do diretório onde está o diretório.
-					Ret = fsLoadFile ( (unsigned char *) buffer, 
-					          (unsigned long) __dir, 
-					          FAT16_ROOTDIR_ADDRESS );
-					//ok
-					if ( Ret == 0 )
-					{
-						printf ("arquivo carregado com sucesso\n");
-						
-						//buffer[0] = 0; //reiniciamos o buffer
-						//i = 0;     //reiniciamos o contador do buffer
-						level++;
-						p++;
-						break;
-						
-					}else{
-					    printf ("load_path: fail loading level 0\n");
-						abort();
-					}
-				}
-				
-				p++;
-			};
-			break;
-			
-		
-		//level1:
-		case 1:
-		    i=0;
-			printf ("\n\n[LEVEL 1]\n\n");
-			for ( i=0; i<12; i++ )
-			{
-				//#debug
-				printf ("%c", (char) *p);
-				
-				buffer[i] = (char) *p;
+
+                    Ret = fsLoadFile ( (unsigned char *) buffer, 
+                              (unsigned long) __dir, 
+                              FAT16_ROOTDIR_ADDRESS );
+                    // ok.
+                    if ( Ret == 0 )
+                    {
+                        printf ("Arquivo carregado com sucesso.\n");
+
+                        level++;
+                        p++;
+                        break;
+                    }else{
+                        printf ("load_path: fail loading level 0\n");
+                        abort ();
+                    };
+                }
+
+                p++;
+            };
+            break;
+
+
+        // Level 1.
+        case 1:
+            i=0;    // Reiniciamos o contador do buffer.
+            //buffer[0] = 0; //reiniciamos o buffer
+            printf ("\n\n[LEVEL 1]\n\n");
+
+            for ( i=0; i<12; i++ )
+            {
+                // #debug
+                printf ("%c", (char) *p);
+
+                buffer[i] = (char) *p;
+
 				//printf ("BUFFER: {%s} \n", buffer);
 				//fim da string ?
-				if ( *p == 0 )
-				{
-					//printf ("BUFFER: {%s} \n", buffer);
-					//abort ();
-					
+
+                //if ( *p == '/' ) // Outro nível ?
+                if ( *p == 0 )
+                {
+                    //printf ("BUFFER: {%s} \n", buffer);
+                    //abort ();
+
 					// Carregando o arquivo alvo que está no segundo nível.
 					// arg1=nome do arquivo alvo, (pode ser um diretório) 
 					// arg2=endereço onde carregar o arquivo, 
 					// arg3=endereço do diretório onde está o arquivo.
-					Ret = fsLoadFile ( (unsigned char *) buffer, 
-					         (unsigned long) address, 
-					         (unsigned long) __dir );
 
-					//ok
-				    if ( Ret == 0 )
-					{
-						return 0;
-					
-					}else{
-					    //fail
-					    printf ("load_path: fail loading level 1\n");
-						
+                    Ret = fsLoadFile ( (unsigned char *) buffer, 
+                              (unsigned long) address, 
+                              (unsigned long) __dir );
+                              
+                    // ok.
+                    if ( Ret == 0 )
+                    {
+                        return 0;
+                    }else{
+
+                        // Fail.
+                        printf ("load_path: Fail loading level 1\n");
+
 						// #debug: 
 						// vamos mostrar o conteúdo do diretório de primeiro nível.
-						printf ("DIR: %s", __dir );
-						abort();
-					};
-				};
-				
-				p++;
-			}
-			//se acabou a contage então falhamos.
-			printf ("load_path: level 1: name too long\n");
-			abort();
-			break;
+                        printf ("DIR: %s", __dir );
+                        abort ();
 
+                    };
+                }
 
-		default:
+                p++;
+            }
+
+            // Se acabou a contage então falhamos.
+            printf ("load_path: Level 1, Name too long.\n");
+            abort();
+
+            break;
+
+        default:
+
 			//#bugbug
-			printf ("load_path: Default level");
+			printf ("load_path: Default level.\n");
 			abort ();
 			//refresh_screen();
 			//while (1){}
-			break;
+            break;
 
 
-	};  //fim do switch
-	}; //fim do for
+    };    // Fim do switch.
+    };    // Fim do for.
 
 
     return -1;
@@ -1081,7 +1088,7 @@ unsigned long fs_find_n_empty_entries (unsigned long n){
     if ( n < 0 || n > lista_size )
     {
         goto fail;
-    };
+    }
 
 
 	for(i = 0; i < n; i++)
@@ -1093,11 +1100,9 @@ unsigned long fs_find_n_empty_entries (unsigned long n){
 		{
 		    file_cluster_list[l] = empty;
             l++;
-		}
-        else
-        {
+		}else{
 		    goto fail;
-		};		
+		};
 	};
 
 
@@ -1108,9 +1113,11 @@ unsigned long fs_find_n_empty_entries (unsigned long n){
 // Done.
 //
 
+// Retorna o primeiro da lista.
+
 done:
-	//retorna o primeiro da lista.
-	return file_cluster_list[0];
+
+    return file_cluster_list[0];
 
 
 fail:
@@ -1125,8 +1132,8 @@ fail:
  *     Carrega o diretório raiz na memória. 
  */ 
  
-void fs_load_rootdir (){
-
+void fs_load_rootdir ()
+{
     fs_load_rootdirEx ();
 }
 
@@ -1138,8 +1145,8 @@ void fs_load_rootdir (){
  *     Operação de hardware. 
  */
  
-void read_lba ( unsigned long address, unsigned long lba ){   
-
+void read_lba ( unsigned long address, unsigned long lba )
+{   
     my_read_hd_sector ( address, lba, 0, 0 );
 }
 
@@ -1149,8 +1156,8 @@ void read_lba ( unsigned long address, unsigned long lba ){
  *     Grava uma lba no HD. (um setor). 
  */
  
-void write_lba ( unsigned long address, unsigned long lba ){    
- 
+void write_lba ( unsigned long address, unsigned long lba )
+{
     my_write_hd_sector ( address, lba, 0, 0 );     
 }
 
@@ -1389,15 +1396,20 @@ unsigned long fsCreateFile ( char *name, unsigned long id ){
 	
 	//fs_save_entry_on_root(i);
 
+
 done:
+
 #ifdef BL_VERBOSE
-    printf("fs_create_file: done ! cluster = %d \n",fat_entry);
+    printf ("fs_create_file: done ! cluster = %d \n",fat_entry);
 #endif    
-	return 0;	
+
+    return 0;	
+
+
 fail:   
-    printf("fail cluster = %d \n",fat_entry);
-	return 1;
-};
+    printf ("fail cluster = %d \n",fat_entry);
+    return 1;
+}
 
 
 /*
@@ -1405,9 +1417,9 @@ fail:
  *     Apaga a fat, colocando zero em tudo.
  */
 
-void fsClearFat (){
-	
-    fsInitFat();  //Provisório.
+void fsClearFat ()
+{
+    fsInitFat ();  //Provisório.
 }
 
 
