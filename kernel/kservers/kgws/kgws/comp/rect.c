@@ -911,29 +911,30 @@ show_saved_rect ( unsigned long x,
 
 void scroll_screen_rect (void){
 
-    //unsigned long x = 0; 
-    //unsigned long y = 0; 
-    //unsigned long width = 0;  //800
-    //unsigned long height = 0;  //600
 
-	// #TEST
     register unsigned int i;
-	// unsigned int i;
 
     unsigned int line_size, lines;
     unsigned int offset;
+
     unsigned long Width = (unsigned long) screenGetWidth ();
     unsigned long Height = (unsigned long) screenGetHeight ();
 
-	//line_size = (unsigned int) width; 
-	//lines = (unsigned int) height;
+
+    //int cWidth = get_char_width ();
+    int cHeight = get_char_height ();
+
+	// = 3; 
+	//24bpp
+    int bytes_count = 0;
+    
+    int count = 0; 
+
+
 
     line_size = (unsigned int) Width; 
     lines = (unsigned int) Height;
-	
-	// = 3; 
-	//24bpp
-    int bytes_count;
+
 
     switch (SavedBPP)
     {
@@ -948,7 +949,6 @@ void scroll_screen_rect (void){
 		//...
     };
 
-    int cHeight = get_char_height ();
 
 	//
 	// Origem e destino.
@@ -958,30 +958,15 @@ void scroll_screen_rect (void){
 	//destino
     void *p = (void *) BACKBUFFER_ADDRESS;
 
-	// o y é a linha da origem. o deslocamento de ter a altura de um char.
 	// origem
+	// o y é a linha da origem. 
+	// o deslocamento deve ter a altura de um char.
     const void *q = (const void *) BACKBUFFER_ADDRESS + ( bytes_count * SavedX * cHeight ) ;
 
 
-
-	// #atenção.
-	
-	//offset = (unsigned int) BUFFER_PIXEL_OFFSET( x, y );
-	
-	//offset = (unsigned int) ( (bytes_count*SavedX*(y)) + (bytes_count*(x)) );
-	
-	//p = (void *) (p + offset);    
-	//q = (const void *) (q + offset);    
-	 
-	// #bugbug
-	// Isso pode nos dar problemas.
-	// ?? Isso ainda é necessário nos dias de hoje ??
-	
-	//vsync ();
-
-	//(line_size * bytes_count) é o número de bytes por linha. 
-
-    int count; 
+    //
+    // Copy.
+    //
 
 	//#importante
 	//É bem mais rápido com múltiplos de 4.	
@@ -991,29 +976,30 @@ void scroll_screen_rect (void){
     {
         count = ((line_size * bytes_count) / 4); 
 
-	    for ( i=0; i < lines; i++ )
-	    {
-		    //copia uma linha ou um pouco mais caso não seja divisível por 
-		    memcpy32 ( p, q, count );
-		    
-			q += (Width * bytes_count);
-	 		p += (Width * bytes_count);
-	    };
+        // Copia uma linha, quatro bytes de cada vez.  
+        for ( i=0; i < lines; i++ )
+        {
+            memcpy32 ( p, q, count );
+
+            q += (Width * bytes_count);
+            p += (Width * bytes_count);
+        };
     }
+
 
 	//se não for divisível por 4.
     if ( ((line_size * bytes_count) % 4) != 0 )
     {
-	    for ( i=0; i < lines; i++ )
-	    {
-		    memcpy ( (void *) p, (const void *) q, (line_size * bytes_count) );
-		    
-			q += (Width * bytes_count);
-		    p += (Width * bytes_count);
-	    };
+        // Copia a linha, um bytes por vez.
+        for ( i=0; i < lines; i++ )
+        {
+            memcpy ( (void *) p, (const void *) q, (line_size * bytes_count) );
+
+            q += (Width * bytes_count);
+            p += (Width * bytes_count);
+        };
     }
 }
-
 
 
 

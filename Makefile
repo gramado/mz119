@@ -10,7 +10,7 @@
 VERSION = 1
 PATCHLEVEL = 26
 SUBLEVEL = 0
-EXTRAVERSION = -rc2
+EXTRAVERSION = -rc3
 NAME = 
 
 
@@ -499,6 +499,10 @@ vhd-copy-files:
 #base fonts
 	sudo cp  base/res/fonts/NC2.FON        /mnt/gramadovhd
 	sudo cp  base/res/fonts/LIN8X8.FON     /mnt/gramadovhd
+	sudo cp  base/res/fonts/LIN8X16.FON    /mnt/gramadovhd
+#...
+
+
 	
 #base Cursors
 	sudo cp  base/res/cursors/CURSOR.BMP    /mnt/gramadovhd

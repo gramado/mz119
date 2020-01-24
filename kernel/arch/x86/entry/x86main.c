@@ -666,20 +666,42 @@ void x86main (void){
 
     windowLoadGramadoIcons ();
 
+
+    //
+    // Fonts.
+    //
+
 	// #fonte:
 	// Testando font NelsonCole2
 	// #todo: Isso pode ficar no módulo gws ?
-
-    //gwsInstallFont ("NC2     FON");
-    gwsInstallFont ("LIN8X8  FON");
-    //...
-
-
     // #todo:
     // Temos que configurar informações sobre a fonte.
+
+    //
+    //  8x8
+    //
+    
+    //gwsInstallFont ("NC2     FON");
+    gwsInstallFont ("LIN8X8  FON");
+    gfontSize = FONT8X8;
     gwsSetCurrentFontCharWidth (8);
     gwsSetCurrentFontCharHeight (8);
 
+
+    //
+    //  8x16
+    //
+
+    //ok, mas problemas no scroll.
+    //gwsInstallFont ("LIN8X16 FON");      
+    //gfontSize = FONT8X16;
+    //gwsSetCurrentFontCharWidth (8);
+    //gwsSetCurrentFontCharHeight (16);
+    //...
+    
+    
+    
+    
 	//
 	// ## testando suporte a salvamento de retângulo ##
 	//

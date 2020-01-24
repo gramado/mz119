@@ -1637,12 +1637,11 @@ void *gde_services ( unsigned long number,
 		// ficar explícito.
 
 
-        //see: tty/console.c
-        //IN: ch, console id.
-		case SYS_KGWS_PUTCHAR:
-			//console_putchar ( (int) arg2, current_vc ); //funciona.
-			console_putchar ( (int) arg2, (int) arg3 );  //#testando
-			break;
+        // see: tty/console.c
+        // IN: ch, console id.
+        case SYS_KGWS_PUTCHAR:
+            console_putchar ( (int) arg2, (int) arg3 ); 
+            break;
 
 
 		// 66

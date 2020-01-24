@@ -161,20 +161,37 @@ void KiTimer (void){
  */
 
 void timer (void){
-	
-	//timers.
-	int i;
-	
-	struct timer_d *t;
-	
-	//
-	// ## ticks total ##
-	//
-	
-    //Contador de ticks.
-	//Incrementa o Tempo total de funcionamento do kernel.
-	
+
+    // Timers.
+    int i = 0;
+
+    struct timer_d *t;
+
+
+
+    unsigned long __cWidth = gwsGetCurrentFontCharWidth();
+    unsigned long __cHeight = gwsGetCurrentFontCharHeight();
+
+    if ( __cWidth == 0  ||  __cHeight == 0 ){
+        panic ("timer: char size\n");
+    }
+
+
+
+
+
+
+    //
+    // Jiffies.
+    //
+
+    // Contador de ticks.
+    // Incrementa o Tempo total de funcionamento do kernel.
+
     jiffies++;
+
+
+
 
 	//
 	// ## sys time ##
@@ -183,7 +200,7 @@ void timer (void){
 	//Mais 10ms para um sistema funcionando a 100HZ
     //sys_time_ms = sys_time_ms + 10;
 	
-	sys_time_ms = (unsigned long) sys_time_ms + (1000/sys_time_hz);	
+	sys_time_ms = (unsigned long) sys_time_ms + (1000/sys_time_hz);
 
 	
 	//
@@ -291,35 +308,40 @@ void timer (void){
 	//#todo: mas poderia ser exatamente o hz configurado par ao mouse
 	//if ( jiffies % mouse_cursor_hz == 0 )
 	//if ( jiffies % sys_time_hz == 0 )	
-	if ( jiffies % 70 == 0 )
-	{
-		//Se o cursor piscante está habilitado.
-		//Essa flag é acionada pelo aplicativo.
-		if (timerShowTextCursor == 1)
-		{
-		    if ( timerTextCursorStatus != 1 )
-		    { 
-	            //apaga
-	            
-	            //refresh_rectangle ( (g_cursor_x + 1)  *8, g_cursor_y*8, 16, 16 );
-	            refresh_rectangle ( (TTY[current_vc].cursor_x + 1)  *8, TTY[current_vc].cursor_y*8, 16, 16 );
-	            	            
+    if ( jiffies % 70 == 0 )
+    {
+        // Se o cursor piscante está habilitado.
+        // Essa flag é acionada pelo aplicativo.
+
+        if (timerShowTextCursor == 1)
+        {
+            // Apaga.
+            if ( timerTextCursorStatus != 1 )
+            { 
+                refresh_rectangle ( (TTY[current_vc].cursor_x + 1)  * __cWidth, 
+                    TTY[current_vc].cursor_y * __cHeight, 
+                    16, 16 );
+
                 timerTextCursorStatus = 1;
-		        goto mouseExit;
-		    }
-	
-		    if ( timerTextCursorStatus == 1 )
-            {			
-		        //acende
-                //bmpDisplayCursorBMP ( cursorIconBuffer, (g_cursor_x + 1) * 8, g_cursor_y*8 );		
-                bmpDisplayCursorBMP ( cursorIconBuffer, (TTY[current_vc].cursor_x + 1) * 8, TTY[current_vc].cursor_y*8 );		        
-		        timerTextCursorStatus = 0;
-			    goto mouseExit;
-		    }
-		};
-	};
-	
-mouseExit:	
+                goto mouseExit;
+            }
+
+            // Acende.
+            if ( timerTextCursorStatus == 1 )
+            {
+                bmpDisplayCursorBMP ( cursorIconBuffer, 
+                    (TTY[current_vc].cursor_x + 1) * __cWidth, 
+                    TTY[current_vc].cursor_y * __cHeight );
+         
+                timerTextCursorStatus = 0;
+                goto mouseExit;
+            }
+        };
+    };
+
+
+
+mouseExit:
 
     // Lista de timers.
     // Podemos percorrer a lista de timer e decrementar,
@@ -403,16 +425,17 @@ done:
 }
 
 
-void timerEnableTextCursor (void){
-	
-    timerShowTextCursor = 1;	
+void timerEnableTextCursor (void)
+{
+    timerShowTextCursor = 1;
 }
 
 
-void timerDisableTextCursor (void){
-	
-    timerShowTextCursor = 0;	
+void timerDisableTextCursor (void)
+{
+    timerShowTextCursor = 0;
 }
+
 
 int new_timer_id (void){
 	

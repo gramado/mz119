@@ -580,7 +580,7 @@ void update_cpu_usage ()
 		for (i=0; i<32; i++)
 		{
 		    gde_draw_text ( cpu_window, 
-		        i*8, CPU_USAGE[i], COLOR_BLACK, "+");
+		        i*smCharHeight, CPU_USAGE[i], COLOR_BLACK, "+");
 		}
 		gde_show_window (cpu_window);
     };
@@ -4239,8 +4239,8 @@ void shellInitWindowLimits(){
     
     //#bugbug: temos que dividir pelo tamanho do char.
     //mas se for zero dá problema.
-    wlMaxColumns = (smScreenWidth / 8);
-    wlMaxRows = (smScreenHeight / 8);
+    wlMaxColumns = (smScreenWidth / smCharWidth);
+    wlMaxRows = (smScreenHeight / smCharHeight);
 	
 	//dado em quantidade de linhas.
     textMinWheelDelta = 1;  //mínimo que se pode rolar o texto
@@ -4365,8 +4365,8 @@ void shellShell (){
 	//quantidade de linhas de colunas da janela.
 	//na verdade deve ser da área de cliente.
 	
-    wlMaxColumns = (wsWindowWidth/8);    
-    wlMaxRows = (wsWindowHeight/8);         
+    wlMaxColumns = (wsWindowWidth/smCharWidth);    
+    wlMaxRows = (wsWindowHeight/smCharHeight);         
  
     if ( wlMaxColumns < wlMinColumns )
 	{
@@ -5435,8 +5435,8 @@ void shellClearScreen (){
 	};
 
 	
-    left = (terminal_rect.left/8);
-    top = (terminal_rect.top/8);
+    left = (terminal_rect.left/smCharWidth);
+    top = (terminal_rect.top/smCharHeight);
 	
     shellSetCursor ( left, top );
 
@@ -7511,8 +7511,8 @@ void shellRefreshVisibleArea (){
 	
 	unsigned long left, top, right, bottom;
  
-    left = (terminal_rect.left/8);
-    top = (terminal_rect.top/8);
+    left = (terminal_rect.left/smCharWidth);
+    top = (terminal_rect.top/smCharHeight);
 	
     shellSetCursor ( left, top );
 	
@@ -8484,7 +8484,7 @@ noArgs:
 	// Habilitando o cursor piscante de textos.
 	//
 	
-    shellSetCursor ( (terminal_rect.left / 8) , ( terminal_rect.top/8) );
+    shellSetCursor ( (terminal_rect.left / smCharWidth) , ( terminal_rect.top/smCharHeight) );
     system_call ( 244, 
         (unsigned long) 0, (unsigned long) 0, (unsigned long) 0 ); 
 	//===========================

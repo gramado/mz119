@@ -422,9 +422,11 @@ void _console_outbyte (int c, int console_number){
             // configuradas na estrutura do terminal atual.
             // Branco no preto é um padrão para terminal.
 			
-            draw_char ( cWidth * TTY[console_number].cursor_x, cHeight * TTY[console_number].cursor_y, c, 
-				COLOR_TERMINALTEXT, COLOR_TERMINAL2 );
-			
+            draw_char ( cWidth * TTY[console_number].cursor_x, 
+                       cHeight * TTY[console_number].cursor_y, 
+                       c, 
+                       COLOR_TERMINALTEXT, COLOR_TERMINAL2 );
+
 		}else{
 			
 			// ## TRANSPARENTE ##
@@ -433,8 +435,10 @@ void _console_outbyte (int c, int console_number){
             // Não sabemos o fundo. Vamos selecionar o foreground.
 			
 			drawchar_transparent ( 
-			    cWidth* TTY[console_number].cursor_x, cHeight * TTY[console_number].cursor_y, 
-				TTY[console_number].cursor_color, c );
+			    cWidth* TTY[console_number].cursor_x, 
+			    cHeight * TTY[console_number].cursor_y, 
+				TTY[console_number].cursor_color, 
+				c );
 		};
 		
 		//#testando ...
@@ -460,9 +464,18 @@ void _console_outbyte (int c, int console_number){
  
 
 void console_outbyte (int c, int console_number){
-	
-	static char prev = 0;
-	
+
+    static char prev = 0;
+
+
+    unsigned long __cWidth = gwsGetCurrentFontCharWidth();
+    unsigned long __cHeight = gwsGetCurrentFontCharHeight();
+
+    if ( __cWidth == 0  ||  __cHeight == 0 ){
+        panic ("console_outbyte: char size\n");
+    }
+
+
 	// Obs:
 	// Podemos setar a posição do curso usando método,
 	// simulando uma variável protegida.
@@ -487,7 +500,8 @@ void console_outbyte (int c, int console_number){
     //Início da próxima linha. 
     if ( c == '\n' && prev == '\r' ) 
     {
-		//#todo: melhorar esse limite.
+		// #todo: 
+		// Melhorar esse limite.
         if ( TTY[console_number].cursor_y >= (TTY[console_number].cursor_bottom-1) )
         {
             console_scroll (console_number);
@@ -645,7 +659,7 @@ void console_outbyte (int c, int console_number){
 	// Tem um scroll logo acima que considera um valor
 	// de limite diferente desse.
 
-	// Número máximo de linhas. (8 pixels por linha.)
+	// Número máximo de linhas. (n pixels por linha.)
     if ( TTY[console_number].cursor_y >= TTY[console_number].cursor_bottom )  
     { 
         console_scroll (console_number);
@@ -681,31 +695,40 @@ void console_putchar ( int c, int console_number ){
 	
 	int cWidth = get_char_width ();
 	int cHeight = get_char_height ();
-	
-	if ( cWidth == 0 || cHeight == 0 )
-	{
-		printf ("terminalPutChar:");
-		die ();
-	}
-	
+
+    if ( cWidth == 0 || cHeight == 0 ){
+        panic ("console_putchar: char");
+    }
+
+
 	// flag on.
 	stdio_terminalmode_flag = 1;  
+
+
+    //
+    //  Console limits
+    //
+
+    if ( console_number < 0 || console_number >= 4 ){
+        panic ("console_putchar: console_number");        
+    }
 
     // Desenhar o char no backbuffer
 	
 	// #todo: Escolher um nome de função que reflita
 	// essa condição de desenharmos o char no backbuffer.
 	
-
-	console_outbyte  ( (int) c, console_number );
+    console_outbyte  ( (int) c, console_number );
 
 	
 	// Copiar o retângulo na memória de vídeo.
-	
-	refresh_rectangle ( 
-	    TTY[console_number].cursor_x * cWidth, TTY[console_number].cursor_y * cHeight, 
-		cWidth, cHeight );
-	
+
+    refresh_rectangle ( 
+        TTY[console_number].cursor_x * cWidth, 
+        TTY[console_number].cursor_y * cHeight, 
+        cWidth, 
+        cHeight );
+
 	// flag off.
 	stdio_terminalmode_flag = 0;  
 }
@@ -1037,37 +1060,35 @@ void console_scroll (int console_number){
 	
     if ( VideoBlock.useGui == 1 )
     {
-	
+
 		// copia o retângulo.
 		// #todo: olhar as rotinas de copiar retângulo.
 		//See: comp/rect.c
         scroll_screen_rect ();
-		
-        //Limpa a última linha.
-		
-		//salva cursor
-		OldX = TTY[console_number].cursor_x;  //g_cursor_x;
-		OldY = TTY[console_number].cursor_y;  //g_cursor_y;
-		
-		//cursor na ultima linha.
-		
-		//g_cursor_x = 0;
-		TTY[console_number].cursor_x = TTY[console_number].cursor_left;          //g_cursor_x = g_cursor_left;
-		TTY[console_number].cursor_y = ( TTY[console_number].cursor_bottom -1);  //g_cursor_y = (g_cursor_bottom-1);
-		
-		// limpa a linha.
-		
-		//for ( i = g_cursor_x; i < g_cursor_right; i++ )
-		for ( i = TTY[console_number].cursor_x; i < TTY[console_number].cursor_right; i++ )
-		{
-		    _console_outbyte (' ',console_number); 
-		};
-	
-		// Reposiciona o cursor na última linha.
 
-		TTY[console_number].cursor_x = TTY[console_number].cursor_left;   //g_cursor_x = g_cursor_left;
-		TTY[console_number].cursor_y = OldY;   //g_cursor_y = OldY;
-		
+        //Limpa a última linha.
+
+		//salva cursor
+		OldX = TTY[console_number].cursor_x; 
+		OldY = TTY[console_number].cursor_y; 
+
+
+        // Cursor na ultima linha.
+        TTY[console_number].cursor_x = TTY[console_number].cursor_left; 
+        TTY[console_number].cursor_y = ( TTY[console_number].cursor_bottom -1); 
+
+
+        // Limpa a últime linha.
+        for ( i = TTY[console_number].cursor_x; i < TTY[console_number].cursor_right; i++ )
+        {
+            _console_outbyte (' ',console_number); 
+        };
+
+
+        // Reposiciona o cursor na última linha.
+        TTY[console_number].cursor_x = TTY[console_number].cursor_left; 
+        TTY[console_number].cursor_y = OldY;  //( TTY[console_number].cursor_bottom -1); 
+
 		refresh_screen ();
 	}
 }
@@ -1209,13 +1230,9 @@ void REFRESH_STREAM ( FILE *stream ){
     {
 		printf ("%c", *c );
 		
-	    //refresh_rectangle ( g_cursor_x * cWidth, g_cursor_y * cHeight, 
-		    //cWidth, cHeight );
-		    
-		    
 	    refresh_rectangle ( 
-	        TTY[current_vc].cursor_x * cWidth,     //g_cursor_x * cWidth, 
-	        TTY[current_vc].cursor_y * cHeight,    //g_cursor_y * cHeight, 
+	        TTY[current_vc].cursor_x * cWidth, 
+	        TTY[current_vc].cursor_y * cHeight,  
 		    cWidth, cHeight );
 		
 		c++;
@@ -1270,7 +1287,7 @@ void console_init_virtual_console (int n)
     TTY[n].cursor_top = 0;
     TTY[n].cursor_right = 80;
     TTY[n].cursor_bottom = 80;
-    TTY[n].cursor_color = COLOR_TERMINALTEXT;
+    TTY[n].cursor_color = COLOR_GREEN; //COLOR_TERMINALTEXT;
 }
 
 
