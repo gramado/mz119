@@ -34,6 +34,47 @@
 //#define SECTOR_SIZE 4096  
 
 
+
+
+//#define MBR_BOOTABLE                    0x80
+//#define MBR_SIGNATURE                   0xAA55
+
+
+//
+// FAT definitions.
+//
+
+//#define FAT_SECTOR_SIZE                 512
+//#define FAT_FIRST_DATA_CLUSTER          2
+
+//#define FAT16_CLUSTER_MASK              0xFFFF
+//#define FAT16_LINK_TERMINATOR           0xFFFF
+
+//#define FAT32_CLUSTER_MASK              0x0FFFFFFF
+//#define FAT32_LINK_TERMINATOR           0x0FFFFFFF
+
+
+/*
+#define FAT_DIRECTORY_ENTRY_FREE        0xE5
+#define FAT_DIRECTORY_ENTRY_LAST        0x00
+
+#define FAT_ATTRIBUTE_READ_ONLY         0x01
+#define FAT_ATTRIBUTE_HIDDEN            0x02
+#define FAT_ATTRIBUTE_SYSTEM            0x04
+#define FAT_ATTRIBUTE_VOLUME_ID         0x08
+#define FAT_ATTRIBUTE_DIRECTORY         0x10
+#define FAT_ATTRIBUTE_ARCHIVE           0x20
+#define FAT_ATTRIBUTE_LONG_NAME         (FAT_ATTRIBUTE_READ_ONLY | FAT_ATTRIBUTE_HIDDEN | FAT_ATTRIBUTE_SYSTEM | FAT_ATTRIBUTE_VOLUME_ID)
+#define FAT_ATTRIBUTE_MASK              0x3F
+
+#define FAT_LONG_NAME_TERMINATOR        0x40
+#define FAT_LONG_NAME_ORDER_MASK        0x3F
+*/
+
+//#define FAT_MAX_PATH                    255
+
+
+
 // short.
 //#define FS_I386_IMAGE  0x014C
 
