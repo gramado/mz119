@@ -15,6 +15,9 @@ NAME =
 
 KERNELVERSION = $(VERSION)$(if $(PATCHLEVEL),.$(PATCHLEVEL)$(if $(SUBLEVEL),.$(SUBLEVEL)))$(EXTRAVERSION)
 
+export KBUILD_IMAGE ?= KERNEL.BIN 
+
+
 # First of all, lemme discribe this documment!
 # We just have two parts. The kernel and the extra stuff.
 
@@ -832,6 +835,9 @@ clean-garden:
 
 kernel-version:
 	@echo $(KERNELVERSION)
+
+image-name:
+	@echo $(KBUILD_IMAGE)
 
 
 #
