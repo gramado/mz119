@@ -203,7 +203,10 @@ unsigned long now (void);
 unsigned long get_timeout (void);
 void set_timeout(unsigned long ticks);
 
+
+void set_systime_hz ( unsigned long hz );
 unsigned long get_systime_hz (void);
+
 unsigned long get_systime_ms (void);
 unsigned long get_systime_totalticks (void);
 

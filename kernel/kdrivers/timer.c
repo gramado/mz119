@@ -686,6 +686,11 @@ unsigned long now (void){
 }
 
 
+void set_systime_hz ( unsigned long hz )
+{
+    sys_time_hz = hz;
+}
+
 /* systime hz */
 unsigned long get_systime_hz (void){
 	
@@ -946,14 +951,16 @@ int early_timer_init (void){
 
     // 400:
     // 100 deixa a digitação muito lenta.
+	//sys_time_hz = (unsigned long) HZ * 4;
 
-	sys_time_hz = (unsigned long) HZ * 4;
-	
-	timerInit8253 ( sys_time_hz );
+    //set_systime_hz ( HZ * 4 );
+    set_systime_hz ( HZ * 6 );
 
-	set_current_quantum (QUANTUM_BASE);
-	
-	set_next_quantum (QUANTUM_BASE);
+    timerInit8253 ( sys_time_hz );
+
+    set_current_quantum (QUANTUM_BASE);
+    
+   set_next_quantum (QUANTUM_BASE);
     
 	set_quantum (QUANTUM_BASE);
 
