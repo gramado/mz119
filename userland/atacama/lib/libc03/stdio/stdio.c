@@ -328,10 +328,61 @@ int fclose (FILE *stream){
 
 FILE *fopen ( const char *filename, const char *mode ){
 
-    return (FILE *) gramado_system_call ( 246, 
-                        (unsigned long) filename, 
-                        (unsigned long) mode, 
-                        (unsigned long) mode ); 
+
+    FILE *__stream;
+    
+    
+    __stream = (FILE *) malloc( sizeof(FILE) );
+    
+    if ( (void *) __stream == NULL )
+        return NULL;
+    
+    
+    //
+    // Get file size.
+    //
+    
+    //
+    // Allocate memory to the buffer.
+    //
+    
+    //
+    // Call kernel to load the file.
+    //
+    
+    //
+    // The buffer is the _base of the stream.
+    //
+    
+    //
+    // return the pointer.
+    //
+    
+    
+    // #bugbug
+    // Isso retorna uma stream que não está em ring3.
+    // Pode até estar em alguma memória compartilhada,
+    // mas não é o que queremos agora.
+
+    // #todo
+    // podemos criar uma stream aqui,
+    // Podemos criar um buffer aqui depois de solicitar
+    // o tamanho do arquivo.
+    // Podemos passar o buffer para o kernel.
+    // Podemos retornar o buffer, colocar ele em stream->_base
+    // e retornarmos o ponteiro para a stream
+
+    //return (FILE *) gramado_system_call ( 246, 
+                        //(unsigned long) filename, 
+                        //(unsigned long) mode, 
+                        //(unsigned long) mode ); 
+
+
+    //#todo
+    // retornar a stream que criamos aqui. 
+    //return (FILE *) __stream;
+    
+    return NULL;
 }
 
 
@@ -565,14 +616,18 @@ int puts(const char* s)
 }
 */
 
-/*
+
 void clearerr(FILE* stream)
 {
-    assert(stream);
-    stream->eof = false;
+    //assert(stream);
+    if ( (void *) stream == NULL )
+        return;
+    
+    
+    stream->eof = FALSE;
     stream->error = 0;
 }
-*/
+
 
 
 /*
@@ -640,16 +695,95 @@ size_t fread (void *ptr, size_t size, size_t nmemb, FILE *f)
  *
  */
 
+// #importante
+// Ler uma certa quantidade de chars de uma stream e coloca-los no buffer.
+// Isso vai ser usado pelo terminal por exemplo.
+// Assim o terminal pode pegar uma string que esteja no arquivo.
+// https://www.tutorialspoint.com/c_standard_library/c_function_fread.htm 
+
 size_t fread (void *ptr, size_t size, size_t n, FILE *fp){
 
+/*
     if ( (void *) fp == NULL )
        return -1;
 
-
+ 
+    //#bugbug: Não passaremos ponteiro de stream par ao kernel. 
     return (size_t) gramado_system_call ( 607, 
                         (unsigned long) ptr, 
                         (unsigned long) n, 
                         (unsigned long) fp ); 
+*/
+
+
+    if ( n <= 0 ){
+        printf ("fread: n \n");
+        return (size_t) -1;
+    }
+
+
+    //if ( (void *) fp == NULL )
+       //return -1;
+
+
+    if ( (void *) fp == NULL )
+    {
+        printf ("fread: fp\n");
+        return (size_t) -1;
+
+    }else{
+
+       // if (s->flags & IOSTREAM_READ)
+       //switch (s->node->type) arquivo, dispositivo, etc ... 
+
+
+		//if (stream->offset <= file->size)
+
+		//ai tem algo errado
+        if ( fp->_p < fp->_base ){
+            printf ("fread: position fail\n");
+            return (size_t) -1;
+        }
+
+
+        // dst = buffer no app.
+        // src = base do buffer da stream + offset de leitura.
+
+        //#todo: 
+        // ainda não temos uma base do buffer devidamente inicializada. 
+		
+		// #hack hack: 
+		// provisório, deletar depois.
+		// precisamos inicializar quando usamos fopen
+		// suspendendo esse hack pois fiz as modificações no fopen
+		// pra inicialziar a estrutura.
+		// Então isso deve funcionar sem esse ajuste 
+		// pelo menos para arquivos abertos com fopen.
+		
+		//fp->_bf._base = fp->_base; 
+		//fp->_r = 0; 
+
+        //...
+
+		//#debug
+        //printf ("fread: copiando para o buffer\n");
+        //printf ("_r=%d \n", fp->_r );
+        //printf ("_bf._base=%x \n", fp->_bf._base );
+        //refresh_screen ();
+
+        // #todo: 
+        // _r limits
+
+        memcpy ( (void *) ptr, 
+            (const void *) (fp->_base + fp->_r ), 
+            (unsigned long) n );
+
+         // Update.        
+         fp->_r = (fp->_r + n);  
+    };
+
+
+    return 0;
 }
 
 
@@ -1917,16 +2051,20 @@ int fputs(const char *str, FILE *fp)
 
 int fputs ( const char *str, FILE *stream )
 {
-	return -1;
-	
-	/*
+
+    if ( (void *) stream == NULL )
+        return EOF;
+
+
     for (; *str; ++str) {
+
         int rc = putc (*str, stream);
+
         if (rc == EOF)
             return EOF;
     }
+
     return 1;
-    */
 }
 
 
@@ -2151,18 +2289,27 @@ int ungetc(int c, FILE *stream)
 
 int ungetc ( int c, FILE *stream )
 {
-	return -1;
-	/*
-    ASSERT(stream);
+    //ASSERT(stream);
+    if ( (void *) stream == NULL )
+        return EOF;
+    
     if (c == EOF)
         return EOF;
+    
+    // Não precisamos mudar.
     if (stream->have_ungotten)
         return EOF;
-    stream->have_ungotten = true;
+    
+    // Mudando.
+    stream->have_ungotten = TRUE;
+    
+    // Salva.
     stream->ungotten = c;
-    stream->eof = false;
+    
+    
+    stream->eof = FALSE;
+
     return c;
-    */
 }
 
 
@@ -2210,10 +2357,14 @@ long ftell (FILE *stream)
  */
 int fileno ( FILE *stream )
 {
-	return -1;
     //assert(stream);
-    //return stream->_file;
+ 
+    if ( (void *) stream == NULL )
+       return EOF; 
+       
+    return (int) stream->_file;
 }
+
 
 
 /*linux klibc style.*/
@@ -2248,13 +2399,86 @@ int getc(FILE *stream)
 
 int __gramado__getc ( FILE *stream ){
 
-    if ( (void *) stream == NULL )
-       return EOF;
+    //if ( (void *) stream == NULL )
+       //return EOF;
 
+    
+    //#bugbug: não passaremos mais ao kernel ponteiro de stream.
+    /*
     return (int) gramado_system_call ( 136, 
                      (unsigned long) stream,  
                      (unsigned long) stream,  
                      (unsigned long) stream );
+     */
+     
+     
+    int ch = 0;
+
+
+    if ( (void *) stream == NULL )
+    {
+		// #debug
+		printf ("fgetc: stream struct fail\n");
+		//refresh_screen();
+		
+		return EOF;
+
+    }else{
+
+		 //(--(p)->_r < 0 ? __srget(p) : (int)(*(p)->_p++))
+		
+		//#fim.
+		//cnt decrementou e chegou a zero.
+		//Não há mais caracteres disponíveis entre 
+		//stream->_ptr e o tamanho do buffer.
+		
+		if ( stream->_cnt <= 0 )
+		{
+			stream->_flags = (stream->_flags | _IOEOF); 
+			stream->_cnt = 0;
+			
+		    //printf ("#debug: fgetc: $\n");
+			
+			//isso funciona, significa que a estrutura tem ponteiro e base validos.
+			//printf("show fgetc:: %s @\n", stream->_base );
+		    //refresh_screen();
+			
+			return EOF;
+		};
+
+		//#debug
+		//nao podemos acessar um ponteiro nulo... no caso endereço.
+		
+		if ( stream->_p == 0 )
+		{
+			printf ("#debug: fgetc: stream struct fail\n");
+		    //refresh_screen();
+			return EOF;
+			
+		}else{
+			
+			// #obs: 
+			// Tem que ter a opção de pegarmos usando o posicionamento
+			// no buffer. O terminal gosta dessas coisas.
+			
+		    //Pega o char no posicionamento absoluto do arquivo
+		    ch = (int) *stream->_p;
+				
+            stream->_p++;
+            stream->_cnt--;
+
+		    return (int) ch;
+		
+		}
+		//fail
+    };
+
+
+	//#debug
+    //printf ("fgetc: $$\n");
+	//refresh_screen();
+
+     return EOF;
 }
 
 /*
@@ -2288,6 +2512,20 @@ int fgetc ( FILE *stream ){
 
 
 
+
+int getc(FILE* stream)
+{
+    return fgetc(stream);
+}
+
+
+int putc(int ch, FILE* stream)
+{
+    return fputc(ch, stream);
+}
+
+
+
 /*
 int feof(FILE *fp)
 {
@@ -2306,10 +2544,15 @@ int feof(FILE *fp)
 
 int feof ( FILE *stream )
 {
-	return -1;
     //assert(stream);
-    //return stream->eof;
+
+    if ( (void *) stream == NULL )
+       return EOF;
+       
+       
+    return (int) stream->eof;
 }
+
 
 
 /*
@@ -2335,10 +2578,8 @@ int ferror ( FILE *stream ){
     if ( (void *) stream == NULL )
        return EOF;
 
-    return (int) gramado_system_call ( 194, 
-                     (unsigned long) stream,  
-                     (unsigned long) stream,  
-                     (unsigned long) stream );    
+
+    return (int) stream->error;
 }
 
 

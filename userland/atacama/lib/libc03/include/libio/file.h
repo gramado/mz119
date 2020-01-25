@@ -206,10 +206,17 @@ struct _iobuf
     char *_tmpfname;
     
     //#todo: usar isso!!
-    //int eof;
-    //int error;
-    //int have_ungotten;
-    //char ungotten;
+    
+    //#test
+    //tentando usar esses outros elementos.
+    //igual ao serenity.
+    
+    int eof;
+    int error;
+    int have_ungotten;
+    char ungotten;
+    
+    //#todo: usar isso!!
     //char default_buffer[BUFSIZ];
 };
 

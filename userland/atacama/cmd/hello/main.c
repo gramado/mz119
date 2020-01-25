@@ -469,6 +469,28 @@ int main ( int argc, char *argv[] )
     //sprintf(_buf,"Testing write() \n");
     //write ( 1, _buf, sizeof(_buf) );     
             
+     
+    // funcionou no qemu.       
+    //putc('X',stdout);        
+    //putc('Y',stdout);        
+    //putc('Z',stdout);        
+    //putc('\n',stdout);        
+    
+    
+    // Testado no qemu. 
+    // Não travou.
+    /*
+    int i;
+    int c;
+    while(1)
+    {
+        c = getc(stdin);
+        if(c==EOF)break;
+        
+        putc(c,stdout);
+    }
+    */
+    
     return 0;
 }
 

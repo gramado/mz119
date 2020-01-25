@@ -417,6 +417,9 @@ __sputc (int _c, FILE *_p)
 //#define	ferror(p)	__sferror(p)
 //#define	clearerr(p)	__sclearerr(p)
 
+
+void clearerr(FILE* stream);
+
 //#ifndef _ANSI_SOURCE
 //#define	fileno(p)	__sfileno(p)
 //#endif
@@ -641,9 +644,9 @@ char *__gets(char *str);
 int fgetc ( FILE *stream );;
 int fputc (int ch, FILE *stream);
 
+int getc(FILE* stream);
+int putc(int ch, FILE* stream);
 
-#define getc(p)     fgetc(p)
-#define putc(x, p)  fputc(x, p)
 
 
 void debug_print (char *string);
