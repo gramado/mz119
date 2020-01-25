@@ -460,3 +460,97 @@ void vt_scroll (struct tty_d *tty)
 
 
 
+// Create a terminal for a window.
+// The father is creating a terminal in one of its windows.
+int vt_create (struct window_d *window, int father_pid)
+{
+	
+    struct vt_d *terminal;
+	
+        
+    if ( father_pid < 0 )
+        return -1;
+
+
+    if ( (void *) window == NULL )
+        return -1;
+
+    if ( window->used == 1 && window->magic == 1234 )
+    {
+         terminal = (struct vt_d *) kmalloc ( sizeof (struct vt_d) );
+         
+         if ( (void *) terminal == NULL )
+             return -1;
+             
+         //terminal->id = ?;
+         terminal->used = 1;
+         terminal->magic = 1234;
+         
+         
+         terminal->father_pid = father_pid;
+         terminal->child_pid = -1;
+    
+         terminal->state = 0;
+         
+         window->isTerminal = 1;
+         window->terminal = terminal;
+    }    
+
+    return 0;
+}
+
+
+// Set child pid given in a window structure.
+int vt_set_child ( struct window_d *window, int child_pid )
+{
+
+    if ( child_pid < 0)
+        return -1;
+
+
+    if ( (void *) window == NULL )
+        return -1;
+
+
+    if ( window->isTerminal != 1 )
+        return -1;
+
+
+    if ( (void *) window->terminal == NULL )
+        return -1;
+
+
+
+    if ( window->terminal->used == 1 && window->terminal->magic == 1234 )
+    {
+        window->terminal->child_pid = child_pid;
+        return 0;
+    }
+    
+    
+    //fail
+    return -1;
+}
+
+
+
+int vt_set_pty ( struct vt_d *terminal, struct tty_d *master, struct tty_d *slave)
+{
+
+    if ( (void *) terminal == NULL )
+        return -1;
+
+
+    if ( terminal->used == 1 && terminal->magic == 1234 )
+    {
+        terminal->master = master;
+        terminal->slave = slave;
+        return 0;
+    }
+
+    return -1;
+}
+
+
+
+

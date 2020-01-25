@@ -199,6 +199,31 @@ void *gde_extra_services ( unsigned long number,
     }
 
 
+    //
+    // Terminal support
+    //
+    
+    // 270 ~ 276
+
+    // Create a terminal given the window.
+    // IN: window, father's pid.
+    if ( number == 270 )
+    {
+         return (void *) vt_create ( (struct window_d *) arg2, (int) arg3 );
+    }
+    
+    
+    // Set child pid given in a vt structure.
+    // Only the father will configurate this thing.
+    // IN: window, child's pid
+    if ( number == 271 )
+    {
+         return (void *) vt_set_child ( (struct window_d *) arg2, (int) arg3 );
+    }
+
+
+
+    // more terminal stuff.
 
 
     if (number == 277 )

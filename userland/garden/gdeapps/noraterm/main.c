@@ -6934,8 +6934,6 @@ noArgs:
 
 
 
-
-
 	// #test 
 	// Criando um timer.
 	// janela, 100 ms, tipo 2= intermitente.
@@ -7102,6 +7100,24 @@ noArgs:
 	//--
 
 
+    //
+    // Create the wt_d struct as an element of window struct
+    //
+    
+    int vt_ret = -1;
+    int father_pid = getpid();
+    
+    //IN: window, father's pid
+    vt_ret = (int) gramado_system_call ( 270, 
+                       (unsigned long) hWindow2, 
+                       (unsigned long) father_pid, 
+                       0 );
+
+    if (vt_ret < 0)
+    {
+        printf ("noraterm: We couldn't create the terminal\n");
+        exit(1);  
+    }
 
 
 

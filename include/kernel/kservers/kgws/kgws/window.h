@@ -1302,7 +1302,14 @@ struct window_d
 
 //==================================================
 
-	// Navegation.
+    //
+    // Terminal.
+    //
+    
+    int isTerminal;
+    struct vt_d *terminal;
+
+    // Navegation.
     struct window_d *prev; 
     struct window_d *next; 
 };

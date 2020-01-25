@@ -152,7 +152,7 @@ struct tty_d
     int terminal_pid;  //todo: usar esse
 
 
-   //#todo: buffer?
+  
 
     // Owner process.
     struct process_d *process;
@@ -219,15 +219,20 @@ struct tty_d
 
     unsigned long cursor_color;
     
-    	
-	
+
 	//linha atual da lista abaixo.
     int current_line;
 
 	// Organizando as linhas dentro do TTY.	
 	//Lista de ponteiros de estrutura de linha (tty_line_d)
     unsigned long lines[32];
-	
+    
+    
+    //#todo
+    //struct ttybuffer_d *buffer;
+
+
+
     //in support
     //unsigned long IN[320];
     //int head; //coloca.
