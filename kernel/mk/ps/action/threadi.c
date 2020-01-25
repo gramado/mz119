@@ -511,60 +511,16 @@ void KiShowTasksParameters (void)
 }
 
 
-/* 
- #todo: mudar nomes 
- */
 
-void KiMostraSlots (void)
-{	
-	mostra_slots ();
-}
-
-
-/* #todo: mudar nomes */
-void KiMostraSlot (int id){
-	
-	mostra_slot (id);
-}
-
-
-/* #todo: mudar nomes */
-void KiMostraReg (int id){
-	
-	//mostra_reg(id);
-}
-
-
-/*
- ***************************************
- * KiShowThreadList:
- *     Mostra os parametros de ALGUMAS das 
- * threads existentes em 
- * threadList[i]. (as primeiras da lista).
- */
-
-void KiShowThreadList (void){
-	
-    mostra_slots ();
-}
 
 
 /*
  *****************************************
- * mostra_slots:
- *
- * @todo:
- * Obs: Estamos mostrando informações sobre todos 
- * os processos e todas threads.
- * Porém esse arquivo é para lidar com threads, 
- * então a torina de lidar com processos
- * deve ir pra outro arquivo.
- * @todo: Mudar nome.
- * #bugbug: Não encontro o protótipo dessa função.
+ * show_slots:
+ *     Show info about all threads.
  */
-//void threadiShowSlots(){ 
 
-void mostra_slots(){
+void show_slots (){
 
     int i;
 
@@ -612,38 +568,34 @@ void mostra_slots(){
              t->used == 1 && 
              t->magic == 1234 )
         {
-            mostra_slot (t->tid);
-        };
+            show_slot (t->tid);
+        }
     };
 }
 
 
 /*
  *****************************************************
- * mostra_slot:
- *     Mostra as variaveis mais importantes de um slot.
- *     obs: Não precisa mostrar o contexto, tem rotina pra isso.
- *     @todo: Mudar nome.
- *     #bugbug: Não encontro o protótipo dessa função. 
+ * show_slot:
+ *     Show info about a thread.
  */
-//void threadiShowSlot(int id){  
 
-void mostra_slot (int id){
+void show_slot (int tid){
 
     struct thread_d *t;
 
-    if ( id < 0 || id >= THREAD_COUNT_MAX )
-    {
-        printf ("action-mostra_slot: id\n");
+
+    if ( tid < 0 || tid >= THREAD_COUNT_MAX ){
+        printf ("show_slot: tid\n");
         goto fail;
     }
 
 
-    t = (void *) threadList[id];
+    t = (void *) threadList[tid];
 
     if ( (void *) t == NULL )
     {
-        printf ("action-mostra_slot: t\n");
+        printf ("show_slot: t\n");
         goto fail;
     }else{
 
@@ -677,44 +629,39 @@ done:
 
 /*
  *************************************************
- * mostra_reg:
- *    Mostra conteúdo dos registradores de uma thread..
- *
+ * show_reg:
+ *     Show the content of the registers.
+ * 
  *    eflags
- *    cs:eip	
- *    ss:esp	
+ *    cs:eip
+ *    ss:esp
  *    ds,es,fs,gs
  *    a,b,c,d
- *
- *    @todo Mudar nome
  */
-//void threadiShowRegisters (int id){   
 
-void mostra_reg (int id){
-	
+void show_reg (int tid){
+
     struct thread_d *t; 
 
-	// Limits.
-    if ( id < 0 || id >= THREAD_COUNT_MAX ){
-		
-	    printf ("fail\n");	
-		return;
-	}
-	
+
+    if ( tid < 0 || tid >= THREAD_COUNT_MAX ){
+        printf ("fail\n");
+        return;
+    }
+
+
 	// Structure.
-    t = (void *) threadList[id];
+    t = (void *) threadList[tid];
 	
 	if ( (void *) t == NULL )
-	{	
-	    
-		printf ("fail\n");	
+	{
+		printf ("fail\n");
 		return;
-		
 	} else {
 		
-		
-	    // Show registers.	
-        
+
+	    // Show registers.
+
 	    printf("\n eflags=[%x]", t->eflags);
 	    printf("\n cs:eip=[%x:%x] ss:esp=[%x:%x]", 
 		    t->cs, t->eip, t->ss, t->esp );

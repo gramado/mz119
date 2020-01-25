@@ -174,11 +174,7 @@ void KiDebugBreakpoint (void);
 
 void KiShowTasksParameters (void);
 
-void KiMostraSlots (void);
 
-void KiMostraSlot(int id);
-
-void KiMostraReg(int id);
 
 void KiShowPreemptedTask (void);	
 
@@ -215,11 +211,6 @@ void task1 (void);
 
 void show_tasks_parameters (void);
 
-void mostra_slots (void);
-
-void mostra_slot(int id);
-
-void mostra_reg(int id);
 
 void show_preempted_task (void);
 

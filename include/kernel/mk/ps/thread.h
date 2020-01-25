@@ -737,7 +737,17 @@ unsigned long GetThreadStackStart(struct thread_d *thread);
 void SelectForExecution (struct thread_d *Thread);
 
 
-void KiShowThreadList (void);
+
+// Show info about all threads.
+void show_slots (void);
+
+// Show info about a thread.
+void show_slot(int tid);
+
+// Show the register of the context.
+void show_reg (int tid);
+
+
 
 void show_thread_information (void); 
 

@@ -134,32 +134,32 @@ void faults ( unsigned long number ){
 	    //EXCEPTION
 		case 1:
 		    printf("EXCEPTION\n");
-		    mostra_reg(current_thread);
+		    show_reg (current_thread);
 			break;
 		
 		// Debug breakpoint interrupt.
 		case 3:
 			printf("BREAKPOINT\n");
-			mostra_slot(current_thread);
-			mostra_reg(current_thread);
+			show_slot (current_thread);
+			show_reg (current_thread);
 		    break;
 		
 		//DOUBLE FAULT
 	    case 8:
 			printf("DOUBLE FAULT\n");
-			mostra_slot(current_thread);
+			show_slot (current_thread);
 		    break;
 
 	    //STACK
 	    case 12:
 			printf("STACK FAULT\n");
-			mostra_reg(current_thread);
+			show_reg (current_thread);
 		    break;
 
 	    //GP
 	    case 13:
 		    printf("GP\n");
-			mostra_reg(current_thread);
+			show_reg (current_thread);
 		    break;
 		
 		//PAGE FAULT
@@ -171,9 +171,9 @@ void faults ( unsigned long number ){
 	    
 	    default:			
 			printf("Default number\n");
-            mostra_reg (current_thread);
-	        //mostra_slots ();	
-			mostra_slot (current_thread);
+            show_reg (current_thread);
+	        //show_slots ();	
+			show_slot (current_thread);
 			break;
 	};
 
@@ -285,8 +285,8 @@ void do_pagefault (void){
 	// #bugbug
 	// Precisamos mudar os nomes.
 	
-    mostra_reg (current_thread);
-	mostra_slots ();
+    show_reg (current_thread);
+	show_slots ();
 	
 	/*
 	// Se o endereço for igual a 0 é porque o eip está perdido.

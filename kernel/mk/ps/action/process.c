@@ -3510,8 +3510,8 @@ __execute_new_process ( const char *filename,
     printf ("__execute_new_process: done\n");
 
     //debug
-    mostra_slot (t->tid);
-    mostra_reg  (t->tid);
+    show_slot (t->tid);
+    show_reg  (t->tid);
 
     printf ("__execute_new_process: *breakpoint { Work in progress } \n");    
     refresh_screen();

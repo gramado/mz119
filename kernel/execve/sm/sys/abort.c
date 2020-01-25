@@ -43,13 +43,14 @@ void abort (void){
 	debug_print("abort:\n");	
 	
 	save_current_context();
-	
-	if (KernelStatus != KERNEL_ABORTED)
-	{
+
+
+    if (KernelStatus != KERNEL_ABORTED)
+    {
         KernelStatus = KERNEL_ABORTED;
 	    scheduler_lock();  //@todo: tirar daqui.
 		//...
-	};
+    }
 	
 	//scheduler_lock();
 	
@@ -90,8 +91,8 @@ void abort (void){
 		    break;
 	};
     		
-	mostra_slot(current_thread);
-	mostra_reg(current_thread);
+	show_slot (current_thread);
+	show_reg (current_thread);
 	
 	
     //  Final message !
@@ -110,15 +111,14 @@ void abort (void){
     
 	/*
      *  No return.
-     */	  
-	 
-	while (1){         
-		
+     */
+
+
+	while (1){ 
 	    asm("cli");
-	    asm("hlt");                 
-	
-	};                          
-};
+	    asm("hlt");  
+	}; 
+}
 
 
 //

@@ -1298,7 +1298,7 @@ void show_thread_information (void){
 	//Mostra Slots. 
 	//threadi.c
 	
-    mostra_slots ();    
+    show_slots ();    
 	
 	/*
 	 * @todo: 

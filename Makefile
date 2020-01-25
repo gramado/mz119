@@ -10,13 +10,20 @@
 VERSION = 1
 PATCHLEVEL = 26
 SUBLEVEL = 0
-EXTRAVERSION = -rc5
+EXTRAVERSION = -rc6
 NAME = 
 
 KERNELVERSION = $(VERSION)$(if $(PATCHLEVEL),.$(PATCHLEVEL)$(if $(SUBLEVEL),.$(SUBLEVEL)))$(EXTRAVERSION)
 
 export KBUILD_IMAGE ?= KERNEL.BIN 
 
+
+srctree := .
+objtree := .
+src := $(srctree)
+obj := $(objtree)
+ 
+ 
 
 # First of all, lemme discribe this documment!
 # We just have two parts. The kernel and the extra stuff.
