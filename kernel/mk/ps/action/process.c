@@ -430,6 +430,26 @@ pid_t do_clone_execute_process (char *filename){
 
 
 
+    //
+    // Convertendo o formato do nome do arquivo.
+    //
+    
+    // >>> "12345678XYZ"
+    
+    read_fntos ( (char *) filename );
+
+
+    //
+    // Searching for the file only on the root dir.
+    //
+    int __Status = -1;
+    __Status = (int) KiSearchFile ( filename, VOLUME1_ROOTDIR_ADDRESS );
+    if (__Status == 1){
+         printf("found\n");
+    }else{
+         printf("not found\n");
+         goto fail;
+    };
 
 
 	//unsigned long old_image_pa; //usado para salvamento.
@@ -574,7 +594,11 @@ do_clone:
         // Essa rotina começou a falhar aqui.
         // Convertendo num formato errado.
         
-        read_fntos ( (char *) filename );
+        // #test
+        // Movemos essa conversão para o início dessa função,
+        // onde checaremos se o arquivo está no diretório.
+        
+        // read_fntos ( (char *) filename );
 
         printf ("do_clone_execute_process: %s\n",filename);
         

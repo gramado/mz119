@@ -31,9 +31,14 @@
  *    +...
  */ 
 
+// IN:
+// File name. "1234578XYZ"
+// Address of the directory.
+
 int KiSearchFile ( unsigned char *file_name, unsigned long address ){
 
-    int Status = 1;
+    int Status = -1;
+
     unsigned long i = 0;                  // Deslocamento do dir. 
     unsigned long j = 0;                  // Deslocamento no nome.
     unsigned long NumberOfEntries = 512;  // Número máximo de entradas no diretório.
@@ -42,52 +47,57 @@ int KiSearchFile ( unsigned char *file_name, unsigned long address ){
 
 
 	// Buffer.
-	//#importante: O endereço do diretório foi passado via argumento.
+	// #importante: 
+	// O endereço do diretório foi passado via argumento.
 
     char *dir = (char *) address;
 
 
-	//??
-	//Não aceitaremos 0, definitivamente.
-	//Mas barra poderemos reconsiderar no futuro.
-	//Talvez devamos considerar ./ também.
+    // Invalid first char.
 
-	if ( file_name[0] == '/' || file_name[0] == 0 )
-	{	
-		goto fail;
-	}
-	
+    if ( file_name[0] == '/' || file_name[0] == 0 )
+    {
+        printf ("Invalid first char\n");
+        goto fail;
+    }
+
+
     // Address Limits:
-	// Endereço de memória onde o diretório está.
-	
-	if (address == 0)
-	{
-	    return (int) 1;
-	}
+    // Endereço de memória onde o diretório está.
+
+    if (address == 0)
+    {
+        printf ("Invalid dir address\n");
+        goto fail;
+    }
+
+    
+    //
+    // Search.
+    //
 
 
-	//Compare.
     for ( i=0; i < NumberOfEntries; i++ )
     {
         // FAT_DIRECTORY_ENTRY_FREE
-		if ( dir[j] == (char) 0xE5 )
-		{	
-		    j += 0x20;
+        if ( dir[j] == (char) 0xE5 )
+        {
+            j += 0x20;
             continue;
-		}
+        }
 
-		// diretório atual ou diretório pai.
-		// '.' ou '..'
-		if ( dir[j] == '.' )
-		{	
-		    j += 0x20;
+        // diretório atual ou diretório pai.
+        // '.' ou '..'
+        if ( dir[j] == '.' )
+        {
+            j += 0x20;
             continue;
-		}
+        }
 
         //#TODO
         //pegar o tamanho da string para determinar o quanto comparar.
 
-		// Entrada normal. Diferente de zero.
+        // Entrada normal. Diferente de zero.
         if ( dir[j] != 0 )
         {
 
@@ -99,7 +109,7 @@ int KiSearchFile ( unsigned char *file_name, unsigned long address ){
 			
 			if (Status == 0)
 			{ 
-			    goto done; 
+			    return 1;  //Found! 
 			}
             
             //Nothing.
@@ -113,14 +123,9 @@ int KiSearchFile ( unsigned char *file_name, unsigned long address ){
 
 	// Fail!
 
-
 fail:
-    Status = (int) 1;
     printf ("KiSearchFile: File not found\n");
-
-
-done:
-    return (int) Status;
+    return (int) -1;
 }
 
 

@@ -170,6 +170,8 @@ __local_ps2kbd_procedure ( struct window_d *window,
    sprintf (buffer,"My super \x1b[8C string!!\n"); 
 
 
+    int Status = -1;
+
     switch (msg)
     {
         case MSG_SYSKEYUP: 
@@ -187,8 +189,15 @@ __local_ps2kbd_procedure ( struct window_d *window,
 
                 // Test 1.
                 case VK_F7:
-                    // refresh_screen();
-                    console_write (0, buffer,62);
+                    //console_write (0, buffer,62);
+                    //Status = (int) KiSearchFile ( "GRAMADO TXT", VOLUME1_ROOTDIR_ADDRESS );
+                    Status = (int) KiSearchFile ( "GRAMADOxTXT", VOLUME1_ROOTDIR_ADDRESS );
+                    if (Status == 1){
+                        printf("found\n");
+                    }else{
+                        printf("not found\n");
+                    };
+                    refresh_screen();
                     break;
 
                 // Test 2.

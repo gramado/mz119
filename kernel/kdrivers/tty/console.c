@@ -800,7 +800,7 @@ ssize_t console_write (int console_number, const void *buf, size_t count)
     
 
     //#DEBUG    
-    printf ("console_write: >>> \n");
+    //printf ("console_write: >>> \n");
        
        
     char *data = (char *) buf;
