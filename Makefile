@@ -13,7 +13,7 @@ SUBLEVEL = 0
 EXTRAVERSION = -rc5
 NAME = 
 
-
+KERNELVERSION = $(VERSION)$(if $(PATCHLEVEL),.$(PATCHLEVEL)$(if $(SUBLEVEL),.$(SUBLEVEL)))$(EXTRAVERSION)
 
 # First of all, lemme discribe this documment!
 # We just have two parts. The kernel and the extra stuff.
@@ -827,6 +827,11 @@ clean-atacama:
 clean-garden:
 	-rm userland/garden/bin/*.o
 	-rm userland/garden/bin/*.BIN
+
+
+
+kernel-version:
+	@echo $(KERNELVERSION)
 
 
 #
