@@ -19,11 +19,14 @@
 
 unsigned char getkey ()
 {
-	asm volatile ("movl $7, %%eax;"
-	     "int $0x80;" ::: "%eax");
 
-	unsigned short *memptr = (unsigned short *) 0x9000;
-	unsigned short *where = memptr;
+    asm volatile (" movl $7, %%eax; "
+        " int $0x80; " ::: " %eax ");
 
-	return *where;
+
+    unsigned short *memptr = (unsigned short *) 0x9000;
+    unsigned short *where = memptr;
+
+
+    return *where;
 } 

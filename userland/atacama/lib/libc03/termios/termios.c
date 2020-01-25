@@ -141,43 +141,69 @@ int tcflow(int fd, int action)
 void cfmakeraw (struct termios *termios_p)
 {
 
-	termios_p->c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP |
-			                INLCR | IGNCR | ICRNL | IXON);
+    if ( (void *) termios_p == NULL )
+        return 0;
 
-	termios_p->c_oflag &= ~OPOST;
-	termios_p->c_lflag &= ~(ECHO | ECHONL | ICANON | ISIG | IEXTEN);
-	termios_p->c_cflag &= ~(CSIZE | PARENB);
-	termios_p->c_cflag |= CS8;
-	termios_p->c_cc[VMIN] = 1;
-	termios_p->c_cc[VTIME] = 0;
+    termios_p->c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP |
+                             INLCR | IGNCR | ICRNL | IXON);
+
+
+    termios_p->c_oflag &= ~OPOST;
+
+    termios_p->c_lflag &= ~(ECHO | ECHONL | ICANON | ISIG | IEXTEN);
+
+    termios_p->c_cflag &= ~(CSIZE | PARENB);
+    termios_p->c_cflag |= CS8;
+
+    termios_p->c_cc[VMIN] = 1;
+    termios_p->c_cc[VTIME] = 0;
 }
 
 
 speed_t cfgetispeed(const struct termios* tp)
 {
+    if ( (void *) tp == NULL )
+        return 0;
+
     return tp->c_ispeed;
 }
 
 
+
+
 speed_t cfgetospeed(const struct termios* tp)
 {
+    if ( (void *) tp == NULL )
+        return 0;
+
     return tp->c_ospeed;
 }
 
+
+
 int cfsetispeed(struct termios *termios_p, speed_t speed)
 {
+    if ( (void *) termios_p == NULL )
+        return -1;
+
     return -1;
 }
 
 
 int cfsetospeed(struct termios *termios_p, speed_t speed)
 {
+    if ( (void *) termios_p == NULL )
+        return -1;
+
 	return -1;
 }
 
 
 int cfsetspeed(struct termios *termios_p, speed_t speed)
 {
+    if ( (void *) termios_p == NULL )
+        return -1;
+
 	return -1;
 }
 

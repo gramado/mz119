@@ -22,16 +22,17 @@
 
 
 void putch (char c){
-	
-	/*
-	asm volatile (
-		"movl $4, %%eax;"
-	     	"movl %0, %%ebx;"
-	     	"int $0x80;"
-		:: "g" (c) : "%eax", "%ebx");
-	*/
-	
-	gramado_system_call ( 65, (unsigned long) c, (unsigned long) c, 
-		(unsigned long) c );	
+
+    // #todo
+    // Copy the low level routines from atacama's libc03.
+
+    gramado_system_call ( 65, 
+        (unsigned long) c, 
+        (unsigned long) 0,     // Console number 
+        (unsigned long) 0 );   // Console number
 }
+
+
+
+
 

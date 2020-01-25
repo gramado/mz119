@@ -21,10 +21,10 @@ int read (unsigned fd, void *buf, unsigned len)
 {
 	asm volatile (
 		"movl $21, %%eax;"
-		"movl %0, %%ecx;"
-	     	"movl %1, %%ebx;"
-		"movl %2, %%edx;"
-	     	"int $0x80;" :: "g" (fd), "b" (buf), "g" (len) : "%eax", "%ecx", "%edx", "memory");
+		"movl %0,  %%ecx;"
+		"movl %1,  %%ebx;"
+		"movl %2,  %%edx;"
+		"int $0x80;" :: "g" (fd), "b" (buf), "g" (len) : "%eax", "%ecx", "%edx", "memory");
 
 	int *memptr = (unsigned short *) 0x9000;
 	int *ret = memptr;

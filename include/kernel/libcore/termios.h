@@ -73,6 +73,16 @@ cc_t     c_cc[NCCS];   // special characters
 */
 
 
+/*
+struct winsize {
+	unsigned short ws_row;
+	unsigned short ws_col;
+	unsigned short ws_xpixel;
+	unsigned short ws_ypixel;
+};
+*/
+
+
 //https://www.mkssoftware.com/docs/man5/struct_termios.5.asp
 /* Primary terminal control structure. POSIX Table 7-1. */
 
