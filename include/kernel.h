@@ -258,10 +258,20 @@ extern void do_executa_new_task (void);
 
 // execve (v)
 #include <kernel/execve/sm/install.h>
-#include <kernel/execve/sm/io.h>                  //io.
+
+
+// io
+#include <kernel/io/io.h>                  //io.
+
+
+// execve
 #include <kernel/execve/sci/syscall.h>            //system calls.
 #include <kernel/execve/sm/modules.h>             //module manager.
-#include <kernel/execve/sm/debug.h>
+
+
+// debug
+#include <kernel/debug/debug.h>
+
 
 #include <kernel/execve/sm/system.h>              //system manager.
 #include <kernel/execve/sm/init.h>
@@ -283,8 +293,10 @@ extern void do_executa_new_task (void);
 #include <kernel/kservers/events.h>
 
 
+// ob
+#include <kernel/ob/object.h>
+
 // execve
-#include <kernel/execve/object.h>
 #include <kernel/execve/ss.h>
 
 

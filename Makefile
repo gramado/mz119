@@ -10,7 +10,7 @@
 VERSION = 1
 PATCHLEVEL = 26
 SUBLEVEL = 0
-EXTRAVERSION = -rc9
+EXTRAVERSION = -rc10
 NAME = 
 
 KERNELVERSION = $(VERSION)$(if $(PATCHLEVEL),.$(PATCHLEVEL)$(if $(SUBLEVEL),.$(SUBLEVEL)))$(EXTRAVERSION)
@@ -389,17 +389,24 @@ KERNEL.BIN:
 	# /sm
 	gcc -c kernel/execve/sm/init.c    -I include/ $(CFLAGS) -o init.o
 	gcc -c kernel/execve/sm/system.c  -I include/ $(CFLAGS) -o system.o
-	gcc -c kernel/execve/sm/debug/debug.c      -I include/ $(CFLAGS) -o debug.o
 	gcc -c kernel/execve/sm/disk/diskvol.c     -I include/ $(CFLAGS) -o diskvol.o
 	gcc -c kernel/execve/sm/install/install.c  -I include/ $(CFLAGS) -o install.o
-	gcc -c kernel/execve/sm/ob/object.c        -I include/ $(CFLAGS) -o object.o
 	gcc -c kernel/execve/sm/rt/runtime.c       -I include/ $(CFLAGS) -o runtime.o
-	gcc -c kernel/execve/sm/sys/abort.c    -I include/ $(CFLAGS) -o abort.o	
+	gcc -c kernel/execve/sm/sys/abort.c    -I include/ $(CFLAGS) -o abort.o
 	gcc -c kernel/execve/sm/sys/info.c     -I include/ $(CFLAGS) -o info.o
-	gcc -c kernel/execve/sm/sys/io.c       -I include/ $(CFLAGS) -o io.o
 	gcc -c kernel/execve/sm/sys/modules.c  -I include/ $(CFLAGS) -o modules.o
 	gcc -c kernel/execve/sm/sys/signal.c   -I include/ $(CFLAGS) -o signal.o
 	gcc -c kernel/execve/sm/sys/sm.c       -I include/ $(CFLAGS) -o sm.o
+
+
+#debug
+	gcc -c kernel/debug/debug.c  -I include/ $(CFLAGS) -o debug.o
+
+#io
+	gcc -c kernel/io/io.c      -I include/ $(CFLAGS) -o io.o
+
+#ob
+	gcc -c kernel/ob/object.c  -I include/ $(CFLAGS) -o object.o
 
 
 	# kservers/kgwm - Kernel Gramado Window Manager.

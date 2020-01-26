@@ -1,5 +1,5 @@
 /*
- * File: sm/io.h
+ * File: io.h
  *
  * Descrição:
  *     Arquivo principal do I/O Manager.

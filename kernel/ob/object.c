@@ -1,5 +1,5 @@
 /*
- * File: sm/ob/object.c
+ * File: ob/object.c
  *
  * Descrição:
  *   #importante: 
