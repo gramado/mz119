@@ -1,11 +1,5 @@
 /*
- * # Jackpot Game #     HELLO.BIN
- *
- * Portando para o sistema operacional Gramado 0.4
- * Portando para a linguagem C.
- * Original: Dev C++.
- * This version: Fred Nora.
- * 2018.
+
  */
  
  
@@ -44,6 +38,79 @@ __SendMessageToProcess ( int pid,
 //
 // ===============================================================
 //
+
+
+
+/*
+int getWindowSize(int *rows, int *cols) {
+  struct winsize ws;
+  if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1 || ws.ws_col == 0) {
+    return -1;
+  } else {
+    *cols = ws.ws_col;
+    *rows = ws.ws_row;
+    return 0;
+  }
+}
+*/
+
+
+/*
+
+ 3 enum ClearCodes {
+ 4 	CLEAR_FROM_CURSOR_TO_END,
+ 5 	CLEAR_FROM_CURSOR_TO_BEGIN,
+ 6 	CLEAR_ALL
+ 7 };
+ 8 
+ 9 void clearScreen(void) {
+10 	printf("\x1b[%dJ", CLEAR_ALL);
+11 }
+12 
+13 void clearScreenToBottom(void) {
+14 	printf("\x1b[%dJ", CLEAR_FROM_CURSOR_TO_END);
+15 }
+16 
+17 void clearScreenToTop(void) {
+18 	printf("\x1b[%dJ", CLEAR_FROM_CURSOR_TO_BEGIN);
+19 }
+20 
+21 void clearLine(void) {
+22 	printf("\x1b[%dK", CLEAR_ALL);
+23 }
+24 
+25 void clearLineToRight(void) {
+26 	printf("\x1b[%dK", CLEAR_FROM_CURSOR_TO_END);
+27 }
+28 
+29 void clearLineToLeft(void) {
+30 	printf("\x1b[%dK", CLEAR_FROM_CURSOR_TO_BEGIN);
+31 }
+
+
+ 3 void moveUp(int positions) {
+ 4 	printf("\x1b[%dA", positions);
+ 5 }
+ 6 
+ 7 void moveDown(int positions) {
+ 8 	printf("\x1b[%dB", positions);
+ 9 }
+10 
+11 void moveRight(int positions) {
+12 	printf("\x1b[%dC", positions);
+13 }
+14 
+15 void moveLeft(int positions) {
+16 	printf("\x1b[%dD", positions);
+17 }
+18 
+19 void moveTo(int row, int col) {
+20 	printf("\x1b[%d;%df", row, col);
+21 }
+* 
+*/
+
+
 
 
 /*
@@ -490,6 +557,47 @@ int main ( int argc, char *argv[] )
         putc(c,stdout);
     }
     */
+    
+    
+    //printf ("A");
+    //printf("\x1b[2J");    // Clear the entire screen  fail
+    //printf ("B \n");
+    
+    //fflush(stdout);
+    
+    //printf("\x1b[1J");    // Clear the screen from cursor to the beginning
+   //printf("\x1b[0J");    // Clear the screen from cursor to the end    
+    
+   //printf("\x1b2dK");    // Clear the current line
+   //printf("\x1b1dK");    // Clear the current line from cursor to left (beginning of the line)
+   //printf("\x1b0dK");    // Clear the current line from cursor to right (end of the line)
+
+   //printf("\x1b%d", 7);    // Save cursor
+   //printf("\x1b%d", 8);    // Restore saved cursor
+
+    
+
+    //write(STDOUT_FILENO, "\x1b[2J", 4);
+    //write(STDOUT_FILENO, "\x1b[H", 3);  
+
+    /*
+    int i=0;
+    while(1){
+        i++;
+        //printf ("\e[%d;%dH    %c\n",i,i,c++);
+        if (i>20)i=0;
+    }
+    */
+    
+    
+    //printf ("\e[1;1H\e[0J *\n");
+    //printf ("\e[1;1H\e[1J *\n");
+    //printf ("\e[1;1H\e[2J *\n");
+    //printf ("\e[1;1H\e[J  *\n");
+
+     //\x1b[H is the code for returning the cursor to the home position.
+
+    //printf ("\e[40;40H Fred Nora\n");
     
     return 0;
 }
