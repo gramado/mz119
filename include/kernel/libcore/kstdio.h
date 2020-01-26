@@ -328,32 +328,6 @@
 int g_inputmode;
  
  
-//
-// Numero de stream no array global de streams.
-//  
-//
-//
-int g_nstream; 
- 
-// Ponteiro para o array de streams dinâmico,
-// Para o caso de termos um novo array de tamanho maior 
-// que o padrão, então alocaremos memória para ele e 
-// usaremos esse ponteiro aí.
-// Ate mesmo para o caso de usarmos apenas o tamanho 
-// padrão podemos usar esse ponteiro aí,
-// apontando Streams[] para gStreams. 
-unsigned long *gStreams; 
-
-//Tmanho dinâmico.?? 
-//unsigned long gStreams[?];
- 
-// 
-//printf support 
-//
-
-//#define kprintf printf    //kernel support
-//#define dprintf printf    //debug support
-//...
  
 
 #define REVERSE_ATTRIB 0x70
@@ -770,12 +744,7 @@ file *file_pwd;         //23 - Diretório de trabalho. Diretório usado no comando
  * com o processo.
  */
  
- 
-//#todo: deletar 
-unsigned long Streams[NUMBER_OF_FILES]; 
-
-//#todo: usar esse.
-//unsigned long fileList[NUMBER_OF_FILES]; 
+unsigned long fileList[NUMBER_OF_FILES]; 
 
 
 

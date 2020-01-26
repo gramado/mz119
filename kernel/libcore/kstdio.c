@@ -255,7 +255,7 @@ file *fopen ( const char *filename, const char *mode ){
 
 
         // #todo
-        // Talvez tenhamos que colocar o ponteiro em Streams[i]
+        // Talvez tenhamos que colocar o ponteiro em fileList[i]
          
 		//...
 
@@ -2050,24 +2050,18 @@ int stdioInitialize (void){
     // Essas estruturas estão em memória compartilhada ??
     // A libc em ring3 poderá acessar os elementos dessa estrutura ?
 
-    Streams[__KERNEL_STREAM_STDIN]  = (unsigned long) stdin;
-    Streams[__KERNEL_STREAM_STDOUT] = (unsigned long) stdout;
-    Streams[__KERNEL_STREAM_STDERR] = (unsigned long) stderr;
+    fileList[__KERNEL_STREAM_STDIN]  = (unsigned long) stdin;
+    fileList[__KERNEL_STREAM_STDOUT] = (unsigned long) stdout;
+    fileList[__KERNEL_STREAM_STDERR] = (unsigned long) stderr;
 
 	//Os próximos são inicializados em fs.c
-	//Streams[3] volume0 root dir (vfs) 
-	//Streams[4] volume1 root dir (boot volume)
-	//Streams[5] volume2 root dir  (system volume)
+	//fileList[3] volume0 root dir (vfs) 
+	//fileList[4] volume1 root dir (boot volume)
+	//fileList[5] volume2 root dir  (system volume)
 	//...
 
 
-    // Configurando o array global para ser o 
-    // mesmo que o array local.	
-	gStreams = (unsigned long *) &Streams[0];
 
-
-	//Número de streams no array global
-	g_nstream = NUMBER_OF_FILES;
 
 
 	// Flag para o tipo de input.
@@ -2136,7 +2130,7 @@ int stdioInitialize (void){
 	current_stdin->_p = (unsigned char *) &current_stdin_data_buffer[0];
 	current_stdin->_cnt = 128;  //Limitando. na verdade e' 4KB.
 	current_stdin->_lbfsize = 128;
-	//#todo: Colocar em Streams[i]
+	//#todo: Colocar em fileList[i]
 	
 	//
 	// ## stdout
@@ -2159,7 +2153,7 @@ int stdioInitialize (void){
 	current_stdout->_p  = (unsigned char *) &current_stdout_data_buffer[0];
 	current_stdout->_cnt = 128;  //Limitando. na verdade e' 4KB.
 	current_stdout->_lbfsize = 128;
-	//#todo: Colocar em Streams[i]
+	//#todo: Colocar em fileList[i]
 	
 	//
 	// ## stderr
@@ -2182,7 +2176,7 @@ int stdioInitialize (void){
 	current_stderr->_p  = (unsigned char *) &current_stderr_data_buffer[0];
 	current_stderr->_cnt = 128;  //Limitando. na verdade e' 4KB.
 	current_stderr->_lbfsize = 128;
-    //#todo: Colocar em Streams[i]
+    //#todo: Colocar em fileList[i]
     
     
 	// Done !

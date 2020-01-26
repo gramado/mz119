@@ -17,7 +17,7 @@
  * I/O system: Inclui I/O manager
  *
  *  @todo: Cria funções para gerenciar ioBuffers.
- * The actual Streams modules lives in kernel space on Unix, and are 
+ * The actual fileList modules lives in kernel space on Unix, and are 
  * installed (pushed) and removed (popped) by the ioctl system call.
  * Versão 1.0, 2016.
  */
@@ -150,7 +150,7 @@ sys_ioctl ( int fd, unsigned long request, char *arg )
      //
      
      //See: kernel/stdio.h
-     //Streams[NUMBER_OF_FILES]; 
+     //fileList[NUMBER_OF_FILES]; 
      
      if ( fd < 0 || fd >= NUMBER_OF_FILES )
      {
@@ -158,7 +158,7 @@ sys_ioctl ( int fd, unsigned long request, char *arg )
           goto fail; //return -1;
      }    
          
-     dev_stream = ( FILE *) Streams[fd];
+     dev_stream = ( file *) fileList[fd];
      
      if ( (void *) dev_stream == NULL )
      {

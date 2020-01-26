@@ -80,7 +80,7 @@ void vfsInit (void){
         vfs->_file = 0; //?
         vfs->_tmpfname = "vfs-stream";
 
-        Streams[__KERNEL_STREAM_VFS] = (unsigned long) vfs;
+        fileList[__KERNEL_STREAM_VFS] = (unsigned long) vfs;
 	};
 	
 

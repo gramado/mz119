@@ -321,10 +321,10 @@ void *get_file (int Index){
     if (Index < 0)
     {
         return NULL;
-    };
+    }
 
 
-    return (void *) Streams[Index];
+    return (void *) fileList[Index];
 }
 
 
@@ -355,7 +355,7 @@ void set_file ( void *file, int Index ){
 	// Include pointer in the list.
 
 
-     Streams[Index] = (unsigned long) file;
+     fileList[Index] = (unsigned long) file;
 }
 
 
@@ -849,7 +849,7 @@ int fsInit (void){
 
 
 	//
-	// ==================== ## Streams ## =========================
+	// ==================== ## fileList ## =========================
 	//
 
 	// Agora inicialzamos as stream 4 e 5.
@@ -882,7 +882,7 @@ int fsInit (void){
         volume1_rootdir->_file = 0; //?
         volume1_rootdir->_tmpfname = "volume1-stream";
 
-        Streams[__KERNEL_STREAM_VOL1_ROOTDIR] = (unsigned long) volume1_rootdir;
+        fileList[__KERNEL_STREAM_VOL1_ROOTDIR] = (unsigned long) volume1_rootdir;
 
         //#bugbug: Validade da estrutura.
         storage->stream = volume1_rootdir; 
@@ -914,7 +914,7 @@ int fsInit (void){
         volume2_rootdir->_file = 0; //?
         volume2_rootdir->_tmpfname = "volume2-stream";
 
-        Streams[__KERNEL_STREAM_VOL2_ROOTDIR] = (unsigned long) volume2_rootdir;
+        fileList[__KERNEL_STREAM_VOL2_ROOTDIR] = (unsigned long) volume2_rootdir;
     };
 
 
@@ -953,7 +953,7 @@ int fsInit (void){
         
         
         // #todo
-        //Streams[ ? ] = (unsigned long) pipe_gramadocore_init_execve;
+        //fileList[ ? ] = (unsigned long) pipe_gramadocore_init_execve;
 
 	    //0
         Pipes[0] = (unsigned long) pipe_gramadocore_init_execve;
