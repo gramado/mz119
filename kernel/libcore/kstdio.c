@@ -1,16 +1,8 @@
 /*
- * File: crts/klibc/stdio.c 
+ * File: libcore/kstdio.c 
  *
- * Descrição:
- *     +Rotinas de input/output padrão.
- *     +Algumas rotinas de terminal.
- *
- * Environment:
- *     >>> Ring 0 <<<
- *
- *
- * @todo: Buffering and pipes.
- *        Priorizar operações com disco.
+ *    i/o routines for the base kernel.
+ *    ring 0.
  * 
  * Credits:
  *     printf support - Georges Menie's tutorial.
@@ -49,7 +41,7 @@ extern unsigned long SavedBPP;
  *     Close a file. 
  */
 
-int fclose (FILE *stream){
+int fclose (file *stream){
 
     //if ( (void *) stream == NULL )
        //return EOF;
@@ -107,14 +99,14 @@ int fclose (FILE *stream){
 // Precisamos inicializar corretamente a estrutura antes de 
 // retornarmos o ponteiro.
 
-FILE *fopen ( const char *filename, const char *mode ){
+file *fopen ( const char *filename, const char *mode ){
 
     unsigned long fileret;
 
     int i;
     
 	//struct _iobuf *stream;
-    FILE *stream;
+    file *stream;
 
 	// Buffer para armazenar o arquivo que vamos abrir.
     char *file_buffer;
@@ -132,7 +124,7 @@ FILE *fopen ( const char *filename, const char *mode ){
     //
 
 	//buffer da estrutura.
-    stream = (FILE *) &struct_buffer[0];
+    stream = (file *) &struct_buffer[0];
 
 
 	// #bugbug
@@ -167,7 +159,7 @@ FILE *fopen ( const char *filename, const char *mode ){
         goto fail;
 
 		//refresh_screen();
-		//return (FILE *) 0;
+		//return (file *) 0;
     }
 
 
@@ -290,7 +282,7 @@ FILE *fopen ( const char *filename, const char *mode ){
         }
 
         goto fail;
-        //return (FILE *) 0;
+        //return (file *) 0;
     }
 
 	//
@@ -320,26 +312,26 @@ FILE *fopen ( const char *filename, const char *mode ){
     }
 
 done:
-    return (FILE *) stream;
+    return (file *) stream;
 
 fail:
 
     refresh_screen ();
-    return (FILE *) 0;
+    return (file *) 0;
 }
 
 //Isso pertence à fcntl
 int __openat (int dirfd, const char *pathname, int flags){
 
  
-    FILE *stream;
+    file *stream;
     // #todo
     // dirfd, flags.
 
     // #bugbug
     // Improvisando com essa que funciona o carregamento.
     
-    stream = (FILE *) fopen ( (const char *) pathname, "r" );
+    stream = (file *) fopen ( (const char *) pathname, "r" );
 
 
     if(!stream)
@@ -364,7 +356,7 @@ int __openat (int dirfd, const char *pathname, int flags){
 // https://www.tutorialspoint.com/c_standard_library/c_function_fread.htm 
 
 
-size_t fread (void *ptr, size_t size, size_t n, FILE *fp){
+size_t fread (void *ptr, size_t size, size_t n, file *fp){
 
 
     //if ( (void *) fp == NULL )
@@ -453,7 +445,7 @@ size_t fread (void *ptr, size_t size, size_t n, FILE *fp){
  *     #todo
  */
 
-size_t fwrite (const void *ptr, size_t size, size_t n, FILE *fp){
+size_t fwrite (const void *ptr, size_t size, size_t n, file *fp){
 
 
    // if ( (void *) fp == NULL )
@@ -509,8 +501,7 @@ size_t fwrite (const void *ptr, size_t size, size_t n, FILE *fp){
 // interna por enquanto.
 // Mudar os nomes dos elementos da estrutura.
 // para ficarem iguais aos nossos.
-int __do_fflush (FILE *stream);
-int __do_fflush (FILE *stream)
+int __do_fflush (file *stream)
 {
 	// #todo
 	// Isso parece ser bem legal.
@@ -631,14 +622,14 @@ int __do_fflush (FILE *stream)
  enquanto não encontrar um '\n'
 */
 
-int fflush ( FILE *stream ){
+int fflush ( file *stream ){
 
     int __ret;
     
     struct process_d *__P;
   
     int i;
-    FILE *__tmp_stream;
+    file *__tmp_stream;
 
 
 
@@ -660,7 +651,8 @@ int fflush ( FILE *stream ){
          
         for (i=0; i<32; i++)
         {
-            __tmp_stream = (FILE *) __P->Streams[i];
+            __tmp_stream = (file *) __P->Streams[i];
+            
             
             if ( (void *) __tmp_stream != NULL )
             {
@@ -688,9 +680,9 @@ int fflush ( FILE *stream ){
 
 int 
 update_standard_stream ( int PID, 
-                         FILE *stream1, 
-                         FILE *stream2, 
-                         FILE *stream3 )
+                         file *stream1, 
+                         file *stream2, 
+                         file *stream3 )
 {
     struct process_d *p;
 
@@ -1069,7 +1061,7 @@ int sprintf ( char *str, const char *format, ... ){
 // Isso significa que fprintf não pode ativar a rotina de pintura
 // enquanto não encontrar um '\n'
 
-int fprintf ( FILE *stream, const char *format, ... ){
+int fprintf ( file *stream, const char *format, ... ){
 
     register int *varg = (int *) (&format);
 
@@ -1175,7 +1167,7 @@ int fprintf ( FILE *stream, const char *format, ... ){
  * fputs:      
  */
 
-int fputs ( const char *str, FILE *stream ){
+int fputs ( const char *str, file *stream ){
 
     int size = 0;
     
@@ -1216,7 +1208,7 @@ int fputs ( const char *str, FILE *stream ){
  * ungetc:
  */
 
-int ungetc ( int c, FILE *stream ){
+int ungetc ( int c, file *stream ){
 
     if (c == EOF) 
         return (int) c;
@@ -1242,7 +1234,7 @@ int ungetc ( int c, FILE *stream ){
  * 
  */
 
-long ftell (FILE *stream){
+long ftell (file *stream){
 
 
     if ( (void *) stream == NULL )
@@ -1258,7 +1250,7 @@ long ftell (FILE *stream){
  * 
  */
  
-int fileno ( FILE *stream ){
+int fileno ( file *stream ){
 
     if ( (void *) stream == NULL )
        return EOF;
@@ -1274,7 +1266,7 @@ int fileno ( FILE *stream ){
  *     #precisamos exportar isso como serviço. (#136)
  */
 
-int fgetc ( FILE *stream ){
+int fgetc ( file *stream ){
 
     int ch = 0;
 
@@ -1352,7 +1344,7 @@ int fgetc ( FILE *stream ){
  * feof:
  */
 
-int feof ( FILE *stream ){
+int feof ( file *stream ){
 
     int ch = 0;
 
@@ -1389,7 +1381,7 @@ int feof ( FILE *stream ){
  *
  */
 
-int ferror ( FILE *stream ){
+int ferror ( file *stream ){
 
     if ( (void *) stream == NULL )
        return EOF;
@@ -1407,7 +1399,7 @@ int ferror ( FILE *stream ){
  *     and whence is what that offset is relative to.
  */
 
-int fseek ( FILE *stream, long offset, int whence ){
+int fseek ( file *stream, long offset, int whence ){
 
     if ( (void *) stream == NULL )
     {
@@ -1463,8 +1455,8 @@ done:
  * _wsetup returns 0 if OK to write, nonzero otherwise.
  */
 /*
-int __swsetup(FILE *fp)
-int __swsetup(FILE *fp)
+int __swsetup(file *fp)
+int __swsetup(file *fp)
 {
     return -1;
 }
@@ -1481,8 +1473,8 @@ int __swsetup(FILE *fp)
 // Isso é usado em __sputc no bsd.
 
 /*
-int __swbuf (int c, FILE *fp);
-int __swbuf (int c, FILE *fp)
+int __swbuf (int c, file *fp);
+int __swbuf (int c, file *fp)
 {
     return -1;
 }
@@ -1495,7 +1487,7 @@ int __swbuf (int c, FILE *fp)
  * fputc:
  */
 
-int fputc ( int ch, FILE *stream ){
+int fputc ( int ch, file *stream ){
 
     //if ( (void *) stream == NULL )
        //return EOF;
@@ -1571,10 +1563,10 @@ int fputc ( int ch, FILE *stream ){
  */
  
 // (since C99)
-// int fscanf( FILE *restrict stream, const char *restrict format, ... );
+// int fscanf( file *restrict stream, const char *restrict format, ... );
 // (until C99)
 
-int fscanf (FILE *stream, const char *format, ... )
+int fscanf (file *stream, const char *format, ... )
 {
 	
     if ( (void *) stream == NULL )
@@ -1590,8 +1582,8 @@ int fscanf (FILE *stream, const char *format, ... )
 
 
 /*
-int vfprintf ( FILE *stream, const char *format, stdio_va_list argptr );
-int vfprintf ( FILE *stream, const char *format, stdio_va_list argptr )
+int vfprintf ( file *stream, const char *format, stdio_va_list argptr );
+int vfprintf ( file *stream, const char *format, stdio_va_list argptr )
 {
 }
 */
@@ -1602,8 +1594,8 @@ int vfprintf ( FILE *stream, const char *format, stdio_va_list argptr )
  */
 
 /* 
-int vfprintf(FILE *stream, const char *format, va_list ap);
-int vfprintf(FILE *stream, const char *format, va_list ap)
+int vfprintf(file *stream, const char *format, va_list ap);
+int vfprintf(file *stream, const char *format, va_list ap)
 {
 	int n;             // Characters written. 
 	char buffer[1024]; // Buffer.             
@@ -1628,7 +1620,7 @@ int vfprintf(FILE *stream, const char *format, va_list ap)
  * 
  */
 
-void rewind ( FILE * stream )
+void rewind ( file *stream )
 {
     //fseek (stream, 0L, SEEK_SET);
 
@@ -1984,9 +1976,9 @@ int stdioInitialize (void){
 	// processo kernel.
 	// Estamos apenas alocando memória para a estrutura.
 
-    stdin  = (FILE *) &buffer0[0];
-    stdout = (FILE *) &buffer1[0];
-    stderr = (FILE *) &buffer2[0];
+    stdin  = (file *) &buffer0[0];
+    stdout = (file *) &buffer1[0];
+    stderr = (file *) &buffer2[0];
     
     
     //
@@ -2133,7 +2125,7 @@ int stdioInitialize (void){
 	current_stdin_struct_buffer = (unsigned char *) newPage ();
 	current_stdin_data_buffer = (unsigned char *) newPage ();
 	
-	current_stdin = (FILE *) &current_stdin_struct_buffer[0];
+	current_stdin = (file *) &current_stdin_struct_buffer[0];
 	
 	current_stdin->used = 1;
 	current_stdin->magic = 1234;
@@ -2156,7 +2148,7 @@ int stdioInitialize (void){
 	current_stdout_struct_buffer = (unsigned char *) newPage ();
 	current_stdout_data_buffer = (unsigned char *) newPage ();	
 	
-	current_stdout = (FILE *) &current_stdout_struct_buffer[0];
+	current_stdout = (file *) &current_stdout_struct_buffer[0];
 	
 	current_stdout->used = 1;
 	current_stdout->magic = 1234;		
@@ -2179,7 +2171,7 @@ int stdioInitialize (void){
 	current_stderr_struct_buffer = (unsigned char *) newPage();
 	current_stderr_data_buffer = (unsigned char *) newPage ();
 	
-	current_stderr = (FILE *) &current_stderr_struct_buffer[0];
+	current_stderr = (file *) &current_stderr_struct_buffer[0];
 	
 	current_stderr->used = 1;
 	current_stderr->magic = 1234;
@@ -2212,7 +2204,7 @@ fail:
 // see: 
 // https://linux.die.net/man/3/setvbuf
 
-void setbuf (FILE *stream, char *buf){
+void setbuf (file *stream, char *buf){
 
     if ( (void *) stream == NULL )
     {
@@ -2246,7 +2238,7 @@ void setbuf (FILE *stream, char *buf){
  * 
  */
  
-void setbuffer (FILE *stream, char *buf, size_t size){
+void setbuffer (file *stream, char *buf, size_t size){
 
     if ( (void *) stream == NULL )
     {
@@ -2280,7 +2272,7 @@ void setbuffer (FILE *stream, char *buf, size_t size){
  * 
  */
  
-void setlinebuf (FILE *stream)
+void setlinebuf (file *stream)
 {
     if ( (void *) stream == NULL )
        return;
@@ -2294,7 +2286,7 @@ void setlinebuf (FILE *stream)
  * 
  */
 
-int setvbuf (FILE *stream, char *buf, int mode, size_t size){
+int setvbuf (file *stream, char *buf, int mode, size_t size){
 
     if ( (void *) stream == NULL )
     {

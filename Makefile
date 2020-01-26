@@ -10,7 +10,7 @@
 VERSION = 1
 PATCHLEVEL = 26
 SUBLEVEL = 0
-EXTRAVERSION = -rc7
+EXTRAVERSION = -rc8
 NAME = 
 
 KERNELVERSION = $(VERSION)$(if $(PATCHLEVEL),.$(PATCHLEVEL)$(if $(SUBLEVEL),.$(SUBLEVEL)))$(EXTRAVERSION)
@@ -127,7 +127,7 @@ ifeq ($(ARCH),x86)
 	#deveria ser headx86.o
 	ENTRY_OBJECTS := boot.o main.o x86main.o 
 
-	EXECVE_OBJECTS := pipe.o socket.o ctype.o  stdio.o stdlib.o string.o unistd.o \
+	EXECVE_OBJECTS := pipe.o socket.o ctype.o  kstdio.o stdlib.o string.o unistd.o \
 	devmgr.o \
 	gde_serv.o \
 	debug.o diskvol.o install.o object.o runtime.o \
@@ -296,14 +296,14 @@ KERNEL.BIN:
 	gcc -c kernel/execve/execve.c  -I include/ $(CFLAGS) -o execve.o
 
 
-	# crts/libcore
-	gcc -c kernel/execve/crts/libcore/pipe/pipe.c      -I include/ $(CFLAGS) -o pipe.o
-	gcc -c kernel/execve/crts/libcore/socket/socket.c  -I include/ $(CFLAGS) -o socket.o
-	gcc -c kernel/execve/crts/libcore/ctype.c   -I include/ $(CFLAGS) -o ctype.o
-	gcc -c kernel/execve/crts/libcore/stdio.c   -I include/ $(CFLAGS) -o stdio.o
-	gcc -c kernel/execve/crts/libcore/stdlib.c  -I include/ $(CFLAGS) -o stdlib.o
-	gcc -c kernel/execve/crts/libcore/string.c  -I include/ $(CFLAGS) -o string.o
-	gcc -c kernel/execve/crts/libcore/unistd.c  -I include/ $(CFLAGS) -o unistd.o
+	# kernel/libcore
+	gcc -c kernel/libcore/pipe.c      -I include/ $(CFLAGS) -o pipe.o
+	gcc -c kernel/libcore/socket.c  -I include/ $(CFLAGS) -o socket.o
+	gcc -c kernel/libcore/ctype.c   -I include/ $(CFLAGS) -o ctype.o
+	gcc -c kernel/libcore/kstdio.c   -I include/ $(CFLAGS) -o kstdio.o
+	gcc -c kernel/libcore/stdlib.c  -I include/ $(CFLAGS) -o stdlib.o
+	gcc -c kernel/libcore/string.c  -I include/ $(CFLAGS) -o string.o
+	gcc -c kernel/libcore/unistd.c  -I include/ $(CFLAGS) -o unistd.o
 
 
 	gcc -c kernel/kdrivers/apic.c    -I include/ $(CFLAGS) -o apic.o

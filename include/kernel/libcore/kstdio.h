@@ -1,16 +1,14 @@
 /*
- * File: stdio.h
+ * File: kstdio.h
  *
- * Descrição:
- *     Rotinas padrão de I/O.
- *   
- * @todo: Trabalhar nas funções de abrir e fechar arquivos.
- * 
+ *    i/o functions for base kernel.
+ *    ring 0.
+ *  
  * History:
  *     2015 - Created by Fred Nora.
- *     2016 - Revision.
  */
 
+ 
  
 /*
     The stdio.h header defines three variable types, 
@@ -575,8 +573,11 @@ struct __sbuf {
  *
  *     Ambiente: RING 0.
  */
-typedef struct _iobuf FILE; 
-struct _iobuf 
+
+//typedef struct _iobuf FILE; 
+//struct _iobuf 
+
+struct file_d
 {
 	// #importante
 	// Vamos tornar a estrutura em kernel mode igual a estrutura de ring3;
@@ -661,6 +662,10 @@ struct _iobuf
     char *_tmpfname;
 };
 
+typedef struct file_d FILE;   //#todo: deletar isso. 
+typedef struct file_d file; 
+
+
 /*
     Fluxo padrão. Também conhecidos como descritores padrão.
 
@@ -680,40 +685,40 @@ struct _iobuf
 //
 
 // Gramado Boot
-FILE *stdin;            //0
-FILE *stdout;           //1
-FILE *stderr;           //2
-FILE *vfs;              //3 - Diretório raiz do vfs. 
-FILE *volume1_rootdir;  //4 - Diretório raiz do volume de boot.
-FILE *volume2_rootdir;  //5 - Diretório raiz do volume do sistema. 
-FILE *file_InitTXT;     //6 - Arquivo de configuração de inicialização. INIT.TXT.
-FILE *file_users;       //7 - Pasta para perfis de usuários. /users
-FILE *file_BootManager; //8 - Boot Manager. BM.BIN.
-FILE *file_BootLoader;  //9 - Boot Loader. BL.BIN.
+file *stdin;            //0
+file *stdout;           //1
+file *stderr;           //2
+file *vfs;              //3 - Diretório raiz do vfs. 
+file *volume1_rootdir;  //4 - Diretório raiz do volume de boot.
+file *volume2_rootdir;  //5 - Diretório raiz do volume do sistema. 
+file *file_InitTXT;     //6 - Arquivo de configuração de inicialização. INIT.TXT.
+file *file_users;       //7 - Pasta para perfis de usuários. /users
+file *file_BootManager; //8 - Boot Manager. BM.BIN.
+file *file_BootLoader;  //9 - Boot Loader. BL.BIN.
 
 // Gramado Core
-FILE *file_Kernel;      //10 - Kernel base. KERNEL.BIN
-FILE *file_Init;        //11 - Init subsystem. INIT.BIN
-FILE *file_Shell;       //12 - Shell subsystem. SHELL.BIN
-FILE *file_TaskMan;     //13 - Task manager subsystem. TAKSMAN.BIN
+file *file_Kernel;      //10 - Kernel base. KERNEL.BIN
+file *file_Init;        //11 - Init subsystem. INIT.BIN
+file *file_Shell;       //12 - Shell subsystem. SHELL.BIN
+file *file_TaskMan;     //13 - Task manager subsystem. TAKSMAN.BIN
 
 // Gramado Cali
-FILE *file_CS;          //14 California Shell. CS.BIN
-FILE *file_CFE;         //15 California File explorer. CFE.BIN
-FILE *file_CWE;         //16 California Web Explorer. CWE.BIN
+file *file_CS;          //14 California Shell. CS.BIN
+file *file_CFE;         //15 California File explorer. CFE.BIN
+file *file_CWE;         //16 California Web Explorer. CWE.BIN
 
 // Gramado LA
-FILE *file_LA;          //17 - Los Angeles Package Manager. LA.BIN  
+file *file_LA;          //17 - Los Angeles Package Manager. LA.BIN  
 
 // System directories
-FILE *file_dd;          //18 - device drivers folder
-FILE *file_bin;         //19 - applications folder
-FILE *file_tmp;         //20 - tmp files folder
-FILE *file_download;    //21 - download files folder
-FILE *file_libs;        //22 - system libs folder
+file *file_dd;          //18 - device drivers folder
+file *file_bin;         //19 - applications folder
+file *file_tmp;         //20 - tmp files folder
+file *file_download;    //21 - download files folder
+file *file_libs;        //22 - system libs folder
 
 // User directories
-FILE *file_pwd;         //23 - Diretório de trabalho. Diretório usado no comando 'pwd'. 
+file *file_pwd;         //23 - Diretório de trabalho. Diretório usado no comando 'pwd'. 
 
 //...
 
@@ -763,10 +768,16 @@ FILE *file_pwd;         //23 - Diretório de trabalho. Diretório usado no comando
  * muitas chamadas para acessar o conteúdo do arquivo, 
  * a não ser que o kernel compartilhe a memória 
  * com o processo.
- *
- *
  */
+ 
+ 
+//#todo: deletar 
 unsigned long Streams[NUMBER_OF_FILES]; 
+
+//#todo: usar esse.
+//unsigned long fileList[NUMBER_OF_FILES]; 
+
+
 
 /*
  * #importante 
@@ -781,11 +792,11 @@ unsigned long Streams[NUMBER_OF_FILES];
 // 0
 //Pipe para a rotina execve particular 
 //usada no no init do ambiente Gramado Core.
-FILE *pipe_gramadocore_init_execve;
+file *pipe_gramadocore_init_execve;
 
 // 1
 //Pipe usado pela rotina execve.
-FILE *pipe_execve;
+file *pipe_execve;
 
 //Continua ...
 
@@ -870,69 +881,70 @@ static __inline int bsd__sputc (int _c, FILE *_p)
  * Protótipos do padrão C.
  */
 
+// #todo
+// Deletar printf
 #define kprintf printf
 
 
 //Isso pertence à fcntl
 int __openat (int dirfd, const char *pathname, int flags);
 
-int fclose(FILE *stream);    //@todo:  
-FILE *fopen( const char *filename, const char *mode );    //@todo: 
+int fclose(file *stream);    //@todo:  
+file *fopen( const char *filename, const char *mode );    //@todo: 
 int printf(const char *format, ...);
 int sprintf(char *str, const char *format, ...);
-int fprintf(FILE *stream, const char *format, ...);
+int fprintf(file *stream, const char *format, ...);
 int putchar( int ch );
 //...
 
+int __do_fflush (file *stream);
 
 
 
 
 
 
+size_t fread (void *ptr, size_t size, size_t n, file *fp);
+size_t fwrite (const void *ptr, size_t size, size_t n, file *fp);
 
-size_t fread (void *ptr, size_t size, size_t n, FILE *fp);
-size_t fwrite (const void *ptr, size_t size, size_t n, FILE *fp);
-
-int fflush ( FILE *stream );
+int fflush ( file *stream );
 
 //atualiza o fluxo padrão para determinado processo
-int update_standard_stream ( int PID, FILE *stream1, FILE *stream2, FILE *stream3 );
+int update_standard_stream ( int PID, file *stream1, file *stream2, file *stream3 );
 
 
 
-int fputs ( const char *str, FILE *stream );
-int ungetc ( int c, FILE *stream );
-long ftell (FILE *stream);
-int fileno ( FILE *stream );
-int fgetc ( FILE *stream );
-int feof ( FILE *stream );
-int ferror ( FILE *stream );
-int fseek ( FILE *stream, long offset, int whence );
-int fputc ( int ch, FILE *stream );
-int fscanf (FILE *stream, const char *format, ... );
-void rewind ( FILE * stream );
-
+int fputs ( const char *str, file *stream );
+int ungetc ( int c, file *stream );
+long ftell (file *stream);
+int fileno ( file *stream );
+int fgetc ( file *stream );
+int feof ( file *stream );
+int ferror ( file *stream );
+int fseek ( file *stream, long offset, int whence );
+int fputc ( int ch, file *stream );
+int fscanf (file *stream, const char *format, ... );
+void rewind ( file *stream );
 
 
 
 //BUFFER:
-//void setbuf(FILE *stream, char *buffer)
-//int setvbuf(FILE *stream, char *buffer, int mode, size_t size);
+//void setbuf(file *stream, char *buffer)
+//int setvbuf(file *stream, char *buffer, int mode, size_t size);
 
 
 //testes...(ainda não  implementadas.)
-//int fgetpos(FILE *stream, fpos_t *pos);
+//int fgetpos(file *stream, fpos_t *pos);
 //int remove(const char *filename);
 //int rename(const char *old_filename, const char *new_filename);
-//  void setbuf(FILE *stream, char *buffer);
+//  void setbuf(file *stream, char *buffer);
 //  FILE *tmpfile(void);
 //  int scanf(const char *format, ...)
-//int fgetc(FILE *stream)
-//  int fputc(int char, FILE *stream)
-//  int getc(FILE *stream)
+//int fgetc(file *stream)
+//  int fputc(int char, file *stream)
+//  int getc(file *stream)
 //  int getchar(void)
-//  int putc(int char, FILE *stream)
+//  int putc(int char, file *stream)
 
 
 int puts ( const char *str );
@@ -975,11 +987,6 @@ int print (char **out, int *varg);
 
 
 
- 
-
-
-
-
 //int getchar();
 
 
@@ -988,10 +995,10 @@ int print (char **out, int *varg);
 //
 
 // see: https://linux.die.net/man/3/setvbuf
-void setbuf(FILE *stream, char *buf);
-void setbuffer(FILE *stream, char *buf, size_t size);
-void setlinebuf(FILE *stream);
-int setvbuf(FILE *stream, char *buf, int mode, size_t size);
+void setbuf(file *stream, char *buf);
+void setbuffer(file *stream, char *buf, size_t size);
+void setlinebuf(file *stream);
+int setvbuf(file *stream, char *buf, int mode, size_t size);
 
 //inicializa os buffers do fluxo padrão em stdio.c
 int stdioInitialize (void);

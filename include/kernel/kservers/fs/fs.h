@@ -608,28 +608,7 @@ findfile_t *Findfile;
 
 
 
-/*
- * file_d:
- *     Estrutura para arquivo.
- */ 
-typedef struct file_d file_t;
-struct file_d
-{
-    //@todo: incluir informações extras sobre o arquivo.
-	
-	/*
-	 * Endreço onde o arquivo foi carregado.
-	 *
-	 */
-	unsigned long address;
-	
-    /*
-	 * Um ponteiro pra estrutura da entrada atual.
-	 */
-	struct dir_entry_d *current;
-};
-
-
+ 
 
 
 /*

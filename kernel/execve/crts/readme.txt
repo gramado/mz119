@@ -1,4 +1,0 @@
-
-/crts
-
-     Initializing folder.

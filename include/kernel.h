@@ -83,7 +83,7 @@ extern void do_executa_new_task (void);
 
 
 // libcore
-#include <kernel/libcore/stdio.h>
+#include <kernel/libcore/kstdio.h>
 
 // kdrivers
 #include <kernel/kdrivers/tty/console.h>
