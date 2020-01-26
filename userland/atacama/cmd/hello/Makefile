@@ -49,6 +49,7 @@ LIBCOBJ = ../../lib/libc03/obj
 myObjects = crt0.o main.o \
 ctype.o \
 stdio.o \
+fcntl.o \
 stdlib.o \
 string.o \
 time.o \
@@ -59,10 +60,10 @@ stubs.o
 
 
 
-.PHONY: all all-c jackpot-link finalize clean
+.PHONY: all all-c hello-link finalize clean
 
-all: main.o all-c jackpot-link finalize clean
-	@echo "Ok?"
+all: main.o all-c hello-link finalize clean
+	@echo "hello Ok?"
 
 main.o:
 	gcc  -c  main.c  $(CFLAGS) -I $(LIBC) -o main.o
@@ -74,6 +75,7 @@ all-c:
 
 	cp $(LIBCOBJ)/ctype.o   .
 	cp $(LIBCOBJ)/stdio.o .
+	cp $(LIBCOBJ)/fcntl.o .
 	cp $(LIBCOBJ)/stdlib.o .
 	cp $(LIBCOBJ)/string.o .
 	cp $(LIBCOBJ)/time.o    .
@@ -85,7 +87,7 @@ all-c:
 
 
 
-jackpot-link:
+hello-link:
 	ld -m elf_i386 -T link.ld -o HELLO.BIN $(myObjects) -Map map.s
 
 finalize:

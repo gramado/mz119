@@ -270,26 +270,58 @@ void stdio_fntos (char *name){
 
 
 
+/*
+void __init_FILE (FILE *fp, int fd, unsigned char *buffer, int flags );
+void __init_FILE (FILE *fp, int fd, unsigned char *buffer, int flags )
+{
+    if(!fp)
+        return;
+        
+    fp->used = 1;
+    fp->magic = 1234;        
+        
+    //fp->iopl = 3;
+            
+    fp->fd = fd;
+    fp->_base = (unsigned char *) buffer;
+    fp->_lbfsize = BUFSIZ;
+    fp->_flags = flags;
+}
+*/
+
+
+/*
+FILE *__make_FILE (int fd)
+{
+    FILE *fp = (FILE *) malloc ( sizeof(FILE) );
+    
+    if (!fp)
+        return NULL;
+    
+    //fp->used = 1;
+    //fp->magic = 1234;        
+     
+    // CLean 
+    memset (fp, 0, sizeof(FILE));
+    
+    unsigned char *buffer;
+    
+    buffer = (unsigned char *) malloc (BUFSIZ);
+    
+    __init_FILE ( (FILE *) fp, (int) fd, (unsigned char *) buffer, 0 );
+    
+    return (FILE *) fp;
+}
+*/
+
+
+
 //#todo
 //https://linux.die.net/man/3/remove
 int remove (const char *pathname)
 {
     return (int) (-1);
 }
-
-
-/*linux klibc style*/
-/*
-static __inline__ int fclose(FILE *__f)
-{
-  extern int close(int);
- 
-    if ( (void *) __f == NULL )
-       return EOF;
- 
-  return close(fileno(__f));
-}
-*/
 
 
 
@@ -300,16 +332,17 @@ static __inline__ int fclose(FILE *__f)
  *     If work, return 0. 
  */
 
+// linux klibc style
+
 int fclose (FILE *stream){
 
     if ( (void *) stream == NULL )
        return EOF;
 
-    return (int) gramado_system_call ( 232, 
-                     (unsigned long) stream, 
-                     (unsigned long) stream, 
-                     (unsigned long) stream ); 
+    return (int) close ( fileno(stream) );
 }
+
+
 
 
 /*
@@ -4283,25 +4316,32 @@ void setlinebuf (FILE *stream)
 
 
 
-// #bugbug
-// precisamos do argumento size.
+// #test
 int setvbuf (FILE *stream, char *buf, int mode, size_t size)
 {
-	/*
+
     if (mode != _IONBF && mode != _IOLBF && mode != _IOFBF) {
-        errno = EINVAL;
+        //errno = EINVAL;
         return -1;
     }
-    stream->mode = mode;
+    stream->_flags = mode;
+    
+    // Se foi passado um byffer válido.
     if (buf) {
-        stream->buffer = buf;
-        stream->buffer_size = size;
+        stream->_base = buf;
+        stream->_lbfsize = size;
+    
+    // Não passaram um buffer válido.
+    // Vmaos usar o default.
     } else {
-        stream->buffer = stream->default_buffer;
-        stream->buffer_size = BUFSIZ;
-    }
-    stream->buffer_index = 0;
-    */
+        stream->_base = stream->default_buffer;
+        stream->_lbfsize = BUFSIZ;
+    };
+    
+    stream->_p = stream->_base;
+    stream->_w = 0;
+    stream->_r = 0;
+    
     return 0;
 }
 

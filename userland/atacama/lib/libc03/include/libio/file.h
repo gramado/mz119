@@ -216,8 +216,11 @@ struct _iobuf
     int have_ungotten;
     char ungotten;
     
-    //#todo: usar isso!!
-    //char default_buffer[BUFSIZ];
+    // #test
+    // Testing this feature.
+    // It makes our lives easier.
+    
+    char default_buffer[BUFSIZ];
 };
 
 

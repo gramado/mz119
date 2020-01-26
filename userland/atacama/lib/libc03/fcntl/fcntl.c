@@ -2,6 +2,23 @@
        #include <sys/types.h>
        #include <sys/stat.h>
        #include <fcntl.h>
+//#include <unistd.h>
+
+
+
+/*
+ ******************************
+ * fcntl:
+ *
+ */
+
+int fcntl ( int fd, int cmd, ... ){
+
+    //if (cmd == F_GETFD || cmd == F_SETFD) { return 0; }
+
+	return -1; //#todo
+}
+
 
 
 
@@ -74,18 +91,5 @@ int creat (const char *pathname, mode_t mode)
     return open (pathname, O_CREAT|O_WRONLY|O_TRUNC, mode);
 }
 
-
-/*
- ******************************
- * fcntl:
- *
- */
-
-int fcntl ( int fd, int cmd, ... ){
-
-    //if (cmd == F_GETFD || cmd == F_SETFD) { return 0; }
-
-	return -1; //#todo
-}
 
 

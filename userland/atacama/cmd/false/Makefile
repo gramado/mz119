@@ -30,8 +30,6 @@ CFLAGS = -m32 \
 	
 LIBC    = ../../lib/libc03/include/
 LIBCOBJ = ../../lib/libc03/obj
-API     = ../../lib/api02/include/
-APIOBJ  = ../../lib/api02/obj
 
 
 	##
@@ -41,6 +39,7 @@ APIOBJ  = ../../lib/api02/obj
 myObjects = crt0.o main.o \
 ctype.o \
 stdio.o \
+fcntl.o \
 stdlib.o \
 string.o \
 time.o \
@@ -52,13 +51,13 @@ stubs.o
 
 
 
-.PHONY: all all-c cat-link finalize clean
+.PHONY: all all-c false-link finalize clean
 
-all: main.o all-c cat-link finalize clean
+all: main.o all-c false-link finalize clean
 	@echo "Ok?"
 
 main.o:
-	gcc  -c  main.c  $(CFLAGS) -I $(LIBC) -I $(API) -o main.o
+	gcc  -c  main.c  $(CFLAGS) -I $(LIBC) -o main.o
 
 all-c:
 
@@ -66,8 +65,8 @@ all-c:
 	cp $(LIBCOBJ)/stubs.o  .
 	
 	cp $(LIBCOBJ)/ctype.o   .
-	
 	cp $(LIBCOBJ)/stdio.o .
+	cp $(LIBCOBJ)/fcntl.o .
 	cp $(LIBCOBJ)/stdlib.o .
 	cp $(LIBCOBJ)/string.o .
 	cp $(LIBCOBJ)/time.o    .
@@ -77,7 +76,7 @@ all-c:
 	cp $(LIBCOBJ)/ioctl.o  .
 
 	
-cat-link:
+false-link:
 	ld -m elf_i386 -T link.ld -o FALSE.BIN $(myObjects) -Map map.s
 
 finalize:

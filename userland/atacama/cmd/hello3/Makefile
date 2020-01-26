@@ -38,9 +38,6 @@ CFLAGS = -m32 \
 LIBC    = ../../lib/libc03/include/
 LIBCOBJ = ../../lib/libc03/obj
 
-#API01   = ../../lib/api02/include/
-#APIOBJ  = ../../lib/api02/obj
-
 
 	##
 	## Objects
@@ -49,6 +46,7 @@ LIBCOBJ = ../../lib/libc03/obj
 myObjects = crt0.o main.o \
 ctype.o \
 stdio.o \
+fcntl.o \
 stdlib.o \
 string.o \
 time.o \
@@ -60,9 +58,9 @@ stubs.o
 
 
 
-.PHONY: all all-c tascii-link finalize clean
+.PHONY: all all-c hello3-link finalize clean
 
-all: main.o all-c tascii-link finalize clean
+all: main.o all-c hello3-link finalize clean
 	@echo "Ok?"
 
 main.o:
@@ -73,6 +71,7 @@ all-c:
 	
 	cp $(LIBCOBJ)/ctype.o   .
 	cp $(LIBCOBJ)/stdio.o .
+	cp $(LIBCOBJ)/fcntl.o .
 	cp $(LIBCOBJ)/stdlib.o .
 	cp $(LIBCOBJ)/string.o .
 	cp $(LIBCOBJ)/time.o    .
@@ -84,7 +83,7 @@ all-c:
 	cp $(LIBCOBJ)/stubs.o  .
 	cp $(LIBCOBJ)/crt0.o  .
 
-tascii-link:
+hello3-link:
 	ld -m elf_i386 -T link.ld -o HELLO3.BIN $(myObjects) -Map app_map.s
 
 finalize:

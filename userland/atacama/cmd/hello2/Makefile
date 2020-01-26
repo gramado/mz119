@@ -48,6 +48,7 @@ APIOBJ  = ../../lib/api01/obj
 myObjects = crt0.o main.o \
 ctype.o \
 stdio.o \
+fcntl.o \
 stdlib.o \
 string.o \
 time.o \
@@ -59,9 +60,9 @@ stubs.o
 
 
 
-.PHONY: all all-c tascii-link finalize clean
+.PHONY: all all-c hello2-link finalize clean
 
-all: main.o all-c tascii-link finalize clean
+all: main.o all-c hello2-link finalize clean
 	@echo "Ok?"
 
 main.o:
@@ -74,6 +75,7 @@ all-c:
 
 	cp $(LIBCOBJ)/ctype.o   .
 	cp $(LIBCOBJ)/stdio.o .
+	cp $(LIBCOBJ)/fcntl.o .
 	cp $(LIBCOBJ)/stdlib.o .
 	cp $(LIBCOBJ)/string.o .
 	cp $(LIBCOBJ)/time.o    .
@@ -83,7 +85,7 @@ all-c:
 	cp $(LIBCOBJ)/ioctl.o  .
 
 
-tascii-link:
+hello2-link:
 	ld -m elf_i386 -T link.ld -o HELLO2.BIN $(myObjects) -Map app_map.s
 
 finalize:

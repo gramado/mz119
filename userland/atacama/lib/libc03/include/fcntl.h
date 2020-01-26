@@ -93,6 +93,9 @@ struct flock {
 */
 
 
+int fcntl ( int fd, int cmd, ... );
+
+
 int openat (int dirfd, const char *pathname, int flags);
 
 int open (const char *pathname, int flags, mode_t mode);
@@ -100,7 +103,7 @@ int open (const char *pathname, int flags, mode_t mode);
 int creat (const char *pathname, mode_t mode);
 
 
-int fcntl ( int fd, int cmd, ... );
+
 
 
 
