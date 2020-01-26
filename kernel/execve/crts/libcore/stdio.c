@@ -328,6 +328,27 @@ fail:
     return (FILE *) 0;
 }
 
+//Isso pertence à fcntl
+int __openat (int dirfd, const char *pathname, int flags){
+
+ 
+    FILE *stream;
+    // #todo
+    // dirfd, flags.
+
+    // #bugbug
+    // Improvisando com essa que funciona o carregamento.
+    
+    stream = (FILE *) fopen ( (const char *) pathname, "r" );
+
+
+    if(!stream)
+        return -1;
+
+    // #bugbug
+    // Esse número esta errado.
+    return stream->_file;
+}
 
 
 /*

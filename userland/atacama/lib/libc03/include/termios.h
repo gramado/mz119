@@ -35,6 +35,13 @@ typedef unsigned short  tcflag_t;  // Terminal modes.
 
 
 
+/* 
+ * You can't even generate this character with 'normal' keyboards.
+ * But some language specific keyboards can generate 0xFF. It seems 
+ * that all 256 are used, so cc_t should be a short ...
+ * (unsigned char)
+ */
+
 
 #ifndef _POSIX_VDISABLE
 #define	_POSIX_VDISABLE	0xff
@@ -189,14 +196,6 @@ struct termios
 
 
 
-/* 
- * You can't even generate this character with 'normal' keyboards.
- * But some language specific keyboards can generate 0xFF. It seems 
- * that all 256 are used, so cc_t should be a short ...
- * (unsigned char)
- */
-
-#define  _POSIX_VDISABLE  (cc_t)0xFF
 
 
 
@@ -299,6 +298,15 @@ int
 tcsetattr ( int fd, 
             int optional_actions,
             const struct termios *termios_p );
+
+
+
+
+
+pid_t tcgetpgrp ( int fd);
+int tcsetpgrp (int fd, pid_t pgrp);
+
+
 
 
 

@@ -2,35 +2,46 @@
 
 
 
-#include <termios.h>
+#include <stddef.h>
+#include <types.h>
+#include <sys/types.h>
 #include <errno.h>
 #include <sys/ioctls.h>
 #include <sys/ioctl.h>
+#include <termios.h>
 
 
-/*
-pid_t tcgetpgrp ( int fd);
+
 pid_t tcgetpgrp ( int fd){
 	
+	
+	return -1; //#todo
+	
+	/*
 	int s;
 
 	if (ioctl(fd, TIOCGPGRP, &s) < 0)
 		return ((pid_t)-1);
 
-	return ((pid_t)s);
+	return ((pid_t) s);
+	*/
 }
-*/
 
-/*
-int tcsetpgrp (int fd, pid_t pgrp);
+
+
 int tcsetpgrp (int fd, pid_t pgrp){
 	
+	return -1; //#todo
+	/*
 	int s;
 	s = pgrp;
 	
 	return ( ioctl(fd, TIOCSPGRP, &s) );
+	
+	*/
 }
-*/
+
+
 
 int tcgetattr (int fd, struct termios *termios_p){
 
@@ -142,7 +153,7 @@ void cfmakeraw (struct termios *termios_p)
 {
 
     if ( (void *) termios_p == NULL )
-        return 0;
+        return;
 
     termios_p->c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP |
                              INLCR | IGNCR | ICRNL | IXON);

@@ -61,6 +61,10 @@ all-c:
 #/ctype
 	gcc  -c  ctype/ctype.c    $(CFLAGS) -I. -I include/ -o ctype.o
 	
+#/fcntl
+	gcc  -c  fcntl/fcntl.c  $(CFLAGS) -I. -I include/ -o fcntl.o
+
+
 #/fscanf
 	gcc  -c  mmap/mmap.c  $(CFLAGS) -I. -I include/ -o mmap.o
 

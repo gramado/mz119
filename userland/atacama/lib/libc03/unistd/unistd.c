@@ -672,19 +672,6 @@ int dup3 (int oldfd, int newfd, int flags){
 }
 
 
-/*
- ******************************
- * fcntl:
- *
- */
-
-int fcntl ( int fd, int cmd, ... ){
-
-    //if (cmd == F_GETFD || cmd == F_SETFD) { return 0; }
-
-	return -1; //#todo
-}
-
 
 //see: sys/resource.h
 int getpriority(int which, id_t who)
@@ -869,17 +856,6 @@ int syncfs(int fd)
     return -1;
 }
 
-/*
- **********************
- * open:
- *
- */
-
-int open (const char *pathname, int flags, mode_t mode){
-
-    return (int) gramado_system_call ( 16, (unsigned long) pathname, 
-                     (unsigned long) flags, (unsigned long) mode );
-}
 
 
 /*
@@ -890,8 +866,10 @@ int open (const char *pathname, int flags, mode_t mode){
 
 int close (int fd){
 
-    return (int) gramado_system_call ( 17, (unsigned long) fd, 
-                     (unsigned long) fd, (unsigned long) fd );
+    return (int) gramado_system_call ( 17, 
+                     (unsigned long) fd, 
+                     (unsigned long) fd, 
+                     (unsigned long) fd );
 }
 
 

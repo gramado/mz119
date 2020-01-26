@@ -386,15 +386,6 @@ FILE *fopen ( const char *filename, const char *mode ){
 }
 
 
-/*
- * creat:
- *     Linux klibc style.
- */
-
-int creat (const char *pathname, mode_t mode)
-{
-    return open (pathname, O_CREAT|O_WRONLY|O_TRUNC, mode);
-}
 
 
 

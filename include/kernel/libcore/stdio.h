@@ -871,7 +871,11 @@ static __inline int bsd__sputc (int _c, FILE *_p)
  */
 
 #define kprintf printf
- 
+
+
+//Isso pertence à fcntl
+int __openat (int dirfd, const char *pathname, int flags);
+
 int fclose(FILE *stream);    //@todo:  
 FILE *fopen( const char *filename, const char *mode );    //@todo: 
 int printf(const char *format, ...);

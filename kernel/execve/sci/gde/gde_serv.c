@@ -2725,13 +2725,13 @@ void *gde_services ( unsigned long number,
 			
 			
 		// 246	
-		// fopen()	
+		// #todo
+		// Essa rotina está servido à chamada openat() da libc03.
+		// IN: dirfd, pathname, flags.
 		case 246:
-			// filename, mode.
-			return (void *) sys_fopen ( (const char *) arg2, 
-			                    (const char *) arg3 );
+			return (void *) __openat ( (int) arg2, (const char *) arg3, (int) arg4 ); 
 			break;
-				
+
 	
 		// pipe	
 		case 247:
