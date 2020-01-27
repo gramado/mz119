@@ -142,9 +142,10 @@ int main (int argc, char **argv){
     
     // Draw text inside a window.
     dtextDrawText ( (struct window_d *) __mywindow,
-        40, 40, COLOR_RED, "gws: Calling child" );
+        40, 40, 
+        COLOR_RED, "gws: Calling child" );
       
-      
+
     // fail !!!
     // Não está rodando o aplicativo que chamamos.     
     gde_clone_and_execute ("iliinit.bin");        

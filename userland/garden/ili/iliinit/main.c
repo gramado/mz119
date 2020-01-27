@@ -53,10 +53,15 @@ int main (int argc, char **argv){
     }else{
 
         // Send message.
+        // Envia uma mensagem pedindo para o ws emitir um hello!
+        // msg = 1000;
 
         // IN: PID, window, msg, long1, long2
         gde_send_message_to_process ( __ws_pid, 
-            NULL, 1000, 0, 0 );  
+            NULL, 
+            1000, 
+            0, 
+            0 );  
     };
 
 

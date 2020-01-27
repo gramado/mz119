@@ -755,6 +755,8 @@ check_WindowWithFocus:
 		// o foco de entrada.
 		// Como o scancode é um char, precisamos converte-lo em unsigned long.
 
+
+        // Old way. Delete it!
         //t->window = w;
         //t->msg = message;
         //t->long1 = ch;            // Key.
@@ -763,10 +765,9 @@ check_WindowWithFocus:
 
 
         t->window_list[ t->tail_pos ] = w;
-           t->msg_list[ t->tail_pos ] = message;
-         t->long1_list[ t->tail_pos ] = ch;
-         t->long2_list[ t->tail_pos ] = tmp_sc;
-        
+        t->msg_list[ t->tail_pos ] = message;
+        t->long1_list[ t->tail_pos ] = ch;
+        t->long2_list[ t->tail_pos ] = tmp_sc;
         t->tail_pos++;
         if ( t->tail_pos >= 31 )
             t->tail_pos = 0;

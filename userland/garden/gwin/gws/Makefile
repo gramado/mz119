@@ -32,24 +32,17 @@ CFLAGS = -m32 \
 	-s
 
 
-
-
 LIBC    = ../../lib/libcore/include/
 LIBCOBJ = ../../lib/libcore/obj
-#LIBC    = ../../lib/libc02/include/
-#LIBCOBJ = ../../lib/libc02/obj
-#API01   = ../../lib/gdelibs/api01/include/
-#APIOBJ  = ../../lib/gdelibs/api01/obj
-API02   = ../../lib/api02/include/
-APIOBJ  = ../../lib/api02/obj
+API02   = ../../lib/libgui/include/
+APIOBJ  = ../../lib/libgui/obj
 
 
 GWS  = gwscore/include/   
 
+
 #RENDERER = renderer/include/  
-
 #CMDLINE = cmdline/include/   
-
 #TERMINAL  = terminal/include/   
 
 

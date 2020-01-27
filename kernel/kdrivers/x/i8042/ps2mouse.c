@@ -1143,6 +1143,10 @@ void mouseHandler (void){
             
             ps2mouse_parse_data_packet();
             
+            //
+            // Message.
+            //
+            
             //#bugbug
             // escaneando janelas.
             // O window server deveria fazer isso.

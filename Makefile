@@ -8,10 +8,12 @@
 
 
 VERSION = 1
-PATCHLEVEL = 26
+PATCHLEVEL = 27
 SUBLEVEL = 0
-EXTRAVERSION = 0
-NAME = Queue
+EXTRAVERSION = -rc0
+NAME = 
+
+
 
 KERNELVERSION = $(VERSION)$(if $(PATCHLEVEL),.$(PATCHLEVEL)$(if $(SUBLEVEL),.$(SUBLEVEL)))$(EXTRAVERSION)
 
@@ -539,8 +541,8 @@ vhd-copy-files:
 
 
 #base  Tests
-	-sudo cp base/tests/*.C      /mnt/gramadovhd
-	-sudo cp base/tests/*.LUA    /mnt/gramadovhd
+#	-sudo cp base/tests/*.C      /mnt/gramadovhd
+#	-sudo cp base/tests/*.LUA    /mnt/gramadovhd
 
 
 #base Wallpapers
