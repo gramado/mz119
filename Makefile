@@ -10,7 +10,7 @@
 VERSION = 1
 PATCHLEVEL = 27
 SUBLEVEL = 0
-EXTRAVERSION = -rc0
+EXTRAVERSION = -rc1
 NAME = 
 
 
@@ -292,7 +292,7 @@ KERNEL.BIN:
 	gcc -c  kernel/request.c  -I include/ $(CFLAGS) -o request.o
 	gcc -c  kernel/panic.c    -I include/ $(CFLAGS) -o panic.o
 	gcc -c  kernel/reboot.c   -I include/ $(CFLAGS) -o reboot.o
-	gcc -c  kernel/sys.c      -I include/ $(CFLAGS) -o sys.o
+
 
 	# /execve
 	gcc -c kernel/execve/execve.c  -I include/ $(CFLAGS) -o execve.o
@@ -385,8 +385,8 @@ KERNEL.BIN:
 	# /vfs
 	gcc -c kernel/kservers/vfs/vfs.c  -I include/ $(CFLAGS) -o vfs.o
 
-	# /sci/gde
-	gcc -c kernel/execve/sci/gde/gde_serv.c  -I include/ $(CFLAGS) -o gde_serv.o
+
+
 
 	# /sm
 	gcc -c kernel/execve/sm/init.c    -I include/ $(CFLAGS) -o init.o
@@ -450,6 +450,17 @@ KERNEL.BIN:
 	
 	gcc -c kernel/kservers/kgws/kgws.c  -I include/ $(CFLAGS) -o kgws.o
 
+
+
+	#
+	#  /sci - System Call Interface.
+	#
+	
+	gcc -c kernel/sci/gde_serv.c  -I include/ $(CFLAGS) -o gde_serv.o
+	gcc -c kernel/sci/sys.c       -I include/ $(CFLAGS) -o sys.o
+	
+	
+	
 
 ## Step2 link-kernel-image  - Linking the kernel image.
 kernel-image-link:

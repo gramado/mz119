@@ -252,6 +252,9 @@ int KEYBOARD_SEND_MESSAGE ( unsigned char SC ){
     int message;               //arg2.
     unsigned long ch;          //arg3 - (O caractere convertido para ascii).
     unsigned long status;      //arg4.  
+    
+    
+    int save_pos = 0;
 
     //
     // Step1 - Pegar o scancode.
@@ -764,10 +767,15 @@ check_WindowWithFocus:
         //t->newmessageFlag = 1;
 
 
+        // Salvamos para limparmos a mensagem no caso de
+        // enviarmos ela para o procedimento de janelas aqui do x/.
+        save_pos = t->tail_pos;
+
         t->window_list[ t->tail_pos ] = w;
         t->msg_list[ t->tail_pos ] = message;
         t->long1_list[ t->tail_pos ] = ch;
         t->long2_list[ t->tail_pos ] = tmp_sc;
+        
         t->tail_pos++;
         if ( t->tail_pos >= 31 )
             t->tail_pos = 0;
@@ -803,11 +811,19 @@ check_WindowWithFocus:
                             (unsigned long) tmp_sc );
                         
                         // Clean.
-                        t->window = NULL;
-                        t->msg = 0;
-                        t->long1 = 0;
-                        t->long2 = 0;
-                        t->newmessageFlag = 0;
+                        t->window_list[ save_pos ] = NULL;
+                           t->msg_list[ save_pos ] = 0;
+                         t->long1_list[ save_pos ] = 0;
+                         t->long2_list[ save_pos ] = 0;
+                        
+                        save_pos = 0;
+                        
+                        //Old way, delete it!
+                        //t->window = NULL;
+                        //t->msg = 0;
+                        //t->long1 = 0;
+                        //t->long2 = 0;
+                        //t->newmessageFlag = 0;
 
                         break;
                 }

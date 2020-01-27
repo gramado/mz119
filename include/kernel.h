@@ -264,8 +264,8 @@ extern void do_executa_new_task (void);
 #include <kernel/io/io.h>                  //io.
 
 
+
 // execve
-#include <kernel/execve/sci/syscall.h>            //system calls.
 #include <kernel/execve/sm/modules.h>             //module manager.
 
 
@@ -315,7 +315,15 @@ extern void do_executa_new_task (void);
 #include <kernel/panic.h>
 #include <kernel/reboot.h>
 #include <kernel/sub.h>       // gramado sub systems
-#include <kernel/sys.h> 
+
+
+
+//
+// sci - system call interface
+//
+
+#include <kernel/sci/syscall.h>            //system calls.
+#include <kernel/sci/sys.h> 
 
 
 

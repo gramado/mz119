@@ -1418,10 +1418,15 @@ done:
  * 
  */
  
-// Essa será a função que atenderá a interrupção
-//esse é o serviço de criação da janela.
-// talvez ampliaremos o número de argumentos
-                      
+// # importante 
+// Essa será a função que atenderá a interrupção.
+// Esse é o serviço de criação da janela.
+// Talvez ampliaremos o número de argumentos.
+    
+//1. Começamos criando uma janela simples
+//2. depois criamos o frame, que decide se vai ter barra 
+//   de títulos ou nao.
+                  
 void *kgws_create_window ( unsigned long type, 
                      unsigned long status, 
                      unsigned long view, 
@@ -1436,16 +1441,8 @@ void *kgws_create_window ( unsigned long type,
                      unsigned long color ) 
 {
 
-   struct window_d *__w;
-   
-    //1. Começamos criando uma janela simples
-    //2. depois criamos o frame. que decide se vai ter barra de títulos ou nao.
-    
-    /*
-    __w = (void *) CreateWindow ( type, status, view, (char *) windowname, 
-                           x, y, width, height, 
-                           (struct window_d *) pWindow, desktopid, clientcolor, color );  
-    */
+    struct window_d *__w;
+
     
     // No caso dos tipos com moldura então criaremos em duas etapas.
     // no futuro todas serão criadas em duas etapas e 
@@ -1453,14 +1450,18 @@ void *kgws_create_window ( unsigned long type,
     
     if ( type == WT_OVERLAPPED )
     {
-		
+
        // # importante
        // Essa rotina cria janelas simples, sem molduras, dos seguintes tipos:
        // WT_SIMPLE, WT_POPUP, WT_BUTTON, WT_STATUSBAR e WT_ICON
 
-        __w = (void *) CreateWindow ( WT_SIMPLE, status, view, (char *) windowname, 
+        __w = (void *) CreateWindow ( WT_SIMPLE, status, view, 
+                           (char *) windowname, 
                            x, y, width, height, 
-                           (struct window_d *) pWindow, desktopid, clientcolor, color );      
+                           (struct window_d *) pWindow, 
+                           desktopid, 
+                           clientcolor, color );      
+    
     
         //pintamos simples, mas a tipagem será  overlapped
         __w->type = WT_OVERLAPPED;   
@@ -1470,15 +1471,18 @@ void *kgws_create_window ( unsigned long type,
 
     if ( type == WT_EDITBOX )
     {
-		
+
        // # importante
        // Essa rotina cria janelas simples, sem molduras, dos seguintes tipos:
        // WT_SIMPLE, WT_POPUP, WT_BUTTON, WT_STATUSBAR e WT_ICON
 
 		// Podemos usar o esquema padrão de cores ...
-        __w = (void *) CreateWindow ( WT_SIMPLE, status, view, (char *) windowname, 
+        __w = (void *) CreateWindow ( WT_SIMPLE, status, view, 
+                           (char *) windowname, 
                            x, y, width, height, 
-                           (struct window_d *) pWindow, desktopid, clientcolor, color );      
+                           (struct window_d *) pWindow, 
+                           desktopid, 
+                           clientcolor, color );      
     
         //pintamos simples, mas a tipagem será  overlapped
         __w->type = WT_EDITBOX;   
@@ -1492,9 +1496,12 @@ void *kgws_create_window ( unsigned long type,
        // WT_SIMPLE, WT_POPUP, WT_BUTTON, WT_STATUSBAR e WT_ICON
 
 		// Podemos usar o esquema padrão de cores ...
-        __w = (void *) CreateWindow ( WT_SIMPLE, status, view, (char *) windowname, 
+        __w = (void *) CreateWindow ( WT_SIMPLE, status, view, 
+                           (char *) windowname, 
                            x, y, width, height, 
-                           (struct window_d *) pWindow, desktopid, clientcolor, color );      
+                           (struct window_d *) pWindow, 
+                           desktopid, 
+                           clientcolor, color );      
     
         //pintamos simples, mas a tipagem será  overlapped
         __w->type = WT_CHECKBOX;   
@@ -1511,25 +1518,34 @@ void *kgws_create_window ( unsigned long type,
        // Essa rotina cria janelas simples, sem molduras, dos seguintes tipos:
        // WT_SIMPLE, WT_POPUP, WT_BUTTON, WT_STATUSBAR e WT_ICON
    
-    __w = (void *) CreateWindow ( type, status, view, (char *) windowname, 
-                           x, y, width, height, 
-                           (struct window_d *) pWindow, desktopid, clientcolor, color );      
+    __w = (void *) CreateWindow ( type, status, view, 
+                       (char *) windowname, 
+                        x, y, width, height, 
+                        (struct window_d *) pWindow, 
+                        desktopid, 
+                        clientcolor, color );      
+    
     
     goto done;
 
 
+
+
+
 draw_frame:
+
     //#IMPORTANTE
     //DESENHA O FRAME DOS TIPOS QUE PRECISAM DE FRAME.
     //OVERLAPED, EDITBOX, CHECKBOX ...
+
     if ( type == WT_OVERLAPPED || type == WT_EDITBOX || type == WT_CHECKBOX )
     {
-		if (type == WT_EDITBOX)
-		{ __w->isEditBox = 1; }
+        if (type == WT_EDITBOX)
+        { __w->isEditBox = 1; }
 
-		if (type == WT_CHECKBOX)
-		{ __w->isCheckBox = 1; }
-		        
+        if (type == WT_CHECKBOX)
+        { __w->isCheckBox = 1; }
+
         // draw frame.
         // Nessa hora essa rotina podera criar a barra de títulos.
         // o wm poderá chamar a rotina de criar frame.
@@ -1563,10 +1579,9 @@ done:
 
         if ( (void *) __w->control != NULL )
         {
-			if ( __w->used != 1 || __w->magic != 1234 )
-			{
-			    __w->control = NULL;
-			}
+            if ( __w->used != 1 || __w->magic != 1234 ){
+                __w->control = NULL;
+            }
         }
 
 
@@ -1585,19 +1600,33 @@ done:
         {
 			if ( __w->used == 1 || __w->magic == 1234 )
 			{
-			   // mandamos a mensagem
-			   // o aplicativo decide o que fazer com ela.
-			    __w->control->window = __w;
-			    __w->control->msg = MSG_CREATE;
-			    __w->control->long1 = 0;
-			    __w->control->long2 = 0;
-			    __w->control->newmessageFlag = 1;
+
+                // New way. Use this one!
+                __w->control->window_list[ __w->control->tail_pos ] = __w;
+                   __w->control->msg_list[ __w->control->tail_pos ] = MSG_CREATE;
+                 __w->control->long1_list[ __w->control->tail_pos ] = 0;
+                 __w->control->long2_list[ __w->control->tail_pos ] = 0;
+                __w->control->tail_pos++;
+                if ( __w->control->tail_pos >= 31 )
+                    __w->control->tail_pos = 0;
+
+
+				//Old way. Delete it!
+			    // mandamos a mensagem
+			    // o aplicativo decide o que fazer com ela.
+			    //__w->control->window = __w;
+			    //__w->control->msg = MSG_CREATE;
+			    //__w->control->long1 = 0;
+			    //__w->control->long2 = 0;
+			    //__w->control->newmessageFlag = 1;
 			}
 		}        
     };
     
+    //
     // z order support.
-
+    //
+    
     int z;
     z = (int) z_order_get_free_slot();
     
@@ -1606,7 +1635,7 @@ done:
         __w->z = z;
         Windows[z] = (unsigned long) __w;
     }else{
-        panic ("CreateWindow: no free slot on zorder");
+        panic ("kgws_create_window: No free slot on zorder.\n");
     };
 
 
