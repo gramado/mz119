@@ -265,8 +265,18 @@ void x86mainStartFirstThread ( void ){
 }
 
 
-//inicializa só o init2.bin
-void x86StartInit2 (void){
+/*
+ * 
+ * 
+ * 
+ * 
+ */
+ 
+// Função local.
+// Inicializa só o init.bin
+// Caso não encontre, então carrega init2.bin
+//void x86StartInit2 (void){
+void __x86StartInit (void){
     
     //
 	// ## INIT ##
@@ -279,13 +289,23 @@ void x86StartInit2 (void){
     
     fileret = (unsigned long) fsLoadFile ( VOLUME1_FAT_ADDRESS, 
                                   VOLUME1_ROOTDIR_ADDRESS, 
-                                  "INIT2   BIN", 
+                                  "INIT    BIN", 
                                   (unsigned long) 0x00400000 );
 
 
+    // Se não encontramos init.bin
     if ( fileret != 0 )
     {
-        panic ("x86StartInit: fileret \n");
+        fileret = (unsigned long) fsLoadFile ( VOLUME1_FAT_ADDRESS, 
+                                      VOLUME1_ROOTDIR_ADDRESS, 
+                                      "INIT2   BIN", 
+                                      (unsigned long) 0x00400000 );
+
+        
+        if ( fileret != 0 )
+        {
+            panic ("__x86StartInit: fileret \n");
+        }
     }
 
 
@@ -307,7 +327,7 @@ void x86StartInit2 (void){
 
     if ( (void *) InitProcess == NULL )
     {
-        panic ("x86main: InitProcess\n");
+        panic ("__x86StartInit: InitProcess\n");
 
     }else{
 
@@ -323,7 +343,7 @@ void x86StartInit2 (void){
 
     if ( (void *) InitThread == NULL )
     {
-        panic ("x86main: IdleThread\n");
+        panic ("__x86StartInit: IdleThread\n");
 
     }else{
 
@@ -558,8 +578,10 @@ void x86main (void){
 
 
 	// Cria e inicializa apenas o init2.bin
-	x86StartInit2 ();
-
+	//x86StartInit2 ();
+    __x86StartInit ();
+    
+    
 	//
 	//===============================================
 	//

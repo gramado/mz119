@@ -51,11 +51,13 @@
 
 // List of system's daemons.
 
-pid_t ____gramado_bin_pid;    // gramado.bin 
-pid_t ____ili_bin_pid;        // ili.bin     
-pid_t ____init_bin_pid;       // init.bin     
-pid_t ____wm_pid;             // Window Manager. 
-pid_t ____ws_pid;             // Window Server. 
+//pid_t ____gramado_bin_pid;    // gramado.bin 
+//pid_t ____ili_bin_pid;        // ili.bin     
+//pid_t ____init_bin_pid;       // init.bin     
+//pid_t ____wm_pid;             // Window Manager. 
+//pid_t ____ws_pid;             // Window Server. 
+
+
 
 
 
