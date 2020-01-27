@@ -58,10 +58,28 @@ int main (int argc, char **argv){
 
         // IN: PID, window, msg, long1, long2
         gde_send_message_to_process ( __ws_pid, 
-            NULL, 
-            1000, 
-            0, 
-            0 );  
+            NULL, 1000, 0, 0 );  
+            
+
+        // enviando mais vezes pra testar a fila de mensagens
+        // ok, funcionou no qemu.
+        //gde_send_message_to_process ( __ws_pid, 
+            //NULL, 1000, 0, 0 );  
+        //gde_send_message_to_process ( __ws_pid, 
+            //NULL, 1000, 0, 0 );  
+        //gde_send_message_to_process ( __ws_pid, 
+            //NULL, 1000, 0, 0 );  
+            
+
+        // Testing the Window Server.
+ 
+        // put some pixel in this position.
+        gde_send_message_to_process ( __ws_pid, 
+            NULL, 2000, 40, 40 );  
+
+        // refresh screen
+        gde_send_message_to_process ( __ws_pid, 
+            NULL, 2020, 0, 0 );  
     };
 
 

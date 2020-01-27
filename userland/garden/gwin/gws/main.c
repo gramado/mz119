@@ -68,18 +68,56 @@ gwsProcedure ( struct window_d *window,
     switch(msg)
     {
         case 1000:
+        
             //draw text inside a window.
             dtextDrawText ( (struct window_d *) __mywindow,
                 40, 60,
                 COLOR_RED,
                 "Hello friend. This is the Window Server!" );
                 
-                printf ("hello friend!");
-                gde_show_backbuffer ();
+             printf ("Hello friend!");
+                
+             gde_show_backbuffer ();
                 break;
                 
+         //
+         // Testing some drawing routines.
+         //
+         
+         // put pixel
+         // IN: Color, x, y
+         case 2000:
+             pixelBackBufferPutpixel ( (unsigned long) COLOR_PINK,   
+                 (unsigned long) long1, (unsigned long) long2 );
+             break;
+ 
+ 
+         case 2001:
+             break;
+             
+         case 2002:
+             break;
+             
+             
+         case 2003:
+             break;
+
+         // Refresh screen 
+         // refresh screen using kgws service. 
+         case 2020:
+             gde_show_backbuffer ();
+             break;
+             
+
+         // Refresh rectangle ... 
+         case 2021:
+             break;
+
+         // ...
+             
+                
          default:
-             printf("msg=%d ",msg);
+             printf ("msg=%d ",msg);
              break;
     }
 
@@ -89,29 +127,25 @@ gwsProcedure ( struct window_d *window,
 int main (int argc, char **argv){
     
     
-    
+    // #debug
     printf ("gws: gws is alive !  \n");
 
+    
+    // Init gws infrastructure.
+    
     gwsInit ();
 
     
-    pixelBackBufferPutpixel ( COLOR_RED,   100, 250 );
-    pixelBackBufferPutpixel ( COLOR_GREEN, 105, 250 );
-    pixelBackBufferPutpixel ( COLOR_BLUE,  110, 250 );
-
-    
-    charBackbufferDrawcharTransparent ( 250,       250, COLOR_RED,   (unsigned long) 'R');
-    charBackbufferDrawcharTransparent ( 250 +8,    250, COLOR_GREEN, (unsigned long) 'G');
-    charBackbufferDrawcharTransparent ( 250 +8 +8, 250, COLOR_BLUE,  (unsigned long) 'B');
-
-
-    charBackbufferDrawchar ( 300, 300, (unsigned long) 'X', COLOR_YELLOW, COLOR_RED );
-
-
-    lineBackbufferDrawHorizontalLine ( 400, 88, 500, COLOR_PINK );
-
-
-    rectBackbufferDrawRectangle ( 200, 400, 100, 60, COLOR_YELLOW );
+    // #tests
+    //pixelBackBufferPutpixel ( COLOR_RED,   100, 250 );
+    //pixelBackBufferPutpixel ( COLOR_GREEN, 105, 250 );
+    //pixelBackBufferPutpixel ( COLOR_BLUE,  110, 250 );
+    //charBackbufferDrawcharTransparent ( 250,       250, COLOR_RED,   (unsigned long) 'R');
+    //charBackbufferDrawcharTransparent ( 250 +8,    250, COLOR_GREEN, (unsigned long) 'G');
+    //charBackbufferDrawcharTransparent ( 250 +8 +8, 250, COLOR_BLUE,  (unsigned long) 'B');
+    //charBackbufferDrawchar ( 300, 300, (unsigned long) 'X', COLOR_YELLOW, COLOR_RED );
+    //lineBackbufferDrawHorizontalLine ( 400, 88, 500, COLOR_PINK );
+    //rectBackbufferDrawRectangle ( 200, 400, 100, 60, COLOR_YELLOW );
 
 
     //createwCreateWindow ( WT_SIMPLE, 1, 1, "FIRST-WINDOW",  
@@ -126,20 +160,20 @@ int main (int argc, char **argv){
       // gui->screen, 0, xCOLOR_GRAY3, xCOLOR_GRAY3 );
 
 
+    
     __mywindow = (struct window_d *) createwCreateWindow ( WT_OVERLAPPED, 
                                          1, 1, "overlapped",  
-                                         100, 100, 
-                                         320, 200,   
+                                         20, 20, 
+                                         480, 320,   
                                          gui->screen, 0, 
                                          xCOLOR_GRAY3, xCOLOR_GRAY3 );
-                           
 
  
     //
     // Calling child.
     //
 
-    
+
     // Draw text inside a window.
     dtextDrawText ( (struct window_d *) __mywindow,
         40, 40, 

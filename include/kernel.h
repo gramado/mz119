@@ -305,14 +305,19 @@ extern void do_executa_new_task (void);
 
 
 
+
+
+
 // kernel
 #include <kernel/ke.h>
 #include <kernel/ki.h>
 #include <kernel/request.h>
 #include <kernel/panic.h>
 #include <kernel/reboot.h>
+#include <kernel/sub.h>       // gramado sub systems
 #include <kernel/sys.h> 
-// =========================================================
+
+
 
 
 

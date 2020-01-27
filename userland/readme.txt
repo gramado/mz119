@@ -1,14 +1,38 @@
-/lib
-    Bibliotecas em ring 3 usadas pelo projeto Gramado.
-    Elas serão usadas pelos processos do gramado que rodam em ring 3, tais como
-    init, drivers e servers.
 
 
 Folders:
-    
+
+    /atacama
+         Atacama subsystem.
+         Commands to run in the virtual terminal or kernel console.
+         libraries.
+
+    /bin
+        Binaries.
+
     /fonts 
         fonts used by gramado.
+        Here is were the fonts are compiled.
+
+    /garden
+         garden subsystem.
+         Apps, servers and drivers.
+         libraries ...  
+
+    /init
+        Init subsistem.
+        init process and more.
 
     /uapi
         ring 3 libs.
         used by init.bin and some other gramado apps in ring 3.
+
+    
+
+
+
+
+
+
+
+
