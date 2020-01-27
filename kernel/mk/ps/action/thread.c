@@ -628,7 +628,21 @@ struct thread_d *threadCopyThread ( struct thread_d *thread ){
 	{
 		clone->wait_reason[w] = thread->wait_reason[w];
 	}
-		
+	
+	
+	int q;
+	for ( q=0; q<32; q++ )
+    {
+         clone->window_list[q] = 0;
+         clone->msg_list[q] = 0;
+         clone->long1_list[q] = 0;
+         clone->long2_list[q] = 0;
+    }
+    clone->head_pos = 0;
+    clone->tail_pos = 0;
+
+	
+	
 	//...
     //@todo:
     //herdar o quantum do processo.
@@ -855,6 +869,17 @@ get_next:
         //Thread->long
         //Thread->long
         //...
+
+        for ( q=0; q<32; q++ )
+        {
+            Thread->window_list[q] = 0;
+            Thread->msg_list[q] = 0;
+            Thread->long1_list[q] = 0;
+            Thread->long2_list[q] = 0;
+        }
+        Thread->head_pos = 0;
+        Thread->tail_pos = 0;
+
 
         //
         // Message queue.

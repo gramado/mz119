@@ -443,13 +443,20 @@ void pty_send_message_to_thread ( unsigned long msg_buffer, int tid ){
 		        return;	
 			}
 
-            t->window = (struct window_d *) buffer[0];
-			t->msg = (int) buffer[1];
-			t->long1 = (unsigned long) buffer[2];
-			t->long2 = (unsigned long) buffer[3];
-				
-			// Sinalizando que temos uma mensagem.
-			t->newmessageFlag = 1; 
+            //t->window = (struct window_d *) buffer[0];
+            //t->msg = (int) buffer[1];
+            //t->long1 = (unsigned long) buffer[2];
+            //t->long2 = (unsigned long) buffer[3];
+            //t->newmessageFlag = 1; 
+
+            t->window_list[ t->tail_pos ] = (struct window_d *) buffer[0];
+            t->msg_list[ t->tail_pos ]    = (int) buffer[1];
+            t->long1_list[ t->tail_pos ]  = (unsigned long) buffer[2];
+            t->long2_list[ t->tail_pos ]  = (unsigned long) buffer[3];
+        
+            t->tail_pos++;
+            if ( t->tail_pos >= 31 )
+                t->tail_pos = 0;
 		};
 	};
 }

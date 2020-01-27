@@ -755,14 +755,24 @@ check_WindowWithFocus:
 		// o foco de entrada.
 		// Como o scancode é um char, precisamos converte-lo em unsigned long.
 
-        t->window = w;
-        t->msg = message;
-        t->long1 = ch;     // Key.
-        t->long2 = tmp_sc;    // Scan code.
+        //t->window = w;
+        //t->msg = message;
+        //t->long1 = ch;            // Key.
+        //t->long2 = tmp_sc;        // Scan code.
+        //t->newmessageFlag = 1;
 
-        t->newmessageFlag = 1;
 
-
+        t->window_list[ t->tail_pos ] = w;
+           t->msg_list[ t->tail_pos ] = message;
+         t->long1_list[ t->tail_pos ] = ch;
+         t->long2_list[ t->tail_pos ] = tmp_sc;
+        
+        t->tail_pos++;
+        if ( t->tail_pos >= 31 )
+            t->tail_pos = 0;
+            
+            
+        
         //
         // Special message.
         //
@@ -1770,18 +1780,35 @@ void *__do_111 ( unsigned long buffer ){
 		// Se não existe uma mensagem na thread, então vamos
         // Vmaos voltar.
 
-        if ( t->newmessageFlag != 1 ){
-            return NULL;  
-        }
+        //if ( t->newmessageFlag != 1 ){
+            //return NULL;  
+        //}
 
 
-		//pegando a mensagem.
+
+		//padrão
+        message_address[0] = (unsigned long) t->window_list[ t->head_pos ];
+        message_address[1] = (unsigned long)    t->msg_list[ t->head_pos ];
+        message_address[2] = (unsigned long)  t->long1_list[ t->head_pos ];
+        message_address[3] = (unsigned long)  t->long2_list[ t->head_pos ];
+
+        // Clean
+        t->window_list[ t->head_pos ] = NULL;
+        t->msg_list[ t->head_pos ] = 0;
+        t->long1_list[ t->head_pos ] = 0;
+        t->long2_list[ t->head_pos ] = 0;
+        
+        // Circula
+        t->head_pos++;
+        if ( t->head_pos >= 31 )
+            t->head_pos = 0;
+
  
 		//padrão
-		message_address[0] = (unsigned long) t->window;
-	    message_address[1] = (unsigned long) t->msg;
-	    message_address[2] = (unsigned long) t->long1;
-	    message_address[3] = (unsigned long) t->long2;
+		//message_address[0] = (unsigned long) t->window;
+	    //message_address[1] = (unsigned long) t->msg;
+	    //message_address[2] = (unsigned long) t->long1;
+	    //message_address[3] = (unsigned long) t->long2;
 
 		//extra. Usado pelos servidores e drivers.
 		message_address[4] = (unsigned long) t->long3;
@@ -1793,7 +1820,7 @@ void *__do_111 ( unsigned long buffer ){
 		// sinalizamos que a mensagem foi consumida.
 		// #todo: 
 		// nesse momento a estrutura da thread também precisa ser limpa.
-        t->newmessageFlag = 0; 
+        //t->newmessageFlag = 0; 
    
 		//sinaliza que há mensagem
         return (void *) 1; 

@@ -523,8 +523,10 @@ __SendMessageToProcess ( int pid,
 	message_buffer[3] = (unsigned long) long2;
 	//...
 
-	return (int) system_call ( 112 , (unsigned long) &message_buffer[0], 
-	                 (unsigned long) pid, (unsigned long) pid );
+    return (int) system_call ( 112 , 
+                     (unsigned long) &message_buffer[0], 
+                     (unsigned long) pid, 
+                     (unsigned long) pid );
 }
 //
 // ===============================================================
@@ -1154,10 +1156,11 @@ shellProcedure ( struct window_d *window,
 				// Abre uma janela e oferece informações 
 				// sobre o aplicativo.
 				case CMD_ABOUT:
-				    // Test.
-				    gde_message_box ( 3, 
-				        "Shell test", 
-				        "Testing MSG_COMMAND.CMD_ABOUT." );
+				    printf ("CMD_ABOUT\n");
+				    // Test. ok.
+				    //gde_message_box ( 3, 
+				        //"Shell test", 
+				        //"Testing MSG_COMMAND.CMD_ABOUT." );
 				    break;
 
 				//clicaram no botão
@@ -2837,11 +2840,19 @@ do_compare:
     }
 
 
-	// mov
-	if ( strncmp( prompt, "mov", 3 ) == 0 )
-	{
-	    goto exit_cmp;
-	}
+    // msg-test
+    int mi;
+    if ( strncmp( prompt, "msg-test", 8 ) == 0 )
+    {
+		// enviando várias mensagens.
+		for (mi=0; mi<20;mi++)
+		{
+            // send message to this process.
+            __SendMessageToProcess ( getpid() , 
+               NULL, MSG_COMMAND, CMD_ABOUT, CMD_ABOUT );
+        }
+        goto exit_cmp;
+    }
 
 
     // metrics

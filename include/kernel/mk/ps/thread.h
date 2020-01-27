@@ -551,6 +551,15 @@ struct thread_d
 	int newmessageFlag;         //flag avisando que tem nova mensagem.
 	
 	
+	
+	
+	struct window_d *window_list[32];
+	int msg_list[32];
+	unsigned long long1_list[32];
+	unsigned long long2_list[32];
+	int tail_pos;
+	int head_pos;
+	
     //
     // Message Queue
     //
