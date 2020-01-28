@@ -200,8 +200,8 @@ int main ( int argc, char *argv[] ){
 	//
 
     //++
-	apiBeginPaint (); 
-	hWindow = (void *) APICreateWindow ( WT_OVERLAPPED, 1, 1, 
+	gde_begin_paint (); 
+	hWindow = (void *) gde_create_window ( WT_OVERLAPPED, 1, 1, 
 	                       "Gramado File Explorer",
 	                       10, 10, 640, 480,    
                            0, 0, COLOR_WHITESMOKE, 0x303030 ); 
@@ -209,15 +209,15 @@ int main ( int argc, char *argv[] ){
 	if ( (void *) hWindow == NULL )
 	{	
 		printf ("gfe: hWindow fail");
-		apiEndPaint ();
+		gde_end_paint ();
 		goto fail;
     }else{
 
-        APIRegisterWindow (hWindow);
-        apiShowWindow (hWindow);
+        gde_register_window (hWindow);
+        gde_show_window (hWindow);
         main_window = hWindow;
     };
-	apiEndPaint ();
+	gde_end_paint ();
     //--
 
 
@@ -248,7 +248,7 @@ int main ( int argc, char *argv[] ){
 	    // Usar alguma rotina da API específica para carregar arquivo.
 	    // na verdade tem que fazer essas rotinas na API.
 	
-	    system_call ( SYSTEMCALL_READ_FILE, 
+        gramado_system_call ( SYSTEMCALL_READ_FILE, 
 	        (unsigned long) "FOLDER  BMP", 
 		    (unsigned long) b, 
 		    (unsigned long) b );
@@ -269,20 +269,20 @@ int main ( int argc, char *argv[] ){
 	//
 	
 	//++
-	apiBeginPaint (); 
-	gWindow = (void *) APICreateWindow ( WT_SIMPLE, 1, 1, "GRID-WINDOW",
+	gde_begin_paint (); 
+	gWindow = (void *) gde_create_window ( WT_SIMPLE, 1, 1, "GRID-WINDOW",
 	                       8, 42, 
 	                       100, 320,    
                            hWindow, 0, 0x303030, 0x303030 );
 	if ( (void *) gWindow == NULL )
 	{	
 		printf ("gfe: gWindow fail");
-		apiEndPaint ();
+		gde_end_paint ();
 
 		goto fail;
 	}else{
 		
-        APIRegisterWindow (gWindow);
+        gde_register_window (gWindow);
 		
 		// #bugbug
 		// problemas na largura dos ítens quando pintamos no modo vertical;
@@ -292,21 +292,21 @@ int main ( int argc, char *argv[] ){
         // Nessa chamada não temos o posicionamento do grid.
 
 	    //#obs: Acho que isso cria grid.
-	    int s = (int) system_call ( 148, (unsigned long) gWindow, 
+	    int s = (int) gramado_system_call ( 148, (unsigned long) gWindow, 
 	                      4, (unsigned long) GRID_VERTICAL );
 	                      //4, (unsigned long) GRID_HORIZONTAL );
 	
         if (s != 0)
         {
 		    printf ("gfe: 148 fail.\n");
-	        apiEndPaint ();
+	        gde_end_paint ();
 	        
 	        goto fail;
 	    }
 	    
-	    apiShowWindow (gWindow);
+	    gde_show_window (gWindow);
 	};
-	apiEndPaint ();
+	gde_end_paint ();
 	//--
 	
 	
@@ -353,7 +353,7 @@ int main ( int argc, char *argv[] ){
 		
 	    //Usando a API para exibir o bmp carregado. 
 	    //ACHO QUE ISSO SOMENTE PINTA NO BACKBUFFER
-	    apiDisplayBMP ( (char *) b, 
+	    gde_display_bmp ( (char *) b, 
 	        200, 
 	        1 + 60 + (i*24) ); 
     };
@@ -376,8 +376,8 @@ int main ( int argc, char *argv[] ){
 
     
 	//++
-	apiBeginPaint (); 
-    mWindow = (void *) APICreateWindow ( WT_SIMPLE, 1, 1, "MENU-WINDOW",
+	gde_begin_paint (); 
+    mWindow = (void *) gde_create_window ( WT_SIMPLE, 1, 1, "MENU-WINDOW",
                            280, 50, 
                            320, 200,
                            hWindow, 0, COLOR_PINK, COLOR_PINK );
@@ -385,15 +385,15 @@ int main ( int argc, char *argv[] ){
     if ( (void *) mWindow == NULL )
     {	
 		printf ("gfe: mWindow fail");
-		apiEndPaint ();
+		gde_end_paint ();
 		
 		goto fail;
     }else{
 		
-        APIRegisterWindow (mWindow);            
-        apiShowWindow (mWindow); 
+        gde_register_window (mWindow);            
+        gde_show_window (mWindow); 
     };
-	apiEndPaint ();
+	gde_end_paint ();
     //--
 
 	 
@@ -403,7 +403,7 @@ int main ( int argc, char *argv[] ){
 	 // mas usaremos apenas o posicionamento da janela mãe. left top
 	 // ou o ponteiro do mouse, quando clicarmos com o botão direito.
 
-     system_call ( 149, 
+     gramado_system_call ( 149, 
          (unsigned long) mWindow, 
          (unsigned long) mWindow, 
          (unsigned long) mWindow );  
@@ -418,7 +418,7 @@ int main ( int argc, char *argv[] ){
 	
 	// #bugbug
 	// Talvez não precisemos disso.
-	refresh_screen ();
+	gde_show_backbuffer ();
 	
 	
 	//
@@ -432,12 +432,12 @@ Mainloop:
 	
 	while (running)
 	{
-		enterCriticalSection(); 
-		system_call ( 111,
+		gde_enter_critical_section(); 
+		gramado_system_call ( 111,
 		    (unsigned long)&message_buffer[0],
 			(unsigned long)&message_buffer[0],
 			(unsigned long)&message_buffer[0] );
-		exitCriticalSection(); 
+		gde_exit_critical_section(); 
 			
 		if ( message_buffer[1] != 0 )
 		{
@@ -449,7 +449,7 @@ Mainloop:
 			message_buffer[0] = 0;
             message_buffer[1] = 0;
             message_buffer[3] = 0;
-            message_buffer[4] = 0;	
+            message_buffer[4] = 0;
         };
 	};	
 	

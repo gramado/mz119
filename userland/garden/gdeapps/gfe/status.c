@@ -27,28 +27,27 @@ void statusInitializeStatusBar()
 	int i;
 	unsigned long OldX, OldY;
 
-	//salva cursor antigo.
-	OldX = apiGetCursorX();
-    OldY = apiGetCursorY();
+
+    // Salva cursor antigo.
+    OldX = gde_get_cursor_x();
+    OldY = gde_get_cursor_y();
 	
 	//posiciona.#teste
-	apiSetCursor( 0, (600/8) -1 );
+	gde_set_cursor ( 0, (600/8) -1 );
 	
 	for( i=0; i < ((800/8)-1); i++)
 	{
 		printf(" ");
 	};
 	
-	apiSetCursor( 8, (600/8) -1 );	
+	gde_set_cursor ( 8, (600/8) -1 );	
 	printf("|# Status Bar offset 8.");
 
-	apiSetCursor( 44, (600/8) -1 );	
+	gde_set_cursor ( 44, (600/8) -1 );	
 	printf("|# Status Bar  offset 44.");
-	
-done:
-    apiSetCursor(OldX,OldY);
-    return;	
-};
+
+    gde_set_cursor (OldX,OldY);
+}
 
 
 void update_statuts_bar( char *string1, char *string2 )
@@ -56,27 +55,31 @@ void update_statuts_bar( char *string1, char *string2 )
 	int i;
 	unsigned long OldX, OldY;
 
-	//salva cursor antigo.
-	OldX = apiGetCursorX();
-    OldY = apiGetCursorY();
+
+
+    // Salva cursor antigo.
+    OldX = gde_get_cursor_x();
+    OldY = gde_get_cursor_y();
+
 	
 	//posiciona.#teste
-	apiSetCursor( 0, (600/8) -1 );
+	gde_set_cursor ( 0, (600/8) -1 );
 	
 	for( i=0; i < ((800/8)-1); i++)
 	{
 		printf(" ");
 	};
 	
-	apiSetCursor( 8, (600/8) -1 );	
+	gde_set_cursor ( 8, (600/8) -1 );	
 	printf(string1);
 
-	apiSetCursor( 44, (600/8) -1 );	
-	printf(string2);
-	
-done:
-    apiSetCursor(OldX,OldY);	
-};
+	gde_set_cursor ( 44, (600/8) -1 );	
+	printf (string2);
+
+    gde_set_cursor (OldX,OldY);
+}
+
+
 
 
 

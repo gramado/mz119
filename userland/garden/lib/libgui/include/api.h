@@ -3684,8 +3684,6 @@ void gde_initialize_critical_section ();
 //Paint support.
 
 void gde_begin_paint ();
-
-
 void gde_end_paint ();
 
 

@@ -30,27 +30,28 @@ void topbarInitializeTopBar (){
 	unsigned long OldX, OldY;
 
 	//salva cursor antigo.
-	OldX = apiGetCursorX();
-    OldY = apiGetCursorY();
-	
+	OldX = gde_get_cursor_x ();
+    OldY = gde_get_cursor_y ();
+
+
 	//posiciona.#teste
-	apiSetCursor( 0, 0 );
+	gde_set_cursor ( 0, 0 );
 	
 	for( i=0; i < ((800/8)-1); i++)
 	{
 		printf(" ");
 	};
-	
-	apiSetCursor( 8, 0 );	
+
+
+	gde_set_cursor ( 8, 0 );
 	printf("|TEDITOR");
 
-	apiSetCursor( 44, 0 );	
+	gde_set_cursor ( 44, 0 );
 	printf("|Application for testing system resources");
 	
-//done:
-    apiSetCursor(OldX,OldY);
-   // return;	
-};
+
+    gde_set_cursor (OldX,OldY);
+}
 
 
 
