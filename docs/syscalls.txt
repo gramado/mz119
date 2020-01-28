@@ -1,6 +1,10 @@
 
+//
+//  int 0x80   (gde_services)
+//
 
-[Number]  [Entry point]                  [Implementation(path)]
+
+[Number]  [Entry point]                  [Implementation (path)]
   
   0       Nothing                         Nothing
   1       sys_my_read_hd_sector      
@@ -32,9 +36,7 @@
 
   34      sys_set_up_cursor
   35      __do_35
-  
   36      sys_system_dispatch_to_procedure
-  
   37      sys_system_procedure
   
   Nothing: 38 ~ 41
@@ -55,7 +57,6 @@
   57      sys_RegisterWindow
   58      sys_CloseWindow
   59      Nothing
-  
   60      sys_set_active_window
   61      sys_get_active_window
   62      sys_SetFocus
@@ -65,37 +66,24 @@
   66      local ?
   67      Nothing
   68      Nothing
-  
   69      Used for tests.
-  
   70      sys_create_request (exit)
-  
   71      fork (suspended for now)
-  
   72      sys_create_thread
   73      sys_create_process
   
   Nothing: 74 ~79
   
   80      sys_show_currentprocess_info 
-  
   81      sys_getppid
   82      (Set PPID)
-  
   83      sys_do_waitpid
-  
   84      Nothing
-  
   85      sys_getpid
-  82      (Set PID)  
-  
-  
+  86      (Set PID)  
   87      sys_Down
-  
   88      sys_processTesting
-  
   89      sys_Up
-  
   90      sys_dead_thread_collector
   
   Nothing: 91 92 93
@@ -107,18 +95,217 @@
   //#todo: Delete 99 100 101 102 (msg)
   
   
+  103      (receive message ?)
+  104      (send message ?)
+  
+  Nothing 105 ~ 109
+  
+  110      sys_reboot
+  111      __do_111
+  112      pty_send_message_to_process
+  113      sys_windowUpdateWindow
+  114      pty_send_message_to_thread (current)
+  115      (Local)
+  116      (Local)  
+  117      pty_send_message_to_thread (PID)
+  118      serviceCreateWindow
+  119      sys_windowSelectColorScheme
+  
+  Nothing: 120 ~ 123
+  
+  124      defered request ??
+  125      sys_system_procedure
+  126      sys_portsx86_IN
+  127      sys_portsx86_OUT
+  128      Nothing.
+  129      sys_systemLinkDriver
+  130      sys_draw_text
+  131      sys_my_buffer_char_blt (local?)
+  132      Nothing
+  133      Nothing
+  134      wrong thing.
+  135      (feed terminal ??)
+  136      ?
+  137      sys_thread_getchar (???)   
+  138      sys_keyboardGetKeyState
+  139      sys_get_scancode
+  140      sys_set_current_keyboard_responder ??
+  141      sys_get_current_keyboard_responder
+  142      sys_set_current_mouse_responder
+  143      sys_get_current_mouse_responder
+  144      sys_getClientAreaRect
+  145      sys_setClientAreaRect
+  146      Get Screen window (root)
+  147      Get Main window
+  148      sys_grid
+  149      sys_MainMenu
+  150      Nothing
+  151      Nothing
+  152     get current uid
+  153     Nothing
+  154     get current gid
+  155     Nothing
+  156     ShowUserInfo
+  157     get user session id
+  158     get window station id
+  159     get desktop id
+  160     sys_create_socket
+  161     sys_getSocketIP
+  162     sys_getSocketPort
+  163     sys_update_socket
+  
+  164 ~ 169  (?)
+  
+  170     sys_fs_print_process_pwd
+  171     get current volume
+  172     set current volume  
+  173     sys_fsListFiles
+  174     sys_KiSearchFile
+  175     'cd' command support
+  176     sys_fs_pathname_backup
+  177     sys_fsList
+  178     sys_fsGetFileSize
+  179     do_gexecve
+  
+  Nothing: 180 ~ 183
+  
+  184     sys_GetProcessHeapStart
+  
+  Nothing: 185 ~ 198
   
   
+  199     sys_gc
+  200     sys_signalSend
   
   
+  Nothing: 201 ~ 210 
+  
+  211     (Get current terminal)
+  212     (Set current terminal)
+  213      nothing
+  214      nothing
+  215     sys_systemGetTerminalWindow
+  216     sys_systemSetTerminalWindow
+  
+  217 ~ 221  (??)
+  
+  222     sys_create_timer
+  223     sys_get_systime_info
+  224     sys_get_time
+  225     sys_get_date
+  226     spinlock stuff
+  227     spinlock stuff  
+  228     spinlock stuff  
+  
+  229 ~ 235  ??
+  
+  236     (Get current tty)
+  
+  237 - 239  ??
+  
+  240     sys_get_cursor_x
+  241     sys_get_cursor_y
+  242     ?
+  243     ?
+  244     sys_timerEnableTextCursor
+  245     sys_timerDisableTextCursor
+  
+  246 ~ 249   libc support
+  
+  246     __openat
+  247     sys_pipe
+  248     do_execve
+  249     ?
+  250     sys_systemGetSystemMetrics
+  251     sys_diskShowCurrentDiskInfo
+  252     sys_volumeShowCurrentVolumeInfo
+  253     sys_memoryShowMemoryInfo
+  254     sys_systemShowDevicesInfo
+  255     sys_KiInformation
   
   
+  //
+  //  There is more.   (gde_extra_services)
+  //
   
   
+  260     sys_read
+  261     sys_write
+  262     console_read
+  263     console_write
+  264     ??
+  265     yield
+  266     process_get_tty
+  267     pty_link_by_pid
+  268     tty_read
+  269     tty_write
+  270     vt_create
+  271     vt_set_child
   
   
+  277     console_get_current_virtual_console
+  278     console_set_current_virtual_console 
+  279     windowUpdateWindow
+  
+  289     debug_print
+  
+  300     UpdateStatusBar
+  
+  518     redraw_screen
+  
+  600     sys_dup
+  601     sys_dup2
+  602     sys_dup3
   
   
+  770     systemShowDevicesInfo
+  
+  801     __gethostname
+  801     __sethostname
+  803     __getusername
+  804     __setusername
+  
+  808     __ptsname ?
+  809     __ptsname ?
+  880     __GetProcessStats
+  881     __GetThreadStats
+  882     getprocessname
+  883     getthreadname
+  
+  
+  900     do_clone_execute_process
+  901     do_fork_process2
+  
+  
+  967     network_procedure
+  
+  4002    sys_fopen
+  4003    sys_fopen
+  
+  7000    socket
+  
+  8000    sys_ioctl
+  
+  9700    raise_window
+  
+  9800    ps2_mouse_dialog
+  
+  
+  9900    button_down
+  9901    button_up
+  
+  9999    system_get_pid
+  
+  
+  // =====================================================
+  
+  //
+  // Special. int 133 
+  //
+  
+  ?       gde_fork
+  
+  // =====================================================  
   
   
   

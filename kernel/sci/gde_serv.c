@@ -459,11 +459,10 @@ void *gde_extra_services ( unsigned long number,
         return (void *) sys_dup3 ( (int) arg2, (int) arg3, (int) arg4 );
     }
 
-	// 605 - fileno
+	// 605 - fileno   deletar.
     if ( number == 605 )
     {
 		return NULL;
-        //return (void *) fileno ( (FILE *) arg2 );
     }
 
     // 606 - ungetc
@@ -1873,7 +1872,7 @@ void *gde_services ( unsigned long number,
 			break;
 		
 		
-		
+		//#todo: deletar 99 100 101 102 (msg)
 		
 		// 99
 		// Pega 'hwnd' na fila da janela com o foco de entrada.
@@ -2093,7 +2092,7 @@ void *gde_services ( unsigned long number,
             return NULL;
             break;
 
-
+       //128 nothing
 
 		// #especial
 		// 129
@@ -2262,6 +2261,7 @@ void *gde_services ( unsigned long number,
 		//#bugbug: isso não parece seguro, precismos checar a validade da estrutura antes,
         //mas vai ficar assim por enquanto.
 		case 146:	
+		    //#todo: criar a rotina de tratamento.
 		    //return (void *) gwsScreenWindow(); //#todo
 		    return (void *) gui->screen;
 			break;
@@ -2270,6 +2270,7 @@ void *gde_services ( unsigned long number,
 		//#bugbug: isso não parece seguro, precismos checar a validade da estrutura antes,
         //mas vai ficar assim por enquanto.
         case 147:
+            //#todo: criar a rotina de tratamento.
 		    //return (void *) gwsMainWindow(); //#todo
 			return (void *) gui->main;
 			break;
@@ -2302,6 +2303,8 @@ void *gde_services ( unsigned long number,
 		    return (void *) current_group;
 			break;
 
+        
+        
         //156 - SYS_SHOWUSERINFO
         case 156:
             ShowUserInfo (current_user);
