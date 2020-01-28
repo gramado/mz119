@@ -1,0 +1,145 @@
+
+
+[Number]  [Entry point]                  [Implementation(path)]
+  
+  0       Nothing                         Nothing
+  1       sys_my_read_hd_sector      
+  2       sys_my_write_hd_sector      
+  3       sys_read_file2
+  4       sys_fsSaveFile
+  5       sys_vsync
+  6       sys_backbuffer_putpixel
+  7       sys_my_buffer_char_blt
+  8       sys_my_buffer_horizontal_line
+  9       sys_drawDataRectangle
+  10      Nothing 
+  11      sys_refresh_screen
+
+  rede: 12,13,14,15
+  
+  i/o:  16,17,18,19
+  
+  16      sys_open
+  17      sys_close
+  18      Nothing 
+  19      Nothing
+  
+  Nothing: 20, 21, 22, 23
+  
+  24      sys_show_window_rect
+
+  Nothing: 25 ~ 33
+
+  34      sys_set_up_cursor
+  35      __do_35
+  
+  36      sys_system_dispatch_to_procedure
+  
+  37      sys_system_procedure
+  
+  Nothing: 38 ~ 41
+  
+  42      Deprecated!
+  43      Nothing
+  44      Nothing
+  
+  Nothing:  45 ~ 49
+  
+  50      sys_resize_window
+  51      sys_redraw_window
+  52      sys_replace_window
+  53      sys_MaximizeWindow
+  54      sys_MinimizeWindow
+  55      sys_windowGetForegroundWindow
+  56      sys_windowSetForegroundWindow
+  57      sys_RegisterWindow
+  58      sys_CloseWindow
+  59      Nothing
+  
+  60      sys_set_active_window
+  61      sys_get_active_window
+  62      sys_SetFocus
+  63      window_with_focus
+  64      sys_KillFocus
+  65      console_putchar               tty/console ?
+  66      local ?
+  67      Nothing
+  68      Nothing
+  
+  69      Used for tests.
+  
+  70      sys_create_request (exit)
+  
+  71      fork (suspended for now)
+  
+  72      sys_create_thread
+  73      sys_create_process
+  
+  Nothing: 74 ~79
+  
+  80      sys_show_currentprocess_info 
+  
+  81      sys_getppid
+  82      (Set PPID)
+  
+  83      sys_do_waitpid
+  
+  84      Nothing
+  
+  85      sys_getpid
+  82      (Set PID)  
+  
+  
+  87      sys_Down
+  
+  88      sys_processTesting
+  
+  89      sys_Up
+  
+  90      sys_dead_thread_collector
+  
+  Nothing: 91 92 93
+  
+  94      sys_SelectForExecution
+  
+  Nothing:  95 ~ 99
+  
+  //#todo: Delete 99 100 101 102 (msg)
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

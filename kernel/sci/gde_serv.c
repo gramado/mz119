@@ -1591,6 +1591,8 @@ void *gde_services ( unsigned long number,
 			sys_CloseWindow ( (struct window_d *) hWnd ); 
 			break;
 
+        //59 - nothing
+        
         //60
 		case SYS_SETACTIVEWINDOW:
 			sys_set_active_window (hWnd);
@@ -1729,6 +1731,8 @@ void *gde_services ( unsigned long number,
 		// IN: ??
 
         case SYS_EXIT:
+        
+            //#todo: criar um wrapper em sci/sys.c ou kernel/exit.c
             sys_create_request ( (unsigned long) 12, // number 
                 (int) 1,                             // status 
                 (int) 0,                             // timeout. 0=imediatamente.
@@ -1822,6 +1826,8 @@ void *gde_services ( unsigned long number,
 			//block_for_a_reason ( (int) current_thread, (int) arg2 ); //suspenso
 			break;
 			
+		//84 - nothing
+			
 		// 85
 		// #bugbug: 
 		// Isso está retornando o ID do processo pai do processo atual.
@@ -1855,7 +1861,8 @@ void *gde_services ( unsigned long number,
 		case SYS_DEADTHREADCOLLECTOR: 
 			sys_dead_thread_collector ();
 			break;
-			
+		// 91 92 93
+		
 		//94	
 		//REAL (coloca a thread em standby para executar pela primeira vez.)
 		// * MOVEMENT 1 (Initialized --> Standby).
@@ -1864,25 +1871,25 @@ void *gde_services ( unsigned long number,
             //sys_SelectForExecution (t);
 			sys_SelectForExecution ( (struct thread_d *) arg2 );
 			break;
-			
+		
+		
+		
+		
 		// 99
 		// Pega 'hwnd' na fila da janela com o foco de entrada.
 		case SYS_GETHWINDOW:
 		    return NULL;
 		    break;
-			
 		// #bugbug
 		// Pega 'msg' na fila da janela com o foco de entrada.
 		// Pegando a mensagem na fila da janela com o foco de entrada.
 		case SYS_GETKEYBOARDMESSAGE:
 			return (void *) sys_windowGetMessage ( (struct window_d *) WindowWithFocus );
 			break;
-			
 		//****   Pega 'long1' na fila da janela com o foco de entrada.	
 		case SYS_GETLONG1:
 			return (void *) sys_windowGetLong1 ( (struct window_d *) WindowWithFocus );
 			break;
-			
 		//****   Pega 'long2' na fila da janela com o foco de entrada.	
 		case SYS_GETLONG2:
 			return (void *) sys_windowGetLong2 ( (struct window_d *) WindowWithFocus );
