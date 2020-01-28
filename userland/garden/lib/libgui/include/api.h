@@ -3754,9 +3754,9 @@ gde_send_message_to_thread ( int tid,
 //Envia uma mensagem para a thread atual.  
 unsigned long 
 gde_send_message ( struct window_d *window, 
-                 int message,
-                 unsigned long long1,
-                 unsigned long long2 );
+                  int message,
+                  unsigned long long1,
+                  unsigned long long2 );
 
   
 int 

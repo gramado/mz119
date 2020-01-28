@@ -678,7 +678,7 @@ shellProcedure ( struct window_d *window,
 			{
 				//O MENU APPLICATION É O CONTEXT MENU.
 				case VK_APPS:
-				    MessageBox ( 1, 
+				    gde_message_box ( 3, 
 				        "Gramado Core Shell:", 
 				        "VK_APPS Context Menu" );
 					break;
@@ -692,7 +692,7 @@ shellProcedure ( struct window_d *window,
 			{
 				// Null.
 				case 0:
-				    MessageBox ( 3, 
+				    gde_message_box ( 3, 
 				        "Shell test", 
 				        "Testing MSG_COMMAND.NULL." );
 				    break;
@@ -701,7 +701,7 @@ shellProcedure ( struct window_d *window,
 				// Abre uma janela e oferece informações sobre o aplicativo.
 				case CMD_ABOUT:
 				    // Test.
-				    MessageBox ( 3, 
+				    gde_message_box ( 3, 
 				        "Shell test", 
 				        "Testing MSG_COMMAND.CMD_ABOUT." );
 				    break;
@@ -728,7 +728,7 @@ shellProcedure ( struct window_d *window,
 		//Essa mensagem pode ser acionada clidando um botão.
 		case MSG_CLOSE:
             printf ("spr: MSG_CLOSE\n");
-			apiExit (0);
+			gde_exit (0);
 			break;
 		
 		//Essa mensagem pode ser acionada clidando um botão.
@@ -788,7 +788,7 @@ shellProcedure ( struct window_d *window,
 					    break;
 					}
 
-					APISetActiveWindow (window);
+					gde_set_active_window (window);
 					//APIredraw_window ( window, 1 );
 					
 					//botão de close
@@ -824,12 +824,12 @@ shellProcedure ( struct window_d *window,
 				case 1:
 				    if ( window == hWindow )
 				    {
-						APISetFocus (window);
+						gde_set_focus (window);
 					}
 
 					if ( window == editboxWindow )
 					{
-					    APISetFocus (window);
+					    gde_set_focus (window);
 						break;
 					}
 
@@ -856,7 +856,7 @@ shellProcedure ( struct window_d *window,
 					if (window == menu_button)
 					{
 	                    shellTestButtons ();	
-		                refresh_screen ();	
+		                gde_show_backbuffer ();	
 					}
 					
 					
@@ -905,7 +905,7 @@ shellProcedure ( struct window_d *window,
 					}
 			      break;
            }
-            //APISetFocus(window);
+            //gde_set_focus(window);
 			//printf("m");
             break;	
 
@@ -969,7 +969,7 @@ shellProcedure ( struct window_d *window,
 		    break;
 		
 		case MSG_KILLFOCUS:
-		    MessageBox (3, "spr","MSG_KILLFOCUS");
+		    gde_message_box (3, "spr","MSG_KILLFOCUS");
 		    break;
 
 
@@ -1227,7 +1227,7 @@ void shellWaitCmd (){
 	} while (1);
 
     prompt_status = 0;	
-};
+}
 
 
 /*
@@ -1627,7 +1627,7 @@ do_compare:
 		printf("\nTesting tokenList ...\n");
 		printf("\nTotal={%d}\n",token_count);
 		printf("\n Comand = %s \n",tokenList[i]);
-		refresh_screen();
+		gde_show_backbuffer ();
 		
 		i++;
 		token = (char *) tokenList[i];
@@ -1833,7 +1833,7 @@ do_compare:
 			if( strncmp( (char*) tokenList[i], "-humility", 9 ) == 0 )
 			{ 
 		        printf("Selecting Humility color scheme\n"); 
-                system_call(119, (unsigned long)1, (unsigned long)1, (unsigned long)1);
+                gramado_system_call(119, (unsigned long)1, (unsigned long)1, (unsigned long)1);
 				printf("done\n");
                 goto exit_cmp;				
 			}
@@ -1842,7 +1842,7 @@ do_compare:
 			if( strncmp( (char*) tokenList[i], "-pride", 6 ) == 0 )
 			{
 				printf("Selecting Pride color scheme\n");
-                system_call(119, (unsigned long)2, (unsigned long)2, (unsigned long)2);
+                gramado_system_call(119, (unsigned long)2, (unsigned long)2, (unsigned long)2);
                 printf("done\n");
 				goto exit_cmp;				
 			}
@@ -1893,7 +1893,7 @@ do_compare:
 	if ( strncmp( prompt, "dialog-box", 10 ) == 0 )
 	{
 		//@todo:testar os 4 tipos 
-	    MessageBox( 1, "Shell dialog box","Testing dialog box...");
+	    gde_message_box ( 3, "Shell dialog box","Testing dialog box...");
         goto exit_cmp;
     };		
 	
@@ -1909,23 +1909,23 @@ do_compare:
 		{
 			
 		    //listar os arquivos em um diretório dado o nome do diretório.
-			enterCriticalSection();
-		    system_call( 177,
+			gde_enter_critical_section();
+		    gramado_system_call( 177,
 		             (unsigned long) dir_name,   //nome do diretório.
                      (unsigned long) dir_name,   
                      (unsigned long) dir_name ); 
-		    exitCriticalSection();		
+		    gde_exit_critical_section();		
 			
 			
 		}else{
 
 		    //listar os arquivos em um diretório dado o nome do diretório.
-			enterCriticalSection();
-		    system_call( 177,
+			gde_enter_critical_section();
+		    gramado_system_call( 177,
 		             (unsigned long) tokenList[i],   //nome do diretório.
                      (unsigned long) tokenList[i],   
                      (unsigned long) tokenList[i] ); 
-		    exitCriticalSection();		
+		    gde_exit_critical_section();		
 			
 			//...
 		};		
@@ -1959,9 +1959,9 @@ do_compare:
     // #teste: deletar.
 	if ( strncmp( prompt, "editbox", 7 ) == 0 )
 	{
-	    enterCriticalSection();    
+	    gde_enter_critical_section ();    
 	    shellCreateEditBox();
-	    exitCriticalSection();    
+	    gde_exit_critical_section ();    
 		
 		goto exit_cmp;
     };		
@@ -2174,7 +2174,7 @@ do_compare:
 	if ( strncmp( prompt, "message-box", 11 ) == 0 )
 	{
 		//@todo:testar os 4 tipos 
-	    MessageBox( 1, "Shell message box","Testing message box...");
+	    gde_message_box ( 1, "Shell message box","Testing message box...");
         goto exit_cmp;
     };	
 	
@@ -2258,7 +2258,7 @@ do_compare:
 	
 	if ( strncmp ( prompt, "current-process", 15 ) == 0 )
 	{
-		system_call ( SYSTEMCALL_CURRENTPROCESSINFO, 0, 0, 0 );
+		gramado_system_call ( SYSTEMCALL_CURRENTPROCESSINFO, 0, 0, 0 );
 		goto exit_cmp; 
 	}
 	
@@ -2276,7 +2276,7 @@ do_compare:
 	{
 	    //printf("~reboot\n");
 		printf("Tem certeza que deseja reiniciar o sistema?\n");
-		q = (int) apiDialog("Pressione 'y' para Yes ou 'n' para No.\n");
+		q = (int) gde_dialog ("Pressione 'y' para Yes ou 'n' para No.\n");
 					
 		if( q == 1 ){ 
 		    printf("Rebooting...\n");
@@ -2406,7 +2406,7 @@ do_compare:
 		// e ajusta as margens do cursor. :)
 		// Qualquer editbox precisa desse tipo de ajuste.
 	    
-		APISetFocus(window);
+		gde_set_focus (window);
 		//shellPrompt();
 		printf("~start\n");
 		
@@ -2526,12 +2526,12 @@ do_compare:
          strncmp( prompt, "T7", 2 ) == 0 || 		 
 	     strncmp( prompt, "t7", 2 ) == 0 )	
 	{
-		printf("VK_CAPITAL %d \n", system_call ( 138, VK_CAPITAL, VK_CAPITAL, VK_CAPITAL ) );				
-	    printf("VK_LSHIFT %d \n", system_call ( 138, VK_LSHIFT, VK_LSHIFT, VK_LSHIFT ) );
-		printf("VK_RSHIFT %d \n", system_call ( 138, VK_RSHIFT, VK_RSHIFT, VK_RSHIFT ) );
-		printf("VK_CONTROL %d \n", system_call ( 138, VK_CONTROL, VK_CONTROL, VK_CONTROL ) );
-		printf("VK_WINKEY %d \n", system_call ( 138, VK_WINKEY, VK_WINKEY, VK_WINKEY ) );
-		printf("VK_LMENU %d \n", system_call ( 138, VK_LMENU, VK_LMENU, VK_LMENU ) );
+		printf("VK_CAPITAL %d \n", gramado_system_call ( 138, VK_CAPITAL, VK_CAPITAL, VK_CAPITAL ) );				
+	    printf("VK_LSHIFT %d \n", gramado_system_call ( 138, VK_LSHIFT, VK_LSHIFT, VK_LSHIFT ) );
+		printf("VK_RSHIFT %d \n", gramado_system_call ( 138, VK_RSHIFT, VK_RSHIFT, VK_RSHIFT ) );
+		printf("VK_CONTROL %d \n", gramado_system_call ( 138, VK_CONTROL, VK_CONTROL, VK_CONTROL ) );
+		printf("VK_WINKEY %d \n", gramado_system_call ( 138, VK_WINKEY, VK_WINKEY, VK_WINKEY ) );
+		printf("VK_LMENU %d \n", gramado_system_call ( 138, VK_LMENU, VK_LMENU, VK_LMENU ) );
 		//...
 		goto exit_cmp;
 	};
@@ -2540,7 +2540,7 @@ do_compare:
 	if ( strncmp( prompt, "t8", 2 ) == 0 )
     {
 	    shellTestButtons ();	
-		refresh_screen ();
+		gde_show_backbuffer ();
 		goto exit_cmp;
 	};	
 
@@ -2563,14 +2563,15 @@ do_compare:
 	if ( strncmp( prompt, "t11", 3 ) == 0 )
     {    
         //chama message box com mensagem about.
-        apiSendMessage ( (struct window_d *) 0, 
-		                 (int) MSG_COMMAND, 
-						 (unsigned long) CMD_ABOUT, 
-						 (unsigned long) 0 );
-		
+        gde_send_message ( (struct window_d *) 0, 
+                           (int) MSG_COMMAND, 
+                           (unsigned long) CMD_ABOUT, 
+                           (unsigned long) 0 );
 		goto exit_cmp;
 	};
-	
+
+
+
 	//buffer de test;
 	unsigned long message_buffer[11];
 	
@@ -2582,12 +2583,12 @@ do_compare:
 	{
         printf("t12: test rect \n");
 		
-		enterCriticalSection(); 
+		gde_enter_critical_section (); 
 		message_buffer[0] = 100;
 		message_buffer[1] = 100;
 		message_buffer[2] = 100;
 		message_buffer[3] = 100;
-		system_call ( 132,
+		gramado_system_call ( 132,
 		    (unsigned long) &message_buffer[0],
 			(unsigned long) &message_buffer[0],
 			(unsigned long) &message_buffer[0] );
@@ -2595,15 +2596,16 @@ do_compare:
 		message_buffer[1] = 50;
 		message_buffer[2] = 100;
 		message_buffer[3] = 100;			
-		system_call ( 133,
+		gramado_system_call ( 133,
 		    (unsigned long) &message_buffer[0],
 			(unsigned long) &message_buffer[0],
 			(unsigned long) &message_buffer[0] );
-		exitCriticalSection(); 
+		gde_exit_critical_section (); 
 		
-        goto exit_cmp;					 
+        goto exit_cmp; 
 	};	
-	
+
+
 	
 	if ( strncmp( prompt, "t13", 3 ) == 0 )
     {    
@@ -2651,7 +2653,7 @@ do_compare:
 		//só podemos enviar a próxima mensagem depois que a primeira for atendida.
 		//pois ainda não temos fila de mensagens e o servidor demora para receber 
 		//tempo de processamento.
-        system_call ( 116, 123, 0, 0 );
+        gramado_system_call ( 116, 123, 0, 0 );
 		//system_call ( 116, 1000, 0, 0 );
 		//system_call ( 116, 2000, 0, 0 );
 		//system_call ( 116, 3000, 0, 0 );
@@ -2672,14 +2674,14 @@ do_compare:
 		printf("timer-test: Creating timer\n");
 		
 	    printf("%d Hz | sys time %d ms | ticks %d \n", 
-		    apiGetSysTimeInfo(1), 
-			apiGetSysTimeInfo(2), 
-			apiGetSysTimeInfo(3) );		
+		    gde_get_systime_info (1), 
+			gde_get_systime_info (2), 
+			gde_get_systime_info (3) );		
 					
 		//janela, 100 ms, tipo 2= intermitente.
 		//system_call ( 222, (unsigned long) window, 100, 2);	
 			
-        apiCreateTimer ( (struct window_d *) window, 
+        gde_create_timer ( (struct window_d *) window, 
             (unsigned long) 50, (int) 2 );			
 		
 		//inicializando.
@@ -2701,13 +2703,13 @@ do_compare:
 	// Cria uma top bar.
     if ( strncmp( prompt, "taskbar", 7 ) == 0 )
 	{
-	    enterCriticalSection();    
+	    //enterCriticalSection();    
 	    
 		//Apenas inicialize. Continuaremos com o procedimento 
 		//do shell e não o da barra,
 		//shellCreateTaskBar (1);
 	    
-		exitCriticalSection();    
+		//exitCriticalSection();    
 		
 		goto exit_cmp;
     };			
@@ -3090,7 +3092,7 @@ done:
 	//refresh_screen();
 	
     return (unsigned long) ret_value;
-};
+}
 
 
 
@@ -3100,14 +3102,14 @@ void shellInitSystemMetrics()
 	//se uma falhar, então pegaremos tudo novamente.
 	
 	// Tamanho da tela.	
-	smScreenWidth = apiGetSystemMetrics(1);
-    smScreenHeight = apiGetSystemMetrics(2); 
-	smCursorWidth = apiGetSystemMetrics(3);
-	smCursorHeight = apiGetSystemMetrics(4);
-	smMousePointerWidth = apiGetSystemMetrics(5);
-	smMousePointerHeight = apiGetSystemMetrics(6);
-	smCharWidth = apiGetSystemMetrics(7);
-	smCharHeight = apiGetSystemMetrics(8);	
+	smScreenWidth = gde_get_system_metrics(1);
+    smScreenHeight = gde_get_system_metrics(2); 
+	smCursorWidth = gde_get_system_metrics(3);
+	smCursorHeight = gde_get_system_metrics(4);
+	smMousePointerWidth = gde_get_system_metrics(5);
+	smMousePointerHeight = gde_get_system_metrics(6);
+	smCharWidth = gde_get_system_metrics(7);
+	smCharHeight = gde_get_system_metrics(8);	
 	//...
 } 
 
@@ -3442,7 +3444,7 @@ int shellInit ( struct window_d *window ){
 		// mas infelismente não podemos testar outros elementos 
 		// da estrutura.
 		
-		APISetFocus ( window );
+		gde_set_focus ( window );
 		
 		// mensagens !!
 		
@@ -3459,7 +3461,7 @@ int shellInit ( struct window_d *window ){
 	//
 	
 	//Active window
-	ActiveWindowId = (int) APIGetActiveWindow ();
+	ActiveWindowId = (int) gde_get_active_window ();
 	
 	//valor de erro
 	if ( ActiveWindowId == (-1) ){
@@ -3474,7 +3476,7 @@ int shellInit ( struct window_d *window ){
 	// Obtendo informações sobre a janela com o foco de entrada.
 
 	// Focus.
-	WindowWithFocusId = (int) APIGetFocus();
+	WindowWithFocusId = (int) gde_get_focus ();
 	
 	//valor de erro
 	if ( WindowWithFocusId == (-1) ){
@@ -3525,12 +3527,12 @@ int shellInit ( struct window_d *window ){
 	
 	//PID = (int) APIGetPID();
 	
-    PID = (int) system_call( SYSTEMCALL_GETPID, 0, 0, 0 );
+    PID = (int) gramado_system_call( SYSTEMCALL_GETPID, 0, 0, 0 );
 	if ( PID == (-1) ){
 	    printf("ERROR getting PID\n");	
 	}
   
-    PPID = (int) system_call( SYSTEMCALL_GETPPID, 0, 0, 0 );
+    PPID = (int) gramado_system_call( SYSTEMCALL_GETPPID, 0, 0, 0 );
 	if ( PPID == (-1) ){
 	    printf("ERROR getting PPID\n");	
 	}
@@ -3557,9 +3559,8 @@ int shellInit ( struct window_d *window ){
 	};
 */	
 	
-	
+	/*
 #ifdef SHELL_VERBOSE
-    
     printf("Creating processes ...\n");	
 	//D.:)
 	P=(void*)apiCreateProcess(0x400000,PRIORITY_HIGH,"D");
@@ -3586,7 +3587,7 @@ int shellInit ( struct window_d *window ){
 	printf("Created!\n");
 	//...
 #endif	
-	
+	*/
 	
 	//
 	//@todo: 
@@ -3667,9 +3668,9 @@ int shellInit ( struct window_d *window ){
 #ifdef SHELL_VERBOSE		
 	//Lib C.
 	//libC. (stdlib.c)
-	system("test");       
-	system("ls");
-	system("start");
+	//system("test");       
+	//system("ls");
+	//system("start");
 	//system("xxfailxx");
 	//...
 #endif
@@ -3677,9 +3678,9 @@ int shellInit ( struct window_d *window ){
 	
 #ifdef SHELL_VERBOSE			
 	//API.
-	apiSystem("test");    
-    apiSystem("ls");
-	apiSystem("start");
+	//apiSystem("test");    
+    //apiSystem("ls");
+	//apiSystem("start");
 	//apiSystem("xxfailxx");
 	//...
 #endif
@@ -3969,7 +3970,7 @@ void shellSetCursor ( unsigned long x, unsigned long y ){
 	//
 	
 	//setando o cursor usado pelo kernel base.	
-    apiSetCursor (x,y);
+    gde_set_cursor (x,y);
 	
 //Atualizando as variáveis globais usadas somente aqui no shell.
 //setGlobals:	
@@ -4002,7 +4003,7 @@ void shellThread (){
 	printf("$\n");
     printf("\n");
 	
-    refresh_screen();
+    gde_show_backbuffer ();
 	
 	while(1){}
     while(1)
@@ -4228,7 +4229,7 @@ void shellTestThreads (){
 	
 	
 	
-	enterCriticalSection();
+	gde_enter_critical_section ();
 	// #importante:
 	// Como a torina de thread é bem pequena e o 
 	// alocador tem pouquíssimo heap, vamos alocar o mínimo.
@@ -4246,7 +4247,7 @@ void shellTestThreads (){
 
     printf("shellTestThreads: Tentando executar uma thread..\n");	
 	
-	ThreadTest1  = (void *) apiCreateThread ( (unsigned long) &shellThread, 
+	ThreadTest1  = (void *) gde_create_thread ( (unsigned long) &shellThread, 
 	                        (unsigned long) (&threadstack1[0] + (2*1024) - 4), 
 							"ThreadTest1" );
 	
@@ -4263,8 +4264,8 @@ void shellTestThreads (){
 	// execussão colocando ela no estado standby.
 	// Logo em seguida a rotinad e taskswitch efetua o spawn.
 	
-	apiStartThread(ThreadTest1);
-	exitCriticalSection();
+	gde_start_thread (ThreadTest1);
+	gde_exit_critical_section ();
 	
 	
 	printf("shell: Tentando executar um thread [ok]..\n");
@@ -4287,7 +4288,8 @@ void shellClearScreen (){
 	unsigned long left, top, right, bottom;
 	
     //desabilita o cursor
-	system_call ( 245, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);	
+	gramado_system_call ( 245, 
+	    (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);	
 	
 	
 	shellClearBuffer ();
@@ -4295,12 +4297,11 @@ void shellClearScreen (){
 	
 	w = (void *) shell_info.terminal_window;
 	
-	if ( (void *) w != NULL )
-	{
-		APIredraw_window ( w, 1 );
-	};
+	if ( (void *) w != NULL ){
+		gde_redraw_window ( w, 1 );
+	}
 
-	
+
     left = (terminal_rect.left/8);
     top = (terminal_rect.top/8);
 	
@@ -4316,8 +4317,9 @@ void shellClearScreen (){
 	//shellRefreshVisibleArea();
 	
 	//reabilita o cursor
-	system_call ( 244, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);	
-};
+	gramado_system_call ( 244, 
+	    (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);	
+}
 
 
 /*
@@ -4339,7 +4341,8 @@ void shellClearScreen (){
 void shellRefreshScreen (){
 
 	//desabilita o cursor
-	system_call ( 245, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);
+	gramado_system_call ( 245, 
+	    (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);
 	
 	int i=0;
 	int j=0;
@@ -4357,9 +4360,9 @@ void shellRefreshScreen (){
 	};
 
 	//reabilita o cursor
-	system_call ( 244, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);	
-	
-};
+	gramado_system_call ( 244, 
+	    (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);	
+}
 
 
 // a intenção aqui é fazer o refresh de apenas uma linha do arquivo.
@@ -4410,14 +4413,14 @@ void shellRefreshChar ( int line_number, int col_number ){
 
 	//Mostra um char do screen buffer.
 	printf( "%c", LINES[line_number].CHARS[col_number] );	
-};
+}
 
 
 //refresh do char que está na posição usada pelo input.
-void shellRefreshCurrentChar (){
-	
+void shellRefreshCurrentChar ()
+{
 	printf ("%c", LINES[textCurrentRow].CHARS[textCurrentCol] );
-};
+}
 
 
 
@@ -4642,19 +4645,19 @@ void shellTestMBR (){
 	
 	unsigned char buffer[512];
 	
-	enterCriticalSection(); 
+	gde_enter_critical_section (); 
 	
 	//message 
 	printf("shellTestMBR: Initializing MBR test ...\n");
 	
 	//read sector
-	system_call ( SYSTEMCALL_READ_LBA, 
+	gramado_system_call ( SYSTEMCALL_READ_LBA, 
 	              (unsigned long) &buffer[0],  //address 
 				  (unsigned long) 0,           //lba
 				  (unsigned long) 0);
 				 
 	
-	exitCriticalSection();   
+	gde_exit_critical_section ();   
 	
 	//
 	// exibe o conteúdo carregado.
@@ -4668,12 +4671,9 @@ void shellTestMBR (){
 	// @todo: Sondar cada elemento do MBR para 
 	// confirmar a presença.
 	//
-	
-//done:
+
 	//printf("done");
-	//refresh_screen(); //??deletar.
-	//return;
-};
+}
 
 
 
@@ -4694,7 +4694,7 @@ void move_to ( unsigned long x, unsigned long y )
 	textCurrentRow = y;
 	
 	//screen_buffer_pos = ( screen_buffer_y * wlMaxColumns + screen_buffer_x ) ;
-};
+}
 
 
 //show shell info
@@ -4705,12 +4705,12 @@ void shellShowInfo (){
     printf(" # shellShowInfo: #\n");
 	
 	
-    PID = (int) system_call( SYSTEMCALL_GETPID, 0, 0, 0);
+    PID = (int) gramado_system_call( SYSTEMCALL_GETPID, 0, 0, 0);
 	if( PID == (-1)){
 	    printf("ERROR getting PID\n");	
 	}
   
-    PPID = (int) system_call( SYSTEMCALL_GETPPID, 0, 0, 0);
+    PPID = (int) gramado_system_call ( SYSTEMCALL_GETPPID, 0, 0, 0);
 	if( PPID == (-1)){
 	    printf("ERROR getting PPID\n");	
 	}
@@ -4719,7 +4719,7 @@ void shellShowInfo (){
 	printf("wlMaxColumns={%d} \n", wlMaxColumns );
 	printf("wlMaxRows={%d} \n", wlMaxRows );	
 	//...
-};
+}
 
 
 //metrics
@@ -4754,7 +4754,7 @@ void shellShowSystemInfo (){
 	
 	//
 	//Active
-	ActiveWindowId = (int) APIGetActiveWindow();
+	ActiveWindowId = (int) gde_get_active_window ();
 	
 	//valor de erro
 	if( ActiveWindowId == (-1)){
@@ -4765,7 +4765,7 @@ void shellShowSystemInfo (){
 
 	//
 	// Focus.
-	WindowWithFocusId = (int) APIGetFocus();
+	WindowWithFocusId = (int) gde_get_focus ();
 	
 	//valor de erro
 	if( WindowWithFocusId == (-1)){
@@ -4816,7 +4816,7 @@ void shellShowWindowInfo (){
 	//};
 		
 		
-	wID = (int) system_call ( SYSTEMCALL_GETTERMINALWINDOW, 0, 0, 0 ); 
+	wID = (int) gramado_system_call ( SYSTEMCALL_GETTERMINALWINDOW, 0, 0, 0 ); 
 	
 	printf("\n current terminal: \n");
 	printf("Windows ID for current terminal = {%d} \n", wID);
@@ -4838,14 +4838,14 @@ void shellShowWindowInfo (){
 
 
 
-				  
+
 unsigned long 
 shellSendMessage ( struct window_d *window, 
                    int msg, 
-				   unsigned long long1, 
-				   unsigned long long2 )
+                   unsigned long long1, 
+                   unsigned long long2 )
 {
-	return (unsigned long) shellProcedure ( window, msg, long1, long2 );
+    return (unsigned long) shellProcedure ( window, msg, long1, long2 );
 }
 
 
@@ -4914,7 +4914,7 @@ void shellUpdateWorkingDiretoryString ( char *string ){
 			    SHELL_PATHNAME_SEPARATOR );				
 		
             //Atualizar no gerenciamento feito pelo kernel.
-	        system_call( 175, (unsigned long) string,
+	        gramado_system_call ( 175, (unsigned long) string,
 		        (unsigned long) string, (unsigned long) string );		
 		};
 	};
@@ -5001,10 +5001,10 @@ void shellTaskList (){
 	int PID;
 
 	//Pega o PID do processo atual.
-    PID = (int) system_call( SYSTEMCALL_GETPID, 0, 0, 0 );
+    PID = (int) gramado_system_call ( SYSTEMCALL_GETPID, 0, 0, 0 );
 	
     //X = apiGetCursorX();
-	Y = apiGetCursorY();
+	Y = gde_get_cursor_y ();
 	
 	Y++;
 	X=0;
@@ -5037,57 +5037,57 @@ void shellTaskList (){
 void shellShowPID (){
 	
 	printf("Current PID %d\n", 
-	    (int) system_call ( SYSTEMCALL_GETPID, 0, 0, 0) );
+	    (int) gramado_system_call ( SYSTEMCALL_GETPID, 0, 0, 0) );
 }
 
 
 void shellShowPPID (){
 	
 	printf("Current PID %d\n", 
-	    (int) system_call( SYSTEMCALL_GETPPID, 0, 0, 0) );
+	    (int) gramado_system_call ( SYSTEMCALL_GETPPID, 0, 0, 0) );
 }
 
 
 void shellShowUID (){
 	
 	printf("Current UID %d\n", 
-	    (int) system_call( SYSTEMCALL_GETCURRENTUSERID, 0, 0, 0) );
+	    (int) gramado_system_call ( SYSTEMCALL_GETCURRENTUSERID, 0, 0, 0) );
 }
 
 
 void shellShowGID (){
 	
 	printf("Current GID %d\n", 
-	    (int) system_call( SYSTEMCALL_GETCURRENTGROUPID, 0, 0, 0) );
+	    (int) gramado_system_call ( SYSTEMCALL_GETCURRENTGROUPID, 0, 0, 0) );
 }
 
 
 void shellShowUserSessionID (){
 	
 	printf("Current user session %d\n", 
-	    (int) system_call( SYSTEMCALL_GETCURRENTUSERSESSION, 0, 0, 0) );
+	    (int) gramado_system_call ( SYSTEMCALL_GETCURRENTUSERSESSION, 0, 0, 0) );
 }
 
 
 void shellShowWindowStationID (){
 	
 	printf("Current window station %d\n", 
-	    (int) system_call( SYSTEMCALL_GETCURRENTWINDOWSTATION, 0, 0, 0) );
+	    (int) gramado_system_call ( SYSTEMCALL_GETCURRENTWINDOWSTATION, 0, 0, 0) );
 }
 
 
 void shellShowDesktopID (){
 	
 	printf("Current desktop %d\n", 
-	    (int) system_call( SYSTEMCALL_GETCURRENTDESKTOP, 0, 0, 0) );
+	    (int) gramado_system_call ( SYSTEMCALL_GETCURRENTDESKTOP, 0, 0, 0) );
 }
 
 
 void shellShowProcessHeapPointer (){
 	
-	int id = (int) system_call( SYSTEMCALL_GETPID, 0, 0, 0); 
+	int id = (int) gramado_system_call ( SYSTEMCALL_GETPID, 0, 0, 0); 
 	
-	unsigned long heap_pointer = (unsigned long) system_call( SYSTEMCALL_GETPROCESSHEAPPOINTER, 
+	unsigned long heap_pointer = (unsigned long) gramado_system_call ( SYSTEMCALL_GETPROCESSHEAPPOINTER, 
 	                                                id, 0, 0 );
 	
 	printf("Current Process heap pointer address %x\n", 
@@ -5098,7 +5098,7 @@ void shellShowProcessHeapPointer (){
 void shellShowKernelHeapPointer (){
 	
 	int id = 0;  //Id do processo kernel. 
-	unsigned long heap_pointer = (unsigned long) system_call( SYSTEMCALL_GETPROCESSHEAPPOINTER, 
+	unsigned long heap_pointer = (unsigned long) gramado_system_call ( SYSTEMCALL_GETPROCESSHEAPPOINTER, 
 	                                                id, 0, 0 );
 	
     printf ("Current Process heap pointer address %x\n", 
@@ -5110,7 +5110,7 @@ void shellShowKernelHeapPointer (){
 void shellShowDiskInfo (){
 	
 	//@todo: atualizar api.h
-	system_call ( 251, 0, 0, 0 );
+	gramado_system_call ( 251, 0, 0, 0 );
 }
 
 
@@ -5118,28 +5118,28 @@ void shellShowDiskInfo (){
 void shellShowVolumeInfo (){
 	
 	//@todo: atualizar api.h
-	system_call ( 252, 0, 0, 0 );
+	gramado_system_call ( 252, 0, 0, 0 );
 }
 
 
 //mostrar informações gerais sobre a memória.
 void shellShowMemoryInfo (){
 	
-	system_call ( SYSTEMCALL_MEMORYINFO, 0, 0, 0 );
+	gramado_system_call ( SYSTEMCALL_MEMORYINFO, 0, 0, 0 );
 }
 
 
 //mostrar informações gerais sobre a memória.
 void shellShowPCIInfo (){
 	
-    system_call ( SYSTEMCALL_SHOWPCIINFO, 0, 0, 0 );	
+    gramado_system_call ( SYSTEMCALL_SHOWPCIINFO, 0, 0, 0 );	
 }
 
 
 //mostrar informações gerais sobre a memória.
 void shellShowKernelInfo (){
 	
-	system_call ( SYSTEMCALL_SHOWKERNELINFO, 0, 0, 0 );
+	gramado_system_call ( SYSTEMCALL_SHOWKERNELINFO, 0, 0, 0 );
 }
 
 
@@ -5306,7 +5306,7 @@ execve:
 	// chamadno wait(ret);
 	//
 	
-	Status = (int) system_call( 167, 
+	Status = (int) gramado_system_call ( 167, 
 	                          (unsigned long) arg1,    //Nome
 				              (unsigned long) arg2,    //arg(endereço da linha de comando)
 				              (unsigned long) arg3 );  //env
@@ -5418,17 +5418,17 @@ int feedterminalDialog( struct window_d *window,
 				//
 				//help
 				case VK_F1:
-				    //APISetFocus(i1Window);
+				    //gde_set_focus(i1Window);
 					//APIredraw_window(i1Window);
-					MessageBox( 1, "feedterminalDialog","F1: HELP");
+					gde_message_box ( 3, "feedterminalDialog","F1: HELP");
 					break;
 				
                 //full screen
                 //colocar em full screen somente a área de cliente. 
 		        case VK_F2:
-				    //APISetFocus(i2Window);
+				    //gde_set_focus(i2Window);
 					//APIredraw_window(i2Window);				
-				    MessageBox( 1, "feedterminalDialog","F2: ");
+				    gde_message_box( 3, "feedterminalDialog","F2: ");
 					//ShellFlag = SHELLFLAG_COMMANDLINE;
 					break;
 					
@@ -6095,7 +6095,7 @@ int shell_save_file (){
 	}
 	
 	
-    Ret = (int) apiSaveFile ( file_1_name,  //name 
+    Ret = (int) gde_save_file ( file_1_name,  //name 
                               number_of_sectors,            //number of sectors.
                               len,            //size in bytes			
                               file_1,       //address
@@ -6249,7 +6249,7 @@ void clearLine ( int line_number )
 void testShowLines()
 {
 	//desabilita o cursor
-	system_call ( 245, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);
+	gramado_system_call ( 245, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);
 	
 	int i=0;
 	int j=0;
@@ -6267,7 +6267,7 @@ void testShowLines()
 	};
 
 	//reabilita o cursor
-	system_call ( 244, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);	
+	gramado_system_call ( 244, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);	
 };
 
 
@@ -6275,7 +6275,7 @@ void testShowLines()
 void shellRefreshVisibleArea (){
 	
 	//desabilita o cursor
-	system_call ( 245, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);
+	gramado_system_call ( 245, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);
 	
 	
 	//
@@ -6318,7 +6318,7 @@ void shellRefreshVisibleArea (){
 	};
 
 	//reabilita o cursor
-	system_call ( 244, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);	
+	gramado_system_call ( 244, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);	
 };
 
 
@@ -6367,16 +6367,16 @@ void shellSocketTest()
 	//
 	
 	printf("Creating socket ...\n");
-	socketHandle = (void *) system_call ( 160, (unsigned long) 0xC0A80164, (unsigned long) 0, (unsigned long) 0x22C3 );
+	socketHandle = (void *) gramado_system_call ( 160, (unsigned long) 0xC0A80164, (unsigned long) 0, (unsigned long) 0x22C3 );
 	
 	printf("Updating socket ...\n");
-	system_call ( 163, (unsigned long) socketHandle, (unsigned long) 0xC0A80165, (unsigned long) 0x22C2 );
+	gramado_system_call ( 163, (unsigned long) socketHandle, (unsigned long) 0xC0A80165, (unsigned long) 0x22C2 );
 	
 	printf("Getting ip from socket ...\n");
-	iplong = (unsigned long) system_call ( 161, (unsigned long) socketHandle, (unsigned long) socketHandle, (unsigned long) socketHandle);
+	iplong = (unsigned long) gramado_system_call ( 161, (unsigned long) socketHandle, (unsigned long) socketHandle, (unsigned long) socketHandle);
 	
 	printf("Getting port from socket ...\n");
-	port = (unsigned long) system_call ( 162, (unsigned long) socketHandle, (unsigned long) socketHandle, (unsigned long) socketHandle);
+	port = (unsigned long) gramado_system_call ( 162, (unsigned long) socketHandle, (unsigned long) socketHandle, (unsigned long) socketHandle);
 	
 	//
 	// output
@@ -6608,10 +6608,10 @@ noArgs:
 	
 	//++
 	//cria, registra e mostra;
-	enterCriticalSection ();    
+	gde_enter_critical_section ();    
     printf ("Creating main window ...\n");
     //hWindow = shellCreateMainWindow (1);
-	hWindow = (void *) APICreateWindow ( WT_OVERLAPPED, 1, 1, "Sprinkler", 
+	hWindow = (void *) gde_create_window ( WT_OVERLAPPED, 1, 1, "Sprinkler", 
                            wpWindowLeft, wpWindowTop, 
                            wsWindowWidth, wsWindowHeight, 
                            0, 0, xCOLOR_GRAY2, xCOLOR_GRAY2 );
@@ -6619,15 +6619,16 @@ noArgs:
 
 	if ( (void *) hWindow == NULL )
 	{
+		gde_exit_critical_section();
 		printf ("hWindow FAIL!");
 		while (1){}
 	}else{
 		
 		//Registrar e mostrar.
-        APIRegisterWindow (hWindow);
-	    apiShowWindow (hWindow);
+        gde_register_window (hWindow);
+	    gde_show_window (hWindow);
 	}
-	exitCriticalSection ();
+	gde_exit_critical_section ();
 	//--
 	
 	// #IMPORTANTE #IMPORTANTE #IMPORTANTE #IMPORTANTE#IMPORTANTE
@@ -6972,20 +6973,20 @@ noArgs:
 
     
     //++
-    enterCriticalSection ();  
-    w_navbar = (void *) APICreateWindow ( WT_SIMPLE, 1, 1, "navbar",     
+    gde_enter_critical_section ();  
+    w_navbar = (void *) gde_create_window ( WT_SIMPLE, 1, 1, "navbar",     
                               1, 40, 
                               wsWindowWidth -40, 24,  
                               hWindow, 0, COLOR_GRAY, COLOR_GRAY );
 	if ( (void *) w_navbar == NULL)
 	{	
 		printf("w_navbar fail");
-		refresh_screen();
+		gde_show_backbuffer();
 		while(1){}
 	}
-	APIRegisterWindow (w_navbar);
-	apiShowWindow (w_navbar);
-	exitCriticalSection ();  
+	gde_register_window (w_navbar);
+	gde_show_window (w_navbar);
+	gde_exit_critical_section ();  
 	//--
 	
 	
@@ -6999,20 +7000,20 @@ noArgs:
     // está sendo em relação à tela.
 
 	//++
-	enterCriticalSection ();  
-	editboxWindow = (void *) APICreateWindow ( WT_EDITBOX, 1, 1, "editbox-navbar",     
+	gde_enter_critical_section ();  
+	editboxWindow = (void *) gde_create_window ( WT_EDITBOX, 1, 1, "editbox-navbar",     
                                 0, 0, 
                                 wsWindowWidth -40 -40, 24,    
                                 w_navbar, 0, COLOR_WINDOW, COLOR_WINDOW );
 	if ( (void *) editboxWindow == NULL)
 	{	
 		printf("edit box fail");
-		refresh_screen();
+		gde_show_backbuffer();
 		while(1){}
 	}
-	APIRegisterWindow (editboxWindow);
-	apiShowWindow (editboxWindow);
-	exitCriticalSection ();  
+	gde_register_window (editboxWindow);
+	gde_show_window (editboxWindow);
+	gde_exit_critical_section ();  
 	//--
 
 
@@ -7021,15 +7022,15 @@ noArgs:
     // está sendo em relação à tela.
       
 	//++
-    enterCriticalSection ();  
-	navbar_button = (void *) APICreateWindow ( WT_BUTTON, 1, 1, "[>]",     
+    gde_enter_critical_section ();  
+	navbar_button = (void *) gde_create_window ( WT_BUTTON, 1, 1, "[>]",     
                                 wsWindowWidth -40 -40, 0, 
                                 32, 24,    
                                 w_navbar, 0, xCOLOR_GRAY3, xCOLOR_GRAY3 );
 
-    APIRegisterWindow (navbar_button);
-	apiShowWindow (navbar_button);
-	exitCriticalSection ();  
+    gde_register_window (navbar_button);
+	gde_show_window (navbar_button);
+	gde_exit_critical_section ();  
 	//--
 	
 
@@ -7067,10 +7068,10 @@ noArgs:
     // Carrega um bmp e decodifica diretamente na tela.
     // O posicionamento é absoluto na tela e não relativo à janela.
     //++
-    enterCriticalSection ();  
+    gde_enter_critical_section ();  
     //system_call ( 4001, (unsigned long) "dennis.bmp", 100, 100 );
-    system_call ( 4001, (unsigned long) "dennis.bmp", 200, 200 );
-    exitCriticalSection ();  
+    gramado_system_call ( 4001, (unsigned long) "dennis.bmp", 200, 200 );
+    gde_exit_critical_section ();  
     //--    
 	//===========================================================
 
@@ -7082,7 +7083,7 @@ noArgs:
 	
 	shellSetCursor ( (terminal_rect.left / 8) , ( terminal_rect.top/8) );	
 	
-	system_call ( 244, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0 );
+	gramado_system_call ( 244, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0 );
 	
 	
 	// #bugbug
@@ -7109,7 +7110,7 @@ noArgs:
 	// para essa janela e não apenas ao procedimento de janela do sistema.
 	// # provavelmente isso marca os limites para a impressão de caractere em modo terminal 
 
-	system_call ( SYSTEMCALL_SETTERMINALWINDOW, (unsigned long) hWindow, 
+	gramado_system_call ( SYSTEMCALL_SETTERMINALWINDOW, (unsigned long) hWindow, 
 		(unsigned long) hWindow, (unsigned long) hWindow );
 
 
@@ -7227,12 +7228,12 @@ Mainloop:
     while (running)
     {
 		// #obs: O retorno será 1 se tiver mensagem e 0 se não tiver.
-		enterCriticalSection(); 
+		gde_enter_critical_section (); 
 		system_call ( 111,
 		    (unsigned long) &message_buffer[0],
 			(unsigned long) &message_buffer[0],
 			(unsigned long) &message_buffer[0] );
-		exitCriticalSection(); 
+		gde_exit_critical_section (); 
 			
 		if ( message_buffer[1] != 0 )
         {
@@ -7301,7 +7302,7 @@ end:
     // Quando outro aplicativo precisar ele clica em uma janela, 
 	// ela ganha o foco e habilita o cursor piscante.	
 	
-    system_call ( 245, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);
+    gramado_system_call ( 245, (unsigned long) 0, (unsigned long) 0, (unsigned long) 0);
 
 #ifdef SHELL_VERBOSE		
     printf ("spr: exiting code '0' ...\n");

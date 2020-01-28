@@ -48,7 +48,7 @@ void dir_builtins (){
 	//#test 
 	//173 Lista arquivos de um diretório, dado o número do disco,
     //o número do volume e o número do diretório,	
-    system_call(173,0,0,0);		
+    gramado_system_call (173,0,0,0);		
 		
 	printf ("~done\n");	
 }
@@ -135,6 +135,6 @@ void help_builtins (int arg){
 void pwd_builtins (){
 	
     //printf("~pwd - print working directory\n");
-    system_call ( 170, 0, 0, 0 );		
-};
+    gramado_system_call ( 170, 0, 0, 0 );		
+}
 

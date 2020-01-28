@@ -154,7 +154,7 @@ shellTopbarProcedure ( struct window_d *window,
 				case VK_F1:
 				    //APISetFocus(i1Window);
 					//APIredraw_window(i1Window);
-					MessageBox( 1, "Gramado Core - Shell Topbar","F1: HELP");
+					gde_message_box( 3, "Gramado Core - Shell Topbar","F1: HELP");
 					break;
 				
                 //full screen
@@ -162,7 +162,7 @@ shellTopbarProcedure ( struct window_d *window,
 		        case VK_F2:
 				    //APISetFocus(i2Window);
 					//APIredraw_window(i2Window);				
-				    MessageBox( 1, "Gramado Core - Shell Topbar","F2: ");
+				    gde_message_box ( 3, "Gramado Core - Shell Topbar","F2: ");
 					//ShellFlag = SHELLFLAG_COMMANDLINE;
 					break;
 					
@@ -186,7 +186,7 @@ shellTopbarProcedure ( struct window_d *window,
 				//O MENU APPLICATION É O CONTEXT MENU.
 				//
 				case VK_APPS:
-				    MessageBox( 1, "Gramado Core Shell Topbar:","Context Menu");
+				    gde_message_box( 3, "Gramado Core Shell Topbar:","Context Menu");
 					break;
 			}		
 		    break;
@@ -205,7 +205,7 @@ shellTopbarProcedure ( struct window_d *window,
 				// Abre uma janela e oferece informações sobre o aplicativo.
 				case CMD_ABOUT:
 				    // Test.
-				    MessageBox( 1, "Shell test Topbar","Testing MSG_COMMAND.CMD_ABOUT.");
+				    gde_message_box( 3, "Shell test Topbar","Testing MSG_COMMAND.CMD_ABOUT.");
 				    break;
 				
 				//clicaram no botão
@@ -254,7 +254,6 @@ shellTopbarProcedure ( struct window_d *window,
 		    break;
 		
 		case MSG_SETFOCUS:
-		    APISetFocus(window);
 			break;
 			
 		case MSG_KILLFOCUS:
@@ -486,6 +485,8 @@ done:
 
 void shellCreateEditBox (){
     
+    /*
+    
 	editboxWindow = (void *) APICreateWindow ( WT_EDITBOX, 1, 1, "editbox-navbar",     
                                 10, 600-100, 300, 24,    
                                 0, 0, COLOR_WINDOW, COLOR_WINDOW );
@@ -504,6 +505,8 @@ void shellCreateEditBox (){
     APIRegisterWindow (editboxWindow);
 
 	//shellSetCursor ( 8, 8 );								   
+
+    */
 };
 
 
@@ -573,7 +576,7 @@ struct window_d *shellCreateMainWindow ( int status ){
     //                            left, top, width, height,    
     //                            0, 0, xCOLOR_GRAY1, xCOLOR_GRAY1 );
 
-	w = (void *) APICreateWindow ( WT_OVERLAPPED, 1, 1, "Sprinkler",     
+	w = (void *) gde_create_window ( WT_OVERLAPPED, 1, 1, "Sprinkler",     
                                 left, top, width, height,    
                                 0, 0, xCOLOR_GRAY2, xCOLOR_GRAY2 );
 
@@ -587,8 +590,8 @@ struct window_d *shellCreateMainWindow ( int status ){
 	};
 	
 	//Registrar.
-    APIRegisterWindow (w);
-	apiShowWindow (w);
+    gde_register_window (w);
+	gde_show_window (w);
 	
 	return w;
 }
@@ -597,7 +600,7 @@ struct window_d *shellCreateMainWindow ( int status ){
 
 void testCreateWindow (){
 
-	
+	/*
 	struct window_d *hWindow;
 	
 	
@@ -623,6 +626,7 @@ void testCreateWindow (){
     apiEndPaint();
 	
     printf("ok\n");
+    */
 };
 
 
@@ -655,11 +659,11 @@ loadFile:
     //@todo: Usar alguma rotina da API específica para carregar arquivo.
 	// na verdade tem que fazer essas rotinas na API.
 	
-	system_call ( SYSTEMCALL_READ_FILE, (unsigned long) file_name, 
+	gramado_system_call ( SYSTEMCALL_READ_FILE, (unsigned long) file_name, 
 		(unsigned long) b, (unsigned long) b);	
 	 
 	//Usando a API para exibir o bmp carregado. 
-	apiDisplayBMP ( (char *) b, 10, 00 ); 
+	gde_display_bmp ( (char *) b, 10, 00 ); 
 	 
     //
 	//Mostrando informações sobre o arquivo.
@@ -728,11 +732,11 @@ loadFile:
     //@todo: Usar alguma rotina da API específica para carregar arquivo.
 	// na verdade tem que fazer essas rotinas na API.
 	
-	system_call ( SYSTEMCALL_READ_FILE, (unsigned long) file_name, 
+	gramado_system_call ( SYSTEMCALL_READ_FILE, (unsigned long) file_name, 
 		(unsigned long) b, (unsigned long) b);	
 	 
 	//Usando a API para exibir o bmp carregado. 
-	apiDisplayBMP ( (char *) b, 0, 0 ); 
+	gde_display_bmp ( (char *) b, 0, 0 ); 
 	 
     //
 	//Mostrando informações sobre o arquivo.
@@ -793,11 +797,11 @@ void shellTestDisplayBMP (){
 loadFile:
     //@todo: Usar alguma rotina da API específica para carregar arquivo.
 	// na verdade tem que fazer essas rotinas na API.
-	system_call ( SYSTEMCALL_READ_FILE, (unsigned long) bmp1_file_name, 
+	gramado_system_call ( SYSTEMCALL_READ_FILE, (unsigned long) bmp1_file_name, 
 		(unsigned long) b, (unsigned long) b);	
 	
 
-	apiDisplayBMP ( (char *) b, 10, 450 );  
+	gde_display_bmp ( (char *) b, 10, 450 );  
 	 
     //
 	//Mostrando informações sobre o arquivo.
@@ -844,7 +848,7 @@ void bmpDisplayBMP ( void *address,
 					 int height )
 {
 
-    apiDisplayBMP ( (char *) address, x, y ); 
+    gde_display_bmp ( (char *) address, x, y ); 
     
 	/*
 	int i, j, base, offset;	
@@ -919,6 +923,7 @@ void bmpDisplayBMP ( void *address,
 //todo mudar o nome da função.
 int shellTestButtons (){
 	
+	/*
 	
 	
 	// Tamanho da tela.	
@@ -988,7 +993,7 @@ int shellTestButtons (){
                                 0, 0, xCOLOR_GRAY1, xCOLOR_GRAY1 );
 								
     APIRegisterWindow (app4_button);	
-    
+    */
 
 	
     return 0;	

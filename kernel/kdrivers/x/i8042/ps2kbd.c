@@ -748,6 +748,40 @@ check_WindowWithFocus:
         tmp_sc = (unsigned long) scancode;
         tmp_sc = (unsigned long) ( tmp_sc & 0x000000FF );
 
+
+
+        // #importante
+        // Sobre o terminal virtual e o input nos seus processos filhos.
+        
+        // A libc não vai pegar digitações de teclado ... 
+        // mas as mensagens de teclado serão enviadas para a fila 
+        // de mensagens da thread associada com a janela que 
+        // tem o foco de entrada.
+        
+        // Quando a janela com o foco de entrada for a janela do 
+        // terminal, então as mensagens de janelas vão para a 
+        // fila de mensagens do processo terminal virtual .... 
+        // o terminal coloca essas digitações em um arquivo, 
+        // esse mesmo arquivo foi herdado pelo processo filho ... 
+        // o processo filho vai chamar esse arquivo de stdin
+
+        // Por fim a libc deve ler no arquivo stdin herdado do 
+        // terminal virtual ... arquivo na qual o terminal está 
+        // colocando as digitações de teclado.
+
+        // Então se a janela do terminal virtual não tiver o foco 
+        // de entrada, então o terminal virtual não receberá as 
+        // digitações de teclado e não terá o que enviar para o 
+        // processo filho via arquivo herdado.
+
+        // Ainda é preciso abordar questões como par de ttys, 
+        // que é uma pty ... e pts que é o sistema de arquivos 
+        // pra multiplexar master ... e ptmx que é o multiplexador 
+        // de master. ... em pts ficarão os terminais virtuais 
+        // multiplexados por ptmx. pts/0 pts/1 ...
+        
+        
+        
         //
         // Message.
         //
@@ -757,14 +791,6 @@ check_WindowWithFocus:
 		// Então a mensagem vai para a thread associada com a janela que tem 
 		// o foco de entrada.
 		// Como o scancode é um char, precisamos converte-lo em unsigned long.
-
-
-        // Old way. Delete it!
-        //t->window = w;
-        //t->msg = message;
-        //t->long1 = ch;            // Key.
-        //t->long2 = tmp_sc;        // Scan code.
-        //t->newmessageFlag = 1;
 
 
         // Salvamos para limparmos a mensagem no caso de
