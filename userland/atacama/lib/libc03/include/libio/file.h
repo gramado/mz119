@@ -133,8 +133,10 @@ struct _iobuf
     int used;
     int magic;
 
-    int iopl;
 
+    unsigned char *_base;    // Pointer to the base of the file. the buffer 
+    
+    
 	// current position in (some) buffer
 	// Current position of file pointer (absolute address).
     unsigned char *_p;
@@ -144,6 +146,10 @@ struct _iobuf
 
 	// write space left for putc()
     int _w;
+    
+    // number of available characters in buffer 
+    int _cnt;  
+
 
 	// flags, below; this FILE is free if 0 	
 	// Flags (see FileFlags). the state of the stream
@@ -153,23 +159,28 @@ struct _iobuf
 	// UNIX System file descriptor
     short _file;
 
+
 	// the buffer (at least 1 byte, if !NULL)
     struct __sbuf _bf;
 
 	// 0 or -_bf._size, for inline putc 
     int _lbfsize;  
 
-	//operations 
-	//#todo: olhar __P em sys/cdefs.h
+
+	// operations - (bsd-like) 
+	// #todo: olhar __P em sys/cdefs.h
     void *_cookie;                 // cookie passed to io functions 
-    int (*_close) __P((void *));
-    int (*_read)  __P((void *, char *, int));
+    int    (*_close) __P((void *));
+    int    (*_read)  __P((void *, char *, int));
     fpos_t (*_seek)  __P((void *, fpos_t, int));
-    int (*_write) __P((void *, const char *, int));
+    int    (*_write) __P((void *, const char *, int));
 
 
 	//file extension 
     struct __sbuf _ext;
+
+
+
 
 	// separate buffer for long sequences of ungetc() 
 	// saved _p when _p is doing ungetc data 
@@ -177,50 +188,44 @@ struct _iobuf
 	// saved _r when _r is counting ungetc data
     int _ur;
 
-	
 	// tricks to meet minimum requirements even when malloc() fails 
     unsigned char _ubuf[3];    // guarantee an ungetc() buffer 
     unsigned char _nbuf[1];    // guarantee a getc() buffer 
 
+
+
 	//separate buffer for fgetln() when line crosses buffer boundary 
     struct __sbuf _lb;    // buffer for fgetln() 
+
+
 
 	//Unix stdio files get aligned to block boundaries on fseek() 
     int _blksize;      // stat.st_blksize (may be != _bf._size) 
     fpos_t _offset;    // current lseek offset 
 
+
+
+    int   _charbuf;   
+    char *_tmpfname;
+    
+    
+    
+    int eof;
+    int error;
+    int have_ungotten;
+    char ungotten;
+        
+    char default_buffer[BUFSIZ];
+    
+    
     // 1= is a device; 0= is a file.
     // Se é um dispositivo ou não.
     // Se for um dispositivo então o dispositivo terá
     // na lista deviceList o mesmo offset da stream na list Streams.
     int isDevice;
     int deviceId;  //índice na lista deviceList[] no kernel.
-    
-	// old stuff
-	// isso pertence a estrutura no formato antigo
-	// e os elementos ainda estão presentes em várias rotinas.
-	//No futuro vamos deletar isso. (Talvez não.)
-    int   _cnt;      // number of available characters in buffer 
-    unsigned char *_base;     // Pointer to the base of the file. the buffer 
-    int   _charbuf;   
-    char *_tmpfname;
-    
-    //#todo: usar isso!!
-    
-    //#test
-    //tentando usar esses outros elementos.
-    //igual ao serenity.
-    
-    int eof;
-    int error;
-    int have_ungotten;
-    char ungotten;
-    
-    // #test
-    // Testing this feature.
-    // It makes our lives easier.
-    
-    char default_buffer[BUFSIZ];
+
+    int iopl;
 };
 
 

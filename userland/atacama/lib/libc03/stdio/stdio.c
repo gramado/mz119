@@ -2842,6 +2842,11 @@ void debug_print (char *string)
         (unsigned long) string );
 }
 
+
+//
+// Flush.
+//
+
 int __serenity_fflush ( FILE *stream)
 {
 
@@ -2849,31 +2854,32 @@ int __serenity_fflush ( FILE *stream)
 	
     // FIXME: fflush(NULL) should flush all open output streams.
     //ASSERT(stream);
-    if ( (void *) stream == NULL )
-    {
-       debug_print( "__serenity_fflush: stream\n");
-       return -1;
+    if ( (void *) stream == NULL ){
+        debug_print( "__serenity_fflush: stream\n");
+        return -1;
     }
  
     //if ( !stream->_w )
         //return 0;
         
         
-    if ( (void *) stream->_base == NULL )
-    {
-       debug_print( "__serenity_fflush: _base\n");
-       return -1;
+    if ( (void *) stream->_base == NULL ){
+        debug_print( "__serenity_fflush: _base\n");
+        return -1;
     }   
-    
-    if ( stream->_w <= 0 )
-    {   
-       debug_print( "__serenity_fflush: _w\n");
-       return -1;
+
+
+    if ( stream->_w <= 0 ){   
+        debug_print( "__serenity_fflush: _w\n");
+        return -1;
     } 
                
-               
-    //int rc = write (1, stream->_base, stream->_w);
     
+    // #todo: 
+    // This is the desired way.           
+    // int rc = write ( fileno(stream), stream->_base, stream->_w );
+
+
     // ISSO FUNCIONA.
     // vamos testar no console virtual.
     int rc = write_VC ( 0, stream->_base, stream->_w ); 
@@ -4923,50 +4929,57 @@ char *ctermid(char *s)
 void stdioInitialize (){
 
 
-    //FILE *_fp;
-
 	// Buffers para as estruturas.
-	unsigned char buffer0[BUFSIZ];
-	unsigned char buffer1[BUFSIZ];
-	unsigned char buffer2[BUFSIZ];
+    unsigned char buffer0[BUFSIZ];
+    unsigned char buffer1[BUFSIZ];
+    unsigned char buffer2[BUFSIZ];
 
+    // Buffers.
     unsigned char buffer0_data[BUFSIZ];
     unsigned char buffer1_data[BUFSIZ];
     unsigned char buffer2_data[BUFSIZ];
 
+
     int status = 0;
     int i;
     
+    //
+    // Pointers.
+    //    
     
-    
-	stdin  = (FILE *) &buffer0[0];
-	stdout = (FILE *) &buffer1[0];
-	stderr = (FILE *) &buffer2[0];
-	
-	
-	stdin->_base    = &buffer0_data[0];
-	stdout->_base   = &buffer1_data[0];
-	stderr->_base   = &buffer2_data[0];
+    stdin  = (FILE *) &buffer0[0];
+    stdout = (FILE *) &buffer1[0];
+    stderr = (FILE *) &buffer2[0];
 
+
+    // Buffers.
+    stdin->_base  = &buffer0_data[0];
+    stdout->_base = &buffer1_data[0];
+    stderr->_base = &buffer2_data[0];
+
+    // p
     stdin->_p  = stdin->_base;
     stdout->_p = stdout->_base;
     stderr->_p = stderr->_base;
-    
+
+    // cnt    
     //stdin->_cnt  = BUFSIZ;
     //stdout->_cnt = BUFSIZ;
     //stderr->_cnt = BUFSIZ;    
     
+    
+    //#todo
     //stdin->_lbfsize  = 128;
     //stdout->_lbfsize = 128;
     //stderr->_lbfsize = 128;    
 
-    //stdin->_w  = 0;
-    //stdout->_w = 0;
-    //stderr->_w = 0;    
+    stdin->_w  = 0;
+    stdout->_w = 0;
+    stderr->_w = 0;    
 
-    //stdin->_r  = 0;
-    //stdout->_r = 0;
-    //stderr->_r = 0;    
+    stdin->_r  = 0;
+    stdout->_r = 0;
+    stderr->_r = 0;    
 
     
     // o kernel ainda não sabe disso.

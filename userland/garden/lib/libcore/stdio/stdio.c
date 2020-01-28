@@ -1270,47 +1270,29 @@ int putchar (int __c)
 
 int putchar (int ch){
 
+
     if ( __libc_output_mode == LIBC_DRAW_MODE ){
 
-        //#todo: IN: ch, virtual,console id.
-        //gramado_system_call ( 65, 
-            //(unsigned long) ch,   // ch
-            //(unsigned long) ch,   // console id.
-            //(unsigned long) ch );
 
-        //#todo: IN: ch, virtual,console id.
+        // #todo: 
+        // Print a char on to console number 0.
+        // IN: ch, virtual,console id.
+
         gramado_system_call ( 65, 
             (unsigned long) ch,   // ch
             (unsigned long) 0,    // console id. 0.
             (unsigned long) 0 );
 
+
     } else if ( __libc_output_mode == LIBC_NORMAL_MODE ){
 
-		// #bugbug
-		// Teremos problemas se stdout não for um ponteiro válido.
-		
-		// #bugbug
-		// Não podemos chamar o terminal à cada char.
-		// Então é mehlor usar fputc e filtrar o char.
-
-		//vamos tentar outr pois putc chama fputc e não fprintf.
-		fputc ( ch, stdout );
-		//fprintf ( stdout, "%c", ch );
+        fputc ( ch, stdout );
     };
-
 
     return (int) ch;
 }
 
 
-/*
-int putchar (int ch){
-        gramado_system_call ( 65, 
-            (unsigned long) ch,   // ch
-            (unsigned long) 0,    // console id. 0.
-            (unsigned long) 0 );
-};
-*/
 
 // Setup libc mode.
 void libc_set_output_mode ( int mode ){
@@ -1518,26 +1500,24 @@ void outbyte (int c){
  * nesse caso.
  */
 
-	//#obs: Tamanho do char constante = 8. 
-	//o que queremos é usar uma variável.
+	// #obs: 
+	// Tamanho do char constante = 8. 
+	// o que queremos é usar uma variável.
 
 void _outbyte ( int c ){
 
-	//#bugbug
-	//essa funçao nao 'e usada ... NAO funciona.
-	//printf usa outra coisa (65).
-
-
+	// #bugbug
+	// Essa funçao nao é usada ... NÃO funciona.
+	// printf usa outra coisa (65).
 
     gramado_system_call ( 7, 
         8*g_cursor_x,  8*g_cursor_y, 
         (unsigned long) c ); 
 
-
-
 	//#todo
 	//putc ( ch, stdout );
 }
+
 
 
 /*
@@ -1757,61 +1737,70 @@ Loop:
 
 void stdioInitialize ()
 {
-    //FILE *_fp;
 
-	// Buffers para as estruturas.
-	unsigned char buffer0[BUFSIZ];
-	unsigned char buffer1[BUFSIZ];
-	unsigned char buffer2[BUFSIZ];
-	
+    // Buffers para as estruturas.
+    unsigned char buffer0[BUFSIZ];
+    unsigned char buffer1[BUFSIZ];
+    unsigned char buffer2[BUFSIZ];
+
+    // Buffers.
     unsigned char buffer0_data[BUFSIZ];
     unsigned char buffer1_data[BUFSIZ];
     unsigned char buffer2_data[BUFSIZ];
 
-	
-	int status = 0;
-
+    int status = 0;
     int i;
     
+ 
 	//Os caracteres são colocados em stdout.
     //__libc_output_mode = LIBC_NORMAL_MODE;
-	
+
 	//Os caracteres são pintados na tela.
 	__libc_output_mode = LIBC_DRAW_MODE;
 
-	// Alocando espaço para as estruturas.
-	// Mas não usaremos a estrutura em ring3, somente o ponteiro.
-	// O ponteiro apontará para um estrutura em ring0.
 
-    //stdin  = (FILE *) &buffer0[0];
-	//stdout = (FILE *) &buffer1[0];
-	//stderr = (FILE *) &buffer2[0];
+    //
+    // Pointers.
+    //
 
-    // pegando s stream na lista de arquivos do processo.
-    // O ponteiro apontará para um estrutura em ring0.
-    // service, pid, fd, 0.
-    
-    //stdin  = (FILE *) gramado_system_call ( 167, getpid(), 0, 0 );
-    //stdout = (FILE *) gramado_system_call ( 167, getpid(), 1, 0 );
-    //stderr = (FILE *) gramado_system_call ( 167, getpid(), 2, 0 );
-    
-	stdin  = (FILE *) &buffer0[0];
-	stdout = (FILE *) &buffer1[0];
-	stderr = (FILE *) &buffer2[0];
-	
-	
-	stdin->_base    = &buffer0_data[0];
-	stdout->_base   = &buffer1_data[0];
-	stderr->_base   = &buffer2_data[0];
+    stdin  = (FILE *) &buffer0[0];
+    stdout = (FILE *) &buffer1[0];
+    stderr = (FILE *) &buffer2[0];
 
+    // Buffers.
+    stdin->_base   = &buffer0_data[0];
+    stdout->_base  = &buffer1_data[0];
+    stderr->_base  = &buffer2_data[0];
+
+    // p
     stdin->_p  = stdin->_base;
     stdout->_p = stdout->_base;
     stderr->_p = stderr->_base;
     
+    // cnt
     stdin->_cnt  = BUFSIZ;
     stdout->_cnt = BUFSIZ;
     stderr->_cnt = BUFSIZ;
 
+    
+    //#todo
+    //stdin->_lbfsize  = 128;
+    //stdout->_lbfsize = 128;
+    //stderr->_lbfsize = 128;    
+
+
+    stdin->_r = 0;
+    stdout->_r = 0;
+    stderr->_r = 0;
+    
+    stdin->_w = 0;
+    stdout->_w = 0;
+    stderr->_w = 0;
+    
+    // o kernel ainda não sabe disso.
+    stdin->_file = 0;
+    stdout->_file = 1;
+    stderr->_file = 2;
 
     //??
     prompt_clean();
@@ -2598,138 +2587,159 @@ fputc(c, fp)
 */
 
 
-
-/*
- *****************************************
- * fputc:
- * 
- *     Isso é chamado por putchar quando a libc está no modo normal
- * e não no modo draw.
- */
-
-
-int fputc ( int ch, FILE *stream ){
+// interna
+// #todo: criar essa rotina na libc.
+void debug_print (char *string)
+{
+    gramado_system_call ( 289, 
+        (unsigned long) string,
+        (unsigned long) string,
+        (unsigned long) string );
+}
 
 
-    if ( (void *) stream == NULL )
-        return EOF;
+//
+// Flush.
+//
 
-     // Coloca um char numa stream.
-     // Chama essa mesma rotina no kernel. sys_fputc.
-     // A stream é essa indicada no argumento.
+int __serenity_fflush ( FILE *stream)
+{
 
-     if ( ch != '\n')
-     {    
-         gramado_system_call ( 196, 
-             (unsigned long) ch,  
-             (unsigned long) stream,  
-             (unsigned long) stream );    
-
-         return (int) ch;
-     }
-
-	// #importante
-	// Notificaremos o terminal somente se o char for '\n'	
+     //debug_print( "__serenity_fflush:\n");
 	
-	// #importante:
-	// Se não for \n, não precisa notificar o terminal.
-
-
-	// #importante:
-	// Se for '\n'
-
-	// #bugbug
-	// ??
-	// Talvez aqui devéssemos apenas chamar o fflush
-	// deixando o fflush notificar o terminal.
-	
-	
-    /*
-    if ( c == '\n' )
-	{
-		if ( fflush(fp) == EOF )
-			return EOF;
-	}
-	*/
-		
-					 
-
-	
-    //
-    // Terminal.
-    //
-
-    // #bugbug
-    // Rever isso e pegar a pid certo.
-
-	// Pegamos o pid do terminal e enviamos uma 
-	// notificação de evento para ele.
-	int terminal___PID = -1;
-	unsigned long message_buffer[5];
-
-
-	// SÓ NOTIFICAREMOS O TERMINAL SE TIVERMOS NO MODO NORMAL.
-	// MSG_ = 2008.
-    if ( __libc_output_mode == LIBC_NORMAL_MODE )
-    {
-		// Qual é o pid do terminal?
-        terminal___PID = (int) gramado_system_call ( 1004, 0, 0, 0 ); 
-	
-	    if ( terminal___PID < 0 )
-	    {
-			// #fail
-			// Como exibir uma mensagem de erro se estamos no modo normal?
-			
-			//libc_set_output_mode (LIBC_DRAW_MODE);
-		    //printf_draw ("fputc:fail\n");
-		    
-             return -1;
-        }
-
-        // Prepara o buffer.
-        // window, MSG_TERMINALCOMMAND, 2008, 2008.
-        message_buffer[0] = (unsigned long) 0;    //window
-        message_buffer[1] = (unsigned long) 100;  //message;  
-        message_buffer[2] = (unsigned long) 2008; //long1; 
-        message_buffer[3] = (unsigned long) 2008; //long2; 
-        //...
-
-
-        // Pede para o kernel enviar uma mensagem para determinado processo.
-        return (int) gramado_system_call ( 112 , 
-                         (unsigned long) &message_buffer[0], 
-                         (unsigned long) terminal___PID, 
-                         (unsigned long) terminal___PID );
-
-        // #todo 
-        // Temos que usar essa chamada ao invés dessa rotina acima.
-	    // __SendMessageToProcess ( terminal___PID, NULL, MSG_TERMINALCOMMAND, 2008, 2008 );
+    // FIXME: fflush(NULL) should flush all open output streams.
+    //ASSERT(stream);
+    if ( (void *) stream == NULL ){
+        debug_print ( "__serenity_fflush: stream\n");
+        return -1;
     }
+ 
+    //if ( !stream->_w )
+        //return 0;
+        
+        
+    if ( (void *) stream->_base == NULL ){
+        debug_print( "__serenity_fflush: _base\n");
+        return -1;
+    }   
 
+
+    if ( stream->_w <= 0 ){   
+        debug_print( "__serenity_fflush: _w\n");
+        return -1;
+    } 
+               
+    
+    // #todo: 
+    // This is the desired way.           
+    // int rc = write ( fileno(stream), stream->_base, stream->_w );
+
+
+    // ISSO FUNCIONA.
+    // vamos testar no console virtual.
+    int rc = write_VC ( 0, stream->_base, stream->_w ); 
+ 
+ 
+    stream->_w = 0;
+    //stream->error = 0;
+    //stream->eof = 0;
+    //stream->have_ungotten = false;
+    //stream->ungotten = 0;
+    
+    if (rc < 0){
+		
+        //stream->error = errno;
+        return EOF;
+    }
 
     return 0;
 }
 
 
-/*glibc style*/
-/* Write the character C to STREAM.  */
-/*
-//int DEFUN(fputc, (c, stream), int c AND FILE *stream)
-int fputc ( int ch, FILE *stream )	
+
+int __serenity_fputc (int ch, FILE *stream)
 {
+     //debug_print( "__serenity_fputc:\n");
+     
+    //assert (stream);
+    //assert (stream->_w < stream->_lbfsize);
+    
+    if ( (void *) stream == NULL )
+    {   
+       debug_print( "__serenity_fputc: stream\n");
+       return -1;
+    } 
+
+    //if (stream->_w > stream->_lbfsize)
+    if (stream->_w > BUFSIZ)
+    {   
+       debug_print( "__serenity_fputc: overflow\n");
+       return -1;
+    } 
+    
+    stream->_base[stream->_w++] = ch;
+
+    if (stream->_w >= BUFSIZ)
+    {
+        __serenity_fflush(stream);
+        return ch;
+    }
+    
+    //if (stream->_flags == _IONBF || (stream->_flags == _IOLBF && ch == '\n'))
+    if ( ch == '\n')
+    {    
+		__serenity_fflush (stream);
+		return ch;
+    }
+    
+
+   //debug_print( "__serenity_fputc: $\n");
+
+    //if (stream->eof || stream->error)
+        //return EOF;
+    
+    return ch;
+}
+
+
+
+int __serenity_putc (int ch, FILE *stream)
+{   
+    return __serenity_fputc (ch, stream);
+}
+
+
+/*
+ *****************************************
+ * fputc:
+ * 
+ *     Isso é chamado por putchar quando a libc está no modo normal.
+ */
+
+int fputc ( int ch, FILE *stream ){
+
+
+    // #todo
+    /*
+    if ( !__validfp(stream) )
+    {
+        errno = EINVAL;
+        return EOF;
+    }
+    */
 
     if ( (void *) stream == NULL )
-        return EOF;
+       return EOF;
 
-  if (!__validfp(stream) || !stream->__mode.__write)
-    {
-      errno = EINVAL;
-      return EOF;
-    }
+    // se gramado.
+    // Exibe através do console virtual.
+    return __serenity_putc (ch, stream);
 
-  return __putc (c, stream);
+    // glibc
+    // Coloca numa stream em ring3.
+    //return __putc(c, stream);
 }
-*/
+
 
 
 /*
@@ -2741,8 +2751,8 @@ int fputc ( int ch, FILE *stream )
 
 //34 - set cursor.
 
-void stdioSetCursor ( unsigned long x, unsigned long y ){
-    
+void stdioSetCursor ( unsigned long x, unsigned long y )
+{
     gramado_system_call ( 34, x, y, 0 );
 }
 
@@ -2754,8 +2764,8 @@ void stdioSetCursor ( unsigned long x, unsigned long y ){
  *     e não dentro do terminal.
  */ 
 
-unsigned long stdioGetCursorX (){
-    
+unsigned long stdioGetCursorX ()
+{
     return (unsigned long) gramado_system_call ( 240, 0, 0, 0 );
 }
 
