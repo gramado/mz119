@@ -3,6 +3,11 @@
 //   sys.h 
 
 
+//See: stdio.c
+int sys_write (unsigned int fd,char *buf,int count);
+
+//#todo
+int sys_read (unsigned int fd,char *buf,int count);
 
 
 //

@@ -6,6 +6,119 @@
 #include <kernel.h>
 
 
+// copiar um buffer para uma stream.
+// dado o fd.
+// Aqui devemos selecionar o dispositivo à escrever.
+// See:
+// https://github.com/zavg/linux-0.01/blob/master/fs/read_write.c
+// ...
+
+int sys_write (unsigned int fd,char *buf,int count)
+{
+    struct process_d *__P;
+    
+    file *__file;
+    
+    int len;
+    
+    
+    
+    // linux 0.01 style.
+	//if (fd>=NR_OPEN || count <0 || !(file=current->filp[fd]))
+		//return -EINVAL;
+	//if (!count)
+		//return 0;
+
+
+
+    
+    // fd?
+    // Não pode ser maior que o número de arquivos abertos 
+    // pelo processo atual.
+    
+    
+    if (fd<0)
+        return -1;
+        
+    if (fd >= 32)
+        return -1;
+
+
+    //
+    // Size of the buffer.
+    //
+
+    // len
+    len = strlen( (const char *) buf );
+    
+    if (len > count )
+        len = count;
+    
+    // #bugbug: 
+    // Precisamos da opção de salvarmos vários setores em
+    // dispositivos de bloco.
+    if (len > 64 )
+        len = 64;
+    
+    
+    //
+    // Process pointer.
+    //
+    
+    
+    
+    __P = (struct process_d *) processList[current_process];
+
+    if ( (void *) __P == NULL )
+    {
+        printf ("sys_write: __P\n");
+        refresh_screen ();
+        return -1; 
+    }
+
+
+    //
+    // file.
+    //
+
+    // #importante
+    // Arquivo. Mas significa objeto.
+
+    __file = ( file * ) __P->Streams[fd];   //#todo: Delete it!
+    //__file = ( file * ) __P->Objects[fd];   //#todo: Use this one!
+    
+    
+    if ( (void *) __file == NULL )
+    {
+		printf ("sys_write: stream\n");
+		refresh_screen();
+        return -1; 
+    }
+
+
+    //
+    // ?
+    //
+
+    //See: unistd.c
+
+    // Escreve em uma stream uma certa quantidade de chars.
+    stdio_file_write ( (file *) __file, (char *) buf, (int) count );
+    
+    return 0;
+}
+
+
+
+
+//todo
+int sys_read (unsigned int fd,char *buf,int count)
+{
+    return -1;
+}
+
+
+
 
 
 /*

@@ -39,11 +39,6 @@ typedef int pid_t;
 // Escreve no arquivo uma certa quantidade de caracteres de uma dada string 
 int stdio_file_write ( FILE *stream, char *string, int len );
 
-//See: stdio.c
-int sys_write (unsigned int fd,char *buf,int count);
-
-//#todo
-int sys_read (unsigned int fd,char *buf,int count);
 
 //posix
 int close ( int fd );

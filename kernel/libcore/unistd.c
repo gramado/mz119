@@ -51,66 +51,7 @@ int stdio_file_write ( FILE *stream, char *string, int len ){
 
 
 
-// copiar um buffer para uma stream.
-// dado o fd.
-int sys_write (unsigned int fd,char *buf,int count)
-{
-    struct process_d *__P;
-    FILE *stream;
-    int len;
-    
-    
-    if (fd<0)
-        return -1;
-        
-    if (fd >= 32)
-        return -1;
 
-
-    // len
-    len = strlen( (const char *) buf );
-    
-    if (len > count )
-        len = count;
-    
-    if (len > 64 )
-        len = 64;
-    
-    
-    
-    
-    __P = (struct process_d *) processList[current_process];
-
-    if ( (void *) __P == NULL )
-    {
-		printf ("sys_write: __P\n");
-		refresh_screen();
-        return -1; 
-    }
-
-
-    stream = ( FILE * ) __P->Streams[fd];
-
-    if ( (void *) stream == NULL )
-    {
-		printf ("sys_write: stream\n");
-		refresh_screen();
-        return -1; 
-    }
-
-
-    // Escreve em uma stream uma certa quantidade de chars.
-    stdio_file_write ( (FILE *) stream, (char *) buf, (int) count );
-    
-    return 0;
-}
-
-
-//todo
-int sys_read (unsigned int fd,char *buf,int count)
-{
-    return -1;
-}
 
 
 
