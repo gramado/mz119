@@ -25,217 +25,265 @@ unsigned long tty_table[4];  //os 4 consoles virtuais.
 
 
 
-
 int 
 tty_read ( unsigned int channel, 
-           char *buf, 
+           char *buffer, 
            int nr )
 {
     struct tty_d *tty;
-
-
-    // Range para terminais virtuais.
-    // os terminais precisam ler seus tty de entrada.
     
-    if (channel >= 10  && channel < 40)
-    {
-        tty = (struct tty_d *) ttyList[channel];
+    
+    //
+    // Limits
+    //
+
+    // ??
+    // Não leremos os Consoles virtuais 
+
+    if ( channel <= 0 && channel < 4 )
+        return -1;
+    
+    
+    //
+    // Buffer NULL
+    //
+    
+    
+    if ( (char *) buffer == NULL ){
+         panic ("tty_read: invalid buf \n");
+    }
+    
+ 
+    //
+    // tty struct.
+    //
+ 
+  
+    tty = (struct tty_d *) ttyList[channel];
         
-        //tty
-        if ( (void *) tty == NULL )
-        {
-            printf ("tty_read: Invalid tty\n");
-            refresh_screen();
-            return -1;
-        }
-            
-        //stream de leitura
-        if ( (void *) tty->stdin == NULL )
-        {
-            printf ("tty_read: Invalid tty stdin\n");
-            refresh_screen();
-            return -1;
-        }
-
- 
-       printf ("tty_read: copiando para buf \n");
-       refresh_screen();
-
- 
-         if ( (void *) tty->stdin->_base == NULL )
-        {
-            printf ("tty_read: invalid _base \n");
-            refresh_screen();
-            return -1;
-        }
-
-        if ( (void *) buf == NULL )
-        {
-            printf ("tty_read: invalid buf \n");
-            refresh_screen();
-            return -1;
-        }
-
-
- 
-        // Se não pode ler
-        // Isso deixa o app (terminal) num loop.
-        //if ( (tty->stdin->_flags & __SRD) == 0 )
-
-       //if ( (tty->stdin->_flags & __SRD) == 1 )
-
-           // copia da tty de leitura para o buffer indicado pelo aplicativo.
-           memcpy ( (void *) buf, (const void *) tty->stdin->_base, nr ); 
-           
-           
-           //tty->stdin->_flags &= ~( tty->stdin->_flags & __SRD);	       
-          return nr; //-1;    
-     };
-     
- 
-     printf ("tty_read: Invalid device\n");
-     refresh_screen();
+    if ( (void *) tty == NULL )
+    {
+        printf ("tty_read: Invalid tty\n");
+        refresh_screen();
+        return -1;
+    }
+        
+    //
+    // File   (stdin)
+    //
     
-    return  -1;    
+    // Arquivo de leitura.
+ 
+    // #importante
+    // Não usaremos mais o termo stream no kernel.
+    // Isso então é um arquivo apontando pela tty.
+    // Podemos usar o buffer da tty.   
+            
+    if ( (void *) tty->stdin == NULL )
+    {
+         printf ("tty_read: Invalid tty stdin\n");
+         refresh_screen();
+         return -1;
+    }
+
+
+    //
+    // _base. 
+    //
+    
+    // A base do arquivo que serve de buffer.
+    
+
+    if ( (void *) tty->stdin->_base == NULL )
+    {
+         printf ("tty_read: invalid _base \n");
+         refresh_screen();
+         return -1;
+    }
+
+    
+    
+    
+    // #todo
+    // temos dois modos de leitura a serem considerados.
+    // O raw e o canonical.
+    
+    
+    //
+    // Copy
+    //
+
+    // Copia da tty de leitura para o buffer indicado pelo aplicativo.
+           
+    printf ("tty_read: copiando para o buffer. \n");
+    refresh_screen ();
+
+ 
+    memcpy ( (void *) buffer, (const void *) tty->stdin->_base, nr ); 
+           
+    return nr; 
 }
 
 
 
+// Escrever no buffer de uma tty qualquer da ttyList
 // o descritor seleciona uma tty em ttyList e escreve em tty->stdout->_base
 int 
 tty_write ( unsigned int channel, 
-            char *buf, 
+            char *buffer, 
             int nr )
 {
 
-   // escrever no buffer de uma tty qualquer
-   // da ttyList
-   
-    struct tty_d *master;
-    struct tty_d *slave;
+    struct tty_d *__src;
+    struct tty_d *__dst;
     
-    // número de dispositivos que atendem a chamada write.
-    // ttyList[]
-    if ( channel >= 64 )
-    {
-        printf ("tty_write: Invalid device\n");
+
+
+    //
+    // Limits
+    //
+
+    // ??
+    // Não escreveremos nos Consoles virtuais cpom essa rotina. 
+
+    if ( channel <= 0 && channel < 4 )
+        return -1;
+
+
+
+
+    //
+    // Buffer NULL
+    //
+    
+    
+    if ( (char *) buffer == NULL ){
+         panic ("tty_read: invalid buf \n");
+    }
+
+
+
+    //
+    //  __src
+    //
+    
+    // tty de origem da transferência.
+    
+    __src = (struct tty_d *) ttyList[channel];
+        
+    if ( (void *) __src == NULL ){
+        printf ("tty_write: Invalid __src tty\n");
+        refresh_screen();
+        return -1;
+    }
+        
+        
+    //
+    //  File (stdout) 
+    //        
+    
+    // Checando a validade do arquivo.
+    // O arquivo da tty de origem da transferência.
+
+    if ( (void *) __src->stdout == NULL ){
+        printf ("tty_write: Invalid __src stdout\n");
         refresh_screen();
         return -1;
     }
 
+
+    //
+    // _base
+    //
     
+    // Essa é a base do arquivo da tty de origem.
 
-    // Range para terminais virtuais.
-    if (channel >= 10  && channel < 40)
-    {
-		
-		printf ("tty_write: ... channel %d \n",channel );
-		            
-		//colocando numa stream que pertence a uma tty
-		//o número da tty é o número do dispositivo na ttyList
-
-        // pega a tty dado o número dela.
-        // agora o processo filho consegue isso quando se conecta ao pai atraves de suas ttys.
-        
-        // se o aplicativo filho tem o número da tty do pai, que é slave
-        // então ele pode escrever diretamente one o pai vai ler, tty->stdin->_base
-        
-        master = (struct tty_d *) ttyList[channel];
-        
-        //tty
-        if ( (void *) master == NULL )
-        {
-            printf ("tty_write: Invalid master\n");
-            refresh_screen();
-            return -1;
-        }
-            
-        //stream
-        if ( (void *) master->stdout == NULL )
-        {
-            printf ("tty_write: Invalid master stdout\n");
-            refresh_screen();
-            return -1;
-        }
-
-        printf ("tty_write: copiando para master->stdout->_base \n");
+    if ( (void *) __src->stdout->_base == NULL ){
+        printf ("tty_write: * invalid _base \n");
         refresh_screen();
-        
-        if ( (void *) master->stdout->_base == NULL )
-        {
-            printf ("tty_write: * invalid _base \n");
-            refresh_screen();
-            return -1;
-        }
-
-        if ( (void *) buf == NULL )
-        {
-            printf ("tty_write: invalid buf \n");
-            refresh_screen();
-            return -1;
-        }
-
-        // coloca em sua própria tty
-        memcpy ( (void *) master->stdout->_base, (const void *) buf, nr ); 
-            
-        // copia para a tty slave.
-        // no caso pode ser um terminal virtual    
-        
-        slave = master->link;    
+        return -1;
+    }
 
 
-        //tty
-        if ( (void *) slave == NULL )
-        {
-            printf ("tty_write: Invalid slave\n");
-            refresh_screen();
-            return -1;
-        }
-            
-        //stream
-        if ( (void *) slave->stdin == NULL )
-        {
-            printf ("tty_write: Invalid slave stdin\n");
-            refresh_screen();
-            return -1;
-        }
+    //
+    // Copy 1.
+    //
 
-        printf ("tty_write: copiando para slave->stdout->_base \n");
+    // Copiando do buffer para o arquivo da tty de origem.
+
+    printf ("tty_write: copiando para __src->stdout->_base \n");
+    refresh_screen();
+
+    memcpy ( (void *) __src->stdout->_base, (const void *) buffer, nr ); 
+    
+    
+    
+    //
+    //    Link.
+    //
+    
+    // Obtendo a estrutura da tty de testino.
+
+    __dst = __src->link;    
+
+
+
+    //
+    //   tty   __dst
+    //
+    
+    // Checando a validade da tty de testino.
+
+    if ( (void *) __dst == NULL ){
+        printf ("tty_write: Invalid __dst tty\n");
         refresh_screen();
-
-        if ( (void *) slave->stdin->_base == NULL )
-        {
-            printf ("tty_write: invalid _base \n");
-            refresh_screen();
-            return -1;
-        }
-
-        if ( (void *) buf == NULL )
-        {
-            printf ("tty_write: invalid buf \n");
-            refresh_screen();
-            return -1;
-        }
-
-        // coloca também na tty slave para leitura.
-        memcpy ( (void *) slave->stdin->_base, (const void *) buf, nr ); 
-        
-       //autoriza a ler. 
-       //printf (" tty_write: altoriza ler \n");
-       //slave->stdin->_flags = (slave->stdin->_flags | __SRD);
-        
-        printf( "DONE\n");
-        refresh_screen();        
-     
-        return nr;
+        return -1;
     }
     
-
-    printf ("tty_write: Invalid device\n");
-    refresh_screen();
     
-    return  -1;
+    //
+    //    File  (stdin)
+    //
+    
+    // Validade do arquivo da tty de destino.
+
+    if ( (void *) __dst->stdin == NULL ){
+        printf ("tty_write: Invalid __dst stdin\n");
+        refresh_screen();
+        return -1;
+    }
+
+
+    //
+    // _base
+    //
+
+    // Checando a validade da base do arquivo da tty de destino.
+
+    if ( (void *) __dst->stdin->_base == NULL ){
+        printf ("tty_write: invalid __dst stdin _base \n");
+        refresh_screen();
+        return -1;
+    }
+
+
+    //
+    // Copy 2.
+    //
+
+    printf ("tty_write: copiando para __dst->stdin->_base \n");
+    refresh_screen();
+
+    // Ccoloca também na tty de destino para leitura.
+    memcpy ( (void *) __dst->stdin->_base, (const void *) buffer, nr ); 
+
+ 
+    printf( "DONE\n");
+    refresh_screen();        
+ 
+    return nr;
 }
+
 
 
 /*
@@ -711,9 +759,9 @@ struct tty_d *tty_create (void)
     // Porque os primeiros 4 dispositivos são reservados para console virtual
     // podemos reservar os 10 primeiros.
     
-    for(i=10; i<256; i++)
+    // Lista de tty e não de console.
+    for (i=4; i<256; i++)
     {
-		// Lista de tty e não de console.
         __tty = (struct tty_d *) ttyList[i];
         
         if ( (void *) __tty == NULL )
@@ -851,7 +899,6 @@ int ttyInit (int tty_id){
     // O sistema terá 8 terminais
     // e terá vários pseudo terminais. pts. - Stands for pseudo terminal slave.
 
-    //if ( tty_id < 0 || tty_id > 7 )
 
     if ( tty_id < 0 || tty_id > 32 )
     {

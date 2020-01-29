@@ -3675,6 +3675,7 @@ do_compare:
     char __wbuf2[128]; //line ?  write
     char __rbuf2[128]; //line ? read 
     int __w_size2 = 0;
+    
     if ( strncmp ( prompt, "tty", 3 ) == 0 )
     {
         //__current_virtual_console = (int) gramado_system_call (277,0,0,0);
@@ -3686,31 +3687,43 @@ do_compare:
         //____this_tty_id = gramado_system_call ( 266, getpid(), 0, 0 );
         //printf ("The tty for this process is %d\n", ____this_tty_id);
 
+
         // link by pid
         // #todo: Create the function link_by_pid()
         gramado_system_call ( 267,
-            getpid(),    //master
-            getppid(),   //slave pai(terminal)
+            getpid(),    // master (shell?)
+            getppid(),   // slave pai (terminal?)
             0 );
             
+        //
+        // scr
+        //    
+        
+        // Show tty for this process.            
         ____this_tty_id = gramado_system_call ( 266, getpid(), 0, 0 );
         printf ("The tty for this process is %d\n", ____this_tty_id);
         
-         //escrevendo na tty desse processo e na tty slave pra leitura.
-         // 10 ~ 40
-         write_ttyList ( ____this_tty_id, __wbuf2, __w_size2 = sprintf (__wbuf2,"Testing tty_write ...\n") );
+        
+         //Escrevendo na tty desse processo e na tty slave pra leitura.
+         write_ttyList ( ____this_tty_id, 
+             __wbuf2, 
+             __w_size2 = sprintf (__wbuf2,"THIS IS A MAGIC STRING\n")  );
 
+        //
+        // dst
+        //
  
-        //ttd id do pai. (terminal)
+        //Obtem o tty id do pai. (terminal)
          ____tty_id = gramado_system_call ( 266, getppid(), 0, 0 );
         printf ("The tty for the father is %d\n", ____tty_id);
 
-        //lendo no tty do terminal
+        //Lendo no tty do terminal
         read_ttyList ( ____tty_id, __rbuf2, 32 );     
-        printf(__rbuf2);
+        printf (__rbuf2);
         
         goto exit_cmp;
     }
+
 
 
 	//flush stdout

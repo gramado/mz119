@@ -349,7 +349,7 @@ void tty_start (struct tty_d *tty);
 
 int 
 tty_read ( unsigned int channel, 
-           char *buf, 
+           char *buffer, 
            int nr );
 
 
@@ -358,7 +358,7 @@ tty_read ( unsigned int channel,
 // o descritor seleciona uma tty em ttyList e escreve em tty->stdout->_base
 int 
 tty_write ( unsigned int channel, 
-            char *buf, 
+            char *buffer, 
             int nr );
 
 //
