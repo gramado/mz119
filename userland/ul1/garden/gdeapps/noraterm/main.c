@@ -1656,8 +1656,13 @@ void *noratermProcedure ( struct window_d *window,
 				
 				//posiciona na próxima coluna.   
 				case VK_F1:  
-				    textCurrentCol++;
-				    terminalSetCursor ( textCurrentCol, textCurrentRow );
+				    
+				    gramado_system_call (900, (unsigned long) "hello3.bin", 0, 0);
+				   
+                                           
+				    
+				    //textCurrentCol++;
+				    //terminalSetCursor ( textCurrentCol, textCurrentRow );
 				    //MessageBox ( 3, "Noraterm", "F1" ); 
 				    //shellSendMessage ( NULL, MSG_TERMINALCOMMAND, 2008, 0);
 		            //printf ("*SCROLL\n");
@@ -1667,8 +1672,15 @@ void *noratermProcedure ( struct window_d *window,
 				
 				//posiciona na proxima linha
 				case VK_F2:
-				    textCurrentRow++;
-				    terminalSetCursor ( textCurrentCol, textCurrentRow );
+
+                   //pegando a tty desse processo pra poder ler.
+                   ____this_tty_id = (int) gramado_system_call ( 266, getpid(), 0, 0 );
+
+                    read_ttyList ( ____this_tty_id, __rbuf2, 32 );  
+                    printf (__rbuf2);
+				
+				    //textCurrentRow++;
+				    //terminalSetCursor ( textCurrentCol, textCurrentRow );
 					//MessageBox ( 3, "Noraterm", "F2" );
 					//shellSendMessage ( NULL, MSG_TERMINALCOMMAND, 2020, 0);
 					break;
@@ -2180,16 +2192,17 @@ void *noratermProcedure ( struct window_d *window,
                         //terminal_clear_from_startofline ();
                         //terminalCopyToScroll ();
                         
-                        //gramado_system_call (900, (unsigned long) "false.bin", 0, 0);
-                        gramado_system_call (900, (unsigned long) "reboot2.bin", 0, 0);
+                        gramado_system_call (900, (unsigned long) "hello3.bin", 0, 0);
+                        //gramado_system_call (900, (unsigned long) "reboot2.bin", 0, 0);
                         
-                        ____this_tty_id = (int) gramado_system_call ( 266, getpid(), 0, 0 );
+                        //pegando a tty desse processo pra poder ler.
+                        //____this_tty_id = (int) gramado_system_call ( 266, getpid(), 0, 0 );
                                            
-                       while(1)
-                       {
-                           read ( ____this_tty_id, __rbuf2, 32 );     
-                           printf (__rbuf2);
-                       }
+                       //while(1)
+                       //{
+                           //read ( ____this_tty_id, __rbuf2, 32 );     
+                           //printf (__rbuf2);
+                       //}
                         
                         //gramado_system_call (900, (unsigned long) "hello3.bin", 0, 0);
                         //gramado_system_call (900, (unsigned long) "gwm.bin", 0, 0);

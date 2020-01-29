@@ -661,74 +661,55 @@ done:
 
 int main ( int argc, char *argv[] ){
 
-    /*
- // Virtual Console and tty.
-    int __current_virtual_console = -1;
+
     int ____tty_id = -1;
     int ____this_tty_id = -1;
     char __wbuf2[128]; //line ?  write
     char __rbuf2[128]; //line ? read 
     int __w_size2 = 0;
-    */
-    
-   
- // VAMOS TESTAR A CONCEXÃO COM O PROCESSO PAI.
-           // que será o noraterm.
 
-           // link by pid
-           // #todo: Create the function link_by_pid()
-   //        gramado_system_call ( 267,
-   //            getpid(),    //master
-   //            getppid(),   //slave pai(terminal)
-   //            0 );
+
+    //link by pid
+        gramado_system_call ( 267,
+            getpid(),    // master (shell?)
+            getppid(),   // slave pai (terminal?)
+            0 );
+            
+
+        //
+        // scr
+        //    
         
-     //____this_tty_id = gramado_system_call ( 266, getpid(), 0, 0 );        
-    
-    
-    //funcionou
-    //write ( ____this_tty_id, __wbuf2, __w_size2 = sprintf (__wbuf2,"writting from hello3 \n") );  
-    
-    /*
-    //funcionou.
-    int i=0;
-    sprintf (&__wbuf2[i++],"1");
-    sprintf (&__wbuf2[i++],"2");
-    sprintf (&__wbuf2[i++],"3");
-    sprintf (&__wbuf2[i++],"4");
-    sprintf (&__wbuf2[i++],"\n");
-    write ( ____this_tty_id, __wbuf2, i );          
-    */
-    
-
-    
-    //putchar2('1');
-    //putchar2('2');
-    //putchar2('3');
-    //putchar2('4');     
-    //flush2();
-    //putchar('\n');  //flush     
-
-    //libc_set_output_mode (LIBC_NORMAL_MODE);
-    //printf ("_____ $$$$ Writing from hello3 $$$$ ____ \n");
-
-   /*
-    while(1)
-    {
-    putchar ('1');
-    putchar ('2');
-    putchar ('3');
-    putchar ('4');
-    putchar ('5');
-    putchar ('6');
-    putchar ('\n');  //flush
-    //putchar ('\0');
-   };
-   */
-   
+        // Show tty for this process.            
+        ____this_tty_id = gramado_system_call ( 266, getpid(), 0, 0 );
+        printf ("The tty for this process is %d\n", ____this_tty_id);
+        
+        
+         //Escrevendo na tty desse processo e na tty slave pra leitura.
+         write_ttyList ( ____this_tty_id, 
+             __wbuf2, 
+             __w_size2 = sprintf (__wbuf2,"THIS IS A MAGIC STRING\n")  );
+       
+            
 
     // usando o write_VC pra escrever no console virtual '0'. 
-    ____Torvalds_printf ("Writing from hello3 ...\n");
+    //____Torvalds_printf ("Writing from hello3 ...\n");
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
