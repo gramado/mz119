@@ -35,12 +35,10 @@
         ...
 
 ---------------------------------------
-    libcore/    (syslib/)
+    syslib/
         biblioteca comum à todos os módulos.
         os processos poderão chamar as rotinas que estão aqui dentro também
         como as rotinas de io, em syslib/libio  ...
-
-        poderia ser syslib/libcore   
  
 
 ----------------------------------
