@@ -9,12 +9,12 @@
 
 
 /*
- * stdio_file_write: 
+ * unistd_file_write: 
  *     Escreve no arquivo uma certa quantidade de caracteres de uma 
  *     dada string.
  */
 
-int stdio_file_write ( FILE *stream, char *string, int len ){
+int unistd_file_write ( file *f, char *string, int len ){
 
     int i;
     char *p;
@@ -23,16 +23,16 @@ int stdio_file_write ( FILE *stream, char *string, int len ){
     p = string;
 
   
-    if ( (void *) stream == NULL )
+    if ( (void *) f == NULL )
     {
-		printf ("stdio_file_write: stream\n");
+		printf ("unistd_file_write: file\n");
 		refresh_screen();
         return EOF; 
     }
 
     if ( (void *) p == NULL )
     {
-		printf ("stdio_file_write: p\n");
+		printf ("unistd_file_write: p\n");
 		refresh_screen();
         return EOF; 
     }
@@ -41,7 +41,46 @@ int stdio_file_write ( FILE *stream, char *string, int len ){
 
     for (i=0; i<len; i++)
     {
-        fputc ( ( int ) *p, stream );
+        fputc ( ( int ) *p, f );
+        p++;
+    };
+
+
+    return 0;
+}
+
+
+int unistd_file_read ( file *f, char *buffer, int len ){
+
+    int i;
+    char *p;
+
+  
+    p = buffer;
+
+  
+    if ( (void *) f == NULL )
+    {
+		printf ("unistd_file_read: file\n");
+		refresh_screen();
+        return EOF; 
+    }
+
+    if ( (void *) p == NULL )
+    {
+		printf ("unistd_file_read: p\n");
+		refresh_screen();
+        return EOF; 
+    }
+
+ 
+    int ch = 0;
+
+    for (i=0; i<len; i++)
+    {
+        ch = (int) fgetc(f);
+        
+        *p = (char) ch;
         p++;
     };
 
@@ -52,17 +91,14 @@ int stdio_file_write ( FILE *stream, char *string, int len ){
 
 
 
-
-
-
+//#??? isso não pertence à fcntl.c ?
 //SVr4,  4.3BSD,  POSIX.1-2001. 
-
 int open (const char *pathname, int flags, mode_t mode ){
 	
 	//#obs:
 	//vamos retornar o indice da tabela de arquivos abertos do processo atual.
 
-	FILE *stream;
+	file *stream;
 		
 	struct process_d *p;
 	int i;
@@ -84,7 +120,7 @@ int open (const char *pathname, int flags, mode_t mode ){
 		//e o mode de fopen 'e um ponteiro.
 		
 		//filename, mode
-		stream = (FILE *) fopen ( (const char *) pathname, (const char *) 0 );
+		stream = (file *) fopen ( (const char *) pathname, (const char *) 0 );
 	
 		if ( (void *) stream == NULL )
 		{
@@ -102,9 +138,9 @@ int open (const char *pathname, int flags, mode_t mode ){
 				 // Se encontramos um slot vazio, 
 				 // colocamos o ponteiro para a stream nele e retornamos o pid.
 				 // tipo: unsigned long
-			     if ( p->Streams[0] == 0 )
+			     if ( p->Objects[0] == 0 )
 				 {
-				     p->Streams[i] = (unsigned long) stream ;
+				     p->Objects[i] = (unsigned long) stream ;
 					 return (int) i;
 				 }
 			 }

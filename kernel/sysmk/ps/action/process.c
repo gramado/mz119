@@ -2090,6 +2090,17 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
     Process2->base_priority = Process1->base_priority;
     Process2->priority = Process1->priority;
 
+    
+    //Herdar os primeiros arquivos.
+    //podemos herdar todos os abertos.
+
+    int i;
+    for (i=0;i<3;i++)
+    {
+        Process2->Objects[i] = Process1->Objects[i];
+    }
+
+
 
 	//
 	// ========================
@@ -2391,6 +2402,9 @@ get_next:
         Process->Streams[1] = (unsigned long) stdout;
         Process->Streams[2] = (unsigned long) stderr;
 
+        // #todo
+        // Podemos colocar 3 arquivos em Objects[]
+        // Ou seriam tty ? 
 
         for ( i=0; i<64; i++ )
         {
