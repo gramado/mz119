@@ -75,229 +75,229 @@ extern void do_executa_new_task (void);
 #include <kernel/globals/gwd.h>   //whatch dogs
 
 // libcore
-#include <kernel/libcore/sys/cdefs.h>
-#include <kernel/libcore/stddef.h>
-#include <kernel/libcore/types.h>
-#include <kernel/libcore/sys/types.h>
-#include <kernel/libcore/limits.h>
+#include <kernel/syslib/libcore/sys/cdefs.h>
+#include <kernel/syslib/libcore/stddef.h>
+#include <kernel/syslib/libcore/types.h>
+#include <kernel/syslib/libcore/sys/types.h>
+#include <kernel/syslib/libcore/limits.h>
 
 
 // libcore
-#include <kernel/libcore/kstdio.h>
+#include <kernel/syslib/libcore/kstdio.h>
 
 // kdrivers
-#include <kernel/kdrivers/tty/console.h>
+#include <kernel/sysio/kdrivers/tty/console.h>
 
 
 // libcore
-#include <kernel/libcore/stdlib.h>
-#include <kernel/libcore/string.h>
-#include <kernel/libcore/ctype.h>
-#include <kernel/libcore/iso646.h>
-#include <kernel/libcore/signal.h>
-#include <kernel/libcore/unistd.h>
-#include <kernel/libcore/fcntl.h>
-#include <kernel/libcore/sys/socket.h>
-#include <kernel/libcore/sys/ioctl.h>
-#include <kernel/libcore/sys/ioctls.h>
-//#include <kernel/libcore/termios.h> //#todo
+#include <kernel/syslib/libcore/stdlib.h>
+#include <kernel/syslib/libcore/string.h>
+#include <kernel/syslib/libcore/ctype.h>
+#include <kernel/syslib/libcore/iso646.h>
+#include <kernel/syslib/libcore/signal.h>
+#include <kernel/syslib/libcore/unistd.h>
+#include <kernel/syslib/libcore/fcntl.h>
+#include <kernel/syslib/libcore/sys/socket.h>
+#include <kernel/syslib/libcore/sys/ioctl.h>
+#include <kernel/syslib/libcore/sys/ioctls.h>
+//#include <kernel/syslib/libcore/termios.h> //#todo
 //...
 
 
 
-// mk
-#include <kernel/mk/ps/mm/x86/memmap.h> 
-#include <kernel/mk/ps/mm/memory2.h>
+// sysmk
+#include <kernel/sysmk/ps/mm/x86/memmap.h> 
+#include <kernel/sysmk/ps/mm/memory2.h>
 
 
 // kdrivers
-#include <kernel/kdrivers/intel.h>
-#include <kernel/kdrivers/cpuid.h>
-#include <kernel/kdrivers/x/display.h>
-#include <kernel/kdrivers/x/video/screen.h>
-#include <kernel/kdrivers/x/video/video.h>
-#include <kernel/kdrivers/x/video/virtcon.h>
-#include <kernel/kdrivers/rtc2.h>
+#include <kernel/sysio/kdrivers/intel.h>
+#include <kernel/sysio/kdrivers/cpuid.h>
+#include <kernel/sysio/kdrivers/x/display.h>
+#include <kernel/sysio/kdrivers/x/video/screen.h>
+#include <kernel/sysio/kdrivers/x/video/video.h>
+#include <kernel/sysio/kdrivers/x/video/virtcon.h>
+#include <kernel/sysio/kdrivers/rtc2.h>
 
 // kservers
-#include <kernel/kservers/kgws/kgws/fonts.h>
-#include <kernel/kservers/ascii.h>   
-#include <kernel/kservers/fs/fs.h>                  // fs.
-#include <kernel/kservers/vfs/vfs.h>                // vfs.
-#include <kernel/kservers/kgws/kgws/prompt.h>
-#include <kernel/kservers/kgws/kgws/bmp2.h>
+#include <kernel/sysio/kservers/kgws/kgws/fonts.h>
+#include <kernel/sysio/kservers/ascii.h>   
+#include <kernel/sysio/kservers/fs/fs.h>                  // fs.
+#include <kernel/sysio/kservers/vfs/vfs.h>                // vfs.
+#include <kernel/sysio/kservers/kgws/kgws/prompt.h>
+#include <kernel/sysio/kservers/kgws/kgws/bmp2.h>
 
 
 // execve
-#include <kernel/execve/sm/disk/diskmap.h>        
+#include <kernel/syssm/execve/sm/disk/diskmap.h>        
 
 // hal
-#include <kernel/hal/screen.h> 
-#include <kernel/hal/video.h>
-#include <kernel/hal/memory.h>
-#include <kernel/hal/cpu.h>  
-#include <kernel/hal/arch/i386/pte.h> 
-#include <kernel/hal/arch/i386/tss.h> 
-#include <kernel/hal/arch/x86/cputypes.h> 
-#include <kernel/hal/arch/x86/pte.h> 
-#include <kernel/hal/arch/x86/x86.h> 
-#include <kernel/hal/arch/x86/x86iv.h> 
-#include <kernel/hal/arch/x86/x86gdt.h>
-#include <kernel/hal/arch/amd/cpuamd.h>  
-#include <kernel/hal/arch/detect.h>  
-#include <kernel/hal/serial.h>        
-#include <kernel/hal/mac.h>                             
-#include <kernel/hal/arch/x86/portsx86.h>
+#include <kernel/sysio/hal/screen.h> 
+#include <kernel/sysio/hal/video.h>
+#include <kernel/sysio/hal/memory.h>
+#include <kernel/sysio/hal/cpu.h>  
+#include <kernel/sysio/hal/arch/i386/pte.h> 
+#include <kernel/sysio/hal/arch/i386/tss.h> 
+#include <kernel/sysio/hal/arch/x86/cputypes.h> 
+#include <kernel/sysio/hal/arch/x86/pte.h> 
+#include <kernel/sysio/hal/arch/x86/x86.h> 
+#include <kernel/sysio/hal/arch/x86/x86iv.h> 
+#include <kernel/sysio/hal/arch/x86/x86gdt.h>
+#include <kernel/sysio/hal/arch/amd/cpuamd.h>  
+#include <kernel/sysio/hal/arch/detect.h>  
+#include <kernel/sysio/hal/serial.h>        
+#include <kernel/sysio/hal/mac.h>                             
+#include <kernel/sysio/hal/arch/x86/portsx86.h>
 
 // kdrivers
-#include <kernel/kdrivers/ide/ata.h>
+#include <kernel/sysio/kdrivers/ide/ata.h>
 
 // execve
-#include <kernel/execve/sm/disk/disk.h>          
-#include <kernel/execve/sm/disk/volume.h>
+#include <kernel/syssm/execve/sm/disk/disk.h>          
+#include <kernel/syssm/execve/sm/disk/volume.h>
 
 
 // kdrivers
-#include <kernel/kdrivers/serial/serial.h>
-#include <kernel/kdrivers/ps2/ps2.h>
-#include <kernel/kdrivers/timer.h>
-#include <kernel/kdrivers/pic.h>
-#include <kernel/kdrivers/apic.h>
-#include <kernel/kdrivers/rtc.h>
-#include <kernel/kdrivers/floppy/floppy.h>
-#include <kernel/kdrivers/x/xproc.h>
-#include <kernel/kdrivers/x/i8042/keyboard.h>
-#include <kernel/kdrivers/x/i8042/vk.h>
-#include <kernel/kdrivers/x/i8042/kbdabnt2.h>
-#include <kernel/kdrivers/x/i8042/ldisc.h>
-#include <kernel/kdrivers/ide/ide.h>
-#include <kernel/kdrivers/pci/pci.h>
-#include <kernel/kdrivers/ahci/ahci.h>
-#include <kernel/kdrivers/ahci/sata.h>
-#include <kernel/kdrivers/usb/usb.h>
+#include <kernel/sysio/kdrivers/serial/serial.h>
+#include <kernel/sysio/kdrivers/ps2/ps2.h>
+#include <kernel/sysio/kdrivers/timer.h>
+#include <kernel/sysio/kdrivers/pic.h>
+#include <kernel/sysio/kdrivers/apic.h>
+#include <kernel/sysio/kdrivers/rtc.h>
+#include <kernel/sysio/kdrivers/floppy/floppy.h>
+#include <kernel/sysio/kdrivers/x/xproc.h>
+#include <kernel/sysio/kdrivers/x/i8042/keyboard.h>
+#include <kernel/sysio/kdrivers/x/i8042/vk.h>
+#include <kernel/sysio/kdrivers/x/i8042/kbdabnt2.h>
+#include <kernel/sysio/kdrivers/x/i8042/ldisc.h>
+#include <kernel/sysio/kdrivers/ide/ide.h>
+#include <kernel/sysio/kdrivers/pci/pci.h>
+#include <kernel/sysio/kdrivers/ahci/ahci.h>
+#include <kernel/sysio/kdrivers/ahci/sata.h>
+#include <kernel/sysio/kdrivers/usb/usb.h>
 
 
 
 // hal (^)
-#include <kernel/hal/up.h>
-#include <kernel/hal/mp.h>
-#include <kernel/hal/breaker.h>
-#include <kernel/hal/hal.h>
+#include <kernel/sysio/hal/up.h>
+#include <kernel/sysio/hal/mp.h>
+#include <kernel/sysio/hal/breaker.h>
+#include <kernel/sysio/hal/hal.h>
 
 
 
 
-// mk (^)
-#include <kernel/mk/ps/arch/x86/x86cont.h>
-#include <kernel/mk/ps/ts.h>
-#include <kernel/mk/ps/tasks.h>
-#include <kernel/mk/ps/image.h>
-#include <kernel/mk/ps/process.h>
-#include <kernel/mk/ps/thread.h>
-#include <kernel/mk/ps/sched/sched.h>
-#include <kernel/mk/ps/ipc/ipc.h>
-#include <kernel/mk/ps/ipc/ipccore.h>
-#include <kernel/mk/ps/ipc/sem.h>
-#include <kernel/mk/ps/queue.h>
-#include <kernel/mk/ps/realtime.h>
-#include <kernel/mk/ps/dispatch.h>
-#include <kernel/mk/ps/event.h>
-#include <kernel/mk/ps/ps.h>
-#include <kernel/mk/mk.h>
+// sysmk (^)
+#include <kernel/sysmk/ps/arch/x86/x86cont.h>
+#include <kernel/sysmk/ps/ts.h>
+#include <kernel/sysmk/ps/tasks.h>
+#include <kernel/sysmk/ps/image.h>
+#include <kernel/sysmk/ps/process.h>
+#include <kernel/sysmk/ps/thread.h>
+#include <kernel/sysmk/ps/sched/sched.h>
+#include <kernel/sysmk/ps/ipc/ipc.h>
+#include <kernel/sysmk/ps/ipc/ipccore.h>
+#include <kernel/sysmk/ps/ipc/sem.h>
+#include <kernel/sysmk/ps/queue.h>
+#include <kernel/sysmk/ps/realtime.h>
+#include <kernel/sysmk/ps/dispatch.h>
+#include <kernel/sysmk/ps/event.h>
+#include <kernel/sysmk/ps/ps.h>
+#include <kernel/sysmk/mk.h>
 
 
 // kservers (v)
-#include <kernel/kservers/kgwm/kgwm.h>
-#include <kernel/kservers/kgws/kgws/ws.h>
-#include <kernel/kservers/kgws/user/usession.h>
-#include <kernel/kservers/kgws/user/room.h>
-#include <kernel/kservers/kgws/user/desktop.h>
-#include <kernel/kservers/kgws/kgws/window.h>
-#include <kernel/kservers/kgws/kgws/menu.h>
-#include <kernel/kservers/kgws/kgws/grid.h>
-#include <kernel/kservers/kgws/kgws/bmp.h>
-#include <kernel/kservers/kgws/terminal/line.h>
-#include <kernel/kservers/kgws/terminal/terminal.h>
-#include <kernel/kservers/kgws/kgws/guiconf.h>
-#include <kernel/kservers/kgws/user/user.h>
-#include <kernel/kservers/kgws/logon/logon.h>
-#include <kernel/kservers/kgws/logoff/logoff.h>
-#include <kernel/kservers/kgws/kgws.h>
+#include <kernel/sysio/kservers/kgwm/kgwm.h>
+#include <kernel/sysio/kservers/kgws/kgws/ws.h>
+#include <kernel/sysio/kservers/kgws/user/usession.h>
+#include <kernel/sysio/kservers/kgws/user/room.h>
+#include <kernel/sysio/kservers/kgws/user/desktop.h>
+#include <kernel/sysio/kservers/kgws/kgws/window.h>
+#include <kernel/sysio/kservers/kgws/kgws/menu.h>
+#include <kernel/sysio/kservers/kgws/kgws/grid.h>
+#include <kernel/sysio/kservers/kgws/kgws/bmp.h>
+#include <kernel/sysio/kservers/kgws/terminal/line.h>
+#include <kernel/sysio/kservers/kgws/terminal/terminal.h>
+#include <kernel/sysio/kservers/kgws/kgws/guiconf.h>
+#include <kernel/sysio/kservers/kgws/user/user.h>
+#include <kernel/sysio/kservers/kgws/logon/logon.h>
+#include <kernel/sysio/kservers/kgws/logoff/logoff.h>
+#include <kernel/sysio/kservers/kgws/kgws.h>
 
 
 // kdrivers (^)
-#include <kernel/kdrivers/tty/ttyldisc.h>
-#include <kernel/kdrivers/tty/ttydrv.h>
-#include <kernel/kdrivers/tty/tty.h>
-#include <kernel/kdrivers/tty/pty.h>
+#include <kernel/sysio/kdrivers/tty/ttyldisc.h>
+#include <kernel/sysio/kdrivers/tty/ttydrv.h>
+#include <kernel/sysio/kdrivers/tty/tty.h>
+#include <kernel/sysio/kdrivers/tty/pty.h>
 
 
-#include <kernel/kdrivers/tty/vt.h>
+#include <kernel/sysio/kdrivers/tty/vt.h>
 
-#include <kernel/kdrivers/x/i8042/i8042.h>
-#include <kernel/kdrivers/x/i8042/ps2mouse.h>
-#include <kernel/kdrivers/x/i8042/ps2kbd.h>
-#include <kernel/kdrivers/network/connect.h> 
-#include <kernel/kdrivers/network/host.h>        //host info.
-#include <kernel/kdrivers/network/ethernet.h>
-#include <kernel/kdrivers/network/arp.h>
-#include <kernel/kdrivers/network/intel.h>       //intel nic - network interface controller.
-#include <kernel/kdrivers/network/nports.h>      //(network) Network Ports  (sw)
-#include <kernel/kdrivers/network/nsocket.h>     //(network) Sockets info. (sw) (not libc)
-#include <kernel/kdrivers/network/ip.h>          //(network) IP info.      (sw)
-#include <kernel/kdrivers/network/channel.h>     //(network) Channel       (sw)
-#include <kernel/kdrivers/network/client.h>      //(network) Client process support. 
-#include <kernel/kdrivers/network/ns.h>          //(network) Network Server.
-#include <kernel/kdrivers/network/network.h>     //(network) Gerenciamento de rede. 
-#include <kernel/kdrivers/dd.h>
+#include <kernel/sysio/kdrivers/x/i8042/i8042.h>
+#include <kernel/sysio/kdrivers/x/i8042/ps2mouse.h>
+#include <kernel/sysio/kdrivers/x/i8042/ps2kbd.h>
+#include <kernel/sysio/kdrivers/network/connect.h> 
+#include <kernel/sysio/kdrivers/network/host.h>        //host info.
+#include <kernel/sysio/kdrivers/network/ethernet.h>
+#include <kernel/sysio/kdrivers/network/arp.h>
+#include <kernel/sysio/kdrivers/network/intel.h>       //intel nic - network interface controller.
+#include <kernel/sysio/kdrivers/network/nports.h>      //(network) Network Ports  (sw)
+#include <kernel/sysio/kdrivers/network/nsocket.h>     //(network) Sockets info. (sw) (not libc)
+#include <kernel/sysio/kdrivers/network/ip.h>          //(network) IP info.      (sw)
+#include <kernel/sysio/kdrivers/network/channel.h>     //(network) Channel       (sw)
+#include <kernel/sysio/kdrivers/network/client.h>      //(network) Client process support. 
+#include <kernel/sysio/kdrivers/network/ns.h>          //(network) Network Server.
+#include <kernel/sysio/kdrivers/network/network.h>     //(network) Gerenciamento de rede. 
+#include <kernel/sysio/kdrivers/dd.h>
 
 // devices
-#include <kernel/devices/devices.h>
-#include <kernel/devices/devmgr.h>        
+#include <kernel/sysio/devices.h>
+#include <kernel/sysio/devmgr.h>        
 
 
 // execve (v)
-#include <kernel/execve/sm/install.h>
+#include <kernel/syssm/execve/sm/install.h>
 
 
 // io
-#include <kernel/io/io.h>                  //io.
+#include <kernel/sysio/io.h>                  //io.
 
 
 
 // execve
-#include <kernel/execve/sm/modules.h>             //module manager.
+#include <kernel/syssm/execve/sm/modules.h>             //module manager.
 
 
 // debug
-#include <kernel/debug/debug.h>
+#include <kernel/syssm/debug/debug.h>
 
 
-#include <kernel/execve/sm/system.h>              //system manager.
-#include <kernel/execve/sm/init.h>
-#include <kernel/execve/execve.h>    
+#include <kernel/syssm/execve/sm/system.h>              //system manager.
+#include <kernel/syssm/execve/sm/init.h>
+#include <kernel/syssm/execve/execve.h>    
 
 
-// mk (^)
-#include <kernel/mk/ps/mm/x86/mmglobal.h>      // Deve ficar mais acima.
-#include <kernel/mk/ps/mm/x86/heap.h>          // Heap pointer support.
-#include <kernel/mk/ps/mm/x86/aspace.h>        // Address Space, (data base account).
-#include <kernel/mk/ps/mm/x86/dspace.h>        // Disk Space, (data base account).
-#include <kernel/mk/ps/mm/x86/bank.h>          // Bank. database
-#include <kernel/mk/ps/mm/x86/mm.h>            // mm, memory manager support.
+// sysmk (^)
+#include <kernel/sysmk/ps/mm/x86/mmglobal.h>      // Deve ficar mais acima.
+#include <kernel/sysmk/ps/mm/x86/heap.h>          // Heap pointer support.
+#include <kernel/sysmk/ps/mm/x86/aspace.h>        // Address Space, (data base account).
+#include <kernel/sysmk/ps/mm/x86/dspace.h>        // Disk Space, (data base account).
+#include <kernel/sysmk/ps/mm/x86/bank.h>          // Bank. database
+#include <kernel/sysmk/ps/mm/x86/mm.h>            // mm, memory manager support.
 
 
 // kservers
-#include <kernel/kservers/cursor.h>
-#include <kernel/kservers/messages.h>
-#include <kernel/kservers/events.h>
+#include <kernel/sysio/kservers/cursor.h>
+#include <kernel/sysio/kservers/messages.h>
+#include <kernel/sysio/kservers/events.h>
 
 
 // ob
-#include <kernel/ob/object.h>
+#include <kernel/syssm/ob/object.h>
 
 // execve
-#include <kernel/execve/ss.h>
+#include <kernel/syssm/execve/ss.h>
 
 
 // profiler
