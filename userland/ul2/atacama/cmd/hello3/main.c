@@ -680,7 +680,8 @@ int main ( int argc, char *argv[] ){
         // scr
         //    
         
-        // Show tty for this process.            
+        /*
+        // Get the tty for this process.            
         ____this_tty_id = gramado_system_call ( 266, getpid(), 0, 0 );
         printf ("The tty for this process is %d\n", ____this_tty_id);
         
@@ -690,6 +691,21 @@ int main ( int argc, char *argv[] ){
              __wbuf2, 
              __w_size2 = sprintf (__wbuf2,"THIS IS A MAGIC STRING\n")  );
        
+       */
+       
+       
+       
+
+        // Get the tty for the parent process       
+        ____tty_id = gramado_system_call ( 266, getppid(), 0, 0 );
+        printf ("The tty for parent process is %d\n", ____tty_id);
+        
+        
+         //Escrevendo na tty do processo pai para leitura.
+         write_ttyList ( ____tty_id, 
+             __wbuf2, 
+             __w_size2 = sprintf (__wbuf2,"THIS IS A MAGIC STRING\n")  );
+
             
 
     // usando o write_VC pra escrever no console virtual '0'. 

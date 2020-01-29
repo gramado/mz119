@@ -79,9 +79,9 @@ tty_read ( unsigned int channel,
     // Isso então é um arquivo apontando pela tty.
     // Podemos usar o buffer da tty.   
             
-    if ( (void *) tty->stdin == NULL )
+    if ( (void *) tty->_buffer == NULL )
     {
-         printf ("tty_read: Invalid tty stdin\n");
+         printf ("tty_read: Invalid tty _buffer\n");
          refresh_screen();
          return -1;
     }
@@ -94,7 +94,7 @@ tty_read ( unsigned int channel,
     // A base do arquivo que serve de buffer.
     
 
-    if ( (void *) tty->stdin->_base == NULL )
+    if ( (void *) tty->_buffer->_base == NULL )
     {
          printf ("tty_read: invalid _base \n");
          refresh_screen();
@@ -119,7 +119,7 @@ tty_read ( unsigned int channel,
     refresh_screen ();
 
  
-    memcpy ( (void *) buffer, (const void *) tty->stdin->_base, nr ); 
+    memcpy ( (void *) buffer, (const void *) tty->_buffer->_base, nr ); 
            
     return nr; 
 }
@@ -185,7 +185,7 @@ tty_write ( unsigned int channel,
     // Checando a validade do arquivo.
     // O arquivo da tty de origem da transferência.
 
-    if ( (void *) __src->stdout == NULL ){
+    if ( (void *) __src->_buffer == NULL ){
         printf ("tty_write: Invalid __src stdout\n");
         refresh_screen();
         return -1;
@@ -198,7 +198,7 @@ tty_write ( unsigned int channel,
     
     // Essa é a base do arquivo da tty de origem.
 
-    if ( (void *) __src->stdout->_base == NULL ){
+    if ( (void *) __src->_buffer->_base == NULL ){
         printf ("tty_write: * invalid _base \n");
         refresh_screen();
         return -1;
@@ -211,72 +211,18 @@ tty_write ( unsigned int channel,
 
     // Copiando do buffer para o arquivo da tty de origem.
 
-    printf ("tty_write: copiando para __src->stdout->_base \n");
+    printf ("tty_write: copiando para __src->_buffer->_base \n");
     refresh_screen();
 
-    memcpy ( (void *) __src->stdout->_base, (const void *) buffer, nr ); 
+    memcpy ( (void *) __src->_buffer->_base, (const void *) buffer, nr ); 
     
     
     
-    //
-    //    Link.
-    //
+    // #bugbug
+    // Não devemos copiar aqui, pois assim damos a chance
+    // do processo pai escrever diretamente na tty do filho
+    // caso ele obtenha sua identificação.
     
-    // Obtendo a estrutura da tty de testino.
-
-    __dst = __src->link;    
-
-
-
-    //
-    //   tty   __dst
-    //
-    
-    // Checando a validade da tty de testino.
-
-    if ( (void *) __dst == NULL ){
-        printf ("tty_write: Invalid __dst tty\n");
-        refresh_screen();
-        return -1;
-    }
-    
-    
-    //
-    //    File  (stdin)
-    //
-    
-    // Validade do arquivo da tty de destino.
-
-    if ( (void *) __dst->stdin == NULL ){
-        printf ("tty_write: Invalid __dst stdin\n");
-        refresh_screen();
-        return -1;
-    }
-
-
-    //
-    // _base
-    //
-
-    // Checando a validade da base do arquivo da tty de destino.
-
-    if ( (void *) __dst->stdin->_base == NULL ){
-        printf ("tty_write: invalid __dst stdin _base \n");
-        refresh_screen();
-        return -1;
-    }
-
-
-    //
-    // Copy 2.
-    //
-
-    printf ("tty_write: copiando para __dst->stdin->_base \n");
-    refresh_screen();
-
-    // Ccoloca também na tty de destino para leitura.
-    memcpy ( (void *) __dst->stdin->_base, (const void *) buffer, nr ); 
-
  
     printf( "DONE\n");
     refresh_screen();        
@@ -793,18 +739,27 @@ _ok:
         __tty->used = 1;
         __tty->magic = 1234;
         
-        __tty->stdin  = (FILE *) newPage (); 
-        __tty->stdout = (FILE *) newPage (); 
-        __tty->stderr = (FILE *) newPage (); 
+        //
+        // files
+        //
         
-        if ( (void *) __tty->stdin == NULL   ||
+        __tty->_buffer = (file *) newPage();
+        __tty->stdin  = (file *) newPage (); 
+        __tty->stdout = (file *) newPage (); 
+        __tty->stderr = (file *) newPage (); 
+        
+        
+        if ( (void *) __tty->_buffer == NULL ||
+             (void *) __tty->stdin == NULL   ||
              (void *) __tty->stdout == NULL  ||
              (void *) __tty->stderr == NULL  )
         {
             panic ("tty_create: streams fail\n");
         }
 
-        //precisa validar as 3 stream.        
+        //precisa validar
+        __tty->_buffer->used = 1;
+        __tty->_buffer->magic = 1234;         
         __tty->stdin->used = 1;
         __tty->stdin->magic = 1234;
         __tty->stdout->used = 1;
@@ -813,14 +768,20 @@ _ok:
         __tty->stderr->magic = 1234;
         
 
+        //
+        // o buffer do arquivo. (_base)
+        //
+        
+        __tty->_buffer->_base  = (char *) newPage (); 
         __tty->stdin->_base  = (char *) newPage (); 
         __tty->stdout->_base = (char *) newPage (); 
         __tty->stderr->_base = (char *) newPage (); 
 
-        //#todo cheacar, e inicializar os outros elementos.
+        //#todo checar, e inicializar os outros elementos.
         
         // register
         
+        // ??
         // #debug
         if ( i >= 64){
             panic ("tty_create: Overflow\n");

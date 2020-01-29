@@ -60,7 +60,7 @@ struct ttybuffer_d
     // Usaremos um stream sem  nome para gerenciar a 
     // área de memória que a tty precisa como buffer.
  
-    FILE *stream;
+    file *stream;
 
     struct ttybuffer_d *next;
 };
@@ -165,9 +165,20 @@ struct tty_d
 	// FILE
 	//
 	
-    FILE *stdin;
-    FILE *stdout;
-    FILE *stderr;
+    file *stdin;
+    file *stdout;
+    file *stderr;
+
+
+    //
+    // buffer 
+    //
+   
+    // Buffer na forma de arquivo.
+    // Usado par aleitura e escrita
+    //Assim o pai pode escrever no tty do processo filho.
+
+    file *_buffer;
 
 
 	//

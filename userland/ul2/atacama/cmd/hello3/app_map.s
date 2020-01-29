@@ -355,8 +355,8 @@ Linker script and memory map
 .rodata         0x0000000000408000      0xe51
  .rodata        0x0000000000408000       0x22 crt0.o
  *fill*         0x0000000000408022        0x2 
- .rodata        0x0000000000408024      0x244 main.o
- *fill*         0x0000000000408268       0x18 
+ .rodata        0x0000000000408024      0x246 main.o
+ *fill*         0x000000000040826a       0x16 
  .rodata        0x0000000000408280      0x100 ctype.o
                 0x0000000000408280                _ctype
  .rodata        0x0000000000408380      0x524 stdio.o
