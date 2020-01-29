@@ -889,7 +889,7 @@ void apiShutDown (){
 	
 	//Argumentos podem ser enviados.
 	
-    system_call ( SYSTEMCALL_SHUTDOWN, 0, 0, 0 );
+    //system_call ( ?, 0, 0, 0 );
 	
     // hang forever.
 	while (1){ asm ("pause"); };	

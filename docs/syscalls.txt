@@ -21,15 +21,20 @@
 
   rede: 12,13,14,15
   
-  i/o:  16,17,18,19
+
   
+  unix  
   16      sys_open
   17      sys_close
-  18      Nothing 
-  19      Nothing
+  18      sys_read
+  19      sys_write
   
-  Nothing: 20, 21, 22, 23
   
+
+  buffers: 20, 21, 22, 23
+ 
+ 
+ 
   24      sys_show_window_rect
 
   Nothing: 25 ~ 33
@@ -39,7 +44,11 @@
   36      sys_system_dispatch_to_procedure
   37      sys_system_procedure
   
-  Nothing: 38 ~ 41
+  38      __gethostname
+  39      __sethostname
+  40      __getusername
+  41      __setusername
+
   
   42      Deprecated!
   43      Nothing

@@ -30,8 +30,9 @@ CFLAGS = -m32 \
 	
 LIBC    = ../../lib/libc03/include/
 LIBCOBJ = ../../lib/libc03/obj
-API     = ../../lib/api02/include/
-APIOBJ  = ../../lib/api02/obj
+
+#API     = ../../lib/api02/include/
+#APIOBJ  = ../../lib/api02/obj
 
 
 	##
@@ -47,6 +48,7 @@ time.o \
 unistd.o \
 termios.o \
 ioctl.o \
+fcntl.o \
 stubs.o
 
 
@@ -58,7 +60,7 @@ all: main.o all-c cat-link finalize clean
 	@echo "Ok?"
 
 main.o:
-	gcc  -c  main.c  $(CFLAGS) -I $(LIBC) -I $(API) -o main.o
+	gcc  -c  main.c  $(CFLAGS) -I $(LIBC)  -o main.o
 
 all-c:
 
@@ -74,7 +76,8 @@ all-c:
 
 	cp $(LIBCOBJ)/termios.o  .
 	cp $(LIBCOBJ)/ioctl.o  .
-
+	cp $(LIBCOBJ)/fcntl.o  .
+	
 	
 cat-link:
 	ld -m elf_i386 -T link.ld -o TRUE.BIN $(myObjects) -Map map.s

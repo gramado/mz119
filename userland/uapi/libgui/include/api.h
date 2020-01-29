@@ -355,11 +355,11 @@
 #define	SYSTEMCALL_REDE_RES3  14
 #define	SYSTEMCALL_REDE_RES4  15
 
-//i/o.
-#define	SYSTEMCALL_IO_RES1  16
-#define	SYSTEMCALL_IO_RES2  17
-#define	SYSTEMCALL_IO_RES3  18
-#define	SYSTEMCALL_IO_RES4  19
+// unix
+#define  SYS_OPEN     16  // open ()
+#define  SYS_CLOSE    17  // close ()
+#define  SYS_READ     18  // read ()
+#define  SYS_WRITE    19  // write ()
 
 //Outros. 
 
@@ -404,15 +404,12 @@
 
 #define	SYSTEMCALL_CALL_SYSTEMPROCEDURE  37  
 
-//Read sector.
-#define	SYSTEMCALL_READSECTOR  38
 
-//Show buffer.
-#define	SYSTEMCALL_SHOWBUFFER  39
+#define SYS_GETHOSTNAME    38
+#define SYS_SETHOSTNAME    39
+#define SYS_GETUSERNAME    40
+#define SYS_SETUSERNAME    41
 
-//Shut down computer.
-#define	SYSTEMCALL_SHUTDOWN  40    //Desliga o computador.
-#define	SYSTEMCALL_41        41
 
 //Bitmap img: 
 #define	SYSTEMCALL_LOAD_BITMAP_16x16  42  //Load bitmap image, size=16x16.

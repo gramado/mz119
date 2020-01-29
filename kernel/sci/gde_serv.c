@@ -1450,25 +1450,37 @@ void *gde_services ( unsigned long number,
             break;
 
         //rede: 12,13,14,15	
-			
-			
-		//i/o:  16,17,18,19	
-			
-		// open()
-		// Retorna um i'ndice na tabela de arquivos abertos do proceso atual.
-		// unistd.c
-		// O tipo mode_t precisa de kernel/sys/types.h
-		// pathname, flags, mode
-        case 16:
+
+
+        // 16 - open()
+        case SYS_OPEN:
             return (void *) sys_open ( (const char *) arg2, 
                                 (int) arg3, (mode_t) arg4 );
             break;
 
-
-        case 17:
+        // 17 - close()
+        case SYS_CLOSE:
             return (void *) sys_close ( (int) arg2 );
             break;
 
+        // 18 - read() 
+        case SYS_READ:
+            return (void *) sys_read ( 
+                                (unsigned int) arg2, 
+                                (char *) arg3, 
+                                (int) arg4 );        
+            break;
+
+        // 19 - write()
+        case SYS_WRITE:
+            return (void *) sys_write ( 
+                                (unsigned int) arg2, 
+                                (char *) arg3, 
+                                (int) arg4 );                
+            break;
+
+
+        // BUFFERS  20 21 22 23        
 
 		//24
 		// window.c
@@ -1515,7 +1527,37 @@ void *gde_services ( unsigned long number,
 							    (int) message_address[1], 
 								(unsigned long) message_address[2], 
 								(unsigned long) message_address[3] );
-            break;    
+            break; 
+            
+            
+        //38 39 40 41
+             
+             
+        //38
+        //get host name  
+        case SYS_GETHOSTNAME:
+            return (void *) __gethostname ( (char *) arg2);
+            break;
+
+        //39
+        //set host name 
+        case SYS_SETHOSTNAME:
+            return (void *) __sethostname ( (const char *) arg2); 
+            break;
+
+        //40
+        //get user name 
+        case SYS_GETUSERNAME:
+           return (void *) __getusername ( (char *) arg2);
+            break;
+            
+        //41
+        //set user name 
+        case SYS_SETUSERNAME:
+            return (void *) __setusername ( (const char *) arg2); 
+            break;
+           
+             
         
         //42 - Load bitmap 16x16. #cancelada.
         case SYS_LOADBMP16X16 :  
@@ -2742,7 +2784,7 @@ void *gde_services ( unsigned long number,
 			return (void *) __openat ( (int) arg2, (const char *) arg3, (int) arg4 ); 
 			break;
 
-	
+
 		// pipe	
 		case 247:
 			return (void *) sys_pipe ( (int *) arg2 ); 

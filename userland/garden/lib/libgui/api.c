@@ -863,7 +863,7 @@ gde_load_bitmap_16x16 ( unsigned long img_address,
 void gde_shutdown (){
 
 
-    gramado_system_call ( SYSTEMCALL_SHUTDOWN, 0, 0, 0 );
+    //gramado_system_call ( ??, 0, 0, 0 );
 
     while (1){ asm ("pause"); };
 }

@@ -438,20 +438,43 @@ int ioctl ( int d, int request, ... )
 
 int open (const char *pathname, int flags, mode_t mode){
 
-    return (int) gramado_system_call ( 16, (unsigned long) pathname, (unsigned long) flags, (unsigned long) mode );
+    return (int) gramado_system_call ( 16, 
+                     (unsigned long) pathname, 
+                     (unsigned long) flags, 
+                     (unsigned long) mode );
 }
 
 
 //SVr4, 4.3BSD, POSIX.1-2001.
 int close (int fd)
 {
-    return (int) gramado_system_call ( 17, (unsigned long) fd, (unsigned long) fd, (unsigned long) fd );
+    return (int) gramado_system_call ( 17, 
+                     (unsigned long) fd, 
+                     (unsigned long) fd, 
+                     (unsigned long) fd );
 }
 
 
 int pipe ( int pipefd[2] )
 {
-    return (int) gramado_system_call ( 247, (unsigned long) pipefd, (unsigned long) pipefd, (unsigned long) pipefd );	
+    return (int) gramado_system_call ( 247, 
+                    (unsigned long) pipefd, 
+                    (unsigned long) pipefd, 
+                    (unsigned long) pipefd );	
+}
+
+
+
+//  SVr4, 4.3BSD, POSIX.1-2001.
+ssize_t read (int fd, const void *buf, size_t count)
+{
+	if (fd<0)
+	    return -1;
+	
+    return (ssize_t) gramado_system_call ( 18, 
+                         (unsigned long) fd,      // dispositivo.
+                         (unsigned long) buf, 
+                         (unsigned long) count ); 
 }
 
 
@@ -462,24 +485,13 @@ ssize_t write (int fd, const void *buf, size_t count)
 	if (fd<0)
 	    return -1;
 	
-    return (ssize_t) gramado_system_call ( 169, 
+    return (ssize_t) gramado_system_call ( 19, 
                          (unsigned long) fd,      // dispositivo.
                          (unsigned long) buf, 
                          (unsigned long) count ); 
 }
 
 
-//  SVr4, 4.3BSD, POSIX.1-2001.
-ssize_t read (int fd, const void *buf, size_t count)
-{
-	if (fd<0)
-	    return -1;
-	
-    return (ssize_t) gramado_system_call ( 268, 
-                         (unsigned long) fd,      // dispositivo.
-                         (unsigned long) buf, 
-                         (unsigned long) count ); 
-}
 
 
 

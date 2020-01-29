@@ -67,11 +67,14 @@
 #define  SYS_REDE_R4    15
 
 
-// i/o - disk support.
-#define  SYS_IO_R1    16  // open()
-#define  SYS_IO_R2    17  // close
-#define  SYS_IO_R3    18  // #todo
-#define  SYS_IO_R4    19  // #todo
+
+// unix
+#define  SYS_OPEN     16  // open ()
+#define  SYS_CLOSE    17  // close ()
+#define  SYS_READ     18  // read ()
+#define  SYS_WRITE    19  // write ()
+
+
 
 
 // kgws - Refresh.
@@ -116,16 +119,11 @@
 #define	SYS_CALLSYSTEMPROCEDURE  37  // Chama o procedimento padrao do sistema.
 
 
-//Read sector.
-#define	SYS_READSECTOR    38
 
-//Show buffer.
-#define	SYS_SHOWBUFFER    39
-
-
-//Shut down conputer.
-#define	SYS_SHUTDOWN        40
-#define	SYS_41              41
+#define SYS_GETHOSTNAME    38
+#define SYS_SETHOSTNAME    39
+#define SYS_GETUSERNAME    40
+#define SYS_SETUSERNAME    41
 
 
 //Load bitmap image, size=16x16.

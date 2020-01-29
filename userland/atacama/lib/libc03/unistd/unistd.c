@@ -379,7 +379,7 @@ ssize_t read (int fd, const void *buf, size_t count)
     if (fd<0)
         return -1;
 
-    return (ssize_t) gramado_system_call ( 260, 
+    return (ssize_t) gramado_system_call ( 18, 
                          (unsigned long) fd,      // dispositivo.
                          (unsigned long) buf, 
                          (unsigned long) count ); 
@@ -391,7 +391,7 @@ ssize_t write (int fd, const void *buf, size_t count)
     if (fd<0)
         return -1;
 
-    return (ssize_t) gramado_system_call ( 261, 
+    return (ssize_t) gramado_system_call ( 19, 
                          (unsigned long) fd,      // dispositivo.
                          (unsigned long) buf, 
                          (unsigned long) count ); 
@@ -858,6 +858,8 @@ int syncfs(int fd)
 
 
 
+
+
 /*
  *****************************************
  * close:
@@ -954,7 +956,7 @@ int gethostname (char *name, size_t len){
 
     int len_ret;
     
-    len_ret = (int) gramado_system_call ( 801, 
+    len_ret = (int) gramado_system_call ( 38, 
                         (unsigned long) name,
                         (unsigned long) name,
                         (unsigned long) name );
@@ -967,7 +969,7 @@ int gethostname (char *name, size_t len){
 //See: http://man7.org/linux/man-pages/man2/sethostname.2.html
 int sethostname (const char *name, size_t len){
 
-    return (int) gramado_system_call ( 802, 
+    return (int) gramado_system_call ( 39, 
                     (unsigned long) name,
                     (unsigned long) name,
                     (unsigned long) name );
@@ -1027,7 +1029,7 @@ int getusername (char *name, size_t len)
 
 
     //coloca no buffer interno
-    __len_ret = (int) gramado_system_call ( 803, 
+    __len_ret = (int) gramado_system_call ( 40, 
                         (unsigned long) name,
                         (unsigned long) name,
                         (unsigned long) name );
@@ -1082,7 +1084,7 @@ int setusername (const char *name, size_t len){
     }
 
 
-    return (int) gramado_system_call ( 804, 
+    return (int) gramado_system_call ( 41, 
                     (unsigned long) name,
                     (unsigned long) name,
                     (unsigned long) name );
