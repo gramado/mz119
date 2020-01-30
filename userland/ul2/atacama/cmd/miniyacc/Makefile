@@ -1,11 +1,14 @@
-# lisp for gde
-# Trying to port this thing.
+# cat for gde
+
+#history:
+#2019 - Created by Fred Nora.
+
 
 VERSION = 0
 PATCHLEVEL = 0
 SUBLEVEL = 0
 EXTRAVERSION =
-#NAME = gde lisp
+#NAME = cat
 
 #todo:
 #We need to simplify these flags
@@ -23,12 +26,8 @@ CFLAGS = -m32 \
 	-no-pie \
 	-fno-stack-protector \
 	-s
-
-#	-fleading-underscore \
-#	-fno-stack-protector \
-#	-s
-
-
+	
+	
 LIBC    = ../../lib/libc03/include/
 LIBCOBJ = ../../lib/libc03/obj
 
@@ -48,46 +47,51 @@ string.o \
 time.o \
 unistd.o \
 termios.o \
-fcntl.o \
 ioctl.o \
-stubs.o    
+fcntl.o \
+stubs.o
 
 
 
-.PHONY: all all-c jackpot-link finalize clean
 
-all: main.o all-c jackpot-link finalize clean
+.PHONY: all all-c cat-link finalize clean
+
+all: main.o all-c cat-link finalize clean
 	@echo "Ok?"
 
 main.o:
-#	gcc  -c  crt0.c  $(CFLAGS) -I $(LIBC) -I $(API) -o crt0.o
+
+#	clang -g -Wall -Wextra miniyacc.c -o miniyacc
 	gcc  -c  main.c  $(CFLAGS) -I $(LIBC) -I $(API) -o main.o
+#	clang  -c  main.c  $(CFLAGS) -I $(LIBC) -I $(API) -o main.o
+
+
 
 all-c:
 
-	cp $(LIBCOBJ)/crt0.o   .
+	cp $(LIBCOBJ)/crt0.o  .
+	cp $(LIBCOBJ)/stubs.o  .
 	
-	cp $(LIBCOBJ)/stubs.o   .
-		
 	cp $(LIBCOBJ)/ctype.o   .
-	cp $(LIBCOBJ)/stdio.o   .
-	cp $(LIBCOBJ)/stdlib.o  .
-	cp $(LIBCOBJ)/string.o  .
+	cp $(LIBCOBJ)/stdio.o .
+	cp $(LIBCOBJ)/stdlib.o .
+	cp $(LIBCOBJ)/string.o .
 	cp $(LIBCOBJ)/time.o    .
 	cp $(LIBCOBJ)/unistd.o  .
+
 	cp $(LIBCOBJ)/termios.o  .
-	cp $(LIBCOBJ)/fcntl.o  .
 	cp $(LIBCOBJ)/ioctl.o  .
+	cp $(LIBCOBJ)/fcntl.o  .
 
-
-jackpot-link:
-	ld -m elf_i386 -T link.ld -o LISP.BIN $(myObjects) -Map map.s
+	
+cat-link:
+	ld -m elf_i386 -T link.ld -o CAT.BIN $(myObjects) -Map map.s
 
 finalize:
-	cp LISP.BIN  ../../bin
+	cp CAT.BIN  ../../bin
 
 clean:
 	-rm *.o
-	-rm LISP.BIN 
-
-
+	-rm CAT.BIN 
+	
+	

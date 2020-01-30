@@ -1,5 +1,5 @@
-OUTPUT_FORMAT("pe-i386")
-ENTRY(__user_app__)
+OUTPUT_FORMAT("elf32-i386")
+ENTRY(main)
 SECTIONS
 { 
 	/* Essa aplicação está usando o diretório do processo kernel. */
