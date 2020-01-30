@@ -98,6 +98,19 @@
 # define FIOQSIZE	0x5460
 #endif
 
+
+
+// #bugbug
+// Rever
+#define TIOCDRAIN 0x545D
+//...
+
+
+
+
+
+
+
 /* Used for packet mode */
 #define TIOCPKT_DATA		 0
 #define TIOCPKT_FLUSHREAD	 1

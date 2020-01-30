@@ -105,6 +105,13 @@ void *ioServices ( unsigned long number,
 
 
 
+
+/*
+ * sys_ioctl:
+ *     system call implementation of ioctl().
+ * 
+ */
+
 // #bugbug
 // Precisamos rever os argumentos, principalmente o último.
 // >> O primeiro argumento seleciona um dispositivo.
@@ -115,20 +122,27 @@ void *ioServices ( unsigned long number,
 // #importante
 // Cada dispositivo terá seu conjunto de operações.
 
+// #bugbug
+// Talvez seja preciso pegar o arquivo aber to em p->Objects[fd]
+
 // See: hal/device.h
 
-int 
-sys_ioctl ( int fd, unsigned long request, char *arg )
-{
-	
-	//
-	// EVERYTHING IS A FILE!
-	//
-	
-	FILE *dev_stream;
+int sys_ioctl ( int fd, unsigned long request, char *arg ){
+
+
+	file *dev_stream;
 	
 	struct device_d  *dev;
     
+
+
+    // for p->Objects[fd]
+    // list of files opened by the current process.
+    struct process_d *p;
+    
+    //#todo
+    //p = (struct process_d *) processList[current_process];
+    //p->Objects[fd]
 
 	printf ("sys_ioctl: #todo\n");
     //printf ("device=%d request=%d \n", fd, request);
@@ -156,7 +170,11 @@ sys_ioctl ( int fd, unsigned long request, char *arg )
      {
           printf ("sys_ioctl: invalid fd\n");
           goto fail; //return -1;
-     }    
+     } 
+     
+     
+     // #bugbug
+     // Talvez seja preciso pegar o arquivo aber to em p->Objects[fd]
          
      dev_stream = ( file *) fileList[fd];
      
@@ -211,7 +229,6 @@ sys_ioctl ( int fd, unsigned long request, char *arg )
 
          //...
      };
-
 
 
     //#debug

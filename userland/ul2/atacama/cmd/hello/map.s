@@ -340,27 +340,27 @@ Linker script and memory map
                 0x00000000004070dc                fchdir
                 0x00000000004070e6                sleep
                 0x00000000004070f0                _exit
- .text          0x0000000000407106      0x1c2 termios.o
+ .text          0x0000000000407106      0x213 termios.o
                 0x0000000000407106                tcgetpgrp
-                0x0000000000407110                tcsetpgrp
-                0x000000000040711a                tcgetattr
-                0x0000000000407138                tcsetattr
-                0x00000000004071b1                tcsendbreak
-                0x00000000004071bb                tcdrain
-                0x00000000004071c5                tcflush
-                0x00000000004071cf                tcflow
-                0x00000000004071d9                cfmakeraw
-                0x0000000000407253                cfgetispeed
-                0x000000000040726b                cfgetospeed
-                0x0000000000407283                cfsetispeed
-                0x000000000040729a                cfsetospeed
-                0x00000000004072b1                cfsetspeed
- .text          0x00000000004072c8       0x3d ioctl.o
-                0x00000000004072c8                ioctl
- .text          0x0000000000407305       0x28 stubs.o
-                0x0000000000407305                gramado_system_call
+                0x0000000000407133                tcsetpgrp
+                0x0000000000407158                tcgetattr
+                0x0000000000407176                tcsetattr
+                0x00000000004071ef                tcsendbreak
+                0x00000000004071f9                tcdrain
+                0x0000000000407216                tcflush
+                0x0000000000407220                tcflow
+                0x000000000040722a                cfmakeraw
+                0x00000000004072a4                cfgetispeed
+                0x00000000004072bc                cfgetospeed
+                0x00000000004072d4                cfsetispeed
+                0x00000000004072eb                cfsetospeed
+                0x0000000000407302                cfsetspeed
+ .text          0x0000000000407319       0x3d ioctl.o
+                0x0000000000407319                ioctl
+ .text          0x0000000000407356       0x28 stubs.o
+                0x0000000000407356                gramado_system_call
                 0x0000000000408000                . = ALIGN (0x1000)
- *fill*         0x000000000040732d      0xcd3 
+ *fill*         0x000000000040737e      0xc82 
 
 .iplt           0x0000000000408000        0x0
  .iplt          0x0000000000408000        0x0 crt0.o

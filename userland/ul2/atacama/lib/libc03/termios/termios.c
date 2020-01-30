@@ -6,46 +6,41 @@
 #include <types.h>
 #include <sys/types.h>
 #include <errno.h>
-#include <sys/ioctls.h>
+
 #include <sys/ioctl.h>
+#include <sys/ioctls.h>
+
 #include <termios.h>
 
 
 
 pid_t tcgetpgrp ( int fd){
-	
-	
-	return -1; //#todo
-	
-	/*
-	int s;
 
-	if (ioctl(fd, TIOCGPGRP, &s) < 0)
-		return ((pid_t)-1);
+    int s;
 
-	return ((pid_t) s);
-	*/
+    if ( ioctl(fd, TIOCGPGRP, &s) < 0 )
+        return ((pid_t)-1);
+
+
+    return ((pid_t) s);
 }
 
 
 
 int tcsetpgrp (int fd, pid_t pgrp){
-	
-	return -1; //#todo
-	/*
-	int s;
-	s = pgrp;
-	
-	return ( ioctl(fd, TIOCSPGRP, &s) );
-	
-	*/
+
+    int s;
+    s = pgrp;
+
+
+    return ( ioctl(fd, TIOCSPGRP, &s) );
 }
 
 
 
 int tcgetattr (int fd, struct termios *termios_p){
 
-    //return ioctl (fd, TIOCGETA, termios_p);
+    // TIOCGETA ?
     return ioctl (fd, TCGETS, termios_p);
 }
 
@@ -73,35 +68,6 @@ tcsetattr ( int fd,
 }
 
 
-// Credits: Apple open source.
-/*
-int
-tcsetattr(fd, opt, t)
-	int fd, opt;
-	const struct termios *t;
-{
-	struct termios localterm;
-
-	if (opt & TCSASOFT) {
-		localterm = *t;
-		localterm.c_cflag |= CIGNORE;
-		t = &localterm;
-	}
-	switch (opt & ~TCSASOFT) {
-	case TCSANOW:
-		return (ioctl(fd, TIOCSETA, t));
-	case TCSADRAIN:
-		return (ioctl(fd, TIOCSETAW, t));
-	case TCSAFLUSH:
-		return (ioctl(fd, TIOCSETAF, t));
-	default:
-		errno = EINVAL;
-		return (-1);
-	}
-} 
-*/
-
-
 int tcsendbreak(int fd, int duration)
 { 
 	return -1; 
@@ -110,8 +76,7 @@ int tcsendbreak(int fd, int duration)
 
 int tcdrain (int fd)
 {
-	return -1; 
-	//return ( ioctl(fd, TIOCDRAIN, 0) );
+    return ( ioctl(fd, TIOCDRAIN, 0) );
 }
 
 
