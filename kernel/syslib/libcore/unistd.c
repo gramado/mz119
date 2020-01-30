@@ -93,6 +93,13 @@ int unistd_file_read ( file *f, char *buffer, int len ){
 
 //#??? isso não pertence à fcntl.c ?
 //SVr4,  4.3BSD,  POSIX.1-2001. 
+
+// #bugbug
+// Precisamos de um endereço em ring 3
+// para que a libc possa manipular o buffer ?
+
+// ou open deve ser usado somente com dispositivos ??
+
 int open (const char *pathname, int flags, mode_t mode ){
 	
 	//#obs:
@@ -105,6 +112,53 @@ int open (const char *pathname, int flags, mode_t mode ){
 	
 	//int pid = -1;
 	
+
+	read_fntos ( (char *) pathname );
+	    
+    //
+    // Searching for the file only on the root dir.
+    //
+    int __Status = -1;
+    __Status = (int) KiSearchFile ( (unsigned char *)pathname, VOLUME1_ROOTDIR_ADDRESS );
+    if (__Status == 1){
+         printf("found\n");
+    }else{
+         printf("not found\n");
+         return -1;
+    };
+
+
+    //taskswitch_lock ();
+    //scheduler_lock ();
+	//name , address.
+     int Size = (int) fsGetFileSize ( (unsigned char *) pathname ); 
+     //scheduler_unlock ();
+     //taskswitch_unlock ();
+
+    
+    if( Size<=0 || Size> 1024*1024)
+        return -1;
+
+
+	//
+	// Carregando
+	//
+	
+	unsigned long address = (unsigned long) kmalloc(Size);
+	
+	if (address == 0)
+	    return -1;
+	
+
+	// Isso funciona.
+	// IN: filename, address
+	int _ret = (int) fs_load_file_2 ( (char *) pathname, (unsigned long) address );
+	
+	if (_ret<0)
+	    return -1;
+	
+	
+	
 	if (current_process < 0)
 		return -1;
 	
@@ -115,19 +169,24 @@ int open (const char *pathname, int flags, mode_t mode ){
 	    return -1;
 	}else{
 		
-		//#bugbug
-		//o argumento 'mode' recebido e' um unsigned short.
-		//e o mode de fopen 'e um ponteiro.
-		
-		//filename, mode
-		stream = (file *) fopen ( (const char *) pathname, (const char *) 0 );
-	
-		if ( (void *) stream == NULL )
-		{
-			printf ("klibc-unistd-open: fail\n"); 
+
+        stream = (file *) kmalloc( sizeof(file) );
+        
+		if ( (void *) stream == NULL ){
+			printf ("klibc-unistd-open: stream fail\n"); 
 		    return -1;
+	
 		}else{
-		
+	
+	         stream->used = 1;
+	         stream->magic = 1234;
+	         
+	         //#importante
+	         //Esse buffer não é acessível pela libc em ring3.
+	         //Então open só abre dispositivo?
+	         stream->_base = (unsigned char *) address;
+	         stream->_p = stream->_base; 
+		     
 		     // agora temos uma stream va'lida. 
 			 // procurar um slot vazio na lista de arquivos abertos do 
 			 // processo atual.

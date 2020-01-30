@@ -325,6 +325,48 @@ int remove (const char *pathname)
 
 
 
+
+/*
+// #todo
+// adaptado de unix v32.
+void
+_strout ( int count, 
+          char *string, 
+          int adjust, 
+          FILE *file, 
+          int fillch );
+void
+_strout ( int count, 
+          char *string, 
+          int adjust, 
+          FILE *file, 
+          int fillch )
+{
+
+	while (adjust < 0) {
+		
+		if (*string=='-' && fillch=='0') {
+			putc (*string++, file);
+			count--;
+		}
+		putc(fillch, file);
+		adjust++;
+	};
+	
+	while (--count>=0)
+		putc(*string++, file);
+	
+	while (adjust) {
+		putc(fillch, file);
+		adjust--;
+	}
+}
+*/
+
+
+
+
+
 /*
  ****************************************
  * fclose:
@@ -333,13 +375,31 @@ int remove (const char *pathname)
  */
 
 // linux klibc style
+// See: unistd.c for close().
 
 int fclose (FILE *stream){
+
+    int __ret = -1;
 
     if ( (void *) stream == NULL )
        return EOF;
 
-    return (int) close ( fileno(stream) );
+
+    // Isso deve fechar o arquivo na lista de arqquivo abertos.
+    __ret = (int) close ( fileno(stream) );
+
+
+    stream->_base = NULL;
+    stream->_p = NULL;
+    
+    //?? What
+    //#todo
+    //stream->_flags &= ~(_IOREAD|_IOWRT|_IONBF|_IOMYBUF|_IOERR|_IOEOF);
+
+    stream->_cnt = 0;
+
+
+    return (int) __ret;
 }
 
 
@@ -363,12 +423,34 @@ FILE *fopen ( const char *filename, const char *mode )
 {
     FILE *__stream;
     
+    int f = -1;
     
     __stream = (FILE *) malloc( sizeof(FILE) );
     
     if ( (void *) __stream == NULL )
         return NULL;
         
+    
+    
+    /*
+    if(*mode == 'w')
+        f = creat(filename, 0600);
+    else if (*mode == 'a'){
+
+		//if ((f = open(filename, 1)) < 0)
+			//f = creat(filename, 0600);
+		//seek(f, 0, 2);
+    
+    }else{
+
+	    //f = open(filename, 0);
+	    //if (f < 0)
+		    //return(NULL);
+
+    };
+    */
+    
+    
     //
     // size
     //
@@ -414,10 +496,26 @@ FILE *fopen ( const char *filename, const char *mode )
         printf ("fopen: Couldn't load the file\n");
         return NULL;
     }
-    
+
+
+    //
+    // _flags
+    //
+
+    // #todo
+	//__stream->_flags &= ~(_IOREAD|_IOWRT);
+
+
+    if (*mode != 'r'){
+        __stream->_flags |= _IOWRT;
+    }else{
+        __stream->_flags |= _IOREAD;
+    };
+
 
     //#todo    
-    __stream->_file = -1;    
+    //Isso deve ser o retorno de open() ou creat()
+    __stream->_file = -1;  //fd    
 
     //base.
     __stream->_base = (unsigned char *) address; 
@@ -2244,6 +2342,25 @@ done:
 }
 
 
+//unix v32
+/*
+char *
+gets(s)
+char *s;
+{
+	register c;
+	register char *cs;
+
+	cs = s;
+	while ((c = getchar()) != '\n' && c >= 0)
+		*cs++ = c;
+	if (c<0 && cs==s)
+		return(NULL);
+	*cs++ = '\0';
+	return(s);
+}
+*/
+
 
 /*
  int getchar()
@@ -4034,6 +4151,12 @@ void perror (const char *str){
 // O ponto de leitura e escrita volta a ser a base.
 void rewind (FILE *stream)
 {
+	//unix 32V
+	//fflush(stream);
+	//lseek( fileno(stream), 0, 0);
+	//stream->_p = stream->_base;
+	//stream->_flag &= ~(_IOERR|_IOEOF);
+
     //se glibc
     //clearerr(stream);
     //(void) fseek(stream, 0L, SEEK_SET);

@@ -866,6 +866,9 @@ int syncfs(int fd)
  *    SVr4, 4.3BSD, POSIX.1-2001.
  */
 
+// #obs
+// Isso deve fechar o arquivo na lista de arqquivo abertos.
+
 int close (int fd){
 
     return (int) gramado_system_call ( 17, 

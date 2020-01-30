@@ -797,7 +797,7 @@ void *gde_extra_services ( unsigned long number,
     // IN: reson, reason
     if ( number == 970 )
     {
-            sys_create_request ( (unsigned long) 15, // number 
+            create_request ( (unsigned long) 15, // number 
                 (int) 1,                             // status 
                 (int) 0,                             // timeout. 0=imediatamente.
                 (int) current_process,               // target_pid
@@ -955,9 +955,9 @@ void *gde_extra_services ( unsigned long number,
     if ( number == 4000 )
     {
 		// load and show bmp
-		//sys_fopen ( (const char *) arg2, (const char *) arg3 );
-		//__bmfp = sys_fopen ( "folder.bmp", "r+" );
-        __bmfp = sys_fopen ( (const char *) arg2, "r+" );
+		//fopen ( (const char *) arg2, (const char *) arg3 );
+		//__bmfp = fopen ( "folder.bmp", "r+" );
+        __bmfp = fopen ( (const char *) arg2, "r+" );
 
 		 //decodificando no backbuffer.
 		 bmpDisplayBMP ( __bmfp->_base, arg3, arg4 );
@@ -972,9 +972,9 @@ void *gde_extra_services ( unsigned long number,
     if ( number == 4001 )
     {
 		// load and show bmp
-		//sys_fopen ( (const char *) arg2, (const char *) arg3 );
-		//__bmfp = sys_fopen ( "folder.bmp", "r+" );
-        __bmfp = sys_fopen ( (const char *) arg2, "r+" );
+		//fopen ( (const char *) arg2, (const char *) arg3 );
+		//__bmfp = fopen ( "folder.bmp", "r+" );
+        __bmfp = fopen ( (const char *) arg2, "r+" );
 
 		//bmp_change_color_flag = BMP_CHANGE_COLOR_TRANSPARENT;
 		//bmp_selected_color = COLOR_WHITE;
@@ -990,7 +990,7 @@ void *gde_extra_services ( unsigned long number,
      //poderia ser um indice na tabela de arquivos abertos pelo processo.
     if ( number == 4002 )
     {
-        return (void *) sys_fopen ( (const char *) arg2, "r+" );
+        return (void *) fopen ( (const char *) arg2, "r+" );
     }
 
 
@@ -999,10 +999,11 @@ void *gde_extra_services ( unsigned long number,
     //#bugbug: Podemos retornar o endereço base. Isso pode dar problemas?
     if ( number == 4003 )
     {
-        __fp = sys_fopen ( (const char *) arg2, "r+" );
+        __fp = fopen ( (const char *) arg2, "r+" );
         return (void *) __fp->_base;
     }
     
+
 
 
     
@@ -1327,13 +1328,13 @@ void *gde_services ( unsigned long number,
 
 		//1 (i/o) Essa rotina pode ser usada por um driver em user mode.
 		case SYS_READ_LBA: 
-			sys_my_read_hd_sector ( (unsigned long) arg2, 
+			my_read_hd_sector ( (unsigned long) arg2, 
 			    (unsigned long) arg3, 0 , 0 ); 
 			break;
 
 		//2 (i/o) Essa rotina pode ser usada por um driver em user mode.
 		case SYS_WRITE_LBA: 
-			sys_my_write_hd_sector ( (unsigned long) arg2, 
+			my_write_hd_sector ( (unsigned long) arg2, 
 			    (unsigned long) arg3, 0 , 0 ); 
 		    break;
 
@@ -1366,7 +1367,7 @@ void *gde_services ( unsigned long number,
             taskswitch_lock ();
             scheduler_lock ();
 
-            sys_fsSaveFile ( (char *) message_address[0],    //name
+            fsSaveFile ( (char *) message_address[0],    //name
                 (unsigned long) message_address[1],  //3, //@todo: size in sectors 
                 (unsigned long) message_address[2],  //255, //@todo: size in bytes
                 (char *) message_address[3],         //arg3,//address
@@ -1390,7 +1391,7 @@ void *gde_services ( unsigned long number,
         // cor, x, y, 0.
 		// todo: chamar kgws_backbuffer_putpixel
         case SYS_BUFFER_PUTPIXEL:
-            sys_backbuffer_putpixel ( (unsigned long) a2, 
+            backbuffer_putpixel ( (unsigned long) a2, 
                 (unsigned long) a3, (unsigned long) a4, 0 ); 
             break;
 
@@ -1425,7 +1426,7 @@ void *gde_services ( unsigned long number,
 			};
 			
 			//x, y, color, char.
-            sys_my_buffer_char_blt ( (unsigned long) (focusWnd->left + arg2),             
+            my_buffer_char_blt ( (unsigned long) (focusWnd->left + arg2),             
                 (unsigned long) (focusWnd->top + arg3),  
                 CurrentColorScheme->elements[csiTerminalFontColor],   
                 (unsigned long) arg4 ); 
@@ -1433,13 +1434,13 @@ void *gde_services ( unsigned long number,
 
 		//8 @todo: BugBug, aqui precisamos de 4 parâmetros.
         case SYS_BUFFER_DRAWLINE:
-            sys_my_buffer_horizontal_line ( (unsigned long) a2, 
+            my_buffer_horizontal_line ( (unsigned long) a2, 
                 (unsigned long) a3, (unsigned long) a4, COLOR_WHITE ); 
             break;
 
 		//9 @todo: BugBug, aqui precisamos de 5 parâmetros.
         case SYS_BUFFER_DRAWRECT:
-            sys_drawDataRectangle ( 0, (unsigned long) a2, (unsigned long) a3, 
+            drawDataRectangle ( 0, (unsigned long) a2, (unsigned long) a3, 
                 (unsigned long) a4, COLOR_WHITE );  
             break;
 
@@ -1452,21 +1453,30 @@ void *gde_services ( unsigned long number,
 
 		//11, Coloca o conteúdo do backbuffer no LFB.
         case SYS_REFRESHSCREEN: 
-            sys_refresh_screen ();
+            refresh_screen ();
             break;
 
         //rede: 12,13,14,15	
 
 
         // 16 - open()
+        // #obs
+        // Isso precisa abrir um arquivo, colocar o ponteiro na 
+        // lista de arquivos abertos e retornar o índice. 
+        // IN: pathname, flags, mode.
+        //#bugbug: o tratamento de open() em ring3 deve ser igual fizemos com fopen.
         case SYS_OPEN:
-            return (void *) sys_open ( (const char *) arg2, 
-                                (int) arg3, (mode_t) arg4 );
+            //#bugbug: open() em ring 3 está usando outra chamada
+            //pra carregar o arquivo.
+            //e se for um dispositivo?
+            return NULL;   
             break;
 
         // 17 - close()
         case SYS_CLOSE:
-            return (void *) sys_close ( (int) arg2 );
+            // todo: criar sys_close()
+            //return (void *) close ( (int) arg2 );
+            return NULL;
             break;
 
         // 18 - read() 
@@ -1491,7 +1501,7 @@ void *gde_services ( unsigned long number,
 		//24
 		// window.c
         case 24:
-            return (void *) sys_show_window_rect ( (struct window_d *) arg2 );
+            return (void *) show_window_rect ( (struct window_d *) arg2 );
             break;
 
         //livre
@@ -1501,7 +1511,7 @@ void *gde_services ( unsigned long number,
 
         // 34 - Setup cursor.
         case SYS_VIDEO_SETCURSOR: 
-            sys_set_up_cursor ( (unsigned long) arg2, 
+            set_up_cursor ( (unsigned long) arg2, 
                 (unsigned long) arg3 );
             return NULL;
             break; 
@@ -1521,7 +1531,7 @@ void *gde_services ( unsigned long number,
         //O teclado envia essa mensagem para o procedimento ativo.
         case SYS_KSENDMESSAGE: 
 		    g_nova_mensagem = 1;    //flag = Existe uma nova mensagem.
-            sys_system_dispatch_to_procedure ( (struct window_d *) arg2, 
+            system_dispatch_to_procedure ( (struct window_d *) arg2, 
 			    (int) arg2, (unsigned long) arg4, (unsigned long) 0);
             break;    
       
@@ -1529,7 +1539,7 @@ void *gde_services ( unsigned long number,
 		// #todo
 		// Vamos passar na forma de mesagens para que tenhamos quatro argumentos.
 		case SYS_CALLSYSTEMPROCEDURE: 
-			return (void *) sys_system_procedure ( (struct window_d *) message_address[0], 
+			return (void *) system_procedure ( (struct window_d *) message_address[0], 
 							    (int) message_address[1], 
 								(unsigned long) message_address[2], 
 								(unsigned long) message_address[3] );
@@ -1592,68 +1602,68 @@ void *gde_services ( unsigned long number,
 
 		//50 resize window (handle,x,y)
 		case SYS_BUFFER_RESIZEWINDOW:
-		    return (void *) sys_resize_window ( (struct window_d *) arg2, arg3, arg4);
+		    return (void *) resize_window ( (struct window_d *) arg2, arg3, arg4);
 		    break;
 		
 		//51 redraw window. (handle)
 		case SYS_BUFFER_REDRAWWINDOW:
-		    return (void *) sys_redraw_window ( (struct window_d *) arg2, arg3 );
+		    return (void *) redraw_window ( (struct window_d *) arg2, arg3 );
 		    break;
 		
 		//52  replace window. (handle,x,y)
 		case SYS_BUFFER_REPLACEWINDOW:
-		    return (void *) sys_replace_window ( (struct window_d *) arg2, arg3, arg4);
+		    return (void *) replace_window ( (struct window_d *) arg2, arg3, arg4);
 		    break;
 		
 		//53 maximize window 
 		//(handle)
 		case SYS_BUFFER_MAXIMIZEWINDOW:
-		    sys_MaximizeWindow ((struct window_d*) arg2);
+		    MaximizeWindow ((struct window_d*) arg2);
 		    break;
 		
 		//54 minimize window
 		//(handle)
 		case SYS_BUFFER_MINIMIZEWINDOW:
-		    sys_MinimizeWindow ( (struct window_d *) arg2);
+		    MinimizeWindow ( (struct window_d *) arg2);
 		    break;
 		
 		//55 Get foreground window.
 		case SYS_BUFFER_GETFOREGROUNDWINDOW:
-		    return (void *) sys_windowGetForegroundWindow ();
+		    return (void *) windowGetForegroundWindow ();
 		    break;
 		
 		//56 set foreground window.
 		case SYS_BUFFER_SETFOREGROUNDWINDOW:
-		    return (void *) sys_windowSetForegroundWindow ( (struct window_d *) arg2 );
+		    return (void *) windowSetForegroundWindow ( (struct window_d *) arg2 );
 		    break;
 		
 		
 		//57.	
 		case SYS_REGISTERWINDOW: 
-			return (void *) sys_RegisterWindow ( (struct window_d *) hWnd );
+			return (void *) RegisterWindow ( (struct window_d *) hWnd );
 			break;
 			
 		//58.	
 		case SYS_CLOSEWINDOW: 
-			sys_CloseWindow ( (struct window_d *) hWnd ); 
+			CloseWindow ( (struct window_d *) hWnd ); 
 			break;
 
         //59 - nothing
         
         //60
 		case SYS_SETACTIVEWINDOW:
-			sys_set_active_window (hWnd);
+			set_active_window (hWnd);
 			break;
 
         //61
 		//Id. (int).	
 		case SYS_GETACTIVEWINDOW:
-            return (void *) sys_get_active_window (); 
+            return (void *) get_active_window (); 
 			break;
 
         //62
 		case SYS_SETFOCUS: 
-			sys_SetFocus ( (struct window_d *) hWnd ); 
+			SetFocus ( (struct window_d *) hWnd ); 
 			break;
 			
         //63 id
@@ -1663,7 +1673,7 @@ void *gde_services ( unsigned long number,
 			
         //64
 		case SYS_KILLFOCUS:
-			sys_KillFocus ( (struct window_d *) hWnd ); 
+			KillFocus ( (struct window_d *) hWnd ); 
 			break;
 
 		// 65
@@ -1780,7 +1790,7 @@ void *gde_services ( unsigned long number,
         case SYS_EXIT:
         
             //#todo: criar um wrapper em sci/sys.c ou kernel/exit.c
-            sys_create_request ( (unsigned long) 12, // number 
+            create_request ( (unsigned long) 12, // number 
                 (int) 1,                             // status 
                 (int) 0,                             // timeout. 0=imediatamente.
                 (int) current_process,               // target_pid
@@ -1805,6 +1815,7 @@ void *gde_services ( unsigned long number,
         // #todo: 
         // Enviar os argumentos via buffer.
         case SYS_CREATETHREAD:
+            //essa função é uma abstração. tem sys_
             return (void *) sys_create_thread ( 
                                 NULL,             // room ? 
                                 NULL,             // desktop
@@ -1831,6 +1842,8 @@ void *gde_services ( unsigned long number,
         // processo pai. 
 
         case SYS_CREATEPROCESS:
+        
+            //essa função é uma abstração. tem sys_
             return (void *) sys_create_process ( NULL, NULL, NULL, 
                                 arg2, arg3, 
                                 0, (char *) a4, 
@@ -1845,7 +1858,7 @@ void *gde_services ( unsigned long number,
 		//#todo: Devemos chamar uma função que mostre informações 
 		//apenas do processo atual. 
 		case SYS_CURRENTPROCESSINFO:
-		    sys_show_currentprocess_info ();
+		    show_currentprocess_info ();
 		    break;
 			
 		//81
@@ -1869,7 +1882,7 @@ void *gde_services ( unsigned long number,
 		// PID veio via argumento.
         case SYS_WAIT4PID: 
             //pid, status, option
-			return (void *) sys_do_waitpid ( (pid_t) arg2, (int *) arg3, (int) arg4 );
+			return (void *) do_waitpid ( (pid_t) arg2, (int *) arg3, (int) arg4 );
 			//block_for_a_reason ( (int) current_thread, (int) arg2 ); //suspenso
 			break;
 			
@@ -1889,24 +1902,24 @@ void *gde_services ( unsigned long number,
 		
 		// 87 Down.
 		case SYS_SEMAPHORE_DOWN:
-		    return (void *) sys_Down ( (struct semaphore_d *) arg2);
+		    return (void *) Down ( (struct semaphore_d *) arg2);
 		    break;
 			
 		//Testa se o processo é válido
         //se for válido retorna 1234		
 		//testando...
 		case SYS_88:   
-            return (void *) sys_processTesting (arg2);
+            return (void *) processTesting (arg2);
 			break;
 			
 		// 89 Up. 	
 		case SYS_SEMAPHORE_UP:
-		    return (void *) sys_Up ( (struct semaphore_d *) arg2 );
+		    return (void *) Up ( (struct semaphore_d *) arg2 );
 		    break;
 		
 		//90 Coletor de threads Zombie. (a tarefa idle pode chamar isso.)
 		case SYS_DEADTHREADCOLLECTOR: 
-			sys_dead_thread_collector ();
+			dead_thread_collector ();
 			break;
 		// 91 92 93
 		
@@ -1916,7 +1929,7 @@ void *gde_services ( unsigned long number,
 		case SYS_STARTTHREAD:
 		    //t = (struct thread_d *) arg2;
             //sys_SelectForExecution (t);
-			sys_SelectForExecution ( (struct thread_d *) arg2 );
+			SelectForExecution ( (struct thread_d *) arg2 );
 			break;
 		
 		
@@ -1931,15 +1944,15 @@ void *gde_services ( unsigned long number,
 		// Pega 'msg' na fila da janela com o foco de entrada.
 		// Pegando a mensagem na fila da janela com o foco de entrada.
 		case SYS_GETKEYBOARDMESSAGE:
-			return (void *) sys_windowGetMessage ( (struct window_d *) WindowWithFocus );
+			return (void *) windowGetMessage ( (struct window_d *) WindowWithFocus );
 			break;
 		//****   Pega 'long1' na fila da janela com o foco de entrada.	
 		case SYS_GETLONG1:
-			return (void *) sys_windowGetLong1 ( (struct window_d *) WindowWithFocus );
+			return (void *) windowGetLong1 ( (struct window_d *) WindowWithFocus );
 			break;
 		//****   Pega 'long2' na fila da janela com o foco de entrada.	
 		case SYS_GETLONG2:
-			return (void *) sys_windowGetLong2 ( (struct window_d *) WindowWithFocus );
+			return (void *) windowGetLong2 ( (struct window_d *) WindowWithFocus );
 			break;
 
  
@@ -1961,7 +1974,7 @@ void *gde_services ( unsigned long number,
 
         // 110 - Reboot.
         case SYS_REBOOT: 
-            sys_reboot ();
+            reboot ();
             break;
 
 
@@ -1994,7 +2007,7 @@ void *gde_services ( unsigned long number,
 		// Envia uma mensagem PAINT para o aplicativo atualizar a 
 		// área de cliente.
 		case 113:
-		    sys_windowUpdateWindow ( (struct window_d *) arg2 );
+		    windowUpdateWindow ( (struct window_d *) arg2 );
 			break;
 
 
@@ -2094,7 +2107,7 @@ void *gde_services ( unsigned long number,
 
 		//119
 		case SYS_SELECTCOLORSCHEME:
-		    return (void *) sys_windowSelectColorScheme ( (int) arg2 );
+		    return (void *) windowSelectColorScheme ( (int) arg2 );
 			break;
 
 
@@ -2111,7 +2124,7 @@ void *gde_services ( unsigned long number,
 		// 125
 		// system procedure call.
         case 125:
-            return (void *) sys_system_procedure ( NULL, 
+            return (void *) system_procedure ( NULL, 
                                 arg2, arg3, arg4 );
             break;
 
@@ -2123,7 +2136,7 @@ void *gde_services ( unsigned long number,
 			//#bugbug
 			//#todo: Tem que resolver as questões de privilégios.
 			//bits, port
-            return (void *) sys_portsx86_IN ( (int) arg2, 
+            return (void *) portsx86_IN ( (int) arg2, 
                                 (unsigned long) arg3 );
             break;
 
@@ -2135,7 +2148,7 @@ void *gde_services ( unsigned long number,
 			//#bugbug
 			//#todo: Tem que resolver as questões de privilégios.
 			//bits, port, value
-            sys_portsx86_OUT ( (int) arg2, 
+            portsx86_OUT ( (int) arg2, 
                 (unsigned long) arg3, (unsigned long) arg4 );
             return NULL;
             break;
@@ -2151,7 +2164,7 @@ void *gde_services ( unsigned long number,
 		// essa mesma.
 		//
 		case SYS_DRIVERINITIALIZED: 
-		    return (void *) sys_systemLinkDriver (arg2,arg3,arg4); 
+		    return (void *) systemLinkDriver (arg2,arg3,arg4); 
 			break;
 			
 			
@@ -2163,7 +2176,7 @@ void *gde_services ( unsigned long number,
 			
 		case SYS_DRAWTEXT:
 			//argString = (unsigned char *) arg4; //??
-		    sys_draw_text ( (struct window_d *) message_address[0], 
+		    draw_text ( (struct window_d *) message_address[0], 
 			    (unsigned long) message_address[1],  
 				(unsigned long) message_address[2],  
 				(unsigned long) message_address[3],   
@@ -2180,7 +2193,7 @@ void *gde_services ( unsigned long number,
 			    break;	
 			};
 			
-			sys_my_buffer_char_blt( (unsigned long) (arg2 + focusWnd->left), //x.
+			my_buffer_char_blt( (unsigned long) (arg2 + focusWnd->left), //x.
 			                    (unsigned long) (arg3 + focusWnd->top),  //y.
 								COLOR_BLACK,                             //color. 
 								(unsigned long) arg4);                   //char.
@@ -2252,7 +2265,7 @@ void *gde_services ( unsigned long number,
 		// Pega caractere no stdin do teclado.
 		// Isso funciona.
         case SYS_GETCH:  
-			return (void *) sys_thread_getchar ();
+			return (void *) thread_getchar ();
             break;
 
 			
@@ -2260,34 +2273,34 @@ void *gde_services ( unsigned long number,
 		//#importante: 
 		//#todo: isso precisa ir para a API.
         case 138:
-		    return (void *) sys_keyboardGetKeyState ( (unsigned char) arg2 );
+		    return (void *) keyboardGetKeyState ( (unsigned char) arg2 );
             break;
 
 
 		//139
         case SYS_GETSCANCODE:
-		    return (void *) sys_get_scancode ();
+		    return (void *) get_scancode ();
             break;
 
 
         //140
         case SYS_SET_CURRENT_KEYBOARD_RESPONDER:
-            sys_set_current_keyboard_responder (arg2);
+            set_current_keyboard_responder (arg2);
 		    break;
 
 		//141	
 		case SYS_GET_CURRENT_KEYBOARD_RESPONDER:
-		    return (void *) sys_get_current_keyboard_responder();
+		    return (void *) get_current_keyboard_responder();
 		    break;
 			
 		//142	
         case SYS_SET_CURRENT_MOUSE_RESPONDER:
-		    sys_set_current_mouse_responder(arg2);
+		    set_current_mouse_responder(arg2);
 			break;
 			
 		//143	
 		case SYS_GET_CURRENT_MOUSE_RESPONDER:
-		    return (void *) sys_get_current_mouse_responder ();
+		    return (void *) get_current_mouse_responder ();
 			break;
 
 			
@@ -2295,14 +2308,14 @@ void *gde_services ( unsigned long number,
 		//Pega o ponteiro da client area.	
 		case SYS_GETCLIENTAREARECT:	
 		    //#bugbug: pegamos o ponteiro mas não temos permissão para acessar a estrutura.
-			return (void *) sys_getClientAreaRect ();	
+			return (void *) getClientAreaRect ();	
 			break;
 		
 		//145
         //configura a client area	
         //@todo: O ponteiro para estrutura de retângulo é passado via argumento.
 		case SYS_SETCLIENTAREARECT:
-			sys_setClientAreaRect ( arg2, arg3, arg4, 0);
+			setClientAreaRect ( arg2, arg3, arg4, 0);
             break;
 
 		//146	
@@ -2327,7 +2340,7 @@ void *gde_services ( unsigned long number,
 		// 148 - Create grid and itens.
 		// window, n, view. 
         case 148:
-           return (void *) sys_grid ( (struct window_d *) arg2, 
+           return (void *) grid ( (struct window_d *) arg2, 
                                (int) arg3, (int) arg4 );
             break;
 
@@ -2336,7 +2349,7 @@ void *gde_services ( unsigned long number,
         // 149 - Testing system menu.
         // Essa é uma rotina de teste, qua chama várias funções.
         case 149:
-            sys_MainMenu ( (struct window_d *) arg2 );
+            MainMenu ( (struct window_d *) arg2 );
             break;
 
 
@@ -2379,21 +2392,21 @@ void *gde_services ( unsigned long number,
 		// Criar um socket e retornar o ponteiro para a estrutura.
 		// Gramado API socket support. (not libc)	
 		case 160:
-            return (void *) sys_create_socket ( (unsigned long) arg2, (unsigned short) arg3 );
+            return (void *) create_socket ( (unsigned long) arg2, (unsigned short) arg3 );
 			break;
 			
 		// 161
         // get socket IP
 		// Gramado API socket support. (not libc)
 		case 161:
-		    return (void *) sys_getSocketIP ( (struct socket_d *) arg2 );
+		    return (void *) getSocketIP ( (struct socket_d *) arg2 );
             break;		
 
 		// 162
         // get socket port		
 		// Gramado API socket support. (not libc)	
 		case 162:
-		    return (void *) sys_getSocketPort( (struct socket_d *) arg2 );
+		    return (void *) getSocketPort( (struct socket_d *) arg2 );
             break;		
 			
 		// 163
@@ -2401,7 +2414,7 @@ void *gde_services ( unsigned long number,
         // retorno 0=ok 1=fail		
         // Gramado API socket support. (not libc)	
 		case 163:
-            return (void *) sys_update_socket ( (struct socket_d *) arg2, 
+            return (void *) update_socket ( (struct socket_d *) arg2, 
                                 (unsigned long) arg3, (unsigned short) arg4 );
 			break;
 
@@ -2460,7 +2473,7 @@ void *gde_services ( unsigned long number,
         //Cada processo tem seu próprio pwd.
         //Essa rotina mostra o pathname usado pelo processo.	
 		case SYS_PWD:
-			sys_fs_print_process_pwd (current_process);
+			fs_print_process_pwd (current_process);
 			break;	
 		
 		//171 - retorna o id do volume atual.
@@ -2478,13 +2491,13 @@ void *gde_services ( unsigned long number,
         //o número do volume e o número do diretório,
         //args in: disk id, volume id, directory id
         case SYS_LISTFILES:
-            sys_fsListFiles ( arg2, arg3, arg4 );  
+            fsListFiles ( arg2, arg3, arg4 );  
 			break;
 			
 			
 		//174
 		case SYS_SEARCHFILE:
-		    return (void *) sys_KiSearchFile ( (unsigned char *) arg2, 
+		    return (void *) KiSearchFile ( (unsigned char *) arg2, 
                                 (unsigned long) arg3 );
 			break;
 			
@@ -2493,15 +2506,15 @@ void *gde_services ( unsigned long number,
         //Atualiza o pathname na estrutura do processo atual.
         //Atualiza o pathname na string global.
 		case 175:
-		    sys_fsUpdateWorkingDiretoryString ( (char *) arg2 );
-            sys_fsLoadFileFromCurrentTargetDir ();
+		    fsUpdateWorkingDiretoryString ( (char *) arg2 );
+            fsLoadFileFromCurrentTargetDir ();
 			break;
 			
 		//176	
         //Remove n nomes de diretório do pathname do processo indicado no argumento.
         //Copia o nome para a string global.
 		case 176:	
-		    sys_fs_pathname_backup ( current_process, (int) arg3 );
+		    fs_pathname_backup ( current_process, (int) arg3 );
 			break;
 			
 		//177
@@ -2509,7 +2522,7 @@ void *gde_services ( unsigned long number,
 		//comando dir no shell.
 		//Listando arquivos em um diretório dado o nome.	
 		case 177:
-		    sys_fsList ( (const char *) arg2 );
+		    fsList ( (const char *) arg2 );
             break;
 
 
@@ -2520,7 +2533,7 @@ void *gde_services ( unsigned long number,
             taskswitch_lock ();
             scheduler_lock ();
 			//name , address.
-            Ret = (void *) sys_fsGetFileSize ( (unsigned char *) arg2 ); 
+            Ret = (void *) fsGetFileSize ( (unsigned char *) arg2 ); 
             scheduler_unlock ();
             taskswitch_unlock ();
             return (void *) Ret; 
@@ -2544,7 +2557,7 @@ void *gde_services ( unsigned long number,
 		//184
 		//pega o endereço do heap do processo dado seu id.	
         case SYS_GETPROCESSHEAPPOINTER:
-            return (void *) sys_GetProcessHeapStart ( (int) arg2 );
+            return (void *) GetProcessHeapStart ( (int) arg2 );
 			break;	
 
 		// feof	
@@ -2586,14 +2599,14 @@ void *gde_services ( unsigned long number,
 		//199 - Garbage Collector.	
 		//A ideia é que os utilitários de gerência de memória possam usar isso.
 		case SYS_GC:
-		    sys_gc ();
+		    gc ();
 			//return (void *) gc (); 
 		    break;
 		
 		//200 - Envia um sinal para um processo.
 		//argumentos (process handle, signal number).
 		case SYS_SENDSIGNAL:
-		    sys_signalSend ( (void *) a2, (int) arg3 );
+		    signalSend ( (void *) a2, (int) arg3 );
 		    break;
 			
 		//...
@@ -2603,7 +2616,7 @@ void *gde_services ( unsigned long number,
         //bloqueamos uma thead por um dos motivos indicados em argumento.
         case SYS_GENERICWAIT:
 		    //TID, reason.
-            //sys_block_for_a_reason ( (int) arg2, (int) arg3 );
+            //block_for_a_reason ( (int) arg2, (int) arg3 );
 			break;		
 			
 		//210
@@ -2634,7 +2647,7 @@ void *gde_services ( unsigned long number,
 		// retorna o ID.
 		// O ID fica em terminal_window.
 		case SYS_GETTERMINALWINDOW: 
-			return (void *) sys_systemGetTerminalWindow (); 
+			return (void *) systemGetTerminalWindow (); 
 			break;
 
 		// 216
@@ -2643,7 +2656,7 @@ void *gde_services ( unsigned long number,
 		// #obs: O refresh de stdout podera' ocorrer em ts.c
 		// O ID fica em terminal_window.	
 		case SYS_SETTERMINALWINDOW:	
-		   sys_systemSetTerminalWindow ( (struct window_d *) arg2 );	
+		   systemSetTerminalWindow ( (struct window_d *) arg2 );	
 		   break;
 		   
 		//217
@@ -2677,7 +2690,7 @@ void *gde_services ( unsigned long number,
 		// 222 - Create timer.
 		// IN: window, ms e tipo
         case 222:
-            return (void *) sys_create_timer ( (struct window_d *) arg2, 
+            return (void *) create_timer ( (struct window_d *) arg2, 
                                 (unsigned long) arg3, (int) arg4 );
             break;
 
@@ -2685,19 +2698,19 @@ void *gde_services ( unsigned long number,
         //223 - get sys time info.
         // informações variadas sobre o sys time.		
 		case 223:
-		    return (void *) sys_get_systime_info ( (int) arg2 );
+		    return (void *) get_systime_info ( (int) arg2 );
             break;		
 
 
 		//224 - get time	
 		case SYS_GETTIME:	
-		    return (void *) sys_get_time ();
+		    return (void *) get_time ();
 			break;
 
 
 		//225 - get date
 		case SYS_GETDATE:
-		    return (void *) sys_get_date ();
+		    return (void *) get_date ();
             break;		
 
 
@@ -2727,25 +2740,25 @@ void *gde_services ( unsigned long number,
 		//232 - fclose
 		case 232:
 			return NULL;
-			//return (void *) sys_fclose ( (FILE *) arg2);
+			//return (void *) fclose ( (FILE *) arg2);
 			break;
 			
 		// 233 - fflush.
 		case 233:
 			return NULL;
-			//return (void *) sys_fflush ( (FILE *) arg2);
+			//return (void *) fflush ( (FILE *) arg2);
 			break;
 			
 		// 234 - fprintf.	
 		case 234:
 			return NULL;
-			//return (void *) sys_fprintf ( (FILE *) arg2, (const char *) arg3 );
+			//return (void *) fprintf ( (FILE *) arg2, (const char *) arg3 );
 			break;
 			
 		//235 - fputs
 		case 235:
 			return NULL;
-			//return (void *) sys_fputs ( (const char *) arg2, (FILE *) arg3 );
+			//return (void *) fputs ( (const char *) arg2, (FILE *) arg3 );
 			break;
 			
 		// tty ... 236 237 238 239.	
@@ -2758,28 +2771,29 @@ void *gde_services ( unsigned long number,
 			
 		//240
 		case SYS_GETCURSORX:
-		    return (void *) sys_get_cursor_x();
+		    return (void *) get_cursor_x();
 		    break;
 
 		//241
 		case SYS_GETCURSORY:
-		    return (void *) sys_get_cursor_y();
+		    return (void *) get_cursor_y();
 		    break;
 			
 		//244 enable text cursor.	
 		case 244:
-		    sys_timerEnableTextCursor ();
+		    timerEnableTextCursor ();
 		    //timerShowTextCursor = 1;
 		    //gwsEnableTextCursor ();
             break;		
 		
 		//245 disable text cursor.
 		case 245:
-		    sys_timerDisableTextCursor ();
+		    timerDisableTextCursor ();
 		    //timerShowTextCursor = 0;
 		    //gwsDisableTextCursor ();
             break;
-			
+	
+	
 		//246 ~ 249 reservado para libc support.	
 			
 			
@@ -2826,40 +2840,40 @@ void *gde_services ( unsigned long number,
 
 		// 250 - Get system metrics
         case SYS_GETSYSTEMMETRICS:
-            return (void *) sys_systemGetSystemMetrics ( (int) arg2 );
+            return (void *) systemGetSystemMetrics ( (int) arg2 );
             break;
 
 
 		//251
 		//Informações sobre o disco atual.
 		case SYS_SHOWDISKINFO:
-		    sys_diskShowCurrentDiskInfo();
+		    diskShowCurrentDiskInfo();
 			refresh_screen();
 			break;
 
 		//252
 		//Informações sobre o volume atual.
 		case SYS_SHOWVOLUMEINFO:
-		    sys_volumeShowCurrentVolumeInfo();
+		    volumeShowCurrentVolumeInfo();
 			refresh_screen();
 			break;
 		
 		//253
 		case SYS_MEMORYINFO:
-		    sys_memoryShowMemoryInfo();
+		    memoryShowMemoryInfo();
 			refresh_screen();
 			break;
 			
 			
 		//254 - Show PCI info.	
 		case SYS_SHOWPCIINFO: 
-			sys_systemShowDevicesInfo();
+			systemShowDevicesInfo();
 			refresh_screen();
 			break;
 			
 		//255 - Mostra informações sobre o kernel.	
 		case SYS_SHOWKERNELINFO: 
-			sys_KiInformation ();
+			KiInformation ();
 			//refresh_screen ();
 			break;
 
