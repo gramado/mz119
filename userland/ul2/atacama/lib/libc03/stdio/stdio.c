@@ -359,9 +359,8 @@ int fclose (FILE *stream){
  * falhar e retornar null.
  */
 
-FILE *fopen ( const char *filename, const char *mode ){
-
-
+FILE *fopen ( const char *filename, const char *mode )
+{
     FILE *__stream;
     
     
@@ -2440,30 +2439,12 @@ int getc(FILE *stream)
 
 int __gramado__getc ( FILE *stream ){
 
-    //if ( (void *) stream == NULL )
-       //return EOF;
-
-    
-    //#bugbug: não passaremos mais ao kernel ponteiro de stream.
-    /*
-    return (int) gramado_system_call ( 136, 
-                     (unsigned long) stream,  
-                     (unsigned long) stream,  
-                     (unsigned long) stream );
-     */
-     
-     
     int ch = 0;
 
 
-    if ( (void *) stream == NULL )
-    {
-		// #debug
-		printf ("fgetc: stream struct fail\n");
-		//refresh_screen();
-		
-		return EOF;
-
+    if ( (void *) stream == NULL ){
+        printf ("fgetc: stream struct fail\n");
+        return EOF;
     }else{
 
 		 //(--(p)->_r < 0 ? __srget(p) : (int)(*(p)->_p++))
@@ -2529,8 +2510,8 @@ int __gramado__getc ( FILE *stream ){
  * pois agora o arquivo 'e gerenciado pelo kernel.
  */
 
-int fgetc ( FILE *stream ){
-
+int fgetc ( FILE *stream )
+{
     if ( (void *) stream == NULL )
        return EOF;
 

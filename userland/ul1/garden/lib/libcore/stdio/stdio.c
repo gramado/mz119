@@ -309,13 +309,87 @@ int fclose (FILE *stream){
  * falhar e retornar null.
  */
 
-FILE *fopen ( const char *filename, const char *mode ){
+FILE *fopen ( const char *filename, const char *mode )
+{
+    FILE *__stream;
+    
+    
+    __stream = (FILE *) malloc( sizeof(FILE) );
+    
+    if ( (void *) __stream == NULL )
+        return NULL;
+        
+    //
+    // size
+    //
+    
+    stdio_fntos( (char *) filename);
+    
+    // get file size
+    size_t s = (size_t) gramado_system_call ( 178, 
+                            (unsigned long) filename,
+                            0,
+                            0 );
+    
+    
+    if ( s <= 0 || s > 1024*1024 )
+    {
+        printf ("fopen: size\n");
+        return NULL;
+    }
+    
+    // endereço desejando.
+    // ring 3.
+    unsigned long address = (unsigned long) malloc(s);
+    
+    if (address == 0)
+    {
+        printf ("fopen: address\n");
+        return NULL;
+    }
 
-    return (FILE *) gramado_system_call ( 246, 
-                        (unsigned long) filename, 
-                        (unsigned long) mode, 
-                        (unsigned long) mode ); 
+
+    // load the file into the address.
+    
+    int status = -1;
+    
+    //IN: service, name, address, 0, 0 
+    status = (int) gramado_system_call( 3, 
+                      (unsigned long) filename, 
+                      (unsigned long) address,  
+                      0 );
+
+    if (status < 0)
+    {
+        printf ("fopen: Couldn't load the file\n");
+        return NULL;
+    }
+    
+
+    //#todo    
+    __stream->_file = -1;    
+
+    //base.
+    __stream->_base = (unsigned char *) address; 
+    __stream->_p = __stream->_base;
+        
+    // size
+    __stream->_lbfsize = (int) s;   
+    __stream->_cnt = __stream->_lbfsize;
+    
+    
+
+    // retornar a stream que criamos aqui. 
+    
+    return (FILE *) __stream;
 }
+
+
+
+
+
+
+
 
 
 /*
@@ -2250,6 +2324,77 @@ int fileno ( FILE *stream ){
 }
 
 
+
+int __gramado__getc ( FILE *stream ){
+
+
+    int ch = 0;
+
+
+
+    if ( (void *) stream == NULL ){
+        printf ("fgetc: stream struct fail\n");
+        return EOF;
+    }else{
+
+		 //(--(p)->_r < 0 ? __srget(p) : (int)(*(p)->_p++))
+		
+		//#fim.
+		//cnt decrementou e chegou a zero.
+		//Não há mais caracteres disponíveis entre 
+		//stream->_ptr e o tamanho do buffer.
+		
+		if ( stream->_cnt <= 0 )
+		{
+			stream->_flags = (stream->_flags | _IOEOF); 
+			stream->_cnt = 0;
+			
+		    //printf ("#debug: fgetc: $\n");
+			
+			//isso funciona, significa que a estrutura tem ponteiro e base validos.
+			//printf("show fgetc:: %s @\n", stream->_base );
+		    //refresh_screen();
+			
+			return EOF;
+		};
+
+		//#debug
+		//nao podemos acessar um ponteiro nulo... no caso endereço.
+		
+		if ( stream->_p == 0 )
+		{
+			printf ("#debug: fgetc: stream struct fail\n");
+		    //refresh_screen();
+			return EOF;
+			
+		}else{
+			
+			// #obs: 
+			// Tem que ter a opção de pegarmos usando o posicionamento
+			// no buffer. O terminal gosta dessas coisas.
+			
+		    //Pega o char no posicionamento absoluto do arquivo
+		    ch = (int) *stream->_p;
+				
+            stream->_p++;
+            stream->_cnt--;
+
+		    return (int) ch;
+		
+		}
+		//fail
+    };
+
+
+	//#debug
+    //printf ("fgetc: $$\n");
+	//refresh_screen();
+
+     return EOF;
+}
+
+
+
 /*linux klibc style.*/
 //isso deve ir para ring0
 /*
@@ -2298,79 +2443,27 @@ int fgetc ( FILE *stream ){
 */
 
 // usado pelo terminal ??
-int fgetc ( FILE *stream ){
-
-    int ch = 0;
-
-
+int fgetc ( FILE *stream )
+{
     if ( (void *) stream == NULL )
+       return EOF;
+
+    // #todo
+    /*
+    if ( !__validfp(stream) )
     {
-		// #debug
-		//printf ("fgetc: stream struct fail\n");
-		//refresh_screen();
-		
-		return (int) (-1);
+        errno = EINVAL;
+        return EOF;
+    }
+    */    
+    
+    // se gramado
+    return (int) __gramado__getc(stream);
+    
 
-    }else{
-
-		 //(--(p)->_r < 0 ? __srget(p) : (int)(*(p)->_p++))
-		
-		//#fim.
-		//cnt decrementou e chegou a zero.
-		//Não há mais caracteres disponíveis entre 
-		//stream->_ptr e o tamanho do buffer.
-		
-		if ( stream->_cnt <= 0 )
-		{
-			stream->_flags = (stream->_flags | _IOEOF); 
-			stream->_cnt = 0;
-			
-		    //printf ("#debug: fgetc: $\n");
-			
-			//isso funciona, significa que a estrutura tem ponteiro e base validos.
-			//printf("show fgetc:: %s @\n", stream->_base );
-		    //refresh_screen();
-			
-			return EOF;
-		};
-		
-		//#debug
-		//nao podemos acessar um ponteiro nulo... no caso endereço.
-		
-		if ( stream->_p == 0 )
-		{
-			//printf ("#debug: fgetc: stream struct fail\n");
-		    //refresh_screen();
-			return EOF;
-			
-		}else{
-			
-
-			// #obs: 
-			// Tem que ter a opção de pegarmos usando o posicionamento
-			// no buffer. O terminal gosta dessas coisas.
-			
-		    //Pega o char no posicionamento absoluto do arquivo
-		    ch = (int) *stream->_p;
-				
-            stream->_p++;
-            stream->_cnt--;
-
-		    return (int) ch;
-		
-		}
-		//fail
-    };
-
-
-	//#debug
-    printf ("fgetc: $$\n");
-	refresh_screen();
-
-
-    return (int) (-1);
+    // se glibc
+    //return __getc(stream);
 }
-
 
 
 

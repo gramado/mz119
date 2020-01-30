@@ -817,12 +817,17 @@ int sscanf(const char *str, const char *format, ...);
 /*
  * Character Input and Output Functions
  */
- 
-int fgetc ( FILE *stream );;
-#define getc fgetc
-int ungetc ( int c, FILE *stream );
 
+
+int __gramado__getc ( FILE *stream );
+
+
+int fgetc ( FILE *stream );
+int ungetc ( int c, FILE *stream );
 long ftell (FILE *stream);
+
+
+#define getc fgetc
 
 
 

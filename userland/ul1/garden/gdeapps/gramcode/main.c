@@ -1000,70 +1000,54 @@ skip_test:
 	
 //file:
 
-    // ## No file ## 
+    //
+    // File name.
+    //
+
+    // argv[0] =  Nome do programa.
+    // argv[1] =  Nome do arquivo.
+
+
     // Se nenhum nome de arquivo foi especificado, então começamos a digitar.
-
-    if ( (char *) argv[1] == NULL )
-    {
+    if ( (char *) argv[1] == NULL ){
         goto startTyping;	
-    };
+    }
 
 
-//#ifdef TEDITOR_VERBOSE		
+
+//#ifdef TEDITOR_VERBOSE
     gde_set_cursor (0,0);
     printf("\n");
     printf("Loading file ...\n");
 //#endif	
 
+    //
+    // Open.
+    //
+
 
     fp = fopen ( (char *) argv[1], "rb" );	
 
     if ( fp == NULL ){
-        printf ("fopen fail, Start typing ...\n");
+        printf ("gramcode: Couldn't open the file. Start typing ...\n");
         goto startTyping;
-
     }else{
 
 
-		//Mostrando o arquivo.
-		
-//#ifdef TEDITOR_VERBOSE
+        // Mostrando o arquivo.
         printf ("\n");
-        //printf(".\n");
-        //printf("..\n");
-        //printf("...\n");
-//#endif 
-	
-       // printf("Show file\n");
-		
-	
-		//#debug
-	    //printf ("Testing fgetc ... \n\n");
-		
-		while (1)
-		{
-			// #bugbug: 
-			// page fault quando chamamos fgetc.
 
-			ch_test = (int) fgetc (fp);
-			//ch_test = (int) getc (f1); 
-			
-			if( ch_test == EOF )
-			{
-				printf("\n\n");
-				printf("EOF reached :)\n\n");
-				goto out;
-				
-			}else{
-				
-				// #bugbug
-				// #todo:
-				// Temos que usar alguma rotina na api.
-				// Pois estamos em um aplicativo com janela.
-				
-			    printf ("%c", ch_test);	
-			};
-		};
+        while (1)
+        {
+            ch_test = (int) fgetc (fp);
+
+            if ( ch_test == EOF ){
+                goto out;
+            }else{
+                printf ("%c", ch_test);	
+            };
+        };
+
 
 out:
 
