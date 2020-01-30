@@ -53,7 +53,6 @@ obj := $(objtree)
 PHONY := _all
 _all: all
 
-#Final message.
 	@echo "That's all!"
 
 
@@ -213,6 +212,10 @@ endif
 PHONY := all
 
 all: KERNEL.BIN kernel-image-link /mnt/gramadovhd  vhd-create vhd-mount vhd-copy-files vhd-unmount clean
+
+
+	#Givin permitions to run ./run hahaha
+	chmod 755 ./run
 
 	@echo "Gramado $(VERSION) $(PATCHLEVEL) $(SUBLEVEL) $(EXTRAVERSION) $(NAME) "
 	@echo "Arch x86"
@@ -820,11 +823,11 @@ oracle-virtual-box-test:
 
 # qemu 
 qemu-test:
-#	-debugcon stdio
-	qemu-system-x86_64 -hda GRAMADO.VHD -m 128 -device e1000 -show-cursor -serial stdio -usb -device usb-host 
-#	qemu-system-x86_64 -hda GRAMADO.VHD -m 512 -device e1000 -show-cursor
-#	qemu-system-x86_64 -hda GRAMADO.VHD -m 1044 -device e1000 -show-cursor
-#	qemu-system-x86_64 -hda GRAMADO.VHD -m 2048 -device e1000 -show-cursor
+	qemu-system-x86_64 -hda GRAMADO.VHD -m 128 -serial stdio 
+#	qemu-system-x86_64 -hda GRAMADO.VHD -m 128 -device e1000 -show-cursor -serial stdio -device e1000
+
+
+
 
 
 #install-kvm-qemu:
