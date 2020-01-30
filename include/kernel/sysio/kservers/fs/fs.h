@@ -867,11 +867,22 @@ void fsUpdateWorkingDiretoryString ( char *string );
 void fs_pathname_backup ( int pid, int n ); 
 
 
+
+// fs_load_file:
+// Carrega um arquivo do disco para a memória dado o nome e o
+// endereço.
+// #todo: Usar path.
+// IN: name, address
+
+file *fs_load_file ( unsigned long name, unsigned long address );
+
+
+// IN: name, address
+int fs_load_file_2 ( char *file_name, unsigned long file_address );
+
 //essa rotina é chamada por services em services.c
 int sys_read_file ( unsigned long name, unsigned long address );
 
-
-FILE *sys_read_file2 ( unsigned long name, unsigned long address );
 
 
 int

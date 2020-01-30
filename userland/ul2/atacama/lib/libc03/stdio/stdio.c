@@ -369,53 +369,70 @@ FILE *fopen ( const char *filename, const char *mode ){
     
     if ( (void *) __stream == NULL )
         return NULL;
-    
-    
+        
     //
-    // Get file size.
-    //
-    
-    //
-    // Allocate memory to the buffer.
+    // size
     //
     
-    //
-    // Call kernel to load the file.
-    //
+    stdio_fntos( (char *) filename);
     
-    //
-    // The buffer is the _base of the stream.
-    //
-    
-    //
-    // return the pointer.
-    //
+    // get file size
+    size_t s = (size_t) gramado_system_call ( 178, 
+                            (unsigned long) filename,
+                            0,
+                            0 );
     
     
-    // #bugbug
-    // Isso retorna uma stream que não está em ring3.
-    // Pode até estar em alguma memória compartilhada,
-    // mas não é o que queremos agora.
-
-    // #todo
-    // podemos criar uma stream aqui,
-    // Podemos criar um buffer aqui depois de solicitar
-    // o tamanho do arquivo.
-    // Podemos passar o buffer para o kernel.
-    // Podemos retornar o buffer, colocar ele em stream->_base
-    // e retornarmos o ponteiro para a stream
-
-    //return (FILE *) gramado_system_call ( 246, 
-                        //(unsigned long) filename, 
-                        //(unsigned long) mode, 
-                        //(unsigned long) mode ); 
+    if ( s <= 0 || s > 1024*1024 )
+    {
+        printf ("fopen: size\n");
+        return NULL;
+    }
+    
+    // endereço desejando.
+    // ring 3.
+    unsigned long address = (unsigned long) malloc(s);
+    
+    if (address == 0)
+    {
+        printf ("fopen: address\n");
+        return NULL;
+    }
 
 
-    //#todo
+    // load the file into the address.
+    
+    int status = -1;
+    
+    //IN: service, name, address, 0, 0 
+    status = (int) gramado_system_call( 3, 
+                      (unsigned long) filename, 
+                      (unsigned long) address,  
+                      0 );
+
+    if (status < 0)
+    {
+        printf ("fopen: Couldn't load the file\n");
+        return NULL;
+    }
+    
+
+    //#todo    
+    __stream->_file = -1;    
+
+    //base.
+    __stream->_base = (unsigned char *) address; 
+    __stream->_p = __stream->_base;
+        
+    // size
+    __stream->_lbfsize = (int) s;   
+    __stream->_cnt = __stream->_lbfsize;
+    
+    
+
     // retornar a stream que criamos aqui. 
-    //return (FILE *) __stream;
     
-    return NULL;
+    return (FILE *) __stream;
 }
 
 

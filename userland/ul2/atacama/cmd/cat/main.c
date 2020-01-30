@@ -20,35 +20,29 @@
 
 //Talvez precisemos configurar o stdout.
  
+
+// Funcionou.
  
 int main ( int argc, char *argv[] ){
 
     FILE *fp;
     register int c;
 
-
-    printf ("cat: Initializing ...\n");
-
+    // open.
+    
     fp = fopen ( (char *) argv[1], "r+" );
-
     if ( (void *) fp == NULL )
         return -1;     
 
-
-    //libc_set_output_mode (LIBC_NORMAL_MODE);
-
-	//get current tty stdou_ring0
-    //stdout = (FILE *) system_call ( 1000, 0, 0, 0 );
-
-
+    
+    // show
+    
     while ( (c = fgetc(fp)) >= 0 )
         printf ("%c", c);
 
-
-    printf ("cat: Done.\n");
-
     return 0;
 }
+
 
 //
 // End.

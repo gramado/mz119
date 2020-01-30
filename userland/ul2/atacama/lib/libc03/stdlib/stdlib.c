@@ -19,6 +19,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <sys/ioctl.h>
+#include <fcntl.h>
+
 
 //system calls.
 #include <stubs/gramado.h> 
@@ -1973,7 +1976,7 @@ ldiv_t ldiv(long numerator, long denominator)
 //This function is specified in POSIX.1-2001. 
 int posix_openpt (int flags)
 {
-    return (int) open ("/dev/ptmx", flags);
+    return (int) open ("/dev/ptmx", flags, 0);
 }
 
 

@@ -1337,22 +1337,28 @@ void *gde_services ( unsigned long number,
 			    (unsigned long) arg3, 0 , 0 ); 
 		    break;
 
-		//3 fopen (i/o)
-		//Carregar um arquivo, dado o nome e o endereço.
-		//#obs: chamar rotinas de interface sys_ simplificam 
-        //o atendimento às system calls.
-		// A funçao esta' em fs/fs.c
-		//IN: name. address
-		case SYS_READ_FILE:
-			
-			//funciona, nao mexer nesse
-		    //return (void *) sys_read_file ( (unsigned long) a2, (unsigned long) arg3 );
-			
-			//#importante: estamos usando esse.
-			//testando novos recursos,
-			return (void *) sys_read_file2 ( (unsigned long) a2, 
-			                    (unsigned long) arg3 );
-			break;
+
+        // 3 
+        // Carregar um arquivo do disco para a memória.
+        // See: fs.c
+        // IN: name, address
+        // #todo: Mudar para: case SYS_LOAD_FILE:
+        
+        case SYS_READ_FILE:
+
+            // #test
+            // FUNCIONOU.
+            return (void *) fs_load_file_2 ( (char *) a2, 
+                                (unsigned long) arg3 );
+
+
+            //return (void *) fs_load_file ( (unsigned long) a2, 
+            //                    (unsigned long) arg3 );
+
+            // Funciona, não mexer.
+            //return (void *) sys_read_file ( (unsigned long) a2, (unsigned long) arg3 );
+            
+            break;
 
 
 		//4 (i/o)
@@ -2505,6 +2511,8 @@ void *gde_services ( unsigned long number,
 		case 177:
 		    sys_fsList ( (const char *) arg2 );
             break;
+
+
 
 		 //#test
 		 //implementando esse serviço.

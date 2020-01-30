@@ -30,6 +30,7 @@ CFLAGS = -m32 \
 	
 LIBC    = ../../lib/libc03/include/
 LIBCOBJ = ../../lib/libc03/obj
+
 API     = ../../lib/api02/include/
 APIOBJ  = ../../lib/api02/obj
 
@@ -47,6 +48,7 @@ time.o \
 unistd.o \
 termios.o \
 ioctl.o \
+fcntl.o \
 stubs.o
 
 
@@ -74,6 +76,7 @@ all-c:
 
 	cp $(LIBCOBJ)/termios.o  .
 	cp $(LIBCOBJ)/ioctl.o  .
+	cp $(LIBCOBJ)/fcntl.o  .
 
 	
 cat-link:

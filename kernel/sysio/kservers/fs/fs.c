@@ -1350,6 +1350,250 @@ void fs_pathname_backup ( int pid, int n ){
 
 
 /*
+ **************************
+ * sys_read_file2
+ *     carrega do diretório alvo. 
+ */
+
+file *fs_load_file ( unsigned long name, unsigned long address ){
+ 
+    file *__file;
+    
+    int i;
+    int Ret = -1;
+    unsigned long new_address;
+
+
+    __file = (file *) kmalloc ( sizeof(file) );
+
+    if ( (void *) __file == NULL ){
+        return NULL;
+    }else{
+
+
+		 //__file->_base = (char *) address;
+		 //__file->_p = stream->_base;
+		 //__file->_cnt = 0;
+		 //__file->_flag = 0;
+		 //...
+		 
+	     //printf("sys_read_file2: struct ok \n");
+		 //printf("base=%x \n",stream->_base);
+		 //printf("ptr=%x  \n",stream->_ptr);
+		
+	 };
+	
+
+	 //#importante, 
+	 //A atualizaçao do nome é feita aqui.
+
+	//update name.
+    fsUpdateWorkingDiretoryString ( (char *) name );
+
+
+	//#importante
+	//temos que respeitar o endereço passaro pelo usu'ario.
+	
+	new_address = address;
+
+
+    if ( new_address == 0 ){
+        printf ("fs_load_file: address fail\n");
+        return NULL;
+    }
+
+
+	//#bugbug
+	//tenta carregar o diret'orio que tem o endereço indicado aqui, 
+	//se falhar carregue o root por enquanto.
+
+	if ( current_target_dir.current_dir_address == 0 )
+	{
+	    printf ("fs_load_file: current_target_dir.current_dir_address fail \n");
+		
+		//reset.
+		current_target_dir.current_dir_address = VOLUME1_ROOTDIR_ADDRESS;
+		
+		for ( i=0; i< 11; i++ )
+		{
+			current_target_dir.name[i] = '\0';
+		}		
+
+		return NULL;
+	}
+
+
+	//#debug
+	//printf ("sys_read_file2: dir_name=(%s) dir_addr=(%x) #debug \n",
+	//    current_target_dir.name, current_target_dir.current_dir_address );
+
+
+    size_t s = (size_t) fsGetFileSize ( (unsigned char *) name );
+
+
+    __file->_base = (char *) new_address;
+    __file->_p  = (char *) new_address;
+    __file->_cnt = s;
+
+    __file->_tmpfname = (char *) name;
+
+
+    // #bugbug
+    // Precisamos de um número na lista de arquivos abertos 
+    // pelo processo.
+    
+    __file->_file = 0;  
+
+
+	//#debug
+    //printf ("sys_read_file2: struct ok \n");
+    printf ("_base=%x \n", __file->_base);
+    printf ("_p=%x  \n", __file->_p);
+
+
+    //++
+    taskswitch_lock ();
+    scheduler_lock ();
+
+    Ret = (int) fsLoadFile ( VOLUME1_FAT_ADDRESS,  
+                    current_target_dir.current_dir_address,    //src dir address 
+                    (unsigned char *) current_target_dir.name, 
+                    (unsigned long) new_address );             //dst dir address
+
+    scheduler_unlock ();
+    taskswitch_unlock ();
+    //--
+
+
+    // Ok.
+    // Done!
+    
+    if ( Ret == 0)
+    {
+        printf ("fs_load_file: Done\n");
+
+        current_target_dir.current_dir_address = new_address;
+        
+        return (file *) __file;
+
+
+    // Fail!
+    
+    }else{
+
+        current_target_dir.current_dir_address = 0;
+        //fclose(__file);
+
+        return NULL;
+    };
+
+
+    return NULL;
+}
+
+
+// Carrega um arquivo do disco para a memória.
+// funcionou.
+int fs_load_file_2 ( char *file_name, unsigned long file_address )
+{
+
+    struct process_d *p;
+    file *__file;
+    
+    int Status = -1;
+    int i;
+
+    // Convertendo o formato do nome do arquivo.    
+    // >>> "12345678XYZ"
+    
+    read_fntos ( (char *) file_name );
+
+
+    // Searching for the file only on the root dir.
+
+    Status = (int) KiSearchFile ( file_name, VOLUME1_ROOTDIR_ADDRESS );
+    
+    if (Status == 1){
+         printf ("found\n");
+    }else{
+         printf ("file not found\n");
+         refresh_screen();
+         return -1;
+    };
+
+    //
+    // Process.
+    //
+  
+    p = (struct process_d *) processList[current_process];
+
+    if ( (void *) p == NULL )
+        return -1;
+
+    if ( p->used != 1 || p->magic != 1234 )
+        return -1;
+        
+        
+    for (i=0; i<32; i++)
+    {
+         if ( p->Objects[i] == 0 )
+         {
+             goto __OK;
+         }
+    };
+    panic ("fs_load_file_2: fail\n");
+
+__OK:
+
+    __file = (file *) kmalloc ( sizeof(file) );
+    if ( (void *) __file == NULL )
+        return -1;
+
+    __file->_file = i;
+    __file->used = 1;
+    __file->magic = 1234;
+
+    size_t s = (size_t) fsGetFileSize ( (unsigned char *) file_name );
+    
+    if (s <= 0)
+        return -1;
+    
+    //limits
+    if (s > 1024*1024)
+        return -1;
+        
+        
+    //limits?
+    
+    __file->_base = (unsigned char *) file_address;
+    
+    if ( (void *) __file->_base == NULL )
+        return -1;
+    
+    
+    __file->_p = __file->_base;
+    
+
+ 
+    Status = (int) fsLoadFile ( VOLUME1_FAT_ADDRESS, 
+                       VOLUME1_ROOTDIR_ADDRESS, 
+                       file_name, 
+                       (unsigned long) file_address );
+   
+    if ( Status != 0 )
+        return -1;
+        
+        
+    printf ("done\n");
+    refresh_screen();
+          
+    // OK.
+    return 0;
+}
+
+
+
+/*
  * sys_read_file:
  *     Interface para carregar arquivo ou diretório.
  *     Essa rotina é chamada por services em services.c
@@ -1388,140 +1632,6 @@ fail:
     return 1;
 }
 
-
-/*
- **************************
- * sys_read_file2
- *     carrega do diretório alvo. 
- */
-
-FILE *sys_read_file2 ( unsigned long name, unsigned long address ){
- 
-    FILE *stream;
-    int i;
-    int Ret = -1;
-    unsigned long new_address;
-
-
-    stream = (FILE *) kmalloc ( sizeof(FILE) );
-
-    if ( (void *) stream == NULL )
-    {
-	     return (FILE *) 0;
-
-    }else{
-
-		 //stream->_base = (char *) address;
-		 //stream->_ptr = stream->_base;
-		 //stream->_cnt = 0;
-		 //stream->_flag = 0;
-		 //...
-		 
-	     //printf("sys_read_file2: struct ok \n");
-		 //printf("base=%x \n",stream->_base);
-		 //printf("ptr=%x  \n",stream->_ptr);
-		
-	 };
-	
-
-	 //#importante, 
-	 //A atualizaçao do nome é feita aqui.
-
-	//update name.
-    fsUpdateWorkingDiretoryString ( (char *) name );
-
-
-	//#importante
-	//temos que respeitar o endereço passaro pelo usu'ario.
-	
-	new_address =  address;
-
-    if ( new_address == 0 )
-    {
-        printf ("sys_read_file2: address fail\n");
-		//return -1;
-
-        return (FILE *) 0;
-    }
-
-
-	//#bugbug
-	//tenta carregar o diret'orio que tem o endereço indicado aqui, 
-	//se falhar carregue o root por enquanto.
-
-	if ( current_target_dir.current_dir_address == 0 )
-	{
-	    printf ("sys_read_file2: current_target_dir.current_dir_address fail \n");
-		
-		//reset.
-		current_target_dir.current_dir_address = VOLUME1_ROOTDIR_ADDRESS;
-		
-		for ( i=0; i< 11; i++ )
-		{
-			current_target_dir.name[i] = '\0';
-		}		
-		
-		//return -1;
-		return (FILE *) 0;
-	}
-
-
-	//#debug
-	//printf ("sys_read_file2: dir_name=(%s) dir_addr=(%x) #debug \n",
-	//    current_target_dir.name, current_target_dir.current_dir_address );
-
-
-
-	size_t s = (size_t) fsGetFileSize ( (unsigned char *) name );
-
-
-    stream->_base = (char *) new_address;
-    stream->_p  = (char *) new_address;
-    stream->_cnt = s;
-
-    stream->_file = 0;
-    stream->_tmpfname = (char *) name;
-
-	//#debug
-    //printf ("sys_read_file2: struct ok \n");
-    printf ("base=%x \n", stream->_base);
-    printf ("ptr=%x  \n", stream->_p);
-
-
-    //++
-    taskswitch_lock ();
-    scheduler_lock ();
-
-    Ret = (int) fsLoadFile ( VOLUME1_FAT_ADDRESS,  
-                    current_target_dir.current_dir_address,    //src dir address 
-                    (unsigned char *) current_target_dir.name, 
-                    (unsigned long) new_address );             //dst dir address
-
-    scheduler_unlock ();
-    taskswitch_unlock ();
-    //--
-
-
-	// Veremos se o carregamento funcionou ou não.
-
-	if ( Ret == 0)
-	{
-		printf ("sys_read_file2: done\n");
-
-        current_target_dir.current_dir_address = new_address;
-        return (FILE *) stream;
-
-    }else{
-
-		current_target_dir.current_dir_address = 0;
-		//fclose(stream);
-
-        return (FILE *) 0;
-    };
-
-
-    return (FILE *) 0;
-}
 
 
 /*
