@@ -297,21 +297,22 @@ int tty_sets (struct tty_d *tty, int options, struct termios *termiosp )
 }
  
  
-
-
-
-
-
-//#todo
-/*
-int 
-tty_ioctl ( int fd, unsigned long request, char *arg );
+ 
+// #todo
 int 
 tty_ioctl ( int fd, unsigned long request, char *arg )
 {
+	
+	//switch(request)
+	
+	    //cases:
+	    //ret = tty_gets(&tty, (struct termios *)arg);
+	    //ret = tty_sets(&tty, IOCTL_MINOR(cmd), (struct termios *)arg);
+	    //ret = tty_clear(&tty);
+	
     return -1;
 }
-*/
+
 
 
 /*
@@ -329,31 +330,6 @@ void release_dev (int dev, FILE *stream)
 
 
 
-//#test
-/*
-void tty_attr_init ( struct termios *t );
-void tty_attr_init ( struct termios *t )
-{
-	//
-	if ( (void *) t == NULL )
-	    return;
-	
-    t->c_iflag = BRKINT | ICRNL;
-    t->c_oflag = 0;
-    t->c_cflag = 0;
-    t->c_lflag = ECHO | ECHOE | ECHOK | ECHONL | ICANON | ISIG;
-    t->c_cc[VEOF] = 0x04;     // ASCII EOT 
-    t->c_cc[VEOL] = 0x00;     // undefined 
-    t->c_cc[VERASE] = 0x08;   // ASCII BS 
-    t->c_cc[VINTR] = 0x03;    // ASCII ETX 
-    t->c_cc[VKILL] = 0x00;    // undefined 
-    t->c_cc[VMIN] = 0x00;     // undefined 
-    t->c_cc[VQUIT] = 0x1C;    // ASCII FS 
-    t->c_cc[VSTART] = 0x00;   // undefined 
-    t->c_cc[VSUSP] = 0x00;    // undefined 
-    t->c_cc[VTIME] = 0x00;
-}
-*/
 
 
 /*
@@ -380,12 +356,6 @@ struct tty_d *get_tty (int tty_id)
 }
 */
 
-
-/*
-int tty_fclose (FILE *stream);
-int tty_fclose (FILE *stream)
-{}
-*/
 
 
 /*
@@ -449,35 +419,42 @@ void tty_start (struct tty_d *tty)
 
 
 
-/*
-void tty_reset_termios ( struct tty_d *tty );
 void tty_reset_termios ( struct tty_d *tty )
 {
     //#todo: Limits messages
     if ( (void *) tty == NULL )
         return;
  
-	tty->termios.c_iflag = ICRNL | IXON | BRKINT;
-	tty->termios.c_oflag = OPOST | ONLCR | NL0 | CR0 | TAB0 | BS0 | VT0 | FF0;
-	tty->termios.c_lflag = ECHO | ECHOE | ECHOK | ISIG | ICANON;
-	tty->termios.c_cflag = CS8 | CREAD;
+	tty->termios.c_iflag = BRKINT | ICRNL | IXON;
+	tty->termios.c_oflag = OPOST;
+	tty->termios.c_cflag = CREAD | CS8;
+	tty->termios.c_lflag = ECHO | ECHOE | ECHOK | ICANON | ISIG;
 	
 	tty->termios.c_ispeed = B9600;
 	tty->termios.c_ospeed = B9600;
 
-	tty->termios.c_cc[VINTR] = 3;//EOI
-	tty->termios.c_cc[VQUIT] = 28;//FS
-	tty->termios.c_cc[VERASE] = 8;//BS
-	tty->termios.c_cc[VEOF] = 4;//EOT
-	tty->termios.c_cc[VSUSP] = 26;//BS
-	tty->termios.c_cc[VEOL] = 0;//BS
-	tty->termios.c_cc[VKILL] = 1;//BS
-	tty->termios.c_cc[VEOL] = 2;//BS
+
+
+
+    //See: termios.h
+    //#todo: Quais falores devemos colocar aqui?!
+    
+    /*
+	tty->termios.c_cc[VEOF]   = 4;  //EOT
+	tty->termios.c_cc[VEOL]   = 2;  //BS
+	tty->termios.c_cc[VERASE] = 8;  //BS
+	tty->termios.c_cc[VINTR]  = 3;  //EOI
+	tty->termios.c_cc[VKILL]  = 1;  //BS
+	tty->termios.c_cc[VQUIT]  = 28; //FS
+	tty->termios.c_cc[VSUSP]  = 26; //BS
+    */
+    
+
 	
 	//tty->win_size.ws_col = 80;
 	//tty->win_size.ws_row = 25;
 }
-*/
+
 
 
 
@@ -631,6 +608,9 @@ int tty_find_empty_slot (){
 struct ttyldisc_d *ttyldisc_create (void) 
 {
     struct ttyldisc_d *__ttyldisc;
+    
+    
+    
     
     __ttyldisc = (struct ttyldisc_d *) kmalloc ( sizeof(struct ttyldisc_d) );
     

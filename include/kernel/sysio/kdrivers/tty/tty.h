@@ -3,6 +3,7 @@
  * Header para o gerenciado de fluxo de caractere.
  */
 
+
  
 
 #define TTYCHARS_COUNT_MAX 25    //80 
@@ -121,7 +122,7 @@ struct tty_d
 
 	// #importante: #TODO
 	// see: termios.h
-    struct termios *termios;
+    struct termios termios;
 
 
 	//
@@ -374,6 +375,13 @@ int
 tty_write ( unsigned int channel, 
             char *buffer, 
             int nr );
+
+
+
+int 
+tty_ioctl ( int fd, unsigned long request, char *arg );
+
+void tty_reset_termios ( struct tty_d *tty );
 
 //
 // End.

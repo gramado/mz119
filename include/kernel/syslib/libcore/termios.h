@@ -110,7 +110,6 @@ struct termios
 
 
 
-
 /* Values for termios c_iflag bit map.  POSIX Table 7-2. */
 #define BRKINT    0x0001  /* signal interrupt on break */
 #define ICRNL     0x0002  /* map CR to NL on input */
@@ -127,6 +126,9 @@ struct termios
 
 /* Values for termios c_oflag bit map.  POSIX Sec. 7.1.2.3. */
 #define  OPOST  0x0001  /* perform output processing */
+// #todo: more flags.
+//...
+
 
 
 
