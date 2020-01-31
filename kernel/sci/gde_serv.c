@@ -328,29 +328,45 @@ void *gde_extra_services ( unsigned long number,
     }
 
 
-    /*
-	// 512 - get x server PID
-    //rotina repetida
-    if ( number == SYS_GET_X_SERVER )
-    {
-		return NULL; //#todo
-        //return (void *) g_ws_pid;
-    }
-    */
-    
-    /*
-	// 513 - set x server PID
-    //rotina repetida
-    if ( number == SYS_SET_X_SERVER )
-    {
-		//g_ws_pid = (int) arg2;
-		return NULL;
-    }
-    */
-
+    //usado por 4 funções logo abaixo.
     struct desktop_d *__desktop;
     
-	// 514 - get wm PID
+	// 512 - get ws PID for a given desktop
+    if ( number == SYS_GET_WS_PID )
+    {
+        // pega o wm de um dado desktop.
+        __desktop = ( struct desktop_d *) arg2;
+        if ( (void *) __desktop != NULL )
+        {
+            if ( __desktop->desktopUsed == 1 && 
+                 __desktop->desktopMagic == 1234 )
+            {
+                return (void *) __desktop->ws; 
+            }
+        }
+        return NULL; //#bugbug: Isso pode significar pid 0.
+    }
+
+
+	// 513 - set ws PID for a given desktop
+    if ( number == SYS_SET_WS_PID )
+    {
+        __desktop = ( struct desktop_d *) arg2;
+        if ( (void *) __desktop != NULL )
+        {
+            if ( __desktop->desktopUsed == 1 && 
+                 __desktop->desktopMagic == 1234 )
+            {
+                 __desktop->ws = (int) arg3;
+                return (void *) 1;  //ok 
+            }
+        }
+        return NULL; //fail
+    }
+    
+    
+    
+	// 514 - get wm PID for a given desktop
 	// IN: desktop
     if ( number == SYS_GET_WM_PID )
     {
@@ -368,7 +384,7 @@ void *gde_extra_services ( unsigned long number,
     }
 
 
-	// 515 - set wm PID
+	// 515 - set wm PID for a given desktop
 	// IN: desktop, pid
     if ( number == SYS_SET_WM_PID )
     {
@@ -391,10 +407,12 @@ void *gde_extra_services ( unsigned long number,
     // ws para o desktop atual
     if ( number == SYS_SHOW_X_SERVER_INFO )
     {
-        kprintf ("516: ws PID=%d \n", CurrentDesktop->ws);
+        kprintf ("516: ws PID=%d \n", CurrentDesktop->ws );
         refresh_screen ();
         return NULL;
     }
+
+
 
     // 517 - show wm info
     // wm para o desktop atual
@@ -404,8 +422,10 @@ void *gde_extra_services ( unsigned long number,
         refresh_screen ();
         return NULL;
     }
-    
-    
+
+
+
+
     // Repinta todas as janelas que foram invalidadas.
     // Isso será usado pelo compositor do window server. 
     // Ou pelo window manager.

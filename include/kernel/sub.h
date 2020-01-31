@@ -51,6 +51,10 @@
 
 // List of system's daemons.
 
+// #bugbug
+// Estamos registrando o ws e o wm na
+// estrutura do desktop.
+
 //pid_t ____gramado_bin_pid;    // gramado.bin 
 //pid_t ____ili_bin_pid;        // ili.bin     
 //pid_t ____init_bin_pid;       // init.bin     

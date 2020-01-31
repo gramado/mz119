@@ -148,12 +148,76 @@ int BAT_TEST (void);
 
 
 
+int
+ps2kbd_send_to_ws ( struct window_d *window, 
+                    int msg, 
+                    unsigned long long1, 
+                    unsigned long long2 ); 
+
 
 unsigned long 
 __local_ps2kbd_procedure ( struct window_d *window, 
                            int msg, 
                            unsigned long long1, 
                            unsigned long long2 ); 
+
+
+
+int
+ps2kbd_send_to_ws ( struct window_d *window, 
+                    int msg, 
+                    unsigned long long1, 
+                    unsigned long long2 )
+{
+
+    struct process_d *__p;
+
+    // #todo
+    // Se o ws está rodando, então mandaremos a mensagem para 
+    // a a fila de mensagem dele.
+        
+    // #isso funcionou.
+    // o ws recebeu a mensagem de teclado.
+    // E é rápido.
+
+    if ( (void *) CurrentDesktop == NULL )
+        return -1;
+        
+  
+    if ( CurrentDesktop->desktopUsed != 1 || 
+         CurrentDesktop->desktopMagic != 1234 )
+    {
+        return -1;
+    }
+
+    
+    // PID
+    // Ainda não sabemos se esse PID é válido.
+    if (CurrentDesktop->ws <= 0)
+        return -1;   
+    
+    
+    __p = (struct process_d *) processList[ CurrentDesktop->ws  ];
+                     
+    __p->control->window_list[ __p->control->tail_pos ] = window;
+    __p->control->msg_list[ __p->control->tail_pos ] = msg;
+    __p->control->long1_list[ __p->control->tail_pos ] = long1;
+    __p->control->long2_list[ __p->control->tail_pos ] = long2;
+        
+    __p->control->tail_pos++;
+    if ( __p->control->tail_pos >= 31 )
+        __p->control->tail_pos = 0;
+        
+        
+    //ok    
+    return 0;
+}
+
+
+
+
+
+
 unsigned long 
 __local_ps2kbd_procedure ( struct window_d *window, 
                            int msg, 
@@ -238,6 +302,8 @@ __local_ps2kbd_procedure ( struct window_d *window,
 
 int KEYBOARD_SEND_MESSAGE ( unsigned char SC ){
 
+
+    struct process_d *__p;
     struct thread_d *t;
     struct window_d *w;
 
@@ -253,6 +319,7 @@ int KEYBOARD_SEND_MESSAGE ( unsigned char SC ){
     unsigned long ch;          //arg3 - (O caractere convertido para ascii).
     unsigned long status;      //arg4.  
     
+    int msg_status = -1;
     
     int save_pos = 0;
 
@@ -793,9 +860,32 @@ check_WindowWithFocus:
 		// Como o scancode é um char, precisamos converte-lo em unsigned long.
 
 
+        
+        
+        // #todo
+        // Se o ws está rodando, então mandaremos a mensagem para 
+        // a a fila de mensagem dele.
+        
+        // #isso funcionou.
+        // o ws recebeu a mensagem de teclado.
+        // E é rápido.
+
+        /*
+        msg_status = (int) ps2kbd_send_to_ws((struct window_d *)w,
+                           (int) message, 
+                           (unsigned long) ch,
+                           (unsigned long) tmp_sc);
+        
+        if ( msg_status == 0 )
+            return 0;
+            
+        */
+        
+        
         // Salvamos para limparmos a mensagem no caso de
         // enviarmos ela para o procedimento de janelas aqui do x/.
         save_pos = t->tail_pos;
+
 
         t->window_list[ t->tail_pos ] = w;
         t->msg_list[ t->tail_pos ] = message;

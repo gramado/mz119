@@ -67,6 +67,14 @@ gwsProcedure ( struct window_d *window,
 {
     switch(msg)
     {
+
+
+        // #test
+        // Tentando receber uma mensagem de digitação.
+        case MSG_KEYDOWN:
+            printf ("%c", (char) long1); //#test
+            break;
+
         case 1000:
         
             //draw text inside a window.
@@ -117,7 +125,7 @@ gwsProcedure ( struct window_d *window,
              
                 
          default:
-             printf ("msg=%d ",msg);
+             //printf ("msg=%d ",msg);
              break;
     }
 
@@ -218,7 +226,7 @@ int main (int argc, char **argv){
 
     // 715 - set ws PID
     // Setar esse processo como o ws do sistema.
-    gramado_system_call ( 715, 
+    gramado_system_call ( 513, 
         __desktop, __ws_pid, __ws_pid);
 
 

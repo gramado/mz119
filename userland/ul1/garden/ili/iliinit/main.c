@@ -38,7 +38,7 @@ int main (int argc, char **argv){
     
     
     // 714 - get ws PID for a given desktop
-    __ws_pid = (int) gramado_system_call ( 714,
+    __ws_pid = (int) gramado_system_call ( 512,
                          (unsigned long) __desktop,
                          (unsigned long) __desktop,
                          (unsigned long) __desktop );

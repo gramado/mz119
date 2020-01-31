@@ -1,5 +1,5 @@
 /*
- * File: execve/sci/syscall.h
+ * File: kernel/sci/syscall.h
  *
  * Descrição:
  *     SCI - System Call Interface header.
@@ -621,13 +621,15 @@
 //
 
 
-// Window server support.
-#define	SYS_GET_X_SERVER  512  // get x server PID
-#define	SYS_SET_X_SERVER  513  // set x server PID
 
-// Window manager support.
-#define	SYS_GET_WM_PID  514  // get wm PID
-#define	SYS_SET_WM_PID  515  // set wm PID
+
+// ws and wm.
+#define  SYS_GET_WS_PID  512
+#define  SYS_SET_WS_PID  513
+#define  SYS_GET_WM_PID  514
+#define  SYS_SET_WM_PID  515
+
+
 
 // Ingo for ws and wm.
 #define	SYS_SHOW_X_SERVER_INFO  516  // show x server info	
