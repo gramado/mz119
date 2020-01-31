@@ -596,6 +596,7 @@ vhd-copy-files:
 	-sudo cp userland/ul2/atacama/bin/TRUE.BIN      /mnt/gramadovhd
 	-sudo cp userland/ul2/atacama/bin/FALSE.BIN     /mnt/gramadovhd
 	-sudo cp userland/ul2/atacama/bin/CAT.BIN       /mnt/gramadovhd
+	-sudo cp userland/ul2/atacama/bin/CMP.BIN       /mnt/gramadovhd
 #	-sudo cp userland/ul2/atacama/bin/DUMPIT.BIN    /mnt/gramadovhd
 	-sudo cp userland/ul2/atacama/bin/HELLO.BIN     /mnt/gramadovhd
 	-sudo cp userland/ul2/atacama/bin/HELLO2.BIN    /mnt/gramadovhd

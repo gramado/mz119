@@ -767,6 +767,16 @@ void clearerr(FILE* stream)
 }
 
 
+/*
+void __clearerr( FILE *iop );
+void __clearerr( FILE *iop )
+{
+    iop->_flags &= ~(_IOERR|_IOEOF);
+}
+*/
+
+
+
 
 /*
 int ferror(FILE* stream)
@@ -2468,6 +2478,32 @@ int ungetc ( int c, FILE *stream )
 
     return c;
 }
+
+
+/*
+// unix v7 cool way
+int __ungetc( int c, FILE *iop );
+int __ungetc( int c, FILE *iop ){
+	
+    if (c == EOF)
+		return(-1);
+
+
+	if ((iop->_flags & _IOREAD )==0 || iop->_p <= iop->_base )
+		if (iop->_p == iop->_base && iop->_w==0)
+			*iop->_p++;
+		else
+			return(-1);
+
+	iop->_w++;
+	
+	*--iop->_p = c;
+	
+	return(0);
+}
+*/
+
+
 
 
 /*

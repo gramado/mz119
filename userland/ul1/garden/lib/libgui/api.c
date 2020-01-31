@@ -133,6 +133,20 @@ void *system_call ( unsigned long ax,
 }
 
 
+
+/*
+//not tested
+int gde_system2 (const char *command);
+int gde_system2 (const char *command)
+{
+    // clone and execute.
+    gramado_system_call (900, (unsigned long) command, 0, 0);    
+    return 0;
+}
+*/
+
+
+
 /*
  ***********************************
  * gde_system: 
