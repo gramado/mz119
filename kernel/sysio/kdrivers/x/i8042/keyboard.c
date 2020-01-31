@@ -150,7 +150,7 @@ void abnt2_keyboard_handler (void){
 	//não precisamos perguntar para o controlador se
 	//podemos ler, porque foi uma interrupção que nos trouxe aqui.
 
-    unsigned char __raw = inportb (0x60);
+    unsigned char __raw = in8 (0x60);
 
 
     // #obs:

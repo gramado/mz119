@@ -73,6 +73,9 @@ void switch_to_user_mode (void){
 
 //unsigned long startExecuteThread(int tid, unsigned long *thread_address)
 
+// #todo
+// Deletar isso ou mudar de nome.
+
 unsigned long 
 executa_tarefa ( int id, 
                  unsigned long *task_address )
@@ -163,12 +166,12 @@ executa_tarefa ( int id,
 	// #todo: deletar.
 	// Parece que isso é realmente preciso, libera o teclado.
 	
-	outb ( 0x20, 0x20 ); 
-	
-	asm ("sti");
+    out8 ( 0x20, 0x20 ); 
+
+    asm ("sti");
     asm ("iret");
-	
-	//Nothing.		
+
+	//Nothing.
 
     panic ("x86start-executa_tarefa: *");
 }

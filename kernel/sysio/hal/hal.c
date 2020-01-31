@@ -297,11 +297,11 @@ void hal_speaker_on (void){
 
     //And play the sound using the PC speaker
 
-    tmp = inb (0x61);
+    tmp = in8 (0x61);
 
     if (tmp != (tmp | 3))
     {
-        outb (0x61, tmp | 3);
+        out8 (0x61, tmp | 3);
     }
 }
 
@@ -310,9 +310,9 @@ void hal_speaker_on (void){
 //make it shutup
 void hal_speaker_off (void)
 {
-    uint8_t tmp = inb(0x61) & 0xFC;
+    uint8_t tmp = in8(0x61) & 0xFC;
 
-    outb (0x61, tmp);
+    out8 (0x61, tmp);
 }
  
  
@@ -654,7 +654,7 @@ void hal_shutdown (void)
 	
     /* Bochs/QEMU poweroff */
 	shutdown_str = "Shutdown";
-    while (*shutdown_str) outb (0x8900, *(shutdown_str++));
+    while (*shutdown_str) out8 (0x8900, *(shutdown_str++));
 	
     panic ("hal_shutdown");
 }

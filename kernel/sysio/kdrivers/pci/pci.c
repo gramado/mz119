@@ -861,7 +861,7 @@ pciConfigReadByte ( unsigned char bus,
 	// sendComand:
 	// Write out the address. (0x0CF8).
 
-    outportl (PCI_ADDRESS_PORT, address);
+    out32 (PCI_ADDRESS_PORT, address);
     io_delay();
 
 	// getData:
@@ -870,7 +870,7 @@ pciConfigReadByte ( unsigned char bus,
 	// inline unsigned char inportb(int port)  
     // int inport8(int port) 
 
-    Ret = (unsigned char) (( inportl(PCI_DATA_PORT) >> ((offset & 3) * 8)) & 0xff); 
+    Ret = (unsigned char) (( in32(PCI_DATA_PORT) >> ((offset & 3) * 8)) & 0xff); 
     io_delay();
     
     
@@ -937,7 +937,7 @@ pciConfigReadWord ( unsigned char bus,
 	// sendComand:
 	// Write out the address. (0x0CF8).
 
-    outportl (PCI_ADDRESS_PORT, address);
+    out32 (PCI_ADDRESS_PORT, address);
     io_delay();
 
 	// getData:
@@ -946,7 +946,7 @@ pciConfigReadWord ( unsigned char bus,
 	// @todo: Talvez possamos usar um input do tipo short.
 	// que é assim int inport16(int port)
 
-    Ret = (unsigned short) (( inportl(PCI_DATA_PORT) >> ((offset & 2) * 8)) & 0xffff);
+    Ret = (unsigned short) (( in32(PCI_DATA_PORT) >> ((offset & 2) * 8)) & 0xffff);
 	//Ret = (unsigned short)(  inport16(PCI_DATA_PORT) );
     io_delay();
 
@@ -992,14 +992,14 @@ pciConfigReadDWord ( unsigned char bus,
 	// sendComand:
 	// Write out the address. (0x0CF8).
 
-    outportl (PCI_ADDRESS_PORT, address);
+    out32 (PCI_ADDRESS_PORT, address);
     io_delay();
 
 	// getData:
 	// Read in the data port. (0x0CFC).
 
 	// Parece ser o certo.
-	Ret = (unsigned long) ( inportl(PCI_DATA_PORT) ); 
+	Ret = (unsigned long) ( in32(PCI_DATA_PORT) ); 
     io_delay();
     
     // Obs: 
@@ -1504,10 +1504,10 @@ int init_pci (void){
 
     // Is PCI supported ?
     
-    outportl ( 0xCF8, 0x80000000);
+    out32 ( 0xCF8, 0x80000000);
     io_delay();
     
-    data = (unsigned long) inportl (0xCF8);
+    data = (unsigned long) in32 (0xCF8);
     io_delay();
     
 	//#todo:

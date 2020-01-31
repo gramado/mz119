@@ -965,7 +965,7 @@ uint8_t keyboard_read (void){
  
 	kbdc_wait (0);
 	
-	uint8_t val = inportb (0x60);
+	uint8_t val = in8 (0x60);
     
 	wait_ns (400);
     
@@ -982,11 +982,11 @@ uint8_t keyboard_read (void){
 // Esta função será usada para escrever dados do teclado na porta 0x60, fora do IRQ1.
 void keyboard_write (uint8_t write){
 
-	kbdc_wait (1);
-	
-	outb ( 0x60, write );
+    kbdc_wait (1);
+
+    out8 ( 0x60, write );
     
-	wait_ns (400);
+    wait_ns (400);
 }
 
 
@@ -1404,13 +1404,13 @@ void keyboardEnable (void){
     // Dizem que isso pode travar o sistema.
 
 	// Wait for bit 1 of status reg to be zero.
-    while ( (inportb(0x64) & 2) != 0 )
+    while ( ( in8 (0x64) & 2) != 0 )
     {
 		//Nothing.
     };
 
 	//Send code for setting Enable command.
-    outportb (0x60,0xF4);
+    out8 (0x60,0xF4);
     //sleep(100);
 }
 
@@ -1424,13 +1424,13 @@ void keyboardDisable (void){
 	
 	//Wait for bit 1 of status reg to be zero.
     
-    while ( (inportb(0x64) & 2) != 0 )
+    while ( ( in8 (0x64) & 2) != 0 )
     {
 		//Nothing.
     };
 
 	//Send code for setting disable command.
-    outportb (0x60,0xF5);
+    out8 (0x60,0xF5);
     //sleep(100);
 }
 
@@ -1447,22 +1447,22 @@ void keyboard_set_leds (char flag){
 	//@todo: filtro.
 
 	//Wait for bit 1 of status reg to be zero.
-    while ( (inportb(0x64) & 2) != 0 )
+    while ( ( in8 (0x64) & 2) != 0 )
     {
 		//Nothing.
 	};
 	//Send code for setting the flag.
-    outportb (0x60,0xED); 
+    out8 (0x60,0xED); 
     sleep (100);
 
 
 	//Wait for bit 1 of status reg to be zero.
-	while ( (inportb(0x64) & 2) != 0 )
+	while ( ( in8 (0x64) & 2) != 0 )
 	{
 	    //Nothing.
 	};
     //Send flag. 
-	outportb (0x60,flag);
+	out8 (0x60,flag);
 	sleep (100);
 
 
@@ -1619,7 +1619,7 @@ void kbdc_wait (unsigned char type){
     if (type==0)
     {
 
-        while ( !inportb(0x64) & 1 )
+        while ( !in8(0x64) & 1 )
         {
 			outanyb (0x80);
 			outanyb (0x80);
@@ -1631,7 +1631,7 @@ void kbdc_wait (unsigned char type){
 		
     }else{
 
-        while ( inportb(0x64) & 2 )
+        while ( in8(0x64) & 2 )
         {
 			outanyb (0x80);
 			outanyb (0x80);

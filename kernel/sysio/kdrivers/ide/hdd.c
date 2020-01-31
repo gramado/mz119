@@ -94,7 +94,7 @@ uint8_t hdd_ata_status_read (int p){
 	// Rever o offset.
 
     //return inb(ata[p].cmd_block_base_addr + ATA_REG_STATUS);
-    return (uint8_t) inportb ( (int) ide_ports[p].base_port + 7);
+    return (uint8_t) in8 ( (int) ide_ports[p].base_port + 7);
 }
 
 
@@ -117,7 +117,7 @@ void hdd_ata_cmd_write ( int port, int cmd_val ){
 
 	//outb(ata.cmd_block_base_address + ATA_REG_CMD,cmd_val);
 
-    outportb ( (int) ide_ports[port].base_port + 7 , (int) cmd_val );
+    out8 ( (int) ide_ports[port].base_port + 7 , (int) cmd_val );
 
 
 	// Esperamos 400ns
@@ -145,8 +145,8 @@ int hdd_ata_wait_no_drq (int p){
  *   lba - LBA number 
  *   rw - Flag read or write.
  *
- *   //inline unsigned char inportb (int port)
- *   //outportb ( int port, int data )
+ *   //inline unsigned char in8 (int port)
+ *   //out8 ( int port, int data )
  *   (IDE PIO)
  */
 
@@ -204,43 +204,43 @@ pio_rw_sector ( unsigned long buffer,
     }
 
 
-    outportb ( (int) ide_ports[port].base_port + 6 , (int) tmplba );
+    out8 ( (int) ide_ports[port].base_port + 6 , (int) tmplba );
 
 
 	// 0x01F2 ; Port to send, number of sectors
-    outportb ( (int) ide_ports[port].base_port + 2 , (int) 1 );
+    out8 ( (int) ide_ports[port].base_port + 2 , (int) 1 );
 
 
 	// 0x1F3  ; Port to send, bit 0 - 7 of LBA
     tmplba = lba;
     tmplba = tmplba & 0x000000FF;
-    outportb ( (int) ide_ports[port].base_port + 3 , (int) tmplba );
+    out8 ( (int) ide_ports[port].base_port + 3 , (int) tmplba );
 
 
 	// 0x1F4  ; Port to send, bit 8 - 15 of LBA
     tmplba = lba;
     tmplba = tmplba >> 8;
     tmplba = tmplba & 0x000000FF;
-    outportb ( (int) ide_ports[port].base_port + 4 , (int) tmplba );
+    out8 ( (int) ide_ports[port].base_port + 4 , (int) tmplba );
 
 
 	// 0x1F5  ; Port to send, bit 16 - 23 of LBA
     tmplba = lba;
     tmplba = tmplba >> 16;
     tmplba = tmplba & 0x000000FF;
-   outportb ( (int) ide_ports[port].base_port + 5 , (int) tmplba );
+    out8 ( (int) ide_ports[port].base_port + 5 , (int) tmplba );
 
 
 	// 0x1F7; Command port
 	// rw
     rw = rw & 0x000000FF;
-    outportb ( (int) ide_ports[port].base_port + 7 , (int) rw );
+    out8 ( (int) ide_ports[port].base_port + 7 , (int) rw );
 
 
 
 	//PIO or DMA ??
 	//If the command is going to use DMA, set the Features Register to 1, otherwise 0 for PIO.
-	//outb (0x1F1, isDMA)
+	//out8 (0x1F1, isDMA)
 
 
 
@@ -259,7 +259,7 @@ pio_rw_sector ( unsigned long buffer,
 again:
 
 
-    c = (unsigned char) inportb ( (int) ide_ports[port].base_port + 7);
+    c = (unsigned char) in8 ( (int) ide_ports[port].base_port + 7);
 
     c = ( c & 8 );
 

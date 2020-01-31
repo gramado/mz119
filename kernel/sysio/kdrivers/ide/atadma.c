@@ -33,13 +33,13 @@ static inline void ata_set_device_and_sector ( unsigned long count, unsigned lon
 	{
 		//Mode LBA28
 	    case 28:
-	        outb ( ata.cmd_block_base_address + ATA_REG_SECCOUNT, count );   // Sector Count 7:0
-	        outb ( ata.cmd_block_base_address + ATA_REG_LBA0, addr );		 // LBA 7-0   
-	        outb ( ata.cmd_block_base_address + ATA_REG_LBA1, addr >> 8 );   // LBA 15-8
-	        outb ( ata.cmd_block_base_address + ATA_REG_LBA2, addr >> 16 );  // LBA 23-16
+	        out8 ( ata.cmd_block_base_address + ATA_REG_SECCOUNT, count );   // Sector Count 7:0
+	        out8 ( ata.cmd_block_base_address + ATA_REG_LBA0, addr );		 // LBA 7-0   
+	        out8 ( ata.cmd_block_base_address + ATA_REG_LBA1, addr >> 8 );   // LBA 15-8
+	        out8 ( ata.cmd_block_base_address + ATA_REG_LBA2, addr >> 16 );  // LBA 23-16
             
 			// Modo LBA active, Select device, and LBA 27-24
-            outb ( ata.cmd_block_base_address + ATA_REG_DEVSEL, 
+            out8 ( ata.cmd_block_base_address + ATA_REG_DEVSEL, 
 			    0x40 | (ata.dev_num << 4) | (addr >> 24 &0x0f) );
             
 			// Verifique se e a mesma unidade para não esperar pelos 400ns.
@@ -58,16 +58,16 @@ static inline void ata_set_device_and_sector ( unsigned long count, unsigned lon
 		//Mode LBA48	
         case 48:
             
-            outb( ata.cmd_block_base_address + ATA_REG_SECCOUNT,0);	      // Sector Count 15:8
-	        outb( ata.cmd_block_base_address + ATA_REG_LBA0,addr >> 24);  // LBA 31-24   
-	        outb( ata.cmd_block_base_address + ATA_REG_LBA1,addr >> 32);  // LBA 39-32
-	        outb( ata.cmd_block_base_address + ATA_REG_LBA2,addr >> 40);  // LBA 47-40
-	        outb( ata.cmd_block_base_address + ATA_REG_SECCOUNT,count);   // Sector Count 7:0
-	        outb( ata.cmd_block_base_address + ATA_REG_LBA0,addr);		  // LBA 7-0   
-	        outb( ata.cmd_block_base_address + ATA_REG_LBA1,addr >> 8);   // LBA 15-8
-	        outb( ata.cmd_block_base_address + ATA_REG_LBA2,addr >> 16);  // LBA 23-16
+            out8( ata.cmd_block_base_address + ATA_REG_SECCOUNT,0);	      // Sector Count 15:8
+	        out8( ata.cmd_block_base_address + ATA_REG_LBA0,addr >> 24);  // LBA 31-24   
+	        out8( ata.cmd_block_base_address + ATA_REG_LBA1,addr >> 32);  // LBA 39-32
+	        out8( ata.cmd_block_base_address + ATA_REG_LBA2,addr >> 40);  // LBA 47-40
+	        out8( ata.cmd_block_base_address + ATA_REG_SECCOUNT,count);   // Sector Count 7:0
+	        out8( ata.cmd_block_base_address + ATA_REG_LBA0,addr);		  // LBA 7-0   
+	        out8( ata.cmd_block_base_address + ATA_REG_LBA1,addr >> 8);   // LBA 15-8
+	        out8( ata.cmd_block_base_address + ATA_REG_LBA2,addr >> 16);  // LBA 23-16
             
-			outb ( ata.cmd_block_base_address + ATA_REG_DEVSEL,
+			out8 ( ata.cmd_block_base_address + ATA_REG_DEVSEL,
 			    0x40 | ata.dev_num << 4 );   // Modo LBA active, Select device,        
             
 			// Verifique se e a mesma unidade para não esperar pelos 400ns.
@@ -122,26 +122,26 @@ ide_dma_data ( void *addr,
     phy = (uint32_t) &ide_dma_prdt[nport];
 
 	// prds physical.
-    outportl ( ata.bus_master_base_address + ide_dma_reg_addr, phy );
+    out32 ( ata.bus_master_base_address + ide_dma_reg_addr, phy );
 
 	// (bit 3 read/write)
 	// 0 = Memory reads.
 	// 1 = Memory writes.
 
-    data = inb( ata.bus_master_base_address + ide_dma_reg_cmd ) &~8;
+    data = in8 ( ata.bus_master_base_address + ide_dma_reg_cmd ) &~8;
 
 	// TODO bit 8 Confilito no Oracle VirtualBox
 	// Obs: Isso foi enviado via argumento e agora foi alerado.
 
     flg = 1;  
 
-    outb ( ata.bus_master_base_address + ide_dma_reg_cmd, data | flg << 3 );
+    out8 ( ata.bus_master_base_address + ide_dma_reg_cmd, data | flg << 3 );
 
 	// Limpar o bit de interrupção e 
 	// o bit de erro no registo de status.
 
-    data = inb ( ata.bus_master_base_address + ide_dma_reg_status );
-    outb ( ata.bus_master_base_address + ide_dma_reg_status, data &~6 );
+    data = in8 ( ata.bus_master_base_address + ide_dma_reg_status );
+    out8 ( ata.bus_master_base_address + ide_dma_reg_status, data &~6 );
 }
 
 
@@ -153,9 +153,9 @@ ide_dma_data ( void *addr,
 
 void ide_dma_start (void){
 	
-    unsigned char data = inb ( ata.bus_master_base_address + ide_dma_reg_cmd );
+    unsigned char data = in8 ( ata.bus_master_base_address + ide_dma_reg_cmd );
 	
-    outb ( ata.bus_master_base_address + ide_dma_reg_cmd, data | 1 );
+    out8 ( ata.bus_master_base_address + ide_dma_reg_cmd, data | 1 );
 }
 
 
@@ -167,13 +167,13 @@ void ide_dma_start (void){
 
 void ide_dma_stop (void){
 	
-    unsigned char data = inb ( ata.bus_master_base_address + ide_dma_reg_cmd ); 
+    unsigned char data = in8 ( ata.bus_master_base_address + ide_dma_reg_cmd ); 
 	
-	outb ( ata.bus_master_base_address + ide_dma_reg_cmd, data &~1);
+    out8 ( ata.bus_master_base_address + ide_dma_reg_cmd, data &~1);
+
+    data = in8 ( ata.bus_master_base_address + ide_dma_reg_status );
 	
-    data = inb ( ata.bus_master_base_address + ide_dma_reg_status );
-	
-    outb ( ata.bus_master_base_address + ide_dma_reg_status, data &~6);
+    out8 ( ata.bus_master_base_address + ide_dma_reg_status, data &~6);
 }
 
 
@@ -184,10 +184,11 @@ void ide_dma_stop (void){
  *     2018 - Created by Nelson Cole.  
  */
 
-int ide_dma_read_status (void){
-	
-    return inb ( ata.bus_master_base_address + ide_dma_reg_status );
+int ide_dma_read_status (void)
+{
+    return in8 ( ata.bus_master_base_address + ide_dma_reg_status );
 }
+
 
 //
 // End.

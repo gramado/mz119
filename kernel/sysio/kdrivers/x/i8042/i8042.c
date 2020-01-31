@@ -31,12 +31,12 @@ prepare_for_output (void){
 unsigned char 
 wait_then_read (int port){
     prepare_for_input();
-    return (unsigned char) inportb (port);
+    return (unsigned char) in8 (port);
 }
 void 
 wait_then_write ( int port, int data ){
     prepare_for_output();
-    outportb ( port, data );
+    out8 ( port, data );
 }
 
 

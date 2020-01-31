@@ -97,17 +97,17 @@ void rtc_irq (void){
 	//_BLINK; ??
 	
     // Save contents of I/O port 0x70.
-	i = inportb(0x70);
+	i = in8 (0x70);
     
 	// acknowledge IRQ 8 at the RTC by reading register C.
-	outportb(0x70, 0x0C);
-	(void)inportb(0x71); 
-	outportb(0x70, i);
+	out8(0x70, 0x0C);
+	(void)in8(0x71); 
+	out8(0x70, i);
     
 	// @todo: Checar esse EOI.
 	// acknowledge IRQ 8 at the PICs
-	//outportb(0xA0, 0x20);
-	//outportb(0x20, 0x20);
+	//out8(0xA0, 0x20);
+	//out8(0x20, 0x20);
 }
 
 
@@ -121,8 +121,8 @@ unsigned long read_cmos_bcd ( unsigned reg ){
 	
 	unsigned long high_digit, low_digit;
 
-	outportb ( 0x70, ( inportb(0x70) & 0x80) | (reg & 0x7F) );
-	high_digit = low_digit = inportb(0x71);
+	out8 ( 0x70, ( in8(0x70) & 0x80) | (reg & 0x7F) );
+	high_digit = low_digit = in8(0x71);
 
 	// Converte BCD para binário. 
 	high_digit >>= 4;
@@ -217,12 +217,12 @@ unsigned short rtcGetExtendedMemory (void){
 	unsigned char highmem;
  
     //Low. (Low extended memory byte)
-    outportb(0x70, RTC_LOWBYTE_EXTENDEDMEMORY);
-    lowmem = inportb(0x71);
+    out8(0x70, RTC_LOWBYTE_EXTENDEDMEMORY);
+    lowmem = in8(0x71);
     
 	//High. (High extended memory byte)
-	outportb(0x70, RTC_HIGHBYTE_EXTENDEDMEMORY);
-    highmem = inportb(0x71);
+	out8(0x70, RTC_HIGHBYTE_EXTENDEDMEMORY);
+    highmem = in8(0x71);
 	
     //Total.
     total = lowmem | highmem << 8;
@@ -261,25 +261,27 @@ unsigned short rtcGetExtendedMemory (void){
  */
  
 unsigned short rtcGetBaseMemory (void){
-	
+
     unsigned short total = 0;
-	
     unsigned char lowmem;
-	unsigned char highmem;
- 
+    unsigned char highmem;
+
+
     //Low. (Low base memory byte)
-    outportb(0x70, RTC_LOWBYTE_BASEMEMORY);
-    lowmem = inportb(0x71);
+    out8(0x70, RTC_LOWBYTE_BASEMEMORY);
+    lowmem = in8(0x71);
     
 	//High. (High base memory byte)
-	outportb(0x70, RTC_HIGHBYTE_BASEMEMORY);
-    highmem = inportb(0x71);
+	out8(0x70, RTC_HIGHBYTE_BASEMEMORY);
+    highmem = in8(0x71);
 	
     //Total.
     total = lowmem | highmem << 8;
-	
+
+
     return (unsigned short) total;
 }
+
 
 
 /*

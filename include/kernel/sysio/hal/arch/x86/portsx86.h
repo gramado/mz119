@@ -139,58 +139,36 @@
  
 
 //
-// @todo: Criar a estrutura e o objeto do tipo porta.
+// #todo: 
+// Criar a estrutura e o objeto do tipo porta.
 //
  
  
+ 
+// goal
+// in8 in16 in32
+// out8 out16 out32
+
+ 
+unsigned char  in8  (int port); 
+unsigned short in16 (int port);
+unsigned long  in32 (int port);
+ 
+void out8  (int port, unsigned char data);
+void out16 (int port, unsigned short data);
+void out32 (int port, unsigned long data);
+
+ 
 //
-// portas
-//
-
-unsigned char inportb(int port);
-void outportb(int port, int data);
-
-unsigned long inportl(unsigned long port);
-void outportl(unsigned long port, unsigned long value);
-
-unsigned char kinportb(int port);
-void koutportb(unsigned int port,unsigned int value);
-
-
-
-unsigned char inb(int port);
-void outb(int port, int data);
-
-
-//
-// ... Obs: input sem retorno.
+// ----------
 //
 
-int inport8(int port);
-void outport8(int port,int data);
-int inport16(int port);
-void outport16(int port,int data);
-int inport32(int port);
-void outport32(int port,int data);
 
 
-static unsigned char inPort60(void);
-static void outPort60(unsigned char value);
-static void outPort64(unsigned char value);
-
-
-//movendo pra cá.
-int kernelProcessorInPort8(int port,int data);
-int kernelProcessorOutPort8(int port,int data);
-int kernelProcessorInPort16(int port,int data);
-int kernelProcessorOutPort16(int port,int data);
-int kernelProcessorInPort32(int port,int data); 
-int kernelProcessorOutPort32(int port,int data);
 
 
 void __x86_io_delay (void);
 void wait_ns(int count);
-
 
 unsigned long portsx86_IN ( int bits, unsigned long port );
 void portsx86_OUT ( int bits, unsigned long port, unsigned long value );

@@ -162,17 +162,11 @@ int MOUSE_SEND_MESSAGE (void *buffer) {
 
 void mouse_write (unsigned char write){
 
-    //kbdc_wait (1);
-    //outportb (0x64,0xD4);
-
-    //kbdc_wait (1);
-    //outportb (0x60,write);
+    prepare_for_output();
+    out8 (I8042_STATUS, 0xd4);
 
     prepare_for_output();
-    outportb (I8042_STATUS, 0xd4);
-
-    prepare_for_output();
-    outportb (I8042_BUFFER, write);
+    out8 (I8042_BUFFER, write);
 }
 
 
@@ -187,10 +181,10 @@ void mouse_write (unsigned char write){
 unsigned char mouse_read (void){
 
     //kbdc_wait (0);
-    //return (unsigned char) inportb (0x60);
+    //return (unsigned char) in8 (0x60);
 
     prepare_for_input();
-    return (unsigned char) inportb (0x60);
+    return (unsigned char) in8 (0x60);
 }
 
 
@@ -528,10 +522,10 @@ static unsigned char getMouseData (void){
     unsigned char data = 0;
 
     while ((data & 0x21) != 0x21)
-        kernelProcessorInPort8 (0x64, data);
+        data = in8 (0x64);
 
 
-    kernelProcessorInPort8 (0x60, data);
+    data = in8 (0x60);
 
     return (data);
 }

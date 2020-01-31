@@ -615,16 +615,16 @@ void timerInit8253 ( unsigned long hz ){
 	
 	
 	// Canal 0, LSB/MSB, modo 3, contar em binário.
-	outportb ( 0x43, 0x36 );			  
+	out8 ( 0x43, 0x36 );
 	
 	// LSB.
-	outportb ( 0x40, period & 0xFF ); 
-	//outportb ( 0x40, 0xA9 );  //test 1000
+	out8 ( 0x40, period & 0xFF ); 
+	//out8 ( 0x40, 0xA9 );  //test 1000
 	
 	
 	// MSB.
-	outportb ( 0x40, period >> 8 );	 
-	//outportb ( 0x40, 0x04 );   // test 1000
+	out8 ( 0x40, period >> 8 );	 
+	//out8 ( 0x40, 0x04 );   // test 1000
 	
 	//#BUGBUG Não faremos isso aqui,
 	//faremos quando ermos spawn da idle thread.

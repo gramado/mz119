@@ -118,11 +118,11 @@ unsigned char ata_wait_drq (void){
  
 void ata_soft_reset (void){
 
-    //unsigned char data = inb ( ata.ctrl_block_base_address + 2 );
-    unsigned char data = inb ( ata.ctrl_block_base_address );
+    //unsigned char data = in8 ( ata.ctrl_block_base_address + 2 );
+    unsigned char data = in8 ( ata.ctrl_block_base_address );
     
-    outb ( ata.ctrl_block_base_address, data | 0x4 );
-    outb ( ata.ctrl_block_base_address, data & 0xfb );
+    out8 ( ata.ctrl_block_base_address, data | 0x4 );
+    out8 ( ata.ctrl_block_base_address, data & 0xfb );
 }
 
 
@@ -132,7 +132,7 @@ void ata_soft_reset (void){
 
 unsigned char ata_status_read (void){
 
-    return inb ( ata.cmd_block_base_address + ATA_REG_STATUS );
+    return in8 ( ata.cmd_block_base_address + ATA_REG_STATUS );
 }
 
 
@@ -141,7 +141,7 @@ void ata_cmd_write (int cmd_val){
     // no_busy 
 
     ata_wait_not_busy ();
-    outb ( ata.cmd_block_base_address + ATA_REG_CMD, cmd_val );
+    out8 ( ata.cmd_block_base_address + ATA_REG_CMD, cmd_val );
 
 	// #todo
 	// Esperamos 400ns
@@ -214,15 +214,14 @@ int ide_identify_device ( uint8_t nport ){
         return (int) -1;
     }
 
-    outb ( ata.cmd_block_base_address + ATA_REG_SECCOUNT, 0 );  // Sector Count 7:0
-    outb ( ata.cmd_block_base_address + ATA_REG_LBA0, 0 );      // LBA 7-0
-    outb ( ata.cmd_block_base_address + ATA_REG_LBA1, 0 );      // LBA 15-8
-    outb ( ata.cmd_block_base_address + ATA_REG_LBA2, 0 );      // LBA 23-16
+    out8 ( ata.cmd_block_base_address + ATA_REG_SECCOUNT, 0 );  // Sector Count 7:0
+    out8 ( ata.cmd_block_base_address + ATA_REG_LBA0,     0 );  // LBA 7-0
+    out8 ( ata.cmd_block_base_address + ATA_REG_LBA1,     0 );  // LBA 15-8
+    out8 ( ata.cmd_block_base_address + ATA_REG_LBA2,     0 );  // LBA 23-16
 
 
     // Select device,
-    
-    outb ( ata.cmd_block_base_address + ATA_REG_DEVSEL, 0xE0 | ata.dev_num << 4 );
+    out8 ( ata.cmd_block_base_address + ATA_REG_DEVSEL, 0xE0 | ata.dev_num << 4 );
 
     // cmd
     ata_wait (400);
@@ -244,8 +243,8 @@ int ide_identify_device ( uint8_t nport ){
     }
 
 
-    lba1 = inb ( ata.cmd_block_base_address + ATA_REG_LBA1 );
-    lba2 = inb ( ata.cmd_block_base_address + ATA_REG_LBA2 );
+    lba1 = in8 ( ata.cmd_block_base_address + ATA_REG_LBA1 );
+    lba2 = in8 ( ata.cmd_block_base_address + ATA_REG_LBA2 );
 
 
     //
@@ -1005,10 +1004,10 @@ int diskATAInitialize ( int ataflag ){
     {
         //Soft Reset, defina IRQ
         
-        outb ( ATA_BAR1, 0xff );
-        outb ( ATA_BAR3, 0xff );
-        outb ( ATA_BAR1, 0x00 );
-        outb ( ATA_BAR3, 0x00 );
+        out8 ( ATA_BAR1, 0xff );
+        out8 ( ATA_BAR3, 0xff );
+        out8 ( ATA_BAR1, 0x00 );
+        out8 ( ATA_BAR3, 0x00 );
 
         ata_record_dev = 0xff;
         ata_record_channel = 0xff;

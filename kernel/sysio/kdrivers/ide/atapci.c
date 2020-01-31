@@ -45,9 +45,9 @@ diskReadPCIConfigAddr ( int bus,
                         int fun, 
                         int offset )
 {
-    outportl ( PCI_PORT_ADDR, CONFIG_ADDR( bus, dev, fun, offset ) );
+    out32 ( PCI_PORT_ADDR, CONFIG_ADDR( bus, dev, fun, offset ) );
 
-    return (uint32_t) inportl (PCI_PORT_DATA);
+    return (uint32_t) in32 (PCI_PORT_DATA);
 }
 
 
@@ -63,9 +63,9 @@ diskWritePCIConfigAddr ( int bus,
                          int offset, 
                          int data )
 {
-    outportl ( PCI_PORT_ADDR, CONFIG_ADDR( bus, dev, fun, offset ) );
+    out32 ( PCI_PORT_ADDR, CONFIG_ADDR( bus, dev, fun, offset ) );
 
-    outportl ( PCI_PORT_DATA, data );
+    out32 ( PCI_PORT_DATA, data );
 }
 
 
@@ -109,9 +109,9 @@ uint32_t diskPCIScanDevice ( int class ){
         {
             for ( fun=0; fun < 8; fun++ )
             {
-                outportl ( PCI_PORT_ADDR, CONFIG_ADDR( bus, dev, fun, 0x8) );
+                out32 ( PCI_PORT_ADDR, CONFIG_ADDR( bus, dev, fun, 0x8) );
 
-                data = inportl (PCI_PORT_DATA);
+                data = in32 (PCI_PORT_DATA);
                 
                 if ( ( data >> 24 & 0xff ) == class )
                 {
