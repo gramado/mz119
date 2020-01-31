@@ -232,47 +232,69 @@ tty_write ( unsigned int channel,
 
 
 
-/*
- #todo
+
 // copia a estrutura de termios.
 // para o aplicativo em ring3 poder ler.
-int tty_gets ( struct tty_d *tty, struct termios *termiosp );
 int tty_gets ( struct tty_d *tty, struct termios *termiosp )
 {
 
+    if ( (void *) tty == NULL )
+        return -1;
+         
+    
+    if ( (void *) termiosp == NULL )
+        return -1;
+
+
     // Copia a estrutura term da tty na estrutura de termios 
     // que está em ring3.
-    memcpy ( termiosp, &tty->term, sizeof(struct termios));
+    memcpy ( termiosp, &tty->termios, sizeof(struct termios));
+
+    return 0;
 }
-*/
 
 
-/*
+
  //copia de ring3 para o kernel.
-int tty_sets (struct tty_d *tty, int options, struct termios *termiosp );
 int tty_sets (struct tty_d *tty, int options, struct termios *termiosp )
 {
-	int ret;
-	
-	ret = 0;
+    int ret = -1;
 
 
-	switch (options)
-	{
+    if ( (void *) tty == NULL )
+        return -1;
+        
+    
+    if (options < 0)
+        return -1;
+        
+    
+    if ( (void *) termiosp == NULL )
+        return -1;
 
-		case TCSANOW:
-			kmemcpy(&tty->term, termiosp, sizeof(struct termios));
-			break;
+    //
+    // Options.
+    //
 
+    switch (options)
+    {
+
+        // Now. The change occurs immediately. 
+        case TCSANOW:
+            memcpy ( &tty->termios, termiosp, sizeof(struct termios) );
+            break;
+
+        // ...
 
 		default:
-			ret = -EINVAL;
+			//ret = -EINVAL;
+			ret = -1;
 			break;
-	}
+    };
 
-	return (ret);
+
+    return (ret);
 }
-*/
  
  
 

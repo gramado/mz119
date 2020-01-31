@@ -1,12 +1,13 @@
 
 
- // #todo
- // kernel side termios support.
+// #todo
+// kernel side termios support.
  
  
- //provavelmente suporte ao gerenciamento de terminais.
+//provavelmente suporte ao gerenciamento de terminais.
 //http://man7.org/linux/man-pages/man3/termios.3.html
 //http://kirste.userpage.fu-berlin.de/chemnet/use/info/libc/libc_12.html
+
 
 //#obs:
 //coisas pra fazer com terminal:
@@ -234,41 +235,6 @@ struct termios
 #define  TCOON   2  /* restart suspended output */
 #define  TCIOFF  3  /* transmit a STOP character on the line */
 #define  TCION   4  /* transmit a START character on the line */
-
-
-
-//https://linux.die.net/man/3/tcgetattr
-//https://www.mkssoftware.com/docs/man3/tcsetattr.3.asp
-
-/*
-int tcgetattr(int fd, struct termios *termios_p);
-
-int tcsetattr(int fd, int optional_actions,
-              const struct termios *termios_p);
-
-int tcsendbreak(int fd, int duration);
-
-int tcdrain(int fd);
-
-int tcflush(int fd, int queue_selector);
-
-int tcflow(int fd, int action);
-
-void cfmakeraw(struct termios *termios_p);
-
-speed_t cfgetispeed(const struct termios *termios_p);
-
-speed_t cfgetospeed(const struct termios *termios_p);
-
-int cfsetispeed(struct termios *termios_p, speed_t speed);
-
-int cfsetospeed(struct termios *termios_p, speed_t speed);
-
-int cfsetspeed(struct termios *termios_p, speed_t speed);
-*/
-
-
-
 
 
 

@@ -358,12 +358,15 @@ void tty_start (struct tty_d *tty);
 
 
 
+int tty_gets ( struct tty_d *tty, struct termios *termiosp );
+int tty_sets (struct tty_d *tty, int options, struct termios *termiosp );
+
+
+
 int 
 tty_read ( unsigned int channel, 
            char *buffer, 
            int nr );
-
-
 
 
 // o descritor seleciona uma tty em ttyList e escreve em tty->stdout->_base

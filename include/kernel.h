@@ -100,7 +100,7 @@ extern void do_executa_new_task (void);
 #include <kernel/syslib/libcore/sys/socket.h>
 #include <kernel/syslib/libcore/sys/ioctl.h>
 #include <kernel/syslib/libcore/sys/ioctls.h>
-//#include <kernel/syslib/libcore/termios.h> //#todo
+#include <kernel/syslib/libcore/termios.h> 
 //...
 
 
