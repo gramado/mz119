@@ -1378,6 +1378,46 @@ char *getenv (const char *name)
 
 
 
+
+
+/*
+ *	s1 is either name, or name=value
+ *	s2 is name=value
+ *	if names match, return value of s2, else NULL
+ *	used for environment searching: see getenv
+ */
+/* 
+//unix v7 
+//used by getenv
+static char *nvmatch ( char *s1, char *s2 );
+static char *nvmatch ( char *s1, char *s2 )
+{
+
+	while (*s1 == *s2++)
+		if (*s1++ == '=')
+			return(s2);
+	if (*s1 == '\0' && *(s2-1) == '=')
+		return(s2);
+	return(NULL);
+}
+*/
+
+/*
+//unix v7
+char *getenv ( char *name);
+char *getenv ( char *name)
+{
+	register char **p = environ;
+	register char *v;
+
+	while (*p != NULL)
+		if ((v = nvmatch(name, *p++)) != NULL)
+			return(v);
+	return(NULL);
+}
+*/
+
+
 //serenity os.
 /*
 char* getenv(const char* name)
