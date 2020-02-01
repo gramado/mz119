@@ -89,7 +89,7 @@ int sys_read (unsigned int fd,char *buf,int count)
     // #importante
     // Arquivo. Mas significa objeto.
 
-    __file = ( file * ) __P->Objects[fd];   //#todo: Use this one!
+    __file = ( file * ) __P->Objects[fd];  
     
     
     if ( (void *) __file == NULL )
@@ -99,16 +99,11 @@ int sys_read (unsigned int fd,char *buf,int count)
         return -1; 
     }
 
-
-    //
-    // ?
-    //
-
     //See: unistd.c
-
-    unistd_file_read ( (file *) __file, (char *) buf, (int) count );
+    // #todo
+    // Tem que retornar a quantidade de bytes lido.
     
-    return 0;
+    return (int) unistd_file_read ( (file *) __file, (char *) buf, (int) count );
 }
 
 
@@ -201,17 +196,12 @@ int sys_write (unsigned int fd,char *buf,int count)
 		refresh_screen();
         return -1; 
     }
+    
 
-
-    //
-    // ?
-    //
-
+    //tem que retonar o tanto de bytes escritos.
     //See: unistd.c
     // Escreve em uma stream uma certa quantidade de chars.
-    unistd_file_write ( (file *) __file, (char *) buf, (int) count );
-    
-    return 0;
+    return (int) unistd_file_write ( (file *) __file, (char *) buf, (int) count );
 }
 
 

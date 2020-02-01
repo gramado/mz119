@@ -1363,14 +1363,14 @@ void *gde_services ( unsigned long number,
 
         // 3 
         // Carregar um arquivo do disco para a memória.
-        // See: fs.c
+        // See: kernel/sysio/kservers/fs/fs.c
         // IN: name, address
         // #todo: Mudar para: case SYS_LOAD_FILE:
         
         case SYS_READ_FILE:
 
             // #test
-            // FUNCIONOU.
+            // FUNCIONOU. testado com open() 
             return (void *) fs_load_file_2 ( (char *) a2, 
                                 (unsigned long) arg3 );
 
@@ -1494,6 +1494,7 @@ void *gde_services ( unsigned long number,
             break;
 
         // 17 - close()
+        // #todo: fechar o arquivo aberto ... 
         case SYS_CLOSE:
             // todo: criar sys_close()
             //return (void *) close ( (int) arg2 );

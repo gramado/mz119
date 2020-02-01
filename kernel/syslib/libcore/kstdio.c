@@ -1271,14 +1271,10 @@ int fgetc ( file *stream ){
     int ch = 0;
 
 
-    if ( (void *) stream == NULL )
-    {
-		// #debug
-		printf ("fgetc: stream struct fail\n");
-		refresh_screen();
-		
-		return (int) (-1);
-
+    if ( (void *) stream == NULL ){
+        printf ("fgetc: stream struct fail\n");
+        refresh_screen();
+        return EOF;
     }else{
 
 		 //(--(p)->_r < 0 ? __srget(p) : (int)(*(p)->_p++))
@@ -1288,6 +1284,7 @@ int fgetc ( file *stream ){
 		//Não há mais caracteres disponíveis entre 
 		//stream->_ptr e o tamanho do buffer.
 		
+		/*
 		if ( stream->_cnt <= 0 )
 		{
 			stream->_flags = (stream->_flags | _IOEOF); 
@@ -1299,20 +1296,19 @@ int fgetc ( file *stream ){
 			//printf("show fgetc:: %s @\n", stream->_base );
 		    //refresh_screen();
 			
-			return (int) (-1);
+			return EOF;
 		};
+		*/
 		
 		//#debug
 		//nao podemos acessar um ponteiro nulo... no caso endereço.
-		
-		if ( stream->_p == 0 )
-		{
-			printf ("#debug: fgetc: stream struct fail\n");
-		    refresh_screen();
-			return (int) (-1);
-			
-		}else{
-			
+
+        if ( stream->_p == 0 ){
+            printf ("#debug: fgetc: stream struct fail\n");
+            refresh_screen();
+            return EOF;
+       }else{
+		   
 			// #obs: 
 			// Tem que ter a opção de pegarmos usando o posicionamento
 			// no buffer. O terminal gosta dessas coisas.
@@ -1323,19 +1319,17 @@ int fgetc ( file *stream ){
             stream->_p++;
             stream->_cnt--;
 
-		    return (int) ch;
-		
+            return (int) ch;
 		}
 		//fail
     };
 
 
 	//#debug
-    printf ("fgetc: $$\n");
-	refresh_screen();
-
-
-    return (int) (-1);
+    printf ("fgetc: fail\n");
+    refresh_screen();
+ 
+    return EOF;
 }
 
 

@@ -37,16 +37,21 @@ int unistd_file_write ( file *f, char *string, int len ){
         return EOF; 
     }
 
-
-
+    //não sei se devemos
+    //rewind(f);
+        
+        
+    /*
     for (i=0; i<len; i++)
     {
         fputc ( ( int ) *p, f );
         p++;
     };
+    */
+    
+    memcpy ( (void *) f->_base, (const void *) string, len ); 
 
-
-    return 0;
+    return len;
 }
 
 
@@ -73,19 +78,35 @@ int unistd_file_read ( file *f, char *buffer, int len ){
         return EOF; 
     }
 
- 
-    int ch = 0;
+    //rewind(f);
 
+
+    //printf ("unistd_file_read: putting %d bytes into the buffer.\n",len);
+    //refresh_screen();
+ 
+ 
+ 
+    memcpy ( (void *) buffer, (const void *) f->_base, len ); 
+ 
+    //Essa rotina falhou.
+    //faltvez fgetc esta falhando.
+    /*
+    int ch = 0;
     for (i=0; i<len; i++)
     {
-        ch = (int) fgetc(f);
-        
+        ch = (int) fgetc (f);
         *p = (char) ch;
         p++;
     };
+    */
 
+    //printf ("unistd_file_read: >> %s \n", buffer); //não funciona.
+    //printf ("unistd_file_read: >>_base %s \n", &f->_base[0]); //funciona.
+    //refresh_screen();
 
-    return 0;
+    // retorna o número bytes lidos.
+
+    return len;
 }
 
 

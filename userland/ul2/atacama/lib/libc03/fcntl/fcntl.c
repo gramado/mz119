@@ -86,7 +86,7 @@ int open (const char *pathname, int flags, mode_t mode){
     
     
     if ( s <= 0 || s > 1024*1024 ){
-        printf ("fopen: size\n");
+        printf ("open: size\n");
         return -1;
     }
 
@@ -96,23 +96,23 @@ int open (const char *pathname, int flags, mode_t mode){
     unsigned long address = (unsigned long) malloc(s);
     
     if (address == 0){
-        printf ("fopen: address\n");
+        printf ("open: address\n");
         return -1;
     }
 
 
     // load the file into the address.
     
-    int status = -1;
+    int __fd = -1;
     
     //IN: service, name, address, 0, 0 
-    status = (int) gramado_system_call( 3, 
+    __fd = (int) gramado_system_call( 3, 
                       (unsigned long) pathname, 
                       (unsigned long) address,  
                       0 );
 
-    if (status < 0){
-        printf ("fopen: Couldn't load the file\n");
+    if (__fd < 0){
+        printf ("open: __fd < 0 .Couldn't load the file\n");
         return -1;
     }
 
@@ -120,7 +120,7 @@ int open (const char *pathname, int flags, mode_t mode){
      // retornamos o fd do arquivo para fopen usar e colocar
      // numa stream ?
      
-     return (int) status;
+     return (int) __fd;
 }
 
 

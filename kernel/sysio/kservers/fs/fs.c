@@ -1492,6 +1492,10 @@ file *fs_load_file ( unsigned long name, unsigned long address ){
 }
 
 
+
+// usada por open()
+// tem que retornar o fd e colocar o ponteiro na lista de arquivos
+// abertos.
 // Carrega um arquivo do disco para a memória.
 // funcionou.
 int fs_load_file_2 ( char *file_name, unsigned long file_address )
@@ -1502,6 +1506,8 @@ int fs_load_file_2 ( char *file_name, unsigned long file_address )
     
     int Status = -1;
     int i;
+    
+    int __fd = -1;
 
     // Convertendo o formato do nome do arquivo.    
     // >>> "12345678XYZ"
@@ -1538,6 +1544,7 @@ int fs_load_file_2 ( char *file_name, unsigned long file_address )
     {
          if ( p->Objects[i] == 0 )
          {
+             __fd = i;
              goto __OK;
          }
     };
@@ -1584,11 +1591,23 @@ __OK:
         return -1;
         
         
+        
+    // salva o ponteiro.
+    if ( __fd >= 0 )    
+        p->Objects[__fd] = (unsigned long) __file;
+        
+    
+        
     printf ("done\n");
     refresh_screen();
           
-    // OK.
-    return 0;
+    //
+    // Done.
+    // Vamos retornar o fd.
+    // Pois essa rotina é usada por open();
+    //      
+          
+    return (int) __fd;
 }
 
 

@@ -13,6 +13,10 @@
 #include <unistd.h>
 
 
+
+#include <fcntl.h> 
+#include <errno.h> 
+
 // #obs
 // Talvez essa rotina não possa ser interrompida.
 // Podemos entrar na sessão crítica, mas precisamos 
@@ -27,9 +31,13 @@ int main ( int argc, char *argv[] ){
 
     FILE *fp;
     register int c;
-
-    // open.
     
+    
+    // #todo
+    // validation
+    
+    
+    // fopen.
     fp = fopen ( (char *) argv[1], "r+" );
     if ( (void *) fp == NULL )
         return -1;     
@@ -41,7 +49,59 @@ int main ( int argc, char *argv[] ){
         printf ("%c", c);
 
     return 0;
+    
+    
+    //
+    //  =====  tests  =======
+    //
+
+    /*
+     
+    //testando open()
+    int fd = -1;
+    
+    char *buffer = (char *) calloc(100, sizeof(char));     
+    
+    
+    fd = open ("init.ini", O_RDONLY | O_CREAT, 0);  
+    if ( fd < 0 ){
+        printf ("cat: open() fail \n");
+        exit(-1);
+    }
+    printf("opened the fd = %d\n", fd); 
+    
+ 
+    int sz = (int) read (fd, buffer, 10); 
+    
+    printf("called read ( %d, buffer, 10).  returned that"
+         " %d bytes  were read.\n", fd, sz); 
+    
+    buffer[sz] = '\0'; 
+    printf("Those bytes are as follows: %s \n", buffer); 
+
+   //...
+   
+    sprintf(buffer,"MAGIC STRING \n ... ");
+    write (fd, buffer, strlen(buffer));
+
+
+    int sz2 = (int) read (fd, buffer, 10); 
+    
+    printf("called read ( %d, buffer, 10).  returned that"
+         " %d bytes  were read.\n", fd, sz2); 
+    
+    buffer[sz2] = '\0'; 
+    printf("Those bytes are as follows: %s \n", buffer); 
+    
+    //close(fd);
+    printf("fim do teste...\n");
+    return 0;
+
+    */
+    
 }
+
+
 
 
 //
