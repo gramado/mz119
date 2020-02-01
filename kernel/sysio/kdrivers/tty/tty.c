@@ -424,33 +424,61 @@ void tty_reset_termios ( struct tty_d *tty )
     //#todo: Limits messages
     if ( (void *) tty == NULL )
         return;
- 
-	tty->termios.c_iflag = BRKINT | ICRNL | IXON;
-	tty->termios.c_oflag = OPOST;
-	tty->termios.c_cflag = CREAD | CS8;
-	tty->termios.c_lflag = ECHO | ECHOE | ECHOK | ICANON | ISIG;
-	
-	tty->termios.c_ispeed = B9600;
-	tty->termios.c_ospeed = B9600;
 
 
 
+    // See: ttydef.h
+     
+    tty->termios.c_iflag = BRKINT | ICRNL | IXON;
+    tty->termios.c_oflag = OPOST;
+    tty->termios.c_cflag = CREAD | CS8;
+    tty->termios.c_lflag = ECHO | ECHOE | ECHOK | ICANON | ISIG;
 
-    //See: termios.h
-    //#todo: Quais falores devemos colocar aqui?!
+    tty->termios.c_ispeed = B9600;
+    tty->termios.c_ospeed = B9600;
+
+    // ^d
+    // 4 - (CEOF: <Ctrl>d or ASCII EOT)
+    tty->termios.c_cc[VEOF] = CEOF;
     
-    /*
-	tty->termios.c_cc[VEOF]   = 4;  //EOT
-	tty->termios.c_cc[VEOL]   = 2;  //BS
-	tty->termios.c_cc[VERASE] = 8;  //BS
-	tty->termios.c_cc[VINTR]  = 3;  //EOI
-	tty->termios.c_cc[VKILL]  = 1;  //BS
-	tty->termios.c_cc[VQUIT]  = 28; //FS
-	tty->termios.c_cc[VSUSP]  = 26; //BS
-    */
+    // ? - 0xff  
+    // 2;  //BS
+    tty->termios.c_cc[VEOL]   = CEOL;    
+    
+    
+    // ^h
+    // (CERASE: <Ctrl>h or ASCII BS)
+    // 0x7f ??
+    // 8;  //BS
+    tty->termios.c_cc[VERASE] = CERASE;
+      
+
+    // ^c
+    // (CINTR: rubout or ASCII DEL)   
+    //3;  //EOI  
+    tty->termios.c_cc[VINTR]  = CINTR;   
+    
+    // ^u
+    // (CKILL: <Ctrl>u or ASCII NAK)
+    // ? - 1;  //BS
+    tty->termios.c_cc[VKILL]  = CKILL;   
     
 
-	
+    // ^\
+    // (CQUIT: <Ctrl>\ or ASCII FS) 
+    // ? - 0x1C
+    //28; //FS
+    tty->termios.c_cc[VQUIT]  = CQUIT;   
+    
+
+    // ^z 
+    // (CSUSP: <Ctrl>z or ASCII SUB) 
+    //26; //BS
+    tty->termios.c_cc[VSUSP]  = CSUSP;   
+
+
+
+    // #todo
 	//tty->win_size.ws_col = 80;
 	//tty->win_size.ws_row = 25;
 }

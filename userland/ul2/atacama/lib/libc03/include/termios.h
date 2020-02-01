@@ -20,9 +20,21 @@
 
 
 
+/* Indices into c_cc array.  Default values in parentheses. POSIX Table 7-5. */
+#define VEOF           0	/* cc_c[VEOF] = EOF char (^D) */
+#define VEOL           1	/* cc_c[VEOL] = EOL char (undef) */
+#define VERASE         2	/* cc_c[VERASE] = ERASE char (^H) */
+#define VINTR          3	/* cc_c[VINTR] = INTR char (DEL) */
+#define VKILL          4	/* cc_c[VKILL] = KILL char (^U) */
+#define VMIN           5	/* cc_c[VMIN] = MIN value for timer */
+#define VQUIT          6	/* cc_c[VQUIT] = QUIT char (^\) */
+#define VTIME          7	/* cc_c[VTIME] = TIME value for timer */
+#define VSUSP          8	/* cc_c[VSUSP] = SUSP (^Z, ignored) */
+#define VSTART         9	/* cc_c[VSTART] = START char (^S) */
+#define VSTOP         10	/* cc_c[VSTOP] = STOP char (^Q) */
+#define VERASEWORD    14	/* cc_c[VERASEWORD] = ERASEWORD char (^W) */
 
 /* Size of cc_c array, some extra space for extensions. */
-
 #define  NCCS  20  
 
 
@@ -44,11 +56,11 @@ typedef unsigned short  tcflag_t;  // Terminal modes.
 
 
 #ifndef _POSIX_VDISABLE
-#define	_POSIX_VDISABLE	0xff
+#define  _POSIX_VDISABLE  0xff
 #endif
 
 #ifndef _POSIX_SOURCE
-#define	CCEQ(val, c)	((c) == (val) ? (val) != _POSIX_VDISABLE : 0)
+#define  CCEQ(val, c)  ((c) == (val) ? (val) != _POSIX_VDISABLE : 0)
 #endif
 
 
@@ -175,23 +187,6 @@ struct termios
 #define  ISIG      0x0040  /* enable signals */
 #define  NOFLSH    0x0080  /* disable flush after interrupt or quit */
 #define  TOSTOP    0x0100  /* send SIGTTOU (job control, not implemented*/
-
-
-
-
-/* Indices into c_cc array.  Default values in parentheses. POSIX Table 7-5. */
-#define VEOF           0	/* cc_c[VEOF] = EOF char (^D) */
-#define VEOL           1	/* cc_c[VEOL] = EOL char (undef) */
-#define VERASE         2	/* cc_c[VERASE] = ERASE char (^H) */
-#define VINTR          3	/* cc_c[VINTR] = INTR char (DEL) */
-#define VKILL          4	/* cc_c[VKILL] = KILL char (^U) */
-#define VMIN           5	/* cc_c[VMIN] = MIN value for timer */
-#define VQUIT          6	/* cc_c[VQUIT] = QUIT char (^\) */
-#define VTIME          7	/* cc_c[VTIME] = TIME value for timer */
-#define VSUSP          8	/* cc_c[VSUSP] = SUSP (^Z, ignored) */
-#define VSTART         9	/* cc_c[VSTART] = START char (^S) */
-#define VSTOP         10	/* cc_c[VSTOP] = STOP char (^Q) */
-#define VERASEWORD    14	/* cc_c[VERASEWORD] = ERASEWORD char (^W) */
 
 
 

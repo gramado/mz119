@@ -24,9 +24,26 @@
 #define _TERMIOS_H
 
 
-/* size of cc_c array, some extra space for extensions. */
 
+// Indices into c_cc array.  
+// Default values in parentheses. POSIX Table 7-5. 
+#define VEOF           0	/* cc_c[VEOF] = EOF char (^D) */
+#define VEOL           1	/* cc_c[VEOL] = EOL char (undef) */
+#define VERASE         2	/* cc_c[VERASE] = ERASE char (^H) */
+#define VINTR          3	/* cc_c[VINTR] = INTR char (DEL) */
+#define VKILL          4	/* cc_c[VKILL] = KILL char (^U) */
+#define VMIN           5	/* cc_c[VMIN] = MIN value for timer */
+#define VQUIT          6	/* cc_c[VQUIT] = QUIT char (^\) */
+#define VTIME          7	/* cc_c[VTIME] = TIME value for timer */
+#define VSUSP          8	/* cc_c[VSUSP] = SUSP (^Z, ignored) */
+#define VSTART         9	/* cc_c[VSTART] = START char (^S) */
+#define VSTOP         10	/* cc_c[VSTOP] = STOP char (^Q) */
+#define VERASEWORD    14	/* cc_c[VERASEWORD] = ERASEWORD char (^W) */
+
+// Size of cc_c array, some extra space for extensions.
 #define  NCCS  20
+
+
 
 
 
@@ -161,19 +178,7 @@ struct termios
 
 
 
-/* Indices into c_cc array.  Default values in parentheses. POSIX Table 7-5. */
-#define VEOF           0	/* cc_c[VEOF] = EOF char (^D) */
-#define VEOL           1	/* cc_c[VEOL] = EOL char (undef) */
-#define VERASE         2	/* cc_c[VERASE] = ERASE char (^H) */
-#define VINTR          3	/* cc_c[VINTR] = INTR char (DEL) */
-#define VKILL          4	/* cc_c[VKILL] = KILL char (^U) */
-#define VMIN           5	/* cc_c[VMIN] = MIN value for timer */
-#define VQUIT          6	/* cc_c[VQUIT] = QUIT char (^\) */
-#define VTIME          7	/* cc_c[VTIME] = TIME value for timer */
-#define VSUSP          8	/* cc_c[VSUSP] = SUSP (^Z, ignored) */
-#define VSTART         9	/* cc_c[VSTART] = START char (^S) */
-#define VSTOP         10	/* cc_c[VSTOP] = STOP char (^Q) */
-#define VERASEWORD    14	/* cc_c[VERASEWORD] = ERASEWORD char (^W) */
+
 
 
 /* 
@@ -213,6 +218,10 @@ struct termios
 #define  TCSANOW    1  /* changes take effect immediately */
 #define  TCSADRAIN  2  /* changes take effect after output is done */
 #define  TCSAFLUSH  3  /* wait for output to finish and flush input */
+
+//#if defined(_NETBSD_SOURCE)
+//#define TCSASOFT	0x10		/* flag - don't alter h.w. state */
+//#endif
 
 
 
