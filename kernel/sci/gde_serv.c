@@ -1,6 +1,7 @@
 /*
- * File: execve/sci/gde/gde_serv.c 
+ * File: sci/gde_serv.c 
  *
+ * 
  *       (SCI) = SYSTEM CALL INTERFACE
  *
  * Esse é o arquivo principal da sci.

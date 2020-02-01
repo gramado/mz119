@@ -7,17 +7,17 @@
 [Number]  [Entry point]                  [Implementation (path)]
   
   0       Nothing                         Nothing
-  1       sys_my_read_hd_sector      
-  2       sys_my_write_hd_sector      
+  1       my_read_hd_sector      
+  2       my_write_hd_sector      
   3       sys_read_file2
-  4       sys_fsSaveFile
-  5       sys_vsync
-  6       sys_backbuffer_putpixel
-  7       sys_my_buffer_char_blt
-  8       sys_my_buffer_horizontal_line
-  9       sys_drawDataRectangle
+  4       fsSaveFile
+  5       vsync
+  6       backbuffer_putpixel
+  7       my_buffer_char_blt
+  8       my_buffer_horizontal_line
+  9       drawDataRectangle
   10      Nothing 
-  11      sys_refresh_screen
+  11      refresh_screen
 
   rede: 12,13,14,15
   
@@ -35,14 +35,14 @@
  
  
  
-  24      sys_show_window_rect
+  24      show_window_rect
 
   Nothing: 25 ~ 33
 
-  34      sys_set_up_cursor
+  34      set_up_cursor
   35      __do_35
-  36      sys_system_dispatch_to_procedure
-  37      sys_system_procedure
+  36      system_dispatch_to_procedure
+  37      system_procedure
   
   38      __gethostname
   39      __sethostname
@@ -56,48 +56,48 @@
   
   Nothing:  45 ~ 49
   
-  50      sys_resize_window
-  51      sys_redraw_window
-  52      sys_replace_window
-  53      sys_MaximizeWindow
-  54      sys_MinimizeWindow
-  55      sys_windowGetForegroundWindow
-  56      sys_windowSetForegroundWindow
-  57      sys_RegisterWindow
-  58      sys_CloseWindow
+  50      resize_window
+  51      redraw_window
+  52      replace_window
+  53      MaximizeWindow
+  54      MinimizeWindow
+  55      windowGetForegroundWindow
+  56      windowSetForegroundWindow
+  57      RegisterWindow
+  58      CloseWindow
   59      Nothing
-  60      sys_set_active_window
-  61      sys_get_active_window
-  62      sys_SetFocus
+  60      set_active_window
+  61      get_active_window
+  62      SetFocus
   63      window_with_focus
-  64      sys_KillFocus
+  64      KillFocus
   65      console_putchar               tty/console ?
   66      local ?
   67      Nothing
   68      Nothing
   69      Used for tests.
-  70      sys_create_request (exit)
+  70      create_request (exit)
   71      fork (suspended for now)
-  72      sys_create_thread
-  73      sys_create_process
+  72      create_thread
+  73      create_process
   
   Nothing: 74 ~79
   
-  80      sys_show_currentprocess_info 
-  81      sys_getppid
+  80      show_currentprocess_info 
+  81      getppid
   82      (Set PPID)
-  83      sys_do_waitpid
+  83      do_waitpid
   84      Nothing
-  85      sys_getpid
+  85      getpid
   86      (Set PID)  
-  87      sys_Down
-  88      sys_processTesting
-  89      sys_Up
-  90      sys_dead_thread_collector
+  87      Down
+  88      processTesting
+  89      Up
+  90      dead_thread_collector
   
   Nothing: 91 92 93
   
-  94      sys_SelectForExecution
+  94      SelectForExecution
   
   Nothing:  95 ~ 99
   
@@ -118,36 +118,36 @@
   116      (Local)  
   117      pty_send_message_to_thread (PID)
   118      serviceCreateWindow
-  119      sys_windowSelectColorScheme
+  119      windowSelectColorScheme
   
   Nothing: 120 ~ 123
   
   124      defered request ??
-  125      sys_system_procedure
-  126      sys_portsx86_IN
-  127      sys_portsx86_OUT
+  125      system_procedure
+  126      portsx86_IN
+  127      portsx86_OUT
   128      Nothing.
-  129      sys_systemLinkDriver
-  130      sys_draw_text
-  131      sys_my_buffer_char_blt (local?)
+  129      systemLinkDriver
+  130      draw_text
+  131      my_buffer_char_blt (local?)
   132      Nothing
   133      Nothing
   134      wrong thing.
   135      (feed terminal ??)
   136      ?
-  137      sys_thread_getchar (???)   
-  138      sys_keyboardGetKeyState
-  139      sys_get_scancode
-  140      sys_set_current_keyboard_responder ??
-  141      sys_get_current_keyboard_responder
-  142      sys_set_current_mouse_responder
-  143      sys_get_current_mouse_responder
-  144      sys_getClientAreaRect
-  145      sys_setClientAreaRect
+  137      thread_getchar (???)   
+  138      keyboardGetKeyState
+  139      get_scancode
+  140      set_current_keyboard_responder ??
+  141      get_current_keyboard_responder
+  142      set_current_mouse_responder
+  143      get_current_mouse_responder
+  144      getClientAreaRect
+  145      setClientAreaRect
   146      Get Screen window (root)
   147      Get Main window
-  148      sys_grid
-  149      sys_MainMenu
+  148      grid
+  149      MainMenu
   150      Nothing
   151      Nothing
   152     get current uid
@@ -158,33 +158,33 @@
   157     get user session id
   158     get window station id
   159     get desktop id
-  160     sys_create_socket
-  161     sys_getSocketIP
-  162     sys_getSocketPort
-  163     sys_update_socket
+  160     create_socket
+  161     getSocketIP
+  162     getSocketPort
+  163     update_socket
   
   164 ~ 169  (?)
   
-  170     sys_fs_print_process_pwd
+  170     fs_print_process_pwd
   171     get current volume
   172     set current volume  
-  173     sys_fsListFiles
-  174     sys_KiSearchFile
+  173     fsListFiles
+  174     KiSearchFile
   175     'cd' command support
-  176     sys_fs_pathname_backup
-  177     sys_fsList
-  178     sys_fsGetFileSize
+  176     fs_pathname_backup
+  177     fsList
+  178     fsGetFileSize
   179     do_gexecve
   
   Nothing: 180 ~ 183
   
-  184     sys_GetProcessHeapStart
+  184     GetProcessHeapStart
   
   Nothing: 185 ~ 198
   
   
-  199     sys_gc
-  200     sys_signalSend
+  199     gc
+  200     signalSend
   
   
   Nothing: 201 ~ 210 
@@ -193,15 +193,15 @@
   212     (Set current terminal)
   213      nothing
   214      nothing
-  215     sys_systemGetTerminalWindow
-  216     sys_systemSetTerminalWindow
+  215     systemGetTerminalWindow
+  216     systemSetTerminalWindow
   
   217 ~ 221  (??)
   
-  222     sys_create_timer
-  223     sys_get_systime_info
-  224     sys_get_time
-  225     sys_get_date
+  222     create_timer
+  223     get_systime_info
+  224     get_time
+  225     get_date
   226     spinlock stuff
   227     spinlock stuff  
   228     spinlock stuff  
@@ -212,25 +212,25 @@
   
   237 - 239  ??
   
-  240     sys_get_cursor_x
-  241     sys_get_cursor_y
+  240     get_cursor_x
+  241     get_cursor_y
   242     ?
   243     ?
-  244     sys_timerEnableTextCursor
-  245     sys_timerDisableTextCursor
+  244     timerEnableTextCursor
+  245     timerDisableTextCursor
   
   246 ~ 249   libc support
   
   246     __openat
-  247     sys_pipe
+  247     pipe
   248     do_execve
   249     ?
-  250     sys_systemGetSystemMetrics
-  251     sys_diskShowCurrentDiskInfo
-  252     sys_volumeShowCurrentVolumeInfo
-  253     sys_memoryShowMemoryInfo
-  254     sys_systemShowDevicesInfo
-  255     sys_KiInformation
+  250     systemGetSystemMetrics
+  251     diskShowCurrentDiskInfo
+  252     volumeShowCurrentVolumeInfo
+  253     memoryShowMemoryInfo
+  254     systemShowDevicesInfo
+  255     KiInformation
   
   
   //
