@@ -1,6 +1,7 @@
 
+# gws - Gramado Window Server.
+
 # Compiling gws
-# 
 # history:
 
 
@@ -86,12 +87,11 @@ all-c:
 	gcc  -c  gwscore/src/gws/line.c     -I $(LIBC) -I $(API02)   -I $(GWS) -I . $(CFLAGS) -o line.o
 	gcc  -c  gwscore/src/gws/pixel.c    -I $(LIBC) -I $(API02)   -I $(GWS) -I . $(CFLAGS) -o pixel.o
 	gcc  -c  gwscore/src/gws/rect.c     -I $(LIBC) -I $(API02)   -I $(GWS) -I . $(CFLAGS) -o rect.o
-	gcc  -c  gwscore/src/gws/dtext.c     -I $(LIBC) -I $(API02)   -I $(GWS) -I . $(CFLAGS) -o dtext.o
-	
-	gcc  -c  gwscore/src/gws/createw.c     -I $(LIBC) -I $(API02)   -I $(GWS) -I . $(CFLAGS) -o createw.o
-
+	gcc  -c  gwscore/src/gws/dtext.c    -I $(LIBC) -I $(API02)   -I $(GWS) -I . $(CFLAGS) -o dtext.o
+	gcc  -c  gwscore/src/gws/createw.c  -I $(LIBC) -I $(API02)   -I $(GWS) -I . $(CFLAGS) -o createw.o
 	gcc  -c  gwscore/src/gws.c          -I $(LIBC) -I $(API02)   -I $(GWS) -I . $(CFLAGS) -o gws.o
 # ...	
+
 
 
 #renderer

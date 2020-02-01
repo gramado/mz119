@@ -1,3 +1,11 @@
+/*
+ * rect.c 
+ * 
+ * 
+ * 
+ */
+
+
 
 #include <api.h>
 #include <gws.h>
@@ -10,10 +18,10 @@
 
 void 
 rectBackbufferDrawRectangle ( unsigned long x, 
-                    unsigned long y, 
-                    unsigned long width, 
-                    unsigned long height, 
-                    unsigned long color )
+                              unsigned long y, 
+                              unsigned long width, 
+                              unsigned long height, 
+                              unsigned long color )
 {
 
 	//#BUGBUG

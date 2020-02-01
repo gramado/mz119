@@ -1,24 +1,41 @@
+/*
+ * File: createw.c 
+ * 
+ *      Creates a window.
+ *      It's part of the gws project.
+ * 
+ * History:
+ *     2019 - Created fy Fred Nora.
+ */
+
+
 
 #include <api.h>
 #include <gws.h>
 
 
 
-
+/*
+ * createwDrawTitleBar:
+ * 
+ * 
+ * 
+ */
 
 // #importante
 // >>> Criaremos a barra de títulos depois que a janela estiver pronta.
             
-int createwDrawTitleBar ( struct window_d *window,
-                unsigned long x,
-                unsigned long y,
-                unsigned long width,
-                unsigned long height,
-                int style,
-                char *string )         
+int 
+createwDrawTitleBar ( struct window_d *window,
+                      unsigned long x,
+                      unsigned long y,
+                      unsigned long width,
+                      unsigned long height,
+                      int style,
+                      char *string )         
 {
-	
-	unsigned long __tmp_color;
+
+    unsigned long __tmp_color;
 
     // podemos desenhar a string e os botões de controle.
     // Isso poderá ser chamado pelo wm.
@@ -27,19 +44,21 @@ int createwDrawTitleBar ( struct window_d *window,
 
        // barra de títulos;   
        //todo: usar o esquema de cores.      
-	
-	 if (window->focus == 1)
-	 { __tmp_color = xCOLOR_GRAY1; }        // mais escuro
-	 if (window->focus == 0)
-	 { __tmp_color = window->bg_color; }    // escolhida pelo aplicativo;
+
+    if (window->focus == 1)
+    { __tmp_color = xCOLOR_GRAY1; }        // mais escuro
+
+    if (window->focus == 0)
+    { __tmp_color = window->bg_color; }    // escolhida pelo aplicativo;
       
-      //retângulo da barra de títulos.
-     rectBackbufferDrawRectangle ( window->left +2, window->top +2, 
-           window->width -4, 30, __tmp_color );        
+    // Retângulo da barra de títulos.
+    rectBackbufferDrawRectangle ( window->left +2, window->top +2, 
+        window->width -4, 30, __tmp_color );        
         
 	// String
     dtextDrawString ( window->left +16 +8 +8, window->top +(32/3), 
         COLOR_TERMINALTEXT2, window->name );  
+
 
      return 0;
 }
@@ -47,7 +66,12 @@ int createwDrawTitleBar ( struct window_d *window,
 
 
 
-
+/*
+ * createwDrawFrame:
+ * 
+ * 
+ * 
+ */
 
 // #importante:
 // essa rotina será chamada depois que criarmos uma janela básica
@@ -66,13 +90,13 @@ int createwDrawTitleBar ( struct window_d *window,
 // por exemplo: uma editbox tem um frame mas não tem uma caption bar;
 
 
-              
-int createwDrawFrame ( struct window_d *window,
-                unsigned long x,
-                unsigned long y,
-                unsigned long width,
-                unsigned long height,
-                int style )          //estilo do frame.
+int 
+createwDrawFrame ( struct window_d *window,
+                   unsigned long x,
+                   unsigned long y,
+                   unsigned long width,
+                   unsigned long height,
+                   int style )          //estilo do frame.
 {
 
     unsigned long border_color;
@@ -83,9 +107,10 @@ int createwDrawFrame ( struct window_d *window,
     // desenhar o frame e depois desenhar a barra de títulos
     // caso esse estilo de frame precise de uma barra.
 
-    //EDITBOX NÃO PRECISA DE BARRA DE TÍTULOS.
-    //MAS PRECISA DE FRAME ... QUE SERÃO AS BORDAS.
-		// Editbox
+    // EDITBOX NÃO PRECISA DE BARRA DE TÍTULOS.
+    // MAS PRECISA DE FRAME ... QUE SERÃO AS BORDAS.
+    // Editbox
+
     if ( window->type == WT_EDITBOX )
     {
 			// Se tiver o foco.
@@ -114,10 +139,12 @@ int createwDrawFrame ( struct window_d *window,
         return 0;
     }
 
+    // Overlapped.
+    // Janela de aplicativos.
 
     if ( window->type == WT_OVERLAPPED)
     {
-			// Se tiver o foco.
+            // Se tiver o foco.
             if ( window->focus == 1 )
             {
                 border_color = COLOR_BLUE;
@@ -127,20 +154,24 @@ int createwDrawFrame ( struct window_d *window,
                 border_size = 2;
             };
             
+        // Quatro bordas.
+            
         rectBackbufferDrawRectangle( window->left, 
             window->top, window->width, border_size, border_color );
 
         rectBackbufferDrawRectangle( window->left, 
             window->top, border_size, window->height, border_color );
 
-		//board2, borda direita e baixo.
+        //board2, borda direita e baixo.
         rectBackbufferDrawRectangle( window->left +window->width -1, 
             window->top, border_size, window->height, border_color );
 
         rectBackbufferDrawRectangle ( window->left, window->top +window->height -1, 
             window->width, border_size, border_color );
             
-       createwDrawTitleBar ( (struct window_d *) window, 
+        
+        // Title bar.
+        createwDrawTitleBar ( (struct window_d *) window, 
             x, y,
             width, height, 
             1,
@@ -202,18 +233,19 @@ int createwDrawFrame ( struct window_d *window,
 //12 - color (bg) (para janela simples)
  
 void *createwCreateWindow2 ( unsigned long type, 
-                     unsigned long status, 
-                     unsigned long view, 
-                     char *windowname, 
-                     unsigned long x, 
-                     unsigned long y, 
-                     unsigned long width, 
-                     unsigned long height, 
-                     struct window_d *pWindow, 
-                     int desktopid, 
-                     unsigned long clientcolor, 
-                     unsigned long color ) 
-{	
+                             unsigned long status, 
+                             unsigned long view, 
+                             char *windowname, 
+                             unsigned long x, 
+                             unsigned long y, 
+                             unsigned long width, 
+                             unsigned long height, 
+                             struct window_d *pWindow, 
+                             int desktopid, 
+                             unsigned long clientcolor, 
+                             unsigned long color ) 
+{
+
 	// @todo: O argumento style está faltando.
 	//        cada tipo de tanela poderá ter vários estilos.
 	// Obs: Podemos ir usando apenas um estilo padrão por enquanto.
@@ -1968,24 +2000,31 @@ done:
 
 
 
+/*
+ * createwCreateWindow:
+ * 
+ * 
+ * 
+ * 
+ */
+
 // Essa será a função que atenderá a interrupção
-//esse é o serviço de criação da janela.
+// esse é o serviço de criação da janela.
 // talvez ampliaremos o número de argumentos
                       
 void *createwCreateWindow ( unsigned long type, 
-                     unsigned long status, 
-                     unsigned long view, 
-                     char *windowname, 
-                     unsigned long x, 
-                     unsigned long y, 
-                     unsigned long width, 
-                     unsigned long height, 
-                     struct window_d *pWindow, 
-                     int desktopid, 
-                     unsigned long clientcolor, 
-                     unsigned long color ) 
+                            unsigned long status, 
+                            unsigned long view, 
+                            char *windowname, 
+                            unsigned long x, 
+                            unsigned long y, 
+                            unsigned long width, 
+                            unsigned long height, 
+                            struct window_d *pWindow, 
+                            int desktopid, 
+                            unsigned long clientcolor, 
+                            unsigned long color ) 
 {
-
 
    struct window_d *__w;
    
@@ -2024,18 +2063,24 @@ void *createwCreateWindow ( unsigned long type,
         __w->type = WT_EDITBOX;   
         goto draw_frame;
     }
+    
+    //
+    // Draw frame.
+    //
 
 
 draw_frame:
-    //#IMPORTANTE
-    //DESENHA O FRAME DOS TIPOS QUE PRECISAM DE FRAME.
-    //OVERLAPED, EDITBOX, CHECKBOX ...
+
+    // #IMPORTANTE
+    // DESENHA O FRAME DOS TIPOS QUE PRECISAM DE FRAME.
+    // OVERLAPED, EDITBOX, CHECKBOX ...
+
+    // draw frame.
+    // Nessa hora essa rotina podera criar a barra de títulos.
+    // o wm poderá chamar a rotina de criar frame.
+    
     if ( type == WT_OVERLAPPED || type == WT_EDITBOX )
     {
-        // draw frame.
-        // Nessa hora essa rotina podera criar a barra de títulos.
-        // o wm poderá chamar a rotina de criar frame.
-        
         createwDrawFrame ( (struct window_d *) __w, 
             x, y,
             width, height, 
@@ -2043,6 +2088,7 @@ draw_frame:
         
         return (void *) __w;   
    }
+    
     
     
     //================

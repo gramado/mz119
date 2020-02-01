@@ -1,22 +1,33 @@
-
+/*
+ * File: dtext.c 
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
 
 
 #include <api.h>
 #include <gws.h>
 
-/* dtextDrawString:
- *     Draw a string on the screen. */
+
+
+/* 
+ * dtextDrawString:
+ *     Draw a string on the screen. 
+ */
 
 void 
 dtextDrawString ( unsigned long x,
-              unsigned long y,
-              unsigned long color,
-              unsigned char *string )
-{	
-	int Index=0;
-	
-	
-	int cWidth = 8; //#bugbug  determinando
+                  unsigned long y,
+                  unsigned long color,
+                  unsigned char *string )
+{
+
+    int Index=0;
+
+    int cWidth = 8;   //#bugbug  determinando
 
 
 	//int cWidth = get_char_width ();
@@ -61,19 +72,20 @@ dtextDrawString ( unsigned long x,
 
 void 
 dtextDrawText ( struct window_d *window,
-            unsigned long x,
-            unsigned long y,
-            unsigned long color,
-            unsigned char *string )
+                unsigned long x,
+                unsigned long y,
+                unsigned long color,
+                unsigned char *string )
 { 
+
+    struct window_d * __w;
+
+
+    __w = (struct window_d *) gui->screen;
 	
-	struct window_d * __w;
-	
-	__w = (struct window_d *) gui->screen;
-	
-	if ( (void *) window == NULL )
-	{
-		dtextDrawString ( __w->left +x, __w->top +y, color, string );
+    if ( (void *) window == NULL )
+    {
+        dtextDrawString ( __w->left +x, __w->top +y, color, string );
         return;
         
     }else{

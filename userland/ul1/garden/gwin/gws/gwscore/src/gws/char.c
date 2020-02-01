@@ -1,23 +1,25 @@
+/*
+ * File: char.c 
+ * 
+ *     gws
+ * 
+ * History:
+ *     2019 - Created by Fred Nora.
+ * 
+ */
+
 
 
 
 //#include <stddef.h>
-
 #include <api.h>
 #include <gws.h>
 
 
 
 
-/*
- ********************************************************
- * my_buffer_char_blt:
- *     Constrói um caractere transparente 8x8 no buffer.
- */
 
-//void charBuiltCharBackBuffer( unsigned long x, unsigned long y, unsigned long color, unsigned long c)
-
-
+// Constrói um caractere transparente 8x8 no buffer.
 void 
 charBackbufferCharBlt ( unsigned long x, 
                         unsigned long y, 
@@ -29,31 +31,27 @@ charBackbufferCharBlt ( unsigned long x,
 
 
 
-
-
-
-
 void charSetCharWidth ( int width ){
-	
-	gcharWidth = (int) width;
+
+    gcharWidth = (int) width;
 }
 
 
 void charSetCharHeight ( int height ){
 	
-	gcharHeight = (int) height;
+    gcharHeight = (int) height;
 }
 
 
 int charGetCharWidth (){
 	
-	return (int) gcharWidth;
+    return (int) gcharWidth;
 }
 
 
 int charGetCharHeight (){
 	
-	return (int) gcharHeight;
+    return (int) gcharHeight;
 }
 
 
@@ -61,15 +59,14 @@ int charGetCharHeight (){
  ******************************************************
  * gws_drawchar_transparent:
  *     Desenha um caractere sem alterar o pano de fundo.
- *
- *  >> no backbuffer.
+ *     >> no backbuffer.
  */
 
 void 
 charBackbufferDrawcharTransparent ( unsigned long x, 
-                           unsigned long y, 
-                           unsigned long color, 
-                           unsigned long c )
+                                    unsigned long y, 
+                                    unsigned long color, 
+                                    unsigned long c )
 {
     int x2;
     int y2;
@@ -184,62 +181,63 @@ charBackbufferDrawcharTransparent ( unsigned long x,
 	};
 	
 
+
 	// O caractere sendo trabalhado.
-	// Offset da tabela de chars de altura 8 na ROM.	
-	
-	 work_char = (void *) gws_currentfont_address + (c * gcharHeight);
-	 // work_char = (void *) gws_currentfont_address + (c * 8);
+
+    work_char = (void *) gws_currentfont_address + (c * gcharHeight);
+
 
 	//
 	// Draw.
 	//
-	
+
+
     for ( y2=0; y2 < gcharHeight; y2++ )
     {
         bit_mask = 0x80;
 
         for ( x2=0; x2 < gcharWidth; x2++ )
-        {			
-	        //Put pixel. 
-            if ( ( *work_char & bit_mask ) )
-			{ 
+        {
+
+           // Put pixel. 
+            if ( ( *work_char & bit_mask ) ){ 
                 pixelBackBufferPutpixel ( color, x + x2, y );  
-			}
-            
-			//Rotate bitmask.
-			bit_mask = (bit_mask >> 1);                
+            }
+
+            // Rotate bitmask.
+            bit_mask = (bit_mask >> 1);  
         };
-		
-		y++;            //Próxima linha da 8 linhas do caractere.
-		work_char++;   
-	};
-	
-	// Algo mais ?        	   
+
+        y++;            //Próxima linha da 8 linhas do caractere.
+        work_char++;   
+    };
 }
 
 
 /*
  *****************************************************
- * draw_char:
- *     Constrói um caractere 8x8 no buffer.
+ * charBackbufferDrawchar:
+ *     Constrói um caractere no buffer.
  *     Desenha um caractere e pinta o pano de fundo.
  */ 
 
                 
 void 
 charBackbufferDrawchar ( unsigned long x, 
-                unsigned long y,  
-                unsigned long c,
-                unsigned long fgcolor,
-                unsigned long bgcolor )
-{	
-	int x2;
+                         unsigned long y,  
+                         unsigned long c,
+                         unsigned long fgcolor,
+                         unsigned long bgcolor )
+{
+
+    int x2;
     int y2;
-	
-    unsigned char bit_mask = 0x80;	
-    
-	char *work_char;  
-    
+
+    unsigned char bit_mask = 0x80;
+
+    char *work_char;  
+
+
 	//struct window_d *hWindow;
 
 	  
@@ -352,21 +350,19 @@ charBackbufferDrawchar ( unsigned long x,
 
         for ( x2=0; x2 < gcharWidth; x2++ )
         {
-				
-			//Put pixel.				
-			pixelBackBufferPutpixel ( *work_char & bit_mask ? fgcolor: bgcolor, 
-			    x + x2, y );
-				
-			
-            bit_mask = (bit_mask >> 1); 								 
+
+			// Put pixel.
+			// A cor varia de acordo com a mascara de bit.
+            pixelBackBufferPutpixel ( *work_char & bit_mask ? fgcolor: bgcolor, 
+                x + x2, y );
+
+            bit_mask = (bit_mask >> 1); 
         };
-		
-		//Próxima linha da (y) linhas do caractere.
-		y++;            
-		work_char++;   
-	};
-	
-	// Algo mais ?       	   
+
+        // Próxima linha da (y) linhas do caractere.
+        y++; 
+        work_char++;   
+    };
 }
 
 

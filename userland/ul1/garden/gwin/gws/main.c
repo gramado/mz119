@@ -45,19 +45,32 @@
 
 #include <api.h>
 
-       struct window_d *__mywindow; 
+
+// Our desktop;
+struct desktop_d *__desktop;
+
+// Our PID.
+int __ws_pid;
+
+
+
+//window.
+struct window_d *__mywindow; 
   
+  
+
   
   
 // #bugbug
 // existe um outro procedimento em gws.c
 // mas queremos apenas um , esse aqui.!!
 // deletar o outro.       
+
 int 
 gwsProcedure ( struct window_d *window, 
-                   int msg, 
-                   unsigned long long1, 
-                   unsigned long long2 );
+               int msg, 
+               unsigned long long1, 
+               unsigned long long2 );
                    
 int 
 gwsProcedure ( struct window_d *window, 
@@ -132,8 +145,18 @@ gwsProcedure ( struct window_d *window,
     return (0);
 }
 
+
+
+/*
+ * main: 
+ *     
+ * 
+ */
+ 
 int main (int argc, char **argv){
     
+    // #todo
+    // Use the debug funcion via serial port.
     
     // #debug
     printf ("gws: gws is alive !  \n");
@@ -145,6 +168,7 @@ int main (int argc, char **argv){
 
     
     // #tests
+    // Isso funciona.
     //pixelBackBufferPutpixel ( COLOR_RED,   100, 250 );
     //pixelBackBufferPutpixel ( COLOR_GREEN, 105, 250 );
     //pixelBackBufferPutpixel ( COLOR_BLUE,  110, 250 );
@@ -208,8 +232,6 @@ int main (int argc, char **argv){
     //
 
     // Getting current desktop;
-    
-    struct desktop_d *__desktop;
 
     __desktop = (struct desktop_d *) gramado_system_call (519,0,0,0);
 
@@ -221,10 +243,9 @@ int main (int argc, char **argv){
          //"Drawing some text inside a window!" );
 
 
-    int __ws_pid;
     __ws_pid = (int) getpid();
 
-    // 715 - set ws PID
+    // Set ws PID
     // Setar esse processo como o ws do sistema.
     gramado_system_call ( 513, 
         __desktop, __ws_pid, __ws_pid);
@@ -262,12 +283,15 @@ event_loop:
         };
     };
 
-    // Error
 
-done:
-    
+
+// Error
+
     return 1; 
 }
  
+
+
+
 
 

@@ -11,6 +11,20 @@
 #include <api.h>
 
 
+
+struct desktop_d *__desktop;
+
+
+int __ws_pid;   
+
+
+
+/*
+ * main: 
+ * 
+ * 
+ */
+ 
 int main (int argc, char **argv){
 
     // #debug
@@ -22,35 +36,27 @@ int main (int argc, char **argv){
     // Desktop
     //
 
-    // 519
+
     // get current dsktop;
-    struct desktop_d *__desktop;
-    
-    //current desktop.
+
     __desktop = (struct desktop_d *) gramado_system_call (519,0,0,0);
    
     
    //
    // get ws pid
    //
-   
-    int __ws_pid;   
-    
-    
-    // 714 - get ws PID for a given desktop
+
+    // Get ws PID for a given desktop
     __ws_pid = (int) gramado_system_call ( 512,
                          (unsigned long) __desktop,
                          (unsigned long) __desktop,
                          (unsigned long) __desktop );
     
-    if (__ws_pid < 0)
-    {
-        gde_message_box ( 3, 
-            "iliinit", "ws fail" ); 
-
+    if (__ws_pid < 0){
+        gde_message_box ( 3, "iliinit", "ws fail" ); 
         gde_exit (1);
- 
     }else{
+
 
         // Send message.
         // Envia uma mensagem pedindo para o ws emitir um hello!
