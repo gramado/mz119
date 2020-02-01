@@ -84,16 +84,16 @@
   Nothing: 74 ~79
   
   80      show_currentprocess_info 
-  81      getppid
+  81      sys_getppid                   sci/sys/sys.c
   82      (Set PPID)
   83      do_waitpid
   84      Nothing
-  85      getpid
+  85      sys_getpid                    sci/sys/sys.c
   86      (Set PID)  
   87      Down
   88      processTesting
   89      Up
-  90      dead_thread_collector
+  90      sys_dead_thread_collector     sci/sys/sys.c
   
   Nothing: 91 92 93
   
@@ -226,11 +226,11 @@
   248     do_execve
   249     ?
   250     systemGetSystemMetrics
-  251     diskShowCurrentDiskInfo
-  252     volumeShowCurrentVolumeInfo
-  253     memoryShowMemoryInfo
-  254     systemShowDevicesInfo
-  255     KiInformation
+  251     sys_show_system_info          sci/sys/sys.c
+  252     sys_show_system_info          sci/sys/sys.c
+  253     sys_show_system_info          sci/sys/sys.c
+  254     sys_show_system_info          sci/sys/sys.c
+  255     sys_show_system_info          sci/sys/sys.c
   
   
   //
