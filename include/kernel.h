@@ -324,7 +324,10 @@ extern void do_executa_new_task (void);
 //
 
 #include <kernel/sci/syscall.h>            //system calls.
-#include <kernel/sci/sys.h> 
+
+
+// HERE !
+#include <kernel/sci/sys/sys.h> 
 
 
 

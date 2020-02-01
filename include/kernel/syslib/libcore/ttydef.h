@@ -83,9 +83,11 @@
 #define  CEOF  CTRL('d')   
 
 
+
+// #BUBUG OVERFLOW.
 // 0xff
 // ?? Isso tá certo ??
-#define  CEOL  ( (unsigned) '\377' )
+//#define  CEOL  ( (unsigned) '\377' )
 //#define  CEOL  0xff
 
 

@@ -6,110 +6,18 @@
 #include <kernel.h>
 
 
-// copiar um buffer para uma stream.
-// dado o fd.
-// Aqui devemos selecionar o dispositivo à escrever.
-// See:
-// https://github.com/zavg/linux-0.01/blob/master/fs/read_write.c
-// ...
 
-int sys_write (unsigned int fd,char *buf,int count)
+// 289
+// See: sm/debug/debug.c
+int sys_serial_debug_printk ( char *s )
 {
-    struct process_d *__P;
-    
-    file *__file;
-    
-    int len;
-    
-    
-    
-    // linux 0.01 style.
-	//if (fd>=NR_OPEN || count <0 || !(file=current->filp[fd]))
-		//return -EINVAL;
-	//if (!count)
-		//return 0;
-
-
-
-    
-    // fd?
-    // Não pode ser maior que o número de arquivos abertos 
-    // pelo processo atual.
-    
-    
-    if (fd<0)
-        return -1;
-        
-    if (fd >= 32)
-        return -1;
-
-
-    //
-    // Size of the buffer.
-    //
-
-    // len
-    len = strlen( (const char *) buf );
-    
-    if (len > count )
-        len = count;
-    
-    // #bugbug: 
-    // Precisamos da opção de salvarmos vários setores em
-    // dispositivos de bloco.
-    if (len > 64 )
-        len = 64;
-    
-    
-    //
-    // Process pointer.
-    //
-    
-    
-    
-    __P = (struct process_d *) processList[current_process];
-
-    if ( (void *) __P == NULL )
-    {
-        printf ("sys_write: __P\n");
-        refresh_screen ();
-        return -1; 
-    }
-
-
-    //
-    // file.
-    //
-
-    // #importante
-    // Arquivo. Mas significa objeto.
-
-    __file = ( file * ) __P->Objects[fd];   //#todo: Use this one!
-    
-    
-    if ( (void *) __file == NULL )
-    {
-		printf ("sys_write: stream\n");
-		refresh_screen();
-        return -1; 
-    }
-
-
-    //
-    // ?
-    //
-
-    //See: unistd.c
-    // Escreve em uma stream uma certa quantidade de chars.
-    unistd_file_write ( (file *) __file, (char *) buf, (int) count );
-    
+    debug_print ( (char *) s );
     return 0;
 }
 
 
 
-
-//todo
+// 18
 int sys_read (unsigned int fd,char *buf,int count)
 {
     struct process_d *__P;
@@ -206,12 +114,126 @@ int sys_read (unsigned int fd,char *buf,int count)
 
 
 
+// 19
+// copiar um buffer para uma stream.
+// dado o fd.
+// Aqui devemos selecionar o dispositivo à escrever.
+// See:
+// https://github.com/zavg/linux-0.01/blob/master/fs/read_write.c
+// ...
+int sys_write (unsigned int fd,char *buf,int count)
+{
+    struct process_d *__P;
+    
+    file *__file;
+    
+    int len;
+    
+    
+    
+    // linux 0.01 style.
+	//if (fd>=NR_OPEN || count <0 || !(file=current->filp[fd]))
+		//return -EINVAL;
+	//if (!count)
+		//return 0;
+
+
+
+    
+    // fd?
+    // Não pode ser maior que o número de arquivos abertos 
+    // pelo processo atual.
+    
+    
+    if (fd<0)
+        return -1;
+        
+    if (fd >= 32)
+        return -1;
+
+
+    //
+    // Size of the buffer.
+    //
+
+    // len
+    len = strlen( (const char *) buf );
+    
+    if (len > count )
+        len = count;
+    
+    // #bugbug: 
+    // Precisamos da opção de salvarmos vários setores em
+    // dispositivos de bloco.
+    if (len > 64 )
+        len = 64;
+    
+    
+    //
+    // Process pointer.
+    //
+    
+    
+    
+    __P = (struct process_d *) processList[current_process];
+
+    if ( (void *) __P == NULL )
+    {
+        printf ("sys_write: __P\n");
+        refresh_screen ();
+        return -1; 
+    }
+
+
+    //
+    // file.
+    //
+
+    // #importante
+    // Arquivo. Mas significa objeto.
+
+    __file = ( file * ) __P->Objects[fd];   //#todo: Use this one!
+    
+    
+    if ( (void *) __file == NULL )
+    {
+		printf ("sys_write: stream\n");
+		refresh_screen();
+        return -1; 
+    }
+
+
+    //
+    // ?
+    //
+
+    //See: unistd.c
+    // Escreve em uma stream uma certa quantidade de chars.
+    unistd_file_write ( (file *) __file, (char *) buf, (int) count );
+    
+    return 0;
+}
+
+
 
 /*
  *****************************************************
  * sys_create_process:
  *     Create process system interface.
  */
+
+        // 73 - Create process.
+        // ??
+        // #todo: enviar os argumentos via buffer.
+        // #todo: Ok, nesse momento, precisamos saber qual é o 
+        // processo pai do processo que iremos criar. Esse deve ser 
+        // o processo atual ...  
+        // PPID = 0. Nesse momento todo processo criado será filho 
+        // do processo número 0. mas não é verdade. 
+        // @todo: Precisamos que o aplicativo em user mode nos passe 
+        // o número do processo pai, ou o proprio kernel identifica 
+        // qual é o processo atual e determina que ele será o 
+        // processo pai. 
 
 void *sys_create_process ( struct room_d *room,
                            struct desktop_d  *desktop,
@@ -243,14 +265,23 @@ void *sys_create_process ( struct room_d *room,
 
 
 
+
+// 85
+// #bugbug: 
+// Isso está retornando o ID do processo pai do processo atual.
+// O que queremos é o ID do processo pai do processo que está chamando.
 // Pega o id do processo atual.
-int sys_getpid (void){
-	return (int) current_process;
+int sys_getpid (void)
+{
+	// ??
+    return (int) current_process;
 }
 
 
 
-
+//81
+//#bugbug Isso está retornando o ID do processo atual.
+//O que queremos é o ID do processo que está chamando
 //Pega o ID do processo pai do processo atual.
 int sys_getppid (void){
 	
@@ -316,6 +347,11 @@ void sys_exit_process ( int pid, int code ){
  *     Create thread system interface.
  */
 
+        // 72 - Create thread.
+        // #todo: 
+        // Enviar os argumentos via buffer.
+
+
 void *sys_create_thread( struct room_d *room,
                          struct desktop_d  *desktop,
                          struct window_d *window,
@@ -353,6 +389,8 @@ void sys_exit_thread (int tid){
 }
 
 
+
+//90 Coletor de threads Zombie. (a tarefa idle pode chamar isso.)
 void sys_dead_thread_collector (void)
 {
     dead_thread_collector ();
@@ -419,6 +457,73 @@ void sys_shutdown (void)
 {
     hal_shutdown ();
 }
+
+
+// 178
+unsigned long sys_get_file_size ( char *path )
+{
+    unsigned long __size = 0;
+    
+    taskswitch_lock ();
+    scheduler_lock ();
+    
+    __size = (unsigned long) fsGetFileSize ( (unsigned char *) path ); 
+    
+    
+    scheduler_unlock ();
+    taskswitch_unlock ();
+    
+    return (unsigned long) __size; 
+}
+
+
+// Usada por vários serviços de debug.
+// Usada para debug.
+void sys_show_system_info ( int n )
+{
+
+    if (n<0)
+        return;
+
+
+    switch (n)
+    {
+        case 1:
+            diskShowCurrentDiskInfo();
+            break;
+
+        case 2:
+            volumeShowCurrentVolumeInfo();
+            break;
+
+        case 3:
+            memoryShowMemoryInfo();
+            break;
+
+        case 4:
+            systemShowDevicesInfo();
+            break;
+            
+        case 5:
+            KiInformation ();
+            break;
+
+        // ...
+    };
+
+
+    refresh_screen ();
+}
+
+
+
+
+
+
+
+
+
+
 
 
 

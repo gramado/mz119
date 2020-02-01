@@ -3,11 +3,22 @@
 //   sys.h 
 
 
-//See: stdio.c
+
+// 289
+int sys_serial_debug_printk ( char *s );
+
+
+// 18
+int sys_read (unsigned int fd,char *buf,int count);
+
+
+// 19
 int sys_write (unsigned int fd,char *buf,int count);
 
-//#todo
-int sys_read (unsigned int fd,char *buf,int count);
+
+
+
+
 
 
 //
@@ -15,6 +26,7 @@ int sys_read (unsigned int fd,char *buf,int count);
 //
 
 
+// 73
 void *sys_create_process ( struct room_d *room,
                            struct desktop_d  *desktop,
                            struct window_d *window,
@@ -41,6 +53,8 @@ void sys_exit_process (int pid, int code);
 // THREADS
 //
 
+
+// 72
 void *sys_create_thread ( struct room_d *room,
                           struct desktop_d  *desktop,
                           struct window_d *window,
@@ -71,6 +85,15 @@ int sys_showpciinfo (void);
 
 void sys_reboot (void);
 void sys_shutdown (void);
+
+
+// 178
+unsigned long sys_get_file_size ( char *path );
+
+
+// Usada por vários serviços de debug.
+// Usada para debug.
+void sys_show_system_info ( int n );
 
 
 //

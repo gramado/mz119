@@ -460,7 +460,7 @@ KERNEL.BIN:
 	#
 	
 	gcc -c kernel/sci/gde_serv.c  -I include/ $(CFLAGS) -o gde_serv.o
-	gcc -c kernel/sci/sys.c       -I include/ $(CFLAGS) -o sys.o
+	gcc -c kernel/sci/sys/sys.c   -I include/ $(CFLAGS) -o sys.o
 	
 	
 	

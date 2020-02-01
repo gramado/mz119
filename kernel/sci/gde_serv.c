@@ -1,3 +1,7 @@
+
+// Talvez todas as rotinas de tratamento terão seus wrappers 
+// em sci/sys/.
+
 /*
  * File: sci/gde_serv.c 
  *
@@ -256,14 +260,14 @@ void *gde_extra_services ( unsigned long number,
         return (void *) current_runlevel;
     }
     
+
     // Serial debug print.
-    // See: sm/debug/debug.c
-    if ( number == 289 )
-    {
-		debug_print ( (char *) arg2 );
-        return NULL;
+    // See: sci/sys
+    if ( number == 289 ){
+        return (void *) sys_serial_debug_printk ( (char *) arg2 );
     }
-    
+
+
     /*    
     // memory size
     // baseado no valor passado pelo bl.bin
@@ -1398,9 +1402,8 @@ void *gde_services ( unsigned long number,
             taskswitch_unlock ();
             break;
 
-		// 5 Vertical Sync. 
-		// Usada pelos servidores.
-		// #todo: chamar kgws_vsync ()
+        // 5
+        // See: sci/sys/sys.c 
         case SYS_VSYNC:
             sys_vsync (); 
             break;
@@ -1832,15 +1835,11 @@ void *gde_services ( unsigned long number,
             break;
 
 
-        // 72 - Create thread.
-        // #todo: 
-        // Enviar os argumentos via buffer.
+
+        // 72
+        // See: sci/sys/sys.c
         case SYS_CREATETHREAD:
-            //essa função é uma abstração. tem sys_
-            return (void *) sys_create_thread ( 
-                                NULL,             // room ? 
-                                NULL,             // desktop
-                                NULL,             // w.
+            return (void *) sys_create_thread ( NULL,  NULL, NULL, 
                                 arg2,             // init eip
                                 arg3,             // init stack
                                 current_process,  // pid
@@ -1849,22 +1848,9 @@ void *gde_services ( unsigned long number,
 
 
 
-        // 73 - Create process.
-        // ??
-        // #todo: enviar os argumentos via buffer.
-        // #todo: Ok, nesse momento, precisamos saber qual é o 
-        // processo pai do processo que iremos criar. Esse deve ser 
-        // o processo atual ...  
-        // PPID = 0. Nesse momento todo processo criado será filho 
-        // do processo número 0. mas não é verdade. 
-        // @todo: Precisamos que o aplicativo em user mode nos passe 
-        // o número do processo pai, ou o proprio kernel identifica 
-        // qual é o processo atual e determina que ele será o 
-        // processo pai. 
-
+        // 73
+        // See: sci/sys/sys.c
         case SYS_CREATEPROCESS:
-        
-            //essa função é uma abstração. tem sys_
             return (void *) sys_create_process ( NULL, NULL, NULL, 
                                 arg2, arg3, 
                                 0, (char *) a4, 
@@ -1881,18 +1867,17 @@ void *gde_services ( unsigned long number,
 		case SYS_CURRENTPROCESSINFO:
 		    show_currentprocess_info ();
 		    break;
-			
-		//81
-		//#bugbug Isso está retornando o ID do processo atual.
-		//O que queremos é o ID do processo que está chamando
-		case SYS_GETPPID: 
-		    return (void *) sys_getppid ();
-			break;
-		
-		//82
-		case SYS_SETPPID: 
-			break;
-			
+
+
+        // 81
+        // See: sci/sys/sys.c
+        case SYS_GETPPID: 
+            return (void *) sys_getppid ();
+            break;
+
+
+        // 82 - livre.
+  
 			
 		// 83
 		// Suporte à chamada da libc waitpid(...).
@@ -1908,19 +1893,18 @@ void *gde_services ( unsigned long number,
 			break;
 			
 		//84 - nothing
-			
-		// 85
-		// #bugbug: 
-		// Isso está retornando o ID do processo pai do processo atual.
-		// O que queremos é o ID do processo pai do processo que está chamando.
-		case SYS_GETPID: 
-		    return (void *) sys_getpid ();
-			break;
-		
-		//86
-		case SYS_SETPID: 
-			break;
-		
+
+
+        // 85
+        // See: sci/sys/sys.c
+        case SYS_GETPID: 
+            return (void *) sys_getpid ();
+            break;
+
+
+        // 86 - livre.
+
+
 		// 87 Down.
 		case SYS_SEMAPHORE_DOWN:
 		    return (void *) Down ( (struct semaphore_d *) arg2);
@@ -1938,12 +1922,18 @@ void *gde_services ( unsigned long number,
 		    return (void *) Up ( (struct semaphore_d *) arg2 );
 		    break;
 		
-		//90 Coletor de threads Zombie. (a tarefa idle pode chamar isso.)
-		case SYS_DEADTHREADCOLLECTOR: 
-			dead_thread_collector ();
-			break;
-		// 91 92 93
-		
+
+ 
+        // 90
+        // See: sci/sys/sys.c 
+        case SYS_DEADTHREADCOLLECTOR: 
+            sys_dead_thread_collector ();
+            break;
+
+
+        // 91 92 93
+
+
 		//94	
 		//REAL (coloca a thread em standby para executar pela primeira vez.)
 		// * MOVEMENT 1 (Initialized --> Standby).
@@ -1993,9 +1983,10 @@ void *gde_services ( unsigned long number,
 
 
 
-        // 110 - Reboot.
+        // 110
+        // See: sci/sys/sys.c
         case SYS_REBOOT: 
-            reboot ();
+            sys_reboot ();
             break;
 
 
@@ -2099,19 +2090,13 @@ void *gde_services ( unsigned long number,
 
 
 
-		// Envia uma mensagem de teste para o servidor taskman	
-        // #todo: deletar isso.
-		case 116:
-	        gui->taskmanWindow->msg_window = NULL;
-		    gui->taskmanWindow->msg = (int) arg2;                //123=temos uma mensagem. 
-		    gui->taskmanWindow->long1 = (unsigned long) arg3;    //0;
-		    gui->taskmanWindow->long2 = (unsigned long) arg4;    //0;
-            gui->taskmanWindow->newmessageFlag = 1;
-		    break;
+        // 116 - free slot.
 
 
-		// 117.
-		// Envia uma mensagem para uma thread, dado o tid.
+
+
+        // 117.
+        // Envia uma mensagem para uma thread, dado o tid.
         case 117:
             pty_send_message_to_thread ( (unsigned long) &message_address[0], 
                  (int) arg3 );
@@ -2548,16 +2533,10 @@ void *gde_services ( unsigned long number,
 
 
 
-		 //#test
-		 //implementando esse serviço.
+        // 178
+        // See: sci/sys/sys.c
         case 178:
-            taskswitch_lock ();
-            scheduler_lock ();
-			//name , address.
-            Ret = (void *) fsGetFileSize ( (unsigned char *) arg2 ); 
-            scheduler_unlock ();
-            taskswitch_unlock ();
-            return (void *) Ret; 
+            return (void *) sys_get_file_size ( (unsigned char *) arg2 );
             break;
 
 
@@ -2865,38 +2844,37 @@ void *gde_services ( unsigned long number,
             break;
 
 
-		//251
-		//Informações sobre o disco atual.
-		case SYS_SHOWDISKINFO:
-		    diskShowCurrentDiskInfo();
-			refresh_screen();
-			break;
+        // 251
+        // See: sci/sys/sys.c
+        case SYS_SHOWDISKINFO:
+            sys_show_system_info (1);
+            break;
 
-		//252
-		//Informações sobre o volume atual.
-		case SYS_SHOWVOLUMEINFO:
-		    volumeShowCurrentVolumeInfo();
-			refresh_screen();
-			break;
-		
-		//253
-		case SYS_MEMORYINFO:
-		    memoryShowMemoryInfo();
-			refresh_screen();
-			break;
-			
-			
-		//254 - Show PCI info.	
-		case SYS_SHOWPCIINFO: 
-			systemShowDevicesInfo();
-			refresh_screen();
-			break;
-			
-		//255 - Mostra informações sobre o kernel.	
-		case SYS_SHOWKERNELINFO: 
-			KiInformation ();
-			//refresh_screen ();
-			break;
+        // 252
+        // See: sci/sys/sys.c
+        case SYS_SHOWVOLUMEINFO:
+            sys_show_system_info (2);
+            break;
+
+        // 253
+        // See: sci/sys/sys.c
+        case SYS_MEMORYINFO:
+            sys_show_system_info (3);
+            break;
+
+
+        // 254
+        // See: sci/sys/sys.c
+        case SYS_SHOWPCIINFO: 
+            sys_show_system_info (4);
+            break;
+
+
+        // 255
+        // See: sci/sys/sys.c
+        case SYS_SHOWKERNELINFO: 
+            sys_show_system_info (5);
+            break;
 
 
 

@@ -441,9 +441,10 @@ void tty_reset_termios ( struct tty_d *tty )
     // 4 - (CEOF: <Ctrl>d or ASCII EOT)
     tty->termios.c_cc[VEOF] = CEOF;
     
+    // Bugbug overflow ??
     // ? - 0xff  
     // 2;  //BS
-    tty->termios.c_cc[VEOL]   = CEOL;    
+    //tty->termios.c_cc[VEOL]   = CEOL;    
     
     
     // ^h
