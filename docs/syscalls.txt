@@ -35,19 +35,19 @@
  
  
  
-  24      show_window_rect
+  24      show_window_rect          sysio/kservers/kgwm/wm.c
 
   Nothing: 25 ~ 33
 
-  34      set_up_cursor
-  35      __do_35
-  36      system_dispatch_to_procedure
-  37      system_procedure
+  34      set_up_cursor                 syssm/execve/sm/system.c
+  35      __do_35                       sysio/kdrivers/x/i8042/ps2kbd.c
+  36      system_dispatch_to_procedure  syssm/execve/sm/system.c
+  37      system_procedure              sysio/kdrivers/x/xproc.c
   
-  38      __gethostname
-  39      __sethostname
-  40      __getusername
-  41      __setusername
+  38      __gethostname            syslib/libcore/unistd.c
+  39      __sethostname            syslib/libcore/unistd.c
+  40      __getusername            sysio/kservers/kgws/user/userenv.c
+  41      __setusername            sysio/kservers/kgws/user/userenv.c
 
   
   42      Deprecated!
