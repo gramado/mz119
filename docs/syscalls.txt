@@ -4,27 +4,34 @@
 //
 
 
-[Number]  [Entry point]                  [Implementation (path)]
+          col 10                        col 40
+[Number]  [Entry point]                 [Implementation (path)]
   
-  0       Nothing                         Nothing
-  1       my_read_hd_sector               sysio/kdrivers/ide/hdd.c
-  2       my_write_hd_sector              sysio/kdrivers/ide/hdd.c
-  3       sys_read_file2                  sysio/kservers/fs/fs.c
-  4       fsSaveFile                      sysio/kservers/fs/write.c
-  5       vsync                           sysio/kdrivers/x/video/vsync.c
-  6       backbuffer_putpixel             sysio/kservers/kgws/kgws/comp/pixel.c
-  7       my_buffer_char_blt              sysio/kservers/kgws/kgws/comp/char.c
-  8       my_buffer_horizontal_line       sysio/kservers/kgws/kgws/comp/line.c
-  9       drawDataRectangle               sysio/kservers/kgws/kgws/comp/rect.c
+  0       Nothing                       Nothing
+  
+  1       my_read_hd_sector             sysio/kdrivers/ide/hdd.c
+  2       my_write_hd_sector            sysio/kdrivers/ide/hdd.c
+
+  3       sys_read_file2                sysio/kservers/fs/fs.c
+  4       fsSaveFile                    sysio/kservers/fs/write.c
+
+  5       vsync                         sysio/kdrivers/x/video/vsync.c
+
+  6       backbuffer_putpixel           sysio/kservers/kgws/kgws/comp/pixel.c
+  7       my_buffer_char_blt            sysio/kservers/kgws/kgws/comp/char.c
+  8       my_buffer_horizontal_line     sysio/kservers/kgws/kgws/comp/line.c
+  9       drawDataRectangle             sysio/kservers/kgws/kgws/comp/rect.c
+  
   10      Nothing 
+  
   11      refresh_screen
+
 
   rede: 12,13,14,15
   
-
   
   unix  
-  16      sys_open                       syslib/libcore/unistd.c
+  16      sys_open                      syslib/libcore/unistd.c
   17      sys_close
   18      sys_read                      sci/sys/sys.c
   19      sys_write                     sci/sys/sys.c
@@ -35,19 +42,23 @@
  
  
  
-  24      show_window_rect          sysio/kservers/kgwm/wm.c
+  24      show_window_rect              sysio/kservers/kgwm/wm.c
 
   Nothing: 25 ~ 33
 
   34      set_up_cursor                 syssm/execve/sm/system.c
+  
   35      __do_35                       sysio/kdrivers/x/i8042/ps2kbd.c
+  
   36      system_dispatch_to_procedure  syssm/execve/sm/system.c
+  
   37      system_procedure              sysio/kdrivers/x/xproc.c
   
-  38      __gethostname            syslib/libcore/unistd.c
-  39      __sethostname            syslib/libcore/unistd.c
-  40      __getusername            sysio/kservers/kgws/user/userenv.c
-  41      __setusername            sysio/kservers/kgws/user/userenv.c
+  38      __gethostname       syslib/libcore/unistd.c
+  39      __sethostname       syslib/libcore/unistd.c
+  
+  40      __getusername       sysio/kservers/kgws/user/userenv.c
+  41      __setusername       sysio/kservers/kgws/user/userenv.c
 
   
   42      Deprecated!
@@ -55,6 +66,7 @@
   44      Nothing
   
   Nothing:  45 ~ 49
+  
   
   50      resize_window
   51      redraw_window
@@ -78,8 +90,11 @@
   69      Used for tests.
   70      create_request (exit)
   71      fork (suspended for now)
+
+
   72      sys_create_thread             sci/sys/sys.c
   73      sys_create_process            sci/sys/sys.c
+  
   
   Nothing: 74 ~79
   
@@ -109,16 +124,16 @@
   
   Nothing 105 ~ 109
   
-  110      sys_reboot
-  111      __do_111
-  112      pty_send_message_to_process
-  113      sys_windowUpdateWindow
-  114      pty_send_message_to_thread (current)
-  115      (Local)
-  116      (Local)  
-  117      pty_send_message_to_thread (PID)
-  118      serviceCreateWindow
-  119      windowSelectColorScheme
+  110     sys_reboot                    sci/sys/sys.c
+  111     __do_111
+  112     pty_send_message_to_process
+  113     sys_windowUpdateWindow
+  114     pty_send_message_to_thread (current)
+  115     (Local)
+  116     (Local)  
+  117     pty_send_message_to_thread (PID)
+  118     serviceCreateWindow
+  119     windowSelectColorScheme
   
   Nothing: 120 ~ 123
   
@@ -225,7 +240,9 @@
   247     pipe
   248     do_execve
   249     ?
+  
   250     systemGetSystemMetrics
+  
   251     sys_show_system_info          sci/sys/sys.c
   252     sys_show_system_info          sci/sys/sys.c
   253     sys_show_system_info          sci/sys/sys.c
@@ -238,8 +255,10 @@
   //
   
   
-  260     sys_read
-  261     sys_write
+  
+  260    Deprecated. 
+  261    Deprecated.
+  
   262     console_read
   263     console_write
   264     ??

@@ -462,6 +462,11 @@ KERNEL.BIN:
 	gcc -c kernel/sci/gde_serv.c  -I include/ $(CFLAGS) -o gde_serv.o
 	gcc -c kernel/sci/sys/sys.c   -I include/ $(CFLAGS) -o sys.o
 	
+
+	#gcc -c kernel/sysio/sys/sys.c   -I include/ $(CFLAGS) -o sysio.o
+	#gcc -c kernel/syslib/sys/sys.c  -I include/ $(CFLAGS) -o syslib.o
+	#gcc -c kernel/sysmk/sys/sys.c   -I include/ $(CFLAGS) -o sysmk.o
+	#gcc -c kernel/syssm/sys/sys.c   -I include/ $(CFLAGS) -o syssm.o
 	
 	
 

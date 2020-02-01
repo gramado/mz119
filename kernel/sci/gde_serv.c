@@ -102,9 +102,8 @@ void *gde_extra_services ( unsigned long number,
     FILE *__bmfp;
 
 
-    
-    // read()   #todo;
-    //usam a lista de arquivos abertos do processo. p->Streams[i]
+    //Deprecated.
+    //Outro número fará esse trabalhao.
     if ( number == 260 )
     {
         return (void *) sys_read ( 
@@ -113,10 +112,8 @@ void *gde_extra_services ( unsigned long number,
                             (int) arg4 );
     }
      
-    
-    
-    // write() #implementada! (revisar!)
-    //usam a lista de arquivos abertos do processo. p->Streams[i]
+    //Deprecated.
+    //Outro número fará esse trabalhao.
     if ( number == 261 )
     {
         return (void *) sys_write ( 
