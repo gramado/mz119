@@ -241,7 +241,7 @@
   248     do_execve
   249     ?
   
-  250     systemGetSystemMetrics
+  250     syssm_get_system_metrics      syssm/syssm.c
   
   251     sys_show_system_info          sci/sys/sys.c
   252     sys_show_system_info          sci/sys/sys.c

@@ -2835,9 +2835,10 @@ void *gde_services ( unsigned long number,
 
 
 
-		// 250 - Get system metrics
+        // 250
+        // See: syssm/syssm.c
         case SYS_GETSYSTEMMETRICS:
-            return (void *) systemGetSystemMetrics ( (int) arg2 );
+            return (void *) syssm_get_system_metrics ( (int) arg2 );
             break;
 
 

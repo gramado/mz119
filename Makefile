@@ -10,7 +10,7 @@
 VERSION = 1
 PATCHLEVEL = 28
 SUBLEVEL = 0
-EXTRAVERSION = -rc7
+EXTRAVERSION = -rc8
 NAME = 
 
 
@@ -173,7 +173,7 @@ ifeq ($(ARCH),x86)
 	REQUEST_OBJECTS := request.o 
 	PANIC_OBJECTS := panic.o 
 	REBOOT_OBJECTS := reboot.o 
-	SYS_OBJECTS := sys.o 
+	SYS_OBJECTS := sys.o sysio.o syslib.o sysmk.o syssm.o   
 	
 	OBJECTS := $(ENTRY_OBJECTS) \
 	$(EXECVE_OBJECTS) \
@@ -460,13 +460,13 @@ KERNEL.BIN:
 	#
 	
 	gcc -c kernel/sci/gde_serv.c  -I include/ $(CFLAGS) -o gde_serv.o
-	gcc -c kernel/sci/sys/sys.c   -I include/ $(CFLAGS) -o sys.o
 	
-
-	#gcc -c kernel/sysio/sys/sys.c   -I include/ $(CFLAGS) -o sysio.o
-	#gcc -c kernel/syslib/sys/sys.c  -I include/ $(CFLAGS) -o syslib.o
-	#gcc -c kernel/sysmk/sys/sys.c   -I include/ $(CFLAGS) -o sysmk.o
-	#gcc -c kernel/syssm/sys/sys.c   -I include/ $(CFLAGS) -o syssm.o
+	# services.
+	gcc -c kernel/sci/sys/sys.c   -I include/ $(CFLAGS) -o sys.o
+	gcc -c kernel/sysio/sysio.c   -I include/ $(CFLAGS) -o sysio.o
+	gcc -c kernel/syslib/syslib.c -I include/ $(CFLAGS) -o syslib.o
+	gcc -c kernel/sysmk/sysmk.c   -I include/ $(CFLAGS) -o sysmk.o
+	gcc -c kernel/syssm/syssm.c   -I include/ $(CFLAGS) -o syssm.o
 	
 	
 

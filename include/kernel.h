@@ -328,7 +328,10 @@ extern void do_executa_new_task (void);
 
 // HERE !
 #include <kernel/sci/sys/sys.h> 
-
+#include <kernel/sysio/sysio.h> 
+#include <kernel/syslib/syslib.h> 
+#include <kernel/sysmk/sysmk.h> 
+#include <kernel/syssm/syssm.h> 
 
 
 
