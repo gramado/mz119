@@ -26,8 +26,8 @@
   unix  
   16      sys_open                       syslib/libcore/unistd.c
   17      sys_close
-  18      sys_read                       sci/sys.c
-  19      sys_write                      sci/sys.c
+  18      sys_read                      sci/sys/sys.c
+  19      sys_write                     sci/sys/sys.c
   
   
 
@@ -78,8 +78,8 @@
   69      Used for tests.
   70      create_request (exit)
   71      fork (suspended for now)
-  72      create_thread
-  73      create_process
+  72      sys_create_thread             sci/sys/sys.c
+  73      sys_create_process            sci/sys/sys.c
   
   Nothing: 74 ~79
   
@@ -256,7 +256,7 @@
   278     console_set_current_virtual_console 
   279     windowUpdateWindow
   
-  289     debug_print
+  289     sys_serial_debug_printk       sci/sys/sys.c
   
   300     UpdateStatusBar
   

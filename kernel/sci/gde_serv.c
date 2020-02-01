@@ -262,7 +262,7 @@ void *gde_extra_services ( unsigned long number,
     
 
     // Serial debug print.
-    // See: sci/sys
+    // See: sci/sys/sys.c
     if ( number == 289 ){
         return (void *) sys_serial_debug_printk ( (char *) arg2 );
     }
