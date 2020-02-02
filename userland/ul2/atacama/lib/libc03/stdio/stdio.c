@@ -728,21 +728,6 @@ int puts(const char *str)
 
 
 
-/*
- ***********************
- * puts:
- */
-
-// #bugbug
-// isso deve escrever no arquivo, assim como
-// tudo em libc.
-
-int puts ( const char *str ){
-
-	// provisório ...
-
-    return (int) printf ("%s",str);
-}
 
 /*
 int puts(const char* s)
@@ -2099,29 +2084,6 @@ int fputs(const char *str, FILE *fp)
 */
 	
 
-/*
- ********************************
- * fputs:      
- */
-
-int fputs ( const char *str, FILE *stream )
-{
-
-    if ( (void *) stream == NULL )
-        return EOF;
-
-
-    for (; *str; ++str) {
-
-        int rc = putc (*str, stream);
-
-        if (rc == EOF)
-            return EOF;
-    }
-
-    return 1;
-}
-
 
 
 //#todo: testar.
@@ -2154,109 +2116,6 @@ char *__gets(char *str)
 }
 
 
-
-/*uClib style*/
-char *fgets(char *s, int count, FILE *fp)
-{
-	int ch;
-	char *p;
-	
-	p = s;
-	
-    if ( (void *) fp == NULL )
-       return (char *) 0;
-
-	
-	//Guard against count arg == INT_MIN. 
-	while (count-- > 1) 
-	{		
-		ch = getc (fp);
-		
-		if (ch == EOF) 
-		{
-			break;
-		}
-		
-		*p++ = ch;
-		
-		if (ch == '\n') { break; }
-	}
-	
-	if ( ferror(fp) || (s == p) ) 
-	{
-		return 0;
-	}
-	
-	*p = 0;
-	
-	return s;
-}
-
-
-
-/*
- *********************************
- * gets:
- *     gets() devolve um ponteiro para string
- */
- 
-char *gets (char *s){
-
-    int ch;
-
-    int t = 0;
-    char *p;
-
-	//printf("gets:\n");
-
-    //salva
-    p = s; 
-
-    while (1)
-    {
-        ch = (int) getchar ();
-		
-        if ( ch != -1 )
-		{
-            			
-			switch (ch) 
-		    {
-				/* termina a string */
-			    case '\n':
-				case VK_RETURN: 
-                    s[t] =  (char) '\0'; 
-                    goto done;
-				    break;
-            
-                case '\b':
-				case VK_BACKSPACE:
-			        if(t > 0){ 
-					    t--;
-					};
-                    break;
-            
-			    default:
-                    //s[t] = (char) ch;
-					//t++;
-					break;
-            };
-			
-			printf ("%c",ch);
-			s[t] = (char) ch;
-			t++;
-			
-		};
-		
-		asm ("pause");
-    };
-
-
-done:
-
-    //s[t] = (char) '\0';
-
-    return (char *) p;
-}
 
 
 //unix v32
@@ -2442,13 +2301,14 @@ static __inline__ off_t ftell(FILE *__f)
 //This function returns the current file position of the stream stream. 
 long ftell (FILE *stream)
 {
-	return -1;
-	/*
-    assert(stream);
-    fflush(stream);
-    return lseek(stream->fd, 0, SEEK_CUR);
-    */
+    if ( (void *) stream == NULL )
+        return 0;
+        
+    fflush (stream);
+    
+    return lseek( fileno(stream) , 0, SEEK_CUR);
 }
+
 
 /*
  * fileno: 
@@ -2735,6 +2595,253 @@ int getchar (void)
 int putchar (int ch)
 {
     return (int) putc ( (int) ch, stdout );
+}
+
+
+//
+// Root 3
+//
+
+char *gets (char *s)
+{
+	register c;
+	register char *cs;
+
+	cs = s;
+	while ((c = getchar()) != '\n' && c >= 0)
+		*cs++ = c;
+	if (c<0 && cs==s)
+		return(NULL);
+	*cs++ = '\0';
+	return(s);
+}
+
+int puts (const char *s)
+{
+	register c;
+
+	while (c = *s++)
+		putchar(c);
+	return(putchar('\n'));
+}
+
+
+//
+// Root 4
+//
+
+//s n iop
+char *fgets (char *s, int size, FILE *stream)
+{
+	register c;
+	register char *cs;
+
+	cs = s;
+	while (--size>0 && (c = getc(stream))>=0) {
+		*cs++ = c;
+		if (c=='\n')
+			break;
+	}
+	if (c<0 && cs==s)
+		return(NULL);
+	*cs++ = '\0';
+	return(s);
+}
+
+//s iop
+int fputs ( const char *s, FILE *stream )
+{
+	register r;
+	register c;
+
+	while (c = *s++)
+		r = putc(c,stream);
+	return(r);
+}
+
+
+//
+// Root 5
+//
+
+
+int getw (FILE *stream)
+{
+	register i;
+
+	i = getc(stream);
+	
+	//#todo
+	//if (stream->_flags&_IOEOF)
+		//return(-1);
+		
+	if (stream->eof == 1 )
+		return EOF;
+		
+		
+	return(i | (getc(stream)<<8));
+}
+
+
+//#test
+int putw (int w, FILE *stream)
+{
+	putc (w, stream);
+	putc (w>>8, stream);
+}
+
+
+
+
+
+
+
+
+
+/*uClib style*/
+char *fgets2 (char *s, int count, FILE *fp)
+{
+	int ch;
+	char *p;
+	
+	p = s;
+	
+    if ( (void *) fp == NULL )
+       return (char *) 0;
+
+	
+	//Guard against count arg == INT_MIN. 
+	while (count-- > 1) 
+	{		
+		ch = getc (fp);
+		
+		if (ch == EOF) 
+		{
+			break;
+		}
+		
+		*p++ = ch;
+		
+		if (ch == '\n') { break; }
+	}
+	
+	if ( ferror(fp) || (s == p) ) 
+	{
+		return 0;
+	}
+	
+	*p = 0;
+	
+	return s;
+}
+
+
+
+/*
+ ********************************
+ * fputs2:      
+ */
+
+int fputs2 ( const char *str, FILE *stream )
+{
+
+    if ( (void *) stream == NULL )
+        return EOF;
+
+
+    for (; *str; ++str) {
+
+        int rc = putc (*str, stream);
+
+        if (rc == EOF)
+            return EOF;
+    }
+
+    return 1;
+}
+
+
+
+
+/*
+ *********************************
+ * gets:
+ *     gets() devolve um ponteiro para string
+ */
+ 
+char *gets2 (char *s){
+
+    int ch;
+
+    int t = 0;
+    char *p;
+
+	//printf("gets:\n");
+
+    //salva
+    p = s; 
+
+    while (1)
+    {
+        ch = (int) getchar ();
+		
+        if ( ch != -1 )
+		{
+            			
+			switch (ch) 
+		    {
+				/* termina a string */
+			    case '\n':
+				case VK_RETURN: 
+                    s[t] =  (char) '\0'; 
+                    goto done;
+				    break;
+            
+                case '\b':
+				case VK_BACKSPACE:
+			        if(t > 0){ 
+					    t--;
+					};
+                    break;
+            
+			    default:
+                    //s[t] = (char) ch;
+					//t++;
+					break;
+            };
+			
+			printf ("%c",ch);
+			s[t] = (char) ch;
+			t++;
+			
+		};
+		
+		asm ("pause");
+    };
+
+
+done:
+
+    //s[t] = (char) '\0';
+
+    return (char *) p;
+}
+
+
+/*
+ ***********************
+ * puts:
+ */
+
+// #bugbug
+// isso deve escrever no arquivo, assim como
+// tudo em libc.
+
+int puts2 ( const char *str ){
+
+	// provisório ...
+
+    return (int) printf ("%s",str);
 }
 
 

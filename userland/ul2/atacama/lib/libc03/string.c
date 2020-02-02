@@ -12,7 +12,10 @@
  
 #include <ctype.h>
 #include <stddef.h>
+
 #include <string.h>
+#include <strings.h>
+
 #include <inttypes.h>
 
 
@@ -1237,6 +1240,14 @@ char *__strdup (char *l){
 
 
 
+char *index (const char *s, int c)
+{
+	do {
+		if (*s == c)
+			return (char *) (s);
+	} while (*s++);
+	return(NULL);
+}
 
 char *rindex (const char *s, int c)
 {

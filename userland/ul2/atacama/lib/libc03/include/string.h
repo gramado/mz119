@@ -6,6 +6,10 @@
  */
 
 
+#ifndef __STRING_H__
+#define __STRING_H__
+
+
 #include <stddef.h>
 
 #ifdef	_BSD_SIZE_T_
@@ -98,10 +102,13 @@ size_t strxfrm (char *dst, const char *src, size_t n);
 char *strerror(int errnum);
 char *strerror_r(int errnum, char *buf, size_t buflen);
 char *strsignal(int sig);
-char *rindex (const char *s, int c);
+
 
 
 void strtoupper(char *src);
+
+#endif    //__STRING_H__
+
 
 //
 // End.

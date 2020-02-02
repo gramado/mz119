@@ -1305,6 +1305,37 @@ void _exit (int status)
 }
 
 
+
+void swab_w (const short *from, short *to, ssize_t n)
+{
+	
+	n /= 2;
+	while (--n >= 0) {
+		*to++ = (*from << 8) + ((*from >> 8) & 0377);
+		from++;
+	}
+}
+
+void swab (const void *from, void *to, ssize_t n)
+{
+    swab_w ( (const short *) from, (short *) to, (ssize_t) n );
+}
+
+
+
+// #todo
+off_t lseek(int fd, off_t offset, int whence)
+{ 
+	return 0;
+}
+
+
+off_t tell(int fildes)
+{
+	return lseek(fildes, 0, SEEK_CUR);
+	//return(lseek(fildes, 0, 1));
+}
+
 //
 // End.
 //

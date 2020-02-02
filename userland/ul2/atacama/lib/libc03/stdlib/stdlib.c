@@ -1357,7 +1357,7 @@ char *glibc_getenv (const char *name)
  *     Credits: Apple open source.
  */
 
-char *getenv (const char *name)
+char *getenv2 (const char *name)
 {
     int offset;
     char *result;
@@ -1377,7 +1377,22 @@ char *getenv (const char *name)
 }
 
 
+//
+// getenv
+//
 
+
+//unix v7
+char *getenv ( char *name )
+{
+	register char **p = environ;
+	register char *v;
+
+	while (*p != NULL)
+		if ((v = nvmatch(name, *p++)) != NULL)
+			return(v);
+	return(NULL);
+}
 
 
 /*
@@ -1386,10 +1401,9 @@ char *getenv (const char *name)
  *	if names match, return value of s2, else NULL
  *	used for environment searching: see getenv
  */
-/* 
+
 //unix v7 
 //used by getenv
-static char *nvmatch ( char *s1, char *s2 );
 static char *nvmatch ( char *s1, char *s2 )
 {
 
@@ -1400,22 +1414,9 @@ static char *nvmatch ( char *s1, char *s2 )
 		return(s2);
 	return(NULL);
 }
-*/
 
-/*
-//unix v7
-char *getenv ( char *name);
-char *getenv ( char *name)
-{
-	register char **p = environ;
-	register char *v;
 
-	while (*p != NULL)
-		if ((v = nvmatch(name, *p++)) != NULL)
-			return(v);
-	return(NULL);
-}
-*/
+
 
 
 //serenity os.

@@ -311,5 +311,13 @@ unsigned int sleep(unsigned int seconds);
 void _exit (int status); 
 
 
+void swab_w (const short *from, short *to, ssize_t n);
+void swab (const void *from, void *to, ssize_t n);
+
+
+off_t lseek(int fd, off_t offset, int whence);
+off_t tell(int fildes);
+
+
 #endif /* _UNISTD_H */
 

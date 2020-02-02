@@ -543,7 +543,7 @@ int fclose(FILE *stream);
  * Normal output.
  */ 
  
-int puts(const char *str); 
+
 
 //#todo: testar.
 //Credits: Sombra OS.
@@ -680,17 +680,42 @@ int fputc (int ch, FILE *stream);
 int getchar (void);
 int putchar (int ch);
 
+//
+// Root 3
+//
+
+char *gets (char *s);
+int puts (const char *s);
+
+
+//
+// Root 4
+//
+
+char *fgets (char *s, int size, FILE *stream);
+int fputs ( const char *s, FILE *stream );
+
+//
+// Root 5
+//
+
+int getw (FILE *stream);
+int putw (int w, FILE *stream);
+
 
 
 //--save
 int getchar2 (void);
-
+char *gets2 (char *s);
+int puts2 (const char *str); 
+char *fgets2 (char *s, int count, FILE *fp);
+int fputs2 ( const char *str, FILE *stream );
 
 
 int ungetc ( int c, FILE *stream );
 
-char *gets (char *s);
-char *fgets(char *s, int count, FILE *fp);
+
+
 
 
 // glibc
