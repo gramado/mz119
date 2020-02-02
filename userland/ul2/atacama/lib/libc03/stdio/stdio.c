@@ -2656,48 +2656,49 @@ int __gramado__getc ( FILE *stream ){
      return EOF;
 }
 
+
+
+//
+// ============= Root =================
+//
+
+
+int getc (FILE *stream)
+{
+	// low level
+    return (int) __gramado__getc (stream);
+}
+
+int putc(int ch, FILE *stream)
+{
+	// low level
+    return (int) __serenity_putc (ch, stream);
+}
+
+
 /*
  *********************************
  * fgetc:
- *     #todo: chamar a rotina do kernel para pegar o char no arquivo,
- * pois agora o arquivo 'e gerenciado pelo kernel.
  */
 
 int fgetc ( FILE *stream )
 {
-    if ( (void *) stream == NULL )
-       return EOF;
-
-    // #todo
-    /*
-    if ( !__validfp(stream) )
-    {
-        errno = EINVAL;
-        return EOF;
-    }
-    */    
-    
-    // se gramado
-    return (int) __gramado__getc(stream);
-    
-
-    // se glibc
-    //return __getc(stream);
+    return (int) getc (stream);
 }
 
 
+/*
+ *****************************************
+ * fputc:
+ */
 
-
-int getc(FILE* stream)
+int fputc ( int ch, FILE *stream )
 {
-    return fgetc(stream);
+    return (int) putc (ch, stream);
 }
 
 
-int putc(int ch, FILE* stream)
-{
-    return fputc(ch, stream);
-}
+
 
 
 
@@ -3107,33 +3108,6 @@ int __serenity_putc (int ch, FILE *stream)
 
 
 
-/*
- *****************************************
- * fputc:
- */
-
-int fputc ( int ch, FILE *stream ){
-
-    // #todo
-    /*
-    if ( !__validfp(stream) )
-    {
-        errno = EINVAL;
-        return EOF;
-    }
-    */
-
-    if ( (void *) stream == NULL )
-       return EOF;
-
-    // se gramado.
-    // Exibe através do console virtual.
-    return __serenity_putc (ch, stream);
-
-    // glibc
-    // Coloca numa stream em ring3.
-    //return __putc(c, stream);
-}
 
 
 

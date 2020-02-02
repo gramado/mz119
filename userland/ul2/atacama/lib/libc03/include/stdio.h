@@ -644,8 +644,8 @@ char *__gets(char *str);
 int fgetc ( FILE *stream );;
 int fputc (int ch, FILE *stream);
 
-int getc(FILE* stream);
-int putc(int ch, FILE* stream);
+
+
 
 
 
@@ -656,10 +656,16 @@ int __serenity_fputc (int ch, FILE *stream);
 int __serenity_putc (int ch, FILE *stream);
 
 
-//#define getchar()   getc(stdin)
-//#define putchar(x)  putc((x), stdout)
+//
+// Root.
+//
+
+int getc (FILE* stream);
+int putc (int ch, FILE* stream);
 int getchar (void);
 int putchar (int ch);
+
+
 
 int ungetc ( int c, FILE *stream );
 
