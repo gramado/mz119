@@ -1567,25 +1567,6 @@ static void printchar ( char **str, int c ){
 
 
 
-/*
- ****************** 
- * putchar
- * 
- */
-
-int putchar (int ch)
-{
-	/*
-	if ( c == '\t' )
-	{
-		for (c = 0; c < 8; c++) __serenity_putc(' ', stdout );
-		return ch;
-	}
-	*/
-
-    return (int) __serenity_putc ( (int) ch, stdout );
-    //return (int) __putc ( (int) ch, stdout ); 
-}
 
 
 
@@ -1950,40 +1931,6 @@ int getchar(void)
 */
 
 
-/*
- *************************************
- * getchar:
- *       O kernel pega no stdin que é a fila do teclado.
- *       Isso funciona.
- */
-
-int getchar (void){
-
-    int Ret = 0;
-
-	// #todo: 
-	// ? Já temos uma função para essa chamada ? 137.
-
-Loop:
-
-    Ret = (int) gramado_system_call ( 137, 0, 0, 0 ); 
-
-    if (Ret > 0)
-    {
-        return (int) Ret;    
-    }
-
-
-    goto Loop;
-    
-
-    //if ( (void *) stdin == NULL )
-       //return EOF;
-
-    // se glibc
-    //return __getc(stdin);
-}
-
 
 
 /*
@@ -2017,46 +1964,6 @@ int __fflush_stderr(void)
   return fflush(stderr);
 }
 */
-
-
-/* 
- ***********************************
- * fflush: 
- *     Salva o buffer no arquivo associado a ele e limpa o buffer. 
- * Se for NULL então faz isso para todas stream abertas.
- * retorna 0 se funcionar e retorna EOF se falhar.
- */
-
-// #bugbug
-// Talvez o buffer deva ficar em ring3,
-// pois seria custozo ter que chamar o kernel para
-// cada char que queremos colocar no buffer.
-// O fflush pode invocar uma rotina no kernel 
-// que copia o buffer que está em ring3
-// mas para isso as duas estruturas precisam ser iguais,
-// ou a chamada de fflush passar o buffer como ponteiro.
-
-int fflush ( FILE *stream )
-{
-	return -1;
-	/*
-    // FIXME: fflush(NULL) should flush all open output streams.
-    ASSERT(stream);
-    if (!stream->buffer_index)
-        return 0;
-    int rc = write(stream->fd, stream->buffer, stream->buffer_index);
-    stream->buffer_index = 0;
-    stream->error = 0;
-    stream->eof = 0;
-    stream->have_ungotten = false;
-    stream->ungotten = 0;
-    if (rc < 0) {
-        stream->error = errno;
-        return EOF;
-    }
-    return 0;
-    */
-}
 
 
 
@@ -2588,9 +2495,77 @@ int getc(FILE *stream)
 */
 
 
+//
+// ================= low level =====================
+//
 
 
-int __gramado__getc ( FILE *stream ){
+int fflush (FILE *stream)
+{
+	// #todo:
+	// Se for NULL faz flush em todos.
+	
+	return (int) __fflush (stream);
+}
+
+// Flush.
+int __fflush (FILE *stream)
+{
+
+     //debug_print( "__fflush:\n");
+	
+    // FIXME: fflush(NULL) should flush all open output streams.
+    //ASSERT(stream);
+    if ( (void *) stream == NULL ){
+        debug_print( "__fflush: stream\n");
+        return -1;
+    }
+ 
+    //if ( !stream->_w )
+        //return 0;
+        
+        
+    if ( (void *) stream->_base == NULL ){
+        debug_print( "__fflush: _base\n");
+        return -1;
+    }   
+
+
+    if ( stream->_w <= 0 ){   
+        debug_print( "__fflush: _w\n");
+        return -1;
+    } 
+               
+    
+    // #todo: 
+    // This is the desired way.           
+    // int rc = write ( fileno(stream), stream->_base, stream->_w );
+
+
+    // ISSO FUNCIONA.
+    // vamos testar no console virtual.
+    int rc = write_VC ( 0, stream->_base, stream->_w ); 
+ 
+ 
+    stream->_w = 0;
+    //stream->error = 0;
+    //stream->eof = 0;
+    //stream->have_ungotten = false;
+    //stream->ungotten = 0;
+    
+    if (rc < 0){
+		
+        //stream->error = errno;
+        return EOF;
+    }
+
+    return 0;
+}
+
+
+
+
+int __getc ( FILE *stream ){
 
     int ch = 0;
 
@@ -2656,6 +2631,49 @@ int __gramado__getc ( FILE *stream ){
      return EOF;
 }
 
+int __putc (int ch, FILE *stream)
+{   
+     //debug_print( "__serenity_fputc:\n");
+     
+    //assert (stream);
+    //assert (stream->_w < stream->_lbfsize);
+    
+    if ( (void *) stream == NULL )
+    {   
+       debug_print( "__putc: stream\n");
+       return -1;
+    } 
+
+    //if (stream->_w > stream->_lbfsize)
+    if (stream->_w > BUFSIZ)
+    {   
+       debug_print( "__putc: overflow\n");
+       return -1;
+    } 
+    
+    stream->_base[stream->_w++] = ch;
+
+    if (stream->_w >= BUFSIZ)
+    {
+        fflush (stream);
+        return ch;
+    }
+    
+    //if (stream->_flags == _IONBF || (stream->_flags == _IOLBF && ch == '\n'))
+    if ( ch == '\n')
+    {    
+		fflush (stream);
+		return ch;
+    }
+    
+
+   //debug_print( "__serenity_fputc: $\n");
+
+    //if (stream->eof || stream->error)
+        //return EOF;
+    
+    return ch;
+}
 
 
 //
@@ -2666,13 +2684,13 @@ int __gramado__getc ( FILE *stream ){
 int getc (FILE *stream)
 {
 	// low level
-    return (int) __gramado__getc (stream);
+    return (int) __getc (stream);
 }
 
-int putc(int ch, FILE *stream)
+int putc (int ch, FILE *stream)
 {
 	// low level
-    return (int) __serenity_putc (ch, stream);
+    return (int) __putc (ch, stream);
 }
 
 
@@ -2699,6 +2717,62 @@ int fputc ( int ch, FILE *stream )
 
 
 
+//
+// Root 2
+//
+
+int getchar (void)
+{
+    return (int) getc (stdin);
+}
+
+/*
+ ****************** 
+ * putchar
+ * 
+ */
+
+int putchar (int ch)
+{
+    return (int) putc ( (int) ch, stdout );
+}
+
+
+
+
+/*
+ *************************************
+ * getchar2:
+ *       O kernel pega no stdin que é a fila do teclado.
+ *       Isso funciona.
+ */
+
+int getchar2 (void){
+
+    int Ret = 0;
+
+	// #todo: 
+	// ? Já temos uma função para essa chamada ? 137.
+
+Loop:
+
+    Ret = (int) gramado_system_call ( 137, 0, 0, 0 ); 
+
+    if (Ret > 0)
+    {
+        return (int) Ret;    
+    }
+
+
+    goto Loop;
+    
+
+    //if ( (void *) stdin == NULL )
+       //return EOF;
+
+    // se glibc
+    //return __getc(stdin);
+}
 
 
 
@@ -2995,62 +3069,9 @@ void debug_print (char *string)
 }
 
 
-//
-// Flush.
-//
-
-int __serenity_fflush ( FILE *stream)
-{
-
-     //debug_print( "__serenity_fflush:\n");
-	
-    // FIXME: fflush(NULL) should flush all open output streams.
-    //ASSERT(stream);
-    if ( (void *) stream == NULL ){
-        debug_print( "__serenity_fflush: stream\n");
-        return -1;
-    }
- 
-    //if ( !stream->_w )
-        //return 0;
-        
-        
-    if ( (void *) stream->_base == NULL ){
-        debug_print( "__serenity_fflush: _base\n");
-        return -1;
-    }   
 
 
-    if ( stream->_w <= 0 ){   
-        debug_print( "__serenity_fflush: _w\n");
-        return -1;
-    } 
-               
-    
-    // #todo: 
-    // This is the desired way.           
-    // int rc = write ( fileno(stream), stream->_base, stream->_w );
 
-
-    // ISSO FUNCIONA.
-    // vamos testar no console virtual.
-    int rc = write_VC ( 0, stream->_base, stream->_w ); 
- 
- 
-    stream->_w = 0;
-    //stream->error = 0;
-    //stream->eof = 0;
-    //stream->have_ungotten = false;
-    //stream->ungotten = 0;
-    
-    if (rc < 0){
-		
-        //stream->error = errno;
-        return EOF;
-    }
-
-    return 0;
-}
 
 
 
@@ -3058,55 +3079,8 @@ int __serenity_fflush ( FILE *stream)
 
 int __serenity_fputc (int ch, FILE *stream)
 {
-     //debug_print( "__serenity_fputc:\n");
-     
-    //assert (stream);
-    //assert (stream->_w < stream->_lbfsize);
-    
-    if ( (void *) stream == NULL )
-    {   
-       debug_print( "__serenity_fputc: stream\n");
-       return -1;
-    } 
-
-    //if (stream->_w > stream->_lbfsize)
-    if (stream->_w > BUFSIZ)
-    {   
-       debug_print( "__serenity_fputc: overflow\n");
-       return -1;
-    } 
-    
-    stream->_base[stream->_w++] = ch;
-
-    if (stream->_w >= BUFSIZ)
-    {
-        __serenity_fflush(stream);
-        return ch;
-    }
-    
-    //if (stream->_flags == _IONBF || (stream->_flags == _IOLBF && ch == '\n'))
-    if ( ch == '\n')
-    {    
-		__serenity_fflush (stream);
-		return ch;
-    }
-    
-
-   //debug_print( "__serenity_fputc: $\n");
-
-    //if (stream->eof || stream->error)
-        //return EOF;
-    
-    return ch;
+    return __putc (ch,stream);
 }
-
-
-int __serenity_putc (int ch, FILE *stream)
-{   
-    return __serenity_fputc (ch, stream);
-}
-
-
 
 
 

@@ -479,7 +479,7 @@ void __serenity_put_string( char *string )
 {
 	int Index;
     for ( Index=0; string[Index] != 0; Index++ )
-        __serenity_putc ( string[Index], __stream );
+        putc ( string[Index], __stream );
 }
 
 

@@ -535,7 +535,6 @@ int fileno ( FILE *stream );
  */ 
  
 FILE *fopen( const char *filename, const char *mode ); 
-int fflush( FILE *stream ); 
 int fclose(FILE *stream); 
 //#define fileno(p)   ((p)->fd)
  
@@ -634,15 +633,14 @@ long ftell (FILE *stream);
 
 // low level.
 
-int __gramado__getc ( FILE *stream );
+
+
 int __gramado__putc ( int ch, FILE *stream );
 
 char *__gets(char *str);
 
 
 
-int fgetc ( FILE *stream );;
-int fputc (int ch, FILE *stream);
 
 
 
@@ -651,9 +649,19 @@ int fputc (int ch, FILE *stream);
 
 void debug_print (char *string);
 
-int __serenity_fflush ( FILE *stream);
+
 int __serenity_fputc (int ch, FILE *stream);
-int __serenity_putc (int ch, FILE *stream);
+
+
+
+//
+// low level
+//
+
+int fflush (FILE *stream);
+int __fflush ( FILE *stream);
+int __getc ( FILE *stream );
+int __putc (int ch, FILE *stream);
 
 
 //
@@ -662,8 +670,20 @@ int __serenity_putc (int ch, FILE *stream);
 
 int getc (FILE* stream);
 int putc (int ch, FILE* stream);
+int fgetc ( FILE *stream );;
+int fputc (int ch, FILE *stream);
+
+//
+// Root 2
+//
+
 int getchar (void);
 int putchar (int ch);
+
+
+
+//--save
+int getchar2 (void);
 
 
 
