@@ -1255,45 +1255,6 @@ char *rindex (const char *s, int c)
 }
 
 
-/*
-//Return the ptr in sp at which the character c last
-//appears; NULL if not found
-//unix v7
-char *rindex ( char *sp, int c);
-char *rindex ( char *sp, int c)
-{
-	register char *r;
-
-	r = NULL;
-	do {
-		if (*sp == c)
-			r = sp;
-	} while (*sp++);
-	return(r);
-}
-*/
-
-
-
-
-
-/*
-//#bugbug
-//rever isso
-char *index (const char *s, int ch);
-char *index (const char *s, int ch){
-	
-	for (;; ++s) {
-		if (*s == ch)
-			return ((char *)s);
-		if (!*s)
-			return NULL; //((char *)NULL);
-	}
-	//NOTREACHED
-}
-*/
-
-
 
 /*
  * Transform src, storing the result in dst, such that

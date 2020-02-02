@@ -318,6 +318,13 @@ void swab (const void *from, void *to, ssize_t n);
 off_t lseek(int fd, off_t offset, int whence);
 off_t tell(int fildes);
 
+int access(const char *pathname, int mode);
+
+
+int chown(const char *pathname, uid_t owner, gid_t group);
+int fchown(int fd, uid_t owner, gid_t group);
+int lchown(const char *pathname, uid_t owner, gid_t group);
+
 
 #endif /* _UNISTD_H */
 

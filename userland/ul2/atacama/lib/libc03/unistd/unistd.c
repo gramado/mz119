@@ -1251,29 +1251,29 @@ char *const envp[])
 	return -1;
 }
 
-/*
-int chown(const char *pathname, uid_t owner, gid_t group);
+
+
 int chown(const char *pathname, uid_t owner, gid_t group)
 {
 	return -1; 
 }
-*/
 
-/*
-int fchown(int fd, uid_t owner, gid_t group);
+
+
+
 int fchown(int fd, uid_t owner, gid_t group)
 {
 	return -1; 
 }
-*/
 
-/*
-int lchown(const char *pathname, uid_t owner, gid_t group);
+
+
+
 int lchown(const char *pathname, uid_t owner, gid_t group)
 {
 	return -1; 
 }
-*/
+
 
 
 
@@ -1335,6 +1335,18 @@ off_t tell(int fildes)
 	return lseek(fildes, 0, SEEK_CUR);
 	//return(lseek(fildes, 0, 1));
 }
+
+
+
+int access(const char *pathname, int mode)
+{
+	// #todo
+	//struct stat foo;
+	//return ( stat(pathname, &foo) );
+
+    return -1;
+}
+
 
 //
 // End.
