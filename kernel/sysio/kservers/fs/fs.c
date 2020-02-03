@@ -1036,14 +1036,12 @@ void fsInitializeWorkingDiretoryString (void){
 
     v = (struct volume_d *) volumeList[current_volume];
 
-    if ( (void *) v == NULL )
-    {
+    if ( (void *) v == NULL ){
         panic ("fsInitializeWorkingDiretoryString: v\n");
 
     }else{
 
-        if ( v->used != 1 || v->magic != 1234 )
-        {
+        if ( v->used != 1 || v->magic != 1234 ){
             panic ("fsInitializeWorkingDiretoryString: validation\n");
         }
 
@@ -1109,8 +1107,7 @@ int fs_initialize_process_pwd ( int pid, char *string ){
     int i;
     struct process_d *p;
 
-    if ( pwd_initialized == 0 )
-    {
+    if ( pwd_initialized == 0 ){
         panic ("fs_initialize_process_pwd: pwd not initialized\n"); 
     } 
 
@@ -1134,8 +1131,7 @@ int fs_initialize_process_pwd ( int pid, char *string ){
 
     }else{
 
-        if ( p->used != 1 || p->magic != 1234 )
-        {
+        if ( p->used != 1 || p->magic != 1234 ){
             panic ("fs_initialize_process_pwd: validation\n");
         }
 
@@ -1160,10 +1156,8 @@ int fs_print_process_pwd (int pid){
 
     struct process_d *p;
 
-    if ( pwd_initialized == 0 )
-    {
+    if ( pwd_initialized == 0 ){
         panic ("fs_print_process_pwd: pwd not initialized\n"); 
-
     }
 
 
@@ -1173,14 +1167,12 @@ int fs_print_process_pwd (int pid){
 
     p = (struct process_d *) processList[pid];
 
-    if ( (void *) p == NULL )
-    {
+    if ( (void *) p == NULL ){
         panic ("fs_print_process_pwd: p\n");
 
     }else{
 
-        if ( p->used != 1 || p->magic != 1234 )
-        {
+        if ( p->used != 1 || p->magic != 1234 ){
             panic ("fs_print_process_pwd: validation\n");
         }
 
@@ -1214,27 +1206,24 @@ void fsUpdateWorkingDiretoryString ( char *string ){
 	tmp = string;
 
 	
-	if ( pwd_initialized == 0 )
-	{
-		printf ("fsUpdateWorkingDiretoryString: pwd not initialized\n"); 
-		return;
-	}
+    if ( pwd_initialized == 0 ){
+        printf ("fsUpdateWorkingDiretoryString: pwd not initialized\n"); 
+        return;
+    }
 
 
     if ( (void *) string == NULL )
-	    return;  
+        return;  
 
 
-	p = (struct process_d *) processList[current_process];
+    p = (struct process_d *) processList[current_process];
 
-    if ( (void *) p == NULL )
-    {
+    if ( (void *) p == NULL ){
         panic ("fsUpdateWorkingDiretoryString: p\n");
 
     }else{
 
-        if ( p->used != 1 || p->magic != 1234 )
-        {
+        if ( p->used != 1 || p->magic != 1234 ){
             panic ("fsUpdateWorkingDiretoryString: validation\n");
         }
 
@@ -1289,34 +1278,34 @@ void fsUpdateWorkingDiretoryString ( char *string ){
  */
  
 void fs_pathname_backup ( int pid, int n ){
-	
-	int i;
-	struct process_d *p;
-		
-	if ( pwd_initialized == 0 )
-	{
-		printf ("fs_pathname_backup: pwd not initialized\n"); 
-		return;
-	}  
 
-	if ( pid<0 )
-	{
-		printf ("fs_pathname_backup: PID\n"); 
-		return;
-	}
-	
-	p = (struct process_d *) processList[pid];
-	
-    if ( (void *) p == NULL )
-    {
+    int i;
+    struct process_d *p;
+
+
+    if ( pwd_initialized == 0 ){
+        printf ("fs_pathname_backup: pwd not initialized\n"); 
+        return;
+    } 
+
+
+    if ( pid<0 ){
+        printf ("fs_pathname_backup: PID\n"); 
+        return;
+    }
+
+
+    p = (struct process_d *) processList[pid];
+
+    if ( (void *) p == NULL ){
         panic ("fsUpdateWorkingDiretoryString: p\n");
 
     }else{
 
-        if ( p->used != 1 || p->magic != 1234 )
-        {
+        if ( p->used != 1 || p->magic != 1234 ){
             panic ("fsUpdateWorkingDiretoryString: validation\n");
         }
+
 
         char *path = (char *) p->pwd_string;
 
@@ -1371,6 +1360,7 @@ file *fs_load_file ( unsigned long name, unsigned long address ){
 
     if ( (void *) __file == NULL ){
         return NULL;
+        
     }else{
 
 
@@ -1527,6 +1517,7 @@ int fs_load_file_2 ( char *file_name, unsigned long file_address )
 		 //#debug
          //printf ("found\n");
     }else{
+
          printf ("file not found\n");
          refresh_screen();
          return -1;
@@ -1799,6 +1790,21 @@ int fs_count_separations (char *path){
     return (int) count;
 }
 */
+
+
+/*
+int fat16_create_new_directory ( ... )
+int fat16_create_new_directory ( ... )
+{}
+*/
+
+/*
+int fat16_create_new_file ( ... );
+int fat16_create_new_file ( ... )
+{}
+*/
+
+
 
 //
 // End.

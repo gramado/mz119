@@ -14,6 +14,17 @@
 //
 
 
+// Filesystem types.
+#define  FS_TYPE_GVFS   1000  // Gramado File System.
+#define  FS_TYPE_VFS    1001
+#define  FS_TYPE_FAT12  1002 
+#define  FS_TYPE_FAT16  1003 
+#define  FS_TYPE_FAT32  1004 
+#define  FS_TYPE_EXT2   1005
+// No more types. 
+
+
+
 // LBA - logical block address.
 // fat16
 
@@ -35,94 +46,8 @@
 
 
 
-
 //#define MBR_BOOTABLE                    0x80
 //#define MBR_SIGNATURE                   0xAA55
-
-
-//
-// FAT definitions.
-//
-
-//#define FAT_SECTOR_SIZE                 512
-//#define FAT_FIRST_DATA_CLUSTER          2
-
-//#define FAT16_CLUSTER_MASK              0xFFFF
-//#define FAT16_LINK_TERMINATOR           0xFFFF
-
-//#define FAT32_CLUSTER_MASK              0x0FFFFFFF
-//#define FAT32_LINK_TERMINATOR           0x0FFFFFFF
-
-
-#define  FAT16_CLUSTER_AVAILABLE    0x0000
-#define  FAT16_CLUSTER_RESERVED     0xfff0
-#define  FAT16_CLUSTER_BAD          0xfff7
-#define  FAT16_CLUSTER_LAST         0xffff
-
-
-
-/*
-#define FAT_DIRECTORY_ENTRY_FREE        0xE5
-#define FAT_DIRECTORY_ENTRY_LAST        0x00
-
-#define FAT_ATTRIBUTE_READ_ONLY         0x01
-#define FAT_ATTRIBUTE_HIDDEN            0x02
-#define FAT_ATTRIBUTE_SYSTEM            0x04
-#define FAT_ATTRIBUTE_VOLUME_ID         0x08
-#define FAT_ATTRIBUTE_DIRECTORY         0x10
-#define FAT_ATTRIBUTE_ARCHIVE           0x20
-#define FAT_ATTRIBUTE_LONG_NAME         (FAT_ATTRIBUTE_READ_ONLY | FAT_ATTRIBUTE_HIDDEN | FAT_ATTRIBUTE_SYSTEM | FAT_ATTRIBUTE_VOLUME_ID)
-#define FAT_ATTRIBUTE_MASK              0x3F
-
-#define FAT_LONG_NAME_TERMINATOR        0x40
-#define FAT_LONG_NAME_ORDER_MASK        0x3F
-*/
-
-//#define FAT_MAX_PATH                    255
-
-
-//
-// FAT16 directory entry
-//
-
-// Structure of the Directory Entries 
-
-// Offset   Size      Description
-// 00h      8 bytes   Filename
-// 08h      3 bytes   Filename Extension
-// 0Bh      1 bytes   Attribute Byte
-// 0Ch      1 bytes   Reserved for Windows NT
-// 0Dh      1 bytes   Creation - Millisecond stamp (actual 100th of a second)
-// 0Eh      2 bytes   Creation Time
-// 10h      2 bytes   Creation Date
-// 12h      2 bytes   Last Access Date
-// 14h      2 bytes   Reserved for FAT32
-// 16h      2 bytes   Last Write Time
-// 18h      2 bytes   Last Write Date
-// 1Ah      2 bytes   Starting cluster
-// 1Ch      4 bytes   File size in bytes
-
-struct fat16_directory_entry_d 
-{
-    unsigned char   FileName[11];       //8.3   
-                          
-    unsigned char   Attributes;     
-    unsigned char   Reserved1;                           
-    unsigned char   CreationMS;
-                         
-    unsigned short  CreationTime;                     
-    unsigned short  CreationDate;                   
-    unsigned short  LastAccessDate;
-    unsigned short  Reserved2;          //for fat32               
-    unsigned short  LastWriteTime;                    
-    unsigned short  LastWriteDate;                    
-    unsigned short  StartingCluster;               
-    
-    unsigned long   FileSize;                         
-};                                     
-//struct fat16_directory_entry_d *FAT16CurrentDirectoryEntry;
-
-
 
 
 
@@ -131,16 +56,6 @@ struct fat16_directory_entry_d
 //#define FS_I386_IMAGE  0x014C
 
 
-// string support
-#define  FS_STRING_TERMINATOR  "\0" 
-
-
-// volume support
-#define  FS_ROOT_STRING     "root:"
-#define  FS_VOLUME0_STRING  "volume0"   //vfs
-#define  FS_VOLUME1_STRING  "volume1"   //boot volume
-#define  FS_VOLUME2_STRING  "volume2"   //system volume.
-#define  FS_UNKNOWNVOLUME_STRING  "unknown-volume"
 
 
 
@@ -149,73 +64,12 @@ struct fat16_directory_entry_d
 #define  FS_BOOTWORKINGDIRECTORY_ID     1
 #define  FS_SYSTEMWORKINGDIRECTORY_ID   2
 #define  FS_UNKNOWNWORKINGDIRECTORY_ID  (-1)
-#define  FS_VFSWORKINGDIRECTORY_STRING      "volume1"
-#define  FS_BOOTWORKINGDIRECTORY_STRING     "volume1"
-#define  FS_SYSTEMWORKINGDIRECTORY_STRING   "volume2"
-#define  FS_UNKNOWNWORKINGDIRECTORY_STRING  "unknown-directory"
-#define  WORKINGDIRECTORY_STRING_MAX 32
 
 
 
-// pathname support.
-// Rethink this.
-
-#define  FS_MAX_NAME_LENGHT (8+3)
-#define  PS1                     "/"  
-#define  PS2                     "\\"
-#define  FS_PATHNAME_SEPARATOR   "/"
-#define  FS_PATHNAME_TERMINATOR  "\0"
-#define  FS_DIR_VFS      'root:/volume0'  
-#define  FS_DIR_BOOT     'root:/volume1'  
-#define  FS_DIR_SYSTEM   'root:/volume2'  
-#define  FS_DIR_BM       'root:/volume1/BM.BIN'       
-#define  FS_DIR_BL       'root:/volume1/BL.BIN'       
-#define  FS_DIR_KERNEL   'root:/volume1/KERNEL.BIN'   
-#define  FS_DIR_INIT     'root:/volume1/INIT.BIN'     
-#define  FS_DIR_SHELL    'root:/volume1/SHELL.BIN'    
-#define  FS_DIR_TASKMAN  'root:/volume1/TASKMAN.BIN' 
-#define  FS_DIR_INITTXT  'root:/volume1/INIT.TXT'      
-#define  FS_DIR_BIN      'root:/volume2/bin'   
-#define  FS_DIR_DEV      'root:/volume2/dev'    
-#define  FS_DIR_LIB      'root:/volume2/lib'     
-#define  FS_DIR_USER     'root:/volume2/user' 
-#define  FS_DIR_DEFAULTUSER  'root:/volume2/user/default'
 
 
 
-// Filesystem types.
-#define  FS_TYPE_GVFS   1000  // Gramado File System.
-#define  FS_TYPE_VFS    1001
-#define  FS_TYPE_FAT12  1002 
-#define  FS_TYPE_FAT16  1003 
-#define  FS_TYPE_FAT32  1004 
-#define  FS_TYPE_EXT2   1005
-// No more types. 
-
-
-
-// fat16 support.
-#define FAT16_ROOT_ENTRIES  512  // 512 entradas no rootdir. 
-#define FAT16_ENTRY_SIZE    32   // Tamanho em bytes da entrada no root dir. 
-#define FAT_ERRO_1    0xffff9 
-#define FAT_ERRO_2    0xffff8
-#define FAT_ERRO_3    0xffff7
-#define FAT_ERRO_4    0xffff6
-#define FAT_STATUS_1  0xffff5
-#define FAT_STATUS_2  0xffff4
-#define FAT_STATUS_3  0xffff3
-#define FAT_STATUS_4  0xffff2
-#define ENTRY_NEVER_USED       0x00
-#define ENTRY_FILE_IS_DELETED  0xE5 
-#define ENTRY_DIRECTORY        0x2E 
-#define FILE_ATTRIBUTE_READ_ONLY     0x01 
-#define FILE_ATTRIBUTE_HIDDEN        0x02
-#define FILE_ATTRIBUTE_SYSTEM        0x04
-#define FILE_ATTRIBUTE_VOLUME_LABEL  0x08
-#define FILE_ATTRIBUTE_DIRECTORY     0x10
-#define FILE_ATTRIBUTE_ARCHIVE       0x20
-#define FILE_ATTRIBUTE_UNUSED1       0x40
-#define FILE_ATTRIBUTE_UNUSED2       0x80
 
 
 // MBR support.
