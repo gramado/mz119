@@ -490,23 +490,25 @@ Linker script and memory map
  .text          0x00000000004097c4      0x104 gws.o
                 0x00000000004097c4                gwsInit
                 0x00000000004098ab                serverInit
- .text          0x00000000004098c8      0x165 termios.o
-                0x00000000004098c8                tcgetattr
-                0x00000000004098e6                tcsetattr
-                0x000000000040995f                tcsendbreak
-                0x0000000000409969                tcdrain
-                0x0000000000409973                tcflush
-                0x000000000040997d                tcflow
-                0x0000000000409987                cfmakeraw
-                0x00000000004099f9                cfgetispeed
-                0x0000000000409a04                cfgetospeed
-                0x0000000000409a0f                cfsetispeed
-                0x0000000000409a19                cfsetospeed
-                0x0000000000409a23                cfsetspeed
- .text          0x0000000000409a2d       0x3d ioctl.o
-                0x0000000000409a2d                ioctl
+ .text          0x00000000004098c8        0x6 comp.o
+                0x00000000004098c8                compositor_loop
+ .text          0x00000000004098ce      0x165 termios.o
+                0x00000000004098ce                tcgetattr
+                0x00000000004098ec                tcsetattr
+                0x0000000000409965                tcsendbreak
+                0x000000000040996f                tcdrain
+                0x0000000000409979                tcflush
+                0x0000000000409983                tcflow
+                0x000000000040998d                cfmakeraw
+                0x00000000004099ff                cfgetispeed
+                0x0000000000409a0a                cfgetospeed
+                0x0000000000409a15                cfsetispeed
+                0x0000000000409a1f                cfsetospeed
+                0x0000000000409a29                cfsetspeed
+ .text          0x0000000000409a33       0x3d ioctl.o
+                0x0000000000409a33                ioctl
                 0x000000000040a000                . = ALIGN (0x1000)
- *fill*         0x0000000000409a6a      0x596 
+ *fill*         0x0000000000409a70      0x590 
 
 .iplt           0x000000000040a000        0x0
  .iplt          0x000000000040a000        0x0 crt0.o
@@ -536,7 +538,7 @@ Linker script and memory map
  .rodata        0x000000000040b364       0x60 createw.o
  .rodata        0x000000000040b3c4       0x39 gws.o
 
-.eh_frame       0x000000000040b400     0x3304
+.eh_frame       0x000000000040b400     0x3324
  .eh_frame      0x000000000040b400       0x34 crt0.o
  .eh_frame      0x000000000040b434       0x48 main.o
                                          0x60 (size before relaxing)
@@ -572,48 +574,51 @@ Linker script and memory map
                                          0xa8 (size before relaxing)
  .eh_frame      0x000000000040e520       0x44 gws.o
                                          0x5c (size before relaxing)
- .eh_frame      0x000000000040e564      0x180 termios.o
+ .eh_frame      0x000000000040e564       0x20 comp.o
+                                         0x38 (size before relaxing)
+ .eh_frame      0x000000000040e584      0x180 termios.o
                                         0x198 (size before relaxing)
- .eh_frame      0x000000000040e6e4       0x20 ioctl.o
+ .eh_frame      0x000000000040e704       0x20 ioctl.o
                                          0x38 (size before relaxing)
 
-.rel.dyn        0x000000000040e704        0x0
- .rel.got       0x000000000040e704        0x0 crt0.o
- .rel.iplt      0x000000000040e704        0x0 crt0.o
- .rel.text      0x000000000040e704        0x0 crt0.o
+.rel.dyn        0x000000000040e724        0x0
+ .rel.got       0x000000000040e724        0x0 crt0.o
+ .rel.iplt      0x000000000040e724        0x0 crt0.o
+ .rel.text      0x000000000040e724        0x0 crt0.o
 
-.data           0x000000000040e720     0x38e0
-                0x000000000040e720                data = .
-                0x000000000040e720                _data = .
-                0x000000000040e720                __data = .
+.data           0x000000000040e740     0x38c0
+                0x000000000040e740                data = .
+                0x000000000040e740                _data = .
+                0x000000000040e740                __data = .
  *(.data)
- .data          0x000000000040e720       0x14 crt0.o
- *fill*         0x000000000040e734        0xc 
- .data          0x000000000040e740      0x440 main.o
- .data          0x000000000040eb80        0x0 stubs.o
- .data          0x000000000040eb80        0x0 ctype.o
- .data          0x000000000040eb80        0x0 stdio.o
- .data          0x000000000040eb80        0x8 stdlib.o
-                0x000000000040eb80                _infinity
- .data          0x000000000040eb88        0x0 string.o
- .data          0x000000000040eb88        0x0 conio.o
- .data          0x000000000040eb88        0x0 socket.o
- *fill*         0x000000000040eb88       0x18 
- .data          0x000000000040eba0       0x80 signal.o
-                0x000000000040eba0                sys_siglist
- .data          0x000000000040ec20        0x0 unistd.o
- .data          0x000000000040ec20      0x440 api.o
- .data          0x000000000040f060      0x440 pixel.o
- .data          0x000000000040f4a0      0x440 line.o
- .data          0x000000000040f8e0      0x440 rect.o
- .data          0x000000000040fd20      0x440 char.o
- .data          0x0000000000410160      0x440 dtext.o
- .data          0x00000000004105a0      0x440 createw.o
- .data          0x00000000004109e0      0x840 gws.o
- .data          0x0000000000411220        0x0 termios.o
- .data          0x0000000000411220        0x0 ioctl.o
+ .data          0x000000000040e740       0x14 crt0.o
+ *fill*         0x000000000040e754        0xc 
+ .data          0x000000000040e760      0x440 main.o
+ .data          0x000000000040eba0        0x0 stubs.o
+ .data          0x000000000040eba0        0x0 ctype.o
+ .data          0x000000000040eba0        0x0 stdio.o
+ .data          0x000000000040eba0        0x8 stdlib.o
+                0x000000000040eba0                _infinity
+ .data          0x000000000040eba8        0x0 string.o
+ .data          0x000000000040eba8        0x0 conio.o
+ .data          0x000000000040eba8        0x0 socket.o
+ *fill*         0x000000000040eba8       0x18 
+ .data          0x000000000040ebc0       0x80 signal.o
+                0x000000000040ebc0                sys_siglist
+ .data          0x000000000040ec40        0x0 unistd.o
+ .data          0x000000000040ec40      0x440 api.o
+ .data          0x000000000040f080      0x440 pixel.o
+ .data          0x000000000040f4c0      0x440 line.o
+ .data          0x000000000040f900      0x440 rect.o
+ .data          0x000000000040fd40      0x440 char.o
+ .data          0x0000000000410180      0x440 dtext.o
+ .data          0x00000000004105c0      0x440 createw.o
+ .data          0x0000000000410a00      0x840 gws.o
+ .data          0x0000000000411240      0x840 comp.o
+ .data          0x0000000000411a80        0x0 termios.o
+ .data          0x0000000000411a80        0x0 ioctl.o
                 0x0000000000412000                . = ALIGN (0x1000)
- *fill*         0x0000000000411220      0xde0 
+ *fill*         0x0000000000411a80      0x580 
 
 .got            0x0000000000412000        0x0
  .got           0x0000000000412000        0x0 crt0.o
@@ -653,6 +658,7 @@ Linker script and memory map
  .bss           0x0000000000422184        0x0 dtext.o
  .bss           0x0000000000422184        0x0 createw.o
  .bss           0x0000000000422184        0x0 gws.o
+ .bss           0x0000000000422184        0x0 comp.o
  .bss           0x0000000000422184        0x0 termios.o
  .bss           0x0000000000422184        0x0 ioctl.o
                 0x0000000000423000                . = ALIGN (0x1000)
@@ -762,6 +768,7 @@ LOAD char.o
 LOAD dtext.o
 LOAD createw.o
 LOAD gws.o
+LOAD comp.o
 LOAD termios.o
 LOAD ioctl.o
 OUTPUT(GWS.BIN elf32-i386)
@@ -787,6 +794,7 @@ OUTPUT(GWS.BIN elf32-i386)
  .comment       0x0000000000000011       0x12 dtext.o
  .comment       0x0000000000000011       0x12 createw.o
  .comment       0x0000000000000011       0x12 gws.o
+ .comment       0x0000000000000011       0x12 comp.o
  .comment       0x0000000000000011       0x12 termios.o
  .comment       0x0000000000000011       0x12 ioctl.o
 
@@ -830,6 +838,8 @@ OUTPUT(GWS.BIN elf32-i386)
                 0x0000000000000000        0x0 createw.o
  .note.GNU-stack
                 0x0000000000000000        0x0 gws.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 comp.o
  .note.GNU-stack
                 0x0000000000000000        0x0 termios.o
  .note.GNU-stack

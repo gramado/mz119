@@ -123,15 +123,13 @@ extern void do_executa_new_task (void);
 // kservers
 #include <kernel/sysio/kservers/kgws/kgws/fonts.h>
 #include <kernel/sysio/kservers/ascii.h>   
-
-#include <kernel/sysio/kservers/fs/path.h>                 // path.
+#include <kernel/sysio/kservers/fs/path.h>                // path.
 #include <kernel/sysio/kservers/fs/fat.h>                 // fat.
-
 #include <kernel/sysio/kservers/fs/fs.h>                  // fs.
 #include <kernel/sysio/kservers/vfs/vfs.h>                // vfs.
-
 #include <kernel/sysio/kservers/kgws/kgws/prompt.h>
 #include <kernel/sysio/kservers/kgws/kgws/bmp2.h>
+
 
 
 // execve

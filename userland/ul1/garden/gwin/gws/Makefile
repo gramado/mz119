@@ -58,7 +58,7 @@ myObjects = crt0.o main.o \
 stubs.o \
 ctype.o stdio.o stdlib.o string.o conio.o socket.o signal.o unistd.o \
 api.o \
-pixel.o line.o rect.o char.o dtext.o createw.o gws.o \
+pixel.o line.o rect.o char.o dtext.o createw.o gws.o comp.o \
 termios.o ioctl.o    
 
 
@@ -90,6 +90,7 @@ all-c:
 	gcc  -c  gwscore/src/gws/dtext.c    -I $(LIBC) -I $(API02)   -I $(GWS) -I . $(CFLAGS) -o dtext.o
 	gcc  -c  gwscore/src/gws/createw.c  -I $(LIBC) -I $(API02)   -I $(GWS) -I . $(CFLAGS) -o createw.o
 	gcc  -c  gwscore/src/gws.c          -I $(LIBC) -I $(API02)   -I $(GWS) -I . $(CFLAGS) -o gws.o
+	gcc  -c  gwscore/src/comp.c         -I $(LIBC) -I $(API02)   -I $(GWS) -I . $(CFLAGS) -o comp.o
 # ...	
 
 

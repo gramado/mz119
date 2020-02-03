@@ -253,8 +253,10 @@ int main (int argc, char **argv){
 
 
     //
-    // loop
+    // Event loop
     //
+
+    // Message loop and compositor loop.
 
     unsigned long message_buffer[5];   
     
@@ -280,6 +282,8 @@ event_loop:
             message_buffer[1] = 0;
             message_buffer[3] = 0;
             message_buffer[4] = 0;
+            
+            //compositor_loop ();
         };
     };
 
