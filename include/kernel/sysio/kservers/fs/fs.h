@@ -54,6 +54,13 @@
 //#define FAT32_LINK_TERMINATOR           0x0FFFFFFF
 
 
+#define  FAT16_CLUSTER_AVAILABLE    0x0000
+#define  FAT16_CLUSTER_RESERVED     0xfff0
+#define  FAT16_CLUSTER_BAD          0xfff7
+#define  FAT16_CLUSTER_LAST         0xffff
+
+
+
 /*
 #define FAT_DIRECTORY_ENTRY_FREE        0xE5
 #define FAT_DIRECTORY_ENTRY_LAST        0x00
@@ -72,6 +79,51 @@
 */
 
 //#define FAT_MAX_PATH                    255
+
+
+//
+// FAT16 directory entry
+//
+
+// Structure of the Directory Entries 
+
+// Offset   Size      Description
+// 00h      8 bytes   Filename
+// 08h      3 bytes   Filename Extension
+// 0Bh      1 bytes   Attribute Byte
+// 0Ch      1 bytes   Reserved for Windows NT
+// 0Dh      1 bytes   Creation - Millisecond stamp (actual 100th of a second)
+// 0Eh      2 bytes   Creation Time
+// 10h      2 bytes   Creation Date
+// 12h      2 bytes   Last Access Date
+// 14h      2 bytes   Reserved for FAT32
+// 16h      2 bytes   Last Write Time
+// 18h      2 bytes   Last Write Date
+// 1Ah      2 bytes   Starting cluster
+// 1Ch      4 bytes   File size in bytes
+
+struct fat16_directory_entry_d 
+{
+    unsigned char   FileName[11];       //8.3   
+                          
+    unsigned char   Attributes;     
+    unsigned char   Reserved1;                           
+    unsigned char   CreationMS;
+                         
+    unsigned short  CreationTime;                     
+    unsigned short  CreationDate;                   
+    unsigned short  LastAccessDate;
+    unsigned short  Reserved2;          //for fat32               
+    unsigned short  LastWriteTime;                    
+    unsigned short  LastWriteDate;                    
+    unsigned short  StartingCluster;               
+    
+    unsigned long   FileSize;                         
+};                                     
+//struct fat16_directory_entry_d *FAT16CurrentDirectoryEntry;
+
+
+
 
 
 
@@ -237,13 +289,12 @@ unsigned short file_cluster_list[1024];
  */ 
 struct partition_table_d
 {    
-	unsigned char boot_indicator; //80h active
+    unsigned char boot_indicator; //80h active
     unsigned char start_chs[3];
     unsigned char partition_type;
     unsigned char end_chs[3];
     unsigned long start_sector;
     unsigned long partition_size; //in sectors.
-	
 };
 struct partition_table_d *partition; 
 
@@ -252,50 +303,29 @@ struct partition_table_d *partition;
 //As informações na partition table apresentadas na forma de 'char'.  
 struct partition_table_chars_d
 { 
-	unsigned char BootFlag;                // Bootable or not
+    unsigned char BootFlag;                // Bootable or not
     
-	unsigned char StartingCHS0;            // Not used
+    unsigned char StartingCHS0;            // Not used
     unsigned char StartingCHS1;            // Not used
     unsigned char StartingCHS2;            // Not used
     
-	unsigned char PartitionType;            // 
+    unsigned char PartitionType;            // 
     
-	unsigned char EndingCHS0;              // Not used
+    unsigned char EndingCHS0;              // Not used
     unsigned char EndingCHS1;              // Not used
     unsigned char EndingCHS2;              // Not used
     
-	unsigned char StartingSector0;       // Hidden sectors
+    unsigned char StartingSector0;       // Hidden sectors
     unsigned char StartingSector1;
     unsigned char StartingSector2;
     unsigned char StartingSector3;
     
-	unsigned char PartitionLength0;      // Sectors in this partition
+    unsigned char PartitionLength0;      // Sectors in this partition
     unsigned char PartitionLength1;
     unsigned char PartitionLength2;
     unsigned char PartitionLength3; 
 };
 struct partition_table_chars_d *partition_chars; 
-
-
-
-/*
-typedef struct Fat16Entry_d Fat16Entry_t;
-struct Fat16Entry_d 
-{
-    char           FileName[11];      // Filename + extension.
-    unsigned char  Attr;              // File attributes.
-    unsigned char  ReservedNT;        // Reserved for use by Windows NT.
-    unsigned char  TimeInTenths;      // Millisecond stamp at file creation.
-    unsigned short CreateTime;        // Time file was created.
-    unsigned short CreateDate;        // Date file was created.
-    unsigned short LastAccessDate;    // Date file was last accessed.
-    unsigned short ClusterHigh;       // High word of this entry's start cluster.
-    unsigned short Time;              // Time last modified.
-    unsigned short Date;              // Date last modified.
-    unsigned short ClusterLow;        // First cluster number low word.
-    unsigned long  Size;              // File size. 
-};
-*/
 
 
 
@@ -377,102 +407,10 @@ struct target_dir_d
 	//...
 };
 struct target_dir_d current_target_dir;
-
- 
-
-/*
-    IMAGE_FILE_MACHINE_I386 (0x14c)
-        for Intel 80386 processor or better
-
-    0x014d
-        for Intel 80486 processor or better
-
-    0x014e
-        for Intel Pentium processor or better
-
-    0x0160
-        for R3000 (MIPS) processor, big endian
-
-    IMAGE_FILE_MACHINE_R3000 (0x162)
-        for R3000 (MIPS) processor, little endian
-
-    IMAGE_FILE_MACHINE_R4000 (0x166)
-        for R4000 (MIPS) processor, little endian
-
-    IMAGE_FILE_MACHINE_R10000 (0x168)
-        for R10000 (MIPS) processor, little endian
-
-    IMAGE_FILE_MACHINE_ALPHA (0x184)
-        for DEC Alpha AXP processor
-
-    IMAGE_FILE_MACHINE_POWERPC (0x1F0)
-        for IBM Power PC, little endian
-		
-// 1 byte aligned
-struct PeHeader {
-	uint32_t mMagic; // PE\0\0 or 0x00004550
-	uint16_t mMachine;
-	uint16_t mNumberOfSections;
-	uint32_t mTimeDateStamp;
-	uint32_t mPointerToSymbolTable;
-	uint32_t mNumberOfSymbols;
-	uint16_t mSizeOfOptionalHeader;
-	uint16_t mCharacteristics;
-}; 
- 
-// 1 byte aligned
-struct Pe32OptionalHeader {
-	uint16_t mMagic; // 0x010b - PE32, 0x020b - PE32+ (64 bit)
-	uint8_t  mMajorLinkerVersion;
-	uint8_t  mMinorLinkerVersion;
-	uint32_t mSizeOfCode;
-	uint32_t mSizeOfInitializedData;
-	uint32_t mSizeOfUninitializedData;
-	uint32_t mAddressOfEntryPoint;
-	uint32_t mBaseOfCode;
-	uint32_t mBaseOfData;
-	uint32_t mImageBase;
-	uint32_t mSectionAlignment;
-	uint32_t mFileAlignment;
-	uint16_t mMajorOperatingSystemVersion;
-	uint16_t mMinorOperatingSystemVersion;
-	uint16_t mMajorImageVersion;
-	uint16_t mMinorImageVersion;
-	uint16_t mMajorSubsystemVersion;
-	uint16_t mMinorSubsystemVersion;
-	uint32_t mWin32VersionValue;
-	uint32_t mSizeOfImage;
-	uint32_t mSizeOfHeaders;
-	uint32_t mCheckSum;
-	uint16_t mSubsystem;
-	uint16_t mDllCharacteristics;
-	uint32_t mSizeOfStackReserve;
-	uint32_t mSizeOfStackCommit;
-	uint32_t mSizeOfHeapReserve;
-	uint32_t mSizeOfHeapCommit;
-	uint32_t mLoaderFlags;
-	uint32_t mNumberOfRvaAndSizes;
-}; 
- 
-struct IMAGE_SECTION_HEADER { // size 40 bytes
-	char[8]  mName;
-	uint32_t mVirtualSize;
-	uint32_t mVirtualAddress;
-	uint32_t mSizeOfRawData;
-	uint32_t mPointerToRawData;
-	uint32_t mPointerToRawData;
-	uint32_t mPointerToRealocations;
-	uint32_t mPointerToLinenumbers;
-	uint16_t mNumberOfRealocations;
-	uint16_t mNumberOfLinenumbers;
-	uint32_t mCharacteristics;
-}; 
-*/
  
  
- 
-//links para arquivos ou diretórios dentro do mesmo sistema de arquivos. 
-typedef struct hardlink_d hardlink_t; 
+// links para arquivos ou diretórios 
+// dentro do mesmo sistema de arquivos. 
 struct hardlink_d
 {
 	int used;
@@ -482,8 +420,8 @@ struct hardlink_d
 
 
 
-//links para arquivos e diretórios em volumes espalhados por vários discos. 
-typedef struct softlink_d softlink_t; 
+// links para arquivos e diretórios em 
+// volumes espalhados por vários discos. 
 struct softlink_d
 {
 	int used;
@@ -493,15 +431,16 @@ struct softlink_d
 
 
 
-
 /*
  * mbr_d:
- *     Structure for MBR parameters.
- *     #bugbug: Corrigir esses valores...
- *     +Olhar no VHD.
- *     +
+ *     ? para obter informações sobre o disco.
+ *     Porém devemos ter um boot block mais completo.
  */ 
-typedef struct mbr_d mbr_t; 
+
+// #bugbug
+// É desnecessário ter isso dentro do kernel.
+// Deletar.
+
 struct mbr_d
 {
 
@@ -554,8 +493,8 @@ struct mbr_d
 	unsigned short Signature;
 */
 }; 
-mbr_t *mbr; 
-//mbr_t *Mbr; 
+struct mbr_d *mbr; 
+
 
 
 
@@ -563,50 +502,23 @@ mbr_t *mbr;
 /*
  * vbr_d:
  *     Structure for VBR parameters.
- *
  */  
-typedef struct vbr_d vbr_t; 
+
 struct vbr_d
 {
 	//copiar mbr, é parecido;
 }; 
-vbr_t *vbr; 
+struct vbr_d *vbr; 
  
  
 
- 
- 
-/*
- * fat_d:
- *     Fat 16.
- *
- */
- 
-typedef struct fat_d fat_t; 
 struct fat_d
 {
     unsigned long address;
 	int type;
 	//...
 };
-fat_t *fat;
-
-
-/*
-typedef struct findfile_d findfile_t;
-struct findfile_d
-{
-	//char reserved[21];
-	//char attrib;
-	//unsigned short wr_time;
-	//unsigned short wr_date;
-	unsigned long size;
-	char name[13];	
-};
-findfile_t *Findfile;
-*/
-
-
+struct fat_d *fat;
 
  
 
@@ -619,20 +531,17 @@ findfile_t *Findfile;
  *     Entrada de diretório baseada em streams. 
  */
 
-typedef struct dir_d dir_t;
 struct dir_d
 {
-	//
-	// @todo: Criar e organizar os elementos dessa estrutura.
-	//
-	
-	int id;
-	
-	int used;
-	int magic;
-	
+
+    int id;
+
+    int used;
+    int magic;
+
 	// Parte principal da estrutura
-	FILE *stream;
+    file *stream;   //deletar.
+	//file *__file;   //usar esse.
 	
 	
     // @todo: Incluir informações extras sobre o diretório,
@@ -644,36 +553,29 @@ struct dir_d
 	
 	
 	// número de bytes em uma entrada.
-	int entry_size_in_bytes;
+    int entry_size_in_bytes;
 	
 	//numero total de bytes no diretório.
-	int totalentries_size_in_bytes;
+    int totalentries_size_in_bytes;
 	
-    /*
-     * Númetro máximo de arquivos em um diretório.
-	 */
+
+    // Númetro máximo de arquivos em um diretório.
     int fileMax;
 
-    /*
-	 * Número total de arquivos presentes no diretório.
-	 */   
+
+	// Número total de arquivos presentes no diretório.
     int fileTotal;
 	
-	/*
-	 * Endreço onde o arquivo foi carregado.
-	 *
-	 */
+
+	//Endreço onde o arquivo foi carregado.
 	unsigned long address;
    
-   /*
-    * flag, se esta ou nao na memoria.
-	*/
+
+    //flag, se esta ou nao na memoria.
     int inMemory;
-   
-    /*
-	 * Um ponteiro pra estrutura da entrada atual.
-	 */
-	struct dir_entry_d *current;
+
+	// Um ponteiro pra estrutura da entrada atual.
+    struct dir_entry_d *current;
 };
 
 
@@ -682,7 +584,7 @@ struct dir_d
  * filesystem_d:
  *     Informações sobre o sistema de arquivos usado pelo sistema.
  */
-typedef struct filesystem_d filesystem_t; 
+
 struct filesystem_d
 {
 
@@ -722,34 +624,32 @@ struct filesystem_d *current_filesystem;
  * file_access_d:
  *     Estrutura para os elementos necessários 
  *     para acessar um arquivo.
- *
  */
-typedef struct file_access_d file_access_t; 
+ 
 struct file_access_d
 {
     //disk
-	struct diskinfo_d *Disk;
+    struct diskinfo_d *Disk;
     
-	//volume
-	struct volumeinfo_d *Volume;
-	
-	//filesystem
-	struct filesystem_d *FileSystem;
+    //volume
+    struct volumeinfo_d *Volume;
+
+    //filesystem
+    struct filesystem_d *FileSystem;
     
-	//directory
-	struct dir_d *Directory;
-	struct dir_entry_d *current;
-	
-	//file	
+    //directory
+    struct dir_d *Directory;
+    struct dir_entry_d *current;
+
+    //file	
     struct file_d *File;
     struct _iobuf *FileInfo; //FILE (C99)	
-	
-	//flags
+
+
+    //flags
     //int flag;	
 };
-file_access_t *FileAccess;
-
-
+struct file_access_d *CurrentFileAccess;
 
 
 
@@ -771,22 +671,22 @@ file_access_t *FileAccess;
 struct storage_d
 {
 
-	// disk - disco atual
+    // disk - disco atual
     struct disk_d *d;
 
-	// volume - volume atual.
+    // volume - volume atual.
     struct volume_d *v;
 
 
-	//file system
-	//Ponteiro para o sistema de arquivos atual.
-	//Se isso for NULL, então não temos sistema de arquivos.
+    //file system
+    //Ponteiro para o sistema de arquivos atual.
+    //Se isso for NULL, então não temos sistema de arquivos.
     struct filesystem_d *fs;
 
 
-	//virtual file system
-	struct vfs_d *vfs;
-	
+    //virtual file system
+    struct vfs_d *vfs;
+
 	//Stream 
 	//ponteiro para o arquivo atual,
 	//que pode ser um arquivo, um diretório, um dispositivo ...
@@ -801,16 +701,17 @@ struct storage_d
 	//quais são as streams gerenciadas pelo kernel que 
 	//o processo tem acesso, também devemos indicar quais são 
 	//as streams abertas pelo processo.
-	
-	//stream atual
-	FILE *stream;
+
+
+    file *__file;
 };
-//Essa será a esttrutura usada para 
-//saber informações sobre o sistema de arquivos atual,
-//e gerenciar o sistema de arquivos atual.
+
+// Essa será a esttrutura usada para saber informações sobre o 
+// sistema de arquivos atual e gerenciar o sistema de arquivos atual.
+
 struct storage_d *storage;
-
-
+//struct storage_d *CurrentStorage;
+// ...
 
 
 //

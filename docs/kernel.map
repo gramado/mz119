@@ -177,7 +177,6 @@ _g_mainwindow_width
                     0x4               main.o
 _cur_process        0x4               main.o
 _current_vc         0x4               main.o
-_FileAccess         0x4               main.o
 _rtcTicks           0x4               rtc.o
 _g_logged           0x4               main.o
 _file_TaskMan       0x4               main.o
@@ -827,6 +826,7 @@ _g_filesystem_type  0x4               main.o
 _Irq4               0x4               main.o
 _dirCount           0x4               main.o
 _ShellProcess       0x4               main.o
+_CurrentFileAccess  0x4               main.o
 _keybuffer_head     0x4               main.o
 _contextCS          0x4               x86cont.o
 _kgws_current_totalticks
@@ -3266,14 +3266,13 @@ Linker script and memory map
                 0x00000000c005fc34                _g_mainwindow_width
                 0x00000000c005fc38                _cur_process
                 0x00000000c005fc3c                _current_vc
-                0x00000000c005fc40                _FileAccess
-                0x00000000c005fc44                _g_logged
-                0x00000000c005fc48                _file_TaskMan
-                0x00000000c005fc4c                _RGBA
-                0x00000000c005fc50                _desktop0
-                0x00000000c005fc54                _SMALL_heappool_address
-                0x00000000c005fc58                _____whatchdog_ps2_keyboard
-                0x00000000c005fc5c                ___breaker_com3_initialized
+                0x00000000c005fc40                _g_logged
+                0x00000000c005fc44                _file_TaskMan
+                0x00000000c005fc48                _RGBA
+                0x00000000c005fc4c                _desktop0
+                0x00000000c005fc50                _SMALL_heappool_address
+                0x00000000c005fc54                _____whatchdog_ps2_keyboard
+                0x00000000c005fc58                ___breaker_com3_initialized
                 0x00000000c005fc60                _nicList
                 0x00000000c005fc80                _____IDLE
                 0x00000000c005fc84                _gui
@@ -3692,11 +3691,12 @@ Linker script and memory map
                 0x00000000c009e9f4                _Irq4
                 0x00000000c009e9f8                _dirCount
                 0x00000000c009e9fc                _ShellProcess
-                0x00000000c009ea00                _keybuffer_head
-                0x00000000c009ea04                _CurrentBuffer
-                0x00000000c009ea08                _CurrentColorScheme
-                0x00000000c009ea0c                _next_quantum
-                0x00000000c009ea10                _process_rootConductor
+                0x00000000c009ea00                _CurrentFileAccess
+                0x00000000c009ea04                _keybuffer_head
+                0x00000000c009ea08                _CurrentBuffer
+                0x00000000c009ea0c                _CurrentColorScheme
+                0x00000000c009ea10                _next_quantum
+                0x00000000c009ea14                _process_rootConductor
                 0x00000000c009ea20                _dev_nport
                 0x00000000c009ea40                _stdio_terminalmode_flag
                 0x00000000c009ea44                _menuDefault

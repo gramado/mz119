@@ -214,7 +214,7 @@ PHONY := all
 all: KERNEL.BIN kernel-image-link /mnt/gramadovhd  vhd-create vhd-mount vhd-copy-files vhd-unmount clean
 
 
-	#Givin permitions to run ./run hahaha
+	#Giving permitions to run ./run hahaha
 	chmod 755 ./run
 
 	@echo "Gramado $(VERSION) $(PATCHLEVEL) $(SUBLEVEL) $(EXTRAVERSION) $(NAME) "

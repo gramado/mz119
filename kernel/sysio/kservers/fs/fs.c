@@ -884,9 +884,12 @@ int fsInit (void){
 
         fileList[__KERNEL_STREAM_VOL1_ROOTDIR] = (unsigned long) volume1_rootdir;
 
-        //#bugbug: Validade da estrutura.
-        storage->stream = volume1_rootdir; 
+        // #bugbug: 
+        // Validade da estrutura.
+        
+        storage->__file = volume1_rootdir; 
     };
+
 
 
 	//
