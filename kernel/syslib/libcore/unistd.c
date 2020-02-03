@@ -142,7 +142,9 @@ int open (const char *pathname, int flags, mode_t mode ){
     int __Status = -1;
     __Status = (int) KiSearchFile ( (unsigned char *)pathname, VOLUME1_ROOTDIR_ADDRESS );
     if (__Status == 1){
-         printf("found\n");
+		
+		 //#debug
+         //printf("found\n");
     }else{
          printf("not found\n");
          return -1;

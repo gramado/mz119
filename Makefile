@@ -561,6 +561,7 @@ vhd-copy-files:
 
 #base  Tests
 #	-sudo cp base/tests/*.C      /mnt/gramadovhd
+	-sudo cp base/tests/*.CPP    /mnt/gramadovhd
 #	-sudo cp base/tests/*.LUA    /mnt/gramadovhd
 
 
@@ -605,6 +606,7 @@ vhd-copy-files:
 	-sudo cp userland/ul2/atacama/bin/SUM.BIN       /mnt/gramadovhd
 	-sudo cp userland/ul2/atacama/bin/SPLIT.BIN     /mnt/gramadovhd
 	-sudo cp userland/ul2/atacama/bin/CMP.BIN       /mnt/gramadovhd
+	-sudo cp userland/ul2/atacama/bin/SHOWFUN.BIN   /mnt/gramadovhd
 #	-sudo cp userland/ul2/atacama/bin/DUMPIT.BIN    /mnt/gramadovhd
 	-sudo cp userland/ul2/atacama/bin/HELLO.BIN     /mnt/gramadovhd
 	-sudo cp userland/ul2/atacama/bin/HELLO2.BIN    /mnt/gramadovhd

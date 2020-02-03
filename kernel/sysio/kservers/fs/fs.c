@@ -1520,7 +1520,9 @@ int fs_load_file_2 ( char *file_name, unsigned long file_address )
     Status = (int) KiSearchFile ( file_name, VOLUME1_ROOTDIR_ADDRESS );
     
     if (Status == 1){
-         printf ("found\n");
+		
+		 //#debug
+         //printf ("found\n");
     }else{
          printf ("file not found\n");
          refresh_screen();
@@ -1553,6 +1555,7 @@ int fs_load_file_2 ( char *file_name, unsigned long file_address )
 __OK:
 
     __file = (file *) kmalloc ( sizeof(file) );
+    
     if ( (void *) __file == NULL )
         return -1;
 
@@ -1598,8 +1601,8 @@ __OK:
         
     
         
-    printf ("done\n");
-    refresh_screen();
+    //printf ("done\n");
+    //refresh_screen();
           
     //
     // Done.

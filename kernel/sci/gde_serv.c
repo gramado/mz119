@@ -163,18 +163,18 @@ void *gde_extra_services ( unsigned long number,
 
 
     // Pega o número da tty de um processo, dado o pid.
+    // ps/action/process.c
     // IN: PID.
     // OUT: tty id.
-    if (number == 266)
-    {
+    if (number == 266){
         return (void *) process_get_tty ( (int) arg2 );
     }
 
 
     // Ligar duas tty dados os pids dos processos que possuem as tty.
+    // kdrivers/tty/pty/pty.c
     // IN: master pid, slave pid.
-    if (number == 267)
-    {
+    if (number == 267){
         return (void *) pty_link_by_pid ( (int) arg2, (int) arg3 );
     }
     

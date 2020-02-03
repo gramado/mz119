@@ -407,9 +407,10 @@ fsLoadFile ( unsigned long fat_address,
 //load_DIR:
 
 
-#ifdef KERNEL_VERBOSE
+//#ifdef KERNEL_VERBOSE
     debug_print ("fsLoadFile:\n");
-#endif
+//#endif
+
 
 	//#test
 	//funcionou
@@ -506,7 +507,7 @@ fsLoadFile ( unsigned long fat_address,
     
     //#debug
     //vamos mostrar a string.
-    printf ("fsLoadFile: file_name={%s}\n", file_name);
+    //printf ("fsLoadFile: file_name={%s}\n", file_name);
 
 
     // name size.
@@ -940,7 +941,7 @@ unsigned long fsGetFileSize ( unsigned char *file_name ){
 	//Carrega o diretório raiz na memória.
 	
 //#ifdef KERNEL_VERBOSE	
-	printf ("fsGetFileSize: Loading root..\n"); 
+	//printf ("fsGetFileSize: Loading root..\n"); 
 //#endif	
 	
 	//#bugbug
@@ -963,31 +964,29 @@ unsigned long fsGetFileSize ( unsigned char *file_name ){
     //A intenção é obtermos a quantidade de entradas no diretório raiz.
 	//#bugbug: Mas isso deveria ser feito para o diretório atual.
 	
-	if ( (void *) filesystem == NULL )
-	{
+    if ( (void *) filesystem == NULL )
+    {
 	    printf ("fsGetFileSize: filesystem\n");
 		goto fail;
 	
-	}else{
+    }else{
 		
 	    //Setores por cluster.
 	    Spc = filesystem->spc;
 		
-	    if (Spc <= 0)
-		{
-	        printf ("fsGetFileSize: Spc\n");
-		    goto fail;
-	    };
+        if (Spc <= 0){
+            printf ("fsGetFileSize: Spc\n");
+            goto fail;
+        }
 	
 	    //Max entries ~ Número de entradas no rootdir.
 		//#bugbug: Devemos ver o número de entradas no diretório corrente.
 	    max = filesystem->rootdir_entries;	
 		
-	    if (max <= 0)
-		{
-	        printf ("fsGetFileSize: max\n");
-			goto fail;
-	    };
+        if (max <= 0){
+            printf ("fsGetFileSize: max\n");
+            goto fail;
+        }
 		
 	    // More?! 
 		// ...
@@ -1000,7 +999,7 @@ unsigned long fsGetFileSize ( unsigned char *file_name ){
     
     //#debug
     //vamos mostrar a string.
-    printf ("fsGetFileSize: file_name={%s}\n", file_name);
+    //printf ("fsGetFileSize: file_name={%s}\n", file_name);
 	
 	//Busca simples pelo arquivo no diretório raiz.
 	//todo: Essa busca pode ser uma rotina mais sofisticada. 
@@ -1013,8 +1012,8 @@ unsigned long fsGetFileSize ( unsigned char *file_name ){
 	//ATENÇÃO:
     //Na verdade a variável 'root' é do tipo short.	 
 
-	i = 0; 
-	
+    i = 0; 
+
 	// Procura o arquivo no diretório raiz.
 	
 //search_file:
@@ -1027,12 +1026,11 @@ unsigned long fsGetFileSize ( unsigned char *file_name ){
     
     // o tamanho da string falhou
     //vamos ajustar.
-    if ( size > 11 )
-    {
+    if ( size > 11 ){
 	     printf ("fsGetFileSize: size fail %d\n",size );   
 	     size = 11;	
 	}
-	
+
 	
 	//
 	// Compare.
@@ -1104,8 +1102,9 @@ found:
 	//refresh_screen();
 	//while(1){ asm("hlt"); }
 	
-	printf ("fsGetFileSize: FileSize=%d \n" , FileSize);
-    refresh_screen ();
+	//#debug
+	//printf ("fsGetFileSize: FileSize=%d \n" , FileSize);
+    //refresh_screen ();
 
 
     return (unsigned long) FileSize;

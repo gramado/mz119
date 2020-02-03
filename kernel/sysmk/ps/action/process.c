@@ -445,7 +445,10 @@ pid_t do_clone_execute_process (char *filename){
     int __Status = -1;
     __Status = (int) KiSearchFile ( filename, VOLUME1_ROOTDIR_ADDRESS );
     if (__Status == 1){
-         printf("found\n");
+
+         //#debug
+         //printf("found\n");
+    
     }else{
          printf("not found\n");
          goto fail;
@@ -582,7 +585,8 @@ do_clone:
 		//
 
 
-        printf ("do_clone_execute_process: %s\n",filename);
+        //#debug
+        //printf ("do_clone_execute_process: %s\n",filename);
 
 
         // #importante: 
@@ -600,7 +604,8 @@ do_clone:
         
         // read_fntos ( (char *) filename );
 
-        printf ("do_clone_execute_process: %s\n",filename);
+        //#debug
+        //printf ("do_clone_execute_process: %s\n",filename);
         
         Status = (int) fsLoadFile ( VOLUME1_FAT_ADDRESS, 
                            VOLUME1_ROOTDIR_ADDRESS, 

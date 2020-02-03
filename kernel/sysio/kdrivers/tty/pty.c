@@ -263,18 +263,14 @@ int pty_link_by_pid ( int master_pid, int slave_pid )
 int pty_link ( struct tty_d *master, struct tty_d *slave )
 {
 
-    if ( (void *) master == NULL )
-    {
+    if ( (void *) master == NULL ){
         printf ("pty_link: master\n");
-        refresh_screen();
-        return -1; 
+        goto fail;
     }
 
-    if ( (void *) slave == NULL )
-    {
+    if ( (void *) slave == NULL ){
         printf ("pty_link: slave\n");
-        refresh_screen();
-        return -1; 
+        goto fail;
     }
 
 
@@ -285,15 +281,15 @@ int pty_link ( struct tty_d *master, struct tty_d *slave )
 	
 	
 	//#debug
-
-    printf ("pty_link: Linked. m=%d s=%d\n", 
-        master->index,
-        master->link->index );
-
-    refresh_screen();
-
-
+    //printf ("pty_link: Linked. m=%d s=%d\n", 
+        //master->index, master->link->index );
+    //refresh_screen();
+    
     return 0;
+    
+fail:
+    refresh_screen();
+    return -1;
 }
 
 

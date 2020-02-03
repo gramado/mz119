@@ -43,7 +43,9 @@ int do_waitpid (pid_t pid, int *status, int options){
     struct process_d *p;  
 
 
-    printf ( "do_waitpid: current_process=%d pid=%d \n",current_process ,pid);
+    //#debug
+    //printf ( "do_waitpid: current_process=%d pid=%d \n", 
+        //current_process, pid );
 
     // #todo
     // tem que bloquear o processo atual até que um dos seus processo filhos
@@ -52,15 +54,17 @@ int do_waitpid (pid_t pid, int *status, int options){
 
     p = (struct process_d *) processList[current_process];
 
-    if ( (void *) p == NULL )
-    {
-		printf ("current process struct fail\n");
-    
+    if ( (void *) p == NULL ){
+        printf ("current process struct fail\n");
+        return -1;
     }else{
+
         if ( p->used == 1 && p->magic == 1234 )
         {
-			
-            printf ("blocking process\n");
+
+            //#debug
+            //printf ("blocking process\n");
+            
             p->state = PROCESS_BLOCKED;
 
 
@@ -71,10 +75,11 @@ int do_waitpid (pid_t pid, int *status, int options){
             //checando se a thread atual é a thread de controle. 
             if (current_thread == p->control->tid )
             {
-				printf ("the current thread is also the control thread\n");
+                //#debug
+                //printf ("the current thread is also the control thread\n");
             }
            
-            printf ("blocking control thread\n");
+            //printf ("blocking thread\n");
             //tem que bloquear todas as threads do pai.
             //Isso pode estar falhando;
             //block_for_a_reason ( (int) p->control, (int) WAIT_REASON_WAIT4PID );
@@ -91,8 +96,9 @@ int do_waitpid (pid_t pid, int *status, int options){
     //*status = 1; 
 
 
-    printf ("do_waitpid: done. \n");
-    refresh_screen();
+    //#debug
+    //printf ("do_waitpid: done. \n");
+    //refresh_screen();
 
     return (int) (-1);
 }

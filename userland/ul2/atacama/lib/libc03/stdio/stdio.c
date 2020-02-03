@@ -486,13 +486,12 @@ FILE *fopen ( const char *filename, const char *mode )
     int status = -1;
     
     //IN: service, name, address, 0, 0 
-    status = (int) gramado_system_call( 3, 
+    status = (int) gramado_system_call ( 3, 
                       (unsigned long) filename, 
                       (unsigned long) address,  
                       0 );
 
-    if (status < 0)
-    {
+    if (status < 0){
         printf ("fopen: Couldn't load the file\n");
         return NULL;
     }
