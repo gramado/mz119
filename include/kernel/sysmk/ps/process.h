@@ -1048,6 +1048,20 @@ __execute_new_process ( const char *filename,
 // Pega o número da tty de um processo, dado o pid.
 int process_get_tty ( int pid );
 
+
+
+int 
+process_execve ( int i,
+                 const char *arg1, 
+                 const char *arg2, 
+                 const char *arg3 );
+
+
+
+
+
+
+
 //
 // End.
 //

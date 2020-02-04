@@ -2538,19 +2538,11 @@ void *gde_services ( unsigned long number,
             break;
 
 
-		//179
-		//#bugbug: isso é um teste
-		//isso faz o programa rodar na thread clone ClonedThread e não n a IdleThread,
-		// 0 = idle ; 216 = cloned.	
-		case 179:
-			//serviço, name, (arg)(endereço da linha de comando), env
-			
-           return (void *) do_gexecve ( 216, 
-                                (const char *) arg2, 
-                                (const char *) arg3, 
-                                (const char *) arg4 ); 
-			break;
-			
+        // 179
+        case 179:
+            panic ("179: deprecated!!!\n");
+            break;
+
 
 		//184
 		//pega o endereço do heap do processo dado seu id.	
@@ -2817,7 +2809,7 @@ void *gde_services ( unsigned long number,
 		// tá usando a thread atual e transformando ela em thread de controle.
 		case 248:
 			//serviço, name, (arg)(endereço da linha de comando), env
-            return (void *) do_execve ( 0, 
+            return (void *) sys_execve ( 0, 
                                 (const char *) arg2, 
                                 (const char *) arg3, 
                                 (const char *) arg4 ); 

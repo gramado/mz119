@@ -81,6 +81,14 @@ gwsProcedure ( struct window_d *window,
     switch(msg)
     {
 
+        case MSG_SYSKEYUP:
+            switch ( long1)
+            {
+                case VK_F1:
+                    gde_reboot ();
+                    break;
+            }    
+            break;
 
         // #test
         // Tentando receber uma mensagem de digitação.

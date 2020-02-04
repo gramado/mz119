@@ -379,11 +379,16 @@ int main ( int argc, char *argv[] ){
 
     
 
+    // Isso funciona.
+    gramado_system_call ( 900, (unsigned long)"gdeshell.bin", 0, 0 );     
     
-    gramado_system_call ( 900, 
-        (unsigned long)"gdeshell.bin", 
-        0, 
-        0 );     
+    
+    // Testando inicializar vários processos.
+    // Precisamos de um delay.
+    //gramado_system_call ( 900, (unsigned long) "gramcode.bin", 0, 0 );     
+    //gramado_system_call ( 900, (unsigned long) "launcher.bin", 0, 0 );             
+        
+        
 
 
     // #todo
