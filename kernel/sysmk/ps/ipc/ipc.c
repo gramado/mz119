@@ -1,28 +1,10 @@
 /*
  * File: ipc/ipc.c 
  *
- * Descrição:
- *     IPCM - Inter-Process Communication Manager.
- *     IPC - Inter-Process Communication.
- *     MB - Módulos incluídos no Kernel Base.
- *     Faz parte do Process Manager, parte fundamental do Kernel Base.
- *
- * Atribuições:
- *     + Comunicação entre processos e threads.
- *     + Mensagens.
- *     + Área de tranferência.
- *     + Semáforos. (temos um módulo para isso).
- *       ...
- *
- * @todo: Criar estruturas.
- * Obs: Haverá troca de mensagens entre processos e o compartilhamento de dados.
- * Vários métodos serão usados, entre eles o uso da fila de mensagens na estrutura 
- * da janela do processo ou do processo ou da thread e o uso de áreas compartilhadas
- * de memórias.
- * Devemos considerar a sincronização de acesso aos recursos. Para isso esse módulo
- * deverá interagir com o gerente de objetos, que estrutura os acessos aos objetos
- * concedendo permissões e contabilidade de acessos e utilizadores.
- *
+ * Description:
+ *     IPC - ( Inter-Process Comunication ).    
+ *     ring 0
+ * 
  * History:
  *     2015 - Created by Fred Nora.
  */

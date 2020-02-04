@@ -1,5 +1,5 @@
 /*
- * File: mk/create.c
+ * File: sysmk/create.c
  *
  *   cria a thread idle do processo init;
  */
@@ -34,15 +34,13 @@ void *createCreateInitThread (void){
 
     InitThread = (void *) kmalloc ( sizeof(struct thread_d) );
 
-    if ( (void *) InitThread == NULL )
-    {
+    if ( (void *) InitThread == NULL ){
         panic ("createCreateInitThread: InitThread\n");
 
     } else {
 
-        // Ver se a estrutura do processo é válida.
-        if ( (void *) InitProcess == NULL )
-        {
+        // Validation.
+        if ( (void *) InitProcess == NULL ){
             panic ("createCreateInitThread: InitProcess\n");
 
         }else{
@@ -54,10 +52,6 @@ void *createCreateInitThread (void){
             InitThread->process = (void *) InitProcess;
        
            // ...
-           
-           
-           
-           
        
         };
        
@@ -110,20 +104,17 @@ void *createCreateInitThread (void){
     InitThread->magic = 1234;
 
 
-    //Identificadores.
-	InitThread->tid = 1;
-	InitThread->ownerPID = (int) InitProcess->pid;  
+    InitThread->tid = 1;
+    InitThread->ownerPID = (int) InitProcess->pid;  
 
-
-	InitThread->name_address = (unsigned long) ThreadName;   //Funciona.
+    InitThread->name_address = (unsigned long) ThreadName; 
 
     // Obs: Já fizemos isso no início da rotina.
     InitThread->process = (void *) InitProcess;
 
 
-	// Page Directory
-	InitThread->DirectoryPA = (unsigned long ) InitProcess->DirectoryPA;
-
+    // Page Directory
+    InitThread->DirectoryPA = (unsigned long ) InitProcess->DirectoryPA;
 
     // Wait reason.
 
@@ -134,9 +125,9 @@ void *createCreateInitThread (void){
 
     InitThread->plane = BACKGROUND;
 
-	// Procedimento de janela.
-    //O procedimento.
-	InitThread->procedure = (unsigned long) &system_procedure;
+    // Procedimento de janela.
+    // O procedimento.
+    InitThread->procedure = (unsigned long) &system_procedure;
 
 
     //
@@ -157,16 +148,14 @@ void *createCreateInitThread (void){
     // Message queue.
     //
 
-    for ( q=0; q<32; q++ )
-    {
+    for ( q=0; q<32; q++ ){
         InitThread->MsgQueue[q] = 0;
-    }
+    };
     InitThread->MsgQueueHead = 0;
     InitThread->MsgQueueTail = 0;
 
 
-
-	//Características.
+    // Características.
     InitThread->type = TYPE_IDLE;    //TYPE_SYSTEM.
     InitThread->iopl = RING3;        //Idle thread é uma thread de um processo em user mode.
     InitThread->state = INITIALIZED;   
@@ -177,18 +166,18 @@ void *createCreateInitThread (void){
     InitThread->priority = InitThread->base_priority;          //dinâmica.
 
 
-	InitThread->saved = 0; 
-	InitThread->preempted = UNPREEMPTABLE; 
+    InitThread->saved = 0; 
+    InitThread->preempted = UNPREEMPTABLE; 
 
-	//Temporizadores.
-	InitThread->step = 0;          
-	InitThread->quantum = QUANTUM_BASE;
-	InitThread->quantum_limit = QUANTUM_LIMIT;
+    //Temporizadores.
+    InitThread->step = 0;          
+    InitThread->quantum = QUANTUM_BASE;
+    InitThread->quantum_limit = QUANTUM_LIMIT;
 
-	InitThread->standbyCount = 0;
-	InitThread->runningCount = 0;    //Tempo rodando antes de parar.
-	InitThread->readyCount = 0;      //Tempo de espera para retomar a execução.
-	
+    InitThread->standbyCount = 0;
+    InitThread->runningCount = 0;    //Tempo rodando antes de parar.
+    InitThread->readyCount = 0;      //Tempo de espera para retomar a execução.
+
 	InitThread->initial_time_ms = get_systime_ms ();
 	InitThread->total_time_ms = 0;
 	
@@ -298,8 +287,7 @@ void *createCreateInitThread (void){
 	// colocando no estado standby.
     
     queue_insert_data ( queue, 
-        (unsigned long) InitThread, 
-        QUEUE_INITIALIZED );
+        (unsigned long) InitThread, QUEUE_INITIALIZED );
     
 
     // * MOVEMENT 1 ( Initialized ---> Standby ).

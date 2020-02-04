@@ -97,16 +97,16 @@ void do_request_12 ( int tid );
  */
  
 int KiRequest (void){
-		
+
     if ( kernel_request < 0 || kernel_request > KERNEL_REQUEST_MAX )
-	{	
-        //#debug
-		
-		printf ("KiRequest: %d", kernel_request );
-		die ();
-	}
-	
-	return (int) request ();
+    {
+        // #debug
+        printf ("KiRequest: %d", kernel_request );
+        die ();
+    }
+
+
+    return (int) request ();
 }
 
 
@@ -316,11 +316,11 @@ int request (void){
 //   Essas finalizações aplicam para todos os requests.
 
     clear_request ();
-	kernel_request = (unsigned long) 0;  
-	
-	
-	// OK.
-	return 0;
+    kernel_request = (unsigned long) 0;  
+
+
+    // Ok.
+    return 0;
 }
 
 
@@ -328,69 +328,74 @@ int
 create_request ( unsigned long number, 
                  int status, 
                  int timeout,
-				 int target_pid,
-				 int target_tid,
+                 int target_pid,
+                 int target_tid,
                  struct window_d *window, 
                  int msg, 
                  unsigned long long1, 
                  unsigned long long2 )
 {
-	
-	if (number > KERNEL_REQUEST_MAX)
-		return 1;
-	
-	kernel_request = number;
-    REQUEST.kernel_request = number;
-	
-	REQUEST.status = status;
-	
-	if (timeout < 0 )
-	{
-		REQUEST.timeout = 0;
-	}else{
-	    REQUEST.timeout = timeout;
-	}
-	
-	REQUEST.target_pid = target_pid;
-	REQUEST.target_tid = target_tid;
 
-	REQUEST.window = (struct window_d *) window;
-	REQUEST.msg = msg;
-	REQUEST.long1 = long1;
-	REQUEST.long2 = long2;
+    if (number > KERNEL_REQUEST_MAX)
+        return 1;
+
+
+    kernel_request = number;
+    REQUEST.kernel_request = number;
+    REQUEST.status = status;
+
+
+    if (timeout < 0 ){
+        REQUEST.timeout = 0;
+    }else{
+        REQUEST.timeout = timeout;
+    };
+
+
+    REQUEST.target_pid = target_pid;
+    REQUEST.target_tid = target_tid;
+
+    // #obs
+    // Atenção com isso.
+
+    REQUEST.window = (struct window_d *) window;
+    REQUEST.msg = msg;
+    REQUEST.long1 = long1;
+    REQUEST.long2 = long2;
 
 	//extra.
 	//rever isso depois.
-	REQUEST.long3 = 0;
-	REQUEST.long4 = 0;
-	REQUEST.long5 = 0;
-	REQUEST.long6 = 0;
+    REQUEST.long3 = 0;
+    REQUEST.long4 = 0;
+    REQUEST.long5 = 0;
+    REQUEST.long6 = 0;
 
-	//OK
-	return 0;
+
+    //Ok.
+    return 0;
 }
 
 
 
 void clear_request (void){
-	
+
     REQUEST.kernel_request = 0;
-	
-	REQUEST.status = 0;
-	REQUEST.timeout = 0;
-	
-	REQUEST.target_pid = 0;
-	REQUEST.target_tid = 0;
-		
-	REQUEST.window = NULL;
-	REQUEST.msg = 0;
-	REQUEST.long1 = 0;
-	REQUEST.long2 = 0;
-		
-	REQUEST.long3 = 0;
-	REQUEST.long4 = 0;
-	REQUEST.long5 = 0;
-	REQUEST.long6 = 0;
+
+    REQUEST.status = 0;
+    REQUEST.timeout = 0;
+
+    REQUEST.target_pid = 0;
+    REQUEST.target_tid = 0;
+
+    REQUEST.window = NULL;
+    REQUEST.msg = 0;
+    REQUEST.long1 = 0;
+    REQUEST.long2 = 0;
+
+    REQUEST.long3 = 0;
+    REQUEST.long4 = 0;
+    REQUEST.long5 = 0;
+    REQUEST.long6 = 0;
 }
 
 
