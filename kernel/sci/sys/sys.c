@@ -16,6 +16,22 @@ int sys_serial_debug_printk ( char *s )
 }
 
 
+/*
+// checar se o usuário tem permissão 
+// para abrir um objeto.
+// vamos checar no processo atual qual é o usuário que está
+// tentando abrir o objeto.
+// Se permitido então colocaremos um fd na lista de arquivos
+// abertos pelo processo.
+int permission (file *f);
+int permission (file *f)
+{
+    // ...
+    
+    return -1;
+}
+*/
+
 
 // 18
 int sys_read (unsigned int fd,char *buf,int count)
@@ -47,6 +63,11 @@ int sys_read (unsigned int fd,char *buf,int count)
         
     if (fd >= 32)
         return -1;
+        
+        
+        
+     //if (count<=0)
+         //return -1;
 
 
     //
@@ -74,9 +95,8 @@ int sys_read (unsigned int fd,char *buf,int count)
     
     __P = (struct process_d *) processList[current_process];
 
-    if ( (void *) __P == NULL )
-    {
-        printf ("sys_write: __P\n");
+    if ( (void *) __P == NULL ){
+        printf ("sys_read: __P\n");
         refresh_screen ();
         return -1; 
     }
@@ -94,10 +114,18 @@ int sys_read (unsigned int fd,char *buf,int count)
     
     if ( (void *) __file == NULL )
     {
-		printf ("sys_write: stream\n");
+		printf ("sys_read: __file\n");
 		refresh_screen();
         return -1; 
     }
+
+
+
+    //switch
+    // is_char_dev?     read_char(...)
+    // is_block_dev?    read_block(...)
+    // is_
+
 
     //See: unistd.c
     // #todo
@@ -145,6 +173,10 @@ int sys_write (unsigned int fd,char *buf,int count)
         
     if (fd >= 32)
         return -1;
+        
+        
+    //if(count<=0)
+        //return -1;
 
 
     //
@@ -172,8 +204,7 @@ int sys_write (unsigned int fd,char *buf,int count)
     
     __P = (struct process_d *) processList[current_process];
 
-    if ( (void *) __P == NULL )
-    {
+    if ( (void *) __P == NULL ){
         printf ("sys_write: __P\n");
         refresh_screen ();
         return -1; 
@@ -192,10 +223,16 @@ int sys_write (unsigned int fd,char *buf,int count)
     
     if ( (void *) __file == NULL )
     {
-		printf ("sys_write: stream\n");
+		printf ("sys_write: __file\n");
 		refresh_screen();
         return -1; 
     }
+    
+    //switch
+    // is_char_dev?     read_char(...)
+    // is_block_dev?    read_block(...)
+    // is_
+
     
 
     //tem que retonar o tanto de bytes escritos.
@@ -204,6 +241,26 @@ int sys_write (unsigned int fd,char *buf,int count)
     return (int) unistd_file_write ( (file *) __file, (char *) buf, (int) count );
 }
 
+
+
+// lseek is just for block devices.
+/*
+//off_t lseek(int fd, off_t offset, int whence);
+int sys_lseek(unsigned int fd,off_t offset, int origin);
+int sys_lseek(unsigned int fd,off_t offset, int origin)
+{
+    return -1;
+}
+*/
+
+
+/*
+int sys_fcntl(unsigned int fd, unsigned int cmd, unsigned long arg);
+int sys_fcntl(unsigned int fd, unsigned int cmd, unsigned long arg)
+{
+    return -1;
+}
+*/
 
 
 /*

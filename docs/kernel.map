@@ -2600,14 +2600,14 @@ Linker script and memory map
  .rodata        0x00000000c003efa4       0x1a panic.o
  .rodata        0x00000000c003efbe        0x5 reboot.o
  *fill*         0x00000000c003efc3        0x1 
- .rodata        0x00000000c003efc4       0x40 sys.o
- .rodata        0x00000000c003f004        0x5 sysio.o
- .rodata        0x00000000c003f009        0x5 syslib.o
- .rodata        0x00000000c003f00e        0x5 sysmk.o
- .rodata        0x00000000c003f013        0x5 syssm.o
-                0x00000000c003f018                _rodata_end = .
+ .rodata        0x00000000c003efc4       0x64 sys.o
+ .rodata        0x00000000c003f028        0x5 sysio.o
+ .rodata        0x00000000c003f02d        0x5 syslib.o
+ .rodata        0x00000000c003f032        0x5 sysmk.o
+ .rodata        0x00000000c003f037        0x5 syssm.o
+                0x00000000c003f03c                _rodata_end = .
                 0x00000000c0040000                . = ALIGN (0x1000)
- *fill*         0x00000000c003f018      0xfe8 
+ *fill*         0x00000000c003f03c      0xfc4 
 
 .eh_frame       0x00000000c0040000     0x8bd0
  .eh_frame      0x00000000c0040000       0x38 main.o

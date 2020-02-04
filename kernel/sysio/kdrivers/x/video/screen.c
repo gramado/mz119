@@ -116,14 +116,40 @@ void refresh_screen (void){
 }
 
 
+
+// Copia para o lfb o conteúdo de uma backbuffer qualquer.
+/*
+void refresh_screen2 (unsigned long backbuffer_address)
+void refresh_screen2 (unsigned long backbuffer_address){
+	
+	unsigned long *backbuffer = (unsigned long *) backbuffer_address;
+	unsigned long *frontbuffer = (unsigned long *) FRONTBUFFER_VA;
+	
+	int i=0;
+	
+	 vsync ();	
+	
+	//#test velocidade?
+	for ( i=0; i< SavedX*SavedY; i++ )
+		frontbuffer[i] = backbuffer[i];	
+}
+*/
+
+
 /*
  *****************************************
  * screenRefresh:
  *     Coloca o conteúdo do BackBuffer no LFB da memória de vídeo.
  *     Se o modo de vídeo permite.
  */
+ 
+// #bugbug
+// Que rotina é essa ?
+ 
 void screenRefresh (void)
 {
+	//refresh_screen();
+	
     //?? SavedBootMode	
     if( g_useGUI == 1 || SavedBootMode == 1 )
 	    asm_refresh_screen();
@@ -143,12 +169,13 @@ int screenInit (void){
 	screenSetSize ( (unsigned long) SavedX, (unsigned long) SavedY );
 	
 	// Setup Screen structure.
-	
-    Screen = (void *) kmalloc( sizeof(struct screen_d) );
+
+
+    Screen = (void *) kmalloc ( sizeof(struct screen_d) );
     
-    if ( (void *) Screen == NULL )
-    {
+    if ( (void *) Screen == NULL ){
         panic ("screenInit:");
+        
     }else{
 
         Screen->left = SCREEN_DEFAULT_LEFT;
@@ -172,9 +199,11 @@ int screenInit (void){
 //#ifdef KERNEL_VERBOSE
 //    printf("done\n");
 //#endif
-	
-	return (int) 0;
-};
+
+
+    return 0;
+}
+
 
 
 /*

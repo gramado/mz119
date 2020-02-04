@@ -109,6 +109,7 @@ void *ioServices ( unsigned long number,
 /*
  * sys_ioctl:
  *     system call implementation of ioctl().
+ *     Executa um dado comando em um dado dispositivo.
  * 
  */
 

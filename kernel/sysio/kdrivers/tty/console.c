@@ -1288,6 +1288,12 @@ void console_init_virtual_console (int n)
     TTY[n].cursor_right = 80;
     TTY[n].cursor_bottom = 80;
     TTY[n].cursor_color = COLOR_GREEN; //COLOR_TERMINALTEXT;
+    
+    // #bugbug
+    // A estrutura tem mais elementos que podem ser inicializados.
+    // Tivemos problemas ao tentar inicializa-los.
+    
+    
 }
 
 
@@ -1313,8 +1319,11 @@ int console_can_write( void)
 */
 
 
-
-
+// Podemos mudar as características de um console.
+/*
+int console_ioctl ( int console, ... );
+int console_ioctl ( int console, ... ){}
+*/
 
 
 

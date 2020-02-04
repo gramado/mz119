@@ -312,7 +312,7 @@
   
   7000    socket
   
-  8000    sys_ioctl
+  8000    sys_ioctl                     sysio/io.c
   
   9700    raise_window
   
