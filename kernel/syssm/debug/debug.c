@@ -18,13 +18,6 @@
  *     @todo: Começar a análise pela estrutura 'platform' e todo
  * o que está dentro dela.
  *
- * This is a spiritual quote.
- *
- * #importante 
- * #todo: Criar aqui nesse documento funções de exibição de texto 
- *        próprias para debug, que classifiquem o erro por níveis.
- *
- *    ex: debug_print( int level, ...)
  *
  * 2015 - Created by Fred Nora.
  *
@@ -39,117 +32,65 @@
 //int debugError;
 //...
 
-//
-// # spiritual quote.
-// Estruturas para fases de inicialização.
-// De uso interno no debug.
-// Just for fun. (user's mental model)
-// ux4, ux3, ux2, ux1
-// hal/microkernel/executive/gramado
-// thinking, logic, creativity, action
-//
-
-typedef enum {
-   MYTHIC, 
-   ROMANTIC,   
-   REALIST,   
-   NATURALIST,   
-}MindType_t;
-
-
-struct Mind_d
-{
-    unsigned long Mythic;
-    unsigned long Romantic;
-    unsigned long Realist;
-    unsigned long Naturalist;
-};
-struct Mind_d Mind;
-
-
-//Internas.
-//void InitMind();
-//void SetMind(int Type);
-
 
 
 
 /*
  * debug_check_inicialization:
+ *
  *     Checar se o kernel e os módulos foram inicializados.
  *     Checa o valor das flags.
  *     checar todos contextos de tarefas válidas.
  */
 
 int debug_check_inicialization (void){
-	
-    int Status = 0;
-	
-	// Check phase.
-	
-	if ( KeInitPhase != 3 )
-	{
-	   Status = 1;
-	   
-	   printf ("debug_check_inicialization: KeInitPhase phase={%d}\n",
-	       KeInitPhase );
-	   
-	   goto fail;
-	};
-	
-    //
-    // check personas
-    //	
 
-	// gramado.
-	/*  @todo: Inda não implementado
-	if(Initialization.gramado != 1){
-	   Status = 1;
-	   printf("debug_check_inicialization: gramado fail!\n");
-	   goto fail;
-	};
-	*/
-	
-	
-	//SetMind(NATURALIST);
-	
-	// Executive.
-	if( Initialization.executive != 1 )
-	{
-	   Status = 1;
-	   printf("sm-debug-debug_check_inicialization: executive\n");
-	   goto fail;
-	};
-	//SetMind(REALIST);
-	
-	
-	// Microkernel.
-    if( Initialization.microkernel != 1 )
-	{
-	   Status = 1;
-	   printf("sm-debug-debug_check_inicialization: microkernel\n");
-	   goto fail;
-	};
-	//SetMind(ROMANTIC);
-	
-	// Hal.
-    if( Initialization.hal != 1 )
-	{
-	   Status = 1;
-	   printf("sm-debug-debug_check_inicialization: hal\n");
-	   goto fail;
-	};
-	//SetMind(MYTHIC);
-	
-	
-	//More?!
-	
-// Done! 
-done:
+    int Status = 0;
+
+    // Check phase.
+
+    if ( KeInitPhase != 3 ){
+       Status = 1;
+       printf ("debug_check_inicialization: KeInitPhase phase={%d}\n",
+           KeInitPhase );
+       goto fail;
+    }
+
+
+
+
+    // Executive.
+    if ( Initialization.executive != 1 ){
+        Status = 1;
+        printf ("debug_check_inicialization: executive\n");
+        goto fail;
+    }
+
+
+    // Microkernel.
+    if ( Initialization.microkernel != 1 ){
+       Status = 1;
+       printf ("debug_check_inicialization: microkernel\n");
+       goto fail;
+    }
+
+
+    // Hal.
+    if ( Initialization.hal != 1 ){
+        Status = 1;
+        printf ("debug_check_inicialization: hal\n");
+        goto fail;
+    }
+
+
+    // More?!
+
+//done:
     return (int) Status;
+
 fail:
-	die(); 
-};
+    die (); 
+}
 
 
 
@@ -158,30 +99,32 @@ fail:
  * debug_check_drivers:
  *    Checar se os drivers estão inicializados.
  */
+ 
 int debug_check_drivers (void){
-	
-	int Status = 0;
-    
-	if(g_driver_hdd_initialized != 1){
+
+    int Status = 0;
+
+
+	if (g_driver_hdd_initialized != 1){
 	    //erro
-	};
-	
-	if(g_driver_keyboard_initialized != 1){
+	}
+
+	if (g_driver_keyboard_initialized != 1){
 	    //erro
-	};
+	}
 	
-    if(g_driver_pci_initialized != 1){
+    if (g_driver_pci_initialized != 1){
 	    //erro
-	};
+	}
 	
-    if(g_driver_rtc_initialized != 1){
+    if (g_driver_rtc_initialized != 1){
 	    //erro
-	};
+	}
 	
-    if(g_driver_timer_initialized != 1){
+    if (g_driver_timer_initialized != 1){
 	    //erro
-	};
-	
+	}
+
 
     return (int) Status;
 }
@@ -195,9 +138,9 @@ int debug_check_drivers (void){
  */
 
 void debug_breakpoint (void){
-	
+
     printf ("debug_breakpoint:\n");
-	die ();
+    die ();
 }
 
 
@@ -222,37 +165,41 @@ debug_compute_checksum ( unsigned char *Buffer,
 
 
 /*
+ ****************************************
  * debug:
- *     Checa por falhas depois de cumpridas as três fases de inicialização.
+ *     Checa por falhas depois de cumpridas as 
+ *     três fases de inicialização.
  */
- 
-int debug (void){
-	
-	int Status;
-		
-	//printf("debug: Starting..\n");
-	
-	// Checa inicialização. Fases, variáveis e estruturas.
-	
-	Status = (int) debug_check_inicialization();
-	if(Status == 1)
-	{
-	   printf("sm-debug-debug: debug_check_inicialization\n");
-	   die();
-	};
-	
-    // 'processor' struct.
-	if( (void *) processor == NULL )
-	{
-	    printf ("sm-debug-debug: processor\n");
-		die();
-	};
 
-	//Check drivers status. 
-	//( Ver se os principais drivers estão inicializados )
-	debug_check_drivers();
-	
-	
+// #bugbug
+// Será que o output está realmente disponível nesse momento ?!
+
+int debug (void){
+
+    int Status = -1; 
+
+    // Checa inicialização. 
+    // Fases, variáveis e estruturas.
+
+    Status = (int) debug_check_inicialization ();
+
+    if (Status == 1){
+        panic ("debug: debug_check_inicialization fail\n");
+    }
+
+
+    // 'processor' struct.
+
+    if ( (void *) processor == NULL ){
+        panic ("debug: processor struct fail\n");
+    }
+
+    // Check drivers status. 
+    // ( Ver se os principais drivers estão inicializados )
+
+    debug_check_drivers ();
+
+
 	/*
 	 * @todo: 
 	 *     Checar se existe componentes do sistema como mbr, root, fat 
@@ -271,38 +218,36 @@ int debug (void){
 	 *     Checar por falhas nas estruturas de tarefas.
 	 */
 
-    //
-	// Antes do logon só tem a Thread idle. 
-	// Checar a estrutura da PID 0.
-	// 
-	 
-	//if( (void*) threadList[0] == NULL ){
-	//    printf("debug fail: TID 0!\n");
-	//	refresh_screen();
-	//	while(1){}
-	//};
-	
+
+
 	//...
 
-    //printf("debug:OK!\n");
-    //printf("debug: Done.\n");
 
+    // printf ("debug: Done.\n");
 
     return 0; 
 }
 
 
 
+/*
+ **********************************
+ * debug_print:
+ *     Serial debug support.
+ * 
+ */
 
 void debug_print ( char *data ){
-	
-	uint32_t i;
-	
-	for ( i=0; data[i] != '\0'; i++ )
-	{
-		serial_write_char (data[i]);
-	}
+
+    uint32_t i;
+
+    for ( i=0; data[i] != '\0'; i++ ){
+        serial_write_char (data[i]);
+    }
 }
+
+
+
 
 
 //
