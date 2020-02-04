@@ -36,17 +36,23 @@
 
 #define USER_COUNT_MAX 16  //User count.
 #define GROUP_COUNT_MAX 4  //Group count.
-  
-  
-#define USER_DEFAULTNAME  "admin" 
- 
-//Strings.
-#define USER_SYSTEM            "system" 
-#define USER_DEFAULT           "default" 
-#define USER_ADMIN             "admin" 
-#define USER_ALL               "all" 
-//#define _4NORA_USER_DIRECTORY  "root:/volume2/user" //??deletar
+
+
+
+
+#define USER_ADMIN          "admin" 
+#define USER_ALL            "all" 
+#define USER_DEFAULT        "default" 
+#define USER_SUPERUSER      "su" 
+#define USER_SYSTEM         "system" 
 //...
+
+
+//
+// super user ID.
+//
+
+//int __su_id;
 
 
 //
@@ -233,6 +239,9 @@ int userconfig_Status;
 // ## input control 
 //
 
+// #bugbug
+// Por que iss está aqui?
+
 typedef struct ioControl_d ioControl_t;
 struct ioControl_d
 {
@@ -279,9 +288,12 @@ int keyboard_message_tail;
 // processo com foco de entrada mudar.
 // ?? tty struct ??
 
-FILE *current_stdin;
-FILE *current_stdout;
-FILE *current_stderr;
+// #bugbug
+// Por que isso está aqui ?
+
+file *current_stdin;
+file *current_stdout;
+file *current_stderr;
 
  
 //estrutura para enviar mensagens de teclado do kernel para 
@@ -381,15 +393,16 @@ typedef enum {
 }hal_token_t;
  */
  
+ 
+ 
+ 
 /*
  * user_info_d:
  *     Estrutura para perfil de usuário do computador.
- *
  */ 
-typedef struct user_info_d user_info_t;
+
 struct user_info_d
 {
-
     object_type_t objectType;
     object_class_t objectClass;
 
@@ -479,15 +492,15 @@ struct user_info_d
     //Continua...
 	struct user_info_d *Next;  //Próximo usuário.(troca.).
 }; 
-user_info_t *CurrentUser;    //Current user !!!
-user_info_t *SystemUser;    //O sistema é o usuário '0'.
-user_info_t *DefaultUser;    //O usuário padrão.
-//user_info_t *UserInfo;
-//user_info_t *User;
+
+struct user_info_d *CurrentUser;    // Current user !!!
+struct user_info_d *SystemUser;     // O sistema é o usuário '0'.
+struct user_info_d *DefaultUser;    // O usuário padrão.
 //...
 
 
-//Lint.
+
+//List.
 unsigned long userList[USER_COUNT_MAX];
  
   
