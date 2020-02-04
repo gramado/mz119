@@ -148,11 +148,6 @@ int BAT_TEST (void);
 
 
 
-int
-ps2kbd_send_to_ws ( struct window_d *window, 
-                    int msg, 
-                    unsigned long long1, 
-                    unsigned long long2 ); 
 
 
 unsigned long 
@@ -162,56 +157,6 @@ __local_ps2kbd_procedure ( struct window_d *window,
                            unsigned long long2 ); 
 
 
-
-int
-ps2kbd_send_to_ws ( struct window_d *window, 
-                    int msg, 
-                    unsigned long long1, 
-                    unsigned long long2 )
-{
-
-    struct process_d *__p;
-
-    // #todo
-    // Se o ws está rodando, então mandaremos a mensagem para 
-    // a a fila de mensagem dele.
-        
-    // #isso funcionou.
-    // o ws recebeu a mensagem de teclado.
-    // E é rápido.
-
-    if ( (void *) CurrentDesktop == NULL )
-        return -1;
-        
-  
-    if ( CurrentDesktop->desktopUsed != 1 || 
-         CurrentDesktop->desktopMagic != 1234 )
-    {
-        return -1;
-    }
-
-    
-    // PID
-    // Ainda não sabemos se esse PID é válido.
-    if (CurrentDesktop->ws <= 0)
-        return -1;   
-    
-    
-    __p = (struct process_d *) processList[ CurrentDesktop->ws  ];
-                     
-    __p->control->window_list[ __p->control->tail_pos ] = window;
-    __p->control->msg_list[ __p->control->tail_pos ] = msg;
-    __p->control->long1_list[ __p->control->tail_pos ] = long1;
-    __p->control->long2_list[ __p->control->tail_pos ] = long2;
-        
-    __p->control->tail_pos++;
-    if ( __p->control->tail_pos >= 31 )
-        __p->control->tail_pos = 0;
-        
-        
-    //ok    
-    return 0;
-}
 
 
 
@@ -745,75 +690,13 @@ done:
 
 
 
-check_WindowWithFocus:
-
-
     //
-    // Window.
+    // Scan code.
     //
 
-	
-	// #importante
-	// Mas como o wm já está presente aqui no kernel, então
-	// já podemos enviar para o window manager. Ou melhor
-	// para a thread de input associada a janela com o foco.
-	
-
-    w = (void *) windowList[window_with_focus];
-
-    if ( (void *) w == NULL )
-    {
-        panic ("KEYBOARD_LINE_DISCIPLINE: w");
-
-    }else{
-
-        if ( w->used != 1 || w->magic != 1234 ){
-            panic ("KEYBOARD_LINE_DISCIPLINE: w validation");
-        }
-
-
-		// #importante:
-		// Aqui significa que temos uma janela com o foco de entrada válida.
-		
-		// #importante:
-		// Pegamos a THREAD de input associada com a janela que tem o 
-		// foco de entrada.
-		
-		// #bugbug
-		// Quando um shell executa outro programa, esse novo
-		// programa, então a thread de controle desse novo programa
-		// não está associada a nenhuma janela com foco de entrada.
-		// Então essa nova thread de controle não recebe mensagens
-		// pois precisamos de uma janela com foco de entrada.
-		
-		// talvez seja trabalho da libc inicialziar p input
-		// talvez utilizando a janela do terminal
-		// sem terminal, sem input.
-
-
-        //
-        // Thread.
-        //
-
-        t = (void *) w->control;
-
-        if ( (void *) t == NULL ){
-            panic ("KEYBOARD_LINE_DISCIPLINE: t \n");
-        }
-
-        if ( t->used != 1 || t->magic != 1234 ){
-            panic ("KEYBOARD_LINE_DISCIPLINE: t validation \n");
-        }        
-
-
-
-        //
-        // Scan code.
-        //
-
-        unsigned long tmp_sc;
-        tmp_sc = (unsigned long) scancode;
-        tmp_sc = (unsigned long) ( tmp_sc & 0x000000FF );
+    unsigned long tmp_sc;
+    tmp_sc = (unsigned long) scancode;
+    tmp_sc = (unsigned long) ( tmp_sc & 0x000000FF );
 
 
 
@@ -870,81 +753,82 @@ check_WindowWithFocus:
         // o ws recebeu a mensagem de teclado.
         // E é rápido.
 
-        /*
-        msg_status = (int) ps2kbd_send_to_ws((struct window_d *)w,
+    //
+    // ws
+    // 
+    
+    // Tentamos mandar a mensagem para ws, 
+    // se der certo a gente retorna,
+    // se não der certo então enviaremos para
+    // a thread de controle da janela com o foco
+    // ou para um procedimento aqui nesse documento.
+
+
+    msg_status = (int) ipc_send_to_ws ( (struct window_d *) w,
                            (int) message, 
                            (unsigned long) ch,
                            (unsigned long) tmp_sc);
         
-        if ( msg_status == 0 )
-            return 0;
+    // Se a mensagem foi enviada para o ws,
+    // então podemos retornar.
+    if ( msg_status == 0 )
+        return 0;
             
-        */
+ 
         
+   // #importante
+   // Só chegaremos até aqui se o ws não está rodando.
+   
+           
         
-        // Salvamos para limparmos a mensagem no caso de
-        // enviarmos ela para o procedimento de janelas aqui do x/.
-        save_pos = t->tail_pos;
-
-
-        t->window_list[ t->tail_pos ] = w;
-        t->msg_list[ t->tail_pos ] = message;
-        t->long1_list[ t->tail_pos ] = ch;
-        t->long2_list[ t->tail_pos ] = tmp_sc;
-        
-        t->tail_pos++;
-        if ( t->tail_pos >= 31 )
-            t->tail_pos = 0;
-            
-            
-        
-        //
-        // Special message.
-        //
+   //
+   // Special message.
+   //
 
         // F5 F6 F7 F8
         // These messages are used by the developer.
         // + Reboot system
-        // + Switch focus.
-        // + Test 1
-        // + Test 2
+    // + Switch focus.
+    // + Test 1
+    // + Test 2
         
-        switch (message)
-        {
-            case MSG_SYSKEYUP: 
+    switch (message)
+    {
+        case MSG_SYSKEYUP: 
 
-                switch (ch){
+            switch (ch){
 
-                    case VK_F5:
-                    case VK_F6:
-                    case VK_F7:
-                    case VK_F8:
+                case VK_F5:
+                case VK_F6:
+                case VK_F7:
+                case VK_F8:
                     
-                        // Handle the message.
-                        __local_ps2kbd_procedure (  w, 
-                            (int) message, 
-                            (unsigned long) ch, 
-                            (unsigned long) tmp_sc );
-                        
-                        // Clean.
-                        t->window_list[ save_pos ] = NULL;
-                           t->msg_list[ save_pos ] = 0;
-                         t->long1_list[ save_pos ] = 0;
-                         t->long2_list[ save_pos ] = 0;
-                        
-                        save_pos = 0;
-                        
-                        //Old way, delete it!
-                        //t->window = NULL;
-                        //t->msg = 0;
-                        //t->long1 = 0;
-                        //t->long2 = 0;
-                        //t->newmessageFlag = 0;
-
-                        break;
-                }
-                break;
-        };
+                    // Handle the message.
+                    __local_ps2kbd_procedure (  w, 
+                        (int) message, 
+                        (unsigned long) ch, 
+                        (unsigned long) tmp_sc );
+                    return 0;
+                    break;
+                     
+                default:   
+                    kgws_send_to_controlthread_of_currentwindow ( w,
+                        (int) message, 
+                        (unsigned long) ch, 
+                        (unsigned long) tmp_sc );
+                    return 0; 
+                    break;
+            }
+            break;
+                
+            //para todas as outras mensagens,
+        default:
+            kgws_send_to_controlthread_of_currentwindow ( w,
+                    (int) message, 
+                    (unsigned long) ch, 
+                    (unsigned long) tmp_sc );
+            return 0;
+            break;
     };
 
 

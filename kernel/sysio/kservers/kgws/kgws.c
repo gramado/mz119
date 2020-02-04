@@ -845,5 +845,70 @@ done:
 
 
 
+int
+kgws_send_to_controlthread_of_currentwindow ( struct window_d *window, 
+                                           int msg, 
+                                           unsigned long long1, 
+                                           unsigned long long2 )
+{
+
+    struct window_d *w;
+    struct thread_d *t;
+
+
+
+
+    w = (void *) windowList[window_with_focus];
+
+    if ( (void *) w == NULL )
+    {
+        panic ("kgws_send_to_controlthread_of_currentwindow: w");
+
+    }else{
+
+        if ( w->used != 1 || w->magic != 1234 ){
+            panic ("kgws_send_to_controlthread_of_currentwindow: w validation");
+        }
+        
+      
+        //
+        // Thread.
+        //
+
+        t = (void *) w->control;
+
+        if ( (void *) t == NULL ){
+            panic ("kgws_send_to_controlthread_of_currentwindow: t \n");
+        }
+
+        if ( t->used != 1 || t->magic != 1234 ){
+            panic ("kgws_send_to_controlthread_of_currentwindow: t validation \n");
+        }        
+    
+
+        //
+        // Scan code.
+        //
+
+        unsigned long tmp_sc;
+        tmp_sc = (unsigned long) long2;
+        tmp_sc = (unsigned long) ( tmp_sc & 0x000000FF );
+    
+        
+        
+        t->window_list[ t->tail_pos ] = window;
+        t->msg_list[ t->tail_pos ] = msg;
+        t->long1_list[ t->tail_pos ] = long1;
+        t->long2_list[ t->tail_pos ] = tmp_sc;
+        
+        t->tail_pos++;
+        if ( t->tail_pos >= 31 )
+            t->tail_pos = 0;
+    };
+    
+    return 0;
+}
+
+
 
 

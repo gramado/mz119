@@ -61,8 +61,15 @@ int gwsClose (void);
 
 
 
-int init_gui (void);
+int
+kgws_send_to_controlthread_of_currentwindow ( struct window_d *window, 
+                                           int msg, 
+                                           unsigned long long1, 
+                                           unsigned long long2 );
 
+
+
+int init_gui (void);
 int init_gramado (void);
 
 
