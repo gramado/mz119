@@ -112,6 +112,11 @@ ipc_dispatch_message ( unsigned long a,
 					   unsigned long d );
 
 
+//#todo: Mudar nome para ipc_...
+void ipc_send_message_to_process ( unsigned long msg_buffer, int pid );
+void ipc_send_message_to_thread ( unsigned long msg_buffer, int tid );
+
+
 
 //
 // End.

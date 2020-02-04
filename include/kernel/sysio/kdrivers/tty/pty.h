@@ -64,10 +64,6 @@ The role of the terminal emulator process is:
 #define PTY_TYPE_SLAVE			0x0002
 
  
-void pty_send_message_to_process ( unsigned long msg_buffer, int pid );
-void pty_send_message_to_thread ( unsigned long msg_buffer, int tid );
-
-void pty_test_sendmessagetoterminal (void);
 
 
 //Ligar duas tty dados os pids dos processos que possuem as tty.

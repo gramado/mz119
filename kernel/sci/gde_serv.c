@@ -2008,7 +2008,7 @@ void *gde_services ( unsigned long number,
 		// que será colocada na thread de cotrole do processo;
         case SYS_SENDMESSAGETOPROCESS:
             //printf ("112: PID=%d\n", arg3 );
-            pty_send_message_to_process ( (unsigned long) &message_address[0], 
+            ipc_send_message_to_process ( (unsigned long) &message_address[0], 
                (int) arg3 );
             //printf ("112: done\n");
             break;
@@ -2025,7 +2025,7 @@ void *gde_services ( unsigned long number,
 		// Envia uma mensagem para a thread atual.
 		// endereço do buffer da mensagem, tid.
         case SYS_SENDMESSAGETOCURRENTTHREAD:
-            pty_send_message_to_thread ( (unsigned long) &message_address[0], 
+            ipc_send_message_to_thread ( (unsigned long) &message_address[0], 
                 (int) current_thread );
             break;
 
@@ -2096,7 +2096,7 @@ void *gde_services ( unsigned long number,
         // 117.
         // Envia uma mensagem para uma thread, dado o tid.
         case 117:
-            pty_send_message_to_thread ( (unsigned long) &message_address[0], 
+            ipc_send_message_to_thread ( (unsigned long) &message_address[0], 
                  (int) arg3 );
             break;
 
