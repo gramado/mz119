@@ -418,6 +418,13 @@ struct user_info_d
     char *path;             // '/root/user/(name)'
     char __username[64];    // HOSTNAME_BUFFER_SIZE
     size_t userName_len;    // len 
+    
+    
+    
+    // Indica quais os tipos de objetos permitidos para esse usuário.
+    // See: globals/gobject.h
+    int permissions[128];
+
 
 
 	//

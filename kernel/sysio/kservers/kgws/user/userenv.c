@@ -186,13 +186,14 @@ void *CreateUser ( char *name, int type ){
     struct user_info_d *New;
 
     int Index = 0;
+    int i;
 
 
     New = (void *) kmalloc ( sizeof(struct user_info_d) ); 
 
-    if ( (void *) New == NULL )
-    {
+    if ( (void *) New == NULL ){
         panic ("CreateUser: New");
+ 
     } else {
 
 		New->used = 1;
@@ -208,7 +209,14 @@ void *CreateUser ( char *name, int type ){
 	
 	    New->usessionId = current_usersession;           
 	    New->roomId = current_room;  //->roomID  
-	    New->desktopId = current_desktop;          
+	    New->desktopId = current_desktop;   
+    
+        // Inicializando a lista de objetos permitidos.
+        // Proibindo tudo.
+        for (i=0; i<128; i++){
+            New->permissions[i]=0;
+        }
+       
 
 	    //Inicializa tokens. (rever)
 	    //New->k_token = KERNEL_TOKEN_NULL;
@@ -379,40 +387,49 @@ UpdateUserInfo ( struct user_info_d *user,
  */
  
 void init_user_info (void){
-	
-	int Id = 0;
-    int Index = 0;	
-	
-	debug_print ("init_user_info:\n");
-	
+
+    int Id = 0;
+    int Index = 0;
+    int i;
+
+
+    debug_print ("init_user_info:\n");
+
+
+
 	//Initialize list.
     
-	while (Index < USER_COUNT_MAX)
-    {	
-	    userList[Index] = (unsigned long) 0;
+    while (Index < USER_COUNT_MAX)
+    {
+        userList[Index] = (unsigned long) 0;
         Index++;
-	};
+    };
 	
     
 	//Configurando a estrutura global.
 	// Create default user. (default,interactive)
 
-	DefaultUser = (void *) CreateUser (default_user_name, USER_TYPE_INTERACTIVE);
-	
-	if ( (void *) DefaultUser == NULL )
-	{
-	    panic ("init_user_info:");
-		
-	} else {
-		
-		
-		if ( (void *) CurrentTTY == NULL )
-		{
-			panic ("init_user_info: CurrentTTY");
-		}
-		
-		CurrentTTY->user_info = DefaultUser;
-		
+    DefaultUser = (void *) CreateUser (default_user_name, USER_TYPE_INTERACTIVE);
+
+    if ( (void *) DefaultUser == NULL ){
+        panic ("init_user_info:");
+
+    } else {
+
+
+        if ( (void *) CurrentTTY == NULL ){
+            panic ("init_user_info: CurrentTTY");
+        }
+
+        // Atualizando a lista de permissões.
+        // Liberando tudo.
+        for (i=0; i<128; i++){
+            DefaultUser->permissions[i]=1;
+        }
+ 
+
+        CurrentTTY->user_info = DefaultUser;
+
 		
 		//Coloca no início da lista.
 		//userList[0] = (unsigned long) SystemUser;    //System.
@@ -423,11 +440,11 @@ void init_user_info (void){
 		
 		//Configura o usuário atual.
 		Id = (int) DefaultUser->userId;
-		SetCurrentUserId(Id);
+		SetCurrentUserId (Id);
 		CurrentUser = (void *) DefaultUser;
 		
 		//Configura o grupo atual ao qual o usuário pertence.
-		SetCurrentGroupId(0);
+		SetCurrentGroupId (0);
 		
 		//#bugbug: falha na máquina real.
 		//interna

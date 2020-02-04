@@ -547,18 +547,22 @@ struct __sbuf {
  *
  *     Ambiente: RING 0.
  */
-
-//typedef struct _iobuf FILE; 
-//struct _iobuf 
-
+ 
 struct file_d
 {
+
+    // Indica qual tipo de objeto esse arquivo representa.
+    // See: globals/gobject.h
+    object_type_t ____object;
+
+
 	// #importante
 	// Vamos tornar a estrutura em kernel mode igual a estrutura de ring3;
-	
+
     int used;
     int magic;
 
+    
     int iopl;
 
 	//Current position of file pointer (absolute address).

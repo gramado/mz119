@@ -1,4 +1,11 @@
 
+/*
+ * gobject.h
+ * 
+ *      It's used for the file structure.
+ * 
+ */
+
 
 //
 // Enumerando os tipos de objetos.
@@ -83,20 +90,20 @@ typedef enum {
 	ObjectTypeProcessor,  //36 processor, hal (talvez isso devesse ir para io de microkernel.)
 	
 	//device(unblocked e blocked).
-	ObjectTypeDevice,      //37 device, hal
-	ObjectTypeDiskInfo,    //38 disk info, hal.
+	ObjectTypeDevice,         //37 device, hal
+	ObjectTypeDiskInfo,       //38 disk info, hal.
 	ObjectTypeProcessorBlock, //39 processor block hal...(pode ir para io,microkernel)
-    ObjectTypeHostInfo,  //40 HostInfo, hal. 
-	ObjectTypeKeyboard,   //41 keyboard, hal.
-	ObjectTypeMacAddress,  //42 MAC Address, hal.
-	ObjectTypeMemory,      //43 memory card info, hal.
-	ObjectTypePciDevice,   //44 PCI device info, hal.
+    ObjectTypeHostInfo,    // 40 HostInfo, hal. 
+	ObjectTypeKeyboard,    // 41 keyboard, hal.
+	ObjectTypeMacAddress,  // 42 MAC Address, hal.
+	ObjectTypeMemory,      // 43 memory card info, hal.
+	ObjectTypePciDevice,   // 44 PCI device info, hal.
 	ObjectTypePciDeviceDriver,   //45 PCI device driver info, hal.
-	ObjectTypePIC, //46 pic controller, hal.
-	ObjectTypeRTC, //47 rtc controller, hal.
-	ObjectTypeScreen, //48 Screen, hal.
-	ObjectTypeTimer,    //49 ?? timer ,hal.	
-	ObjectTypeVideo,    //50 video ,hal.
+	ObjectTypePIC,       //46 pic controller, hal.
+	ObjectTypeRTC,       //47 rtc controller, hal.
+	ObjectTypeScreen,    //48 Screen, hal.
+	ObjectTypeTimer,     //49 ?? timer ,hal.	
+	ObjectTypeVideo,     //50 video ,hal.
 	ObjectTypeVolume,    //51 disk volume ,hal.
 	
 	//things
@@ -138,7 +145,12 @@ typedef enum {
 	ObjectTypeMessage,    //79
 	//...
 	
-	ObjectTypeTTY
+	ObjectTypeTTY,
+	ObjectTypeCharDev,
+	ObjectTypeBlockDev,
+	ObjectTypeNetworkDev
+	
+	
 	
 	//@todo: precisamos criar um tipo genérico
 	//       para validação de objetos não especificados 

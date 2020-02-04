@@ -40,8 +40,6 @@ typedef int pid_t;
 int unistd_file_write ( file *f, char *string, int len );
 int unistd_file_read ( file *f, char *buffer, int len );
 
-//posix
-int close ( int fd );
 
 int sys_dup ( int oldfd );
 int sys_dup2 (int oldfd, int newfd);

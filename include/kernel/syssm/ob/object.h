@@ -2,7 +2,7 @@
  * File: object.h
  *
  *    Object manager.
- *    See: gobject.h
+ *    See: ob/object.h
  * 
  * History:
  *     2016 - Created by Fred Nora.

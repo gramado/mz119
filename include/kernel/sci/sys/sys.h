@@ -4,6 +4,15 @@
 
 
 
+
+//SVr4,  4.3BSD,  POSIX.1-2001. 
+int sys_open ( const char *pathname, int flags, mode_t mode );
+int sys_close ( int fd );
+
+
+
+
+
 // 289
 int sys_serial_debug_printk ( char *s );
 
