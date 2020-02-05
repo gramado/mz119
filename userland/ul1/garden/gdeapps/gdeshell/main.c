@@ -2607,9 +2607,9 @@ do_compare:
 	
 	
     //get-windowstation
-	if ( strncmp( prompt, "get-windowstation", 17 ) == 0 )
+	if ( strncmp( prompt, "get-room", 8 ) == 0 )
 	{
-	    shellShowWindowStationID();
+	    shellShowWindowStationID(); //mudar o nome;
         goto exit_cmp;
     };
 	
@@ -2644,7 +2644,7 @@ do_compare:
 		
 		printf("done\n");
         goto exit_cmp;
-    };		
+    }	
 	
 	
 	// hd ??
@@ -2807,11 +2807,11 @@ do_compare:
 
 
     // mm-info
-    if ( strncmp( prompt, "mm-info", 7 ) == 0 )
-    {
+    if ( strncmp( prompt, "mm-info", 7 ) == 0 ){
         shellShowMemoryInfo ();
         goto exit_cmp;
     }
+
 
     // mm-size
     // mb
@@ -2825,16 +2825,14 @@ do_compare:
 
 
     // mm-kernelheap
-    if ( strncmp( prompt, "mm-kernelheap", 13 ) == 0 )
-    {
+    if ( strncmp( prompt, "mm-kernelheap", 13 ) == 0 ){
         shellShowKernelHeapPointer ();
         goto exit_cmp;
     }
 
 
     // mm-processheap
-    if ( strncmp( prompt, "mm-processheap", 14 ) == 0 )
-    {
+    if ( strncmp( prompt, "mm-processheap", 14 ) == 0 ){
         shellShowProcessHeapPointer ();
         goto exit_cmp;
     }
@@ -2856,17 +2854,16 @@ do_compare:
 
 
     // metrics
-	// Mostra algumas informações de métrica do sistema.
-	if ( strncmp( prompt, "metrics", 7 ) == 0 )
-	{
-		shellShowMetrics ();
+    // Mostra algumas informações de métrica do sistema.
+    if ( strncmp( prompt, "metrics", 7 ) == 0 ){
+        shellShowMetrics ();
         goto exit_cmp;
-	}
+    }
 
 
 	// new
 	if ( strncmp( prompt, "new", 3 ) == 0 )
-	{		
+	{
 	    printf("~new - New file or directory\n");
 	    goto exit_cmp;
 	}
@@ -2874,24 +2871,23 @@ do_compare:
     
 	// mbr
 	// ?? Talvez mostrar informações sobre o mbr ou realizar testes.
-    if ( strncmp( prompt, "mbr", 3 ) == 0 )
-	{
-		shellTestMBR ();
-		printf("done\n");
-		goto exit_cmp;
+    if ( strncmp( prompt, "mbr", 3 ) == 0 ){
+        shellTestMBR ();
+        printf ("done\n");
+        goto exit_cmp;
     }
 
 
     // pci-info
-    if ( strncmp( prompt, "pci-info", 8 ) == 0 )
-    {
+    if ( strncmp( prompt, "pci-info", 8 ) == 0 ){
         shellShowPCIInfo ();
         goto exit_cmp;
     }
 
 
-    //process-stats
-    //testando informações estatísticas sobre os processos.
+    // process-stats
+    // Testando informações estatísticas sobre os processos.
+    // #bugbug: Não mostra as informações dos processos clones.
 
     unsigned long __process_image_pa;    
     unsigned long __process_image_va;
@@ -2949,30 +2945,17 @@ do_compare:
     }
 
 
-
-    // puts - 
-    // Testing puts, from libc.
-    if ( strncmp( prompt, "puts", 4 ) == 0 )
-    {
-        puts("~puts\n");
-        goto exit_cmp;
-    }
-
-
     // current-process
     //?? mudar o nome desse comando. OU mudar de lugar.
-    if ( strncmp ( prompt, "current-process", 15 ) == 0 )
-    {
-        system_call ( SYSTEMCALL_CURRENTPROCESSINFO, 
-            0, 0, 0 );
+    if ( strncmp ( prompt, "current-process", 15 ) == 0 ){
+        system_call ( SYSTEMCALL_CURRENTPROCESSINFO, 0, 0, 0 );
         goto exit_cmp; 
     }
 
 
     // pwd 
     // Print working directory.
-    if ( strncmp( prompt, "pwd", 3 ) == 0 )
-    {
+    if ( strncmp( prompt, "pwd", 3 ) == 0 ){
         pwd_builtins ();
         goto exit_cmp;
     }
@@ -3037,29 +3020,6 @@ do_compare:
     if ( strncmp( prompt, "save", 4 ) == 0 )
     {
         printf("~save root\n");
-        goto exit_cmp;
-    }
-
-
-	//cancelada
-    if ( strncmp( prompt, "???1", 7 ) == 0 )
-    {
-        goto exit_cmp;
-    }
-
-
-
-    // cancelada
-    if ( strncmp( prompt, "???2", 7 ) == 0 )
-    {
-        goto exit_cmp;
-    }
-
-
-    // service
-    if ( strncmp( prompt, "service", 7 ) == 0 )
-    {
-        printf("~Nothing\n");
         goto exit_cmp;
     }
 
@@ -3232,9 +3192,9 @@ do_compare:
     if ( strncmp( prompt, "streams", 7 ) == 0 )
     {
         printf ("Streams: \n");
-        printf ("__stdin_fd=%d  \n", __stdin_fd  );
-        printf ("__stdout_fd=%d \n", __stdout_fd );
-        printf ("__stderr_fd=%d \n", __stderr_fd );
+        printf ("__stdin_fd  = %d \n", __stdin_fd  );
+        printf ("__stdout_fd = %d \n", __stdout_fd );
+        printf ("__stderr_fd = %d \n", __stderr_fd );
         //...
         goto exit_cmp;
     }
@@ -3253,8 +3213,7 @@ do_compare:
     // Carrega um arquivo no buffer de words 
     // depois exibe todo o buffer mantendo o posicionamento 
     //no cursor. Isso força um scroll.
-    if ( strncmp( prompt, "t1", 2 ) == 0 )
-    {
+    if ( strncmp( prompt, "t1", 2 ) == 0 ){
         shellTestLoadFile ();
         goto exit_cmp;
     }
@@ -3290,7 +3249,7 @@ do_compare:
     {
 		printf ("\n t4: Open init.txt \n");
         
-		f1 = fopen ("init.txt","rb");  
+		f1 = fopen ("init.ini","rb");  
         if( f1 == NULL )
 		{
 			printf ("fopen fail\n");
@@ -3509,10 +3468,8 @@ do_compare:
         
         // ?? critical session ??
         P = (void *) gde_create_process ( 0x400000, 
-                        PRIORITY_HIGH, 
-                        "PROCESS-TEST-1" );
-        if ( (void *) P == NULL )
-        {
+                        PRIORITY_HIGH, "PROCESS-TEST-1" );
+        if ( (void *) P == NULL ){
             printf ("Fail creating process\n");
         }
         goto exit_cmp;
@@ -3644,18 +3601,16 @@ do_compare:
 
     // t900 - Clona e executa o filho dado o nome do filho.
     // Isso funciona muito bem.
-    // Precisa ser melhor aproveitado no garden. :)
-    if ( strncmp ( prompt, "t900", 4 ) == 0 )
-    {
+    if ( strncmp ( prompt, "t900", 4 ) == 0 ){
         system_call ( 900, (unsigned long) "gramcode.bin", 0, 0 );
-		goto exit_cmp;
+        goto exit_cmp;
     }
 
 
     // t901
-    //clona um processo, retorna para o pai e inicializa o processo
-    //filho do seu entrypoint. (#test)	
-	int t901_ret;
+    // clona um processo, retorna para o pai e inicializa o processo
+    // filho do seu entrypoint. (#test)	
+    int t901_ret;
     if ( strncmp ( prompt, "t901", 4 ) == 0 )
     {
 	    t901_ret = (int) system_call ( 901, 0, 0, 0 );
@@ -3668,6 +3623,7 @@ do_compare:
 		goto exit_cmp;
     }
 
+    
     // Virtual Console and tty.
     int __current_virtual_console = -1;
     int ____tty_id = -1;
@@ -3725,15 +3681,6 @@ do_compare:
     }
 
 
-
-	//flush stdout
-	if ( strncmp( prompt, "flush-stdout", 12 ) == 0 )
-	{
-		fflush (stdout);
-		goto exit_cmp;
-	}
-
-	
 	// tasklist - Lista informações sobre os processos.
 	//isso será um programa tasklist.bin
     if ( strncmp( prompt, "tasklist", 8 ) == 0 )
@@ -3743,26 +3690,12 @@ do_compare:
     };
 
 
-    //test-taskman-server - testando servidor taskman
-    if ( strncmp( prompt, "test-taskman-server", 19 ) == 0 )
+	// time
+    if ( strncmp( prompt, "time", 4 ) == 0 )
     {
-		//só podemos enviar a próxima mensagem depois que a primeira for atendida.
-		//pois ainda não temos fila de mensagens e o servidor demora para receber 
-		//tempo de processamento.
-        system_call ( 116, 123, 0, 0 );
-		//system_call ( 116, 1000, 0, 0 );
-		//system_call ( 116, 2000, 0, 0 );
-		//system_call ( 116, 3000, 0, 0 );
-		//system_call ( 116, 4000, 0, 0 );
+        printf ("~time\n");
         goto exit_cmp;
     }
-
-	// time
-	if ( strncmp( prompt, "time", 4 ) == 0 )
-	{
-		printf ("~time\n");
-        goto exit_cmp;
-    };
 
 
    //teste da árvore de natal
@@ -3786,6 +3719,7 @@ do_compare:
         
         goto exit_cmp;
     }
+
 
 	// timer-test
 	// Essa rotina cria um objeto timer que gera um interrupção 
@@ -3847,38 +3781,36 @@ do_compare:
     }
 
 
-
-    if ( strncmp( prompt, "user-info", 9 ) == 0 )
-	{
-		// IN: service, user id.
-		// Mas mostraremos as informações so usuário atual.
-		gramado_system_call (156, 0,0,0);
-		goto exit_cmp;
+    // user info
+    // Mas mostraremos as informações so usuário atual.
+    // IN: service, user id.
+    if ( strncmp( prompt, "user-info", 9 ) == 0 ){
+        gramado_system_call (156, 0,0,0);
+        goto exit_cmp;
     }
 
 
 	// version
 	//?? isso pode ser um programa
     if ( strncmp( prompt, "version", 7 ) == 0 )
-	{
-		show_shell_version();
-	    //printf("\n Gramado version %s \n", OS_VERSION );
+    {
+        show_shell_version();
+       //printf("\n Gramado version %s \n", OS_VERSION );
         goto exit_cmp;
     }
 
 
     // volume-info
-    if ( strncmp( prompt, "volume-info", 11 ) == 0 )
-    {
+    if ( strncmp( prompt, "volume-info", 11 ) == 0 ){
         shellShowVolumeInfo();
         goto exit_cmp;
     }
-	
+
 
 	// window
     if ( strncmp( prompt, "window", 6 ) == 0 )
-	{
-		shellShowWindowInfo();
+    {
+        shellShowWindowInfo();
         goto exit_cmp;
     }
     
@@ -3894,7 +3826,8 @@ do_compare:
         //apiShowWindow (__screen_window);
         goto exit_cmp;
     }
-    
+
+
 	// wmain - test main window (main window)
     //#bugbug: isso não funcionou
     struct window_d *__main_window;
