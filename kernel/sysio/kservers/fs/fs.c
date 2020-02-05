@@ -1491,6 +1491,7 @@ file *fs_load_file ( unsigned long name, unsigned long address ){
 // abertos.
 // Carrega um arquivo do disco para a memória.
 // funcionou.
+
 int fs_load_file_2 ( char *file_name, unsigned long file_address )
 {
 
@@ -1513,15 +1514,17 @@ int fs_load_file_2 ( char *file_name, unsigned long file_address )
     Status = (int) KiSearchFile ( file_name, VOLUME1_ROOTDIR_ADDRESS );
     
     if (Status == 1){
-		
-		 //#debug
-         //printf ("found\n");
+
+        //#debug
+        //printf ("found\n");
+    
     }else{
 
          printf ("file not found\n");
          refresh_screen();
          return -1;
     };
+
 
     //
     // Process.
@@ -1544,7 +1547,8 @@ int fs_load_file_2 ( char *file_name, unsigned long file_address )
              goto __OK;
          }
     };
-    panic ("fs_load_file_2: fail\n");
+    panic ("fs_load_file_2: No slots!\n");
+
 
 __OK:
 
@@ -1556,15 +1560,57 @@ __OK:
     __file->_file = i;
     __file->used = 1;
     __file->magic = 1234;
+    
+    //
+    // File size.
+    //
 
     size_t s = (size_t) fsGetFileSize ( (unsigned char *) file_name );
     
     if (s <= 0)
         return -1;
+        
+    // Se o tamanho do arquivo for menor que o buffer.
+    if (s < __file->_lbfsize)
+        s = (size_t) __file->_lbfsize;
+ 
+
+    // Se o arquivo for maior que buffer disponível.
+    // Podemos almentar o buffer.
+    if (s > __file->_lbfsize)
+    {
+        // limite - 1MB.
+        if (s > 1024*1024)
+        {
+            printf ("fs_load_file_2: File size out of limits\n");
+            refresh_screen();
+            return -1;
+        }
+        
+        // Allocate new buffer.
+        __file->_base = (char *) kmalloc (s);
+        
+        if ( (void *) __file->_base == NULL )
+        {
+            printf ("fs_load_file_2: Couldn't create a new buffer\n");
+            refresh_screen();
+            return -1;             
+        }
+        
+        // temos um novo buffer size.
+        __file->_lbfsize = (int) s;
+    }
+
+    // #paranoia.
+    // Checando os limites novamente.
     
-    //limits
-    if (s > 1024*1024)
+    // limits - 1MB
+    if (s > 1024*1024){
+        printf ("fs_load_file_2: File size out of limits\n");
+        refresh_screen();
         return -1;
+    }
+
         
         
     //limits?
@@ -1613,39 +1659,13 @@ __OK:
  * sys_read_file:
  *     Interface para carregar arquivo ou diretório.
  *     Essa rotina é chamada por services em services.c
- *     Essa rotina não é mais usara. (backup),
- *     Agora estamos usando sys_read_file2.
- *     #suspensa. #deletar;
  */
 
-int sys_read_file ( unsigned long name, unsigned long address ){
+int sys_read_file ( char *file_name, unsigned long file_address )
+{
 
-    int Ret = -1;
-
-
-	//#bugbug
-	//Estamos usando o diretório raiz.
-	//a rotina sys_read_file2 carrega do diretório alvo.
-
-
-    taskswitch_lock ();
-    scheduler_lock ();
-
-
-    Ret = (int) fsLoadFile ( VOLUME1_FAT_ADDRESS,  
-                    VOLUME1_ROOTDIR_ADDRESS, 
-                    (unsigned char *) name, 
-                    (unsigned long) address ); 
-
-
-    scheduler_unlock ();
-    taskswitch_unlock ();
-
-    return (int) Ret;
-
-
-fail:
-    return 1;
+    return (int) fs_load_file_2 ( (char *) file_name, 
+                     (unsigned long) file_address );
 }
 
 

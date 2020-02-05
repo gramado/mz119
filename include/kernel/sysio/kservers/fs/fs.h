@@ -636,8 +636,9 @@ file *fs_load_file ( unsigned long name, unsigned long address );
 int fs_load_file_2 ( char *file_name, unsigned long file_address );
 
 //essa rotina é chamada por services em services.c
-int sys_read_file ( unsigned long name, unsigned long address );
 
+
+int sys_read_file ( char *file_name, unsigned long file_address );
 
 
 int

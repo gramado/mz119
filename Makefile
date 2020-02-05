@@ -10,7 +10,7 @@
 VERSION = 1
 PATCHLEVEL = 28
 SUBLEVEL = 0
-EXTRAVERSION = -rc16
+EXTRAVERSION = -rc17
 NAME = 
 
 
@@ -475,7 +475,7 @@ kernel-image-link:
 	@echo "================================="
 	@echo "(Step 2) Linking the kernel image ..."
 
-	ld -m elf_i386 -T kernel/link.ld -o KERNEL.BIN $(OBJECTS) -Map docs/kernel.map
+	ld -m elf_i386 -T kernel/link.ld -o KERNEL.BIN $(OBJECTS) -Map docs/KERNEL.MAP
 	mv KERNEL.BIN bin/boot/
 
 
@@ -528,7 +528,14 @@ vhd-copy-files:
 #base
 	sudo cp base/GRAMADO.TXT        /mnt/gramadovhd
 	
-#base	ini files
+
+#base dev files.
+	-sudo cp base/dev/LOOP0           /mnt/gramadovhd
+	-sudo cp base/dev/NULL            /mnt/gramadovhd
+	-sudo cp base/dev/SDA             /mnt/gramadovhd
+
+	
+#base ini files
 	sudo cp base/ini/GUI.INI         /mnt/gramadovhd
 	sudo cp base/ini/INIT.INI        /mnt/gramadovhd
 	sudo cp base/ini/USER.INI        /mnt/gramadovhd
@@ -567,6 +574,9 @@ vhd-copy-files:
 
 #base Wallpapers
 #	-sudo cp base/res/wall/GRAMADO.BMP   /mnt/gramadovhd
+
+#docs
+	sudo cp docs/*.TXT        /mnt/gramadovhd
 
 
 

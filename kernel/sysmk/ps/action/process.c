@@ -2096,12 +2096,10 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
     Process2->priority = Process1->priority;
 
     
-    //Herdar os primeiros arquivos.
-    //podemos herdar todos os abertos.
+    // Herdar todos arquivos.
 
     int i;
-    for (i=0;i<3;i++)
-    {
+    for (i=0;i<32;i++){
         Process2->Objects[i] = Process1->Objects[i];
     }
 
@@ -2353,7 +2351,7 @@ get_next:
 
     }else{
 
-		//Object.
+        // Object.
         Process->objectType = ObjectTypeProcess;
         Process->objectClass = ObjectClassKernelObjects;
 
@@ -2413,7 +2411,6 @@ get_next:
         for ( i=0; i<64; i++ ){
             Process->Objects[i] = 0;
         }
-
 
         Process->Objects[0] = (unsigned long) stdin;
         Process->Objects[1] = (unsigned long) stdout;

@@ -190,6 +190,11 @@ done:
  * @todo: A biblioteca C pode chamar essa funçao.
  */
  
+// #obs
+// Isso salva um arquivo.
+// Também poderia ser usado para criar um arquivo ou diretório ? 
+ 
+ 
 //#todo: 
 //#test
 //Número máximo de entradas na lista de clusters. Quantas?
@@ -200,6 +205,8 @@ done:
 
 //lista de clusters
 unsigned short list[fat_range_max];
+ 
+// IN: name, size in sectors, size in bytes, adress, flag. 
  
 int
 fsSaveFile ( char *file_name, 
@@ -224,22 +231,20 @@ fsSaveFile ( char *file_name,
 	// info
 	// me parece que todas as informações estão chegando aqui corretas.
 
-	//#debug:
-	//o nome está salvando corretamente;
-
-	printf ("fsSaveFile: \n");
-	printf ("name=%s  \n", file_name ); 
-	printf ("size=%d  \n", file_size );
-	printf ("nbytes=%d  \n", size_in_bytes );
-	printf ("address=%x  \n", file_address );
-	printf ("flag=%x \n", flag );
+    // #debug:
+    printf ("fsSaveFile: \n");
+    printf ("name=%s  \n", file_name ); 
+    printf ("size=%d  \n", file_size );
+    printf ("nbytes=%d  \n", size_in_bytes );
+    printf ("address=%x  \n", file_address );
+    printf ("flag=%x \n", flag );
 
 
-	//#bugbug: 
-	//Não vale esse determinismo. 
-	//Temos que saber qual é o disco atual e o volume atual.
-	//Precisamos saber se o root dir já está na memória e se
-	//a fat já está na memória.
+	// #bugbug: 
+	// Não vale esse determinismo. 
+	// Temos que saber qual é o disco atual e o volume atual.
+	// Precisamos saber se o root dir já está na memória e se
+	// a fat já está na memória.
 
     unsigned short *root = (unsigned short *) VOLUME1_ROOTDIR_ADDRESS;
     unsigned short *fat  = (unsigned short *) VOLUME1_FAT_ADDRESS;
@@ -294,8 +299,8 @@ fsSaveFile ( char *file_name,
             // que o arquivo precisa.
             // Marca o fim.
 
-			if (file_size == 0)
-			{
+            if (file_size == 0)
+            {
                 list[j] = (unsigned short) 0xfff8;   
 
                 //#importante:
@@ -311,7 +316,7 @@ fsSaveFile ( char *file_name,
             list[j] = (unsigned short) c;   
             j++; 
 
-			//decrementa o tamanho do arquivo!
+            // Decrementa o tamanho do arquivo!
             file_size--; 
         };
 
@@ -331,7 +336,7 @@ out_of_range:
     goto fail;
 
 
-	//#debug
+    // #debug
     //refresh_screen();
     //while(1){ asm("hlt"); }
 
@@ -341,58 +346,77 @@ out_of_range:
 // Salva o arquivo.
 // O arquivo tem na lista todos os clusters que ele precisa.
 
+    //
+    // Save!
+    // 
+
 
 save_file:
 
     //#debug
     //printf("fsSaveFile: save_file: \n"); 
-	//refresh_screen();
+    //refresh_screen();
   
     // Início da lista.
     i = 0; 
 
-	// #bugbug
-	// Limite máximo improvisado.
-	
-    j = 512*4;    
+    //
+    // Size limits.
+    //
+
+    // #bugbug
+    // Limite máximo improvisado.
+    // 2KB.
+
+    j = (512*4);    
+ 
  
     // Pegamos o primeiro da lista.
     first = list[i];
-	
+
+
 	// #debug
 	// printf("first={%x}\n",first);
 	
 //CreateEntry:
 	
 	// Name.
-	Entry[0] = (char) file_name[0];
-	Entry[1] = (char) file_name[1];
-	Entry[2] = (char) file_name[2];
-	Entry[3] = (char) file_name[3];
-	Entry[4] = (char) file_name[4];
-	Entry[5] = (char) file_name[5];
-	Entry[6] = (char) file_name[6];
-	Entry[7] = (char) file_name[7];
-	
+    Entry[0] = (char) file_name[0];
+    Entry[1] = (char) file_name[1];
+    Entry[2] = (char) file_name[2];
+    Entry[3] = (char) file_name[3];
+    Entry[4] = (char) file_name[4];
+    Entry[5] = (char) file_name[5];
+    Entry[6] = (char) file_name[6];
+    Entry[7] = (char) file_name[7];
+
 	// Ext.
-	Entry[8] = (char) file_name[8];
-	Entry[9] = (char) file_name[9];
-	Entry[10] = (char) file_name[10];
-	
-	// Flag and reserved.
-	// 0x20=arquivo.
-	Entry[11] = flag;   
-	Entry[12] = 0;       
-	
+    Entry[8]  = (char) file_name[8];
+    Entry[9]  = (char) file_name[9];
+    Entry[10] = (char) file_name[10];
+
+
+    // Flag. (attributes ?)
+    // 0x01: read only
+    // 0x02: hidden
+    // 0x04: system
+    // 0x08: volume label
+    // 0x10: directory
+    // 0x20: archive
+    Entry[11] = flag; 
+
+    // Reserved.
+    Entry[12] = 0;       
+
 	// Creation time. 14 15 16
-	Entry[13] = 0x08; 
-	Entry[14] = 0x08; 
-	Entry[15] = 0xb6;
+    Entry[13] = 0x08; 
+    Entry[14] = 0x08; 
+    Entry[15] = 0xb6;
 	
 	// Creation date.
-	Entry[16] = 0xb6;
-	Entry[17] = 0x4c;
-	
+    Entry[16] = 0xb6;
+    Entry[17] = 0x4c;
+
 	// Access date.
 	Entry[18] = 0xb8;
 	Entry[19] = 0x4c;
@@ -451,8 +475,7 @@ save_file:
 
     int xxxx_entryindex = (int) findEmptyDirectoryEntry ( VOLUME1_ROOTDIR_ADDRESS, 128 );
 
-    if ( xxxx_entryindex == -1 )
-    {
+    if ( xxxx_entryindex == -1 ){
         printf ("No empty entry\n");
         goto fail;
     }
@@ -466,8 +489,11 @@ save_file:
 	// Encontramos multiplicando o índice da entrada pelo tamanho da entrada.
 
 
-	int xxxx = (int) ( xxxx_entryindex * xxxx_entrysize );
+    int xxxx = (int) ( xxxx_entryindex * xxxx_entrysize );
 
+    //
+    // Copy entry into the root in the memory.
+    //
 
 	//Copia 32 bytes.
     memcpy ( &root[xxxx], Entry, 32 );
@@ -495,6 +521,13 @@ save_file:
 
 	unsigned long address = (unsigned long) file_address;
 
+
+    //
+    // Save!
+    //
+    
+    // Saving the file into the disk.
+    // Cluster by cluster.
 
 //SavingFile:
 
@@ -537,11 +570,17 @@ save_file:
         //próximo valor da lista
         i++;
 
-        //limite #test #bugbug
-        //limitando o tamanho do arquivo a 16 entradas.
 
-        if (i > 16)
-        {
+        //
+        // #bugbug
+        //
+
+        // #bugbug
+        // #test
+        // limite  
+        // limitando o tamanho do arquivo a 16 entradas.
+
+        if (i > 16){
             goto fail;
         }
 
@@ -554,13 +593,27 @@ fail:
     refresh_screen ();
     return (int) 1;
 
+   
+   //
+   // Done!
+   //
+
     //Nesse momento já salvamos os clusters do arquivo.
     
 done:
 
     // #debug
     printf ("fsSaveFile: clusters saved\n");
-
+    
+    
+    //
+    // Saving root into the disk
+    //
+    
+    // #obs:
+    // Não precisamos fazer isso o tempo todo.
+    // Podemos apenas sinalizar que a sincronização está pendente.
+    
     printf ("Saving root..\n");
     refresh_screen ();
 
@@ -592,7 +645,7 @@ done:
 		// Precisamos de estruturas.
 
 		my_write_hd_sector ( (unsigned long) VOLUME1_ROOTDIR_ADDRESS + roff, 
-		    (unsigned long) ( VOLUME1_ROOTDIR_LBA     + rlbaoff ), 0, 0  );
+		    (unsigned long) ( VOLUME1_ROOTDIR_LBA + rlbaoff ), 0, 0  );
 
         roff = roff + 0x200;
         rlbaoff = rlbaoff + 1;
@@ -615,6 +668,17 @@ done:
 
     //printf("write_lba\n");      
     //refresh_screen();
+    
+    
+    //
+    // Saving fat into the disk
+    //
+    
+    // #obs:
+    // Não precisamos fazer isso o tempo todo.
+    // Podemos apenas sinalizar que a sincronização está pendente.
+    
+    
 
     //#bugbug: Devemos salvar ela toda.	
     //salva 4 setores da fat!       
@@ -653,7 +717,7 @@ done:
         //            VOLUME1_FAT_LBA     + lbaoff );
 
         my_write_hd_sector ( (unsigned long) VOLUME1_FAT_ADDRESS + off, 
-            (unsigned long) ( VOLUME1_FAT_LBA     + lbaoff ), 0, 0  );
+            (unsigned long) ( VOLUME1_FAT_LBA + lbaoff ), 0, 0  );
 
         off = off + 0x200;
         lbaoff = lbaoff + 1;
@@ -663,7 +727,6 @@ done:
     //#debug
     printf ("fsSaveFile: done hang \n"); 
     refresh_screen ();
-
 
     return 0;
 }

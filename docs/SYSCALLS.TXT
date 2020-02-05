@@ -12,8 +12,8 @@
   1       my_read_hd_sector             sysio/kdrivers/ide/hdd.c
   2       my_write_hd_sector            sysio/kdrivers/ide/hdd.c
 
-  3       sys_read_file2                sysio/kservers/fs/fs.c
-  4       fsSaveFile                    sysio/kservers/fs/write.c
+  3       sys_read_file                 sysio/kservers/fs/fs.c
+  4       sys_write_file                sysio/kservers/fs/fs.c
 
   5       vsync                         sysio/kdrivers/x/video/vsync.c
 

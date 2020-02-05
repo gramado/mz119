@@ -1290,17 +1290,15 @@ void *gde_services ( unsigned long number,
 	// *Importante: 
 	// Checando se o esquema de cores está funcionando.
 
-    if ( (void *) CurrentColorScheme == NULL )
-    {
-		panic ("gde_services: CurrentColorScheme");
-		//die ();
+    if ( (void *) CurrentColorScheme == NULL ){
+        panic ("gde_services: CurrentColorScheme");
+ 
     }else{
 
 		if ( CurrentColorScheme->used != 1 || 
 		     CurrentColorScheme->magic != 1234 )
 		{
 		    panic ("gde_services: CurrentColorScheme validation");
-		    //die ();
 		}
 		//Nothing.
     };
@@ -1366,38 +1364,29 @@ void *gde_services ( unsigned long number,
         // See: kernel/sysio/kservers/fs/fs.c
         // IN: name, address
         // #todo: Mudar para: case SYS_LOAD_FILE:
-        
         case SYS_READ_FILE:
 
-            // #test
-            // FUNCIONOU. testado com open() 
-            return (void *) fs_load_file_2 ( (char *) a2, 
+            return (void *) sys_read_file ( (char *) a2, 
                                 (unsigned long) arg3 );
 
-
-            //return (void *) fs_load_file ( (unsigned long) a2, 
-            //                    (unsigned long) arg3 );
-
-            // Funciona, não mexer.
-            //return (void *) sys_read_file ( (unsigned long) a2, (unsigned long) arg3 );
-            
             break;
 
 
-		//4 (i/o)
+
+        // 4 
+        // Save file.
+        // See: sysio/kservers/fs/fs.c
+        // IN: name, size in sectors, size in bytes, adress, flag.
         case SYS_WRITE_FILE:
-            taskswitch_lock ();
-            scheduler_lock ();
 
-            fsSaveFile ( (char *) message_address[0],    //name
-                (unsigned long) message_address[1],  //3, //@todo: size in sectors 
-                (unsigned long) message_address[2],  //255, //@todo: size in bytes
-                (char *) message_address[3],         //arg3,//address
-                (char) message_address[4] );         //,arg4 ); //flag
+            sys_write_file ( (char *) message_address[0],  
+                (unsigned long) message_address[1],   
+                (unsigned long) message_address[2],  
+                (char *) message_address[3],         
+                (char) message_address[4] );        
 
-            scheduler_unlock ();
-            taskswitch_unlock ();
             break;
+
 
         // 5
         // See: sci/sys/sys.c 
