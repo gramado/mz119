@@ -13,8 +13,8 @@
 
 int sys_dup ( int oldfd ){
 
-	FILE *stream_old;
-	FILE *stream_new;
+	file *stream_old;
+	file *stream_new;
 	
 	struct process_d *Process;
 
@@ -40,10 +40,10 @@ int sys_dup ( int oldfd ){
 	
 	for ( i=3; i< NUMBER_OF_FILES; i++ )
 	{
-	    if ( Process->Streams[i] == 0 )
+	    if ( Process->Objects[i] == 0 )
 		{
 			//reserva.
-			Process->Streams[i] = 216;
+			Process->Objects[i] = 216;
 			
 		    slot = i;
 			break;
@@ -53,28 +53,28 @@ int sys_dup ( int oldfd ){
 	
 	if ( slot == -1 ) 
 	{
-		Process->Streams[i] = (unsigned long) 0;
+		Process->Objects[i] = (unsigned long) 0;
 	    return -1;
 	}	
 	
 	//#todo: filtrar oldfd
 	
-	stream_old = (FILE *) Process->Streams[oldfd];
+	stream_old = (file *) Process->Objects[oldfd];
 	
-	if ( (void *) stream_old == NULL )
-	{
-		Process->Streams[i] = (unsigned long) 0;
-	    return -1;		
-	}else{
+    if ( (void *) stream_old == NULL ){
+        Process->Objects[i] = (unsigned long) 0;
+        return -1;
+ 
+    }else{
         
-		stream_new = (void *) kmalloc ( sizeof(FILE) );
+		stream_new = (void *) kmalloc ( sizeof(file) );
 		
-		if ( (void *) stream_new == NULL )
-		{
-		    Process->Streams[i] = (unsigned long) 0;
+		if ( (void *) stream_new == NULL ){
+		    Process->Objects[i] = (unsigned long) 0;
 	        return -1;			
 		}
-		
+
+
         stream_new->used = 1;
 		stream_new->magic = 1234;	
 		
@@ -88,9 +88,11 @@ int sys_dup ( int oldfd ){
 		//quanto falta é igual ao tamanho.
 		stream_new->_cnt = stream_old->_cnt; 
 		
-		Process->Streams[slot] = (unsigned long) stream_new;
-		
-		return (int) slot;
+
+		Process->Objects[slot] = (unsigned long) stream_new;
+
+
+        return (int) slot;
 	}
 
 	// On success, these system calls return the new file descriptor.  
@@ -104,16 +106,18 @@ fail:
 
 int sys_dup2 (int oldfd, int newfd){
 
-	FILE *stream_old;
-	FILE *stream_new;
-	
-	struct process_d *Process;
+    file *stream_old;
+    file *stream_new;
+
+    struct process_d *Process;
+
+
 
 	Process = (void *) processList[current_process];
 	
-	if ( (void *) Process == NULL )
-	{
+    if ( (void *) Process == NULL ){
 		return -1;
+
 	}else{
 	
 	     if ( Process->used != 1 || Process->magic != 1234 )
@@ -126,35 +130,36 @@ int sys_dup2 (int oldfd, int newfd){
 
 	
     int slot = newfd;	
-	
-	if ( slot == -1 ) 
-	{
-		Process->Streams[slot] = (unsigned long) 0;
+
+
+    if ( slot == -1 ){
+		Process->Objects[slot] = (unsigned long) 0;
 	    return -1;
-	}	
-	
+    }	
+
+
 	//#todo: filtrar oldfd
 	
-	stream_old = (FILE *) Process->Streams[oldfd];
+    stream_old = (file *) Process->Objects[oldfd];
 	
-	if ( (void *) stream_old == NULL )
-	{
-		Process->Streams[slot] = (unsigned long) 0;
-	    return -1;		
+	if ( (void *) stream_old == NULL ){
+		Process->Objects[slot] = (unsigned long) 0;
+	    return -1;
+	    
 	}else{
         
 				
-		stream_new = (FILE *) Process->Streams[slot];
+		stream_new = (file *) Process->Objects[slot];
 		
 		if ( (void *) stream_new == NULL )
 		{
-		    Process->Streams[slot] = (unsigned long) 0;
+		    Process->Objects[slot] = (unsigned long) 0;
 	        return -1;			
 		}
-		
+
         stream_new->used = 1;
-		stream_new->magic = 1234;			
-				
+        stream_new->magic = 1234;			
+
 		stream_new->_base = stream_old->_base;	
 		stream_new->_p = stream_old->_p;
 		
@@ -167,29 +172,31 @@ int sys_dup2 (int oldfd, int newfd){
 				
 		return (int) slot;
 	}
+
 
 	// On success, these system calls return the new file descriptor.  
 	// On error, -1 is returned, and errno is set appropriately.	
 	
 fail:
 	//errno = ?;
-	return -1;
+    return -1;
  }
+
 
 int sys_dup3 (int oldfd, int newfd, int flags){
 	
 	//#todo: flags.
 
-	FILE *stream_old;
-	FILE *stream_new;
+	file *stream_old;
+	file *stream_new;
 	
 	struct process_d *Process;
 
 	Process = (void *) processList[current_process];
 	
-	if ( (void *) Process == NULL )
-	{
+    if ( (void *) Process == NULL ){
 		return -1;
+
 	}else{
 	
 	     if ( Process->used != 1 || Process->magic != 1234 )
@@ -205,32 +212,32 @@ int sys_dup3 (int oldfd, int newfd, int flags){
 	
 	if ( slot == -1 ) 
 	{
-		Process->Streams[slot] = (unsigned long) 0;
+		Process->Objects[slot] = (unsigned long) 0;
 	    return -1;
 	}	
 	
 	//#todo: filtrar oldfd
 	
-	stream_old = (FILE *) Process->Streams[oldfd];
+	stream_old = (file *) Process->Objects[oldfd];
 	
-	if ( (void *) stream_old == NULL )
-	{
-		Process->Streams[slot] = (unsigned long) 0;
-	    return -1;		
-	}else{
-        
-				
-		stream_new = (FILE *) Process->Streams[slot];
+    if ( (void *) stream_old == NULL ){
+		Process->Objects[slot] = (unsigned long) 0;
+	    return -1;
+
+    }else{
+
+	
+        stream_new = (file *) Process->Objects[slot];
 		
-		if ( (void *) stream_new == NULL )
-		{
-		    Process->Streams[slot] = (unsigned long) 0;
+		if ( (void *) stream_new == NULL ){
+		    Process->Objects[slot] = (unsigned long) 0;
 	        return -1;			
 		}
-		
+
+
         stream_new->used = 1;
-		stream_new->magic = 1234;		
-				
+        stream_new->magic = 1234;
+
 		stream_new->_base = stream_old->_base;	
 		stream_new->_p = stream_old->_p;
 		
@@ -246,7 +253,8 @@ int sys_dup3 (int oldfd, int newfd, int flags){
 
 	// On success, these system calls return the new file descriptor.  
 	// On error, -1 is returned, and errno is set appropriately.	
-	
+
+
 fail:
 	//errno = ?;
 	return -1;
@@ -259,17 +267,17 @@ fail:
 
 int sys_pipe ( int *pipefd ){
 	
-	FILE *stream1;
-	FILE *stream2;
-		
-	struct process_d *Process;
+    file *stream1;
+    file *stream2;
 
-	
+    struct process_d *Process;
+
+
 	Process = (void *) processList[current_process];
 	
-	if ( (void *) Process == NULL )
-	{
+    if ( (void *) Process == NULL ){
 		return -1;
+
 	}else{
 	
 	     if ( Process->used != 1 || Process->magic != 1234 )
@@ -299,10 +307,10 @@ int sys_pipe ( int *pipefd ){
 	
 	for ( i=3; i< NUMBER_OF_FILES; i++ )
 	{
-	    if ( Process->Streams[i] == 0 )
+	    if ( Process->Objects[i] == 0 )
 		{
 			//reserva.
-			Process->Streams[i] = 216;
+			Process->Objects[i] = 216;
 			
 		    slot1 = i;
 			break;
@@ -311,10 +319,10 @@ int sys_pipe ( int *pipefd ){
 
 	for ( i=3; i< NUMBER_OF_FILES; i++ )
 	{
-	    if ( Process->Streams[i] == 0 )
+	    if ( Process->Objects[i] == 0 )
 		{
 			//reserva.
-			Process->Streams[i] = 216;
+			Process->Objects[i] = 216;
 			
 		    slot2 = i;
 			break;
@@ -324,8 +332,8 @@ int sys_pipe ( int *pipefd ){
 	if ( slot1 == -1 || slot2 == -1 ) 
 	{
 		
-		Process->Streams[i] = (unsigned long) 0;
-		Process->Streams[i] = (unsigned long) 0;
+		Process->Objects[i] = (unsigned long) 0;
+		Process->Objects[i] = (unsigned long) 0;
 		
 	    return -1;
 	}
@@ -338,22 +346,23 @@ int sys_pipe ( int *pipefd ){
 	
     if ( (void *) buff == NULL )
 	{
-		 Process->Streams[i] = (unsigned long) 0;
-		 Process->Streams[i] = (unsigned long) 0;		
+		 Process->Objects[i] = (unsigned long) 0;
+		 Process->Objects[i] = (unsigned long) 0;		
 	     return -1;
 	}
 	
 	//estruturas 
-	stream1 = (void *) kmalloc ( sizeof(FILE) );
-	stream2 = (void *) kmalloc ( sizeof(FILE) );
+	stream1 = (void *) kmalloc ( sizeof(file) );
+	stream2 = (void *) kmalloc ( sizeof(file) );
 	
 	if ( (void *) stream1 == NULL || (void *) stream2 == NULL )
 	{
-		Process->Streams[i] = (unsigned long) 0;
-		Process->Streams[i] = (unsigned long) 0;		
+		Process->Objects[i] = (unsigned long) 0;
+		Process->Objects[i] = (unsigned long) 0;		
 	    return -1;
 	}else{
-	
+
+
 		// As duas estruturas compartilham o mesmo buffer.
 		
         stream1->used = 1;
@@ -377,8 +386,8 @@ int sys_pipe ( int *pipefd ){
 		stream2->_cnt = stream2->_lbfsize; 
 		
 		
-		Process->Streams[i] = (unsigned long) stream1;
-		Process->Streams[i] = (unsigned long) stream2;
+		Process->Objects[i] = (unsigned long) stream1;
+		Process->Objects[i] = (unsigned long) stream2;
 		
 		// #importante
 		// Esse é o retorno esperado.

@@ -289,17 +289,19 @@ struct process_d
  
     object_type_t objectType;
     object_class_t objectClass;
-    struct object_d *object;
+
+  
+    struct object_d *object;  //Talvez não.
+
 
     int used;  
     int magic; 
     
 
+    // Arquivos abertos.
     // Objetos abertos pelo processo.
     unsigned long Objects[64];
 
-    // Usado para pipes sem nome por exemplo.
-    unsigned long Streams[NUMBER_OF_FILES];
 
 
 

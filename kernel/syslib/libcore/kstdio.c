@@ -651,7 +651,7 @@ int fflush ( file *stream ){
          
         for (i=0; i<32; i++)
         {
-            __tmp_stream = (file *) __P->Streams[i];
+            __tmp_stream = (file *) __P->Objects[i];
             
             
             if ( (void *) __tmp_stream != NULL )
@@ -708,9 +708,9 @@ update_standard_stream ( int PID,
 		panic ("update_standard_stream: args fail\n");
 	}
 	
-	//p->Streams[0] = (unsigned long) stream1;  
-	p->Streams[1] = (unsigned long) stream2; 
-	p->Streams[2] = (unsigned long) stream3;
+	//p->Objects[0] = (unsigned long) stream1;  
+	p->Objects[1] = (unsigned long) stream2; 
+	p->Objects[2] = (unsigned long) stream3;
 	
 	//stdin = stream1;
 	stdout = stream2;

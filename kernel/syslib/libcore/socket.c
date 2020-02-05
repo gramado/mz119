@@ -63,20 +63,21 @@ int socket ( int family, int type, int protocol ){
 
 
 	Process = (void *) processList[current_process];
-	
-	if ( (void *) Process == NULL )
-	{
-		return -1;
-	}else{
-	
-	     if ( Process->used != 1 || Process->magic != 1234 )
-		 {
-		     return -1;
-		 }
+
+    if ( (void *) Process == NULL ){
+        return -1;
+
+    }else{
+
+        if ( Process->used != 1 || Process->magic != 1234 )
+        {
+		    return -1;
+		}
 		
 		 //ok
 	};
-	
+
+
 	//#todo
 	//temos que criar uma rotina que procure slots em Process->Streams[]
 	//e colocarmos em process.c
@@ -95,10 +96,10 @@ int socket ( int family, int type, int protocol ){
 	
 	for ( i=3; i< NUMBER_OF_FILES; i++ )
 	{
-	    if ( Process->Streams[i] == 0 )
+	    if ( Process->Objects[i] == 0 )
 		{
 			//reserva.
-			Process->Streams[i] = 216;
+			Process->Objects[i] = 216; 
 			
 		    slot1 = i;
 			break;
@@ -108,7 +109,7 @@ int socket ( int family, int type, int protocol ){
     //se falhar.
 	if ( slot1 == -1 ) 
 	{
-		Process->Streams[i] = (unsigned long) 0;
+		Process->Objects[i] = (unsigned long) 0;
 	    return -1;
 	}
 
@@ -121,7 +122,7 @@ int socket ( int family, int type, int protocol ){
 	
     if ( (void *) buff == NULL )
 	{
-		 Process->Streams[i] = (unsigned long) 0;
+		 Process->Objects[i] = (unsigned long) 0;
 	     return -1;
 	}
 
@@ -134,7 +135,7 @@ int socket ( int family, int type, int protocol ){
 	
 	if ( (void *) stream1 == NULL  )
 	{
-		Process->Streams[i] = (unsigned long) 0;
+		Process->Objects[i] = (unsigned long) 0;
 	    return -1;
 	}else{
 	
@@ -155,7 +156,7 @@ int socket ( int family, int type, int protocol ){
 		stream1->_cnt = stream1->_lbfsize;   
 
 		//Colocando na lista de arquivos abertos no processo.
-		Process->Streams[i] = (unsigned long) stream1;
+		Process->Objects[i] = (unsigned long) stream1;
 
 		
 		// #importante
@@ -175,12 +176,12 @@ int socket ( int family, int type, int protocol ){
 
 unsigned long 
 socket_services ( unsigned long number, 
-				  unsigned long arg2, 
-				  unsigned long arg3, 
-				 unsigned long arg4 )
+                  unsigned long arg2, 
+                  unsigned long arg3, 
+                  unsigned long arg4 )
 {
 	
-	printf ("klibc:  socket_services: number=%d \n", number);
+	printf ("socket_services: number=%d \n", number);
 	
 	if ( number < 7000 || number >= 8000 )
 		return 0;
@@ -203,7 +204,7 @@ socket_services ( unsigned long number,
 		//...
 			
 	    default:
-			printf ("klibc: socket_services: Default\n");
+			printf ("socket_services: Default\n");
 			break;
 	}
 	

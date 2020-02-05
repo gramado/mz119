@@ -111,7 +111,7 @@ network_procedure ( struct window_d *window,
 		//nesse momento vamos habilitar a notificação de processos.
 		//>long1 tem o descritor na lista de arquivos abertos do processo.
 		case 1000:
-	        network__stream = (FILE *) __process->Streams[long1];
+	        network__stream = (file *) __process->Objects[long1];
 		    notification_status = 1;
 		    if ( notification_status != 1 ){ break; }		     
 		    if ( (void *) network__stream == NULL )
@@ -127,7 +127,7 @@ network_procedure ( struct window_d *window,
 		
 		//>long1 tem o descritor na lista de arquivos abertos do processo.
 		case 2000:
-		    network__stream = (FILE *) __process->Streams[long1]; 
+		    network__stream = (file *) __process->Objects[long1]; 
 		    notification_status = 1;
 		    if ( notification_status != 1 ){ break; }		    
 		    if ( (void *) network__stream == NULL )

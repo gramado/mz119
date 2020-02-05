@@ -1614,8 +1614,8 @@ do_clone:
        Clone->next = NULL;
        
        // lista de arquivos abertos.
-       for (i=0; i<NUMBER_OF_FILES; i++)
-       {  Clone->Streams[i] = Current->Streams[i]; }
+       //for (i=0; i<NUMBER_OF_FILES; i++)
+       //{  Clone->Streams[i] = Current->Streams[i]; }
        
        for (i=0; i<64; i++)
        {  Clone->Objects[i] = Current->Objects[i]; }
@@ -2398,23 +2398,26 @@ get_next:
 		// Zerando essa lista e criando 3 streams para o processo.
 		// Mas vamos improvisar e usar os ponteiros do kernel.
 		
-        for ( i=0; i< NUMBER_OF_FILES; i++ )
-        {
-            Process->Streams[i] = 0;
-        }
+        //for ( i=0; i< NUMBER_OF_FILES; i++ ){
+            //Process->Streams[i] = 0;
+        //}
 
-        Process->Streams[0] = (unsigned long) stdin;
-        Process->Streams[1] = (unsigned long) stdout;
-        Process->Streams[2] = (unsigned long) stderr;
+        //Process->Streams[0] = (unsigned long) stdin;
+        //Process->Streams[1] = (unsigned long) stdout;
+        //Process->Streams[2] = (unsigned long) stderr;
 
         // #todo
         // Podemos colocar 3 arquivos em Objects[]
         // Ou seriam tty ? 
 
-        for ( i=0; i<64; i++ )
-        {
+        for ( i=0; i<64; i++ ){
             Process->Objects[i] = 0;
         }
+
+
+        Process->Objects[0] = (unsigned long) stdin;
+        Process->Objects[1] = (unsigned long) stdout;
+        Process->Objects[2] = (unsigned long) stderr;
 
 
 		//Process->terminal =
@@ -3429,11 +3432,14 @@ int process_find_empty_stream_slot ( struct process_d *process ){
 
 // Pega uma stream na lista de arquivos dado o fd.
 
-FILE *get_stream_from_fd ( int pid, int fd )
-{
-    FILE *fp;
-    struct process_d *p;
 
+//mudar para: get_file_from_fd
+file *get_stream_from_fd ( int pid, int fd )
+{
+    struct process_d *p;
+    file *fp;
+    
+   
 
     if ( pid < 0)
         return NULL;
@@ -3442,13 +3448,12 @@ FILE *get_stream_from_fd ( int pid, int fd )
     // Get process pointer.
     p = (struct process_d *) processList[ pid ];
 
-
-
     if (fd<0)
         return NULL;
 
+
     // Get fp from list of open files.
-    return ( FILE * ) p->Streams[fd];  
+    return ( file * ) p->Objects[fd];  
 }
 
 //===============
