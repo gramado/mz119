@@ -62,8 +62,10 @@
 
   
   42      Deprecated!
-  43      Nothing
-  44      Nothing
+  
+  43      sys_create_empty_file         fs/fs.c 
+  44      sys_create_empty_directory    fs/fs.c
+  
   
   Nothing:  45 ~ 49
   

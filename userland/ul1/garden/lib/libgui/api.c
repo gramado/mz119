@@ -2522,9 +2522,9 @@ gde_save_file ( char *file_name,
 		
 	
 
-	gde_enter_critical_section ();
-		
-	Ret = (int) system_call ( SYSTEMCALL_WRITE_FILE,
+    gde_enter_critical_section ();
+
+    Ret = (int) gramado_system_call ( SYSTEMCALL_WRITE_FILE,
                     (unsigned long) &message_buffer[0], 
                     (unsigned long) &message_buffer[0],  
                     (unsigned long) &message_buffer[0] ); 
@@ -2533,6 +2533,34 @@ gde_save_file ( char *file_name,
 
     return (int) Ret;
 }
+
+
+int gde_create_empty_file ( char *file_name )
+{
+    int __ret;
+    
+    gde_enter_critical_section ();
+    
+    __ret = (int) gramado_system_call ( 43, 
+                      (unsigned long) file_name, 0, 0);
+
+    gde_exit_critical_section ();    
+    return __ret;
+}
+
+int gde_create_empty_directory ( char *dir_name )
+{
+    int __ret;
+    
+    gde_enter_critical_section ();
+    
+    __ret = (int) gramado_system_call ( 44, 
+                      (unsigned long) dir_name, 0, 0);
+
+    gde_exit_critical_section ();    
+    return __ret;
+}
+
 
 
 // gde_down:

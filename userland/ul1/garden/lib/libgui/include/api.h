@@ -3659,6 +3659,9 @@ gde_save_file ( char *file_name,
                 char flag ); 
 
 
+int gde_create_empty_file ( char *file_name );
+int gde_create_empty_directory ( char *dir_name );
+
 
 
 // semáforo.

@@ -649,6 +649,9 @@ sys_write_file ( char *file_name,
                  char flag );
  
 
+int sys_create_empty_file ( char *file_name );
+int sys_create_empty_directory ( char *dir_name );
+
 
 
 

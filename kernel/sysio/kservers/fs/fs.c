@@ -1756,6 +1756,9 @@ int fsLoadFileFromCurrentTargetDir (void){
 	//vamos fazer igual ao sys_read_file 
 	//e criarmos opções ... se possível.
 
+
+// IN: name, size in sectors, size in bytes, adress, flag.
+
 int
 sys_write_file ( char *file_name, 
                  unsigned long file_size,
@@ -1769,11 +1772,11 @@ sys_write_file ( char *file_name,
     taskswitch_lock ();
     scheduler_lock ();
 
-    Ret = (int) fsSaveFile ( (char *) file_name,    //name
-                    (unsigned long) file_size,      //3, //@todo: size in sectors 
-                    (unsigned long) size_in_bytes,  //255, //@todo: size in bytes
-                    (char *) file_address,          //arg3,//address
-                    (char) flag );                  //,arg4 ); //flag
+    Ret = (int) fsSaveFile ( (char *) file_name,    
+                    (unsigned long) file_size,       
+                    (unsigned long) size_in_bytes,  
+                    (char *) file_address,          
+                    (char) flag );                  
 
     scheduler_unlock ();
     taskswitch_unlock ();
@@ -1782,6 +1785,46 @@ sys_write_file ( char *file_name,
 
     return Ret;
 }
+
+
+
+int sys_create_empty_file ( char *file_name )
+{
+    char buffer[512];
+    int number_of_sectors = 1;
+    int size_in_bytes = 512;  
+    int __ret;
+    
+    __ret = (int) fsSaveFile ( (char *) file_name,    
+                    (unsigned long) number_of_sectors,       
+                    (unsigned long) size_in_bytes,  
+                    (char *) &buffer[0],          
+                    (char) 0x20 );  //0x20 = file.                  
+
+
+
+    return __ret;
+}
+
+
+int sys_create_empty_directory ( char *dir_name )
+{
+    char buffer[512];
+    int number_of_sectors = 1;
+    int size_in_bytes = 512;  
+    int __ret;
+    
+    __ret = (int) fsSaveFile ( (char *) dir_name,    
+                    (unsigned long) number_of_sectors,       
+                    (unsigned long) size_in_bytes,  
+                    (char *) &buffer[0],          
+                    (char) 0x10 );  //0x10 = directory.                  
+
+
+
+    return __ret;
+}
+
 
 
 //#todo

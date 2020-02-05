@@ -2806,6 +2806,21 @@ do_compare:
     }
 
 
+    // mkdir - Criar um diretório dado o nome.
+    if ( strncmp( prompt, "mkdir", 5 ) == 0 )
+    {
+        gde_create_empty_directory ( (char *) tokenList[1] );
+        goto exit_cmp;
+    }
+
+
+    // mkfile - Criar um arquivo dado o nome.
+    if ( strncmp( prompt, "mkfile", 6 ) == 0 )
+    {
+        gde_create_empty_file ( (char *) tokenList[1] );
+        goto exit_cmp;
+    }
+
     // mm-info
     if ( strncmp( prompt, "mm-info", 7 ) == 0 ){
         shellShowMemoryInfo ();

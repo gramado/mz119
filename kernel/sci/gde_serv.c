@@ -1586,10 +1586,26 @@ void *gde_services ( unsigned long number,
            
              
         
-        //42 - Load bitmap 16x16. #cancelada.
+        //42 - Load bitmap 16x16. 
+        // #cancelada.
+        // Deletar!
+        // Deletar em ring3 também.
         case SYS_LOADBMP16X16 :  
             return NULL;
             break;
+
+
+        // Create an empty file.
+        case 43:
+            return (void *) sys_create_empty_file ( (char *) arg2 );
+            break;
+
+        // Create an empty directory.
+        case 44:
+            return (void *) sys_create_empty_directory ( (char *) arg2 );
+            break;
+           
+
 
         // 45 - Message Box. #cancelada 
         case SYS_MESSAGEBOX:
