@@ -2097,7 +2097,8 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 
     
     // Herdar todos arquivos.
-
+    // O fluxo padrão foi criando antes em kstdio.c
+            
     int i;
     for (i=0;i<32;i++){
         Process2->Objects[i] = Process1->Objects[i];
@@ -2412,6 +2413,7 @@ get_next:
             Process->Objects[i] = 0;
         }
 
+        // O fluxo padrão foi criando antes em kstdio.c
         Process->Objects[0] = (unsigned long) stdin;
         Process->Objects[1] = (unsigned long) stdout;
         Process->Objects[2] = (unsigned long) stderr;

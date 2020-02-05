@@ -424,6 +424,18 @@ int sys_write (unsigned int fd,char *buf,int count)
     // is_block_dev?    read_block(...)
     // is_
 
+
+    // Se o descritor usado por write() for de um arquivo
+    // do tipo console, escreveremos no console 0.
+    if ( __file->____object == ObjectTypeVirtualConsole )
+    {
+       // console number, buffer, size.
+       return (int) console_write ( 
+                        (int) 0,       // Console 0 
+                        (const void *) buf, 
+                        (size_t) count );
+    }
+
     
 
     //tem que retonar o tanto de bytes escritos.

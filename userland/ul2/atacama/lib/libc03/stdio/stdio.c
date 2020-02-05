@@ -2398,13 +2398,16 @@ int __fflush (FILE *stream)
                
     
     // #todo: 
-    // This is the desired way.           
-    // int rc = write ( fileno(stream), stream->_base, stream->_w );
+    // This is the desired way.
+    // Nesse teste escreveremos em stdout. Seu descritor indicará
+    // que é um dispositivo do tipo console. O kernel escreverá no 
+    // console 0.           
+    int rc = write ( fileno(stream), stream->_base, stream->_w );
 
 
     // ISSO FUNCIONA.
     // vamos testar no console virtual.
-    int rc = write_VC ( 0, stream->_base, stream->_w ); 
+    //int rc = write_VC ( 0, stream->_base, stream->_w ); 
  
  
     stream->_w = 0;

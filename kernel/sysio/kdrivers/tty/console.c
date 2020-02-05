@@ -772,6 +772,7 @@ ssize_t console_read (int console_number, const void *buf, size_t count)
 
 
 // Tem escape sequence
+// console number, buffer, size.
 ssize_t console_write (int console_number, const void *buf, size_t count)
 {
 

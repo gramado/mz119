@@ -1995,6 +1995,7 @@ int stdioInitialize (void){
 
 
     // Configurando a estrutura de stdin. 
+	stdin->____object = ObjectTypeVirtualConsole;
 	stdin->used = 1;
 	stdin->magic = 1234;
 	stdin->_base = &prompt[0];    //See: include/kernel/stdio.h
@@ -2010,6 +2011,7 @@ int stdioInitialize (void){
 
 
     // Configurando a estrutura de stdout.
+    stdout->____object = ObjectTypeVirtualConsole;
 	stdout->used = 1;
 	stdout->magic = 1234;
 	stdout->_base = &prompt_out[0];  //See: include/kernel/stdio.h
@@ -2025,6 +2027,7 @@ int stdioInitialize (void){
 
 
     // Configurando a estrutura de stderr.
+    stderr->____object = ObjectTypeVirtualConsole;
 	stderr->used = 1;
 	stderr->magic = 1234;
 	stderr->_base = &prompt_err[0];  //See: include/kernel/stdio.h

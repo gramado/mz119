@@ -146,6 +146,7 @@ typedef enum {
 	//...
 	
 	ObjectTypeTTY,
+	ObjectTypeVirtualConsole,
 	ObjectTypeCharDev,
 	ObjectTypeBlockDev,
 	ObjectTypeNetworkDev
