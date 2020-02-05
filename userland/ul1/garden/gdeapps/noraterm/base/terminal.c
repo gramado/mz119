@@ -267,6 +267,7 @@ void terminalRefreshCurrentChar (){
 	
 	//#usar api.
 	printf ("%c", LINES[textCurrentRow].CHARS[textCurrentCol] );
+	fflush(stdout);
 	
 	// Atualiza os deslocamanentos dentro do buffer.
 	

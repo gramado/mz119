@@ -668,9 +668,9 @@ int __putc (int ch, FILE *stream);
 // Root.
 //
 
-int getc (FILE* stream);
-int putc (int ch, FILE* stream);
-int fgetc ( FILE *stream );;
+int getc (FILE *stream);
+int putc (int ch, FILE *stream);
+int fgetc ( FILE *stream );
 int fputc (int ch, FILE *stream);
 
 //

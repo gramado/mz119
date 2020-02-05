@@ -281,7 +281,7 @@ void *teditorProcedure ( struct window_d *window,
 				    
 					//#test
 					printf("\r");
-					printf("\n");
+					printf("\n"); //FLUSH
 					
                     break; 
 
@@ -305,6 +305,7 @@ void *teditorProcedure ( struct window_d *window,
 				
 				// #importante:
 				// Teclas de digitação.
+				
 				default:
 				    // Improvisando um salvamento de arquivo.
 				    if ( long1 == 's' )
@@ -599,8 +600,12 @@ void teditorInsertNextChar (char c){
 	// Cursor da linha
     LINES[textCurrentRow].CHARS[textCurrentCol] = (char) c;
 
-	// refresh
-    teditorRefreshCurrentChar();
+
+    //
+    // Refresh
+    //
+    
+    teditorRefreshCurrentChar ();
 
 
 	// Update
@@ -642,6 +647,7 @@ gramcodeLinesInsertChar ( int line_number,
 void teditorRefreshCurrentChar ()
 {
     printf ("%c", LINES[textCurrentRow].CHARS[textCurrentCol] );
+    fflush(stdout);
 }
 
 

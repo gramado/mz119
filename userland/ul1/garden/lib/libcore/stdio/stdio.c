@@ -257,6 +257,16 @@ void stdio_fntos (char *name){
 
 
 
+void debug_print (char *string)
+{
+    gramado_system_call ( 289, 
+        (unsigned long) string,
+        (unsigned long) string,
+        (unsigned long) string );
+}
+
+
+
 //#todo
 //https://linux.die.net/man/3/remove
 int remove (const char *pathname)
@@ -573,21 +583,7 @@ int puts(const char *str)
 
 
 
-/*
- ***********************
- * puts:
- */
 
-// #bugbug
-// isso deve escrever no arquivo, assim como
-// tudo em libc.
-
-int puts ( const char *str ){
-
-	// provisório ...
-
-    return (int) printf ("%s",str);
-}
 
 
 
@@ -1304,69 +1300,6 @@ int putchar (int __c)
 
 
 
-/*
- *******************************
- * putchar:
- *     Put a char in the screen.
- *     Obs: Isso funciona bem. 
- *
- *     #importante: O kernel pinta o char no backbuffer e
- *     em seguida efetua um refresh do char para mostra-lo na tela.
- *     #bugbug: Não precisamos desse retorno. Pode ser void ? libc?
- */
-
-	// +Chamar a função 'putchar' oferecida pelo kernel 
-	// e utilizar o cursor gerenciado pelo kernel.
-	// Queremos que o kernel gerencie as mensagens de digitação,
-	// então devemos usar a opção que permite o kernel usar seu próprio cursor.
-	// Estamos deixando o kernel gerenciar as mensagens de digitação 
-	// usando seu próprio cursor.
-
-	// 65 - kgws terminal put char.
-	// Esse é um serviço oferecido pelo kgws para imprimir caracteres
-	// na tela de um terminal. Lembrando que a libc não imprime, apenas
-	// coloca os caracteres dentro dos arquivos.
-	
-	// #bugbug
-	// Então nesse momento a libc deveria apenas fazer isso. Colocar
-	// o char dentro do arquivo.
-	// A aplicativo terminal virtual em ring3 deverá imprimir
-	// as coisas na tela usando os recursos do servidor kgws ou outro.
-	
-	
-	// printf deve sempre funcionar no modo normal
-	// outra funçao semelhante `a printf devepode ser criada para o modo draw
-	// esse nova printf ser'a s'o uma vers~ao diferente do wrapper da
-	// printf. todo o resto deve permanecer igual, mudando tamb'em 
-	// o final da funçao onde pintaremos o char na tela ao inv'es de 
-	// colocar no arquivo.
-
-
-int putchar (int ch){
-
-
-    if ( __libc_output_mode == LIBC_DRAW_MODE ){
-
-
-        // #todo: 
-        // Print a char on to console number 0.
-        // IN: ch, virtual,console id.
-
-        gramado_system_call ( 65, 
-            (unsigned long) ch,   // ch
-            (unsigned long) 0,    // console id. 0.
-            (unsigned long) 0 );
-
-
-    } else if ( __libc_output_mode == LIBC_NORMAL_MODE ){
-
-        fputc ( ch, stdout );
-    };
-
-    return (int) ch;
-}
-
-
 
 // Setup libc mode.
 void libc_set_output_mode ( int mode ){
@@ -1770,32 +1703,6 @@ int getchar(void)
 */
 
 
-/*
- *************************************
- * getchar:
- *       O kernel pega no stdin que é a fila do teclado.
- *       Isso funciona.
- */
-
-int getchar (void){
-
-    int Ret = 0;
-
-	// #todo: 
-	// ? Já temos uma função para essa chamada ? 137.
-
-Loop:
-
-    Ret = (int) gramado_system_call ( 137, 0, 0, 0 ); 
-
-    if (Ret > 0)
-    {
-        return (int) Ret;    
-    }
-
-
-    goto Loop;
-}
 
 
 /*
@@ -1826,13 +1733,6 @@ void stdioInitialize ()
     int i;
     
  
-	//Os caracteres são colocados em stdout.
-    //__libc_output_mode = LIBC_NORMAL_MODE;
-
-	//Os caracteres são pintados na tela.
-	__libc_output_mode = LIBC_DRAW_MODE;
-
-
     //
     // Pointers.
     //
@@ -1852,9 +1752,9 @@ void stdioInitialize ()
     stderr->_p = stderr->_base;
     
     // cnt
-    stdin->_cnt  = BUFSIZ;
-    stdout->_cnt = BUFSIZ;
-    stderr->_cnt = BUFSIZ;
+    //stdin->_cnt  = BUFSIZ;
+    //stdout->_cnt = BUFSIZ;
+    //stderr->_cnt = BUFSIZ;
 
     
     //#todo
@@ -1875,6 +1775,26 @@ void stdioInitialize ()
     stdin->_file = 0;
     stdout->_file = 1;
     stderr->_file = 2;
+    
+	__libc_output_mode = LIBC_DRAW_MODE;
+	
+
+      // #importante:
+      // Vamos conectar o processo filho ao processo pai
+      // atraves das ttys dos processos.
+      // o processo pai eh o terminal.
+      // #bugbug:
+      // Esse metodo nao funcionara no caso
+      // do processo filho do shell
+      
+      gramado_system_call ( 267,
+           getpid(),    //master
+           getppid(),   //slave pai(terminal)
+           0 );
+
+
+
+    __libc_tty_id = (int) gramado_system_call ( 266, getpid(), 0, 0 );        
 
     //??
     prompt_clean();
@@ -1897,12 +1817,11 @@ int __fflush_stdout(void)
 */
 
 
-/*
-int __fflush_stderr(void) 
-{
-  return fflush(stderr);
-}
-*/
+
+//
+// ================= low level =====================
+//
+
 
 
 /* 
@@ -1913,57 +1832,318 @@ int __fflush_stderr(void)
  * retorna 0 se funcionar e retorna EOF se falhar.
  */
 
-int fflush ( FILE *stream ){
+int fflush (FILE *stream)
+{
+	// #todo:
+	// Se for NULL faz flush em todos.
 
-    if ( (void *) stream == NULL )
-        return EOF;
-        
-	// fflush deve limpar o buffer agora.
-    return (int) gramado_system_call ( 233, 
-                     (unsigned long) stream, 
-                     (unsigned long) stream, 
-                     (unsigned long) stream ); 
-
-
-    /*
-	//fflush deve mostrar no terminal o conteúdo agora
-    // Pegamos o pid do terminal e enviamos uma 
-	
-	// notificação de evento para ele.
-	int terminal___PID = -1;
-	unsigned long message_buffer[5];
-	
-	//SÓ NOTIFICAREMOS O TERMINAL SE TIVERMOS NO MODO NORMAL
-	if ( __libc_output_mode == LIBC_NORMAL_MODE )
-	{
-	    terminal___PID = (int) system_call ( 1004, 0, 0, 0 ); 
-	
-	    if ( terminal___PID < 0 )
-	    {
-			//libc_set_output_mode (LIBC_DRAW_MODE);
-		    //printf_draw ("fprintf:fail\n");
-		    return -1;
-	    }
-		
-        //if (pid<0)
-		    //return -1;
-	
-	    message_buffer[0] = (unsigned long) 0;    //window
-	    message_buffer[1] = (unsigned long) 100;  //message;  //MSG_TERMINALCOMMAND
-	    message_buffer[2] = (unsigned long) 2008; //long1;    //2008  
-	    message_buffer[3] = (unsigned long) 2008; //long2;    //2008
-	    //...
-
-	    //notifica o terminal de que ele tem mensagens.
-	    return (int) system_call ( 112 , (unsigned long) &message_buffer[0], 
-	                 (unsigned long) terminal___PID, (unsigned long) terminal___PID );
-
-        //#todo temos que usar essa chamada ao invés dessa rotina acima.
-        //ok
-	    // __SendMessageToProcess ( terminal___PID, NULL, MSG_TERMINALCOMMAND, 2008, 2008 );
-	}
-	*/
+    return (int) __fflush (stream);
 }
+
+
+// real flush.
+int __fflush (FILE *stream)
+{
+
+     //debug_print( "__fflush:\n");
+	
+    // FIXME: fflush(NULL) should flush all open output streams.
+    //ASSERT(stream);
+    if ( (void *) stream == NULL ){
+        debug_print( "__fflush: stream\n");
+        return -1;
+    }
+ 
+    //if ( !stream->_w )
+        //return 0;
+        
+        
+    if ( (void *) stream->_base == NULL ){
+        debug_print( "__fflush: _base\n");
+        return -1;
+    }   
+
+
+    if ( stream->_w <= 0 ){  
+        stream->_w = 0; 
+        debug_print( "__fflush: _w\n");
+        return -1;
+    } 
+               
+    
+    // #todo: 
+    // This is the desired way.           
+    // int rc = write ( fileno(stream), stream->_base, stream->_w );
+
+
+    // ISSO FUNCIONA.
+    // vamos testar no console virtual.
+    int rc = write_VC ( 0, stream->_base, stream->_w ); 
+ 
+ 
+    stream->_w = 0;
+    //stream->error = 0;
+    //stream->eof = 0;
+    //stream->have_ungotten = false;
+    //stream->ungotten = 0;
+    
+    if (rc < 0){
+		
+        //stream->error = errno;
+        return EOF;
+    }
+
+    return 0;
+}
+
+int __getc ( FILE *stream ){
+
+    int ch = 0;
+
+
+    if ( (void *) stream == NULL ){
+        printf ("__getc: stream struct fail\n");
+        return EOF;
+    }else{
+
+		 //(--(p)->_r < 0 ? __srget(p) : (int)(*(p)->_p++))
+		
+		//#fim.
+		//cnt decrementou e chegou a zero.
+		//Não há mais caracteres disponíveis entre 
+		//stream->_ptr e o tamanho do buffer.
+		
+		if ( stream->_cnt <= 0 )
+		{
+			stream->_flags = (stream->_flags | _IOEOF); 
+			stream->_cnt = 0;
+			
+		    //printf ("#debug: fgetc: $\n");
+			
+			//isso funciona, significa que a estrutura tem ponteiro e base validos.
+			//printf("show fgetc:: %s @\n", stream->_base );
+		    //refresh_screen();
+			
+			return EOF;
+		};
+
+		//#debug
+		//nao podemos acessar um ponteiro nulo... no caso endereço.
+		
+		if ( stream->_p == 0 )
+		{
+			printf ("__getc: stream struct fail\n");
+		    //refresh_screen();
+			return EOF;
+			
+		}else{
+			
+			// #obs: 
+			// Tem que ter a opção de pegarmos usando o posicionamento
+			// no buffer. O terminal gosta dessas coisas.
+			
+		    //Pega o char no posicionamento absoluto do arquivo
+		    ch = (int) *stream->_p;
+				
+            stream->_p++;
+            stream->_cnt--;
+
+		    return (int) ch;
+		
+		}
+		//fail
+    };
+
+
+	//#debug
+    //printf ("fgetc: $$\n");
+	//refresh_screen();
+
+     return EOF;
+}
+
+int __putc (int ch, FILE *stream)
+{   
+     //debug_print( "__serenity_fputc:\n");
+     
+    //assert (stream);
+    //assert (stream->_w < stream->_lbfsize);
+    
+    if ( (void *) stream == NULL )
+    {   
+       debug_print( "__putc: stream\n");
+       return -1;
+    } 
+
+    //if (stream->_w > stream->_lbfsize)
+    if (stream->_w > BUFSIZ)
+    {   
+       debug_print( "__putc: overflow\n");
+       return -1;
+    } 
+    
+    stream->_base[stream->_w++] = ch;
+
+    if (stream->_w >= BUFSIZ)
+    {
+        fflush (stream);
+        return ch;
+    }
+    
+    //if (stream->_flags == _IONBF || (stream->_flags == _IOLBF && ch == '\n'))
+    if ( ch == '\n')
+    {    
+		fflush (stream);
+		return ch;
+    }
+    
+
+   //debug_print( "__serenity_fputc: $\n");
+
+    //if (stream->eof || stream->error)
+        //return EOF;
+    
+    return ch;
+}
+
+
+//
+// ============= Root =================
+//
+
+
+int getc (FILE *stream)
+{
+	// low level
+    return (int) __getc (stream);
+}
+
+int putc (int ch, FILE *stream)
+{
+	// low level
+    return (int) __putc (ch, stream);
+}
+
+
+int fgetc ( FILE *stream )
+{
+    return (int) getc (stream);
+}
+
+
+int fputc ( int ch, FILE *stream )
+{
+    return (int) putc (ch, stream);
+}
+
+//
+// Root 2
+//
+
+
+int getchar (void)
+{
+    return (int) getc (stdin);
+}
+
+int putchar (int ch)
+{
+    return (int) putc ( (int) ch, stdout );
+}
+
+//
+// Root 3
+//
+
+char *gets (char *s)
+{
+	register c;
+	register char *cs;
+
+	cs = s;
+	while ((c = getchar()) != '\n' && c >= 0)
+		*cs++ = c;
+	if (c<0 && cs==s)
+		return(NULL);
+	*cs++ = '\0';
+	return(s);
+}
+
+int puts (const char *s)
+{
+	register c;
+
+	while (c = *s++)
+		putchar(c);
+	return(putchar('\n'));
+}
+
+
+//
+// Root 4
+//
+
+
+//s n iop
+char *fgets (char *s, int size, FILE *stream)
+{
+	register c;
+	register char *cs;
+
+	cs = s;
+	while (--size>0 && (c = getc(stream))>=0) {
+		*cs++ = c;
+		if (c=='\n')
+			break;
+	}
+	if (c<0 && cs==s)
+		return(NULL);
+	*cs++ = '\0';
+	return(s);
+}
+
+//s iop
+int fputs ( const char *s, FILE *stream )
+{
+	register r;
+	register c;
+
+	while (c = *s++)
+		r = putc(c,stream);
+	return(r);
+}
+
+//
+// Root 5
+//
+
+
+int getw (FILE *stream)
+{
+	register i;
+
+	i = getc(stream);
+	
+	//#todo
+	//if (stream->_flags&_IOEOF)
+		//return(-1);
+		
+	if (stream->eof == 1 )
+		return EOF;
+		
+		
+	return(i | (getc(stream)<<8));
+}
+
+
+//#test
+int putw (int w, FILE *stream)
+{
+	putc (w, stream);
+	putc (w>>8, stream);
+}
+
+
 
 
 
@@ -2093,22 +2273,6 @@ int fputs(const char *str, FILE *fp)
 */
 	
 
-/*
- ********************************
- * fputs:      
- */
-
-int fputs ( const char *str, FILE *stream ){
-
-    if ( (void *) stream == NULL )
-        return EOF;
-
-    return (int) gramado_system_call ( 235, 
-                     (unsigned long) str, 
-                     (unsigned long) stream, 
-                     (unsigned long) stream ); 
-}
-
 
 
 //#todo: testar.
@@ -2180,69 +2344,7 @@ char *fgets(char *s, int count, FILE *fp)
 */
 
 
-/*
- *********************************
- * gets:
- *     gets() devolve um ponteiro para string
- */
  
-char *gets (char *s){
-
-    int ch;
-
-    int t = 0;
-    char *p;
-
-	//printf("gets:\n");
-
-    //salva
-    p = s; 
-
-    while (1)
-    {
-        ch = (int) getchar ();
-		
-        if ( ch != -1 )
-		{
-            			
-			switch (ch) 
-		    {
-				/* termina a string */
-			    case '\n':
-				case VK_RETURN: 
-                    s[t] =  (char) '\0'; 
-                    goto done;
-				    break;
-            
-                case '\b':
-				case VK_BACKSPACE:
-			        if(t > 0){ 
-					    t--;
-					};
-                    break;
-            
-			    default:
-                    //s[t] = (char) ch;
-					//t++;
-					break;
-            };
-			
-			printf ("%c",ch);
-			s[t] = (char) ch;
-			t++;
-			
-		};
-		
-		asm ("pause");
-    };
-
-
-done:
-
-    //s[t] = (char) '\0';
-
-    return (char *) p;
-}
 
 
 
@@ -2442,28 +2544,6 @@ int fgetc ( FILE *stream ){
 }
 */
 
-// usado pelo terminal ??
-int fgetc ( FILE *stream )
-{
-    if ( (void *) stream == NULL )
-       return EOF;
-
-    // #todo
-    /*
-    if ( !__validfp(stream) )
-    {
-        errno = EINVAL;
-        return EOF;
-    }
-    */    
-    
-    // se gramado
-    return (int) __gramado__getc(stream);
-    
-
-    // se glibc
-    //return __getc(stream);
-}
 
 
 
@@ -2680,15 +2760,6 @@ fputc(c, fp)
 */
 
 
-// interna
-// #todo: criar essa rotina na libc.
-void debug_print (char *string)
-{
-    gramado_system_call ( 289, 
-        (unsigned long) string,
-        (unsigned long) string,
-        (unsigned long) string );
-}
 
 
 //
@@ -2802,36 +2873,6 @@ int __serenity_putc (int ch, FILE *stream)
 }
 
 
-/*
- *****************************************
- * fputc:
- * 
- *     Isso é chamado por putchar quando a libc está no modo normal.
- */
-
-int fputc ( int ch, FILE *stream ){
-
-
-    // #todo
-    /*
-    if ( !__validfp(stream) )
-    {
-        errno = EINVAL;
-        return EOF;
-    }
-    */
-
-    if ( (void *) stream == NULL )
-       return EOF;
-
-    // se gramado.
-    // Exibe através do console virtual.
-    return __serenity_putc (ch, stream);
-
-    // glibc
-    // Coloca numa stream em ring3.
-    //return __putc(c, stream);
-}
 
 
 
@@ -3631,14 +3672,13 @@ kvprintf ( char const *fmt,
 		};
 	};
 #undef PCHAR
-};
+}
 
 
 static void xxxputchar ( int c, void *arg ){
-	
+
 	/* add your putchar here */
-	
-	//printf("%c",c);
+
     putchar ( (int) c );
 }
 

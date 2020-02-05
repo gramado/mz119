@@ -21,6 +21,14 @@
 #include <stdarg.h> 
 
 
+
+
+// tty id desse processo.
+// Usado na inicialização da biblioteca.
+// See: stdio.c:
+int __libc_tty_id;
+
+
 //
 // # Modes #
 //
@@ -665,7 +673,7 @@ zzz __putc (c, stream)
 
 
 
-
+void debug_print (char *string);
 
 //===========================================
 // ## Protótipos do padrão C. ##
@@ -724,7 +732,7 @@ int fileno ( FILE *stream );
  */ 
  
 FILE *fopen( const char *filename, const char *mode ); 
-int fflush( FILE *stream ); 
+
 int fclose(FILE *stream); 
 //#define fileno(p)   ((p)->fd)
  
@@ -733,7 +741,7 @@ int fclose(FILE *stream);
  * Normal output.
  */ 
  
-int puts(const char *str); 
+
 
 //#todo: testar.
 //Credits: Sombra OS.
@@ -768,7 +776,7 @@ int stderr_printf (const char *format, ...);
 void perror(const char *str);
 
 
-int printf(const char *format, ...); 
+int printf (const char *format, ...); 
 
 //tradicional, incompleta; não funciona,
 //estamos implementando uma printf padrão tradicional.
@@ -814,37 +822,88 @@ int fscanf(FILE *stream, const char *format, ... );
 
 int sscanf(const char *str, const char *format, ...);
  
-/*
- * Character Input and Output Functions
- */
-
-
-int __gramado__getc ( FILE *stream );
-
-
-int fgetc ( FILE *stream );
-int ungetc ( int c, FILE *stream );
-long ftell (FILE *stream);
-
-
-#define getc fgetc
 
 
 
-int __serenity_fflush ( FILE *stream);
-int __serenity_fputc (int ch, FILE *stream);
-int __serenity_putc (int ch, FILE *stream);
+//
+// low level
+//
 
+
+int fflush (FILE *stream); 
+int __fflush (FILE *stream);
+int __getc ( FILE *stream );
+int __putc (int ch, FILE *stream);
+
+
+//
+// Root.
+//
+
+int getc (FILE *stream);
+int putc (int ch, FILE *stream);
+int fgetc (FILE *stream);
 int fputc (int ch, FILE *stream);
 
+//
+// Root 2
+//
 
-char *gets (char *s);
 int getchar (void);
 int putchar (int ch);
 
 
+
+//
+// Root 3
+//
+
+char *gets (char *s);
+int puts (const char *s);
+
+
+//
+// Root 4
+//
+
+char *fgets (char *s, int size, FILE *stream);
+int fputs ( const char *s, FILE *stream );
+
+
+//
+// Root 5
+//
+
+int getw (FILE *stream);
+int putw (int w, FILE *stream);
+
+
+
+//saved
+int __gramado__getc ( FILE *stream );
+int __serenity_fflush ( FILE *stream);
+int __serenity_fputc (int ch, FILE *stream);
+int __serenity_putc (int ch, FILE *stream);
+
+
+
+int ungetc ( int c, FILE *stream );
+long ftell (FILE *stream);
+
+
+
+
+
+
+
+
+
+
+
+
+
 //#define getc(p)     fgetc(p)
-#define putc(x, p)  fputc(x, p)
+
 //#define getchar()   getc(stdin)
 //#define putchar(x)  putc((x), stdout)
 

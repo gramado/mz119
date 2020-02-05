@@ -10,35 +10,32 @@
 #include "shell.h"
 
 
-void cd_buitins (){
-	
-	printf("cd_buitins:\n");
-};
+void cd_buitins ()
+{
+    printf ("cd_buitins:\n");
+}
 
 
 //cls
-void cls_builtins (){
-	
-    shellClearScreen();
-};
+void cls_builtins ()
+{
+    shellClearScreen ();
+}
 
 
 void copy_builtins()
 {
-	
-};
+}
 
 
 void date_builtins()
 {
-	
-};
+}
 
 
 void del_builtins()
 {
-	
-};
+}
 
 
 void dir_builtins (){
@@ -110,10 +107,16 @@ int getgid_builtins (){
 }
 
 
-void help_builtins (int arg){
-	
-	printf ("gdeshell:\n");
-	
+void help_builtins (int arg)
+{
+    putc('*',stdout);
+    putc(' ',stdout);
+    fflush (stdout);    
+    
+    printf ("gdeshell: cls, ls, reboot \n");
+    return;
+    
+    /*
 	switch (arg)
 	{
 		//all
@@ -130,6 +133,7 @@ void help_builtins (int arg){
 			shellHelp ();
 			break;
 	};
+	*/
 }
 
 

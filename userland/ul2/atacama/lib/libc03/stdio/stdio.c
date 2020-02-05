@@ -2363,11 +2363,11 @@ int fflush (FILE *stream)
 {
 	// #todo:
 	// Se for NULL faz flush em todos.
-	
-	return (int) __fflush (stream);
+
+    return (int) __fflush (stream);
 }
 
-// Flush.
+// real flush.
 int __fflush (FILE *stream)
 {
 
@@ -2391,6 +2391,7 @@ int __fflush (FILE *stream)
 
 
     if ( stream->_w <= 0 ){   
+        stream->_w = 0; 
         debug_print( "__fflush: _w\n");
         return -1;
     } 
@@ -2430,7 +2431,7 @@ int __getc ( FILE *stream ){
 
 
     if ( (void *) stream == NULL ){
-        printf ("fgetc: stream struct fail\n");
+        printf ("__getc: stream struct fail\n");
         return EOF;
     }else{
 
@@ -2460,7 +2461,7 @@ int __getc ( FILE *stream ){
 		
 		if ( stream->_p == 0 )
 		{
-			printf ("#debug: fgetc: stream struct fail\n");
+			printf ("__getc: stream struct fail\n");
 		    //refresh_screen();
 			return EOF;
 			
@@ -2553,21 +2554,11 @@ int putc (int ch, FILE *stream)
 }
 
 
-/*
- *********************************
- * fgetc:
- */
-
 int fgetc ( FILE *stream )
 {
     return (int) getc (stream);
 }
 
-
-/*
- *****************************************
- * fputc:
- */
 
 int fputc ( int ch, FILE *stream )
 {
@@ -2584,12 +2575,6 @@ int getchar (void)
 {
     return (int) getc (stdin);
 }
-
-/*
- ****************** 
- * putchar
- * 
- */
 
 int putchar (int ch)
 {

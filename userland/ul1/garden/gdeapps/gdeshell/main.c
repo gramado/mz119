@@ -1015,8 +1015,8 @@ shellProcedure ( struct window_d *window,
 				case VK_RETURN:
 				    
 					//#test
-					printf("\r");
-					printf("\n");
+					//printf("\r");
+					//printf("\n");
 				
 				    input ('\0'); 
 					
@@ -1714,6 +1714,10 @@ NewCmdLine:
 
     if ( *c == '\0' )
     {
+        //printf ("empty line\n");
+        printf ("\n");
+        fflush(stdout);
+        rewind(stdout);
         goto exit_cmp;
     }
 
@@ -2654,11 +2658,12 @@ do_compare:
         printf ("~hd\n");
         goto exit_cmp;
     }
-	
+ 
 
 	// help
 	// ?
 	// Mostra ajuda.
+ 
     if ( strncmp( prompt, "HELP", 4 ) == 0 || 
          strncmp( prompt, "help", 4 ) == 0 || 
          strncmp( prompt, "?", 1 ) == 0 )
@@ -2668,7 +2673,8 @@ do_compare:
 		
 		if( token == NULL )
 		{
-			help_builtins(1);
+			help_builtins (1);
+
 		}else{
 
 			if ( strncmp( (char*) tokenList[i], "--all", 5 ) == 0 )
@@ -5130,28 +5136,37 @@ void shellTree (){
 void shellPrompt (){
 
     int i;
-	
-	// Linpando o buffer de entrada.
-	
-	for ( i=0; i<PROMPT_MAX_DEFAULT; i++ )
-	{
-		prompt[i] = (char) '\0';
-	}
-	
+
+    // Linpando o buffer de entrada.
+
+    for ( i=0; i<PROMPT_MAX_DEFAULT; i++ ){
+        prompt[i] = (char) '\0';
+    }
+
     prompt[0] = (char) '\0';
-	prompt_pos = 0;
+    prompt_pos = 0;
     prompt_status = 0;
-	prompt_max = PROMPT_MAX_DEFAULT;  
+    prompt_max = PROMPT_MAX_DEFAULT;  
+
 
     //old
     //printf ("\n");
     //printf ("[%s]", current_workingdiretory_string );	
     //printf ("%s ", SHELL_PROMPT );
 
-    printf ("\n");
+    //printf ("\n");
     //printf ("[%s", current_user_name );
     //printf ("@%s]", current_host_name );
-    printf ("%s ", SHELL_PROMPT );
+    //printf ("%s ", SHELL_PROMPT );
+    
+    
+    //rewind (stdout);
+    //printf ("$ ");
+    //fflush (stdout);
+    
+    putc('$',stdout);
+    putc(' ',stdout);
+    fflush (stdout);    
 }
 
 
@@ -5716,8 +5731,12 @@ void shellInsertNextChar (char c){
 
 	// refresh
     //shellRefreshCurrentChar ();
+    
+    
+    // #bugbug
+    // A rotina de libc só vai imprimir quando enche o buffer.
     printf ("%c", LINES[textCurrentRow].CHARS[textCurrentCol] );
-
+    fflush (stdout);
 
 	// update
 	textCurrentCol++;
@@ -5936,7 +5955,7 @@ void shellShowWindowInfo (){
 	printf ("\n");	
 	printf (" # shellShowWindowInfo #\n");
 	
-	printf ("mainWindow={%x}", shell_info.main_window );
+	printf ("mainWindow={%x}\n", shell_info.main_window );
 		
 	//#bugbug 
 	//temos um problema aqui.
@@ -6197,7 +6216,7 @@ void shellTaskList (){
     printf("%d",PID);
 	X=8;
 	shellSetCursor(X,Y);
-	printf("...");
+	printf("...\n");
 	
     //...
 }
@@ -7502,7 +7521,7 @@ void shellRefreshVisibleArea (){
 	
 	if ( textTopRow > textBottomRow )
 	{
-		printf("shellRefreshVisibleArea: textTopRow fail");
+		printf("shellRefreshVisibleArea: textTopRow fail\n");
 	}
 	
 	//toda a área visível.
@@ -8298,8 +8317,9 @@ get_input_filename:
 	
 noArgs:		
 	
-    printf ("gdeshell: noArgs\n");
-	
+    printf ("gdeshell: noArgs \n");
+
+
 	//ok
     //printf ("gdeshell: *breakpoint");
     //while (1){}
@@ -8354,7 +8374,7 @@ noArgs:
 	
 	if ( (void *) hWindow == NULL )
 	{
-		printf ("shellCreateMainWindow FAIL!");
+		printf ("shellCreateMainWindow FAIL!\n");
 		gde_exit_critical_section ();
 		while (1){}
 	}
