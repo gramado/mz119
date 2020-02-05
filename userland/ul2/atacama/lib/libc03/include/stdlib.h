@@ -121,14 +121,13 @@ void *stdlib_system_call ( unsigned long ax,
 const char	*getprogname(void);
 void setprogname(const char *progname);
 
-int unlockpt(int fd);
 
-int getpt(void);
 
-int grantpt(int fd);
-
+// pseudo-terminal support.
 int posix_openpt (int flags);
-
+int grantpt(int fd);
+int unlockpt(int fd);
+int getpt(void);
 
 
 // The ptsname() function returns the name of the slave pseudoterminal
@@ -239,8 +238,6 @@ void srand (unsigned int seed);
 //Obs: Essa rotina existe na API e funciona. Se ela faz parte da lib C
 // então ela deve sair de lá vir pra cá.
 int system (const char *command);
-
-
 
 
 

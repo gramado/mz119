@@ -2030,6 +2030,12 @@ int grantpt(int fd)
 
 
 
+//POSIX.1-2001. 
+//unlockpt - unlock a pseudoterminal master/slave pair 
+int unlockpt(int fd)
+{ 
+	return -1; 
+}
 
 //getpt - open the pseudoterminal master (PTM) 
 //getpt() is glibc-specific; use posix_openpt(3) instead. 
@@ -2040,14 +2046,6 @@ int getpt(void)
 
 
 
-
-//POSIX.1-2001. 
-//unlockpt - unlock a pseudoterminal master/slave pair 
-int unlockpt(int fd)
-{ 
-	return -1; 
-}
-
 const char	*getprogname(void)
 {
 	return NULL;
@@ -2055,6 +2053,8 @@ const char	*getprogname(void)
 
 void setprogname(const char *progname)
 {}
+
+
 
 //
 // End.
