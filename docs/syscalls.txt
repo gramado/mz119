@@ -31,8 +31,8 @@
   
   
   unix  
-  16      sys_open                      syslib/libcore/unistd.c
-  17      sys_close
+  16      sys_open                      sci/sys/sys.c
+  17      sys_close                     sci/sys/sys.c
   18      sys_read                      sci/sys/sys.c
   19      sys_write                     sci/sys/sys.c
   

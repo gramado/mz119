@@ -212,7 +212,7 @@ int permission (file *f)
 
 
 // 18
-int sys_read (unsigned int fd,char *buf,int count)
+int sys_read (unsigned int fd, char *buf, int count)
 {
     struct process_d *__P;
     
@@ -560,7 +560,8 @@ int sys_getppid (void){
  */
  
 int sys_fork (void){
-	return (int) fork ();
+
+    return (int) fork ();
 }
 
 
