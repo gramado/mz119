@@ -16,6 +16,44 @@ int sys_serial_debug_printk ( char *s )
 }
 
 
+/*
+ * sys_ioctl:
+ *     system call implementation of ioctl().
+ *     Executa um dado comando em um dado dispositivo.
+ */
+
+int sys_ioctl ( int fd, unsigned long request, char *arg )
+{
+    if ( fd < 0 )
+        return -1;
+
+    return -1;
+}
+
+
+int sys_fcntl ( int fd, int cmd, ... )
+{
+
+    if ( fd < 0 )
+        return -1;
+    
+    if ( cmd < 0 )
+        return -1;
+    
+    
+    switch(cmd)
+    {
+        // lock operation.
+        case F_SETLK:
+            break;
+            
+        default:
+            break;
+    };
+
+
+    return -1; //#todo
+}
 
 
 //#??? isso não pertence à fcntl.c ?

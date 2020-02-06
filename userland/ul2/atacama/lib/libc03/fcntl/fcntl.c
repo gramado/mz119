@@ -16,12 +16,28 @@
  *
  */
 
-int fcntl ( int fd, int cmd, ... ){
+// Isso é um wrapper usando fcntl()
 
-    //if (cmd == F_GETFD || cmd == F_SETFD) { return 0; }
+int fcntl ( int fd, int cmd, ... )
+{
 
-	return -1; //#todo
+    if (fd<0) {
+        return -1;
+    }
+    
+    /*
+    va_list ap;
+    va_start(ap, options);
+    //x = va_arg (ap, unsigned);
+    va_end(ap);
+    
+    return gramado_system_call ( ?, fd, cmd,  0 );
+    */
+  
+    return -1; //#todo
 }
+
+
 
 
 
@@ -155,4 +171,11 @@ int creat (const char *pathname, mode_t mode)
 }
 
 
+
+// it's a wrapper.
+// lock operation using fcntl()
+int flock (int fd, int operation)
+{
+    return -1;
+}
 

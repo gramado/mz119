@@ -103,8 +103,8 @@ int open (const char *pathname, int flags, mode_t mode);
 int creat (const char *pathname, mode_t mode);
 
 
-
-
+// #bugbug: Maybe it1s defined in 'sys/file.h'
+int flock (int fd, int operation); 
 
 
 #endif /* _FCNTL_H */

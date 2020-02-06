@@ -1040,7 +1040,7 @@ void *gde_extra_services ( unsigned long number,
 
     // ioctl ()
     // IN: fd, request, arg
-    // See: kernel/sysio/io.c    
+    // See: sci/sys/sys.c    
     
     if ( number == 8000 )
     {
@@ -1049,7 +1049,13 @@ void *gde_extra_services ( unsigned long number,
                             (char *) arg4 );
     }
 
-
+    // fcntl()
+    // See: sci/sys/sys.c    
+    if ( number == 8001 )
+    {
+        return NULL;
+        //return (void *) sys_fcntl ( ... #todo );
+    }
 
     //test
     //raise window.

@@ -314,7 +314,8 @@
   
   7000    socket
   
-  8000    sys_ioctl                     sysio/io.c
+  8000    sys_ioctl                     sci/sys/sys.c
+  8001    sys_fcntl                     sci/sys/sys.c
   
   9700    raise_window
   
