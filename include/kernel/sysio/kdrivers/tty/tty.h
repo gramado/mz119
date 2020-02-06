@@ -390,14 +390,14 @@ tty_write_ttyList ( unsigned int channel,
 
 
 int 
-__tty_read_ttyList ( struct tty_d *tty, 
-           char *buffer, 
-           int nr );
+__tty_read ( struct tty_d *tty, 
+             char *buffer, 
+             int nr );
 
 int 
-__tty_write_ttyList ( struct tty_d *tty, 
-            char *buffer, 
-            int nr );
+__tty_write ( struct tty_d *tty, 
+              char *buffer, 
+              int nr );
 
 
 

@@ -75,11 +75,11 @@ tty_write_ttyList ( unsigned int channel,
 }
 
             
-// reads into ttyList[] 
+
 int 
-__tty_read_ttyList ( struct tty_d *tty, 
-           char *buffer, 
-           int nr )
+__tty_read ( struct tty_d *tty, 
+             char *buffer, 
+             int nr )
 {
 
 
@@ -89,7 +89,7 @@ __tty_read_ttyList ( struct tty_d *tty,
     
     
     if ( nr <= 0 ){
-        printf ("__tty_read_ttyList: nr \n");
+        printf ("__tty_read: nr \n");
         refresh_screen();
         return -1;
     }
@@ -106,7 +106,7 @@ __tty_read_ttyList ( struct tty_d *tty,
     
     
     if ( (char *) buffer == NULL ){
-         panic ("__tty_read_ttyList: invalid buffer \n");
+         panic ("__tty_read: invalid buffer \n");
     }
     
  
@@ -123,7 +123,7 @@ __tty_read_ttyList ( struct tty_d *tty,
             
     if ( (void *) tty->_buffer == NULL )
     {
-         printf ("__tty_read_ttyList: Invalid tty _buffer\n");
+         printf ("__tty_read: Invalid tty _buffer\n");
          refresh_screen();
          return -1;
     }
@@ -137,7 +137,7 @@ __tty_read_ttyList ( struct tty_d *tty,
     
 
     if ( (void *) tty->_buffer->_base == NULL ){
-         printf ("__tty_read_ttyList: invalid _base \n");
+         printf ("__tty_read: invalid _base \n");
          refresh_screen();
          return -1;
     }
@@ -156,7 +156,7 @@ __tty_read_ttyList ( struct tty_d *tty,
 
     // Copia da tty de leitura para o buffer indicado pelo aplicativo.
            
-    printf ("__tty_read_ttyList: Copiando para o buffer. \n");
+    printf ("__tty_read: Copiando para o buffer. \n");
     refresh_screen ();
  
     memcpy ( (void *) buffer, (const void *) tty->_buffer->_base, nr ); 
@@ -178,9 +178,9 @@ __tty_read_ttyList ( struct tty_d *tty,
 // escreve em tty->stdout->_base
 
 int 
-__tty_write_ttyList ( struct tty_d *tty, 
-            char *buffer, 
-            int nr )
+__tty_write ( struct tty_d *tty, 
+              char *buffer, 
+              int nr )
 {
 
     if ( (void *) tty == NULL )
@@ -189,7 +189,7 @@ __tty_write_ttyList ( struct tty_d *tty,
     
 
     if ( nr <= 0 ){
-        printf ("__tty_write_ttyList: nr \n");
+        printf ("__tty_write: nr \n");
         refresh_screen();
         return -1;
     }
@@ -208,7 +208,7 @@ __tty_write_ttyList ( struct tty_d *tty,
     
     
     if ( (char *) buffer == NULL ){
-         panic ("__tty_write_ttyList: invalid buf \n");
+         panic ("__tty_write: invalid buf \n");
     }
 
 
@@ -222,7 +222,7 @@ __tty_write_ttyList ( struct tty_d *tty,
     // O arquivo da tty de origem da transferência.
 
     if ( (void *) tty->_buffer == NULL ){
-        printf ("__tty_write_ttyList: Invalid tty _buffer\n");
+        printf ("__tty_write: Invalid tty _buffer\n");
         refresh_screen();
         return -1;
     }
@@ -235,7 +235,7 @@ __tty_write_ttyList ( struct tty_d *tty,
     // Essa é a base do arquivo da tty de origem.
 
     if ( (void *) tty->_buffer->_base == NULL ){
-        printf ("__tty_write_ttyList: * invalid _base \n");
+        printf ("__tty_write: * invalid _base \n");
         refresh_screen();
         return -1;
     }
@@ -247,7 +247,7 @@ __tty_write_ttyList ( struct tty_d *tty,
 
     // Copiando do buffer para o arquivo da tty de origem.
 
-    printf ("__tty_write_ttyList: Copiando para tty->_buffer->_base \n");
+    printf ("__tty_write: Copiando para tty->_buffer->_base \n");
     refresh_screen();
 
     memcpy ( (void *) tty->_buffer->_base, (const void *) buffer, nr ); 
