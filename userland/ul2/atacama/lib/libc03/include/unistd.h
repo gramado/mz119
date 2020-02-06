@@ -236,6 +236,10 @@ ssize_t write_ttyList (int fd, const void *buf, size_t count);
 ssize_t read_ttyList (int fd, const void *buf, size_t count);
 
 
+// tty from open file list.
+ssize_t write_tty (int fd, const void *buf, size_t count);
+ssize_t read_tty (int fd, const void *buf, size_t count);
+
 //
 // VC
 //

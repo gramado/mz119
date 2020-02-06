@@ -186,7 +186,7 @@ void *gde_extra_services ( unsigned long number,
     if (number == 268)
     {
            // IN: fd, buf, count.         
-           return (void *) tty_read ( (unsigned int) arg2,  //channel 
+           return (void *) tty_read_ttyList ( (unsigned int) arg2,  //channel 
                                (char *) arg3,                //buf
                                (int) arg4 );                 //nr
     }
@@ -195,17 +195,11 @@ void *gde_extra_services ( unsigned long number,
     if (number == 269)
     {
         // IN: fd, buf, count.         
-        return (void *) tty_write ( (unsigned int) arg2,  //channel 
+        return (void *) tty_write_ttyList ( (unsigned int) arg2,  //channel 
                             (char *) arg3,                //buf
                             (int) arg4 );                 //nr
     }
 
-
-    //
-    // Terminal support
-    //
-    
-    // 270 ~ 276
 
     // Create a terminal given the window.
     // IN: window, father's pid.
@@ -224,8 +218,25 @@ void *gde_extra_services ( unsigned long number,
     }
 
 
+    // channel is a file descriptor in the file list of the current process.
+    if (number == 272)
+    {
+           // IN: fd, buf, count.         
+           return (void *) tty_read ( (unsigned int) arg2,   //channel 
+                               (char *) arg3,                //buf
+                               (int) arg4 );                 //nr
+    }
 
-    // more terminal stuff.
+    // channel is a file descriptor in the file list of the current process.
+    if (number == 273)
+    {
+        // IN: fd, buf, count.         
+        return (void *) tty_write ( (unsigned int) arg2,  //channel 
+                            (char *) arg3,                //buf
+                            (int) arg4 );                 //nr
+    }
+
+
 
 
     if (number == 277 )
@@ -751,13 +762,12 @@ void *gde_extra_services ( unsigned long number,
  
  
  
-	// t900
+	// 900
 	// Clona e executa o filho dado o nome do filho.
 	// Isso é usado pelo terminal virtual. (noraterm)
 	// See: See: ps/action/process.c
-	
-    if ( number == 900 )
-    { 
+
+    if ( number == 900 ){ 
         return (void *) do_clone_execute_process ( (char *) arg2 );
     }
 

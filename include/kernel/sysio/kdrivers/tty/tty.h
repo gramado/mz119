@@ -363,16 +363,27 @@ int tty_gets ( struct tty_d *tty, struct termios *termiosp );
 int tty_sets (struct tty_d *tty, int options, struct termios *termiosp );
 
 
-
+// channel is a fd in the file list of a process.
 int 
 tty_read ( unsigned int channel, 
+           char *buffer, 
+           int nr );
+ 
+// channel is a fd in the file list of a process.
+int 
+tty_write ( unsigned int channel, 
+            char *buffer, 
+            int nr );
+
+int 
+tty_read_ttyList ( unsigned int channel, 
            char *buffer, 
            int nr );
 
 
 // o descritor seleciona uma tty em ttyList e escreve em tty->stdout->_base
 int 
-tty_write ( unsigned int channel, 
+tty_write_ttyList ( unsigned int channel, 
             char *buffer, 
             int nr );
 

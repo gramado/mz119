@@ -37,21 +37,26 @@ static inline void spawnSetCr3 ( unsigned long value ){
  * spawn de thread.
  */
  
+// #todo
+// change to (int tid). 
+ 
 void KiSpawnTask (int id){
 
 
-    if ( id < 0 || id >= THREAD_COUNT_MAX)
-    {
+    if ( id < 0 || id >= THREAD_COUNT_MAX ){
         printf ("spawn-KiSpawnTask: TID=%d", id );
         die ();
     }
 
+    //
+    // do spawn.
+    //
 
     spawn_thread (id);
 
-    panic ("spawn-KiSpawnTask");
     
-	// No return!
+    // Not reached.
+    panic ("spawn-KiSpawnTask");
 }
 
 
@@ -68,17 +73,16 @@ void KiSpawnTask (int id){
 	// x86.
  
 void spawn_thread (int id){
-	
-	int Status;
-	
-	struct thread_d *Current;
+
+    int Status;
+
+    struct thread_d *Current;
     struct thread_d *spawn_Pointer;
 
 	// #todo: 
 	// Filtrar tid.
 
-    if ( id < 0 || id >= THREAD_COUNT_MAX)
-    {
+    if ( id < 0 || id >= THREAD_COUNT_MAX){
         printf ("spawn-spawn_thread: TID=%d", id );
         die ();
     }
@@ -99,33 +103,28 @@ void spawn_thread (int id){
 
     spawn_Pointer = (void *) threadList[id]; 
 
-    if ( (void *) spawn_Pointer == NULL )
-    {
-	    printf ("spawn_thread: Pointer TID={%d}", id );
-		die();
-		
+    if ( (void *) spawn_Pointer == NULL ){
+        printf ("spawn_thread: Pointer TID={%d}", id );
+        die ();
+
     } else {
 
-		// State ~ Checa o estado da thread.
-        
-		if ( spawn_Pointer->state != STANDBY )
-		{
+        // State ~ Checa o estado da thread.
+        if ( spawn_Pointer->state != STANDBY ){
             printf ("spawn_thread: State TID={%d}\n", id );
-		    die ();
-        };
+            die ();
+        }
 
-		
-	    // Saved ~ Se o contexto está salvo, é porque não é a primeira vez.
-		
-        if ( spawn_Pointer->saved == 1 )
-		{
+
+        // Saved ~ Se o contexto está salvo, é porque não é a primeira vez.
+        if ( spawn_Pointer->saved == 1 ){
             printf ("spawn_thread: Saved TID={%d}\n", id );
-		    die ();
-        };  
-		
-		
-	    // ??
-		// More checks ?
+            die ();
+        }
+
+
+        // ??
+        // More checks ?
     };
 
 
@@ -144,23 +143,24 @@ void spawn_thread (int id){
 		// Configura a variável global.
 
         current_thread = (int) spawn_Pointer->tid;    
-		
+
 		// Configura a próxima.
 		// A next será a antiga current salva anteriormente.
-		
-		spawn_Pointer->Next = (void *) Current;        
 
-		
+        spawn_Pointer->Next = (void *) Current;        
+
+
 		// * MOVEMENT 2 (Standby --> Running).
-		
+
+
         if ( spawn_Pointer->state == STANDBY )
-		{
-			spawn_Pointer->state = RUNNING;    
-			
-			queue_insert_data ( queue, (unsigned long) spawn_Pointer, 
-			    QUEUE_RUNNING );
-		};
-		
+        {
+            spawn_Pointer->state = RUNNING;    
+
+            queue_insert_data ( queue, 
+                (unsigned long) spawn_Pointer, QUEUE_RUNNING );
+        }
+
 		
 		// Destrava o mecanismo de taskswitch.
 		// Destrava o Scheduler.
@@ -176,9 +176,8 @@ void spawn_thread (int id){
 	// Se o status estiver diferente de RUNNING, então algo 
 	// deu errado na preparação.
 
-    if ( spawn_Pointer->state != RUNNING )
-    {
-        printf ("* spawn_thread: State TID={%d}\n", id );
+    if ( spawn_Pointer->state != RUNNING ){
+        printf ("spawn_thread: State TID={%d}\n", id );
         die ();
     }
 

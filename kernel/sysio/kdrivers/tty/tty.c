@@ -23,10 +23,10 @@
 unsigned long tty_table[4];  //os 4 consoles virtuais.
 
 
-
-
+            
+// reads into ttyList[] descriptor.
 int 
-tty_read ( unsigned int channel, 
+tty_read_ttyList ( unsigned int channel, 
            char *buffer, 
            int nr )
 {
@@ -40,9 +40,12 @@ tty_read ( unsigned int channel,
     // ??
     // Não leremos os Consoles virtuais 
 
-    if ( channel <= 0 && channel < 4 )
+    if ( channel < 4 )
+    {
+        printf ("tty_read_ttyList: invalid channel\n");
+        refresh_screen();
         return -1;
-    
+    }
     
     //
     // Buffer NULL
@@ -50,7 +53,7 @@ tty_read ( unsigned int channel,
     
     
     if ( (char *) buffer == NULL ){
-         panic ("tty_read: invalid buf \n");
+         panic ("tty_read_ttyList: invalid buf \n");
     }
     
  
@@ -63,7 +66,7 @@ tty_read ( unsigned int channel,
         
     if ( (void *) tty == NULL )
     {
-        printf ("tty_read: Invalid tty\n");
+        printf ("tty_read_ttyList: Invalid tty\n");
         refresh_screen();
         return -1;
     }
@@ -81,7 +84,7 @@ tty_read ( unsigned int channel,
             
     if ( (void *) tty->_buffer == NULL )
     {
-         printf ("tty_read: Invalid tty _buffer\n");
+         printf ("tty_read_ttyList: Invalid tty _buffer\n");
          refresh_screen();
          return -1;
     }
@@ -96,7 +99,7 @@ tty_read ( unsigned int channel,
 
     if ( (void *) tty->_buffer->_base == NULL )
     {
-         printf ("tty_read: invalid _base \n");
+         printf ("tty_read_ttyList: invalid _base \n");
          refresh_screen();
          return -1;
     }
@@ -115,7 +118,7 @@ tty_read ( unsigned int channel,
 
     // Copia da tty de leitura para o buffer indicado pelo aplicativo.
            
-    printf ("tty_read: copiando para o buffer. \n");
+    printf ("tty_read_ttyList: copiando para o buffer. \n");
     refresh_screen ();
 
  
@@ -126,10 +129,14 @@ tty_read ( unsigned int channel,
 
 
 
+
+// writes into ttyList[] descriptor.
 // Escrever no buffer de uma tty qualquer da ttyList
-// o descritor seleciona uma tty em ttyList e escreve em tty->stdout->_base
+// o descritor seleciona uma tty em ttyList[] e 
+// escreve em tty->stdout->_base
+
 int 
-tty_write ( unsigned int channel, 
+tty_write_ttyList ( unsigned int channel, 
             char *buffer, 
             int nr )
 {
@@ -146,8 +153,12 @@ tty_write ( unsigned int channel,
     // ??
     // Não escreveremos nos Consoles virtuais cpom essa rotina. 
 
-    if ( channel <= 0 && channel < 4 )
+    if ( channel < 4 )
+    {
+        printf ("tty_write_ttyList: invalid channel\n");
+        refresh_screen();
         return -1;
+    }
 
 
 
@@ -158,7 +169,7 @@ tty_write ( unsigned int channel,
     
     
     if ( (char *) buffer == NULL ){
-         panic ("tty_read: invalid buf \n");
+         panic ("tty_write_ttyList: invalid buf \n");
     }
 
 
@@ -172,7 +183,7 @@ tty_write ( unsigned int channel,
     __src = (struct tty_d *) ttyList[channel];
         
     if ( (void *) __src == NULL ){
-        printf ("tty_write: Invalid __src tty\n");
+        printf ("tty_write_ttyList: Invalid __src tty\n");
         refresh_screen();
         return -1;
     }
@@ -186,7 +197,7 @@ tty_write ( unsigned int channel,
     // O arquivo da tty de origem da transferência.
 
     if ( (void *) __src->_buffer == NULL ){
-        printf ("tty_write: Invalid __src stdout\n");
+        printf ("tty_write_ttyList: Invalid __src stdout\n");
         refresh_screen();
         return -1;
     }
@@ -199,7 +210,7 @@ tty_write ( unsigned int channel,
     // Essa é a base do arquivo da tty de origem.
 
     if ( (void *) __src->_buffer->_base == NULL ){
-        printf ("tty_write: * invalid _base \n");
+        printf ("tty_write_ttyList: * invalid _base \n");
         refresh_screen();
         return -1;
     }
@@ -211,7 +222,7 @@ tty_write ( unsigned int channel,
 
     // Copiando do buffer para o arquivo da tty de origem.
 
-    printf ("tty_write: copiando para __src->_buffer->_base \n");
+    printf ("tty_write_ttyList: copiando para __src->_buffer->_base \n");
     refresh_screen();
 
     memcpy ( (void *) __src->_buffer->_base, (const void *) buffer, nr ); 
@@ -251,6 +262,25 @@ int tty_gets ( struct tty_d *tty, struct termios *termiosp )
     memcpy ( termiosp, &tty->termios, sizeof(struct termios));
 
     return 0;
+}
+
+
+// channel is a fd in the file list of a process.
+int 
+tty_read ( unsigned int channel, 
+           char *buffer, 
+           int nr )
+{
+    return -1;
+}
+
+// channel is a fd in the file list of a process.
+int 
+tty_write ( unsigned int channel, 
+            char *buffer, 
+            int nr )
+{
+    return -1;
 }
 
 

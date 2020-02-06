@@ -13,19 +13,18 @@
 // O terminal pega as teclas digitadas e envia elas para
 // um arquivo que o shell poderá ler.
 // Então o stdout do terminal será lido pelo child.
- 
- 
 
-//See:
-//https://www.mkssoftware.com/docs/man5/struct_termios.5.asp
-//https://invisible-island.net/xterm/ctlseqs/ctlseqs.html#h2-PC-Style-Function-Keys
-//https://en.wikipedia.org/wiki/ANSI_escape_code 
-//https://en.wikipedia.org/wiki/C0_and_C1_control_codes
-//https://vt100.net/docs/vt220-rm/table2-4.html
-//http://notes.burke.libbey.me/ansi-escape-codes/
-//http://jafrog.com/2013/11/23/colors-in-terminal.html
-//https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences
-//https://tforgione.fr/posts/ansi-escape-codes/
+
+// See:
+// https://www.mkssoftware.com/docs/man5/struct_termios.5.asp
+// https://invisible-island.net/xterm/ctlseqs/ctlseqs.html#h2-PC-Style-Function-Keys
+// https://en.wikipedia.org/wiki/ANSI_escape_code 
+// https://en.wikipedia.org/wiki/C0_and_C1_control_codes
+// https://vt100.net/docs/vt220-rm/table2-4.html
+// http://notes.burke.libbey.me/ansi-escape-codes/
+// http://jafrog.com/2013/11/23/colors-in-terminal.html
+// https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences
+// https://tforgione.fr/posts/ansi-escape-codes/
 
 
 
@@ -1571,7 +1570,7 @@ void *noratermProcedure ( struct window_d *window,
 				        input ('\0'); 
 				        
 				        
-				        printf ("Sending ...");
+				        printf ("Sending ...\n");
 				        // #nesse momento devemos enviar o conteúdo do
 				        // prompt[] para um lugar onde outro aplicativo possa pegar.
 					    // vamos enviar para CurrentTTY->stdout->_base por enquanto.
@@ -1652,24 +1651,26 @@ void *noratermProcedure ( struct window_d *window,
 		
 		case MSG_SYSKEYDOWN:
 		    switch (long1)
-			{	     
-				
-				//posiciona na próxima coluna.   
-				case VK_F1:  
-				    
-				    gramado_system_call (900, (unsigned long) "hello3.bin", 0, 0);
-				   
-                                           
-				    
+			{
+
+
+                case VK_F1:
+                
+                    // lançando um processo filho.  
+                    gramado_system_call ( 900, 
+                        (unsigned long) "hello3.bin", 0, 0 );
+
+
 				    //textCurrentCol++;
 				    //terminalSetCursor ( textCurrentCol, textCurrentRow );
 				    //MessageBox ( 3, "Noraterm", "F1" ); 
 				    //shellSendMessage ( NULL, MSG_TERMINALCOMMAND, 2008, 0);
 		            //printf ("*SCROLL\n");
 		            //terminal_scroll_display ();
-		            //shellPrompt ();	
-					break;
-				
+		            //shellPrompt ();
+                    break;
+
+
 				//posiciona na proxima linha
 				case VK_F2:
 
@@ -1678,6 +1679,7 @@ void *noratermProcedure ( struct window_d *window,
 
                     read_ttyList ( ____this_tty_id, __rbuf2, 32 );  
                     printf (__rbuf2);
+                    fflush(stdout);
 				
 				    //textCurrentRow++;
 				    //terminalSetCursor ( textCurrentCol, textCurrentRow );
@@ -2253,6 +2255,7 @@ void *noratermProcedure ( struct window_d *window,
                            if ( read ( ____this_tty_id, __rbuf2, 32 ) > 0 )
                            {     
                                printf (__rbuf2);
+                               fflush (stdout);
                            }
                        }
                         
@@ -2290,6 +2293,7 @@ void *noratermProcedure ( struct window_d *window,
                        {
                            read ( ____this_tty_id, __rbuf2, 32 );     
                            printf (__rbuf2);
+                           fflush(stdout);
                            // se isso não aparecer .. 
                            //o printf acima tambem nao funcionou, 
                            //mesmo que o read tenha funcionado
@@ -3840,7 +3844,7 @@ do_compare:
 				
 			}else{
 				//printf("2");
-			    printf("%c", ch_test);	
+			    printf("%c", ch_test);
 			};
 		};
 		
@@ -3853,7 +3857,7 @@ do_compare:
 	if ( strncmp( prompt, "t5", 2 ) == 0 )
 	{
 		printf("t5: save file\n");
-		save_string2 ( "t5: Salvando esse texto em test1234.txt", "TEST1234TXT" );
+		save_string2 ( "t5: Salvando texto em test1234.txt \n", "TEST1234TXT" );
 		//shell_save_file ();
 		printf("t5: done\n");
         goto exit_cmp;
@@ -3980,7 +3984,7 @@ do_compare:
 		
 		//#bubug
 		//Vamos abortar por causa de uma page fault.
-		printf ("t14: debug *hang");
+		printf ("t14: debug *hang\n");
 		while(1){}
 		
 		goto exit_cmp;
@@ -5422,7 +5426,7 @@ void shellTestThreads (){
     if ( (void *) ThreadTest1 == NULL )
     {	
 	    printf("shellTestThreads: apiCreateThread fail \n");	
-	    die("ThreadTest1");
+	    die("ThreadTest1\n");
     }
 
 
@@ -5868,7 +5872,7 @@ void shellTaskList (){
     printf("%d",PID);
 	X=8;
 	terminalSetCursor (X,Y);
-	printf("...");
+	printf("...\n");
 	
     //...		
 }
@@ -6195,10 +6199,12 @@ feedterminalDialog ( struct window_d *window,
 
 void die (char *str){
 	
-	printf ("die: %s", str);
+	printf ("die: %s \n", str);
+	fflush(stdout);
 	
 	//@todo
 	fprintf (stderr,"%s\n",str);
+	//fflush(stderr);
 	
 	exit (1);
 }
@@ -6419,8 +6425,9 @@ int shell_save_file (){
 	
 	printf("shell_save_file: done\n");	
 	
-	return (int) Ret;
-};
+
+    return (int) Ret;
+}
 
 
 //salvando uma string.
@@ -6768,7 +6775,7 @@ int main ( int argc, char *argv[] ){
 		//#Test.
         //fprintf( stderr,"Starting Shell with no arguments...\n");	 	
 		
-		die ("SHELL.BIN: No args");
+		die ("SHELL.BIN: No args \n");
 		
 		goto noArgs; 
 		
@@ -7032,8 +7039,8 @@ noArgs:
 
     if ( (void *) client_bg == NULL )
     {
-		printf ("client_bg window fail ");
-		die( ":(");
+		printf ("client_bg window fail \n");
+		die( ":( \n");
     }else{
 		
         gde_register_window  (client_bg);
@@ -7151,7 +7158,7 @@ noArgs:
                                     client_bg, 0, 0x404040, 0x404040 );
 	if ( (void *) client_bar_Window == NULL)
 	{	
-		printf(".. fail");
+		printf(".. fail \n");
 		gde_show_backbuffer();
 		gde_exit_critical_section ();  
 		while(1){}

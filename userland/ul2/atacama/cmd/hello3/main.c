@@ -657,28 +657,38 @@ done:
 
 
 
+/*
+ * 
+ * 
+ * 
+ * 
+ */
 
+// #test
+// This app is called by noraterm.
+// We write in a tty and noraterm reads from it.
 
 int main ( int argc, char *argv[] ){
 
 
     int ____tty_id = -1;
     int ____this_tty_id = -1;
-    char __wbuf2[128]; //line ?  write
-    char __rbuf2[128]; //line ? read 
+    char __wbuf2[512]; //line ?  write
+    char __rbuf2[512]; //line ? read 
     int __w_size2 = 0;
 
 
-    //link by pid
-        gramado_system_call ( 267,
-            getpid(),    // master (shell?)
-            getppid(),   // slave pai (terminal?)
-            0 );
+    // link by pid
+    // Linking against noraterm.
+    
+    gramado_system_call ( 267,
+        getpid(),    // master (shell?)
+        getppid(),   // slave pai (terminal?)
+        0 );
             
-
-        //
-        // scr
-        //    
+    //
+    // scr
+    //    
         
         /*
         // Get the tty for this process.            
@@ -693,21 +703,32 @@ int main ( int argc, char *argv[] ){
        
        */
        
-       
+ 
+     //
+     // get tty
+     //      
        
 
-        // Get the tty for the parent process       
-        ____tty_id = gramado_system_call ( 266, getppid(), 0, 0 );
-        printf ("The tty for parent process is %d\n", ____tty_id);
+     // Get the tty id of the parent process. The terminal.
+     
+     ____tty_id = gramado_system_call ( 266, getppid(), 0, 0 );
+     
+     printf ("hello3: The tty for parent process is %d \n", 
+         ____tty_id );
+     
+     
+     //
+     // write in the tty
+     //
         
         
-         //Escrevendo na tty do processo pai para leitura.
-         write_ttyList ( ____tty_id, 
-             __wbuf2, 
-             __w_size2 = sprintf (__wbuf2,"THIS IS A MAGIC STRING\n")  );
+     // Escrevendo na tty do processo pai para leitura.
+     
+     write_ttyList ( ____tty_id, 
+         __wbuf2, 
+         __w_size2 = sprintf (__wbuf2,"hello3: THIS IS A MAGIC STRING \n")  );
 
             
-
     // usando o write_VC pra escrever no console virtual '0'. 
     //____Torvalds_printf ("Writing from hello3 ...\n");
     return 0;

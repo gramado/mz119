@@ -331,7 +331,7 @@ ssize_t read_ttyList (int fd, const void *buf, size_t count)
 }
 
 
-// o descritor seleciona uma tty em ttyList
+// o descritor seleciona uma tty em ttyList[]
 ssize_t write_ttyList (int fd, const void *buf, size_t count)
 {
     if (fd<0)
@@ -342,6 +342,32 @@ ssize_t write_ttyList (int fd, const void *buf, size_t count)
                          (unsigned long) buf, 
                          (unsigned long) count ); 
 }
+
+ssize_t read_tty (int fd, const void *buf, size_t count)
+{
+    if (fd<0)
+        return -1;
+
+    return (ssize_t) gramado_system_call ( 272, 
+                         (unsigned long) fd,      // dispositivo.
+                         (unsigned long) buf, 
+                         (unsigned long) count ); 
+}
+
+
+// o descritor seleciona uma tty em ttyList[]
+ssize_t write_tty (int fd, const void *buf, size_t count)
+{
+    if (fd<0)
+        return -1;
+
+    return (ssize_t) gramado_system_call ( 273, 
+                         (unsigned long) fd,      // dispositivo.
+                         (unsigned long) buf, 
+                         (unsigned long) count ); 
+}
+
+
 
 
 // read on virtual console!

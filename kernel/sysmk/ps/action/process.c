@@ -450,7 +450,7 @@ pid_t do_clone_execute_process (char *filename){
          //printf("found\n");
     
     }else{
-         printf("not found\n");
+         printf ("do_clone_execute_process: Not found!\n");
          goto fail;
     };
 
@@ -467,37 +467,37 @@ pid_t do_clone_execute_process (char *filename){
 	//if ( current_process < 0 )
 	//    return 0;
 
-	Current = (struct process_d *) processList[current_process];
-	
-	if ( (void *) Current == NULL )
-	{
-		printf ("do_clone_execute_process: Current struct \n");
-		goto fail;
-	
-	}else{
-		
-		if ( Current->used != 1 || Current->magic != 1234 )
-		{    
-			printf ("do_clone_execute_process: Current validation \n");
-			goto fail;		
-		}
-		
-		//#test
-        dir = (unsigned long *) Current->DirectoryVA;	
-		old_dir_entry1 = dir[1]; //salvando
-		
+    Current = (struct process_d *) processList[current_process];
+
+    if ( (void *) Current == NULL ){
+        printf ("do_clone_execute_process: Current struct \n");
+        goto fail;
+
+    }else{
+
+        if ( Current->used != 1 || Current->magic != 1234 ){    
+            printf ("do_clone_execute_process: Current validation \n");
+            goto fail;
+        }
+
+
+        // #test
+        dir = (unsigned long *) Current->DirectoryVA;
+        old_dir_entry1 = dir[1]; //salvando
+
+
 		//salvando o endereço físico da imagem que existe no processo.
 		//old_image_pa = (unsigned long) virtual_to_physical ( Current->Image, gKernelPageDirectoryAddress ); 
-		
+
 	    //#debug
 	    //printf(">>> check current process: %d %d \n", current_process, Current->pid );
 		goto do_clone;
 		//...
 	};
-	
-	
+
+
 	//
-	// ## Clone ##
+	// Clone.
 	//
 	
 do_clone:

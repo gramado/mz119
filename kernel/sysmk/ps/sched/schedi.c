@@ -947,20 +947,18 @@ void check_for_standby (void){
 
 
     do {
-
         New = (void *) queue->standbyList[i];
 
         if ( (void *) New != NULL )
         {
-		    if ( New->used == 1 && 
-			     New->magic == 1234 && 
-				 New->state == STANDBY )   
-			{
-			    	
-				current_thread = (int) New->tid;
-			    goto do_spawn;
-			
-			};
+            if ( New->used == 1 && 
+                 New->magic == 1234 && 
+                 New->state == STANDBY )   
+            {
+
+                current_thread = (int) New->tid;
+                goto do_spawn;
+            };
         };
 
         i++;
@@ -996,10 +994,10 @@ do_spawn:
 #endif 
 
 
+   // action/spawn.c
    KiSpawnTask ( current_thread );
 
-    //  ## No return ##	
-
+    // Not reached.
     panic ("schedi-check_for_standby: ERROR");
 }
 

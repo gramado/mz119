@@ -267,10 +267,12 @@
   265     yield
   266     process_get_tty
   267     pty_link_by_pid
-  268     tty_read
-  269     tty_write
+  268     tty_read_ttyList              kdrivers/tty/tty.c
+  269     tty_write_ttyList             kdrivers/tty/tty.c
   270     vt_create
   271     vt_set_child
+  272     tty_read                      kdrivers/tty/tty.c
+  273     tty_write                     kdrivers/tty/tty.c
   
   
   277     console_get_current_virtual_console
