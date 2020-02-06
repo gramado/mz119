@@ -390,9 +390,25 @@ tty_write_ttyList ( unsigned int channel,
 
 
 int 
+__tty_read_ttyList ( struct tty_d *tty, 
+           char *buffer, 
+           int nr );
+
+int 
+__tty_write_ttyList ( struct tty_d *tty, 
+            char *buffer, 
+            int nr );
+
+
+
+int 
 tty_ioctl ( int fd, unsigned long request, char *arg );
 
 void tty_reset_termios ( struct tty_d *tty );
+
+
+
+int tty_init_module (void);
 
 //
 // End.

@@ -1873,12 +1873,12 @@ int __fflush (FILE *stream)
     
     // #todo: 
     // This is the desired way.           
-    // int rc = write ( fileno(stream), stream->_base, stream->_w );
+    int rc = write ( fileno(stream), stream->_base, stream->_w );
 
 
     // ISSO FUNCIONA.
     // vamos testar no console virtual.
-    int rc = write_VC ( 0, stream->_base, stream->_w ); 
+    //int rc = write_VC ( 0, stream->_base, stream->_w ); 
  
  
     stream->_w = 0;

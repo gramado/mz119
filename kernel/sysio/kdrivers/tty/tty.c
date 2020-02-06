@@ -23,54 +23,93 @@
 unsigned long tty_table[4];  //os 4 consoles virtuais.
 
 
-            
+
 // reads into ttyList[] descriptor.
 int 
 tty_read_ttyList ( unsigned int channel, 
            char *buffer, 
            int nr )
+
 {
-    struct tty_d *tty;
+    struct tty_d *__tty;
     
-    
-    //
-    // Limits
-    //
-
-    // ??
     // Não leremos os Consoles virtuais 
-
-    if ( channel < 4 )
-    {
+    if ( channel < 4 ){
         printf ("tty_read_ttyList: invalid channel\n");
         refresh_screen();
         return -1;
     }
     
+     __tty = (struct tty_d *) ttyList[channel];
+
+     __tty_read_ttyList ( (struct tty_d *) __tty, 
+           (char *) buffer, 
+           (int) nr );
+
+}
+
+
+int 
+tty_write_ttyList ( unsigned int channel, 
+            char *buffer, 
+            int nr )
+{
+
+    struct tty_d *__tty;
+    
+    // Não leremos os Consoles virtuais 
+    if ( channel < 4 ){
+        printf ("tty_write_ttyList: invalid channel\n");
+        refresh_screen();
+        return -1;
+    }
+    
+        __tty = (struct tty_d *) ttyList[channel];
+        
+ 
+      __tty_write_ttyList ( (struct tty_d *) __tty, 
+           (char *) buffer, 
+           (int) nr );
+
+
+}
+
+            
+// reads into ttyList[] 
+int 
+__tty_read_ttyList ( struct tty_d *tty, 
+           char *buffer, 
+           int nr )
+{
+
+
+    if ( (void *) tty == NULL )
+        return -1;
+    
+    
+    
+    if ( nr <= 0 ){
+        printf ("__tty_read_ttyList: nr \n");
+        refresh_screen();
+        return -1;
+    }
+
+    
+    //
+    // Limits
+    //
+
+   
     //
     // Buffer NULL
     //
     
     
     if ( (char *) buffer == NULL ){
-         panic ("tty_read_ttyList: invalid buf \n");
+         panic ("__tty_read_ttyList: invalid buffer \n");
     }
     
  
-    //
-    // tty struct.
-    //
- 
-  
-    tty = (struct tty_d *) ttyList[channel];
-        
-    if ( (void *) tty == NULL )
-    {
-        printf ("tty_read_ttyList: Invalid tty\n");
-        refresh_screen();
-        return -1;
-    }
-        
     //
     // File   (stdin)
     //
@@ -84,7 +123,7 @@ tty_read_ttyList ( unsigned int channel,
             
     if ( (void *) tty->_buffer == NULL )
     {
-         printf ("tty_read_ttyList: Invalid tty _buffer\n");
+         printf ("__tty_read_ttyList: Invalid tty _buffer\n");
          refresh_screen();
          return -1;
     }
@@ -97,9 +136,8 @@ tty_read_ttyList ( unsigned int channel,
     // A base do arquivo que serve de buffer.
     
 
-    if ( (void *) tty->_buffer->_base == NULL )
-    {
-         printf ("tty_read_ttyList: invalid _base \n");
+    if ( (void *) tty->_buffer->_base == NULL ){
+         printf ("__tty_read_ttyList: invalid _base \n");
          refresh_screen();
          return -1;
     }
@@ -118,11 +156,15 @@ tty_read_ttyList ( unsigned int channel,
 
     // Copia da tty de leitura para o buffer indicado pelo aplicativo.
            
-    printf ("tty_read_ttyList: copiando para o buffer. \n");
+    printf ("__tty_read_ttyList: Copiando para o buffer. \n");
     refresh_screen ();
-
  
     memcpy ( (void *) buffer, (const void *) tty->_buffer->_base, nr ); 
+    
+    
+    //#debug
+    printf ( "debug_read >>>%s \n", buffer );
+    refresh_screen ();
            
     return nr; 
 }
@@ -136,30 +178,27 @@ tty_read_ttyList ( unsigned int channel,
 // escreve em tty->stdout->_base
 
 int 
-tty_write_ttyList ( unsigned int channel, 
+__tty_write_ttyList ( struct tty_d *tty, 
             char *buffer, 
             int nr )
 {
 
-    struct tty_d *__src;
-    struct tty_d *__dst;
+    if ( (void *) tty == NULL )
+        return -1;
+
     
+
+    if ( nr <= 0 ){
+        printf ("__tty_write_ttyList: nr \n");
+        refresh_screen();
+        return -1;
+    }
+
 
 
     //
     // Limits
     //
-
-    // ??
-    // Não escreveremos nos Consoles virtuais cpom essa rotina. 
-
-    if ( channel < 4 )
-    {
-        printf ("tty_write_ttyList: invalid channel\n");
-        refresh_screen();
-        return -1;
-    }
-
 
 
 
@@ -169,25 +208,11 @@ tty_write_ttyList ( unsigned int channel,
     
     
     if ( (char *) buffer == NULL ){
-         panic ("tty_write_ttyList: invalid buf \n");
+         panic ("__tty_write_ttyList: invalid buf \n");
     }
 
 
-
-    //
-    //  __src
-    //
-    
-    // tty de origem da transferência.
-    
-    __src = (struct tty_d *) ttyList[channel];
-        
-    if ( (void *) __src == NULL ){
-        printf ("tty_write_ttyList: Invalid __src tty\n");
-        refresh_screen();
-        return -1;
-    }
-        
+   
         
     //
     //  File (stdout) 
@@ -196,8 +221,8 @@ tty_write_ttyList ( unsigned int channel,
     // Checando a validade do arquivo.
     // O arquivo da tty de origem da transferência.
 
-    if ( (void *) __src->_buffer == NULL ){
-        printf ("tty_write_ttyList: Invalid __src stdout\n");
+    if ( (void *) tty->_buffer == NULL ){
+        printf ("__tty_write_ttyList: Invalid tty _buffer\n");
         refresh_screen();
         return -1;
     }
@@ -209,8 +234,8 @@ tty_write_ttyList ( unsigned int channel,
     
     // Essa é a base do arquivo da tty de origem.
 
-    if ( (void *) __src->_buffer->_base == NULL ){
-        printf ("tty_write_ttyList: * invalid _base \n");
+    if ( (void *) tty->_buffer->_base == NULL ){
+        printf ("__tty_write_ttyList: * invalid _base \n");
         refresh_screen();
         return -1;
     }
@@ -222,21 +247,60 @@ tty_write_ttyList ( unsigned int channel,
 
     // Copiando do buffer para o arquivo da tty de origem.
 
-    printf ("tty_write_ttyList: copiando para __src->_buffer->_base \n");
+    printf ("__tty_write_ttyList: Copiando para tty->_buffer->_base \n");
     refresh_screen();
 
-    memcpy ( (void *) __src->_buffer->_base, (const void *) buffer, nr ); 
+    memcpy ( (void *) tty->_buffer->_base, (const void *) buffer, nr ); 
     
     
+
+    //#debug
+    printf ( "debug_write >>>%s \n", tty->_buffer->_base );
+    refresh_screen ();
+    
+    
+    //
+    // Send message to parent.
+    //
+    
+    //Envia um alerta para o pai
+    //indicando a tty pra ele ler.
+    
+    // current process. quem escreveu;
+    struct process_d * __p;
+    
+    __p = (struct process_d *) processList[current_process];
+    
+    //todo checar;
+    
+    // o parent 
+    int PPID = (int) __p->ppid;
+    
+    //
+    // alert!!
+    //
+    
+    unsigned long message_address[8];
+ 
+     message_address[0] = (unsigned long) 0; //w
+     message_address[1] = (unsigned long) 444;   // alerta que tem que ler na ttyList[] do processo indicado.
+     message_address[2] = (unsigned long) __p->pid;
+     message_address[3] = (unsigned long) __p->pid;   
+    
+    //send
+    ipc_send_message_to_process ( (unsigned long) &message_address[0], 
+               (int) PPID );
+    
+
     
     // #bugbug
     // Não devemos copiar aqui, pois assim damos a chance
     // do processo pai escrever diretamente na tty do filho
     // caso ele obtenha sua identificação.
     
- 
-    printf( "DONE\n");
-    refresh_screen();        
+
+    //printf( "DONE\n");
+    //refresh_screen();        
  
     return nr;
 }
@@ -993,23 +1057,39 @@ int ttyInit (int tty_id){
 	   // Limpando a lista!
 	   //
 	   
-        for (i=0; i<256; i++)
-	    {
-		    ttyList[i] = 0;
-	    }
+	   //isso ja foi inicializado em logo.c
+        //for (i=0; i<256; i++)
+	    //{ ttyList[i] = 0;}
 	
 	    ttyList[tty_id] = (unsigned long) CurrentTTY;
 	       
 	       
 	    // More ?    
     };
+    
+    
+    
+    //
 
 
     return 0;
 }
 
 
+int tty_init_module (void)
+{
+	int i;
+	
+        for (i=0; i<256; i++)
+	    {
+		    ttyList[i] = 0;
+	    }
 
+
+    //...
+    
+    return 0;
+}
 
 //
 // End.

@@ -690,7 +690,7 @@ int main ( int argc, char *argv[] ){
     // scr
     //    
         
-        /*
+        
         // Get the tty for this process.            
         ____this_tty_id = gramado_system_call ( 266, getpid(), 0, 0 );
         printf ("The tty for this process is %d\n", ____this_tty_id);
@@ -699,9 +699,9 @@ int main ( int argc, char *argv[] ){
          //Escrevendo na tty desse processo e na tty slave pra leitura.
          write_ttyList ( ____this_tty_id, 
              __wbuf2, 
-             __w_size2 = sprintf (__wbuf2,"THIS IS A MAGIC STRING\n")  );
+             __w_size2 = sprintf (__wbuf2,"hello3:THIS IS A MAGIC STRING\n")  );
        
-       */
+       
        
  
      //
@@ -710,23 +710,21 @@ int main ( int argc, char *argv[] ){
        
 
      // Get the tty id of the parent process. The terminal.
-     
-     ____tty_id = gramado_system_call ( 266, getppid(), 0, 0 );
-     
-     printf ("hello3: The tty for parent process is %d \n", 
-         ____tty_id );
+     //____tty_id = gramado_system_call ( 266, getppid(), 0, 0 );
+     //printf ("hello3: The tty for parent process is %d \n", 
+         //____tty_id );
      
      
      //
-     // write in the tty
+     // write in the tty of parent
      //
         
         
      // Escrevendo na tty do processo pai para leitura.
      
-     write_ttyList ( ____tty_id, 
-         __wbuf2, 
-         __w_size2 = sprintf (__wbuf2,"hello3: THIS IS A MAGIC STRING \n")  );
+     //write_ttyList ( ____tty_id, 
+         //__wbuf2, 
+         //__w_size2 = sprintf (__wbuf2,"hello3: THIS IS A MAGIC STRING \n")  );
 
             
     // usando o write_VC pra escrever no console virtual '0'. 

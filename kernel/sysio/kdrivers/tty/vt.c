@@ -466,7 +466,7 @@ int vt_create (struct window_d *window, int father_pid)
 {
 	
     struct vt_d *terminal;
-	
+
         
     if ( father_pid < 0 )
         return -1;
@@ -494,9 +494,30 @@ int vt_create (struct window_d *window, int father_pid)
          
          window->isTerminal = 1;
          window->terminal = terminal;
-    }    
+    }   
+    
+    
+    // register
+    // Pra usar isso pela primeira vez tem que inicializar.
+    
+    int i;  
+    for (i=0; i<32; i++)
+    {
+         if ( vtList[i] == 0 )
+         {
+             //save
+             vtList[i] = (unsigned long) terminal;
+             
+             return i;
+         } 
+    } 
+  
+  
+  
+   //fail 
+    panic ("vt_create: no slots");
 
-    return 0;
+    return -1;
 }
 
 
@@ -553,4 +574,20 @@ int vt_set_pty ( struct vt_d *terminal, struct tty_d *master, struct tty_d *slav
 
 
 
+//init module.
+int vt_init_module (void)
+{
+    int i;  
+    
+    
+    
+    //init list
+    for (i=0; i<32; i++)
+        vtList[i] = (unsigned long) 0;
+
+
+    //..
+    
+    return 0;
+}
 

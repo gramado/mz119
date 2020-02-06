@@ -35,6 +35,11 @@ struct vt_d
 };
 
 
+// Listar os terminais virtuais.
+// Isso vai ajudar a mandar as mensagens;
+unsigned long vtList[32];
+
+
 
 void _vt_outbyte ( int c, struct tty_d *tty );
 void vt_outbyte ( int c, struct tty_d *tty );
@@ -46,9 +51,12 @@ void vt_scroll (struct tty_d *tty);
 // The father is creating a terminal in one of its windows.
 int vt_create (struct window_d *window, int father_pid);
 
-
 // Set child pid given in a window structure.
 int vt_set_child ( struct window_d *window, int child_pid );
+
+//init module.
+int vt_init_module (void);
+
 
 
 

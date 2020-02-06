@@ -1536,6 +1536,25 @@ void *noratermProcedure ( struct window_d *window,
 
     switch (msg)
     {
+		// // alerta que tem que ler na ttyList[] do pid indicado em long1
+		case 444:
+                    printf("444: =)\n");
+                    fflush(stdout);
+
+                    //pegando a tty desse processo pra poder ler.
+                    //long1 é o pid de quem vamos ler a tty.
+                    ____this_tty_id = (int) gramado_system_call ( 266, long1, 0, 0 );
+                    printf ("NORATERM: The tty for the sender process is %d \n", 
+                          ____this_tty_id );
+
+
+                    read_ttyList ( ____this_tty_id, __rbuf2, 32 );  
+                    printf (__rbuf2);
+                    printf("444: =)\n");
+                    fflush(stdout);
+		   break;
+		
+		
 		//Faz algumas inicializações de posicionamento e dimensões.
 		//case MSG_INITDIALOG:
 		//    break;
@@ -1656,6 +1675,14 @@ void *noratermProcedure ( struct window_d *window,
 
                 case VK_F1:
                 
+                    printf ("VK_F1:\n");
+
+                    //pegando a tty desse processo pra poder ler.
+                    ____this_tty_id = (int) gramado_system_call ( 266, getpid(), 0, 0 );
+                    printf ("NORATERM: The tty for THIS process is %d \n", 
+                          ____this_tty_id );
+
+                
                     // lançando um processo filho.  
                     gramado_system_call ( 900, 
                         (unsigned long) "hello3.bin", 0, 0 );
@@ -1674,13 +1701,19 @@ void *noratermProcedure ( struct window_d *window,
 				//posiciona na proxima linha
 				case VK_F2:
 
-                   //pegando a tty desse processo pra poder ler.
-                   ____this_tty_id = (int) gramado_system_call ( 266, getpid(), 0, 0 );
+                    printf ("VK_F2:\n");
+  
+                    //pegando a tty desse processo pra poder ler.
+                    ____this_tty_id = (int) gramado_system_call ( 266, getpid(), 0, 0 );
+                    printf ("NORATERM: The tty for THIS process is %d \n", 
+                          ____this_tty_id );
+
 
                     read_ttyList ( ____this_tty_id, __rbuf2, 32 );  
                     printf (__rbuf2);
+                    printf("VK_F2: =)\n");
                     fflush(stdout);
-				
+
 				    //textCurrentRow++;
 				    //terminalSetCursor ( textCurrentCol, textCurrentRow );
 					//MessageBox ( 3, "Noraterm", "F2" );
