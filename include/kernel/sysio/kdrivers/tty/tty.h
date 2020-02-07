@@ -408,6 +408,29 @@ void tty_reset_termios ( struct tty_d *tty );
 
 
 
+// Escreve na tty de um processo alvo e envia uma mensagem pra
+// ele saber o que fazer com o que ele ler no buffer.
+// Talvez seja possível fazer o mesmo
+// em outros modulos, esses mesmos argumentos mais outros.
+// Essa rotina dentro do kernel copia os dados que estão num buffer 
+// para dentro do buffer da tty e em seguida envia um alerta para um 
+// processo alvo, dizendo que ele tem dados no buffer de sua tty. 
+// Os últimos argumentos são enviados para o processo na hora do alerta 
+// pra dizer pra ele que tipo de dados tem no buffer e o que deve 
+// fazer com eles.
+// ---
+// Da pra enviar todo tipo de coisa, pois o buffer é do tamanho que 
+// você quizer. Inclusive da pra enviar protocolos de rede.
+
+int 
+tty_send_message ( int target_pid, 
+                   char *buffer, 
+                   int nr,
+                   int msg,
+                   unsigned long long1,
+                   unsigned long long2 ); 
+
+
 int tty_init_module (void);
 
 //

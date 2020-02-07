@@ -396,6 +396,201 @@ __tty_write ( struct tty_d *tty,
 }
 
 
+/*
+ * 
+ * 
+ * 
+ */
+
+
+// Escreve na tty de um processo alvo e envia uma mensagem pra
+// ele saber o que fazer com o que ele ler no buffer.
+// Talvez seja possível fazer o mesmo
+// em outros modulos, esses mesmos argumentos mais outros.
+// Essa rotina dentro do kernel copia os dados que estão num buffer 
+// para dentro do buffer da tty e em seguida envia um alerta para um 
+// processo alvo, dizendo que ele tem dados no buffer de sua tty. 
+// Os últimos argumentos são enviados para o processo na hora do alerta 
+// pra dizer pra ele que tipo de dados tem no buffer e o que deve 
+// fazer com eles.
+// ---
+// Da pra enviar todo tipo de coisa, pois o buffer é do tamanho que 
+// você quizer. Inclusive da pra enviar protocolos de rede.
+
+// #importante
+// É possível criar muitas variações dessa rotina.
+// E implementá-las em outros módulos.
+
+int 
+tty_send_message ( int target_pid, 
+                   char *buffer, 
+                   int nr,
+                   int msg,
+                   unsigned long long1,
+                   unsigned long long2 )
+{
+
+    struct process_d * __p;
+    struct tty_d *tty;
+    
+    
+    
+    if ( target_pid<0 )
+        return -1;
+
+   
+    __p = (struct process_d *) processList[target_pid];
+    
+    if ( (void *) __p == NULL )
+        panic("__tty_write: __p\n");
+
+
+    if ( __p->used != 1 || __p->magic != 1234 )
+        panic("__tty_write: validation\n");
+
+
+    if (__p->pid < 0)
+        panic("__tty_write: PID\n");         
+
+
+    //pega a tty do processo alvo.
+    tty = __p->tty;
+
+
+    if ( (void *) tty == NULL )
+        panic("__tty_write: tty\n");         
+
+
+    //#todo check validation.
+    
+
+    if ( nr <= 0 ){
+        printf ("__tty_write: nr \n");
+        refresh_screen();
+        return -1;
+    }
+
+
+
+    //
+    // Limits
+    //
+
+
+
+    //
+    // Buffer NULL
+    //
+    
+    
+    if ( (char *) buffer == NULL ){
+         panic ("__tty_write: invalid buf \n");
+    }
+
+
+   
+        
+    //
+    //  File (stdout) 
+    //        
+    
+    // Checando a validade do arquivo.
+    // O arquivo da tty de origem da transferência.
+
+    if ( (void *) tty->_buffer == NULL ){
+        printf ("__tty_write: Invalid tty _buffer\n");
+        refresh_screen();
+        return -1;
+    }
+
+
+    //
+    // _base
+    //
+    
+    // Essa é a base do arquivo da tty de origem.
+
+    if ( (void *) tty->_buffer->_base == NULL ){
+        printf ("__tty_write: * invalid _base \n");
+        refresh_screen();
+        return -1;
+    }
+
+
+    //
+    // Copy 1.
+    //
+
+    // Copiando do buffer para o arquivo da tty de origem.
+
+    printf ("__tty_write: Copiando para tty->_buffer->_base \n");
+    refresh_screen();
+
+    memcpy ( (void *) tty->_buffer->_base, (const void *) buffer, nr ); 
+    
+    
+
+    //#debug
+    printf ( "debug_write >>>%s \n", tty->_buffer->_base );
+    refresh_screen ();
+    
+    
+
+    
+    //
+    // alert!!
+    //
+    
+    
+    // #importante
+    // Ok, nesse momento o sender pode enviar vários
+    // tipos de mensagem, essa mensagem deve ser indicada
+    // no argumento dessa função.
+    // 444 - ler a mensagem de string que está no buffer.
+    // 445 - O buffer contém vários argumentos.
+    // 446 - o buffer é um buffer com algum protocolo de network.
+    // ??? - Muitas mensagens podem ser criadas nesse caso,
+    // transformando essa rotina numa poderosa ferramenta de comunicação
+    // entre processos.
+    // Os soquetes da libc podem tirar proveito desse mecanismo.
+    // ??? nesse caso o processo filho está mandando mensagem
+    // para o processo pai, Mas podemos criar rotinas que
+    // enviem mensagem pra quanquer processo, inclusive para ws e wm.
+    // ??? - #importante: O próprio kernel pode usar uma rotina 
+    // como essa para enviar mensagens para processos servidores 
+    // ou drivers.
+    
+    
+    
+    unsigned long message_address[8];
+ 
+     message_address[0] = (unsigned long) 0; //w
+     message_address[1] = (unsigned long) msg;   // alerta que tem que ler na ttyList[] do processo indicado.
+     message_address[2] = (unsigned long) long1;
+     message_address[3] = (unsigned long) long2;   
+
+    
+    //send
+    ipc_send_message_to_process ( (unsigned long) &message_address[0], 
+               (int) __p->pid );
+    
+
+    
+    // #bugbug
+    // Não devemos copiar aqui, pois assim damos a chance
+    // do processo pai escrever diretamente na tty do filho
+    // caso ele obtenha sua identificação.
+    
+
+    //printf( "DONE\n");
+    //refresh_screen();        
+ 
+    return nr;
+}
+
+
+
+
 
 
 // copia a estrutura de termios.
