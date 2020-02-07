@@ -662,31 +662,36 @@ void set_filesystem_type (int type)
 // #todo: Usar tipo 'int'.
 
 void fs_init_fat (void){
-	
-	// File system structure.
-	
-    if ( (void *) filesystem == NULL )
-    {
-        printf ("fs_init_fat error: filesystem\n");
-        return;
+
+    //
+    // The root file system structure.
+    //
+    
+    // "/"
+
+    if ( (void *) root == NULL ){
+        panic ("fs_init_fat: No root file system!\n");
     }
 
-	// FAT structure.
 
+    //
+    // FAT structure.
+    //
+    
+    
     fat = (void *) kmalloc ( sizeof(struct fat_d) );
 
-    if ( (void *) fat == NULL )
-    {
-        printf ("fs_init_fat error: fat\n");
-        return;
+    if ( (void *) fat == NULL ){
+        panic ("fs_init_fat: No fat struture \n");
 
     }else{
 
         // Info.
 
-        fat->address = filesystem->fat_address; 
-        fat->type = filesystem->type;
-		//Continua ...
+        fat->address = root->fat_address; 
+        fat->type    = root->type;
+
+        // Continua ...
     };
 
 
@@ -709,19 +714,27 @@ void fs_init_fat (void){
 // #todo: Usar tipo 'int'.
 
 void fs_init_structures (void){
-	
-    int Type;
-	
-    filesystem = (void *) kmalloc ( sizeof(struct filesystem_d) );
 
-    if ( (void *) filesystem == NULL )
-    {
-        panic ("fs_init_structures: filesystem\n");
+    int Type;
+
+
+    //
+    // The root file system.
+    //
+    
+    // "/"
+
+    root = (void *) kmalloc ( sizeof(struct filesystem_d) );
+
+    if ( (void *) root == NULL ){
+        panic ("fs_init_structures: Couldn't create the root structure.\n");
 
     }else{
-        storage->fs = filesystem;
+
+        storage->fs = root;
         //...
     };
+
 
 
 	//Type.
@@ -730,14 +743,12 @@ void fs_init_structures (void){
 
     Type = (int) get_filesystem_type ();   
 
-    if ( Type == 0 )
-    {
+    if ( Type == 0 ){
         panic ("fs_init_structures error: Type");
 
     }else{
 
-        //if ( (void *) filesystem == NULL )
-            filesystem->type = (int) Type;
+            root->type = (int) Type;
     };
 
 
@@ -746,21 +757,21 @@ void fs_init_structures (void){
         case FS_TYPE_FAT16:
 
 			//Rootdir.
-			filesystem->rootdir_address = VOLUME1_ROOTDIR_ADDRESS;
-	        filesystem->rootdir_lba = VOLUME1_ROOTDIR_LBA;
+			root->rootdir_address = VOLUME1_ROOTDIR_ADDRESS;
+	        root->rootdir_lba = VOLUME1_ROOTDIR_LBA;
 	        
 			//Fat.
-			filesystem->fat_address = VOLUME1_FAT_ADDRESS;
-	        filesystem->fat_lba = VOLUME1_FAT_LBA;
+			root->fat_address = VOLUME1_FAT_ADDRESS;
+	        root->fat_lba = VOLUME1_FAT_LBA;
 	        
 			//Dataarea.
 			//filesystem->dataarea_address = ??;
-	        filesystem->dataarea_lba = VOLUME1_DATAAREA_LBA;
+	        root->dataarea_lba = VOLUME1_DATAAREA_LBA;
 	        
 			//sectors per cluster.
-			filesystem->spc = (int) get_spc(); //variável
-	        filesystem->rootdir_entries = FAT16_ROOT_ENTRIES;
-	        filesystem->entry_size = FAT16_ENTRY_SIZE;
+			root->spc = (int) get_spc(); //variável
+	        root->rootdir_entries = FAT16_ROOT_ENTRIES;
+	        root->entry_size = FAT16_ENTRY_SIZE;
 			
 		    break;
 			

@@ -72,32 +72,6 @@
 
 
 
-// MBR support.
-#define  BS_JmpBoot       0  /* x86 jump instruction (3-byte) */
-#define  BS_OEMName       2  /* OEM name (8-byte) */
-#define  BPB_BytsPerSec  11  /* Sector size [byte] (WORD) */
-#define  BPB_SecPerClus  13  /* Cluster size [sector] (BYTE) */
-#define  BPB_RsvdSecCnt  14  /* Size of reserved area [sector] (WORD) */
-#define  BPB_NumFATs     16  /* Number of FATs (BYTE) */
-#define  BPB_RootEntCnt  17  /* Size of root directory area for FAT [entry] (WORD) */
-#define  BPB_TotSec16    19  /* Volume size (16-bit) [sector] (WORD) */
-#define  BPB_Media       21  /* Media descriptor byte (BYTE) */
-#define  BPB_FATSz16     22  /* FAT size (16-bit) [sector] (WORD) */
-#define  BPB_SecPerTrk   24  /* Number of sectors per track for int13h [sector] (WORD) */
-#define  BPB_NumHeads    26  /* Number of heads for int13h (WORD) */
-#define  BPB_HiddSec     28  /* Volume offset from top of the drive (DWORD) */
-#define  BPB_TotSec32    32  /* Volume size (32-bit) [sector] (DWORD) */
-#define  BS_DrvNum       36  /* Physical drive number for int13h (BYTE) */
-#define  BS_NTres        37  /* WindowsNT error flag (BYTE) */
-#define  BS_BootSig      38  /* Extended boot signature (BYTE) */
-#define  BS_VolID        39  /* Volume serial number (DWORD) */
-#define  BS_VolLab       42  /* Volume label string (8-byte) */
-#define  BS_FilSysType   50  /* Filesystem type string (8-byte) */
-#define  BS_BootCode     62  /* Boot code (448-byte) */
-#define  BS_55AA         510  /* Signature word (WORD) */
-#define  MBR_Table       446  /* MBR: Offset of partition table in the MBR */ 
-
-
 
 
 //
@@ -105,7 +79,10 @@
 //
 
 
-char *current_volume_string;
+
+//
+// pwd
+//
 
 // a stringo do diretório de trabalho.
 char current_workingdiretory_string[WORKINGDIRECTORY_STRING_MAX];
@@ -117,13 +94,7 @@ int pwd_initialized;
 int dirCount;  
 
 
-// Tipo de sistema de arquivos, fat16, ext2 ...
-int g_filesystem_type;   //use this one.
-int g_spc;               //sectors per cluster.(spc é variável.)
 
-
-// Se é fat32, 16, 12.
-int fatbits;   
 
 //list of clusters. 
 unsigned short file_cluster_list[1024]; 
@@ -134,52 +105,6 @@ unsigned short file_cluster_list[1024];
 //
 //    ====    Structures    ====
 //
-
-
-
-/*
- * partition_table_d:
- *     Structure for partition table.
- */ 
-struct partition_table_d
-{    
-    unsigned char boot_indicator; //80h active
-    unsigned char start_chs[3];
-    unsigned char partition_type;
-    unsigned char end_chs[3];
-    unsigned long start_sector;
-    unsigned long partition_size; //in sectors.
-};
-struct partition_table_d *partition; 
-
-
-
-//As informações na partition table apresentadas na forma de 'char'.  
-struct partition_table_chars_d
-{ 
-    unsigned char BootFlag;                // Bootable or not
-    
-    unsigned char StartingCHS0;            // Not used
-    unsigned char StartingCHS1;            // Not used
-    unsigned char StartingCHS2;            // Not used
-    
-    unsigned char PartitionType;            // 
-    
-    unsigned char EndingCHS0;              // Not used
-    unsigned char EndingCHS1;              // Not used
-    unsigned char EndingCHS2;              // Not used
-    
-    unsigned char StartingSector0;       // Hidden sectors
-    unsigned char StartingSector1;
-    unsigned char StartingSector2;
-    unsigned char StartingSector3;
-    
-    unsigned char PartitionLength0;      // Sectors in this partition
-    unsigned char PartitionLength1;
-    unsigned char PartitionLength2;
-    unsigned char PartitionLength3; 
-};
-struct partition_table_chars_d *partition_chars; 
 
 
 
@@ -285,85 +210,8 @@ struct softlink_d
 
 
 
-/*
- * mbr_d:
- *     ? para obter informações sobre o disco.
- *     Porém devemos ter um boot block mais completo.
- */ 
-
-// #bugbug
-// É desnecessário ter isso dentro do kernel.
-// Deletar.
-
-struct mbr_d
-{
-
-/*
-	//jmp code (3 bytes)
-	
-	//os name 
-	//Sistem info. 
-    char OEM_ID[5];  //"NORA "
-    char VERSION[3]; //"1.0"
-	
-	//bpb 
-	  
-    //Bpb.	
-    unsigned short BytesPerSector;  // dw 512
-	char SectorsPerCluster;         // db 1
-	short ReservedSectors;          // dw 2
-	char TotalFATs;                 // db 2
-	short MaxRootEntries;           // dw 512         ;512 entradas de 32bytes=32 setores.
-	short TotalSectorsSmall;        // dw 0
-	char MediaDescriptor;           // db 0xF0
-	short SectorsPerFAT;            // dw 64          ;64.      
-	short SectorsPerTrack;          // dw 0           ;pegar via bios.     
-	
-	short NumHeads;                 // dw 0           ;pegar via bios.        
-	long HiddenSectors;             // dd 0x00000000
-	long TotalSectorsLarge;         // dd 0x00000000
-	
-	//;for extended.
-	char DriveNumber;               // db 0x80        ;pegar via bios.
-	char Flags;                     // db 0x00
-	char bootSignature;             // db 0           ;Extended Boot Signature.
-	long VolumeID;                  // dd 0x00000001
-	char VolumeLabel[11];           // db "FREDNORA8MB"
-	char SystemID[8];               // db "FAT16   "		
-	
-	//PointerTable
-	//unsigned short SystemName;
-	//unsigned short SystemVersion;
-	//unsigned short SystemBPB;
-	//unsigned short SystemSignature;
-	
-	//Partition Table
-	//unsigned long p0[3];
-	//unsigned long p1[3];
-	//unsigned long p2[3];
-	//unsigned long p3[3];
-	
-	//Signature.
-	unsigned short Signature;
-*/
-}; 
-struct mbr_d *mbr; 
 
 
-
-
-
-/*
- * vbr_d:
- *     Structure for VBR parameters.
- */  
-
-struct vbr_d
-{
-	//copiar mbr, é parecido;
-}; 
-struct vbr_d *vbr; 
- 
  
 
 struct fat_d
@@ -436,7 +284,7 @@ struct dir_d
 
 /*
  * filesystem_d:
- *     Informações sobre o sistema de arquivos usado pelo sistema.
+ *     Informações sobre um sistema de arquivos.
  */
 
 struct filesystem_d
@@ -467,9 +315,12 @@ struct filesystem_d
 
     //...
 };
-struct filesystem_d *filesystem;
-struct filesystem_d *current_filesystem;
-//...
+
+struct filesystem_d *root;
+struct filesystem_d *CurrentFileSystem;
+// ...
+
+
 
 
 
@@ -506,66 +357,6 @@ struct file_access_d
 struct file_access_d *CurrentFileAccess;
 
 
-
-//===================================================================
-//                      STORAGE  
-//===================================================================
-//
-// # important:
-// Informação sobre os recursos de armazenamento.
-// Mesmo que nenhum sistema de arquivos esteja configurado é possível
-// consultar essa estrutura para saber a condição do sistema
-// de arquivos atual.
-// #info: 
-// Esse será o nível 0. O nível masi baixo das estruturas 
-// de gerenciamento de armazenamento de massa. Abaixo disso é driver
-// de controlador.
-//
-
-struct storage_d
-{
-
-    // disk - disco atual
-    struct disk_d *d;
-
-    // volume - volume atual.
-    struct volume_d *v;
-
-
-    //file system
-    //Ponteiro para o sistema de arquivos atual.
-    //Se isso for NULL, então não temos sistema de arquivos.
-    struct filesystem_d *fs;
-
-
-    //virtual file system
-    struct vfs_d *vfs;
-
-	//Stream 
-	//ponteiro para o arquivo atual,
-	//que pode ser um arquivo, um diretório, um dispositivo ...
-	//tudo seguindo definições unix-like para esse tipo de estrutura.
-	//Na inicialização uma das estruturas deve ser apontada aqui.
-	
-	//#importante 
-	//devemos permitir que os programas em user mode tenham acesso 
-	//as streams gerenciadas pelo kernel.
-	
-	//na estrutura de processo devemos indicar 
-	//quais são as streams gerenciadas pelo kernel que 
-	//o processo tem acesso, também devemos indicar quais são 
-	//as streams abertas pelo processo.
-
-
-    file *__file;
-};
-
-// Essa será a esttrutura usada para saber informações sobre o 
-// sistema de arquivos atual e gerenciar o sistema de arquivos atual.
-
-struct storage_d *storage;
-//struct storage_d *CurrentStorage;
-// ...
 
 
 //

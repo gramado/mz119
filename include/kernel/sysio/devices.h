@@ -41,6 +41,10 @@
 //e1000
 
 
+#define MAJOR(a) (((unsigned)(a))>>8)
+#define MINOR(a) ((a)&0xff)
+
+
 
 
 

@@ -32,17 +32,16 @@
 //de acessoa objetos ... que pode ser 'arquivos' ou 
 // dispositivos. 
 //talvez isso devesse ir para object.h
+
 typedef enum {
 	
 	// **** EXECUTIVE  ****
-	
-	//ram
+
 	//Nothing for now.	
     ObjectTypeNull,               //0 Null. (Free)
 	ObjectTypeASpace,             //1 Address Space. (memory address)
 	ObjectTypeDSpace,             //2 Disk Space.
 	ObjectTypeBank,               //3 Bank. (banco de dados).
-	//sm
 	ObjectTypeChannel,            //4 executive sm.
 	ObjectTypeDirectory,          //5 diretório de arquivos. executive sm.
 	ObjectTypeHeap,               //6 heap executive sm
@@ -58,25 +57,23 @@ typedef enum {
 	ObjectTypeFramePool,          //16
 	ObjectTypeSocket,             //17 sockets, executive, sm.
     ObjectTypeUserInfo,           //18 userinfo, executive, sm.
-	//uigm 
-	ObjectTypeDesktop,     //19 desktop, executive,uigm.	
-	ObjectTypeMenuItem,        //20 menuitem, executive uigm.
-	ObjectTypeMenu,        //21 menu, executive uigm.	
-	ObjectTypeUserSession, //22 User session, executive, uigm.	
-	ObjectTypeWindowProcedure,  //23 window procedure, executive, uigm.	
-	ObjectTypeRectangle,        //24 rectangle, executive, uigm. 	
-	ObjectTypeRGBA,             //25 rgba, executive, uigm. 
-	ObjectTypeWindow,           //26 window, executive ,uigm.
-	ObjectTypeRoom,  //27 desktop pool. room window station, executive, uigm.
-	//uitm.
-	ObjectTypeTerminal,        //28 console, executive, uitm.
-    ObjectTypeLine,           //29 console line, executive, uitm.
-	ObjectTypeTerminal2,       //30 Terminal, executive, uitm. //TODO MUDAR
+	ObjectTypeDesktop,            //19 desktop, executive,uigm.	
+	ObjectTypeMenuItem,           //20 menuitem, executive uigm.
+	ObjectTypeMenu,               //21 menu, executive uigm.	
+	ObjectTypeUserSession,        //22 User session, executive, uigm.	
+	ObjectTypeWindowProcedure,    //23 window procedure, executive, uigm.	
+	ObjectTypeRectangle,          //24 rectangle, executive, uigm. 	
+	ObjectTypeRGBA,               //25 rgba, executive, uigm. 
+	ObjectTypeWindow,             //26 window, executive ,uigm.
+	ObjectTypeRoom,               //27 desktop pool. room window station, executive, uigm.
+	ObjectTypeTerminal,           //28 console, executive, uitm.
+    ObjectTypeLine,               //29 console line, executive, uitm.
+	ObjectTypeTerminal2,          //30 Terminal, executive, uitm. //TODO MUDAR
 	
     // **** MICROKERNEL  ****
 	
 	//microkernel
-	ObjectTypeProcess,  //31 Process, microkernel.
+	ObjectTypeProcess,    //31 Process, microkernel.
 	ObjectTypeSemaphore,  //32 semaphore, microkernel.	
 	ObjectTypeThread,     //33 thread, microkernel.
 	
@@ -114,49 +111,50 @@ typedef enum {
 	ObjectTypeRequest,   //53 request de kernel /include.
 	ObjectTypeSignal,    //54
 	ObjectTypeFile,      //55 file, /include. stdio.
-	ObjectTypeMetafile, //56 
-	ObjectTypeMutex,    //57
-	ObjectTypeToken,    //58 Token de acesso à objetos. (access token)
-	ObjectTypeFont,    //59
-	ObjectTypeIcon,     //60
-	ObjectTypePipe,     //61
+	ObjectTypeMetafile,  //56 
+	ObjectTypeMutex,     //57
+	ObjectTypeToken,     //58 Token de acesso à objetos. (access token)
+	ObjectTypeFont,      //59
+	ObjectTypeIcon,      //60
+	ObjectTypePipe,      //61
 	
 	ObjectTypeGroup,     //62
 	ObjectTypeUser,      //63
 	
-	ObjectTypeComputer,      //64
-	ObjectTypeCpuRegister,   //65
+	ObjectTypeComputer,       //64
+	ObjectTypeCpuRegister,    //65
 	
 	
-	ObjectTypeDisk,   //66
-	ObjectTypeDiskPartition,   //67 //info struct
-	ObjectTypeGDT,   //68
-	ObjectTypeLDT,   //69
-	ObjectTypeIDT,   //70
-	ObjectTypeTSS,   //71
+	ObjectTypeDisk,           //66
+	ObjectTypeDiskPartition,  //67 //info struct
+	ObjectTypeGDT,            //68
+	ObjectTypeLDT,            //69
+	ObjectTypeIDT,            //70
+	ObjectTypeTSS,            //71
 	
-	ObjectTypePort,  //72 (i/o port)
-	ObjectTypeController, //73
-	ObjectTypeKM, //74
-	ObjectTypeUM, //75
-	ObjectTypeColorScheme,  //76
-	ObjectTypeButton,       //77
-	ObjectTypeGrid,       //78
-	ObjectTypeMessage,    //79
+	ObjectTypePort,           //72 (i/o port)
+	ObjectTypeController,     //73
+	ObjectTypeKM,             //74
+	ObjectTypeUM,             //75
+	ObjectTypeColorScheme,    //76
+	ObjectTypeButton,         //77
+	ObjectTypeGrid,           //78
+	ObjectTypeMessage,        //79
 	//...
 	
 	ObjectTypeTTY,
 	ObjectTypeVirtualConsole,
 	ObjectTypeCharDev,
 	ObjectTypeBlockDev,
-	ObjectTypeNetworkDev
+	ObjectTypeNetworkDev,
+	ObjectTypeFileSystem
 	
-	
-	
-	//@todo: precisamos criar um tipo genérico
-	//       para validação de objetos não especificados 
+
+	// todo: 
+	// precisamos criar um tipo genérico
+	// para validação de objetos não especificados 
 	// ou até nulos, talvez. :)
-	//ObjectTypeGeneric, //80
+	// ObjectTypeGeneric, //80
 	
 }object_type_t;
 
@@ -169,11 +167,14 @@ typedef enum {
 
 //talvez isso devesse ir para object.h
 typedef enum {
+	
 	ObjectClassKernelObjects,  // Kernel Objects.
 	ObjectClassUserObjects,    // User Objects.
 	ObjectClassGuiObjects,     // Graphical User Interface Objects.
 	ObjectClassCliObjects,     // Command Line Interface Objects.
+    
     //...	
+
 }object_class_t;
 
 

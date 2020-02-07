@@ -438,18 +438,19 @@ fsLoadFile ( unsigned long fat_address,
     // Ou seja, pega o número máximo de entradas.
     // ...
 
-    if ( (void *) filesystem == NULL )
-    {
-        printf ("fsLoadFile: filesystem\n");
-        goto fail;
+    if ( (void *) root == NULL ){
+        panic ("fsLoadFile: No root file system.\n");
 
     }else{
 
-        Spc = filesystem->spc;
+
+        // #todo
+        // Check if the root is initialized.
+
+        Spc = root->spc;
 
         if (Spc <= 0){
-            printf ("fsLoadFile: Spc\n");
-            goto fail;
+            panic ("fsLoadFile: Spc\n");
         }
 
         // Max entries 
@@ -457,11 +458,10 @@ fsLoadFile ( unsigned long fat_address,
         // #bugbug: 
         // Devemos ver o número de entradas no diretório corrente.
 
-        max = filesystem->rootdir_entries;
+        max = root->rootdir_entries;
 
         if (max <= 0){
-            printf ("fsLoadFile: max\n");
-            goto fail;
+            panic ("fsLoadFile: max root entries \n");
         }
 
 
@@ -914,7 +914,7 @@ unsigned long fsGetFileSize ( unsigned char *file_name ){
 	// Poderíamos usar malloc ou alocador de páginas ??
 	// #todo: Devemos carregar o diretório atual.
 
-    unsigned short *root = (unsigned short *) VOLUME1_ROOTDIR_ADDRESS;
+    unsigned short *root_dir = (unsigned short *) VOLUME1_ROOTDIR_ADDRESS;
 
 	// #todo: Devemos carregar o diretório atual.
 	//unsigned long current_dir_address = (unsigned long) Newpage();
@@ -963,34 +963,31 @@ unsigned long fsGetFileSize ( unsigned char *file_name ){
 	//Checa se é válida a estrutura do sistema de arquivos.
     //A intenção é obtermos a quantidade de entradas no diretório raiz.
 	//#bugbug: Mas isso deveria ser feito para o diretório atual.
-	
-    if ( (void *) filesystem == NULL )
-    {
-	    printf ("fsGetFileSize: filesystem\n");
-		goto fail;
-	
+
+
+    if ( (void *) root == NULL ){
+        panic ("fsGetFileSize: No root file system\n");
+
     }else{
-		
-	    //Setores por cluster.
-	    Spc = filesystem->spc;
-		
+
+        // Setores por cluster.
+        Spc = root->spc;
+
         if (Spc <= 0){
-            printf ("fsGetFileSize: Spc\n");
-            goto fail;
+            panic ("fsGetFileSize: Spc\n");
         }
 	
 	    //Max entries ~ Número de entradas no rootdir.
 		//#bugbug: Devemos ver o número de entradas no diretório corrente.
-	    max = filesystem->rootdir_entries;	
+	    max = root->rootdir_entries;	
 		
         if (max <= 0){
-            printf ("fsGetFileSize: max\n");
-            goto fail;
+            panic ("fsGetFileSize: max root entries\n");
         }
-		
-	    // More?! 
-		// ...
-	};
+
+        // More?! 
+        // ...
+    };
 
 
     //
@@ -1040,10 +1037,10 @@ unsigned long fsGetFileSize ( unsigned char *file_name ){
 	while ( i < max )
 	{
 		//Se a entrada não for vazia.
-		if ( root[z] != 0 )
+		if ( root_dir[z] != 0 )
         {
 			// Copia o nome e termina incluindo o char 0.
-			memcpy ( NameX, &root[z], size );
+			memcpy ( NameX, &root_dir[z], size );
 			NameX[size] = 0;
 			
             // Compara 11 caracteres do nome desejado, 

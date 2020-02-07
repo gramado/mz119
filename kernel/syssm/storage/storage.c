@@ -1,12 +1,8 @@
 /*
- * File: sm\disk\volume.c 
+ * File: storage/storage.c 
  *
- * Descrição:
- *     Gerenciador de volumes.
- *     Arquivo principal do Volume Manager.
- *     MB - Módulos incluídos no Kernel Base.
- *
- *     Obs: O Gerenciador de Volumes um módulo muito importante do Kernel.
+ *     Storage manager.
+ *     Manages disks and volumes. 
  *
  * 2015 - Created by Fred Nora.
  * 2018 - Revision.

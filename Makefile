@@ -10,8 +10,8 @@
 VERSION = 1
 PATCHLEVEL = 28
 SUBLEVEL = 0
-EXTRAVERSION = -rc22
-NAME = 
+EXTRAVERSION = 
+NAME = Root
 
 
 
@@ -131,7 +131,7 @@ ifeq ($(ARCH),x86)
 	EXECVE_OBJECTS := pipe.o socket.o ctype.o  kstdio.o stdlib.o string.o unistd.o \
 	devmgr.o \
 	gde_serv.o \
-	debug.o diskvol.o install.o object.o runtime.o \
+	debug.o storage.o install.o object.o runtime.o \
 	abort.o info.o io.o modules.o signal.o sm.o \
 	init.o system.o \
 	execve.o 
@@ -394,7 +394,9 @@ KERNEL.BIN:
 	# /sm
 	gcc -c kernel/syssm/execve/sm/init.c    -I include/ $(CFLAGS) -o init.o
 	gcc -c kernel/syssm/execve/sm/system.c  -I include/ $(CFLAGS) -o system.o
-	gcc -c kernel/syssm/execve/sm/disk/diskvol.c     -I include/ $(CFLAGS) -o diskvol.o
+	
+	gcc -c kernel/syssm/storage/storage.c     -I include/ $(CFLAGS) -o storage.o
+
 	gcc -c kernel/syssm/execve/sm/install/install.c  -I include/ $(CFLAGS) -o install.o
 	gcc -c kernel/syssm/execve/sm/rt/runtime.c       -I include/ $(CFLAGS) -o runtime.o
 	gcc -c kernel/syssm/execve/sm/sys/abort.c    -I include/ $(CFLAGS) -o abort.o

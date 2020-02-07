@@ -132,9 +132,6 @@ extern void do_executa_new_task (void);
 
 
 
-// execve
-#include <kernel/syssm/execve/sm/disk/diskmap.h>        
-
 // hal
 #include <kernel/sysio/hal/screen.h> 
 #include <kernel/sysio/hal/video.h>
@@ -156,9 +153,11 @@ extern void do_executa_new_task (void);
 // kdrivers
 #include <kernel/sysio/kdrivers/ide/ata.h>
 
-// execve
-#include <kernel/syssm/execve/sm/disk/disk.h>          
-#include <kernel/syssm/execve/sm/disk/volume.h>
+
+// syssm
+#include <kernel/syssm/storage/volume.h>
+#include <kernel/syssm/storage/disk.h>          
+#include <kernel/syssm/storage/storage.h>          
 
 
 // kdrivers
