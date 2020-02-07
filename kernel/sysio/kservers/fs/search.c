@@ -35,6 +35,9 @@
 // File name. "1234578XYZ"
 // Address of the directory.
 
+// OUT:
+// 1 = Found.
+
 int KiSearchFile ( unsigned char *file_name, unsigned long address ){
 
     int Status = -1;
@@ -42,6 +45,7 @@ int KiSearchFile ( unsigned char *file_name, unsigned long address ){
     unsigned long i = 0;                  // Deslocamento do dir. 
     unsigned long j = 0;                  // Deslocamento no nome.
     unsigned long NumberOfEntries = 512;  // Número máximo de entradas no diretório.
+    // O número de entradas poderia ser passado via argumento.
 
     char NameX[13];
 
@@ -55,19 +59,17 @@ int KiSearchFile ( unsigned char *file_name, unsigned long address ){
 
     // Invalid first char.
 
-    if ( file_name[0] == '/' || file_name[0] == 0 )
-    {
-        printf ("Invalid first char\n");
+    if ( file_name[0] == '/' || file_name[0] == 0 ){
+        printf ("KiSearchFile: Invalid first char\n");
         goto fail;
     }
 
 
     // Address Limits:
     // Endereço de memória onde o diretório está.
-
-    if (address == 0)
-    {
-        printf ("Invalid dir address\n");
+    
+    if (address == 0){
+        printf ("KiSearchFile: Invalid dir address\n");
         goto fail;
     }
 
@@ -107,10 +109,10 @@ int KiSearchFile ( unsigned char *file_name, unsigned long address ){
 			
 		    Status = (int) strncmp ( file_name, NameX, 11 );
 			
-			if (Status == 0)
-			{ 
-			    return 1;  //Found! 
-			}
+            // Found!
+            if (Status == 0){ 
+                return 1;   
+            }
             
             //Nothing.
         };   

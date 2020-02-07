@@ -1101,9 +1101,12 @@ int g_mm_system_type;
 	unsigned long LARGE_pagedpool_address; 
     unsigned long LARGE_heappool_address;
     
-	unsigned long LARGE_extraheap1_address;
+    unsigned long LARGE_extraheap1_address;
     unsigned long LARGE_extraheap2_address; 
     unsigned long LARGE_extraheap3_address; 
+
+
+
 
 
 
@@ -1117,6 +1120,8 @@ unsigned long memorysizeBaseMemory;
 unsigned long memorysizeOtherMemory;
 unsigned long memorysizeExtendedMemory;
 unsigned long memorysizeTotal;
+
+
 
 
 unsigned long memorysizeInstalledPhysicalMemory;

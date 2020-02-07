@@ -278,9 +278,6 @@ const char *break_path (const char *pathname, char *filename)
 
 
 
-
-
-
 /*
  **************
  * fsLoadFile:
@@ -501,7 +498,11 @@ fsLoadFile ( unsigned long fat_address,
     //{
         //Absolute = 1;
         //file_name++;
-    //}
+
+
+
+    //while (*file_name == '/')
+        //file_name++;
         
 
     
@@ -519,6 +520,17 @@ fsLoadFile ( unsigned long fat_address,
          printf ("fsLoadFile: size fail %d\n", size ); 
          size = 11;
     }
+    
+    
+    // We are opening the root dir.
+    //if ( file_name[0] == '/' && size == 1 )
+    //{
+    //}
+    
+    
+    //
+    // Search dirent.
+    //
 
 
 
@@ -544,7 +556,6 @@ fsLoadFile ( unsigned long fat_address,
     // (32/2) próxima entrada! (16 words) 512 vezes!
     
     i = 0; 
-                    
     while ( i < max )
     {
         if ( __dir[z] != 0 )
@@ -564,7 +575,7 @@ fsLoadFile ( unsigned long fat_address,
         i++;        
     }; 
 
-
+    
     //
     // Not found.
     //

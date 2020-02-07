@@ -155,17 +155,45 @@ void *clone_kernel_page_directory (void){
 */
 
 
+
+
+
+// #importante: PERIGO !!!
 //#bugbug
 //isso é um improviso, precisamos de outro endereço.
+// >>>> 0x1000
+// O sistema está usando esse endereço como início de um heap
+// onde pegamos páginas de memória para criarmos diretórios de páginas.
+// Isso porque precisamos de endereços que terminem com pelo menos 
+// 12bits zerados.
+// #todo: 
+// Precisamos encontrar outro lugar para esse heap, tendo em vista que
+// o número de diretórios criados será grande e o heap invadirá 
+// outras áreas.
+
+// #bugbug
+// Vamos improvisar um limite por enquanto.
+// O limite será o início da cga em modo texto.
+// See: gpa.h
+
 unsigned long table_pointer_heap_base = 0x1000;
 
-unsigned long 
-get_table_pointer (void)
+unsigned long get_table_pointer (void)
 {
     table_pointer_heap_base =  table_pointer_heap_base + 0x1000;
+    
+    if ( table_pointer_heap_base >= VM_BASE )
+    {
+        // #todo
+        // Precisamos de uma nova origem.
+        // Os primeiros 12bits precisam ser '0'.
+        panic ("pages-get_table_pointer: FIXME: limits.\n");
+    }
 
-    return table_pointer_heap_base;	
+
+    return table_pointer_heap_base;
 }
+
 
 
 
@@ -198,22 +226,26 @@ void *CreatePageDirectory (void){
 	// virtual address.
 	// Alocaremos uma página apenas, pois tem 4KB.	
 
+    //
+    //  # PERIGO.
+    //
+
 	// #BUGBUG
 	// #PERIGO.
 	// Isso deu certo.
-	// >>> O endereço precisa ter 12 bitz zerados para flags,
+	// >>> O endereço precisa ter 12 bits zerados para flags,
 	// então essa alocação é de 4KB em 4KB.
-	
+
+
 	//destAddressVA = (unsigned long) newPage (); 
-	destAddressVA = (unsigned long) get_table_pointer();  //ok
-	
-	if ( destAddressVA == 0 )
-	{
+    destAddressVA = (unsigned long) get_table_pointer();  //ok
+
+    if ( destAddressVA == 0 ){
         panic ("CreatePageDirectory: destAddressVA\n");
-		//die ();
-		//return NULL;
-	}
-	
+    }
+
+
+
 	// Talvez devamos limpar.
 	//memset ( destAddressVA, 0, sizeof(1024*4) );
 	

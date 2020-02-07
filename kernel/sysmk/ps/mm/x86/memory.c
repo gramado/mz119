@@ -999,35 +999,34 @@ int init_mm (void){
 
 	//#importante:
 	//Inicializa heap e stack.
-	
-	Status = (int) init_heap ();
-	
-	if (Status != 0)
-	{
-	    printf("init_mm fail: Heap\n");
-	    return (int) 1;
-	};	
-	
-	
-	Status = (int) init_stack ();
-	
-	if (Status != 0)
-	{
-	    printf("init_mm fail: Stack\n");
-	    return (int) 1;
-	};
 
-	
+    Status = (int) init_heap ();
+
+    if (Status != 0){
+        printf ("init_mm fail: Heap\n");
+        return (int) 1;
+    }
+
+
+
+    Status = (int) init_stack ();
+
+    if (Status != 0){
+        printf ("init_mm fail: Stack\n");
+        return (int) 1;
+    }
+
+
 	// Zerar a lista.
 	// Lista de blocos de memória dentro do heap do kernel.
-	
-	while ( i < MMBLOCK_COUNT_MAX )
-	{
+
+    while ( i < MMBLOCK_COUNT_MAX )
+    {
         mmblockList[i] = (unsigned long) 0;
-		
-		i++;
+        i++;
     };
-	
+
+
 	//Primeiro Bloco.
     //current_mmblock = (void *) NULL;
 	
@@ -1062,47 +1061,38 @@ int init_mm (void){
     memorysizeTotal = (unsigned long) ( memorysizeBaseMemory + memorysizeOtherMemory + memorysizeExtendedMemory );
 
 
-	// #IMPORTANTE 
-	// Determinar o tipo de sistema de memória.
-	// small   pelo menos 32mb
-	// medium  pelo menos 64mb
-	// large   pelo menos 128mb
-	
-	//0MB
-	if ( memorysizeTotal >= (0) )
-	{
-		g_mm_system_type = stNull;
-	    
-		// #atenção 
-		// Nesse caso devemos prosseguir e testar as outras opções.		
-	}	
-	
-	
-	//32MB
-	//(32*1024)
-	if ( memorysizeTotal >= SMALLSYSTEM_SIZE_KB )   
-	{
-		g_mm_system_type = stSmallSystem;
-	}
-	
-	
-	//64MB
-	//(64*1024)
-	if ( memorysizeTotal >= MEDIUMSYSTEM_SIZE_KB )  
-	{
-		g_mm_system_type = stMediumSystem;
-	}	
-	
-	
-	//128MB
-	//(128*1024)
-	if ( memorysizeTotal >= LARGESYSTEM_SIZE_KB )  
-	{
-		g_mm_system_type = stLargeSystem;
-	}		
-	
 
-	
+    // #IMPORTANTE 
+    // Determinar o tipo de sistema de memória.
+    // small   pelo menos 32mb
+    // medium  pelo menos 64mb
+    // large   pelo menos 128mb
+
+    // 0MB
+    // #atenção 
+    // Nesse caso devemos prosseguir e testar as outras opções.
+    if ( memorysizeTotal >= (0) ){
+        g_mm_system_type = stNull;
+    }
+
+    // 32MB
+    if ( memorysizeTotal >= SMALLSYSTEM_SIZE_KB ){
+        g_mm_system_type = stSmallSystem;
+    }
+
+    // 64MB
+    if ( memorysizeTotal >= MEDIUMSYSTEM_SIZE_KB ){
+        g_mm_system_type = stMediumSystem;
+    }
+
+    // 128MB
+    if ( memorysizeTotal >= LARGESYSTEM_SIZE_KB ){
+        g_mm_system_type = stLargeSystem;
+    }
+
+
+
+
 	//inicializando o framepool (paged pool)
 	
 	initializeFramesAlloc ();
@@ -1434,6 +1424,18 @@ int gc (void){
 
     return 0;
 }
+
+
+
+// #todo
+/*
+unsigned long mm_query_system_size(void);
+unsigned long mm_query_system_size(void)
+{
+    return (unsigned long) memorysizeTotal;
+}
+*/
+
 
 
 /*
