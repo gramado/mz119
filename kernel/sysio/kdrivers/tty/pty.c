@@ -8,6 +8,10 @@
 // Enquando os canais usam os termos server/client os pty
 // usam os termos master/slave.
 
+// See:
+// ptmx - https://docs.oracle.com/cd/E19253-01/816-4855/termsub15-14/index.html
+// http://poincare.matf.bg.ac.rs/~ivana/courses/ps/sistemi_knjige/pomocno/apue/APUE/0201433079/ch19lev1sec3.html
+
 
 #include <kernel.h>
 
@@ -305,5 +309,35 @@ int pty_unlink ( struct tty_d *tty )
 	
 	return 0;
 }
+
+
+
+int ptmx_open (void)
+{
+    int ptm_fd = -1;
+    
+    struct tty_d *master;
+    struct tty_d *slave;
+    
+    
+    master = (struct tty_d *) tty_create();
+    slave = (struct tty_d *) tty_create();
+    
+    //#todo check validation
+    
+    int status = -1;
+    status = pty_link(master,slave);
+
+    if (status < 0)
+        return -1;
+
+    // +abre uma tty master e coloca na lista de arquivos abertos
+    // pelo processo
+    // +cria uma tty stave e deixa bloqueada.
+    // retorna o fd da tty master.
+    
+    return (int) ptm_fd;
+}
+
 
 

@@ -73,5 +73,5 @@ int pty_link_by_pid ( int master_pid, int slave_pid );
 int pty_link ( struct tty_d *master, struct tty_d *slave );
 int pty_unlink ( struct tty_d *tty );
 
-
+int ptmx_open (void);
  

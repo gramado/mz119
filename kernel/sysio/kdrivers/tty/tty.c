@@ -11,6 +11,9 @@
  * #obs: Vamos montar dispositivos de terminal virtual em /DEV
  */
  
+  
+ 
+ 
  
 #include <kernel.h> 
 
@@ -42,10 +45,9 @@ tty_read_ttyList ( unsigned int channel,
     
      __tty = (struct tty_d *) ttyList[channel];
 
-     __tty_read_ttyList ( (struct tty_d *) __tty, 
-           (char *) buffer, 
-           (int) nr );
-
+     return (int) __tty_read ( (struct tty_d *) __tty, 
+                      (char *) buffer, 
+                      (int) nr );
 }
 
 
@@ -67,11 +69,10 @@ tty_write_ttyList ( unsigned int channel,
         __tty = (struct tty_d *) ttyList[channel];
         
  
-      __tty_write_ttyList ( (struct tty_d *) __tty, 
-           (char *) buffer, 
-           (int) nr );
-
-
+ 
+    return (int) __tty_write ( (struct tty_d *) __tty, 
+                     (char *) buffer, 
+                     (int) nr );
 }
 
             
@@ -1074,6 +1075,10 @@ int ttyInit (int tty_id){
 
     return 0;
 }
+
+
+
+
 
 
 int tty_init_module (void)
