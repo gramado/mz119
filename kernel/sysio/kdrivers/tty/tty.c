@@ -27,6 +27,49 @@ unsigned long tty_table[4];  //os 4 consoles virtuais.
 
 
 
+/*
+int 
+tty_read_from_of ( unsigned int fd, 
+           char *buffer, 
+           int nr );
+
+int 
+tty_read_from_of ( unsigned int fd, 
+           char *buffer, 
+           int nr )
+{
+    // pega o objeto tty na lista de arquivos abertos.
+    // chama read
+    //__tty_read( ... );
+    
+    return -1;
+}
+*/
+
+
+
+/*
+int 
+tty_write_from_of ( unsigned int fd, 
+           char *buffer, 
+           int nr );
+
+int 
+tty_write_from_of ( unsigned int fd, 
+           char *buffer, 
+           int nr )
+{
+    // pega o objeto tty na lista de arquivos abertos.
+    // chama read
+    //__tty_write( ... );
+    
+    return -1;
+}
+*/
+
+
+
+
 // reads into ttyList[] descriptor.
 int 
 tty_read_ttyList ( unsigned int channel, 
