@@ -3026,12 +3026,11 @@ do_compare:
 
 
     // root
-    // Suspensa.
+    // Show root file system info.
     if ( strncmp( prompt, "root", 4 ) == 0 )
     {
-        printf("~/root\n");
-		//testa_root();
-		goto exit_cmp;
+        gramado_system_call (4444, 0, 0, 0);
+        goto exit_cmp;
     }
 
 

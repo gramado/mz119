@@ -78,6 +78,7 @@
 //    ====    Variables    ====
 //
 
+static char *____root_name = "/";
 
 
 //
@@ -289,13 +290,32 @@ struct dir_d
 
 struct filesystem_d
 {
+    
+    // Object info.
+
+    object_type_t objectType;
+    object_class_t objectClass;
+
 
     int used;
     int magic;
 
     int type;
 
+    char *name;
     
+
+    
+    // Number of entries in the root dir.
+    int rootdir_entries;
+
+    // Size of the entry in bytes.
+    int entry_size; 
+
+    //================    
+
+    // #bugbug
+    // Thats specific for fat16.
     // fat16.
     unsigned long rootdir_address; //endereço do rootdir
     unsigned long rootdir_lba;     //lba
@@ -304,14 +324,12 @@ struct filesystem_d
     unsigned long dataarea_address; //endereço do inicio da area de dados.
     unsigned long dataarea_lba;   //lba
 
+
+    // #bugbug
+    // its a disk stuff.
     // Sectors per cluster.
     int spc;    
 
-    // Number of entries in the root dir.
-    int rootdir_entries;
-
-    // Size of the entry in bytes.
-    int entry_size; 
 
     //...
 };
@@ -319,8 +337,6 @@ struct filesystem_d
 struct filesystem_d *root;
 struct filesystem_d *CurrentFileSystem;
 // ...
-
-
 
 
 
@@ -640,6 +656,9 @@ int fsCheckELFFile ( unsigned long address );
 int fsCheckPEFile( unsigned long address );
 int fsLoadFileFromCurrentTargetDir (void);
 void fsInitTargetDir (void);
+
+
+void fs_show_root_fs_info(void);
 
 
 /*

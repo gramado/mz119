@@ -715,8 +715,7 @@ void fs_init_fat (void){
 
 void fs_init_structures (void){
 
-    int Type;
-
+    int Type = 0;
 
     //
     // The root file system.
@@ -731,6 +730,16 @@ void fs_init_structures (void){
 
     }else{
 
+
+        root->used = 1;
+        root->magic = 1234;
+
+        root->objectType = ObjectTypeFileSystem;
+        root->objectClass = ObjectClassKernelObjects;
+        
+        
+        root->name = (char *) ____root_name;
+        
         storage->fs = root;
         //...
     };
@@ -739,7 +748,7 @@ void fs_init_structures (void){
 
 	//Type.
 	//#bugbug: 
-    //Em qual dico e volume pegamos o tipo de sistema de arquivos.
+    //Em qual disco e volume pegamos o tipo de sistema de arquivos.
 
     Type = (int) get_filesystem_type ();   
 
@@ -772,21 +781,62 @@ void fs_init_structures (void){
 			root->spc = (int) get_spc(); //variável
 	        root->rootdir_entries = FAT16_ROOT_ENTRIES;
 	        root->entry_size = FAT16_ENTRY_SIZE;
-			
+            
+            // ...
+
 		    break;
 			
 	    case FS_TYPE_EXT2:
 		    //nothing for now.
 		    break;
-		
-		//case FS_TYPE_EXT3: break;
-		
+
+        //...
+
+
         default:
 		    //nothing for now.
             break;
     };
 }
 
+
+
+
+void fs_show_root_fs_info(void)
+{
+
+    printf ("\n");
+    printf ("fs_show_root_fs_info:\n");
+
+    if ( (void *) root == NULL ){
+        printf ("No root structure\n");
+        goto fail;
+ 
+    }else{
+
+        if ( root->used != 1 || root->magic != 1234 ){
+             printf ("Validation fail\n");
+             goto fail;
+        }
+
+        printf ("name = %s \n",root->name );
+                
+        printf ("Object type %d \n",root->objectType );
+        printf ("Object class %d \n",root->objectClass );
+        
+        printf ("type = %d \n",root->type );
+        printf ("Root dir entries %d \n",root->rootdir_entries );
+        printf ("Entry size %d \n",root->entry_size );
+        //printf ("",root-> );
+
+        refresh_screen();
+        return;
+    }; 
+
+fail:
+    refresh_screen();
+    return;
+}
 
 /*
  ********************************************************
@@ -874,7 +924,6 @@ int fsInit (void){
 	
 	
 	//foi definido em stdio.h
-	//FILE *volume1_rootdir;
 
     volume1_rootdir = (FILE *) kmalloc ( sizeof(FILE) );
 

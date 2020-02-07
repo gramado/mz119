@@ -142,13 +142,13 @@ typedef enum {
 	ObjectTypeMessage,        //79
 	//...
 	
-	ObjectTypeTTY,
-	ObjectTypeVirtualConsole,
-	ObjectTypeCharDev,
-	ObjectTypeBlockDev,
-	ObjectTypeNetworkDev,
-	ObjectTypeFileSystem
-	
+    ObjectTypeTTY,
+    ObjectTypeVirtualConsole,
+    ObjectTypeCharDev,
+    ObjectTypeBlockDev,
+    ObjectTypeNetworkDev,
+    ObjectTypeFileSystem
+
 
 	// todo: 
 	// precisamos criar um tipo genérico

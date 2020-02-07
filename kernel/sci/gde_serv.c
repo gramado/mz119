@@ -1036,8 +1036,12 @@ void *gde_extra_services ( unsigned long number,
     }
     
 
-
-
+    // Show root files ystem info.
+    if ( number == 4444 )
+    {
+        fs_show_root_fs_info();
+        return NULL;
+    }
     
     //socket() la libc.
     //chamaremos a rotina na crts/klibc
