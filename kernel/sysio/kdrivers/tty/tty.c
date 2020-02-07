@@ -345,6 +345,27 @@ __tty_write ( struct tty_d *tty,
     // alert!!
     //
     
+    
+    // #importante
+    // Ok, nesse momento o sender pode enviar vários
+    // tipos de mensagem, essa mensagem deve ser indicada
+    // no argumento dessa função.
+    // 444 - ler a mensagem de string que está no buffer.
+    // 445 - O buffer contém vários argumentos.
+    // 446 - o buffer é um buffer com algum protocolo de network.
+    // ??? - Muitas mensagens podem ser criadas nesse caso,
+    // transformando essa rotina numa poderosa ferramenta de comunicação
+    // entre processos.
+    // Os soquetes da libc podem tirar proveito desse mecanismo.
+    // ??? nesse caso o processo filho está mandando mensagem
+    // para o processo pai, Mas podemos criar rotinas que
+    // enviem mensagem pra quanquer processo, inclusive para ws e wm.
+    // ??? - #importante: O próprio kernel pode usar uma rotina 
+    // como essa para enviar mensagens para processos servidores 
+    // ou drivers.
+    
+    
+    
     unsigned long message_address[8];
  
      message_address[0] = (unsigned long) 0; //w
