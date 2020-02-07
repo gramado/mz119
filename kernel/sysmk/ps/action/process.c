@@ -1952,8 +1952,7 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 
 
     // Check Process1
-    if ( (void *) Process1 == NULL )
-    {
+    if ( (void *) Process1 == NULL ){
         printf ("processCopyProcess: Process1\n");
         goto fail;
 
@@ -1968,10 +1967,10 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 
 
     // Check Process2
-    if ( (void *) Process2 == NULL )
-    {
+    if ( (void *) Process2 == NULL ){
         printf ("processCopyProcess: Process1\n");
         goto fail;
+    
     }else{
 
         if ( Process2->used != 1 || Process2->magic != 1234 )
@@ -2179,7 +2178,7 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
     //Process2->long2  = Process1->long2;     //arg4.
 
 
-
+    /*
     //++
     // tty support
     Process2->tty = ( struct tty_d *) tty_create ();  
@@ -2189,6 +2188,13 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
     }
     tty_start (Process2->tty);
     //--
+    */
+    
+    // #test
+    // No caso da clonagem, vamos herdar a tty,
+    // talvezz isso facilite a comunicação.
+    
+    Process2->tty = Process1->tty;
 
 
     Process2->exit_code = Process1->exit_code;
@@ -2726,9 +2732,8 @@ get_next:
         // tty support
 
         Process->tty = ( struct tty_d *) tty_create ();         
+        
         if ( (void *) Process->tty == NULL ){
-			
-			//printf ("pid %d \n",Process->pid );
             panic ("create_process: Couldn't create tty\n");
         }
         tty_start (Process->tty);

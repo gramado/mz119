@@ -315,10 +315,31 @@ __tty_write ( struct tty_d *tty,
     
     __p = (struct process_d *) processList[current_process];
     
-    //todo checar;
+
+    if ( (void *) __p == NULL )
+        panic("__tty_write: __p\n");
+
+
+    if ( __p->used != 1 || __p->magic != 1234 )
+        panic("__tty_write: validation\n");
+    
+    
+    // #bugbug
+    // Atenção. O mecanismo de clonagem
+    // pode gerar um ppid errado ?
     
     // o parent 
     int PPID = (int) __p->ppid;
+
+
+    if (PPID<0)
+        panic("__tty_write: PPID\n");
+
+
+    printf ("__tty_write: PID  %d\n", __p->pid);
+    printf ("__tty_write: PPID %d\n", __p->ppid);
+    refresh_screen();
+
     
     //
     // alert!!
@@ -328,8 +349,12 @@ __tty_write ( struct tty_d *tty,
  
      message_address[0] = (unsigned long) 0; //w
      message_address[1] = (unsigned long) 444;   // alerta que tem que ler na ttyList[] do processo indicado.
-     message_address[2] = (unsigned long) __p->pid;
-     message_address[3] = (unsigned long) __p->pid;   
+     //message_address[2] = (unsigned long) __p->pid;
+     //message_address[3] = (unsigned long) __p->pid;   
+
+     message_address[2] = (unsigned long) 0;
+     message_address[3] = (unsigned long) 0;   
+
     
     //send
     ipc_send_message_to_process ( (unsigned long) &message_address[0], 

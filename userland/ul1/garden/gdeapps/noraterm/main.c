@@ -1543,8 +1543,9 @@ void *noratermProcedure ( struct window_d *window,
 
                     //pegando a tty desse processo pra poder ler.
                     //long1 é o pid de quem vamos ler a tty.
-                    ____this_tty_id = (int) gramado_system_call ( 266, long1, 0, 0 );
-                    printf ("NORATERM: The tty for the sender process is %d \n", 
+                    //____this_tty_id = (int) gramado_system_call ( 266, long1, 0, 0 );
+                    ____this_tty_id = (int) gramado_system_call ( 266, getpid(), 0, 0 );
+                    printf ("NORATERM: The tty for the this process is %d \n", 
                           ____this_tty_id );
 
 
