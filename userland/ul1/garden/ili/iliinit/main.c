@@ -12,6 +12,8 @@
 
 
 
+
+//#bugbug: temos que usar o id.
 struct desktop_d *__desktop;
 
 
@@ -37,7 +39,9 @@ int main (int argc, char **argv){
     //
 
 
-    // get current dsktop;
+    // get current desktop;
+    
+    // #bugbug: isso é um id.
 
     __desktop = (struct desktop_d *) gramado_system_call (519,0,0,0);
    
@@ -55,6 +59,7 @@ int main (int argc, char **argv){
     if (__ws_pid < 0){
         gde_message_box ( 3, "iliinit", "ws fail" ); 
         gde_exit (1);
+        
     }else{
 
 
