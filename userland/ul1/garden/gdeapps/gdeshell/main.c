@@ -244,8 +244,11 @@ int login_shell = 0;
 
 //Se for diferente de zero então esse shell é interativo.
 //Se for zero ele pode apenas estar executando um script.
+// #importante: Inicializa interativo.
+// Se quem chamou deseja que o shell não seja interativo,
+// tem que enviar os argumentos necessários.
 
-int interactive = 0;
+int interactive = 1;
 
 
 /* Non-zero means to remember lines typed to the shell on the history

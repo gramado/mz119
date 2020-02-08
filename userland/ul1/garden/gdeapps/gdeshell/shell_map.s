@@ -777,10 +777,11 @@ Linker script and memory map
                 0x0000000000418b78                the_current_maintainer
                 0x0000000000418b7c                primary_prompt
                 0x0000000000418b80                secondary_prompt
-                0x0000000000418b84                remember_on_history
-                0x0000000000418b88                current_command_number
-                0x0000000000418b8c                bashrc_file
-                0x0000000000418b90                shell_config_file
+                0x0000000000418b84                interactive
+                0x0000000000418b88                remember_on_history
+                0x0000000000418b8c                current_command_number
+                0x0000000000418b90                bashrc_file
+                0x0000000000418b94                shell_config_file
                 0x0000000000418ba0                long_args
                 0x0000000000418c18                deltaValue
  *fill*         0x0000000000418c1c        0x4 
@@ -825,7 +826,7 @@ Linker script and memory map
                 0x000000000041b000                __bss = .
  *(.bss)
  .bss           0x000000000041b000        0x0 crt0.o
- .bss           0x000000000041b000       0x6c main.o
+ .bss           0x000000000041b000       0x68 main.o
                 0x000000000041b000                ShellFlag
                 0x000000000041b004                executing
                 0x000000000041b008                login_status
@@ -833,48 +834,46 @@ Linker script and memory map
                 0x000000000041b010                global_command
                 0x000000000041b014                interrupt_state
                 0x000000000041b018                login_shell
-                0x000000000041b01c                interactive
-                0x000000000041b020                restricted
-                0x000000000041b024                debugging_login_shell
-                0x000000000041b028                indirection_level
-                0x000000000041b02c                shell_level
-                0x000000000041b030                act_like_sh
-                0x000000000041b034                debugging
-                0x000000000041b038                no_rc
-                0x000000000041b03c                no_profile
-                0x000000000041b040                do_version
-                0x000000000041b044                quiet
-                0x000000000041b048                make_login_shell
-                0x000000000041b04c                no_line_editing
-                0x000000000041b050                no_brace_expansion
-                0x000000000041b054                sm_initialized
-                0x000000000041b058                wl_initialized
-                0x000000000041b05c                ws_initialized
-                0x000000000041b060                wp_initialized
- .bss           0x000000000041b06c       0x10 net.o
-                0x000000000041b06c                host_mac_address
- .bss           0x000000000041b07c        0x8 shellui.o
- *fill*         0x000000000041b084       0x1c 
- .bss           0x000000000041b0a0     0x8004 api.o
- .bss           0x00000000004230a4        0x0 ctype.o
- .bss           0x00000000004230a4        0x9 stdio.o
- *fill*         0x00000000004230ad       0x13 
- .bss           0x00000000004230c0     0x8020 stdlib.o
-                0x00000000004230c0                environ
- .bss           0x000000000042b0e0        0x4 string.o
- .bss           0x000000000042b0e4        0x0 conio.o
- .bss           0x000000000042b0e4        0x8 builtins.o
- .bss           0x000000000042b0ec        0x8 desktop.o
- *fill*         0x000000000042b0f4        0xc 
- .bss           0x000000000042b100      0x11f unistd.o
-                0x000000000042b100                __execv_environ
- .bss           0x000000000042b21f        0x0 socket.o
- .bss           0x000000000042b21f        0x0 wait.o
- .bss           0x000000000042b21f        0x0 termios.o
- .bss           0x000000000042b21f        0x0 ioctl.o
- .bss           0x000000000042b21f        0x0 stubs.o
+                0x000000000041b01c                restricted
+                0x000000000041b020                debugging_login_shell
+                0x000000000041b024                indirection_level
+                0x000000000041b028                shell_level
+                0x000000000041b02c                act_like_sh
+                0x000000000041b030                debugging
+                0x000000000041b034                no_rc
+                0x000000000041b038                no_profile
+                0x000000000041b03c                do_version
+                0x000000000041b040                quiet
+                0x000000000041b044                make_login_shell
+                0x000000000041b048                no_line_editing
+                0x000000000041b04c                no_brace_expansion
+                0x000000000041b050                sm_initialized
+                0x000000000041b054                wl_initialized
+                0x000000000041b058                ws_initialized
+                0x000000000041b05c                wp_initialized
+ .bss           0x000000000041b068       0x10 net.o
+                0x000000000041b068                host_mac_address
+ .bss           0x000000000041b078        0x8 shellui.o
+ .bss           0x000000000041b080     0x8004 api.o
+ .bss           0x0000000000423084        0x0 ctype.o
+ .bss           0x0000000000423084        0x9 stdio.o
+ *fill*         0x000000000042308d       0x13 
+ .bss           0x00000000004230a0     0x8020 stdlib.o
+                0x00000000004230a0                environ
+ .bss           0x000000000042b0c0        0x4 string.o
+ .bss           0x000000000042b0c4        0x0 conio.o
+ .bss           0x000000000042b0c4        0x8 builtins.o
+ .bss           0x000000000042b0cc        0x8 desktop.o
+ *fill*         0x000000000042b0d4        0xc 
+ .bss           0x000000000042b0e0      0x11f unistd.o
+                0x000000000042b0e0                __execv_environ
+ .bss           0x000000000042b1ff        0x0 socket.o
+ .bss           0x000000000042b1ff        0x0 wait.o
+ .bss           0x000000000042b1ff        0x0 termios.o
+ .bss           0x000000000042b1ff        0x0 ioctl.o
+ .bss           0x000000000042b1ff        0x0 stubs.o
                 0x000000000042c000                . = ALIGN (0x1000)
- *fill*         0x000000000042b21f      0xde1 
+ *fill*         0x000000000042b1ff      0xe01 
  COMMON         0x000000000042c000      0xd08 crt0.o
                 0x000000000042c000                g_cursor_x
                 0x000000000042c004                stdout
