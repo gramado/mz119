@@ -2,7 +2,7 @@
 #todo
 
 all: asm-stuff cp-stuff clean
-	@echo "taokay?"
+	@echo "BM.BIN OK ?"
 
 asm-stuff:
 	nasm -I stage1/ \

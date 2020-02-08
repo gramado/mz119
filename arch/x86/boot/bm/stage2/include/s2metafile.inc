@@ -124,44 +124,44 @@ META$FILE:
 ;No caso de o BM não estar presente no sistema de arquivos.
 ;então ele foi carregado pelo stage 1 que pasou o comando para ele.
 .TRAP1:
-    PUSH CODE_SEGMENT 
-	PUSH stage2Trap1    ;; *fat16 (Padrão) Quando carregado pe stage 1.      
+    PUSH 0 
+	PUSH AFTER_DATA    ;; *fat16 (Padrão) Quando carregado pe stage 1.      
     RETF
 ;No caso de BM ser um arquivo no sistema de arquivos. Então ele foi carregado 
 ;pelo mbr em 0:8000h e o metafile fica em 0:8200h.
 .TRAP2:
-    PUSH CODE_SEGMENT 
-	PUSH stage2Trap2 ;; fat12 ?? @todo:       
+    PUSH 0 
+	PUSH AFTER_DATA ;; fat12 ?? @todo:       
     RETF
 	
 .TRAP3:
-    PUSH CODE_SEGMENT 
-	PUSH stage2Trap3 ;; fat16 ?? @todo:
+    PUSH 0 
+	PUSH AFTER_DATA ;; fat16 ?? @todo:
     RETF
 	
 .TRAP4:
-    PUSH CODE_SEGMENT 
-	PUSH stage2Trap4 ;; fat32 ?? @todo:
+    PUSH 0 
+	PUSH AFTER_DATA ;; fat32 ?? @todo:
     RETF
 	
 .TRAP5:
-    PUSH CODE_SEGMENT 
-	PUSH stage2Trap5 ;; ext2 ?? @todo:
+    PUSH 0 
+	PUSH AFTER_DATA ;; ext2 ?? @todo:
     RETF
 	
 .TRAP6:
-    PUSH CODE_SEGMENT 
-	PUSH stage2Trap6 ;; outro fs ?? @todo:
+    PUSH 0 
+	PUSH AFTER_DATA ;; outro fs ?? @todo:
     RETF
 
 .TRAP7:
-    PUSH CODE_SEGMENT 
-	PUSH stage2Trap7 ;;  outro fs ?? @todo:
+    PUSH 0 
+	PUSH AFTER_DATA ;;  outro fs ?? @todo:
     RETF
 
 .TRAP8:
-    PUSH CODE_SEGMENT 
-	PUSH stage2Trap8 ;;  outro fs ?? @todo:
+    PUSH 0 
+	PUSH AFTER_DATA ;;  outro fs ?? @todo:
     RETF
 	
 

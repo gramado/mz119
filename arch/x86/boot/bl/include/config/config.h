@@ -31,19 +31,41 @@
 //BAR2 = base port 170   (channel 1 secondary master) (channel 1 secondary slave)
 //BAR3 = base port 376   channel ??
 
-#define __CHANNEL0 0  // BAR 0 primary, master and slave
-#define __CHANNEL1 2  // BAR 2 secondary, master and slave
+
+
+
+#define __CHANNEL0 0  // BAR 0 primary ide channel. master and slave
+#define __CHANNEL1 2  // BAR 2 secondary ide channel. master and slave
 #define __CHANNEL2 1  // BAR 1 extra (sata emulating ide)
 #define __CHANNEL3 3  // BAR 3 extra (sata emulating ide)
 
 
 // #importante
 // Esses valores são usados pelo driver.
-#define __IDE_PORT __CHANNEL0    //primary
+// #obs
+// Talvez podemos tomar essa decisão de acordo com o número 
+// do dispositivo que foi passado pelo BIOS.
+
+
+// Discos:
+// /dev/sda - 0x80
+// /dev/sdb - 0x81
+// /dev/sdc - 0x82
+// /dev/sdd - 0x83
+
+// Partições:
+// sda1, sda2, sda3, sda4 ...
+
+#define __IDE_PORT __CHANNEL0    // primary
 #define __IDE_SLAVE  0           // 0=master 1=slave
 
 
 
+// Configuramos as estruturas de ide, e 
+// de acordo com o número passado pelo bios
+// selecionamos qual estrutura usar.
+// Temos que passar para o kernel o número do
+// dispositivo.
 
 // #tests:
 

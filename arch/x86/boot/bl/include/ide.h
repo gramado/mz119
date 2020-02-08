@@ -130,6 +130,9 @@ struct ide_channel_d
 	//...
 };
 
+struct ide_channel_d idechannelList[8];
+
+
 
 //estrutura para discos controlados pela controladora ide.
 typedef struct ide_disk_d ide_disk_t;

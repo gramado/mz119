@@ -81,6 +81,7 @@ ata                 0x18              main.o
 tab_status          0x4               keyboard.o
 VideoBlock          0x1c              main.o
 g_cursor_y          0x4               main.o
+idechannelList      0xc0              main.o
 g_cmd_status        0x4               main.o
 g_current_ide_device
                     0x4               main.o
@@ -543,7 +544,7 @@ Linker script and memory map
  .bss           0x000000000002c028        0x0 faults.o
  *(COMMON)
  *fill*         0x000000000002c028       0x18 
- COMMON         0x000000000002c040     0x11a4 main.o
+ COMMON         0x000000000002c040     0x1268 main.o
                 0x000000000002c040                g_fat16_fat_status
                 0x000000000002c060                prompt
                 0x000000000002c15c                EDITBOX_LARGURA
@@ -598,56 +599,57 @@ Linker script and memory map
                 0x000000000002d184                ata
                 0x000000000002d19c                VideoBlock
                 0x000000000002d1b8                g_cursor_y
-                0x000000000002d1bc                g_cmd_status
-                0x000000000002d1c0                g_current_ide_device
-                0x000000000002d1c4                g_file_system_type
-                0x000000000002d1c8                mmblockCount
-                0x000000000002d1cc                g_char_attrib
-                0x000000000002d1d0                g_next_proc
-                0x000000000002d1d4                g_lbf_pa
-                0x000000000002d1d8                g_nova_mensagem
-                0x000000000002d1dc                EDITBOX_X
-                0x000000000002d1e0                g_cursor_x
- COMMON         0x000000000002d1e4       0x1c keyboard.o
-                0x000000000002d1e4                shift_status
-                0x000000000002d1e8                alt_status
-                0x000000000002d1ec                escape_status
-                0x000000000002d1f0                tab_status
-                0x000000000002d1f4                key_status
-                0x000000000002d1f8                ctrl_status
-                0x000000000002d1fc                winkey_status
- COMMON         0x000000000002d200        0x8 hdd.o
-                0x000000000002d200                hddError
-                0x000000000002d204                hddStatus
- *fill*         0x000000000002d208       0x18 
- COMMON         0x000000000002d220       0x44 ide.o
-                0x000000000002d220                dma_addr
-                0x000000000002d224                current_dev
-                0x000000000002d240                ide_dma_prdt
-                0x000000000002d260                ready_queue_dev
- COMMON         0x000000000002d264        0x4 timer.o
-                0x000000000002d264                timerTicks
- COMMON         0x000000000002d268        0xc heap.o
-                0x000000000002d268                mm_prev_pointer
-                0x000000000002d26c                last_size
-                0x000000000002d270                last_valid
- *fill*         0x000000000002d274        0xc 
- COMMON         0x000000000002d280      0x42c shell.o
-                0x000000000002d280                shell_status
-                0x000000000002d2a0                shell_string_buffer
-                0x000000000002d6a0                deslocamento
-                0x000000000002d6a4                ret_string
-                0x000000000002d6a8                ShellInitialized
+                0x000000000002d1c0                idechannelList
+                0x000000000002d280                g_cmd_status
+                0x000000000002d284                g_current_ide_device
+                0x000000000002d288                g_file_system_type
+                0x000000000002d28c                mmblockCount
+                0x000000000002d290                g_char_attrib
+                0x000000000002d294                g_next_proc
+                0x000000000002d298                g_lbf_pa
+                0x000000000002d29c                g_nova_mensagem
+                0x000000000002d2a0                EDITBOX_X
+                0x000000000002d2a4                g_cursor_x
+ COMMON         0x000000000002d2a8       0x1c keyboard.o
+                0x000000000002d2a8                shift_status
+                0x000000000002d2ac                alt_status
+                0x000000000002d2b0                escape_status
+                0x000000000002d2b4                tab_status
+                0x000000000002d2b8                key_status
+                0x000000000002d2bc                ctrl_status
+                0x000000000002d2c0                winkey_status
+ COMMON         0x000000000002d2c4        0x8 hdd.o
+                0x000000000002d2c4                hddError
+                0x000000000002d2c8                hddStatus
+ *fill*         0x000000000002d2cc       0x14 
+ COMMON         0x000000000002d2e0       0x44 ide.o
+                0x000000000002d2e0                dma_addr
+                0x000000000002d2e4                current_dev
+                0x000000000002d300                ide_dma_prdt
+                0x000000000002d320                ready_queue_dev
+ COMMON         0x000000000002d324        0x4 timer.o
+                0x000000000002d324                timerTicks
+ COMMON         0x000000000002d328        0xc heap.o
+                0x000000000002d328                mm_prev_pointer
+                0x000000000002d32c                last_size
+                0x000000000002d330                last_valid
+ *fill*         0x000000000002d334        0xc 
+ COMMON         0x000000000002d340      0x42c shell.o
+                0x000000000002d340                shell_status
+                0x000000000002d360                shell_string_buffer
+                0x000000000002d760                deslocamento
+                0x000000000002d764                ret_string
+                0x000000000002d768                ShellInitialized
  *(.bss_heap)
- .bss_heap      0x000000000002d6ac      0x400 head.o
-                0x000000000002d6ac                bootloader_heap_start
-                0x000000000002daac                bootloader_heap_end
+ .bss_heap      0x000000000002d76c      0x400 head.o
+                0x000000000002d76c                bootloader_heap_start
+                0x000000000002db6c                bootloader_heap_end
  *(.bss_stack)
- .bss_stack     0x000000000002daac      0x400 head.o
-                0x000000000002daac                bootloader_stack_end
-                0x000000000002deac                bootloader_stack_start
+ .bss_stack     0x000000000002db6c      0x400 head.o
+                0x000000000002db6c                bootloader_stack_end
+                0x000000000002df6c                bootloader_stack_start
                 0x000000000002e000                . = ALIGN (0x1000)
- *fill*         0x000000000002deac      0x154 
+ *fill*         0x000000000002df6c       0x94 
                 0x000000000002e000                end = .
                 0x000000000002e000                _end = .
                 0x000000000002e000                __end = .

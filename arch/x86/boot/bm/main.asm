@@ -234,26 +234,18 @@ G_START_GUI EQU 0  ;; 1= (YES) 0 = (NO)
 
 [bits 16]
 
-System4Nora_BootManager:
-boot_main:    
 
 
-;;
-;; =================================================
-;;
+;; #importante
+;; Entrypoint do BM.BIN
+;; Saltaremos a área de dados no início do arquivo.
 
-;=================
-; Obs: Aqui é oomeço do Stage2 do Boot Manager.
-; Saltaremos a área de dados no início do arquivo.
-;
-; ** PRIMEIRO SETOR DE BM.BIN ** ;;
-;    
+bm_main:    
 
+    jmp START_AFTER_DATA
 
 ROOTDIRSTART EQU (bootmanagerOEM_ID)
 ROOTDIRSIZE  EQU (bootmanagerOEM_ID+4)
-
-    jmp bootmanagerSTART
 
 bootmanagerOEM_ID                db "QUASI-OS"
 bootmanagerBytesPerSector        dw 0x0200
@@ -281,33 +273,32 @@ save_cylinder_numbers: dw 0  ;Número de cilindros do disco.
 ;;...
 
 
-    ;;
-	;; --------------------------------------------------------------
-	;; 'bootmanagerSTART' Recepcionará os argumentos passados pelo MBR.
-	;; Obs: O MBR se sacrifica muito para pegar esses argumentos,
-	;; devemos recepcioná-los com respeito.
-	;;
-	;; São eles:
-	;; ==========
-	;; bx = Magic number.
-	;; ax = Number of heads.    (*IMPORTANTE) 
-	;; dl = Drive number.       (*IMPORTANTE)
-    ;; cl = Sectors per track.  (*IMPORTANTE)
-    ;; di = cylinder numbers    (*IMPORTANTE) 
-	;; si = offet do ponteiro para o BPB.
-	;; ----------------------------------------------------------------
-	;;
-	
+
 ;;====================================================================
+
+
+;;
 ;; Real entry point.
-bootmanagerSTART:
+;; 
 
-;;;setupRegisters:
-		
-    ;Code located at 0000:0x8000. 
-	;Adjust segment registers and stack.
+;; #importante: 
+;; O único argumento passado pelo MBR foi o número do disco.
+;; IN: dl = Disk number.
+
+;; /dev/sda - 0x80
+;; /dev/sdb - 0x81
+;; /dev/sdc - 0x82
+;; /dev/sdd - 0x83
 
 
+START_AFTER_DATA:
+
+    ; Set up registers.
+    ; Adjust segment registers and stack.
+    ; Code located at 0000:0x8000. 
+    ; Stack located at 0000:0x6000.
+
+    
     cli
     mov ax, 0
     mov ds, ax
@@ -317,30 +308,22 @@ bootmanagerSTART:
     mov sp, 0x6000   
     sti
 
-    ;;
-    ;; Argumento passado pelo MBR. 
-    ;;
-	
-	;Disk number.
-	mov byte [bootmanagerDriveNumber], dl
-	;mov dh, 0
-    mov byte [META$FILE.DISK_NUMBER], dl  
-	
-	;CMP DL, BYTE 0x80
-	;JE __GO
-
-	;int 0x16 
-	;int 0x19	
-
-;;getDiskInfo:
-
-    ;;
-	;; Pegando informações sobre o disco.
-	;;
-	
-	;;========================================
 
     ;
+    ; Save disk number.
+    ;
+
+    mov byte [bootmanagerDriveNumber], dl
+    mov byte [META$FILE.DISK_NUMBER], dl  
+
+
+    ;;
+    ;; Get disk info.
+    ;;
+
+;;========================================
+;;getDiskInfo:
+
     ; Get drive parameters: 
     ; =====================
     ; Return: CF set on error.
@@ -354,7 +337,7 @@ bootmanagerSTART:
     ;      high two bits of maximum cylinder number (bits 7-6).
     ; DH = maximum head number.
     ; DL = number of drives.
-    ;
+
     xor ax, ax
     mov ah, byte 08h
     int 0x13 
@@ -369,20 +352,23 @@ bootmanagerSTART:
 	; O valor de Heads foi gravado no BPB mas precisará ser passado a diante
 	; para uso posterior.
 	;
-	xor ax, ax
-	mov al, dh
-	inc ax				              ;From 0-based to count.
-	;Number of heads.
-	mov word [bootmanagerNumHeads], ax	
-	mov word [META$FILE.HEADS], ax
-	
-	;
+
+    xor ax, ax
+    mov al, dh
+    inc ax                            ;From 0-based to count.
+    ;Number of heads.
+    mov word [bootmanagerNumHeads], ax
+    mov word [META$FILE.HEADS], ax
+
+
+    ;
     ; Sectors Per Track e Cylinders.
     ; Essas informações apresentam meio truncadas
     ; O valor do número de cilindros é aprentado
     ; de forma parcial, uma parte em cada registrador.
-    ;	
-	
+    ;
+
+
 	;spt.
 	;  bits [5:0] logical last index of sectors per track = number_of 
 	;  (because index starts with 1).
@@ -390,91 +376,93 @@ bootmanagerSTART:
 	;   bits [7:6] [15:8] logical last index of cylinders = number_of - 1 
 	;  (because index starts with 0).
 
-	;
-	; Sectors Per Track - (SPT).
-	; "Esconde 2 bits que pertencem a quantidade de setores".
-	;
-	; Obs: 
-	; O valor de SPT foi gravado no BPB mas precisará ser passado a diante
-	; para uso posterior.
-    ;	
-	xor eax, eax 
-	mov al, cl
-	and al, byte 00111111b                   ;03Fh
-	mov byte [SectorsPerTrack], al    ;BPB (word).
-	;Sectors per track.
-	mov ah, 0                                   ;;enviamos apenas 'al' 
-	mov word [bootmanagerSectorsPerTrack], ax 	;;enviamos apenas 'al'
-    mov word [META$FILE.SPT], ax	
+    
+    ; Sectors Per Track - (SPT).
+    ; "Esconde 2 bits que pertencem a quantidade de setores".
     ;
-	; Cylinders
-	; Obs: 
-	; O valor de CylinderNumbers foi gravado em variável mas precisará ser 
-	; passado a diante para uso posterior.
-	;
+    ; Obs: 
+    ; O valor de SPT foi gravado no BPB mas precisará 
+    ; ser passado a diante para uso posterior.
+   
+    xor eax, eax 
+    mov al, cl
+    and al, byte 00111111b                   ;03Fh
+    mov byte [SectorsPerTrack], al    ;BPB (word).
+    ;Sectors per track.
+    mov ah, 0                                  ; enviamos apenas 'al' 
+    mov word [bootmanagerSectorsPerTrack], ax  ; enviamos apenas 'al'
+    mov word [META$FILE.SPT], ax
+    
+    ; Cylinders
+    ; Obs: 
+    ; O valor de CylinderNumbers foi gravado em variável mas precisará ser 
+    ; passado a diante para uso posterior.
+
     xor eax, eax
-    mov al, cl   					;Two high bits of cylinder number in bits 6&7.
-    and al, 11000000b				;Mask it.
-    shl ax, 2						;Move them to bits 8&9.
-    mov al, ch						;Rest of the cylinder bits.(low 8 bits)
-    inc eax							;Number is 0-based.
-    ;Número de cilindros do disco.
+    mov al, cl                 ; Two high bits of cylinder number in bits 6&7.
+    and al, 11000000b          ; Mask it.
+    shl ax, 2                  ; Move them to bits 8&9.
+    mov al, ch                 ; Rest of the cylinder bits.(low 8 bits)
+    inc eax                    ; Number is 0-based.
+    ; Número de cilindros do disco.
     mov word [save_cylinder_numbers], ax
     mov word [META$FILE.CYLINDERS], ax
 
 
-	;;
-	;;========================================
+    ;;
+    ;;========================================
     ;;
    
-
-	;;
-	;; Carregar root.
-	;;
+    ;;
+    ;; Carregar root.
+    ;;
 
 bootmanagerLOAD_ROOT:
     
-	;Compute size of root directory and store in "cx".
+    ;Compute size of root directory and store in "cx".
     
-	xor cx, cx
+    xor cx, cx
     xor dx, dx
     mov ax, 0x0020                          ; 32 byte directory entry.
     mul WORD [bootmanagerMaxRootEntries]    ; Total size of directory.
     div WORD [bootmanagerBytesPerSector]    ; Sectors used by directory.
     mov word [ROOTDIRSIZE], ax
-	mov cx, ax
-	;xchg ax, cx
+    mov cx, ax
+    ;xchg ax, cx
  
     ;Compute location(LBA) of root directory and store in "ax".
     xor ax, ax
-	mov al, BYTE [bootmanagerTotalFATs]                ; number of FATs
-    mul WORD [bootmanagerSectorsPerFAT]                ; sectors used by FATs
-	add ax, WORD [bootmanagerReservedSectors]          ; adjust for bootsector
+    mov al, BYTE [bootmanagerTotalFATs]          ; number of FATs
+    mul WORD [bootmanagerSectorsPerFAT]          ; sectors used by FATs
+    add ax, WORD [bootmanagerReservedSectors]    ; adjust for bootsector
     add ax, WORD [bootmanagerHiddenSectors]
-	
-	mov word [ROOTDIRSTART], ax              ; *** Nesse momento ax contem o setor inicial do root dir ***
-	add  ax, cx
-    mov WORD [bootmanagerdatasector], ax               ; base of root directory
+
+    mov word [ROOTDIRSTART], ax              ; *** Nesse momento ax contem o setor inicial do root dir ***
+    add  ax, cx
+    mov WORD [bootmanagerdatasector], ax     ; base of root directory
     ;Read root directory into memory (0:1000) ?
     ;mov WORD [bootmanagerdatasector], 591  ;;SIMULADO Início da área de dados.
-	
-	
-    mov ax, word [ROOTDIRSTART] ;559                            ;;Início do root.
-    mov cx, word [ROOTDIRSIZE] ;1                              ;;Size.
-    mov bx, 0x1000                         ;;root_buffer. Copy root dir above bootcode
+
+
+    mov ax, word [ROOTDIRSTART]    ; Início do root.
+    mov cx, word [ROOTDIRSIZE]     ; Tamanho do root.
+    mov bx, 0x1000                 ; root_buffer. Copy root dir above bootcode
     call bootmanagerReadSectors
+
 
     pusha
     mov si, bootmanagermsgCRLF
     call bootmanagerDisplayMessage
     popa
 
+
     ;Debug breakpoint.
     ;jmp $
 
+
     ;Browse root directory for binary image.
-    mov cx, WORD [bootmanagerMaxRootEntries] ;Load loop counter.
-    mov di, 0x1000                           ;root_buffer, 0x1000, locate first root entry. ?
+    mov cx, WORD [bootmanagerMaxRootEntries]    ; Load loop counter.
+    mov di, 0x1000                              ; root_buffer, 0x1000, locate first root entry. ?
 .bootmanagerLOOP:
     push cx
     mov cx, 0x000B                    ; eleven character name
@@ -502,69 +490,107 @@ bootmanagerLOAD_FAT:
     call bootmanagerDisplayMessage
     popa
 
-    ;Debug breakpoint.
-	;mov ah, 0x00
+
+    ; Debug breakpoint.
+    ;mov ah, 0x00
     ;int 0x16
+
 
     ; Save starting cluster of boot image.
     mov dx, WORD [di + 0x001A]
     mov WORD [bootmanagercluster], dx             ; file's first cluster.
 
-	;;
-	;; #BUGBUG NÃO ESTAMOS CARREGANDO A FAT INTEIRA.
-	;;         CARREGAR A FAT INTEIRA DÁ PROBLEMA.
-	;;
-     
-	 
+    ;;
+    ;; #BUGBUG 
+    ;; NÃO ESTAMOS CARREGANDO A FAT INTEIRA.
+    ;; CARREGAR A FAT INTEIRA DÁ PROBLEMA.
+    ;;
+ 
+ 
     ; Read FAT into memory (es:bx).?? Onde ??
-	; ?? 0:0x1000 
-	; ?? Qual é o segmento e o offset da FAT ??
-	mov ax, 0 
+    ; ?? 0:0x1000 
+    ; ?? Qual é o segmento e o offset da FAT ??
+
+    mov ax, 0 
     mov es, ax
+
 
     ; Compute location of FAT and store in "ax".
     mov ax, WORD [bootmanagerHiddenSectors]       ; adjust for bootsector.
-	add ax, WORD [bootmanagerReservedSectors]	
-	;mov ax, 67            ;SIMULADO Onde ?LBA inicial da FAT.?
-	mov cx, 8             ;(apenas 8 setores da fat.) (246/2)  ;; metade da fat  WORD [bootmanagerSectorsPerFAT]
-	mov bx, 0x1000        ;fat_buffer ; copy FAT above bootcode.
-    call bootmanagerReadSectors	
+    add ax, WORD [bootmanagerReservedSectors]     ; lba inicial da fat ?.
+    mov cx, 8         ; (apenas 8 setores da fat.) (246/2)  ;; metade da fat  WORD [bootmanagerSectorsPerFAT]
+    mov bx, 0x1000    ; fat_buffer ; copy FAT above bootcode.
+    call bootmanagerReadSectors
+
 
 	;;
 	;; Nesse momento já carregamos a FAT.
 	;;
-	 
+
+
+ 
 	;Debug breakpoint. 
 	;jmp $
-	 
+
+    
+    ;;
+    ;; Message.
+    ;;
+
+ 
     ; Read image file into memory (0x2000:0)(es:bx)
-    	
-	;Mensagem.
-	mov si, bootmanagermsgImg
+    
+    ;Mensagem.
+    mov si, bootmanagermsgImg
     call bootmanagerDisplayMessage
 
-	; Opção de mensagem.
-	; mov si, bootmanagermsgCRLF
+    ; Opção de mensagem.
+    ; mov si, bootmanagermsgCRLF
     ; call bootmanagerDisplayMessage
-	 
-    ;es:bx para a imagem BL(2000:0)   ... gs para a fat.
-	mov ax, 0x2000    
-    mov es, ax        ;Destination for image.
-    mov bx, 0x0000    ;Destination for image.
+
+
+
+    ;;
+    ;; Load image.
+    ;;
+
+
+
+    ; Destination for the image.
+    ; es:bx = (2000:0).
+
+    mov ax, 0x2000    
+    mov es, ax
+    mov bx, 0x0000
      
-	;gs:bx para a FAT.
-	push bx    ;Salva o offset da imagem.
-	
-	;FAT segment.
- 	mov ax, 0     	
+    ;;
+    ;; Ajust fat segment.
+    ;; 
+     
+    ;gs:bx para a FAT.
+
+    
+    ;; ??
+    ;; Salva o offset da imagem.
+    push bx    
+
+
+    ; FAT segment.
+    mov ax, 0 
     mov gs, ax     
 
-;; Carregar a imagem. 
+
+    ;;
+    ;; Loading the image.
+    ;;
+
+
 bootmanagerLOAD_IMAGE:
+
     mov ax, WORD [bootmanagercluster]  ;Cluster to read.
     pop bx                             ;Buffer to read into (offset da imagem).
     call bootmanagerClusterLBA         ;Convert cluster to LBA.
-	 
+ 
     xor cx, cx
     mov cl, BYTE 1    ;[bootmanagerSectorsPerCluster] ;sectors to read.
     call bootmanagerReadSectors
@@ -622,28 +648,34 @@ bootmanagerDONE:
 	;;======================================================================
 
 
-;
+
+
+
 ; Go!
 ; Agora saltamos para a trap que existe no início do META$FILE.
-; 
+; Trap 1. (isso está nesse arquivo mesmo)
+ 
 .goToFisrtTrap:
 
     push WORD 0
-    push WORD stage2Trap1  ;Trap 1. (isso está nesse arquivo mesmo)
+    push WORD AFTER_DATA  
     retf
 
-    ;JMP $  ;Fail.
 
 
 ;;===============================
-;Fail. 
-; @todo: Agora temos espaço no BM. Isso pode ser melhorado, colocando 
-; uma mensagem.
+; Fail. 
+;
+; #todo: Colocar uma mensagem de erro.
+;
+
 bootmanagerFAILURE:
+
     int 0x18
     jmp $
 
-	;mov ax, 0x8000 ;0x07C0
+
+    ;mov ax, 0x8000 
     ;mov ds, ax
     ;mov es, ax
 
@@ -654,11 +686,16 @@ bootmanagerFAILURE:
     ;int  0x19         ; warm boot computer
 
 
+
+
+
 ;*****************************************************************
 ; bootmanagerDisplayMessage:
 ;     Display ASCIIZ string at "ds:si" via BIOS.
 ;*****************************************************************
+
 bootmanagerDisplayMessage:
+
     lodsb                                   ; load next character
     or al, al                               ; test for NUL character
     jz .bootmanagerDONE
@@ -667,9 +704,10 @@ bootmanagerDisplayMessage:
     mov bl, 0x07                            ; text attribute
     int 0x10                                ; invoke BIOS
     jmp bootmanagerDisplayMessage
+
 .bootmanagerDONE:
     ret
-	
+
 
 
 ;************************************************************************
@@ -969,21 +1007,24 @@ BL_LBA         equ 0
 
 ;========================================================================
 ; stage2_main:
+;
 ;     Início do stage 2. 
-;     O stage 2 começa com um metafile. No início do metafile tem uma trap 
-; para o real início do stage 2.
+;
 ;     O endereço do stage 2 é 0000H:1000H.
 ;     O stage 2 fica no segundo setor do disco.
 ;-------------------------------------------------
+
 stage2_main:
 
+    PUSH 0 
+    PUSH AFTER_DATA 
+    RETF
+
     ;
-	; Includes.
-	;
+    ; Includes.
+    ;
 
     ; metafile.
-    ; *IMPORTANTE	
-    ; Obs: (No início do metafile tem uma trap para AFTER_DATA).
     %include "s2metafile.inc"
 
     ;header.
@@ -1010,30 +1051,7 @@ stage2_main:
 
 
 
-;;
-;; #todo: 
-;; Criar essas traps lá em baixo desse arquivo, em 16bit mesmo.
-;;
 
-
-;;procisório.
-;stage2Trap1:  ;;Essa trap está localizada logo abaixo.
-stage2Trap2:
-stage2Trap3:
-stage2Trap4:
-stage2Trap5:
-stage2Trap6:
-stage2Trap7:
-stage2Trap8:
-    ;nop         ;;@todo: Traps não implementadas.
-	mov si, msg_stage2_trap_fail
-	call DisplayMessage 
-	jmp $
-	
-msg_stage2_trap_fail db 'BM: stage2 TRAP FAIL',0
-
-
-	
 ;------------------------------------------
 ; AFTER_DATA:
 ;     Início real do stage 2.
@@ -1047,125 +1065,30 @@ msg_stage2_trap_fail db 'BM: stage2 TRAP FAIL',0
 ;     cl = Sectors per track.
 ;     si = BPB.
 ;
+
 AFTER_DATA:
-    nop
-stage2Trap1:  
-   
-	;Confere a autorização. (Magic Number)
-	;cmp bx, word 0xF0ED
-	;jne s2_FAILURE
-	
-	;;
-	;; META$FILE.
-	;;
-	
-	;;Initialize variables in the META$FILE.
-stage2InitializeMetafile:
-    ;nop
-.saveMagicNumberMetafile:    	; * Salva o magic number no metafile.
-	;mov word [META$FILE.MAGIC_NUMBER], bx     ;magic number.
-.diskParametersMetafile:       	; * Salva os parâmetros de disco no META$FILE.
-	
-	;;#bugbug. não salvaremos no metafile porque já fizemos isso no início do bm.
-	
-	;mov word [META$FILE.S1_BPB_POINTER], si   ;Ponteiro para o BPB do stage 1, do MBR.		
-	;Disk Number, heads, spt, cylinders.
-	;mov byte [META$FILE.DISK_NUMBER], dl      ;Disk number.
-	;mov word [META$FILE.HEADS], ax            ;Heads.
-	;mov byte [META$FILE.SPT], cl              ;SPT, Sectors Per Track.
-	;mov word [META$FILE.CYLINDERS], di        ;Cylinders, Quantidade de cilindros, (Word).
-	;@todo: Talvez o stage1 passe mais argumentos, talvez em ch.
-	;...
-	
-	;;
-	;;    ****    BPB    ****
-	;;
 
-	;Configura e inicializa alguns BPBs.
-stage2BPBSupport:
-	
-	;;
-	;; FAT16 BPB.
-	;;
-	
-	; * Salva os parâmetros do disco no BPB do módulo de fat16.
-.diskParameters_fat16_bpb:
-	;Disk Number, heads, spt.
-    ;mov byte [fat16_bpb.DriveNumber], dl      ;Disk number.
-	;mov word [fat16_bpb.NumHeads], ax         ;Heads.
-	;mov byte [fat16_bpb.SectorsPerTrack], cl  ;SPT, Sectors Per Track.
-    ;...	
-		
-	;;
-	;; S2 BPB.
-	;;
-	
-	; * Salva os parâmetros do disco no BPB do stage2.
-.diskParameters_s2_bpb:	
-	; Disk Number, heads, spt.
-	;mov byte [s2_bpb.DriveNumber], dl         ;Disk number.
-	;mov word [s2_bpb.NumHeads], ax            ;Heads.
-	;mov byte [s2_bpb.SectorsPerTrack], cl     ;SPT, Sectors Per Track.
-    ;...	
-	
-	;;
-	;; SAVE POINTERS.
-	;;
-	
-stage2SavePointers:
-    ;nop	
-.s1BPBPointer:  ;Em 16bit.	
-	;mov word [salva_s1_bpb], si    ;stage1 bpb.	
-	;mov word [g_Stage1BPB], si     ;stage1 bpb.	
-.s2BPBPointer:  ;Em 16bit.
-	;mov ax, word s2_bpb
-	;mov word [g_Stage2BPB], ax     ;stage2 bpb.
-.sfat16BPBPointer:  ;Em 32bit.
-   ; xor eax, eax	
-	;mov ax, word fat16_bpb
-	;mov word [g_Fat16BPB], ax     ;fat16 bpb.
-		
-	;
-	; Inicializações ...
-	;
-	
-stage2Initializations:	
-	;nop
-	
-	; Configuração de vídeo.
-	; Set text output with certain attributes to be bright, and not blinking.
-	
-    ;mov eax, 1003h                       
-    ;mov ebx, 0                            
-    ;int 10h
-	
-.showMessages:	
-	
-	
-HERE:
 
-	mov ax, 0 
-	mov ds, ax
-	mov es, ax 
-	
-	;Boot Manager Splash.
-	mov si, msg_bm_splash
-	call DisplayMessage 	
-	
-	;Message.
-	;mov si, msg_s2_init
-	;call DisplayMessage 
-	
-	;Debug.
-	;jmp $
-	 
-	
+    ;; Message.
+    ; ;Boot Manager Splash.
+
+    mov ax, 0 
+    mov ds, ax
+    mov es, ax 
+
+    mov si, msg_bm_splash
+    call DisplayMessage
+
+    ; Debug.
+    ; jmp $
+
 ;; Checar se a assinatura PE está na memória, se estiver, pularemos e
 ;; a etapa de carregamento do arquivo.
 ;; #todo
 ;; Rever essa assinatudo, pois tudo no sistema agora usa ELF.
 
-.checkSig:
+xxx_checkSig:
+
     mov ax, 0x2000
 	mov gs, ax 
 	
@@ -1184,18 +1107,28 @@ HERE:
 	;; Se os dois char não estão ausentes, significa que o arquivo eta no lugar.
 	jmp .sigFound
 
+    ;;
+    ;; Not found
+    ;;
+
 
 ;;A assinatura não foi encontrada, o arqui não está na memória.	
 .sigNotFound:
-    ;;message: o arquivo não esta presente na memória.
-	mov si, stage2_msg_pe_sig
-	call DisplayMessage
+    
+    ;; message: 
+    ;; O arquivo não esta presente na memória.
+    
+    mov si, stage2_msg_pe_sig
+    call DisplayMessage
 
-
-;; Hang
 .sigHalt:
     hlt
     jmp .sigHalt
+
+
+    ;;
+    ;; Found.
+    ;;
 
 
 ;; A assinatura foi encontrada ... 
@@ -1203,69 +1136,39 @@ HERE:
 
 .sigFound:
 
-    ;;message: o arquivo esta presente na memória.
-	mov si, stage2_msg_pe_sigOK
-	call DisplayMessage
-	;jmp $	
-	
-	;debug mostrar 'L'
-	;push ds
-    ;push es
-    ;push si
-    ;mov ax, 0x2000 
-    ;mov ds, ax
-    ;mov es, ax	
-   	;mov si, 0
-	;call DisplayMessage
-    ;pop si
-    ;pop es
-    ;pop ds	
+    ;; message: 
+    ;; O arquivo esta presente na memória.
 
-	;;?? fail???
-	;debug: mostrar o entry point. 
-	;push ds
-    ;push es
-    ;push si
-    ;mov ax, 0x2000 
-    ;mov ds, ax
-    ;mov es, ax	
-   	;mov si, 0x1000
-	;call DisplayMessage
-    ;pop si
-    ;pop es
-    ;pop ds	
-	
-	;;
-	;; O arquivo me parece estar corrompido, foi carregado 
-	;;com setores desordenados... coisa que não acontece com a rotina de 32bit.
-	;;
-	
-	;DEBUG:   
-	;USAR BASTANTE ESSE DEBUG PARA TER CERTEZA QUE TEMOS TODO O ARQUIVO 
-	;ONDE QUEREMOS.
-	;REPETIR ESSE DEBUG EM OUTRAS PARTES DO BM ... 
-	;EM MUITAS PARTES SE PRECISO ... FAZER ALGO SEMELHANTE EM 32BIT
-	;jmp $
+    mov si, stage2_msg_pe_sigOK
+    call DisplayMessage
+
+    ;debug
+    ;jmp $
+
+
 
 
 
     ;Turn off FDC motor.
-.turnoffFDCMotor:
+    
+xxx_turnoffFDCMotor:
+
     mov dx, 3F2h 
     mov al, 0 
     out dx, al
 
  
-.setupRegisters:	
-   
-    ;Setup registers.
+ 
+    ;Setup registers. 
+ 
+xxx_setupRegisters:
 
     cli
     mov ax, 0  
     mov ds, ax
     mov es, ax
-	;mov fs, ax  
-	;mov gs, ax 
+    ;mov fs, ax  
+    ;mov gs, ax 
     xor ax, ax
     mov ss, ax
     mov sp, 0x6000 
@@ -1276,50 +1179,36 @@ HERE:
     sti
 
 
-.setupA20:
-	
-	;Enable a20 line.
-	
-	pusha
-	
+    ;Enable a20 line.
+
+xxx_setupA20:
+
+    pusha
     call A20_enable
+    mov si, msg_a20
+    call DisplayMessage
+    popa
 
-	mov si, msg_a20
-	call DisplayMessage
-	
-	popa
-	
-  
-	; Detect Hardware:
-	; ================
-	; Detecta hardware presente usando rotinas de 16 bits via BIOS.
-	; Obs: É possível detectar vários componente de hardware usando os 
-	; recursos oferecidos pelo BIOS. Esses parametros serão salvos no 
-	; META$FILE, passados para Boot Loader, que passara para o Kernel.
 
-.detectHardware:
-	
-	;Message
-	;mov si, msg_detect_harware
-	;call DisplayMessage
-    ;call DetectionMain
-	
-	;;
-.readingFile:
-	
-    ;## Nothing ...	
-	
-	
-    ;
-	; Configurando o modo de inicialização do Boot Manager:
-	; ====================================================
-	; Seleciona um modo de inicializaçao para o Boot Manager.
-	; A opção está salva no metafile do Boot Mananger.
-	; Opções:
-	;     +1 ~ Shell do boot manager.
-	;     +2 ~ GUI
-	;
+
+
+
+    ;;
+    ;; Config
+    ;;
+
+    ; Configurando o modo de inicialização do Boot Manager:
+    ; ====================================================
+    ; Seleciona um modo de inicializaçao para o Boot Manager.
+    ; A opção está salva no metafile do Boot Mananger.
+    ; Opções:
+    ;     +1 ~ Shell do boot manager.
+    ;     +2 ~ GUI
     
+    
+xxx_Config:
+
+ 
 	;
 	; Configura o metafile. META$FILE.INIT_MODE = al
 	;
@@ -1365,18 +1254,24 @@ HERE:
 	;;
 
 .xxxxGO:
-	
+
+
+
 	; Ativar o modo escolhido.
 	; (lib16\s2modes.inc)
-	
-	JMP s2modesActivateMode     
-	JMP $
+
+    JMP s2modesActivateMode     
+    JMP $
 	
 	
 stage2_msg_pe_sig db "BM:stage2Initializations: *PE SIG",0
-stage2_msg_pe_sigOK db "BM:stage2Initializations: SIG OK", 13, 10, 0	
-	
-	
+stage2_msg_pe_sigOK db "BM:stage2Initializations: SIG OK", 13, 10, 0
+
+
+
+
+
+
 ;;
 ;; ####################################################################
 ;;	

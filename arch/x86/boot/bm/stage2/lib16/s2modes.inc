@@ -46,11 +46,17 @@ set_video_mode:
 ;     Pega o modo de video.
 ;     out: ax
 ;
+
 get_video_mode:
+    
     mov ax, word [META$FILE.VIDEO_MODE]
-	ret 
-	
-	
+    ret 
+
+
+
+
+
+
 ;==================================================================
 ; s2modesActivateMode:
 ;     Ativa o modo escolhido por configuração. 
@@ -60,15 +66,15 @@ get_video_mode:
 ;++
 
 s2modesActivateMode:
-   
-	call Window.ClearScreen	
-	
-	pusha
+
+    call Window.ClearScreen	
+
+    pusha
     call Window.StatusBar
     mov si, msg_s2_activating_mode
     call PoeString
     popa
-	
+
 	;jmp $
 	
 	; Pega o modo de inicialização no metafile.
@@ -94,12 +100,12 @@ s2modesActivateMode:
 
 mShell:
 
-	pusha
+    pusha
     call Window.StatusBar
     mov si, msg_modo1
     call PoeString
     popa
-	
+
 .videoMode:
 
 	;Set video mode.
@@ -322,11 +328,13 @@ s2modespm32:
 	;; GO!
 	;;	
     
-	;msm/start.inc
-	jmp startGUI
-	jmp $
-	
-	
+    ;msm/start.inc
+
+    jmp startGUI
+    jmp $
+
+
+
 s2modes_initmessageinGM db "s2modes: Initializing PM in GM", 13, 10, 0
 
 ;;

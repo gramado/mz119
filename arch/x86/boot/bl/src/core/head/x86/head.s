@@ -80,6 +80,7 @@ KRN_ENTRYPOINT  equ  0x00101000    ;Entry point no endereço fisico.
 ;      edx = Boot Block.
 ;
 ;++
+
 global _bootloader_entry_point
 _bootloader_entry_point:
 
@@ -101,12 +102,13 @@ ____START:
     ;Debug.
     ;JMP $
 
-	;Salva o modo de vídeo.
+    ; Salva o modo de vídeo.
     mov byte [bl_video_mode], al
 
-	;Verifica se usa gui ou não.
-	cmp al, byte 'G'
-	je .useGUI
+    ; Verifica se usa gui ou não.
+    cmp al, byte 'G'
+    je .useGUI
+
 .dontuseGUI:
     mov dword [_SavedBootMode], 0    ;Text Mode flag.
     jmp .go 
@@ -114,10 +116,10 @@ ____START:
 .useGUI:
     mov dword [_SavedBootMode], 1    ;GUI flag.
 
-.go:		
+.go:
 	;Salva o LFB.
 	;Global para endereço físico do LFB.
-	mov dword [_g_lbf_pa], ebx    
+    mov dword [_g_lbf_pa], ebx    
 
    ; @todo: 
    ;     Passar o bootblock em ebx e a flag em al.
@@ -416,13 +418,14 @@ blShellLoop:
 ;     LFB address.
 
 BootBlock:
-.lfb: dd 0    ; 0 - LFB address.
-.x:   dd 0    ; 4 - Width in pixels.
-.y:   dd 0    ; 8 - Height in pixel.
-.bpp: dd 0    ; 12 - bpp address.
-.last_valid_address: dd 0    ;; 16 - last valid ram address when finding mem size.
+.lfb: dd 0                   ;  0 - LFB address.
+.x:   dd 0                   ;  4 - Width in pixels.
+.y:   dd 0                   ;  8 - Height in pixel.
+.bpp: dd 0                   ; 12 - bpp address.
+.last_valid_address: dd 0    ; 16 - last valid ram address when finding mem size.
+;.disk_number: dd 0           ; 20 - disk number 0x8?
 ;...
-;Continua...	
+;Continua...
 
 
 

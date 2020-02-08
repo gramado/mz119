@@ -480,7 +480,7 @@ DONE:
 
 ;Step8:
 
-    ; Pass a argument to the next stage.
+    ; Pass an argument to the next stage.
     ; Disk Number.
     
     mov dl, byte [DriveNumber]
