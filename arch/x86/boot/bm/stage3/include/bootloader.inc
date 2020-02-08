@@ -1,20 +1,21 @@
 ;
 ; File: bootloader.inc 
 ;
-; Descrição:
-;     Inicia o Boot Loader da partição ativa.
-;     Carrega o BL.BIN para a memória e executa.
-;     O Boot Loader pode estar em qualquer partição de qualquer disco, 
-; mesmo que o disco não seja bootável.
+; Descriï¿½ï¿½o:
+;     Inicia o Boot Loader da partiï¿½ï¿½o ativa.
+;     Carrega o BL.BIN para a memï¿½ria e executa.
+;     O Boot Loader pode estar em qualquer partiï¿½ï¿½o de qualquer disco, 
+; mesmo que o disco nï¿½o seja bootï¿½vel.
 ;
-; Versão 1.0, 2015.
+; History:
+;     2015 - Created by Fred Nora.
 ;
 
 
 
 ;  
 ; Boot Loader name.
-; Obs: Esse é programaque deve ser carregado pelo Boot Manager.
+; Obs: Esse ï¿½ programaque deve ser carregado pelo Boot Manager.
 ;
 
 boot_loader_name  db  'BL      BIN',0
@@ -22,32 +23,49 @@ boot_loader_name  db  'BL      BIN',0
 
 ;------------------------------------------
 ; BootBlock:
-;     Argumentos que serão passador para o Boot Loader.
-;     Passa para o Boot Loader um ponteiro para os serviços oferecidos pelo 
+;
+;     Table of arguments passaed to BL.BIN.
+;     #todo: We need the disk number.
+;
+;     Argumentos que serï¿½o passador para o Boot Loader.
+;     Passa para o Boot Loader um ponteiro para os serviï¿½os oferecidos pelo 
 ; Boot Manager.
-;     * Informações sobre modo de vídeo.
+;     * Informaï¿½ï¿½es sobre modo de vï¿½deo.
 ;     * ...
 ;     *
 ;
-; Obs: Isso é um Meta-Objeto: Um vetor contendo variáveis e métodos.
-; Obs: .bmServices conterá o endereço de _bmServices:. que esta em lib32.inc.
+; Obs: Isso ï¿½ um Meta-Objeto: Um vetor contendo variï¿½veis e mï¿½todos.
+; Obs: .bmServices conterï¿½ o endereï¿½o de _bmServices:. que esta em lib32.inc.
 ;
-; Obs: Criaremos um bloco de informações seguindo o padrão da 'Multiboot Specification'.
-; O Boot Manager, o Boot Loader e o Kernel base deverão seguir esse padrão de boot.
-; Para tirarmos proveito da padronização do processo de boot para open source.
+; Obs: Criaremos um bloco de informaï¿½ï¿½es seguindo o padrï¿½o da 'Multiboot Specification'.
+; O Boot Manager, o Boot Loader e o Kernel base deverï¿½o seguir esse padrï¿½o de boot.
+; Para tirarmos proveito da padronizaï¿½ï¿½o do processo de boot para open source.
 ;
+
+;; Caution
+;; BL.BIN needs to know this order.
+
 BootBlock:
-    .lfb:    dd 0
-    .x:      dd 0
-    .y:      dd 0
-    .bpp:    dd 0
-    .metafile_address:  dd 0
-    .bmServices: dd 0 
+
+    .lfb:    dd 0              ;; 0
+    .x:      dd 0              ;; 4
+    .y:      dd 0              ;; 8
+    .bpp:    dd 0              ;; 12
+	.last_valid_address: dd 0  ;; 16 - ram (size)
+    .metafile_address:   dd 0  ;; 20
+    .disk_number: dd 0         ;; 24
+	.heads: dd 0               ;; 28
+	.spt: dd 0                 ;; 32
+	.cylinders: dd 0           ;; 36 
+
     ;Continua...
 
 
+
+
+
 ;;
-;;  Bloco de informações para o multiboot.
+;;  Bloco de informaï¿½ï¿½es para o multiboot.
 ;;	
 MultiBootBlock:
     dd 0
@@ -58,14 +76,14 @@ MultiBootBlock:
 
 	
 	
-;Status da instalação do boot.
+;Status da instalaï¿½ï¿½o do boot.
 bootloader_install_status: dd 0
 
 
 
 ;-----------------------------------------------
 ; bootloader:
-;     Carrega e inicia o Boot Loader da partição ativa.
+;     Carrega e inicia o Boot Loader da partiï¿½ï¿½o ativa.
 ;
 ;++
 bootloader: 
@@ -80,8 +98,8 @@ bootloader:
 	
 ;====================================================
 ; load_boot_loader:
-;     Carrega o Boot Loader (BL.BIN) na memória.
-;     Essa rotina é chamada em start.inc para carregar o BL.BIN na memória.
+;     Carrega o Boot Loader (BL.BIN) na memï¿½ria.
+;     Essa rotina ï¿½ chamada em start.inc para carregar o BL.BIN na memï¿½ria.
 ;     Essa rotina chama os recursos de \fs da classe fs16XXXX. 
 ;
 load_boot_loader:
@@ -125,7 +143,7 @@ start_bootloader:
     call os_screen_clear
 	call reset_cursor
 	
-    ;cabeçalho PE.
+    ;cabeï¿½alho PE.
     cmp byte [IMAGE_ADDRESS], byte 'L'
 	je .ok
 	
@@ -137,7 +155,7 @@ start_bootloader:
 	jmp $
 .ok:	
     ;Debug
-	;Mostra o arquivo. (ou um pedaço dele.)
+	;Mostra o arquivo. (ou um pedaï¿½o dele.)
     ;mov esi, IMAGE_ADDRESS
 	;call os_output
 	
@@ -173,19 +191,19 @@ start_bootloader:
 	;mov esi, bl_bl_fail_text
 	;call os_output	
 	
-	;Opção.
+	;Opï¿½ï¿½o.
 	JMP $
 	
 
 ;;==================================================================
 ;; start_bootloader_on_graphic_mode:
-;;     Executa o programa BL.BIN no modo gráfico.
+;;     Executa o programa BL.BIN no modo grï¿½fico.
 ;;
 ;;
 ;;   **** PASSANDO O COMANDO PARA O BL.BIN    ****
 ;;
 ;;
-;; @todo: Verificar antes se ele está presenta na memória.
+;; @todo: Verificar antes se ele estï¿½ presenta na memï¿½ria.
 ;;
 start_bootloader_on_graphic_mode:
 ;bootloaderStartOnGraphicMode:	
@@ -193,11 +211,11 @@ start_bootloader_on_graphic_mode:
 	; Meta-Object: @todo:
 	; ============
 	;     O Boot Manager passar para o Boot Loader um Meta-Objeto na forma 
-	; de vetor, contendo variáveis e métodos.
-	;     O principal método à se passar é _bmServices contendo o método
-	; que o Boot Manager usa para oferecer serviços. Desse módo o Boot Manager
-	; pode atuar como um módulo do kernel em kernel mode. Para isso o
-	; Boot Loader terá que passar esse método para o Kernel Base.
+	; de vetor, contendo variï¿½veis e mï¿½todos.
+	;     O principal mï¿½todo ï¿½ se passar ï¿½ _bmServices contendo o mï¿½todo
+	; que o Boot Manager usa para oferecer serviï¿½os. Desse mï¿½do o Boot Manager
+	; pode atuar como um mï¿½dulo do kernel em kernel mode. Para isso o
+	; Boot Loader terï¿½ que passar esse mï¿½todo para o Kernel Base.
 	;
 	
 	;
@@ -237,7 +255,7 @@ start_bootloader_on_graphic_mode:
 	
 	xor eax, eax
 	mov al, byte 'G'                       ;Flag. (useing graphics)	
-	mov ebx, dword [ModeInfo_PhysBasePtr]  ;LFB address (endereço físico)
+	mov ebx, dword [ModeInfo_PhysBasePtr]  ;LFB address (endereï¿½o fï¿½sico)
 	mov ecx, ebp
 	mov edx, ebp                           ;tabela
 	
@@ -251,7 +269,7 @@ start_bootloader_on_graphic_mode:
 	;jmp $
 	
 	
-    ;cabeçalho PE. no BL.BIN.
+    ;cabeï¿½alho PE. no BL.BIN.
     cmp byte [IMAGE_ADDRESS], byte 'L'
 	jne .peFail	
 
@@ -266,7 +284,7 @@ start_bootloader_on_graphic_mode:
 	jmp 8:IMAGE_ADDRESS_ENTRY_POINT
 	JMP $
 
-;O arquivo não está presente na memória.	
+;O arquivo nï¿½o estï¿½ presente na memï¿½ria.	
 .peFail:
 	mov esi, msg_bootloader_sig
 	call lib32PrintString

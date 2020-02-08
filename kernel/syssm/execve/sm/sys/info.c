@@ -1,8 +1,8 @@
 /*
  * File: info.c
  *
- * Descrição:
- *     Rotinas de informações sobre o sistema.
+ * Descriï¿½ï¿½o:
+ *     Rotinas de informaï¿½ï¿½es sobre o sistema.
  *
  * History:
  *     2015 - Created by Fred Nora.
@@ -13,7 +13,7 @@
 #include <kernel.h>
 
 
-//Usados para mostrar informações sobre a localização 
+//Usados para mostrar informaï¿½ï¿½es sobre a localizaï¿½ï¿½o 
 //das partes da imagem do kernel.
 //#todo: deletar;
 /*
@@ -31,25 +31,25 @@ extern unsigned long bss_end;
 /*
  * KeInformation: 
  *    @todo:
- *    Mostra em informações sobre o kernel.
- *    Chama módulo externo (Server em user mode) para
- *    mostrar informações sobre o kernel ou sobre o sistema.
+ *    Mostra em informaï¿½ï¿½es sobre o kernel.
+ *    Chama mï¿½dulo externo (Server em user mode) para
+ *    mostrar informaï¿½ï¿½es sobre o kernel ou sobre o sistema.
  *    Obs: 
- *    As informções podem ser salvas em um arquivo de saída padrão.
+ *    As informï¿½ï¿½es podem ser salvas em um arquivo de saï¿½da padrï¿½o.
  */
 
 void KeInformation (void){
 	
-	//return;    //Ainda não implementada.
+	//return;    //Ainda nï¿½o implementada.
 }
 
 
 /*
  *********************************************************
  * KiInformation: 
- * Mostra uma lista de informações sobre o Sistema.
- * Obs: @todo: A lista de informações de ser bem completa, 
- * pois servirá de ajuda ao desenvolvedor. Deve conter 
+ * Mostra uma lista de informaï¿½ï¿½es sobre o Sistema.
+ * Obs: @todo: A lista de informaï¿½ï¿½es de ser bem completa, 
+ * pois servirï¿½ de ajuda ao desenvolvedor. Deve conter 
  * de tudo, abordando todas as camadas do sistema. 
  * 
  * Ordem por classe:
@@ -59,7 +59,7 @@ void KeInformation (void){
  * DEVICES: umblocked, blocked
  * THINGS:
  *
- * Obs: As informções podem ser salvas em um arquivo de saída padrão.
+ * Obs: As informï¿½ï¿½es podem ser salvas em um arquivo de saï¿½da padrï¿½o.
  */
 
 //void infoShowKernelInfo() 
@@ -70,7 +70,7 @@ void KiInformation (void){
 	
 
 	// #suspenso
-	// Suspendemos o uso de variáveis importadas do makefile.
+	// Suspendemos o uso de variï¿½veis importadas do makefile.
 	
 /*	
 #ifdef IMPORTED_VARIABLES	
@@ -165,8 +165,8 @@ void KiInformation (void){
     show_thread_information ();
 
 
-	// Critério de dispatch.
-	// Mostra o número de vezes que um critério de seleção 
+	// Critï¿½rio de dispatch.
+	// Mostra o nï¿½mero de vezes que um critï¿½rio de seleï¿½ï¿½o 
 	// de thread foi usado pelo dispatcher.
 
     printf ("\n");
@@ -195,12 +195,12 @@ void KiInformation (void){
 	    
 	//@todo:
 	//mostrar o tamanho da pilha..
-	//#bugbug: A informações sobre a stack estão incorretas, 
-	//pois essas variáveis mostram 
-	// o endereço da stack na hora da inicialização. 
+	//#bugbug: A informaï¿½ï¿½es sobre a stack estï¿½o incorretas, 
+	//pois essas variï¿½veis mostram 
+	// o endereï¿½o da stack na hora da inicializaï¿½ï¿½o. 
 	//Quando o processador retorna de ring3 para ring0
-	//ele usa o endereço de pilha indicado na TSS.
-	//Pois bem, é mais digno mostrar aqui o endereço da pilha, 
+	//ele usa o endereï¿½o de pilha indicado na TSS.
+	//Pois bem, ï¿½ mais digno mostrar aqui o endereï¿½o da pilha, 
 	//indicado no TSS.
 	//printf("STACK: Start={%x} | End={%x} | Total={%d KB} \n",
 	//    kernel_stack_start ,kernel_stack_end ,StackTotal);
@@ -242,7 +242,7 @@ done:
 
 
 /*
- Salva as informações em um arquivo de texto.
+ Salva as informaï¿½ï¿½es em um arquivo de texto.
 void infoSaveInfo();
 void infoSaveInfo()
 {
@@ -259,6 +259,60 @@ void infoShowKernelInfo()
 	return;
 };
 */
+
+
+
+
+
+unsigned long info_get_boot_info ( int i )
+{
+	
+	// The data comes from boot block and beyond.
+
+    if (i<0)
+        return 0;
+        
+    switch (i)
+    {
+        case 1:
+           return (unsigned long) blSavedLastValidAddress;
+           break;
+
+        case 2:
+           return (unsigned long) blSavedMetafileAddress;
+           break;
+
+        case 3:
+           return (unsigned long) blSavedDiskNumber;
+           break;
+
+        case 4:
+           return (unsigned long) blSavedHeads;
+           break;
+
+        case 5:
+           return (unsigned long) blSavedSPT;
+           break;
+
+        case 6:
+           return (unsigned long) blSavedCylinders;
+           break;
+
+        case 7:
+           //return (unsigned long) 
+           break;
+
+        case 9:
+           //return (unsigned long) 
+           break;
+
+
+
+    };
+    
+   //fail 
+   return 0;
+}
 
 
 //

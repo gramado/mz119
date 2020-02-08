@@ -296,6 +296,19 @@ void *gde_extra_services ( unsigned long number,
         __mm_size_mb = ( memorysizeTotal/0x400);
         return (void *) __mm_size_mb;
     }
+    
+    
+    
+    // #bugbug: cuidado.
+    // get boot info.
+    // See: info.c
+    // IN: index to select the info.
+    
+    if ( number == 293 ){
+        return (void *) info_get_boot_info ( (int) arg2 );
+    }
+    
+    
 
 
     // Updates a status bar of a given window.

@@ -2145,17 +2145,18 @@ do_compare:
 		};
 		goto exit_cmp;
     };	
-	
-	
-	// boot
-    // ??
-	
-	if ( strncmp( prompt, "boot", 4 ) == 0 )
-	{
-	    printf ("~boot\n");
+
+
+    // #bugbug
+    // Cuidado.
+    unsigned long __bi_disk_number;
+    if ( strncmp( prompt, "boot", 4 ) == 0 )
+    {
+        __bi_disk_number = (unsigned long) gramado_system_call ( 293, 3, 0, 0 );
+        printf ("disk_number %x \n", __bi_disk_number );
         goto exit_cmp;
-    };
-	
+    }
+
 
 	// cd - Change dir.
 	if ( strncmp( prompt, "cd", 2 ) == 0 )

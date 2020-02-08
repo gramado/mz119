@@ -1,27 +1,27 @@
 ;
 ; File: bm/main.asm 
 ;
-; Descrição:
-;     Esse é o arquivo principal de BM.BIN.
+; Descriï¿½ï¿½o:
+;     Esse ï¿½ o arquivo principal de BM.BIN.
 ;     Foi carregado pelo MBR.  
-;     O objetivo é carregar BL.BIN na memória e passar o comando para ele.
+;     O objetivo ï¿½ carregar BL.BIN na memï¿½ria e passar o comando para ele.
 ; 
 ;     *** Importante: @todo: Um novo nome deve ser criado.
-;     Arquivo principal do System4Nora. (Começa com o BM).
+;     Arquivo principal do System4Nora. (Comeï¿½a com o BM).
 ;
 ; *Importante:
-; + O arquivo main.asm faz uma sequência de inclusões de módulos que compõem 
-; o Boot manager, começando pelos módulos de 16bit e depois os módulos de 
+; + O arquivo main.asm faz uma sequï¿½ncia de inclusï¿½es de mï¿½dulos que compï¿½em 
+; o Boot manager, comeï¿½ando pelos mï¿½dulos de 16bit e depois os mï¿½dulos de 
 ; 32bit. 
-; + O arquivo header32.inc deve ficar no início das inclusões dos módulos de 
-; 32bit, para que os módulos de 32bit possam utiliza-lo adequadamente.
+; + O arquivo header32.inc deve ficar no inï¿½cio das inclusï¿½es dos mï¿½dulos de 
+; 32bit, para que os mï¿½dulos de 32bit possam utiliza-lo adequadamente.
 ;
 ;Sobre o sistema System4Nora: (#cancelado)
 ;========================================
-;    O sistema é chamado SYSTEM.VHD.
-;    É um VHD de 32 MB feito em assembly. (NASM).
-;    Comtém 4 programas compilados juntos.
-;    São eles:
+;    O sistema ï¿½ chamado SYSTEM.VHD.
+;    ï¿½ um VHD de 32 MB feito em assembly. (NASM).
+;    Comtï¿½m 4 programas compilados juntos.
+;    Sï¿½o eles:
 ;    
 ;       1, Boot Manager (16 e 32 bit).
 ;       2, Boot Loader (32 bit). (@todo)
@@ -34,55 +34,55 @@
 ;                     podem usar as bibliotecas de 32bit
 ;                     que pertencem ao Boot Manager.
 ;
-;       *O System4Nora permite a inicialização no Modo Texto e
-;        e no Modo Gráfico. A seleção do modo é feita no arquivo stage2.inc.
-;        mas a seleção do modo de inicilização poderá ser feita pelo
-;        usuário administrador e pelo desenvolvedor.
+;       *O System4Nora permite a inicializaï¿½ï¿½o no Modo Texto e
+;        e no Modo Grï¿½fico. A seleï¿½ï¿½o do modo ï¿½ feita no arquivo stage2.inc.
+;        mas a seleï¿½ï¿½o do modo de inicilizaï¿½ï¿½o poderï¿½ ser feita pelo
+;        usuï¿½rio administrador e pelo desenvolvedor.
 ;
 ;  1) Sobre o Boot Manager do System4Nora:
-;       Faz a inicialização em 16 bits.
+;       Faz a inicializaï¿½ï¿½o em 16 bits.
 ;
 ;  2) Sobre o Boot Loader do System4Nora:
-;       É um Boot Loader interno que carrega o kernel interno
+;       ï¿½ um Boot Loader interno que carrega o kernel interno
 ;
 ;  3) Sobre o Kernel do System4Nora:
-;         O Kernel é mínimo, monotarefa.
+;         O Kernel ï¿½ mï¿½nimo, monotarefa.
 ;         Tecnologia semelhante ao DPMI.
 ;         Os recursos do System4Nora podem
-;         ser acessados através de um Shell interno.
+;         ser acessados atravï¿½s de um Shell interno.
 ;         usado pelo desenvolvedor para gerenciamento de
-;         inicialização.         
+;         inicializaï¿½ï¿½o.         
 ;       
 ;  4) Sobre o Browser do System4Nora:
-;        O Browser é a interface gráfica. É a área de trabalho onde
-;        aparecerão as páginas em html, os atalhos para as aplicações
+;        O Browser ï¿½ a interface grï¿½fica. ï¿½ a ï¿½rea de trabalho onde
+;        aparecerï¿½o as pï¿½ginas em html, os atalhos para as aplicaï¿½ï¿½es
 ;        ou os gerenciadores do sistema.
-;        Essa inteface gráfica assim como o shell interno será
-;        usada para gerenciamento de inicialização.
+;        Essa inteface grï¿½fica assim como o shell interno serï¿½
+;        usada para gerenciamento de inicializaï¿½ï¿½o.
 ;
 ;Sobre o subsistema:
 ;===================
-;    O subsistema é chamado SYSTEM.BIN.
-;    É um programa em user mode feito em C.
-;    Serão usados os códigos do Boot Loader em C e
-;    do Kernel em C, já feitos.
-;    A atribuição do subsistema é ser uma interface
-;    entre as aplicações em user mode e o kernel em assembly.
+;    O subsistema ï¿½ chamado SYSTEM.BIN.
+;    ï¿½ um programa em user mode feito em C.
+;    Serï¿½o usados os cï¿½digos do Boot Loader em C e
+;    do Kernel em C, jï¿½ feitos.
+;    A atribuiï¿½ï¿½o do subsistema ï¿½ ser uma interface
+;    entre as aplicaï¿½ï¿½es em user mode e o kernel em assembly.
 ;     
-; Sobre as aplicações:
+; Sobre as aplicaï¿½ï¿½es:
 ; ===================
-;     As aplicações são programas feitos em C 32bit.
+;     As aplicaï¿½ï¿½es sï¿½o programas feitos em C 32bit.
 ;     Rodam em user mode.
 ;
-; @todo: Filtrar as informaçoes abaixo nesse comentário.
+; @todo: Filtrar as informaï¿½oes abaixo nesse comentï¿½rio.
 ;
 ; Sobre o Boot Manager contido no System4Nora:
 ; ============================================
-;     O Boot Manager é a primeira parte do System4Nora, ele começa com um MBR 
+;     O Boot Manager ï¿½ a primeira parte do System4Nora, ele comeï¿½a com um MBR 
 ; em 16bit e stage 2 em 16bit depois muda pra 32bit.
 ; 
 ;     Arquivo principal do Boot Manager.
-;     M0 - Módulos em ring0.
+;     M0 - Mï¿½dulos em ring0.
 ;
 ;     Boot Manager 16bit via BIOS.
 ;     Para HD IDE.
@@ -99,14 +99,14 @@
 ; GeForce_8400_GS equ 0x06E4  
 ; GeForce 8400 GS: 0x0115   800x600x32BPP
 ;
-; Obs: A resolução usada por enquanto em 32bit é 800x600x24BPP.
+; Obs: A resoluï¿½ï¿½o usada por enquanto em 32bit ï¿½ 800x600x24BPP.
 ; 
 ; Continua ...
 ;
 ; OBS: 
-;     O Boot Loader (BL.BIN) pode querer configurar o modo de vídeo. Então ele 
-; salva o modo no metafile e reinicia a máquina. Para isso o Boot Manager deve 
-; apenas pegar o valor que esta no metafile e não editar o metafile.
+;     O Boot Loader (BL.BIN) pode querer configurar o modo de vï¿½deo. Entï¿½o ele 
+; salva o modo no metafile e reinicia a mï¿½quina. Para isso o Boot Manager deve 
+; apenas pegar o valor que esta no metafile e nï¿½o editar o metafile.
 ;
 ; Autor: Frederico Martins Nora - (frednora)
 ;
@@ -117,7 +117,7 @@
 
 ;;
 ;; #importante
-;; O arquivo foi carregado em 0:8000. Fica mais fácil lidar com a gdt 
+;; O arquivo foi carregado em 0:8000. Fica mais fï¿½cil lidar com a gdt 
 ;; configurando o org em 0x8000 e colocando os segmentos em 0.
 ;;
 
@@ -228,7 +228,7 @@ G_START_GUI EQU 0  ;; 1= (YES) 0 = (NO)
 
 ;;
 ;; 16 bit: 
-;; Estamos no primeiro setor do BM.BIN, ele começa em 16 bit.
+;; Estamos no primeiro setor do BM.BIN, ele comeï¿½a em 16 bit.
 ;;
 
 
@@ -238,7 +238,7 @@ G_START_GUI EQU 0  ;; 1= (YES) 0 = (NO)
 
 ;; #importante
 ;; Entrypoint do BM.BIN
-;; Saltaremos a área de dados no início do arquivo.
+;; Saltaremos a ï¿½rea de dados no inï¿½cio do arquivo.
 
 bm_main:    
 
@@ -269,7 +269,7 @@ bootmanagerSystemID              db "FAT16   "
 
 ;;
 ;; Salvando alguns argumentos passados pelo MBR. 
-save_cylinder_numbers: dw 0  ;Número de cilindros do disco.
+save_cylinder_numbers: dw 0  ;Nï¿½mero de cilindros do disco.
 ;;...
 
 
@@ -282,7 +282,7 @@ save_cylinder_numbers: dw 0  ;Número de cilindros do disco.
 ;; 
 
 ;; #importante: 
-;; O único argumento passado pelo MBR foi o número do disco.
+;; O ï¿½nico argumento passado pelo MBR foi o nï¿½mero do disco.
 ;; IN: dl = Disk number.
 
 ;; /dev/sda - 0x80
@@ -315,7 +315,7 @@ START_AFTER_DATA:
 
     mov byte [bootmanagerDriveNumber], dl
     mov byte [META$FILE.DISK_NUMBER], dl  
-
+    mov byte [DISKINFO16_disk_number], dl  
 
     ;;
     ;; Get disk info.
@@ -344,12 +344,12 @@ START_AFTER_DATA:
 
 	;
 	;Heads.
-	;Número de heads.
+	;Nï¿½mero de heads.
 	;Logical last index of heads = (number_of - 1). 
 	;(Because index starts with 0).
 	;
 	; Obs: 
-	; O valor de Heads foi gravado no BPB mas precisará ser passado a diante
+	; O valor de Heads foi gravado no BPB mas precisarï¿½ ser passado a diante
 	; para uso posterior.
 	;
 
@@ -359,12 +359,12 @@ START_AFTER_DATA:
     ;Number of heads.
     mov word [bootmanagerNumHeads], ax
     mov word [META$FILE.HEADS], ax
-
+    mov word [DISKINFO16_heads], ax
 
     ;
     ; Sectors Per Track e Cylinders.
-    ; Essas informações apresentam meio truncadas
-    ; O valor do número de cilindros é aprentado
+    ; Essas informaï¿½ï¿½es apresentam meio truncadas
+    ; O valor do nï¿½mero de cilindros ï¿½ aprentado
     ; de forma parcial, uma parte em cada registrador.
     ;
 
@@ -381,7 +381,7 @@ START_AFTER_DATA:
     ; "Esconde 2 bits que pertencem a quantidade de setores".
     ;
     ; Obs: 
-    ; O valor de SPT foi gravado no BPB mas precisará 
+    ; O valor de SPT foi gravado no BPB mas precisarï¿½ 
     ; ser passado a diante para uso posterior.
    
     xor eax, eax 
@@ -392,10 +392,12 @@ START_AFTER_DATA:
     mov ah, 0                                  ; enviamos apenas 'al' 
     mov word [bootmanagerSectorsPerTrack], ax  ; enviamos apenas 'al'
     mov word [META$FILE.SPT], ax
-    
+    mov word [DISKINFO16_spt], ax   
+
+
     ; Cylinders
     ; Obs: 
-    ; O valor de CylinderNumbers foi gravado em variável mas precisará ser 
+    ; O valor de CylinderNumbers foi gravado em variï¿½vel mas precisarï¿½ ser 
     ; passado a diante para uso posterior.
 
     xor eax, eax
@@ -404,9 +406,10 @@ START_AFTER_DATA:
     shl ax, 2                  ; Move them to bits 8&9.
     mov al, ch                 ; Rest of the cylinder bits.(low 8 bits)
     inc eax                    ; Number is 0-based.
-    ; Número de cilindros do disco.
+    ; Nï¿½mero de cilindros do disco.
     mov word [save_cylinder_numbers], ax
     mov word [META$FILE.CYLINDERS], ax
+    mov word [DISKINFO16_cylinders], ax
 
 
     ;;
@@ -441,10 +444,10 @@ bootmanagerLOAD_ROOT:
     add  ax, cx
     mov WORD [bootmanagerdatasector], ax     ; base of root directory
     ;Read root directory into memory (0:1000) ?
-    ;mov WORD [bootmanagerdatasector], 591  ;;SIMULADO Início da área de dados.
+    ;mov WORD [bootmanagerdatasector], 591  ;;SIMULADO Inï¿½cio da ï¿½rea de dados.
 
 
-    mov ax, word [ROOTDIRSTART]    ; Início do root.
+    mov ax, word [ROOTDIRSTART]    ; Inï¿½cio do root.
     mov cx, word [ROOTDIRSIZE]     ; Tamanho do root.
     mov bx, 0x1000                 ; root_buffer. Copy root dir above bootcode
     call bootmanagerReadSectors
@@ -502,14 +505,14 @@ bootmanagerLOAD_FAT:
 
     ;;
     ;; #BUGBUG 
-    ;; NÃO ESTAMOS CARREGANDO A FAT INTEIRA.
-    ;; CARREGAR A FAT INTEIRA DÁ PROBLEMA.
+    ;; Nï¿½O ESTAMOS CARREGANDO A FAT INTEIRA.
+    ;; CARREGAR A FAT INTEIRA Dï¿½ PROBLEMA.
     ;;
  
  
     ; Read FAT into memory (es:bx).?? Onde ??
     ; ?? 0:0x1000 
-    ; ?? Qual é o segmento e o offset da FAT ??
+    ; ?? Qual ï¿½ o segmento e o offset da FAT ??
 
     mov ax, 0 
     mov es, ax
@@ -524,7 +527,7 @@ bootmanagerLOAD_FAT:
 
 
 	;;
-	;; Nesse momento já carregamos a FAT.
+	;; Nesse momento jï¿½ carregamos a FAT.
 	;;
 
 
@@ -544,7 +547,7 @@ bootmanagerLOAD_FAT:
     mov si, bootmanagermsgImg
     call bootmanagerDisplayMessage
 
-    ; Opção de mensagem.
+    ; Opï¿½ï¿½o de mensagem.
     ; mov si, bootmanagermsgCRLF
     ; call bootmanagerDisplayMessage
 
@@ -609,17 +612,17 @@ bootmanagerLOAD_IMAGE:
 	;EOF.
 	cmp dx, 0xFFFF                       ; 0x0FF0 test for end of file.
 	jne bootmanagerLOAD_IMAGE
-	;jnb bootmanagerLOAD_IMAGE ;Opção. 
+	;jnb bootmanagerLOAD_IMAGE ;Opï¿½ï¿½o. 
 bootmanagerDONE:
     
-	;Opção de mensagem.
+	;Opï¿½ï¿½o de mensagem.
 	;mov si, bootmanagermsgCRLF
     ;call bootmanagerDisplayMessage
 	
 	;;========================
-    ;; Atenção:
-    ;;     Esse é primeiro setor do BM.BIN, ele irá carregar o arquivo BL.BIN 
-	;; e irá passar o comando para o stage 2 do (BM).
+    ;; Atenï¿½ï¿½o:
+    ;;     Esse ï¿½ primeiro setor do BM.BIN, ele irï¿½ carregar o arquivo BL.BIN 
+	;; e irï¿½ passar o comando para o stage 2 do (BM).
     ;;=======================	
 
     ;Mensagem de sucesso.	 
@@ -632,19 +635,19 @@ bootmanagerDONE:
 	;; ===================================================================
 	;; *Importante:
 	;;
-	;; >> Nesse momento já conseguimos carregar o BL.BIN em 0x2000:0. Agora 
-	;; passamos o comando para o stage2 do BM, onde configuramos o máquina,
-	;; entramos em modo gráfico, em modo protegido e por fim entramos no 
+	;; >> Nesse momento jï¿½ conseguimos carregar o BL.BIN em 0x2000:0. Agora 
+	;; passamos o comando para o stage2 do BM, onde configuramos o mï¿½quina,
+	;; entramos em modo grï¿½fico, em modo protegido e por fim entramos no 
 	;; mini-shell do BM.
-	;; >> Observe que o início do BM está em 16bit. Aproveitamos isso para
+	;; >> Observe que o inï¿½cio do BM estï¿½ em 16bit. Aproveitamos isso para
 	;; carregarmos o arquivo BL.BIN com a ajuda dos recursos do BIOS. Isso
-	;; nos oferece um pouco de tranquilidade. Então, já que o BM, cumpriu 
-	;; seu principal objetivo logo no início do código, podemos usar o resto 
-	;; dele para rotinas mais detalhadas de obtenção de informações sobre a 
-	;; arquitetura x86. Assim podemos passar para o BL.BIN o maior número de 
-	;; informções possíveis, e deixá-lo em um estado confortável.
+	;; nos oferece um pouco de tranquilidade. Entï¿½o, jï¿½ que o BM, cumpriu 
+	;; seu principal objetivo logo no inï¿½cio do cï¿½digo, podemos usar o resto 
+	;; dele para rotinas mais detalhadas de obtenï¿½ï¿½o de informaï¿½ï¿½es sobre a 
+	;; arquitetura x86. Assim podemos passar para o BL.BIN o maior nï¿½mero de 
+	;; informï¿½ï¿½es possï¿½veis, e deixï¿½-lo em um estado confortï¿½vel.
 	;; Sendo assim, o BM.BIN, pode ser um programa com um tamanho um pouco 
-	;; maior, mas talvez isso torne o trabalho o MBR mais difícil.
+	;; maior, mas talvez isso torne o trabalho o MBR mais difï¿½cil.
 	;;======================================================================
 
 
@@ -652,8 +655,8 @@ bootmanagerDONE:
 
 
 ; Go!
-; Agora saltamos para a trap que existe no início do META$FILE.
-; Trap 1. (isso está nesse arquivo mesmo)
+; Agora saltamos para a trap que existe no inï¿½cio do META$FILE.
+; Trap 1. (isso estï¿½ nesse arquivo mesmo)
  
 .goToFisrtTrap:
 
@@ -714,7 +717,7 @@ bootmanagerDisplayMessage:
 ; bootmanagerReadSectors:
 ;     Reads "cx" sectors from disk starting at "ax" into memory location 
 ; "es:bx".
-;     Carrega na memória, em es:bx, 'cx' setores do disco, começando pela 
+;     Carrega na memï¿½ria, em es:bx, 'cx' setores do disco, comeï¿½ando pela 
 ; LBA 'ax'. 
 ;************************************************************************
 
@@ -828,7 +831,7 @@ bootmanagermsgCRLF      db  0x0D, 0x0A, 0x00
 
 
 ;=================
-; Obs: Aqui é o fim do Stage1 do Boot Manager.
+; Obs: Aqui ï¿½ o fim do Stage1 do Boot Manager.
 ;
 
 ;;
@@ -836,15 +839,15 @@ bootmanagermsgCRLF      db  0x0D, 0x0A, 0x00
 ;;	
 	
 ;=================
-; Obs: Aqui é oomeço do Stage2 do Boot Manager.
+; Obs: Aqui ï¿½ oomeï¿½o do Stage2 do Boot Manager.
 ;
 
 
 
 [bits 16]
 	;Stage 2.
-	;Esse é o segundo setor.
-    ;*Daqui pra frente temos código de inicialização.	
+	;Esse ï¿½ o segundo setor.
+    ;*Daqui pra frente temos cï¿½digo de inicializaï¿½ï¿½o.	
 	;; ** SEGUNDO SETOR ** ;;
 
 	;;
@@ -864,29 +867,29 @@ bootmanagermsgCRLF      db  0x0D, 0x0A, 0x00
 ; It starts on second sector.
 ;
 ; *Importante:
-; O arquivo stage2.inc faz uma sequência de inclusões de módulos
-; de 16bit que compõem o stage2. Os promeiros devem ser s2metafile.inc 
-; e s2header.inc que servirão de suporte para todos os outros modulos
+; O arquivo stage2.inc faz uma sequï¿½ncia de inclusï¿½es de mï¿½dulos
+; de 16bit que compï¿½em o stage2. Os promeiros devem ser s2metafile.inc 
+; e s2header.inc que servirï¿½o de suporte para todos os outros modulos
 ; do stage2.
 ;
 ; *IMPORTANTE:
-;      É IMPRESSINDÍVEL A POSSIBILIDADE DE CARREGAR O 'BOOT LOADER' USANDO 
+;      ï¿½ IMPRESSINDï¿½VEL A POSSIBILIDADE DE CARREGAR O 'BOOT LOADER' USANDO 
 ; OS RECURSOS DO BIOS DE 16BIT. Esse arquivo deve chamar a rotina de 
-; carregamento de arquivo. Obs: Já está implementada a rotina de carregar 
+; carregamento de arquivo. Obs: Jï¿½ estï¿½ implementada a rotina de carregar 
 ; um setor usando fat16 em 16bit usando recursos do BIOS.   
 ;
-; Atribuições:
+; Atribuiï¿½ï¿½es:
 ;     +1 - Configura o sistema. 
-;     +2 - Entra no modo de inicialização configurado. 
+;     +2 - Entra no modo de inicializaï¿½ï¿½o configurado. 
 ;
-; Modo de vídeo do Boot Manager:
+; Modo de vï¿½deo do Boot Manager:
 ; =============================
 ;     O Boot Manager usa o modo de texto, mas configura o modo de video
-; de acordo com as especificações do metafile que está no segundo setor.
+; de acordo com as especificaï¿½ï¿½es do metafile que estï¿½ no segundo setor.
 ;
 ; Estado dos registradores:
 ; ========================
-; O 'stage2 e o resto do Boot Manager' são carregados em 0000h:1000h pelo 
+; O 'stage2 e o resto do Boot Manager' sï¿½o carregados em 0000h:1000h pelo 
 ; stage1 (MBR).
 ; O stage 2 inicia com os seguintes valores nos registradores:
 ;
@@ -911,29 +914,29 @@ bootmanagermsgCRLF      db  0x0D, 0x0A, 0x00
 ;
 ; Memory map:
 ; ==========
-;     +VBR        = 8000:7c00 (Primeiro setor da partição ativa).
+;     +VBR        = 8000:7c00 (Primeiro setor da partiï¿½ï¿½o ativa).
 ;     +FAT        = 6000:0000
 ;     +ROOT       = 4000:0000
 ;     +BootLoader = 2000:0000
 ;
-; Informações sobre as partições:
+; Informaï¿½ï¿½es sobre as partiï¿½ï¿½es:
 ; ==============================
-; Partição 0 - (31MB).
+; Partiï¿½ï¿½o 0 - (31MB).
 ;     vbr  - ?    
 ;     fat1 - ?
 ;     fat2 - ?
 ;     root - ?
 ;     data - ?
-; Partição 1 - Não usada.
-; Partição 2 - Não usada.
-; Partição 3 - Não usada.
+; Partiï¿½ï¿½o 1 - Nï¿½o usada.
+; Partiï¿½ï¿½o 2 - Nï¿½o usada.
+; Partiï¿½ï¿½o 3 - Nï¿½o usada.
 ;
 ; OBS: 
-; É importante receber bem os parâmetros de disco passados pelo stage1. 
-; O stage2 salva os parâmetros de disco no META$FILE carregado na memória. 
-; (volátil).  
+; ï¿½ importante receber bem os parï¿½metros de disco passados pelo stage1. 
+; O stage2 salva os parï¿½metros de disco no META$FILE carregado na memï¿½ria. 
+; (volï¿½til).  
 ;
-; Histórico:
+; Histï¿½rico:
 ;     2015 - Created.
 ;     2016 - Revision.
 ;     2017 - Revision.
@@ -944,21 +947,21 @@ bootmanagermsgCRLF      db  0x0D, 0x0A, 0x00
 
 ;
 ; Algumas constantes usadas pelo stage 2.
-; Obs: Por conveniência, o desenvolvedor pode manipular essas constantes.
+; Obs: Por conveniï¿½ncia, o desenvolvedor pode manipular essas constantes.
 ;
 
-;;Tipos de bootloader que poderão ser carregados pelo boot manager.
+;;Tipos de bootloader que poderï¿½o ser carregados pelo boot manager.
 ;BOOTLOADER_TYPE_NONE      EQU 0  ;Sem tipo definido. Negligenciado.
 ;BOOTLOADER_TYPE_GRAMADO   EQU 1  ;Boot Loader do sistema operacional Gramado.
-;BOOTLOADER_TYPE_MULTIBOOT EQU 1  ;Usando o padrão multiboot.
+;BOOTLOADER_TYPE_MULTIBOOT EQU 1  ;Usando o padrï¿½o multiboot.
 ;BOOTLOADER_TYPE_UNKNOW    EQU 2  ;Desconhecido.
 ;;...
 
 ;==========================================
 ; *Importante:
-;     nesse momento determinamos a localização, no disco, dos elementos do 
+;     nesse momento determinamos a localizaï¿½ï¿½o, no disco, dos elementos do 
 ; sistema de arquivos FAT16.
-; Não é isso o que queremos. Essas informações precisam ser obtidas através 
+; Nï¿½o ï¿½ isso o que queremos. Essas informaï¿½ï¿½es precisam ser obtidas atravï¿½s 
 ; de rotinas de sondagem. 
 ;
 
@@ -986,10 +989,10 @@ ROOT_LBA       equ 559
 
 
 ;;========================
-;; Aqui está a localização do bootloader na memória. 
-;; A LBAnão importa, pois ele foi carregado do sistema sistema de 
+;; Aqui estï¿½ a localizaï¿½ï¿½o do bootloader na memï¿½ria. 
+;; A LBAnï¿½o importa, pois ele foi carregado do sistema sistema de 
 ;; arquivos e a LBA inicial dele estava armazenada na entrada do 
-;; diretório raiz.
+;; diretï¿½rio raiz.
 ;;
 
 ;Boot Loader.
@@ -1008,9 +1011,9 @@ BL_LBA         equ 0
 ;========================================================================
 ; stage2_main:
 ;
-;     Início do stage 2. 
+;     Inï¿½cio do stage 2. 
 ;
-;     O endereço do stage 2 é 0000H:1000H.
+;     O endereï¿½o do stage 2 ï¿½ 0000H:1000H.
 ;     O stage 2 fica no segundo setor do disco.
 ;-------------------------------------------------
 
@@ -1035,8 +1038,17 @@ stage2_main:
 
     ;dados.
     %include "s2gdt.inc"
+
+
+    ;;=================================================
+    ;; #importante
+    ;; Foi possivel passar para BL.BIN Os dados de s2vesa.inc
+    ;; Vamos tentar passar os dados de s2config16.inc, pois esta
+    ;; relativamente proximo.
     %include "s2vesa.inc"      
-    %include "s2config16.inc"    ;Configurações de inicialização.
+    %include "s2config16.inc"    
+    ;; ==================================================
+
 
     ;lib.
     %include "s2a20.inc"
@@ -1054,12 +1066,12 @@ stage2_main:
 
 ;------------------------------------------
 ; AFTER_DATA:
-;     Início real do stage 2.
-;     A primeira coisa a se fazer é salvar os parâmetros de disco passados 
+;     Inï¿½cio real do stage 2.
+;     A primeira coisa a se fazer ï¿½ salvar os parï¿½metros de disco passados 
 ; pelo stage1.
 ;
 ; Argumentos recebidos:
-;     bx = Magic number. (autorização)
+;     bx = Magic number. (autorizaï¿½ï¿½o)
 ;     ax = Number of heads.
 ;     dl = Drive number.
 ;     cl = Sectors per track.
@@ -1082,7 +1094,7 @@ AFTER_DATA:
     ; Debug.
     ; jmp $
 
-;; Checar se a assinatura PE está na memória, se estiver, pularemos e
+;; Checar se a assinatura PE estï¿½ na memï¿½ria, se estiver, pularemos e
 ;; a etapa de carregamento do arquivo.
 ;; #todo
 ;; Rever essa assinatudo, pois tudo no sistema agora usa ELF.
@@ -1104,7 +1116,7 @@ xxx_checkSig:
 	cmp al, byte 0x01  ;;segundo byte
     jne .sigNotFound
 	
-	;; Se os dois char não estão ausentes, significa que o arquivo eta no lugar.
+	;; Se os dois char nï¿½o estï¿½o ausentes, significa que o arquivo eta no lugar.
 	jmp .sigFound
 
     ;;
@@ -1112,11 +1124,11 @@ xxx_checkSig:
     ;;
 
 
-;;A assinatura não foi encontrada, o arqui não está na memória.	
+;;A assinatura nï¿½o foi encontrada, o arqui nï¿½o estï¿½ na memï¿½ria.	
 .sigNotFound:
     
     ;; message: 
-    ;; O arquivo não esta presente na memória.
+    ;; O arquivo nï¿½o esta presente na memï¿½ria.
     
     mov si, stage2_msg_pe_sig
     call DisplayMessage
@@ -1137,7 +1149,7 @@ xxx_checkSig:
 .sigFound:
 
     ;; message: 
-    ;; O arquivo esta presente na memória.
+    ;; O arquivo esta presente na memï¿½ria.
 
     mov si, stage2_msg_pe_sigOK
     call DisplayMessage
@@ -1197,11 +1209,11 @@ xxx_setupA20:
     ;; Config
     ;;
 
-    ; Configurando o modo de inicialização do Boot Manager:
+    ; Configurando o modo de inicializaï¿½ï¿½o do Boot Manager:
     ; ====================================================
-    ; Seleciona um modo de inicializaçao para o Boot Manager.
-    ; A opção está salva no metafile do Boot Mananger.
-    ; Opções:
+    ; Seleciona um modo de inicializaï¿½ao para o Boot Manager.
+    ; A opï¿½ï¿½o estï¿½ salva no metafile do Boot Mananger.
+    ; Opï¿½ï¿½es:
     ;     +1 ~ Shell do boot manager.
     ;     +2 ~ GUI
     
@@ -1280,10 +1292,10 @@ stage2_msg_pe_sigOK db "BM:stage2Initializations: SIG OK", 13, 10, 0
 ;;============================================
 ;; stage2Shutdown:
 ;;     Desliga o computador via APM, using BIOS.
-;;     Obs: Isso é um teste.
+;;     Obs: Isso ï¿½ um teste.
 ;;     #Funcionou, 
 ;;     Criar um comando no shell do boot manager para isso.	
-;;     isso pode ser chamado quando uma aplicação em user mode
+;;     isso pode ser chamado quando uma aplicaï¿½ï¿½o em user mode
 ;;     chamar uma rotina de retorno para o modo real.
 ;;
 
@@ -1325,24 +1337,24 @@ stage2Shutdown:
 bootmanager_main:
 
 	;
-	; Em ordem de prioridade na compilação.
+	; Em ordem de prioridade na compilaï¿½ï¿½o.
 	;
 	
 	;14, Header principal. 
-	;Definições globais usadas em 32bit.
+	;Definiï¿½ï¿½es globais usadas em 32bit.
 	;Header principal em 32 bits.
     %include "header32.inc"	    
 
 	;13, Headers. 
-    %include "system.inc"       ;Arquivo de configuração do sistema.
-    %include "init.inc"   	    ;Arquivo de configuração da inicialização.
-    %include "sysvar32.inc"     ;Variáveis do sistema.
+    %include "system.inc"       ;Arquivo de configuraï¿½ï¿½o do sistema.
+    %include "init.inc"   	    ;Arquivo de configuraï¿½ï¿½o da inicializaï¿½ï¿½o.
+    %include "sysvar32.inc"     ;Variï¿½veis do sistema.
     %include "gdt32.inc"        ;Gdt.
     %include "idt32.inc"        ;Idt.
     %include "ldt32.inc"        ;Ldt.
     %include "tss32.inc"        ;Tss.
     %include "stacks32.inc"     ;Stacks.
-    %include "ints32.inc"       ;Handles para as interrupções.
+    %include "ints32.inc"       ;Handles para as interrupï¿½ï¿½es.
     %include "fat16header.inc"	;Headers para o sistema de arquivos fat16.
 
     ;12, Monitor.
@@ -1352,8 +1364,8 @@ bootmanager_main:
     %include "font32.inc"       ;Fonte.
 
 	;11, Hardware.
-    %include "cpuinfo.inc"      ;Rotinas de detecção e configuração de cpu.
-    %include "hardware.inc"     ;Rotinas de detecção e configuração de hardware.
+    %include "cpuinfo.inc"      ;Rotinas de detecï¿½ï¿½o e configuraï¿½ï¿½o de cpu.
+    %include "hardware.inc"     ;Rotinas de detecï¿½ï¿½o e configuraï¿½ï¿½o de hardware.
     ;...
 
 	;10, Irqs.
@@ -1365,7 +1377,7 @@ bootmanager_main:
     ;...
 
     ;9 - Tasks. (#no tasks)
-    %include "tasks32.inc"     ;Rotinas de inicialização do sistema de tarefas.
+    %include "tasks32.inc"     ;Rotinas de inicializaï¿½ï¿½o do sistema de tarefas.
 
     ;8 - lib32.	
     ;%include "lib32.inc"       ;Rotinas em 32 bits.
@@ -1376,21 +1388,21 @@ bootmanager_main:
 	;6 - Disk.
     %include "fat12pm.inc"     ;FAT12 em 32 bits.
     %include "fat16lib.inc"    ;FAT16 (rotinas).
-    %include "fat16.inc"       ;FAT16 (funções principais).
+    %include "fat16.inc"       ;FAT16 (funï¿½ï¿½es principais).
     %include "ramfs.inc"       ;RamDisk fs.
     %include "format.inc"      ;Formata.
-    %include "fs32.inc"        ;fs, (gerência os sistemas de arquivos).	
+    %include "fs32.inc"        ;fs, (gerï¿½ncia os sistemas de arquivos).	
 
 	;5 - File.
-    %include "installer.inc"   ;Instala metafiles em LBAs específicas.
-    %include "file.inc"        ;Operações com aquivos.
+    %include "installer.inc"   ;Instala metafiles em LBAs especï¿½ficas.
+    %include "file.inc"        ;Operaï¿½ï¿½es com aquivos.
     %include "bootloader.inc"  ;Carrega o Boot Loader (BL.BIN).
 
 	;4 - Debug.
     %include "debug.inc"       ;System debug.
 
 	;3 - blconfig.
-    %include "blconfig.inc"    ;Gerência a inicialização.
+    %include "blconfig.inc"    ;Gerï¿½ncia a inicializaï¿½ï¿½o.
 
 	;2 - Boot Manager Mini-Shell.
     %include "shell.inc"       ;Prompt de comandos.
@@ -1406,7 +1418,7 @@ bootmanager_main:
 	
 
 ;;===============================================
-;;    ****    INÍCIO DO BOOT LOADER    ****    ;;
+;;    ****    INï¿½CIO DO BOOT LOADER    ****    ;;
 ;;===============================================
 
 System4Nora_BootLoader:
@@ -1416,7 +1428,7 @@ System4Nora_BootLoader:
 
 
 ;;==========================================
-;;    ****    INÍCIO DO KERNEL    ****    ;;
+;;    ****    INï¿½CIO DO KERNEL    ****    ;;
 ;;==========================================
 System4Nora_Kernel:
     %include "kernel.inc"
@@ -1425,7 +1437,7 @@ System4Nora_Kernel:
 
 	
 ;;===========================================
-;;    ****    INÍCIO DO BROWSER    ****    ;;
+;;    ****    INï¿½CIO DO BROWSER    ****    ;;
 ;;===========================================
 System4Nora_Browser:
     %include "browser.inc"
@@ -1438,7 +1450,7 @@ System4Nora_Browser:
 	
 ;;
 ;; *Ok, Chegamos no limite, para que o stage 2 continue com o mesmo
-;; tamanho precisamos simplicar algum código e economizar caracteres.
+;; tamanho precisamos simplicar algum cï¿½digo e economizar caracteres.
 ;;
 	
 ;;=========================================================

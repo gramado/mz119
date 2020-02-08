@@ -6,22 +6,22 @@
 ;
 ; File: head.s 
 ;
-; Descrição:
-; Esse arquivo é o entrypoint do Boot Loader. (BL.BIN).
-; Parte inicial do núcleo do Boot Loader para a arquitetura x86 de 32bit 
+; Descriï¿½ï¿½o:
+; Esse arquivo ï¿½ o entrypoint do Boot Loader. (BL.BIN).
+; Parte inicial do nï¿½cleo do Boot Loader para a arquitetura x86 de 32bit 
 ; para desktops.
 ; Startup module for the 32bit Boot Loader of a 32bit OS for desktops.
 ;
-; Localização:
-; O Boot Loader é carregado em 0x00020000 com o entry point em 0x00021000.
+; Localizaï¿½ï¿½o:
+; O Boot Loader ï¿½ carregado em 0x00020000 com o entry point em 0x00021000.
 ;
-; Atribuições:   
+; Atribuiï¿½ï¿½es:   
 ;    + Inicializar a arquitetura x86. 
-;    + Chamar código em C para carregar o kernel.
+;    + Chamar cï¿½digo em C para carregar o kernel.
 ;    + Passar o comando para o kernel.
 ;
-; ATENÇÃO:
-; Logo abaixo, no fim desse arquivo, estão GDT, IDT e includes.
+; ATENï¿½ï¿½O:
+; Logo abaixo, no fim desse arquivo, estï¿½o GDT, IDT e includes.
 ;
 ; History:
 ;     2015 - Created by Fred Nora.
@@ -42,27 +42,27 @@ extern ___last_valid_address
 
 
 
-; Variáveis importadas.
+; Variï¿½veis importadas.
 
 
-;Endereço físico do Linear Frame Buffer, LFB.
+;Endereï¿½o fï¿½sico do Linear Frame Buffer, LFB.
 extern _g_lbf_pa      
 ;...
 
 
-; Funções importadas.
+; Funï¿½ï¿½es importadas.
 
 extern _BlMain                ; * Entrada da parte em C.
-extern _BlKernelModuleMain    ; * Reentrada do bl, agora na forma de módulo.
+extern _BlKernelModuleMain    ; * Reentrada do bl, agora na forma de mï¿½dulo.
 ;extern _shell_main    ;Entrada do Shell do Boot Loader.
 
 ;...
 
 
 
-; Endereços físicos do kernel base.
+; Endereï¿½os fï¿½sicos do kernel base.
 KRN_BASE        equ  0x00100000    ;1MB.
-KRN_ENTRYPOINT  equ  0x00101000    ;Entry point no endereço fisico.
+KRN_ENTRYPOINT  equ  0x00101000    ;Entry point no endereï¿½o fisico.
 
 
 ; Directory and page table.
@@ -102,10 +102,10 @@ ____START:
     ;Debug.
     ;JMP $
 
-    ; Salva o modo de vídeo.
+    ; Salva o modo de vï¿½deo.
     mov byte [bl_video_mode], al
 
-    ; Verifica se usa gui ou não.
+    ; Verifica se usa gui ou nï¿½o.
     cmp al, byte 'G'
     je .useGUI
 
@@ -118,14 +118,14 @@ ____START:
 
 .go:
 	;Salva o LFB.
-	;Global para endereço físico do LFB.
+	;Global para endereï¿½o fï¿½sico do LFB.
     mov dword [_g_lbf_pa], ebx    
 
    ; @todo: 
    ;     Passar o bootblock em ebx e a flag em al.
 
     mov byte [bl_video_mode], al
-    mov dword [_g_lbf_pa], ebx         ;Endereço físico do LFB.
+    mov dword [_g_lbf_pa], ebx         ;Endereï¿½o fï¿½sico do LFB.
 
 	;;
 	;; ## Boot Block ##
@@ -135,6 +135,9 @@ ____START:
 	;Ponteiro para o bootblock passado pelo boot manager.
 	
     mov dword [_SavedBootBlock], edx 
+
+
+
 
     ;LFB, X, Y, BPP
 
@@ -245,16 +248,16 @@ ____START:
 
 
 	; Obs:
-	; A rotina _BlMain configurou os diretórios e as pagetables.
-	; Configurou 4 diretórios e algumas pagetables.
-	; Agora registramos o diretório do processo kernel em cr3.
-	; Colocando no CR3 o endereço do diretório de páginas que o Kernel usará.
+	; A rotina _BlMain configurou os diretï¿½rios e as pagetables.
+	; Configurou 4 diretï¿½rios e algumas pagetables.
+	; Agora registramos o diretï¿½rio do processo kernel em cr3.
+	; Colocando no CR3 o endereï¿½o do diretï¿½rio de pï¿½ginas que o Kernel usarï¿½.
 
 
 setupCR3:
 
 	; @todo: 
-	; Usar variável global.
+	; Usar variï¿½vel global.
 	; Obs:  
 	; Para sistemas pequenos. 
 
@@ -293,11 +296,11 @@ setupCR0:
 	; Meta-Object: @todo:
 	; ============
 	;     O Boot Loader passar para o kernel um Meta-Objeto na forma de vetor,
-	; contendo variáveis e métodos.
-	;     O principal método à se passar é _blServices contendo o método
-	; que o Boot Loader usa para oferecer serviços. Desse módo o Boot Loader
-	; pode atuar como um módulo do kernel em kernel mode. Outro método
-	; que o Boot Loader deve passar para o kernel base é o método _bmServices
+	; contendo variï¿½veis e mï¿½todos.
+	;     O principal mï¿½todo ï¿½ se passar ï¿½ _blServices contendo o mï¿½todo
+	; que o Boot Loader usa para oferecer serviï¿½os. Desse mï¿½do o Boot Loader
+	; pode atuar como um mï¿½dulo do kernel em kernel mode. Outro mï¿½todo
+	; que o Boot Loader deve passar para o kernel base ï¿½ o mï¿½todo _bmServices
 	; herdado do Boot Manager.
 
 	; Preparando para passa o comando para o Kernel.
@@ -317,6 +320,13 @@ StartKernelEntry:
 	;Width in pixels.
 	;Height in pixel.
 	;bpp.
+
+
+    ;;#importante
+	;;usaremos para transferir alguns valores do boot block
+	;;do bm para o boot block do bl.
+
+	mov edx, dword [_SavedBootBlock]
 
 
     ; 0 - lfb
@@ -346,9 +356,36 @@ StartKernelEntry:
 	mov dword [BootBlock.last_valid_address], eax   ;;estrutura logo abaixo.
 
 
+    ;;#todo: 20
+
+     ;; 24 - disk number
+	xor eax, eax
+	mov eax, dword [edx +24]    
+    mov dword [BootBlock.disk_number], eax
+
+    ;; 28 - heads
+	xor eax, eax
+	mov eax, dword [edx +28]    
+    mov dword [BootBlock.heads], eax
+
+
+    ;; 32 - spt
+	xor eax, eax
+	mov eax, dword [edx +32]    
+    mov dword [BootBlock.spt], eax
+
+   ;; 36 - cylinders
+	xor eax, eax
+	mov eax, dword [edx +36]    
+    mov dword [BootBlock.cylinders], eax
+
+
+
+
+
 	;Continua...
 
-	; Argumentos passandos através dos registradores:
+	; Argumentos passandos atravï¿½s dos registradores:
 	; al = Flag.
 	; ebx = LFB address.
 	; ecx = BootBlock.
@@ -361,10 +398,13 @@ StartKernelEntry:
 	
 	;Prepara a tabela.
 	mov ebp, dword BootBlock	
-
 	mov edx, ebp                 ;Tabela. (boot block)
 	mov ecx, ebp                 ;Tabela. (boot block)
+	
+	;Prepara o lfb.
 	mov ebx, dword [_SavedLFB]   ;LFB address.
+
+    ;Prepara o modo grafico.
 	xor eax, eax	
 	
     cmp dword [_SavedBootMode], 1    ;gui	
@@ -406,7 +446,7 @@ StartKernelEntry:
 
 blShellLoop:
 
-	;Aqui está aberta a opção de chamar o shell do boot loader.
+	;Aqui estï¿½ aberta a opï¿½ï¿½o de chamar o shell do boot loader.
 	;call _shell_main	
 
     jmp blShellLoop
@@ -414,8 +454,14 @@ blShellLoop:
 
 ;========================================================
 ; BootBlock:
-;     Bloco de configuração de inicialização.
+;     Bloco de configuraï¿½ï¿½o de inicializaï¿½ï¿½o.
 ;     LFB address.
+
+;; #bugbug
+;; isso tem que ser igual ao do BM.BIN
+;; Essa tabela Ã© a que Ã© mandada para o kernel.
+
+;; ok ta igual ao do bm.
 
 BootBlock:
 .lfb: dd 0                   ;  0 - LFB address.
@@ -423,8 +469,14 @@ BootBlock:
 .y:   dd 0                   ;  8 - Height in pixel.
 .bpp: dd 0                   ; 12 - bpp address.
 .last_valid_address: dd 0    ; 16 - last valid ram address when finding mem size.
-;.disk_number: dd 0           ; 20 - disk number 0x8?
-;...
+.metafile_address:   dd 0    ;; 20
+.disk_number: dd 0           ;; 24
+.heads: dd 0                 ;; 28
+.spt: dd 0                   ;; 32
+.cylinders: dd 0             ;; 36 
+
+
+
 ;Continua...
 
 
@@ -437,7 +489,7 @@ BootBlock:
 ;----------------------------------------
 ; _SavedBootBlock:
 ;     Salvando os argumentos passados pelo Boot Manager em 
-;     variáveis globais.
+;     variï¿½veis globais.
 ;	
 global _SavedBootBlock
 _SavedBootBlock:  
@@ -471,7 +523,7 @@ NULL_SEL equ $-gdt
     dd 0
     dd 0
 
-; Segmento de código.
+; Segmento de cï¿½digo.
 CODE_SEL equ $-gdt
     dw 0xFFFF
     dw 0
@@ -528,7 +580,7 @@ GDT_register:
 
 ;Constantes usandas nas entradas da IDT.
 sys_interrupt  equ  0x8E  
-sys_code       equ  8        ;Seletor de código.
+sys_code       equ  8        ;Seletor de cï¿½digo.
 
 
 ;========================================;
@@ -1947,7 +1999,7 @@ idt:
 	dw 0
 	
 ;
-; *** Interrupção do sistema.
+; *** Interrupï¿½ï¿½o do sistema.
 ;	
 
 ;200 interrupt C8h, System Call.
@@ -2359,7 +2411,7 @@ IDT_register:
 ;
 
 ;
-; Os includes estão padronizados assim:
+; Os includes estï¿½o padronizados assim:
 ;
 ; head, headlib.
 ; hardware, hardwarelib.
@@ -2367,20 +2419,20 @@ IDT_register:
 ;
 
 
-    ;Funções de apoio a inicialização do boot loader.
+    ;Funï¿½ï¿½es de apoio a inicializaï¿½ï¿½o do boot loader.
     %include "headlib.s"
 
-	;Interrupções de hardware (irqs) e faults.(reservadas).
+	;Interrupï¿½ï¿½es de hardware (irqs) e faults.(reservadas).
     %include "hardware.inc"
     %include "hardwarelib.inc"
 
-	;interrupções de software
+	;interrupï¿½ï¿½es de software
 	%include "software.inc"
     %include "softwarelib.inc"
 
 
 ;
-; DATA: início do data segment.
+; DATA: inï¿½cio do data segment.
 ;
 segment .data
 global _data_start
@@ -2397,7 +2449,7 @@ _data_start:
 segment .bss
 global _bss_start
 _bss_start:
-    ;times (512*2) db 0 #bugbug isso não pode.
+    ;times (512*2) db 0 #bugbug isso nï¿½o pode.
 
 	
 	

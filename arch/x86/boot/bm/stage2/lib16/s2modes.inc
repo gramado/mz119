@@ -1,22 +1,21 @@
 ;    
-; File: lib16\s2modes.inc
+; File: lib16/s2modes.inc
 ;
-; Descrição:
-;     Parte do Stage2.
+;    stage2.
 ;
-; Atribuições:
-;     Ativa um modo de inicialização definido para o Boot Manager.
-;     Opções:
+;     Ativa um modo de inicializaï¿½ï¿½o definido para o Boot Manager.
+;     Opï¿½ï¿½es:
 ;     +1 - Inicia o Shell do boot manager.  
 ;     +2 - Inicia o BL.BIN no modo GUI. 
 ;
-; Versão 1.0, 2015, 2016.
+; History:
+;     2015 - Created by Fred Nora.
 ;
 
  
 ;---------------------------------------
 ; set_boot_mode:
-;     Configura um modo de inicialisação do System4Nora.
+;     Configura um modo de inicialisaï¿½ï¿½o do System4Nora.
 ;     in: al
 ; 
 set_boot_mode:
@@ -25,7 +24,7 @@ set_boot_mode:
  
 ;---------------------------
 ; get_boot_mode:
-;     Pega o modo de inicialisação do System4Nora.
+;     Pega o modo de inicialisaï¿½ï¿½o do System4Nora.
 ;     out: al
 ;
 get_boot_mode:
@@ -59,7 +58,7 @@ get_video_mode:
 
 ;==================================================================
 ; s2modesActivateMode:
-;     Ativa o modo escolhido por configuração. 
+;     Ativa o modo escolhido por configuraï¿½ï¿½o. 
 ;
 ;+1 - Inicia o Shell do boot manager.  
 ;+2 - Inicia o BL.BIN no modo GUI. 	
@@ -67,7 +66,7 @@ get_video_mode:
 
 s2modesActivateMode:
 
-    call Window.ClearScreen	
+    call Window.ClearScreen
 
     pusha
     call Window.StatusBar
@@ -75,25 +74,38 @@ s2modesActivateMode:
     call PoeString
     popa
 
-	;jmp $
-	
-	; Pega o modo de inicialização no metafile.
+
+    ; Debug
+    ; jmp $
+
+
+	; Pega o modo de inicializaï¿½ï¿½o no metafile.
+	; O modo configurado retornarï¿½ em al.
 	; al = META$FILE.INIT_MODE
 
+
 .switch:
-	xor eax, eax
-	call get_boot_mode
-	
-	cmp al, byte BOOTMODE_SHELL    ;1 - Shell
-	je mShell
-	
-	cmp al, byte BOOTMODE_GUI      ;2 - GUI.
-	je mGui 
-	
-.default:	
-	jmp mShell	
-	jmp $
-	
+
+    xor eax, eax
+    call get_boot_mode
+
+    ;1 - Shell
+    cmp al, byte BOOTMODE_SHELL    
+    je mShell
+
+    ;2 - GUI.
+    cmp al, byte BOOTMODE_GUI      
+    je mGui 
+
+
+;; fail.
+.____default:
+    jmp mShell
+    jmp $
+
+
+
+
 ;=================================================================
 ;+1 (boot mode shell) -  
 ;    Inicia a prompt de comandos do Boot Manager. #shell.   
@@ -109,7 +121,7 @@ mShell:
 .videoMode:
 
 	;Set video mode.
-	;Modo texto é VGA 3.
+	;Modo texto ï¿½ VGA 3.
 	
 	xor eax, eax
 	mov ax, word 3    
@@ -121,7 +133,7 @@ mShell:
 	
 .bootMode:	
 
-	;Ativar modo de inicialização.
+	;Ativar modo de inicializaï¿½ï¿½o.
 	mov al, byte BOOTMODE_SHELL
 	call set_boot_mode
 	
@@ -129,7 +141,7 @@ mShell:
 	; @todo: Talvez os argumentos devam ser preparados antes.
 
 	 
-	; Inicializão do modo protegido.
+	; Inicializï¿½o do modo protegido.
 	; Switching to Protected Mode.
 	; msm/pm.inc
 	
@@ -138,21 +150,22 @@ mShell:
 	
 
 ;==============================================================
-;+2 (boot mode gui) - Modo gráfico.
+;+2 (boot mode gui) - Graphycs mode.
 ;
 ; VESA:
 ;     + Verifica se suporta vesa.	
-;     + Inicia configuração de video usando vesa.
+;     + Inicia configuraï¿½ï¿½o de video usando vesa.
 ;
 ;     Ativa o modo usando BIOS e valores do metafile.
 ;     @todo: (bugbug) aqui estamos usando vesa para configurar o modo de
-; de video, sem saber nada sobre a placa de vídeo.
+; de video, sem saber nada sobre a placa de vï¿½deo.
 ;
 ;;
 ;; * IMPORTANTE:
-;;   O OBJETIVO É CHEGARMOS AQUI COM O ARQUIVO BL.BIN CARREGADO NA MEMÓRIA
+;;   O OBJETIVO ï¿½ CHEGARMOS AQUI COM O ARQUIVO BL.BIN CARREGADO NA MEMï¿½RIA
 ;;   E PASSARMOS O COMANDO PARA ELE, SEM TERMOS QUE CARREGALO USANDO RECURSOS DE 32BIT.
 ;++	
+
 mGui:
     nop
 .videoMode:	
@@ -167,7 +180,7 @@ mGui:
     ;Salva modo.
 	mov al, byte BOOTMODE_GUI
 
-	;Verifica suporte à VESA.
+	;Verifica suporte ï¿½ VESA.
 .probeVESA:	
 	pusha
     call s2vesaSearchVESA 	
@@ -209,7 +222,7 @@ mGui:
 	xor ax, ax
 	
 	;; #importante
-	;; Temos que entrar no modo protegido já estando 
+	;; Temos que entrar no modo protegido jï¿½ estando 
 	;; no modo grafico.
 
 	;;
@@ -289,7 +302,7 @@ s2modespm32:
 	
 	;xor eax, eax
 	mov al, byte 'G'                       ;Flag. (useing graphics)	
-	mov ebx, dword [ModeInfo_PhysBasePtr]  ;LFB address (endereço físico)
+	mov ebx, dword [ModeInfo_PhysBasePtr]  ;LFB address (endereï¿½o fï¿½sico)
 	
 	mov ebp, dword BootBlock
 	mov ecx, ebp                           ;tabela
@@ -297,13 +310,13 @@ s2modespm32:
 		
 		
 	;;
-	;; Aqui estamos em modo protegido e no modo gráfico, 
+	;; Aqui estamos em modo protegido e no modo grï¿½fico, 
 	;; vamos testar se as mensagens para esse ambiente 
-	;; estão funcionando.
+	;; estï¿½o funcionando.
 	;;
 	
 	;;
-	;; @todo: Poderíamos limpar a tela entes de 
+	;; @todo: Poderï¿½amos limpar a tela entes de 
 	;; apresentarmos essa mensagem.
 	;;
 	
@@ -321,14 +334,14 @@ s2modespm32:
 	;#debug
 	;jmp $
 	
-    ; Opção é saltar para uma área de inicialização em 
-	; 32bit modo gráfico.
+    ; Opï¿½ï¿½o ï¿½ saltar para uma ï¿½rea de inicializaï¿½ï¿½o em 
+	; 32bit modo grï¿½fico.
 	
 	;;
 	;; GO!
 	;;	
     
-    ;msm/start.inc
+    ; stage3/start.inc
 
     jmp startGUI
     jmp $
@@ -341,9 +354,9 @@ s2modes_initmessageinGM db "s2modes: Initializing PM in GM", 13, 10, 0
 ;;#####################################################################
 ;;
 
-;;não queremos estragar as rotinas de 16bit.	
+;;nï¿½o queremos estragar as rotinas de 16bit.	
 [bits 16]	
-;Não suporta VESA, entrar no Shell do Boot Manager.
+;Nï¿½o suporta VESA, entrar no Shell do Boot Manager.
 noVesa:
 	mov al, byte BOOTMODE_SHELL
 	call set_boot_mode	

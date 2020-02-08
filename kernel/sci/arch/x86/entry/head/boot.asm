@@ -112,10 +112,12 @@ START:
     ; IN:  
     ;    al = 'G' (Graphic Mode).
     ;    al = 'T' (Text Mode).
+    ;
     ;    ebx = LFB.
     ;
     ;    ecx = BootBlock pointer.
-    ;    edx = LoaderBlock pointer.
+    ;    edx = BootBlock pointer.
+    ;    ebp = BootBlock pointer.
     
     
     

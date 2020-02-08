@@ -430,20 +430,22 @@ rm_shutdown_msg1 db 'pm.inc: RM, Press a key to shutdown',13 ,10 ,0
 [bits 32]   
 
 
-;;=================================================================================
+
+
+;; ====================================================================
 ;; rmStartGUI:
+;; 
 ;;     Inicializa o modo gráfico padrão.
+;;     Essa rotina está em 32bit e foi chamada pelo shell. 
 ;;     Essa rotina poderá ser chamada pelo shell em 32 bit modo texto,
-;; que está dentro do boot manager. 
-;;     Obs: Estamos usando a gdt do módulo de 32 bit      
+;;     que está dentro do boot manager. 
+;;     Obs: 
+;;     Estamos usando a gdt do módulo de 32 bit      
 ;;
-;; *******   IMPORTANTE *********
-;; CONSEGUIMOS QUE O MBR CARREGASSE O BL.BIN DO DIRETÓRIO RAIZ
-;; DO SISTEMA DE ARQUIVOS FAT16 E TAMBEM CARREGASSE O STAGE 2,
-;; ENTÃO NÃO DEVEMOS CARREGAR NOVAMENTE O BL.BIN USANDO RECURSOS DE 32BIT,
-;; E ESSA É A INTENSÃO ... O QUE NOS RESTA É PASSAR O COMANDO PARA ELE.
-;; OBS: PODEMOS FAZER UM TESTE ANTES PRA VER SE ELE ESTÁ PRESENTE NA MEMÓRIA.
-;;; 'L' (PE).          
+;; ****  IMPORTANTE  ****
+;; BL.BIN já foi carregado por BM.BIN usando os recursos do BIOS.
+;; Só nos resta passar o comando para BL.BIN.
+;;
 
 rmStartGUI:
 
@@ -461,54 +463,64 @@ rmStartGUI:
 	;; o seletor para modo protegido de 16bit.
 	;; Pula para o o modo protegido de 16bit, usando o seletor de 16bit.
 
-	jmp RM_Code_Sel:pmode_16bit_startgui
-	
+    jmp RM_Code_Sel:pmode_16bit_startgui
+
 [BITS 16]
 
 pmode_16bit_startgui:
 
-    ; Ajusta os seletores de codigo para modo protegido de 16 bits.
+    ; Ajusta os seletores de código para 
+    ; modo protegido de 16 bit.
 
     mov ax, RM_Data_Sel
     mov ss, ax
     mov ds, ax
     mov es, ax
-	;mov fs, ax
-	;mov gs, ax
+    ;mov fs, ax
+    ;mov gs, ax
 
 
-	;debug
-	;jmp $
-	
-	;Carrega ivt = 0:0
+    ;debug
+    ;jmp $
 
-	lidt [ivtr_rm] 
 
-;5. Clear the PE flag in the CR0 register to switch to real-address mode.
+    ; Carrega ivt = 0:0
+
+    lidt [ivtr_rm] 
+
+; 5. 
+; Clear the PE flag in the CR0 register to switch to real-address mode.
+
 
    mov eax, cr0
    and al, 0xFE
    mov cr0, eax
-   
-;;#############################################################################
-;; 6. Execute a far JMP instruction to jump to a real-address mode program. 
-;; This operation flushes the instruction queue and loads the appropriate 
-;; base and access rights values in the CS register.
 
-    ;; Usando um jmp de 16 bits modo real.
+
+;; ###############################################################
+;; 6. 
+;; Execute a far JMP instruction to 
+;; jump to a real-address mode program. 
+;; This operation flushes the instruction queue and 
+;; loads the appropriate base and 
+;; access rights values in the CS register.
+;;
+
+    ;; #importante:
+    ;; Usando um jmp de 16 bit modo real.
 
     JMP 0:do_rm_startgui 
 
+    ;; Nothing.
 
-	;; Nothing.
-	
 do_rm_startgui:
 
 
-	;; 7. Load the SS, DS, ES, FS, and GS registers as needed by the 
+	;; 7. 
+	;; Load the SS, DS, ES, FS, and GS registers as needed by the 
 	;; real-address mode code. If any of the registers are not going 
 	;; to be used in real-address mode, write 0s to them.
-	
+
 	;; Segmento 0
 
     cli
@@ -517,7 +529,6 @@ do_rm_startgui:
     mov es, ax
     mov fs, ax
     mov gs, ax
-
 
 
 	; Create stack
@@ -581,9 +592,10 @@ do_rm_startgui:
 
 	;; #Importante:
 	;; Mensagem em modo real.
- 	;; Suspenderemos essa mensagem porque está degradando o desempenho.
+	;; Suspenderemos essa mensagem porque está degradando o desempenho.
 	;; Ela será uma opção de debug.
-	
+
+
 	;; #debug
 	;; mov si, rm_startgui_msg1
 	;; call DisplayMessage	
@@ -599,22 +611,24 @@ do_rm_startgui:
 
 .doStartGUI:
 
-	;Set mode.
-	
-	mov al, byte BOOTMODE_GUI
-	call set_boot_mode
-		
-	;; #IMPORTANTE
-	;; definição do arquivo main.asm
-	
-	mov word [META$FILE.VIDEO_MODE], G_VIDEO_MODE
+    ;Set mode.
+    mov al, byte BOOTMODE_GUI
+    call set_boot_mode
+
+    ;; #IMPORTANTE
+    ;; definição do arquivo main.asm
+
+    mov word [META$FILE.VIDEO_MODE], G_VIDEO_MODE
 
 
-	;Inicializa o modo selecionado.
-	;(lib16/s2modes.inc)
+
+    ;Inicializa o modo selecionado.
+    ;(lib16/s2modes.inc)
 
     JMP s2modesActivateMode 
     jmp $
+
+
 
 
 

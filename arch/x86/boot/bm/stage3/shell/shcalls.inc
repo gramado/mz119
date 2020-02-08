@@ -86,17 +86,17 @@ do_mount_volume:
 
 ;===============================================================
 ; do_boot:
+;
 ;      Iniciaremos o modo gráfico padrão.
 ;      Chamaremos uma rotina que volta para o modo real, 
-; muda o modo de vídeo e inicializa a GUI.
-;++
+;      muda o modo de vídeo e 
+;      inicializa a GUI.
+;      See stage3/pm.inc 
 
-    ;; See pm.inc 
-	
 do_boot:
-	jmp rmStartGUI
-;--	
-
+    
+    jmp rmStartGUI
+    jmp $
 
 
 

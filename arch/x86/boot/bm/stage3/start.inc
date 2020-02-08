@@ -1,21 +1,21 @@
 ;-----------------------------------------------------
 ; File: stage3/start.inc 
 ;
-; Descrição: 
-;     Início do modo protegido. 
-;     O modo protegido já foi configurado e começam aqui as rotinas em 32bit. 
+; Descriï¿½ï¿½o: 
+;     Inï¿½cio do modo protegido. 
+;     O modo protegido jï¿½ foi configurado e comeï¿½am aqui as rotinas em 32bit. 
 ;
-; Atribuições: 
-;     +Efetivar a escolha do modo de inicialização.
+; Atribuiï¿½ï¿½es: 
+;     +Efetivar a escolha do modo de inicializaï¿½ï¿½o.
 ;     +Passar o comando para Shell do Boot Manager
 ;      se essa for a escolha.
 ;     +Carregar o Boot Loader e passar o comando 
 ;      pra ele se essa for a escolha.
 ;
-; Opções de inicialização:
+; Opï¿½ï¿½es de inicializaï¿½ï¿½o:
 ; ========================
 ; +1 - Inicia o Shell do Boot Manager no modo texto.
-; +2 - Inicia o Boot Loader (BL.BIN) no modo GRÁFICO. (GUI).
+; +2 - Inicia o Boot Loader (BL.BIN) no modo GRï¿½FICO. (GUI).
 ;
 ; Contexto dos registradores:
 ; ===========================
@@ -38,18 +38,18 @@
 
 ;=======================================================
 ; start:
-;     Início do modo protegido.
+;     Inï¿½cio do modo protegido.
 ; IN:
 ;     AL = New mode.  (o modo a ser inicializado)
 ;
-; Pega o modo de vídeo passado pelo stage 2 através de AL e salva no contexto 
+; Pega o modo de vï¿½deo passado pelo stage 2 atravï¿½s de AL e salva no contexto 
 ; de 32 bits.
 ;
 
 start:
     
 	;; #bugbug 
-	;; Esse valor pode estar errado durante a inicialização em modo texto.
+	;; Esse valor pode estar errado durante a inicializaï¿½ï¿½o em modo texto.
 	
 	mov byte [BOOT.modo], al
     
@@ -61,7 +61,7 @@ start:
 
 
 ; ajusta_modo: 
-;     Inicia um modo da configuração permanente.
+;     Inicia um modo da configuraï¿½ï¿½o permanente.
 ;     @todo: Trocar o nome.
 
 ajusta_modo:
@@ -71,9 +71,9 @@ startSetupMode:
 
 	;; #bugbug 
 	;; Esse valor pode estar errado durante 
-	;; a inicialização em modo texto.
+	;; a inicializaï¿½ï¿½o em modo texto.
 
-	;Pega o modo de inicialisação do Boot Manager. 
+	;Pega o modo de inicialisaï¿½ï¿½o do Boot Manager. 
 	
 	xor eax, eax
 	mov al, byte [BOOT.modo]  
@@ -83,7 +83,7 @@ startSetupMode:
 	; ==============
 	;
 	; modo 1 - Inicia o BL.BIN no modo TEXTO.(Default).
-	; modo 2 - Inicia o BL.BIN no modo GRÁFICO.
+	; modo 2 - Inicia o BL.BIN no modo GRï¿½FICO.
 	; modo 3 - Inicia a prompt de comandos do bootmanager.
 	; modo 4 - (reservado)
 	; Default.
@@ -133,7 +133,7 @@ startCLI:
 	;call clear_screen
 	
 	
-    ;Habilita todas interrupções.
+    ;Habilita todas interrupï¿½ï¿½es.
 .enableInterrupts:
 
 	mov al, 0
@@ -147,8 +147,8 @@ startCLI:
     ;;
 
 	;; #importante
-	;; O shell está em msm/shell
-	;; Esse é loop do shell do boot manager.
+	;; O shell estï¿½ em msm/shell
+	;; Esse ï¿½ loop do shell do boot manager.
 	
 startShellLoop:
     
@@ -162,13 +162,13 @@ startShellLoop:
 	call shellInit                
     
 	; Sairemos do loop.
-    ; 0 - Nenhuma alteração foi feita, 
-	; não precisa salvar o metafile.
+    ; 0 - Nenhuma alteraï¿½ï¿½o foi feita, 
+	; nï¿½o precisa salvar o metafile.
 	cmp eax, 0
 	je .exit0
 
 	; Sairemos do loop.
-    ; 1 - Alguma alteração foi feita, 
+    ; 1 - Alguma alteraï¿½ï¿½o foi feita, 
 	; precisa salvar o metafile.
 	cmp eax, 1
 	je .exit1
@@ -179,7 +179,7 @@ startShellLoop:
 
 ;	
 ;Saimos do loop do shell.
-;Nenhuma alteração foi feita, não precisa salvar o metafile.
+;Nenhuma alteraï¿½ï¿½o foi feita, nï¿½o precisa salvar o metafile.
 ;Apenas reiniciamos o sistema.
 .exit0:
 	mov esi, start_msg_rebooting
@@ -190,8 +190,8 @@ startShellLoop:
 
 ;
 ;Saimos do loop do shell.
-;Alguma alteração foi feita, precisamos salvar o metafile.
-;Reiniciamos o sistema para validar as alterações feitas no metafile. 
+;Alguma alteraï¿½ï¿½o foi feita, precisamos salvar o metafile.
+;Reiniciamos o sistema para validar as alteraï¿½ï¿½es feitas no metafile. 
 .exit1:
 
 	mov esi, start_msg_saving_metafile
@@ -216,34 +216,37 @@ start_msg_rebooting        db 'start: Rebooting..',13,10,0
 	
 ;==========================================================================
 ; startGUI:
-;     Inicia o BL.BIN no modo gráfico.
-;	  Obs: Quando retornamos para o modo real e ativamos o modo gráfico,
-;     Saltamos para cá com a opção de usamos mensagens em modo gráfico 
+;     Initializes BL.BIN in graphycs mode.
+;
+;     Inicia o BL.BIN no modo grï¿½fico.
+;	  Obs: Quando retornamos para o modo real e ativamos o modo grï¿½fico,
+;     Saltamos para cï¿½ com a opï¿½ï¿½o de usamos mensagens em modo grï¿½fico 
 ; em modo protegido.
 
 
 ;; IMPORTANTE:
-;; O OBJETIVO É CHEGARMOS AQUI COM O ARQUIVO BL.BIN CARREGADO NA MEMÓRIA
+;; O OBJETIVO ï¿½ CHEGARMOS AQUI COM O ARQUIVO BL.BIN CARREGADO NA MEMï¿½RIA
 ;; E PASSARMOS O COMANDO PARA ELE, SEM TERMOS QUE CARREGA LO 
 ;; USANDO RECURSOS DE 32BIT.
 
 	;; *Importante:
-	;; Fazendo configurações aqui mesmo ao invés de chamarmos 
-	;; 'setup_machine' ou ainda não fazendo essas configurações, 
-	;; pois já estamos em modo protegido com as interrupções 
-	;; desabilitadas e em modo gráfico ..
-	;; Podemos deixar que o boot loader faça suas inicializações. 
-	;; Obs: Isso está funcionando bem.
-	;; Mas o timer foi configurado várias vezes.
+	;; Fazendo configuraï¿½ï¿½es aqui mesmo ao invï¿½s de chamarmos 
+	;; 'setup_machine' ou ainda nï¿½o fazendo essas configuraï¿½ï¿½es, 
+	;; pois jï¿½ estamos em modo protegido com as interrupï¿½ï¿½es 
+	;; desabilitadas e em modo grï¿½fico ..
+	;; Podemos deixar que o boot loader faï¿½a suas inicializaï¿½ï¿½es. 
+	;; Obs: Isso estï¿½ funcionando bem.
+	;; Mas o timer foi configurado vï¿½rias vezes.
 
+
+
+startGUI:
 
 
 	;;===============
 	;;setup machine
 
-startGUI:
-
-	cli
+    cli
 
 	;GDT and IDT. 
 	lgdt [lgdt_opcode]
@@ -252,10 +255,10 @@ startGUI:
 	
 	;; #todo: 
 	;; Nessa hora alguns vetores podem ser configurados.
-	;; Primeiro as excessões e depois as ISRs.
+	;; Primeiro as excessï¿½es e depois as ISRs.
 	;; Selecting the 'Processor Interrup Mode'.
 	;; PIC MODE
-    ;; Todos os componentes APIC são ignorados e o sistema opera
+    ;; Todos os componentes APIC sï¿½o ignorados e o sistema opera
     ;; no modo single-thread usando LINT0.
 
 
@@ -293,23 +296,23 @@ startGUI:
 	;processor Discovery and initialization
 	;(cpuid threads and cores, start inter-processor interrupt sipi, ap wakeu pstate,
 	;wakeup vector alignment, caching consdarations,ap idle state)	
-	;apenas o básico para o boot manager.
+	;apenas o bï¿½sico para o boot manager.
 	
 
 	;;
-	;; Fazendo alguma inicialização de dispositivos de I/O suportados.
+	;; Fazendo alguma inicializaï¿½ï¿½o de dispositivos de I/O suportados.
 	;;
 
 	;step
 	;i/o devices
 	;( embedded controller EC, super io SIO, legacy free systems, miscellaneous io devices)
-    ;Nesse momento os dispositivos de i/o suportados aqui são (keyboard, IDE, graphic card).
+    ;Nesse momento os dispositivos de i/o suportados aqui sï¿½o (keyboard, IDE, graphic card).
 	
 	;;
 	;; #bugbug
 	;; Cancelado.
-	;; Não precisamos disso, pois vamos configurar o teclado 
-	;; durante a inicialização do i8042 no kernel.
+	;; Nï¿½o precisamos disso, pois vamos configurar o teclado 
+	;; durante a inicializaï¿½ï¿½o do i8042 no kernel.
 	;;	
 	
 	;KEYBOARD.
@@ -322,35 +325,35 @@ startGUI:
 		
 	
 	;LFB.   #BUGUBG NO QEMU
-	;;call configura_lfb   ;;?? onde está essa rotina ??
+	;;call configura_lfb   ;;?? onde estï¿½ essa rotina ??
 	
 	
 
 	; #BUGBUG
 	; #todo:
 	; Aqui estamos usando constantes, porem esses valores precisam 
-	; serem detectados, pois variam à cada formatação.
+	; serem detectados, pois variam ï¿½ cada formataï¿½ï¿½o.
 	
 	
 	
-	;Detectar os parâmetros do sistema de arquivos FAT16.
+	;Detectar os parï¿½metros do sistema de arquivos FAT16.
 	;fat lba, root lba ...
 	;call fat16DetectFSParameters  ;;fat16lib.inc
 	
 	;Setup current dir.
     mov dword [g_current_fat_lba],        FAT16_FAT_LBA       ;Fat do volume atual
-    mov dword [g_current_directory_lba],  FAT16_ROOTDIR_LBA   ;Diretório do volume atual.
+    mov dword [g_current_directory_lba],  FAT16_ROOTDIR_LBA   ;Diretï¿½rio do volume atual.
 	mov dword [g_current_dataarea_lba],   FAT16_DATAAREA_LBA  ;?? ;lba do inicio da area de dados do volume atual.
 	;Continua...
 	
 
 	
-    ;; Configurando PCI. (O básico suportado pelo Boot Manager.)
-	;; O boot manager está carregando o BL utilizando recursos 
+    ;; Configurando PCI. (O bï¿½sico suportado pelo Boot Manager.)
+	;; O boot manager estï¿½ carregando o BL utilizando recursos 
 	;; do BIOS em modo real. Mas se o BM fosse carregar o BL 
 	;; de um dispositivo SATA em 32bit teria que configurar o PCI.
-	;; (Se possível deixaremos para o BL o penoso trabalho de lidar
-	;; com PCI, já que o BL é feito em C, isso deve ser mais fácil para
+	;; (Se possï¿½vel deixaremos para o BL o penoso trabalho de lidar
+	;; com PCI, jï¿½ que o BL ï¿½ feito em C, isso deve ser mais fï¿½cil para
 	;; o BL do que para o BM.)
 	
 	;step
@@ -395,15 +398,15 @@ startGUI:
 	
     ;; #bugbug
     ;; Cancelando isso.
-	;; Pois esses valores estão acima do limite de 16MB.
-	;; Qualquer coisa para sistemas acima de 16MB serão 
+	;; Pois esses valores estï¿½o acima do limite de 16MB.
+	;; Qualquer coisa para sistemas acima de 16MB serï¿½o 
 	;; configuradas pelo kernel depois de detectar a 
-	;; quantidade de memória.
+	;; quantidade de memï¿½ria.
 	
     ;call configura_buffer
 	
 	;
-	;se configurar o modo 3 não tem como 
+	;se configurar o modo 3 nï¿½o tem como 
 	;reconfigurar atravez desse modo ainda.
 	;entao salva modo 1
 	;	
@@ -413,8 +416,8 @@ startGUI:
 	
 	
 	; #todo: 
-	; Não é certo pintar um backgraund direto na memória de video.
-    ; O Boot Manger não tem sincronização vertical ainda.	 
+	; Nï¿½o ï¿½ certo pintar um backgraund direto na memï¿½ria de video.
+    ; O Boot Manger nï¿½o tem sincronizaï¿½ï¿½o vertical ainda.	 
 	 
 	 
 	;background test!
@@ -429,13 +432,13 @@ startGUI:
 	;;
 	
 	;; #bugbug: 
-	;; As rotinas de 'char' 'string' e 'load' aparentemente estão travando 
-	;; o sistema, as duas janelas de status estão funcionando quando não 
-	;; chamamos essas funções.
+	;; As rotinas de 'char' 'string' e 'load' aparentemente estï¿½o travando 
+	;; o sistema, as duas janelas de status estï¿½o funcionando quando nï¿½o 
+	;; chamamos essas funï¿½ï¿½es.
 	
 	; #obs:
-	; Aqui vamos testar a rotina de mostrar strings no modo gráfico.
-	; O caractere deve ser construído, píxel por píxel, utilizando 
+	; Aqui vamos testar a rotina de mostrar strings no modo grï¿½fico.
+	; O caractere deve ser construï¿½do, pï¿½xel por pï¿½xel, utilizando 
 	; o mapa de caracteres do BIOS.
 
 
@@ -449,7 +452,7 @@ startGUI:
 	;jmp $
 	
 	;Debug:
-	;Pinta uma janela pra testar modo gráfico.
+	;Pinta uma janela pra testar modo grï¿½fico.
 	
 	;mov eax, 0    ;x.
 	;mov ebx, 0    ;y.
@@ -461,12 +464,12 @@ startGUI:
 	
   
     ;; #BUGBUG
-    ;; O teste indicou que as rotinas de char e string estão
+    ;; O teste indicou que as rotinas de char e string estï¿½o
     ;; com mal funcionamento, travando o sistema.
-    ;; a segunda janale não aparece que sinaliza prograsso não aparece.
+    ;; a segunda janale nï¿½o aparece que sinaliza prograsso nï¿½o aparece.
   
   
-    ;; @todo: Fazer debug da função print char antes de tudo ...
+    ;; @todo: Fazer debug da funï¿½ï¿½o print char antes de tudo ...
     ;; status: testando ...
 
   
@@ -565,21 +568,21 @@ startGUI:
 	
     
 	; #todo: 
-	; Não há funções de string em modo gráfico no bootmanager ainda.
-	; Então para o carregamento do BL.BIN não há mensagens.      
+	; Nï¿½o hï¿½ funï¿½ï¿½es de string em modo grï¿½fico no bootmanager ainda.
+	; Entï¿½o para o carregamento do BL.BIN nï¿½o hï¿½ mensagens.      
 	
 	; Carrega o Boot Loader.
-	; Carrega o arquivo  BL.BIN na memória e passa o comando para ele.
+	; Carrega o arquivo  BL.BIN na memï¿½ria e passa o comando para ele.
 	; Enviando argumento em AL, e EBX.
 	
 .LoadBootLoader:
 	
-	;;;; ATENÇÃO 
+	;;;; ATENï¿½ï¿½O 
 	;;;; O BL.BIN FOI CARREGADO PELO MBR USANDO RECURSOS DO BIOS.
-	;;;; NÃO DEVEMOS CARREGA-LO NOVAMENTE NESSE MOMENTO USANDO RECURSO DE 32BIT.
+	;;;; Nï¿½O DEVEMOS CARREGA-LO NOVAMENTE NESSE MOMENTO USANDO RECURSO DE 32BIT.
 	
 	; Obs: 
-	; ?? Não carrega mais pois ele está em assembly e faz parte do System4Nora.
+	; ?? Nï¿½o carrega mais pois ele estï¿½ em assembly e faz parte do System4Nora.
 
 	;mov esi, msg_start_ok
 	;call lib32PrintString	
@@ -603,7 +606,7 @@ startGUI:
 	
 	;; #bugbug
 	;; Temos que permitir o formato elf.
-	;; Porém o BL ainda está no formato PE.
+	;; Porï¿½m o BL ainda estï¿½ no formato PE.
 
 
     ;;
@@ -634,11 +637,19 @@ startGUI:
     ;;  ## Boot Block ## 
     ;;
 
+	;; Preparing a table of arguments.
+	;; See: stage3/include/bootloader.inc.
+
+
+	;; #todo
+	;; We need the boot disk value!
+
 	;; Prepara a tabela.
 	;; Estamos preparando a tabela para enviarmos para o Boot Loader.
+
 	
 	;; #todo
-	;; Precismos passar mais informações sobre o disco.
+	;; Precismos passar mais informaï¿½ï¿½es sobre o disco.
 	
 	; LFB address.
 	; Width in pixels.
@@ -647,31 +658,70 @@ startGUI:
 	; metafile address
 	; ...
 	
+	;; lfb
 	xor eax, eax
 	mov eax, dword [ModeInfo_PhysBasePtr]  
 	mov dword [BootBlock.lfb], eax
 	
+	;; screen width
 	xor eax, eax
 	mov ax, word [ModeInfo_XResolution]    
 	mov dword [BootBlock.x], eax 
 	
+	;; screen height
 	xor eax, eax
 	mov ax, word [ModeInfo_YResolution]    
 	mov dword [BootBlock.y], eax 
 	
+
+    ;; bpp
 	xor eax, eax
 	mov al, byte [ModeInfo_BitsPerPixel]   
 	mov dword [BootBlock.bpp], eax 
 
+    ;; ??
+    ;; metafile address
 	xor eax, eax
 	mov eax, dword META$FILE    
 	mov dword [BootBlock.metafile_address], eax
-    
+
+
+    ;; #bugbug
+	;; Algo nao permite enderecarmos os elementos do metafile.
+	;; mas conseguimos passar seu endereco.
+
+
+    ;; disk number.
+	xor eax, eax
+	mov al, byte [DISKINFO16_disk_number]  
+	mov dword [BootBlock.disk_number], eax 
+
+
+    ;; heads (word)
+	xor eax, eax
+	mov ax, word [DISKINFO16_heads]
+	mov dword [BootBlock.heads], eax 
+
+
+    ;; spt (word)
+	xor eax, eax
+	mov ax, word [DISKINFO16_spt]
+	mov dword [BootBlock.spt], eax 
+
+
+    ;; cylinders (word)
+	xor eax, eax
+	mov ax, word [DISKINFO16_cylinders]
+	mov dword [BootBlock.cylinders], eax 
+
+
+	
 	;Continua...
 	
 	;xor eax, eax
 	mov al, byte 'G'                       ;Flag. (useing graphics)	
-	mov ebx, dword [ModeInfo_PhysBasePtr]  ;LFB address (endereço físico)
+	
+	mov ebx, dword [ModeInfo_PhysBasePtr]  ;LFB address (endereï¿½o fï¿½sico)
 	
 	mov ebp, dword BootBlock
 	mov ecx, ebp                           ;tabela
@@ -693,7 +743,7 @@ startGUI:
 	;;
 
 
-; O arquivo não está presente na memória.
+; O arquivo nï¿½o estï¿½ presente na memï¿½ria.
 ; Muda a cor da string.	
 .peFail:
 
@@ -719,7 +769,7 @@ startGUI:
     
     
 	; #fim, 
-	; Começam as rotinas internas do arquivo.
+	; Comeï¿½am as rotinas internas do arquivo.
 	
 
 ;;=======================================================================
@@ -756,15 +806,15 @@ configura_lfb:
 
 ;-------------------------------------
 ; configura_buffer:
-;     Configura buffer para modo gráfico.
+;     Configura buffer para modo grï¿½fico.
 ;     
 ;  #bugbug 
-; nem lembro desses endereços, 
-; mas eles estão acima de 16MB e isso é problema, pois o 
-; sistema tem a configuração mínima de 16MB.
+; nem lembro desses endereï¿½os, 
+; mas eles estï¿½o acima de 16MB e isso ï¿½ problema, pois o 
+; sistema tem a configuraï¿½ï¿½o mï¿½nima de 16MB.
 ;
-;     @todo: Confirmar os endereços dos buffer.
-;            Configurar páginas para eles.  
+;     @todo: Confirmar os endereï¿½os dos buffer.
+;            Configurar pï¿½ginas para eles.  
 ;
 ;++
 
@@ -774,10 +824,10 @@ configura_buffer:
 
     ;; #bugbug
     ;; Cancelando isso.
-	;; Pois esses valores estão acima do limite de 16MB.
-	;; Qualquer coisa para sistemas acima de 16MB serão 
+	;; Pois esses valores estï¿½o acima do limite de 16MB.
+	;; Qualquer coisa para sistemas acima de 16MB serï¿½o 
 	;; configuradas pelo kernel depois de detectar a 
-	;; quantidade de memória.
+	;; quantidade de memï¿½ria.
 	
 	;buffer 1,2 e 3.
 	;push edx

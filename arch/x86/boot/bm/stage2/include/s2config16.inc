@@ -22,9 +22,20 @@ BOOT16:
    ; .res8:  dd 0
 ;...
 
+
+
+DISKINFO16:
+
+    DISKINFO16_disk_number: db 0 
+	  DISKINFO16_heads:       dw 0
+	  DISKINFO16_spt:         dw 0
+	  DISKINFO16_cylinders:   dw 0
+    ;; ...
 	
+
+
 ;
-; Fim.
+; End.
 ;
 
 

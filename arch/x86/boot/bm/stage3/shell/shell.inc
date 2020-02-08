@@ -178,37 +178,46 @@ os_command_line:
 	;;
 	;;#BUGBUG
     ;;
-	
-    ;Trocamos um caractere por outro dentro de uma string.	
-	
-.killSpaces:		
 
-	mov esi, cli_temp_string
-	mov al, 0x20                ;Quando for espaço,
-	mov bl, 0x00                ;Coloque zero.
-	call os_string_change_char  ;lib32\string32.inc
-	pop esi				        ;Pop the command string.
+
+
+    ; Trocamos um caractere por outro dentro de uma string.
+
+.killSpaces:
+
+    mov esi, cli_temp_string
+    mov al, 0x20                ;Quando for espaço,
+    mov bl, 0x00                ;Coloque zero.
+    call os_string_change_char  ;lib32\string32.inc
+    pop esi                     ;Pop the command string.
 
 
 	;;
 	;; Compara a primeira palavra - (edi).
 	;;
-	
-	; 'mount'
+
+    ; 'mount'
     ; Monta o volume do sistema se possível.
-	
+
 .xMount:	
 	mov edi, mount_volume_string
 	call os_string_compare
 	jc do_mount_volume	
 
-	;'boot'
-	; Inicia o modo gráfico padrão. GUI 
-	
-.xBoot:	
-	mov edi, boot_string
-	call os_string_compare
-	jc do_boot	
+
+;;
+;; Boot.
+;;
+
+    ; 'boot'
+    ; Inicia o modo gráfico padrão. GUI 
+    ; See: shcalls.inc
+
+.xBoot:
+    mov edi, boot_string
+    call os_string_compare
+    jc do_boot
+
 
     ;'shutdown'
 	; Desliga a máquina via APM.
