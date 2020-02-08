@@ -192,8 +192,12 @@ __local_ps2kbd_procedure ( struct window_d *window,
                     //do_clone_execute_process ("init2.bin");
                     break;
 
-                // Switch focus.
+                // 
                 case VK_F6:
+                    
+                    // #se o porcesso não existe vai dar problema.
+                    tty_send_message (103,buffer, 32, 444, 0, 0);
+                    //tty_send_message (104,buffer, 32, 444, 0, 0);
                     break;
 
                 // Test 1.
