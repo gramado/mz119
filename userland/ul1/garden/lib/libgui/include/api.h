@@ -1759,7 +1759,7 @@ static unsigned long vga_256colors_palette[256] = {
 //****
 
 //
-// Teclas virtuais.
+// Virtua keys.
 #define VK_LBUTTON	0x01
 #define VK_RBUTTON	0x02
 #define VK_CANCEL	0x03

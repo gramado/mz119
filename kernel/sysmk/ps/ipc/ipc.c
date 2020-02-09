@@ -10,6 +10,11 @@
  */
 
 
+// See:
+// https://www.drdobbs.com/interprocess-communication-the-l4-micro/184402030
+// ...
+
+
 
 #include <kernel.h>
 
