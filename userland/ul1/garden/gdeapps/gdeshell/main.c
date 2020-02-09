@@ -3117,22 +3117,38 @@ do_compare:
 	//nesse teste aproveitamos o soquete criado para se
 	//comunicar com o driver de rede. que enviará uma mensagem para
 	//esse processo.
-	int socket_fd = -1;
+
+    int socket_fd = -1;
+    char __socket_buffer[32];
     if ( strncmp( prompt, "socket", 6 ) == 0 )
     {
+        printf("\n");
         socket_fd = (int) socket ( (int) AF_INET, 
                              (int) SOCK_STREAM, 
                              (int) 0 );
         
         printf ("socket_fd = %d\n",socket_fd);
 
+
+        sprintf( __socket_buffer, "Magic string");
+        write (socket_fd, &__socket_buffer[0], 12 );
+        
+        //suja o buffer
+        sprintf( __socket_buffer, "============");
+        
+        read (socket_fd, &__socket_buffer[0], 5 );
+        printf(">>%s \n",__socket_buffer);
+        
+
         // Pede para o kernel usar esse descritor para
         // mandar mensagens através dessa stream.
         // O procedimento de janela tratará a mensagem MSG_AF_INET.
-        gramado_system_call ( 966, 
-            (unsigned long) socket_fd,
-            (unsigned long) socket_fd,
-            (unsigned long) socket_fd );
+        
+        //gramado_system_call ( 966, 
+           // (unsigned long) socket_fd,
+           // (unsigned long) socket_fd,
+           // (unsigned long) socket_fd );
+            
         goto exit_cmp;
     }
 

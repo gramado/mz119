@@ -1059,8 +1059,9 @@ void *gde_extra_services ( unsigned long number,
     //socket() la libc.
     //chamaremos a rotina na crts/klibc
     //family, type, protocol
-    if ( number == 7000 )
-    {
+ 
+    //#todo: mudar para sys_socket.
+    if ( number == 7000 ){
         return (void *) socket ( (int) arg2, (int) arg3, (int) arg4 );
     }
 

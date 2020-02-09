@@ -180,15 +180,19 @@ socket() creates an endpoint for communication and returns a file
  */
 
 //int socket ( int family, int type, int protocol ){
-int socket ( int domain, int type, int protocol ){
-
-    // #test
-    // serviço 7000.
-
-    return (int) system_call ( 7000, 
+int socket ( int domain, int type, int protocol )
+{
+    int __fd = -1;
+    
+    __fd = (int) gramado_system_call ( 7000, 
                      (unsigned long) domain, 
                      (unsigned long) type, 
                      (unsigned long) protocol );
+
+    if(__fd<0)
+        printf ("socket: Couldn't create the socket!\n");
+        
+    return (int) __fd;
 }
 
 

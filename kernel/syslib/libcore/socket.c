@@ -23,21 +23,24 @@
 // Se o protocolo for '0', então precisamos encontrar o 
 // protocolo adequado.
 
+// #todo: 
+// mudar para sys_socket.
+    
 int socket ( int family, int type, int protocol ){
 	
 	//#todo:
 	//vai retornar o descritor de uma stream.
-	
-	//#debug
-	printf ("klibc: socket: #todo:\n");
-	refresh_screen();
-	
 
-    FILE *stream1;
+    //#debug
+    printf ("syslib-libcore-socket:\n");
+    refresh_screen();
 
-	struct process_d *Process;
-	
-	
+
+    file *socket_file;
+
+    struct process_d *Process;
+
+
 	//
 	// Filtros
 	//
@@ -62,20 +65,25 @@ int socket ( int family, int type, int protocol ){
     //{}
 
 
-	Process = (void *) processList[current_process];
+    Process = (void *) processList[current_process];
 
     if ( (void *) Process == NULL ){
+
+        printf("Process\n");
+        refresh_screen();
         return -1;
 
     }else{
 
         if ( Process->used != 1 || Process->magic != 1234 )
         {
-		    return -1;
-		}
-		
-		 //ok
-	};
+            printf("Process validation\n");
+            refresh_screen();
+            return -1;
+        }
+
+        //ok
+    };
 
 
 	//#todo
@@ -83,17 +91,18 @@ int socket ( int family, int type, int protocol ){
 	//e colocarmos em process.c
 	//essa é afunção que estamos criando.
 	// process_find_empty_stream_slot ( struct process_d *process );
-	
-	// procurar 2 slots livres.
+
+    // procurar slot livres.
     int i;
-    int slot1 = -1;
-	
+    int __slot = -1;
+
+
 	// #improvisando
 	// 0, 1, 2 são reservados para o fluxo padrão.
 	// Como ainda não temos rotinas par ao fluxo padrão,
 	// pode ser que peguemos os índices reservados.
 	// Para evitar, começaremos depois deles.
-	
+
 	for ( i=3; i< NUMBER_OF_FILES; i++ )
 	{
 	    if ( Process->Objects[i] == 0 )
@@ -101,14 +110,15 @@ int socket ( int family, int type, int protocol ){
 			//reserva.
 			Process->Objects[i] = 216; 
 			
-		    slot1 = i;
+		    __slot = i;
 			break;
 		}
 	}
 
     //se falhar.
-	if ( slot1 == -1 ) 
+	if ( __slot == -1 ) 
 	{
+		printf ("no free slots\n");
 		Process->Objects[i] = (unsigned long) 0;
 	    return -1;
 	}
@@ -127,44 +137,47 @@ int socket ( int family, int type, int protocol ){
 	}
 
 	//
-	// Stream.
+	// File.
 	//
-	
-	//estruturas 
-	stream1 = (void *) kmalloc ( sizeof(FILE) );
-	
-	if ( (void *) stream1 == NULL  )
-	{
-		Process->Objects[i] = (unsigned long) 0;
-	    return -1;
-	}else{
-	
-		// As duas estruturas compartilham o mesmo buffer.
-		
-        stream1->used = 1;
-		stream1->magic = 1234;
 
-		stream1->_base = buff;
-		stream1->_p = buff;
+    socket_file = (void *) kmalloc ( sizeof(file) );
 
-		stream1->_tmpfname = NULL;
+    if ( (void *) socket_file == NULL  ){
 
-		stream1->_lbfsize = BUFSIZ; 
+        Process->Objects[i] = (unsigned long) 0;
+        return -1;
 
-		
-		//quanto falta é igual ao tamanho.
-		stream1->_cnt = stream1->_lbfsize;   
+    }else{
 
-		//Colocando na lista de arquivos abertos no processo.
-		Process->Objects[i] = (unsigned long) stream1;
+        // As duas estruturas compartilham o mesmo buffer.
 
-		
+        socket_file->used = 1;
+        socket_file->magic = 1234;
+        
+        // This file represents a object of type socket.
+        socket_file->____object = ObjectTypeSocket;
+
+        socket_file->_base = buff;
+        socket_file->_p = buff;
+
+        socket_file->_tmpfname = NULL;
+
+        socket_file->_lbfsize = BUFSIZ; 
+
+
+        //quanto falta é igual ao tamanho.
+        socket_file->_cnt = socket_file->_lbfsize;   
+
+        //Colocando na lista de arquivos abertos no processo.
+        Process->Objects[i] = (unsigned long) socket_file;
+
+
 		// #importante
 		// Esse é o retorno esperado.
 
 		//printf ("slot1 = %d\n", slot1);
-		return (int) slot1;
-	};
+        return (int) __slot;
+    };
 
 
     return -1;
