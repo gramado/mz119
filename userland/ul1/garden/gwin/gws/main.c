@@ -93,7 +93,11 @@ gwsProcedure ( struct window_d *window,
         // #test
         // Tentando receber uma mensagem de digitação.
         case MSG_KEYDOWN:
-            printf ("%c", (char) long1); //#test
+            
+            //#bugbug: Isso está falhando.
+            //mas o f1 funciona.
+            printf ("%c", (char) long1); 
+            //gde_show_backbuffer ();
             break;
 
         case 1000:
@@ -104,10 +108,12 @@ gwsProcedure ( struct window_d *window,
                 COLOR_RED,
                 "Hello friend. This is the Window Server!" );
                 
-             printf ("Hello friend!");
-                
+             printf ("Hello friend! %d %d \r \n", long1, long2 );
+            
+             //#todo: send response.
+            
              gde_show_backbuffer ();
-                break;
+             break;
                 
          //
          // Testing some drawing routines.

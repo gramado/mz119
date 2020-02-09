@@ -69,7 +69,7 @@ int main (int argc, char **argv){
 
         // IN: PID, window, msg, long1, long2
         gde_send_message_to_process ( __ws_pid, 
-            NULL, 1000, 0, 0 );  
+            NULL, 1000, getpid(), getpid() );  
             
 
         // enviando mais vezes pra testar a fila de mensagens
