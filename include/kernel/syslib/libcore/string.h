@@ -37,5 +37,5 @@ size_t strspn(const char* str, const char* accept);
 char *strtok_r (char *s, const char *delim, char **last);
 char *strtok (char *s, const char *delim);
 
-
+char *strdup (const char *str);
 

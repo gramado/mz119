@@ -21,51 +21,52 @@
 //Mostra informações sobre o disco atual.
 
 void diskShowCurrentDiskInfo (void)
-{	
-	printf ("The current disk is %d\n", current_disk );
-	diskShowDiskInfo(current_disk);
+{
+    printf ("The current disk is %d\n", current_disk );
+    diskShowDiskInfo (current_disk);
 }
 
 
 //Mostra informações sobre um disco dado seu descritor.
 int diskShowDiskInfo ( int descriptor ){
-	
-	struct disk_d *d;
-	
-	//#debug
-	printf("diskShowDiskInfo:\n\n");
-	
-	
-    if ( descriptor < 0 || descriptor > DISK_COUNT_MAX )
-	{
-		printf("descriptor fail\n");
-		goto fail;
-	}		
-	
+
+    struct disk_d *d;
+
+    //#debug
+    //printf ("diskShowDiskInfo:\n\n");
+    printf ("\n\n");
+
+    if ( descriptor < 0 || descriptor > DISK_COUNT_MAX ){
+        printf ("descriptor fail\n");
+        goto fail;
+    }
+
+
 	d = (struct disk_d *) diskList[descriptor];
-	
-	if ( (void *) d == NULL )
-	{
-		printf("struct fail\n");
-		goto fail;
-		
-	} else {
-		
-		if ( d->used != 1 || d->magic != 1234 ){
-			
+
+    if ( (void *) d == NULL ){
+        printf ("struct fail\n");
+        goto fail;
+
+    } else {
+
+
+        if ( d->used != 1 || d->magic != 1234 ){
 			printf("flags fail\n");
 			goto fail;
-		}		
-		
-		printf ("id={%d} used={%d} magic={%d} \n", d->id, d->used, d->magic );
-		
+        }
+
+		printf ("id={%d} used={%d} magic={%d} \n", 
+		    d->id, d->used, d->magic );
+		    
+		printf ("boot_disk={%d}\n",d->boot_disk_number);
+
 		printf ("diskType={%d}\n", d->diskType );
-		printf("name={%s}\n", d->name );		
+		printf ("name={%s}\n", d->name );
 		//...
 		goto done;
-	};
-	
-	
+    };
+
 	goto done;
 	
 	
@@ -74,24 +75,43 @@ fail:
     return (int) 1;
 
 done:
-    printf("done\n");
-	return (int) 0;
-};
 
+    printf ("done\n");
+    return 0;
+}
+
+
+//show info for all disks in the list.
+void disk_show_info (void)
+{
+    int i;
+    struct disk_d *disk;
+    
+    for(i=0; i<DISK_COUNT_MAX; i++)
+    {
+        disk = (struct disk_d *) diskList[i];
+        
+        if ( (void *) disk != NULL ){
+            diskShowDiskInfo(i);
+        }
+    };
+}
 
 
 /*
  * disk_get_disk_handle:
  *     Obtem o ponteiro da estrutura dado o descritor.
  */
+ 
 void *disk_get_disk_handle ( int number ){
-	
+
 	if ( number < 0 || number >= DISK_COUNT_MAX ){
 		return NULL;
 	}
-	
-	return (void *) diskList[number];
-};
+
+
+    return (void *) diskList[number];
+}
 
 
 /* #deletar */
@@ -114,68 +134,98 @@ void *disk_get_current_disk_info (void)
 
 int disk_init (void){
 
-	int i=0;
+    int i=0;
+    
+    unsigned char __boot_disk;
 
-	
-#ifdef KERNEL_VERBOSE	
-    printf("disk_init: Initializing..\n");
-#endif	
 
-    //Limpar lista.	
-	
-	for ( i=0; i<DISK_COUNT_MAX; i++ ){
-		
-		diskList[i] = 0;
-	};
-	
+#ifdef KERNEL_VERBOSE
+    printf ("disk_init: Initializing..\n");
+#endif
+
+
+    // Clean.
+    for ( i=0; i<DISK_COUNT_MAX; i++ ){
+        diskList[i] = 0;
+    };
+
  
     //
     //  Disk
     //
-	
+
+    struct disk_d *d;
+
 	//#importante
 	//Essa estrutura é vital, não podemos ficar sem ela.
 	
-	storage->d = (void *) kmalloc( sizeof(struct disk_d) );
-	
-	if( (void *) storage->d == NULL )
-	{
-		panic ("sm-disk-disk_init:");
-		
+    d = (void *) kmalloc( sizeof(struct disk_d) );
+    
+
+    if( (void *) d == NULL )
+        panic ("disk_init: d");
+ 
+ 
+    if( (void *) storage == NULL ){
+        panic ("disk_init: storage");
+
 	}else{
 		
-		//@todo:
-		//disk_conductor->objectType = ?;
-		//disk_conductor->objectClass = ?;
 		
-		storage->d->diskType = DISK_TYPE_NULL;
+		d->diskType = DISK_TYPE_NULL;
 		
-	    storage->d->id = 0;
+	    d->id = 0;
+	    d->boot_disk_number = (char) info_get_boot_info (3);
 	    
-		storage->d->used = (int) 1;
-	    storage->d->magic = (int) 1234;
+		d->used = (int) 1;
+	    d->magic = (int) 1234;
 	    
-		storage->d->name = "DISK 0";
+	    __boot_disk = (char) d->boot_disk_number;
+        switch (__boot_disk)
+        {
+            case 0x80:
+                d->name = "sda";
+                break;
+
+            case 0x81:
+                d->name = "sdb";
+                break;
+
+            case 0x82:
+                d->name = "sdc";
+                break;
+
+            case 0x83:
+                d->name = "sdd";
+                break;
+           
+            default:
+                d->name = "sd?";
+                break;
+        };
+
 		
-		storage->d->next = NULL;
+		d->next = NULL;
 		
 		//global
 	    current_disk = 0;
 	
-		//atualiza a lista
-		diskList[current_disk] = (unsigned long) storage->d;
-	};	
-	
-    //
-	//@todo: Nothing more ?!!
-	//
-	
+        storage->system_disk = (struct disk_d *) d;
+
+        ____boot____disk =  (struct disk_d *) d;
+    };
+
+
+
+   //more?
+ 
+
 //done:
 
     printf("Done\n");
-	
-    return (int) 0;
-};
+
+    return 0;
+}
 
 
 
@@ -276,8 +326,10 @@ void init_test_disk (void){
 done:
 	printf("Done.\n");
 	*/
+
     return;
-};
+}
+
 
 //
 // ================================================================
@@ -290,8 +342,8 @@ done:
 //Mostra informações sobre o volume atual.
 
 void volumeShowCurrentVolumeInfo (void){
-	
-	printf("The current volume is %d\n",current_volume);
+
+    printf ("The current volume is %d\n",current_volume);
     volumeShowVolumeInfo (current_volume);	
 }
 
@@ -301,21 +353,22 @@ void volumeShowCurrentVolumeInfo (void){
  * volumeShowVolumeInfo:
  *
  */
+ 
 int volumeShowVolumeInfo ( int descriptor ){
-	
-	struct volume_d *v;
-	
-	printf("volumeShowVolumeInfo:\n");
-	
-    if( descriptor < 0 || descriptor > VOLUME_COUNT_MAX )
-	{
-		printf("descriptor fail\n");
-		goto fail;
-	}	
-	
-	
-	v = (struct volume_d *) volumeList[descriptor];
-	
+
+    struct volume_d *v;
+
+    //printf ("volumeShowVolumeInfo:\n");
+    printf ("\n\n");
+
+    if ( descriptor < 0 || descriptor > VOLUME_COUNT_MAX ){
+        printf("descriptor fail\n");
+        goto fail;
+    }
+
+
+    v = (struct volume_d *) volumeList[descriptor];
+
 	if( (void *) v == NULL )
 	{
 		printf("struct fail\n");
@@ -362,20 +415,24 @@ fail:
     return (int) 1;
 
 done:
+    
     printf("done\n");
-	return (int) 0;
-};	
+
+    return 0;
+}
 
 
 
 void *volume_get_volume_handle( int number )
 {
 	//check limts
-	if( number < 0 || number >= VOLUME_COUNT_MAX ){
-		return NULL;
-	}
-	return (void *) volumeList[number];
-};
+    if ( number < 0 || number >= VOLUME_COUNT_MAX ){
+        return NULL;
+    }
+    
+
+    return (void *) volumeList[number];
+}
 
 
 void *volume_get_current_volume_info (void)
@@ -398,35 +455,43 @@ void *volume_get_current_volume_info (void)
 //int volumeInit()
 
 int volume_init (void){
-	
-	int i;
-	
+
+    int i;
+    
+    
+    char name_buffer[32];
+
+
 #ifdef KERNEL_VERBOSE
-    printf("volume_init: Initializing..\n");
+    printf ("volume_init: Initializing..\n");
 #endif
 
 
-	//limpar
-	for ( i=0; i<VOLUME_COUNT_MAX; i++ ){
-		volumeList[i] = 0;
-	};
+    // Clean
+    for ( i=0; i<VOLUME_COUNT_MAX; i++ ){
+        volumeList[i] = 0;
+    };
 
-	
-	// root: - Volume 0 (vfs)
+
+    if ( (void *) storage == NULL ){
+        panic ("volume_init: storage");
+    }
+
+
+    // root: - Volume 0 (vfs)
     // root:/volume0 - Links para o raiz.   
-	// root:/volume1 - volume da partição de boot.
-	// root:/volume2 - volume da partição de sistema.
-	
+    // root:/volume1 - volume da partição de boot.
+    // root:/volume2 - volume da partição de sistema.
+
 	
 	
 	// Volume.
-	volume_vfs = (void *) kmalloc( sizeof(struct volume_d) );
-	
-	if ( (void *) volume_vfs == NULL )
-	{
-	    panic ("sm-disk-volume_init: volume_vfs");
+    volume_vfs = (void *) kmalloc( sizeof(struct volume_d) );
 
-	}else{
+    if ( (void *) volume_vfs == NULL ){
+        panic ("volume_init: volume_vfs");
+
+    }else{
 		
 		//@todo:
 		//volume_vfs->objectType = ?;
@@ -441,23 +506,26 @@ int volume_init (void){
 		volume_vfs->used = (int) 1;
 	    volume_vfs->magic = (int) 1234;
 	    
-		volume_vfs->name = "VOLUME 0";  
-        
-		volume_vfs->cmd = "root:";
+        //volume_vfs->name = "VOLUME 0"; 
+        sprintf ( (char *) name_buffer, "VOLUME-%d",volume_vfs->id);
+        volume_vfs->name = (char *) strdup ( (const char *) name_buffer);  
 
-        volumeList[0] = (unsigned long) volume_vfs; 		
-	};
-	
-	
-	// Volume.
-	volume_bootpartition = (void *) kmalloc( sizeof(struct volume_d) );
-	
-	if ( (void *) volume_bootpartition == NULL )
-	{
-	    panic ("sm-disk-volume_init: volume_bootpartition");
+        //#todo
+        volume_vfs->cmd = "root:";
 
-	}else{
-		
+        volumeList[0] = (unsigned long) volume_vfs;
+        storage->vfs_volume = (struct volume_d *) volume_vfs; 
+    };
+
+	
+    // Volume.
+    volume_bootpartition = (void *) kmalloc( sizeof(struct volume_d) );
+
+    if ( (void *) volume_bootpartition == NULL ){
+        panic ("volume_init: volume_bootpartition");
+
+    }else{
+
 		//@todo:
 		//volume_bootpartition->objectType = ?;
         //volume_bootpartition->objectClass = ?;
@@ -465,33 +533,33 @@ int volume_init (void){
 		
 		// Será usado pelo VFS.
 		volume_bootpartition->volumeType = VOLUME_TYPE_DISK_PARTITION;
-		
-	    volume_bootpartition->id = 1;
-	    
+
+        volume_bootpartition->id = 1;
+           
 		volume_bootpartition->used = (int) 1;
 	    volume_bootpartition->magic = (int) 1234;
 	    
-		volume_bootpartition->name = "VOLUME 1 - BOOT";  
+		//volume_bootpartition->name = "VOLUME 1 - BOOT";  
+        sprintf ( (char *) name_buffer, "VOLUME-%d",volume_bootpartition->id);
+        volume_bootpartition->name = (char *) strdup ( (const char *) name_buffer);  
         
+        
+        //#todo
 		volume_bootpartition->cmd = "root:/volume1";
 		
 		//Volume atual
-        current_volume = 1;	
+        current_volume = 1;
 
-        volumeList[current_volume] = (unsigned long) volume_bootpartition; 	
+        volumeList[1] = (unsigned long) volume_bootpartition; 
+        storage->boot_volume = (struct volume_d *) volume_bootpartition; 
+    };
 
-        //#importante 
-        //atualizamos a estrutura storage com o volume atual.
-		storage->v = volume_bootpartition;   		
-	};
-	
 	
 	// Volume.
-	volume_systempartition = (void *) kmalloc( sizeof(struct volume_d) );
-	
-	if ( (void *) volume_systempartition == NULL )
-	{
-	    panic ("sm-disk-volume_init: volume_systempartition");
+    volume_systempartition = (void *) kmalloc( sizeof(struct volume_d) );
+
+    if ( (void *) volume_systempartition == NULL ){
+        panic ("volume_init: volume_systempartition");
 
 	}else{
 		
@@ -508,17 +576,39 @@ int volume_init (void){
 		volume_systempartition->used = (int) 1;
 	    volume_systempartition->magic = (int) 1234;
 	    
-		volume_systempartition->name = "VOLUME 2";  
-        
+		//volume_systempartition->name = "VOLUME 2";  
+        sprintf ( (char *) name_buffer, "VOLUME-%d",volume_systempartition->id);
+        volume_systempartition->name = (char *) strdup ( (const char *) name_buffer);  
+
+
+        //#todo 
 		volume_systempartition->cmd = "root:/volume2";
 
-        volumeList[2] = (unsigned long) volume_systempartition; 		
+        volumeList[2] = (unsigned long) volume_systempartition;
+        storage->system_volume = (struct volume_d *) volume_systempartition; 
 	};
-	
-    return (int) 0;
-};
 
 
+    return 0;
+}
+
+
+//show info for all volumes in the list.
+void volume_show_info (void)
+{
+    int i;
+    struct volume_d *volume;
+    
+    for(i=0; i<VOLUME_COUNT_MAX; i++)
+    {
+        volume = (struct volume_d *) volumeList[i];
+        
+        if ( (void *) volume != NULL )
+        {
+            volumeShowVolumeInfo(i);
+        }
+    };
+}
 
 
 /*

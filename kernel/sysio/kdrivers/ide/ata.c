@@ -201,6 +201,10 @@ int ide_identify_device ( uint8_t nport ){
     unsigned char lba1, lba2;
 
     struct disk_d *disk;
+    
+    
+    char name_buffer[32];
+
 
 
     ata_assert_dever (nport);
@@ -237,8 +241,7 @@ int ide_identify_device ( uint8_t nport ){
 
     ata_wait (400);
     
-    if ( ata_status_read() == 0 )
-    {  
+    if ( ata_status_read() == 0 ){  
         return (int) -1;
     }
 
@@ -263,31 +266,43 @@ int ide_identify_device ( uint8_t nport ){
 
         ata_wait_not_busy();
         ata_wait_no_drq();
-		
-		
-		ide_ports[nport].channel = ata.channel;
-		ide_ports[nport].dev_num = ata.dev_num;		
+
+
+        ide_ports[nport].channel = ata.channel;
+        ide_ports[nport].dev_num = ata.dev_num;
 
         //salvando o tipo em estrutura de porta.
         ide_ports[nport].id = (uint8_t) nport;
         ide_ports[nport].used = (int) 1;
         ide_ports[nport].magic = (int) 1234;
-        ide_ports[nport].name = "PATA";	
+        ide_ports[nport].name = "PATA";
         ide_ports[nport].type = (int) idedevicetypesPATA;
-		
-		
-		disk = (struct disk_d *) kmalloc (  sizeof(struct disk_d) );
-		if ((void *) disk != NULL )
-		{
-			disk->channel = ata.channel;
-			disk->dev_num = ata.dev_num;
-			disk->id = nport;  
-			disk->used = 1;
-			disk->magic = 1234;
-			disk->name = "PATA-TEST";
-			disk->diskType = DISK_TYPE_PATA;
-			diskList[nport] = (unsigned long) disk;
-		}
+
+
+        disk = (struct disk_d *) kmalloc ( sizeof(struct disk_d) );
+
+        if ((void *) disk != NULL )
+        {
+            disk->channel = ata.channel;
+            disk->dev_num = ata.dev_num;
+            
+            // ID and index.
+            disk->id = nport;
+            disk->boot_disk_number = 0; // ??
+            
+            disk->used = 1;
+            disk->magic = 1234;
+            
+            
+            // name = "sd?"
+            //disk->name = "PATA-TEST";
+            sprintf ( (char *) name_buffer, "PATA-TEST-%d",nport);
+            disk->name = (char *) strdup ( (const char *) name_buffer);  
+            
+            disk->diskType = DISK_TYPE_PATA;
+
+            diskList[nport] = (unsigned long) disk;
+        }
 
         return (int) 0;
 
@@ -305,31 +320,40 @@ int ide_identify_device ( uint8_t nport ){
         ata_pio_read ( ata_identify_dev_buf, 512 );
         ata_wait_not_busy();
         ata_wait_no_drq();
-		
-		ide_ports[nport].channel = ata.channel;
-		ide_ports[nport].dev_num = ata.dev_num;			
+
+        ide_ports[nport].channel = ata.channel;
+        ide_ports[nport].dev_num = ata.dev_num;
 
         //salvando o tipo em estrutura de porta.
         ide_ports[nport].id = (uint8_t) nport;
         ide_ports[nport].used = (int) 1;
         ide_ports[nport].magic = (int) 1234;
-        ide_ports[nport].name = "SATA";	
+        ide_ports[nport].name = "SATA";
         ide_ports[nport].type = (int) idedevicetypesSATA;
-		
-		disk = (struct disk_d *) kmalloc (  sizeof(struct disk_d) );
-		if ((void *) disk != NULL )
-		{
-			
+
+        disk = (struct disk_d *) kmalloc (  sizeof(struct disk_d) );
+
+        if ((void *) disk != NULL )
+        {
+
 			disk->channel = ata.channel;
 			disk->dev_num = ata.dev_num;
 			
-			disk->id = nport;  
+            // ID and index.
+            disk->id = nport;
+            disk->boot_disk_number = 0; // ??
+
+			
 			disk->used = 1;
 			disk->magic = 1234;
-			disk->name = "SATA-TEST";
-			disk->diskType = DISK_TYPE_SATA;
-			diskList[nport] = (unsigned long) disk;
-		}
+
+            //disk->name = "SATA-TEST";
+            sprintf ( (char *) name_buffer, "SATA-TEST-%d",nport);
+            disk->name = (char *) strdup ( (const char *) name_buffer);  
+     
+            disk->diskType = DISK_TYPE_SATA;
+            diskList[nport] = (unsigned long) disk;
+        }
 
         return (int) 0;
 
@@ -366,7 +390,11 @@ int ide_identify_device ( uint8_t nport ){
 			disk->id = nport;  
 			disk->used = 1;
 			disk->magic = 1234;
-			disk->name = "PATAPI-TEST";
+			
+			//disk->name = "PATAPI-TEST";
+            sprintf ( (char *) name_buffer, "PATAPI-TEST-%d",nport);
+            disk->name = (char *) strdup ( (const char *) name_buffer);  
+            
 			disk->diskType = DISK_TYPE_PATAPI;
 			diskList[nport] = (unsigned long) disk;
 		}
@@ -407,7 +435,12 @@ int ide_identify_device ( uint8_t nport ){
 			disk->id = nport;  
 			disk->used = 1;
 			disk->magic = 1234;
-			disk->name = "SATAPI-TEST";
+			
+			//disk->name = "SATAPI-TEST";
+            sprintf ( (char *) name_buffer, "SATAPI-TEST-%d",nport);
+            disk->name = (char *) strdup ( (const char *) name_buffer);  
+
+
 			disk->diskType = DISK_TYPE_SATAPI;
 			diskList[nport] = (unsigned long) disk;
 		}

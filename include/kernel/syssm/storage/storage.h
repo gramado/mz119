@@ -2,6 +2,10 @@
 
 // storage/storage.h
 
+
+
+
+
 //===================================================================
 //                      STORAGE  
 //===================================================================
@@ -20,12 +24,46 @@
 struct storage_d
 {
 
-    // disk - disco atual
-    struct disk_d *d;
+    //
+    // Disk.
+    //
+    
 
-    // volume - volume atual.
-    struct volume_d *v;
+    // System disk
+    // The disk where the system is installed.
+    struct disk_d *system_disk;
 
+
+    //
+    // Volume.
+    //
+    
+    
+    // vfs volume.
+    struct volume_d *vfs_volume;
+    
+    // Boot volume.
+    struct volume_d *boot_volume;
+
+    // System volume.
+    struct volume_d *system_volume;    
+
+
+    //
+    // vfs
+    //
+
+    //virtual file system
+    struct vfs_d *vfs;
+
+
+    //
+    //  fs ???
+    //
+    
+    // #bugbug
+    // Talvez podemos encontrar issa informação
+    // na estrutura de volume.
 
     //file system
     //Ponteiro para o sistema de arquivos atual.
@@ -33,8 +71,10 @@ struct storage_d
     struct filesystem_d *fs;
 
 
-    //virtual file system
-    struct vfs_d *vfs;
+
+    //
+    // file ??
+    //
 
 	//Stream 
 	//ponteiro para o arquivo atual,

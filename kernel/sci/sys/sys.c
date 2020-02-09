@@ -778,11 +778,13 @@ void sys_show_system_info ( int n )
     switch (n)
     {
         case 1:
-            diskShowCurrentDiskInfo();
+            //diskShowCurrentDiskInfo();
+            disk_show_info();
             break;
 
         case 2:
-            volumeShowCurrentVolumeInfo();
+            //volumeShowCurrentVolumeInfo();
+            volume_show_info();
             break;
 
         case 3:

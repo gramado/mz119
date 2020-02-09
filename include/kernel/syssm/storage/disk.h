@@ -224,14 +224,15 @@ struct disk_d
     disk_type_t diskType;
     disk_class_t diskClass;
 
-    // int id;
-    uint8_t id;
+
+    int id;                 // ID na lista.
+    char boot_disk_number;  // ID herado do boot block.
 
     int used;
     int magic;
 
-	//Ponteiro para o nome do disco,
-	//talvez não precise ser um ponteiro, pode ser um array.
+	// Ponteiro para o nome do disco,
+	// Talvez não precise ser um ponteiro, pode ser um array.
     char *name;  
 
 
@@ -246,19 +247,18 @@ struct disk_d
     struct disk_d *next;
 };
 
-//
-// Lita de discos
-//
+struct disk_d *____boot____disk;
 
-//se tem lista de lisco pode ficar aqui em sm
-//quanto ao resto??!!
+
+// Disk list.
+// Essa lista é preenchida pelo driver de IDE.
 
 unsigned long diskList[DISK_COUNT_MAX];
 
 
 
-
-
+//show info for all disks in the list.
+void disk_show_info (void);
 
 
 void diskShowCurrentDiskInfo (void);

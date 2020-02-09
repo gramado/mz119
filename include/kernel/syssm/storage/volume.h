@@ -128,9 +128,11 @@ struct volume_d
 
     struct volume_d *next;
 };
+
 struct volume_d *volume_vfs;             // volume 0
 struct volume_d *volume_bootpartition;   // volume 1
 struct volume_d *volume_systempartition; // volume 2
+
 //#importante:
 //Esses são os três volumes básicos do sistema 
 //mesmo que o disco só tenha um volume, essas 
@@ -143,6 +145,9 @@ struct volume_d *volume_systempartition; // volume 2
 
 unsigned long volumeList[VOLUME_COUNT_MAX];
 
+
+//show info for all volumes in the list.
+void volume_show_info (void);
 
 void volumeShowCurrentVolumeInfo (void);
 

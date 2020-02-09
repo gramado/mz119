@@ -657,6 +657,18 @@ strtok(char *s, const char *delim)
 
 
 
+char *strdup (const char *str){
+
+    char *copy;
+    size_t len;
+
+	len = strlen(str) + 1;
+	
+	if (!(copy = (char *) kmalloc( ( size_t ) len ) ))
+		return (NULL);
+	memcpy (copy, str, len);
+	return (copy);
+}
 
 
 
