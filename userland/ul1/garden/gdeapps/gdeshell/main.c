@@ -3131,12 +3131,16 @@ do_compare:
 
 
         sprintf( __socket_buffer, "Magic string");
-        write (socket_fd, &__socket_buffer[0], 12 );
+        
+        send (socket_fd , __socket_buffer , strlen(__socket_buffer) , 0 ); 
+        //write (socket_fd, &__socket_buffer[0], 12 );
         
         //suja o buffer
         sprintf( __socket_buffer, "============");
         
-        read (socket_fd, &__socket_buffer[0], 5 );
+        //read (socket_fd, &__socket_buffer[0], 5 );
+        recv (socket_fd, (void *) &__socket_buffer[0], 5, 0 );
+        
         printf(">>%s \n",__socket_buffer);
         
 
