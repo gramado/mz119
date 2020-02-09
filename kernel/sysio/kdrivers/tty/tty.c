@@ -682,15 +682,69 @@ int
 tty_ioctl ( int fd, unsigned long request, char *arg )
 {
 	
-	//switch(request)
-	
+    switch (request)
+    {
+        case TCGETS:
+            //ret = tty_gets(&tty, (struct termios *)arg);
+            return -1;
+            break;
+
+
+        case TCSETS:
+            //ret = tty_sets(&tty, IOCTL_MINOR(cmd), (struct termios *)arg);
+            return -1;
+            break;
+
+
+        case TCFLSH:
+            return -1;
+            break;
+            
+        //case ?:
+            //break;
+        
+      
+        default:
+            return -1;
+            break;
+    };
 	    //cases:
-	    //ret = tty_gets(&tty, (struct termios *)arg);
-	    //ret = tty_sets(&tty, IOCTL_MINOR(cmd), (struct termios *)arg);
+	    
+	    
 	    //ret = tty_clear(&tty);
 	
     return -1;
 }
+
+
+/*
+int tty_rewind_buffer ( struct tty_d *tty );
+int tty_rewind_buffer ( struct tty_d *tty )
+{
+
+    if ( (void *) tty == NULL )
+        return -1;
+       
+    if ( (void *) tty->_buffer == NULL )
+        return -1;
+        
+    if ( (void *) tty->_buffer->_base == NULL )
+        return -1;
+
+    if ( (void *) tty->_buffer->_p == NULL )
+        return -1;
+        
+    if ( tty->_buffer->_p < tty->_buffer->_base )
+        return -1;
+
+    tty->_buffer->_p = tty->_buffer->_base;
+    
+    return 0; 
+}
+*/
+
+
+
 
 
 
@@ -702,8 +756,8 @@ int init_dev(int dev)
 
 
 /*
-void release_dev (int dev, FILE *stream);
-void release_dev (int dev, FILE *stream)
+void release_dev (int dev, file *f);
+void release_dev (int dev, file *f)
 {}
 */
 

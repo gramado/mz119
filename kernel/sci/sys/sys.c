@@ -22,12 +22,50 @@ int sys_serial_debug_printk ( char *s )
  *     Executa um dado comando em um dado dispositivo.
  */
 
+// See:
+// http://man7.org/linux/man-pages/man2/ioctl.2.html
+
 int sys_ioctl ( int fd, unsigned long request, char *arg )
 {
+    struct process_d *p;
+    file *f;
+    
+    
     if ( fd < 0 )
         return -1;
 
+    p = (struct process_d *) processList[current_process];
+
+    if ( (void *) p == NULL )
+        return -1;
+        
+    if ( p->used != 1 || p->magic != 1234 )
+        return -1;
+        
+        
+    //pega o arquivo.
+    f = (file *) p->Objects[fd];
+
+    // checa o tipo de objeto.
+    // Isso deve ser usado principalmente com dispositivos 
+    // de caracteres como o terminal.
+        
+
+    
+    if ( f->____object != ObjectTypeDevice )
+    {
+        printf ("sys_ioctl: Not a device\n");
+        refresh_screen ();
+        return -1;
+    }
+
+
+    //fail
     return -1;
+    
+    
+    //ok
+    return 0;
 }
 
 
