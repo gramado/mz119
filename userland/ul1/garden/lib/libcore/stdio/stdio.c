@@ -1834,10 +1834,20 @@ int __fflush_stdout(void)
 
 int fflush (FILE *stream)
 {
+    int __ret = -1;
+    
 	// #todo:
 	// Se for NULL faz flush em todos.
 
-    return (int) __fflush (stream);
+    if ( (void *) stream == NULL ){
+        debug_print( "fflush: stream\n");
+        return -1;
+    }
+
+    __ret  = (int) __fflush (stream);
+
+
+    return (int) __ret;
 }
 
 
@@ -1864,9 +1874,10 @@ int __fflush (FILE *stream)
     }   
 
 
-    if ( stream->_w <= 0 ){  
+    if ( stream->_w <= 0 )
+    {  
         stream->_w = 0; 
-        debug_print( "__fflush: _w\n");
+        debug_print( "__fflush: *_w\n");
         return -1;
     } 
                
@@ -1879,6 +1890,12 @@ int __fflush (FILE *stream)
     // ISSO FUNCIONA.
     // vamos testar no console virtual.
     //int rc = write_VC ( 0, stream->_base, stream->_w ); 
+ 
+ 
+    // #test
+    // Clear the buffer ???
+    memset ( stream->_base, 0, stream->_lbfsize);
+    rewind(stream);
  
  
     stream->_w = 0;
@@ -3895,16 +3912,32 @@ void perror (const char *str){
 }
 
 
+
+// #bugbug
+// Isso deve acontecer somente na estrutura de stream
+// em ring 3.
 // O ponto de leitura e escrita volta a ser a base.
+
 void rewind (FILE *stream){
 
     if ( (void *) stream == NULL )
         return;
 
+
+    stream->_p = stream->_base;
+    stream->_w = 0;
+    stream->_r = 0;
+
+    //#bugbug
+    // não mandamos ponteiro de estrutura de stream para o kernel
+    // ele nem sabe o que é isso.
+    
+    /*
     gramado_system_call ( 609, 
         (unsigned long) stream, 
         (unsigned long) stream, 
         (unsigned long) stream ); 
+    */
 }
 
 

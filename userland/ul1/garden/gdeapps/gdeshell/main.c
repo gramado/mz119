@@ -1715,12 +1715,8 @@ NewCmdLine:
 	// Se alguem pressiona [ENTER] com prompt vazio dá page fault ?
 	// Isso cancela caso o buffer esteja vazio.
 
-    if ( *c == '\0' )
-    {
-        //printf ("empty line\n");
-        printf ("\n");
-        fflush(stdout);
-        rewind(stdout);
+    if ( *c == '\0' ){
+        shellInsertLF();
         goto exit_cmp;
     }
 
@@ -1768,6 +1764,7 @@ fixing_command_line:
 		// de espaços depois apertou enter. Não há mais o que fazer.
 
         if ( *c == '\0' ){
+            shellInsertLF();
             goto exit_cmp;
         }
 
@@ -1989,6 +1986,14 @@ this_directory:
 do_command:	
     //nothing.	
 do_compare:
+
+
+    // #test
+    // À partir daqui teremos comandos que são aplicativos,
+    // ou comandos que falharam, ou comandos embutidos.
+    // Vamos mostrar o output na próxima linha.
+
+    shellInsertLF();
 
     // Ordem:
     // + Primeiro alguns comandos extra.
