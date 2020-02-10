@@ -868,6 +868,8 @@ void *gde_extra_services ( unsigned long number,
 	// O arg2 é o PID.
 	// Devemos retornar o ponteiro para o stdout do terminal
 	// associado com o aplicativo.
+	
+	//#bugbug: Não usar mais isso.
     if ( number == 1000 )
     {
         return (void *) CurrentTTY->stdout;
@@ -1056,12 +1058,12 @@ void *gde_extra_services ( unsigned long number,
     }
     
 
-    // Show root files ystem info.
-    if ( number == 4444 )
-    {
+    // Show root files system info.
+    if ( number == 4444 ){
         fs_show_root_fs_info();
         return NULL;
     }
+    
     
     //socket() la libc.
     //chamaremos a rotina na crts/klibc
