@@ -49,5 +49,6 @@ Please, give me some feedback.
 ## More information
 
 Gramado is a Free and Open Source operating system created by Fred Nora.
+
 The source code uses the BSD license.
 
