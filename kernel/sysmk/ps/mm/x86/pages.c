@@ -264,10 +264,10 @@ void *CreatePageDirectory (void){
     // Precisamos usar o endereço virtual para manipularmos os dados,
 	// pois estamos no esquema de memória do kernel base.
 
-	
-	unsigned long *src = (unsigned long *) gKernelPageDirectoryAddress;  
 
-	unsigned long *dst = (unsigned long *) destAddressVA;  
+    unsigned long *src = (unsigned long *) gKernelPageDirectoryAddress;  
+
+    unsigned long *dst = (unsigned long *) destAddressVA;  
 	
 	
 	//
@@ -1668,221 +1668,6 @@ int SetUpPaging (void){
 }
 
 
-/*
- * initializeFramesAlloc:
- *     Inicializa o framepool. 
- */
-
-void initializeFramesAlloc (void){
-	
-	int Index;
-	struct page_d *p;
-	
-	//
-	// Inicializando a lista de pages.
-	//
-	
-	for ( Index=0; Index < PAGE_COUNT_MAX; Index++ )
-	{	
-	    pageAllocList[Index] = (unsigned long) 0;
-	};
-	
-	
-	//
-	// Criando o primeiro para testes.
-	//
-	
-	p = (void *) kmalloc ( sizeof( struct page_d ) );
-	
-	if ( p == NULL )
-	{
-		printf ("initializeFramesAlloc:\n");
-		return;
-		//goto done;
-		
-	}else{
-		
-	    p->id = 0;
-	
-	    p->used = 1;
-	    p->magic = 1234;
-	
-	    p->free = 0;  //not free
-	    p->next = NULL; 
-	    //...	
-	
-	    pageAllocList[0] = ( unsigned long ) p; 		
-	};	
-}
-
-
-
-/*
- ***********************************************
- * allocPages:
- *
- * @param número de páginas contíguas.
- * Obs: Pode ser que os pageframes não sejam 
- * contíguos mas as páginas serão.
- * estamos usando uma page table toda já mapeada. 4MB.
- * @TODO: ESSA ROTINA ESTÁ INCOMPLETA ... REVISAR. #bugbug
- *
- * #bugbug: se estamos lidando com o endereço base vitual, então estamos 
- * lidando com páginas pre alocadas e não pageframes.
- */
- 
-// #bugbug
-// Estamos alocando memória compartilhada?
-// então seria sh_allocPages() 
-
-void *allocPages (int size){
-	
-	int Index;
-	
-	//página inicial da lista
-	struct page_d *Ret;   
-	
-	struct page_d *Conductor;
-	struct page_d *p;
-	
-	//Esse é o endereço virtual do início do pool de pageframes.
-	unsigned long base = (unsigned long) g_pagedpool_va;
-	
-	unsigned long va;
-    unsigned long pa;
-	
-	int Count = 0;
-	
-	//
-	// Checando limites.
-	//
-	
-//#ifdef MK_VERBOSE
-    //printf ("allocPages: Initializing ...\n");	
-//#endif
-
-	//problemas com o size.
-	if (size <= 0)
-	{
-		//if debug
-		printf ("allocPages: size 0\n");
-		return NULL;
-	};
-	
-			
-    //Se é pra alocar apenas uma página.
-	if (size == 1)
-	{		
-		return (void *) newPage ();	
-	}	
-	
-	//se o size for maior que o limite.
-    if ( size > PAGE_COUNT_MAX )
-	{
-		//if debug
-		printf ("allocPages: size limits\n");
-		goto fail;
-	}
-	
-	
-	//
-	// Isso encontra slots o suficiente para alocarmos tudo o que queremos.
-	//
-	
-	int Base;
-	
-	Base = firstSlotForAList (size);
-	
-	if ( Base == -1 )
-	{
-		printf("Base = -1 \n");
-		goto fail;
-	}
-	
-//#ifdef MK_VERBOSE	
-    //printf ("allocPages: for ...\n");		
-//#endif 
- 
-	//começamos a contar do frame logo após o condutor.
-	
-	for (Index = Base; Index < (Base+size+1); Index++ )
-	{
-	    p = (void *) pageAllocList[Index];
-				
-		//Slot livre
-		if ( p == NULL )
-		{
-			//#bugbug
-			//Isso pode esgotar o heap do kernel
-			
-			p = (void *) kmalloc ( sizeof( struct page_d ) );
-			
-			if ( p == NULL )
-			{
-				printf ("allocPages: fail 2\n");
-				goto fail;
-			};
-			
-			//printf("#");
-			p->id = Index;
-			
-			p->used = 1;
-			p->magic = 1234;
-			
-			//not free
-			p->free = 0;  
-
-			//----
-			
-			p->locked = 0;
-			
-			//contador de referências
-			p->ref_count = 1;	
-			
-			//pegando o endereço virtual.
-			va = (unsigned long) ( base + (p->id * 4096) );    
-			pa = (unsigned long) virtual_to_physical ( va, gKernelPageDirectoryAddress ); 
-			
-	
-			if ( ( pa % PAGE_SIZE) != 0 ) 
-			{		
-			    pa = pa - ( pa % PAGE_SIZE);			
-			}	 	
-			
-			p->frame_number = (pa / PAGE_SIZE);
-			
-			if ( pa == 0 )
-			{
-			    p->frame_number = 0;
-			}
-			
-			//---
-			
-			pageAllocList[Index] = ( unsigned long ) p; 
-			
-			Conductor->next = (void *) p;
-			Conductor = (void *) Conductor->next;
-			
-			Count++;
-			if( Count >= size )
-			{
-				Ret = (void *) pageAllocList[Base];
-			    goto done;	
-			}	
-		};
-	};
-	
-fail:
-    printf ("allocPages: fail \n");		
-    return NULL;	
-
-	//#Importante:
-	//Retornaremos o endereço virtual inicial do primeiro pageframe da lista.
-	    
-done:
-
-    return (void *) ( base + (Ret->id * 4096) );
-}
 
 
 //checar se a estrutura de p'agina é nula
@@ -1921,45 +1706,6 @@ void notfreePage (struct page_d *p){
 	}		
 }
 
-
-/*
- ***************************************************************
- * firstSlotForAList:
- *     Retorna o primeiro índice de uma sequência de slots livres 
- * em pageAllocList[].
- */
-
-int firstSlotForAList ( int size ){
-	
-	int Index;
-	int Base = 0;
-	int Count = 0;
-    void *slot;
-	
-tryAgain:
-	
-	for ( Index=Base; Index < 1024; Index++ )
-	{
-	    slot = (void *) pageAllocList[Index];
-		
-		if ( (void *) slot != NULL )
-		{
-			Base = Base+Count;
-			Base++;
-			Count = 0;
-			goto tryAgain;			
-		}
-		
-		Count++; 
-		
-		if (Count >= size){
-			return (int) Base;
-		}
-	};
-
-
-    return (int) -1;
-}
 
 
 
@@ -2003,6 +1749,41 @@ virtual_to_physical ( unsigned long virtual_address,
 
     return (unsigned long) (address + o);
 }
+
+
+// Testando essa rotina.
+void pages_calc_mem(void)
+{
+    int i,j,k,free=0;
+
+
+    long *pg_dir = (long *) gKernelPageDirectoryAddress;   
+    long *pg_tbl;
+
+
+    printf("\n\n");
+
+    //for(i=0 ; i<PAGING_PAGES ; i++)
+    //    if (!mem_map[i]) free++;
+    //printf("%d pages free (of %d)\n\r",free,PAGING_PAGES);
+
+    for (i=0 ; i<1024 ; i++)
+    {
+        if (1&pg_dir[i])
+        {
+            pg_tbl = (long *) (0xfffff000 & pg_dir[i]);
+
+            for(j=k=0 ; j<1024 ; j++)
+                if (pg_tbl[j]&1)
+                    k++;
+            printf("Pg-dir[%d] uses %d pages\n",i,k);
+        }
+    };
+    
+    refresh_screen();
+}
+
+
 
 
 //

@@ -1282,12 +1282,14 @@ void notfreePage (struct page_d *p);
 
 int firstSlotForAList (int size);
 
+
+
+
 //?? Talvez tenha que mudar de nome.
 //checar se estamos lidando com páginas ou com frames.
 void initializeFramesAlloc (void);
 
-
-//construtur
+//constructor
 //cria uma estrutura válida de página
 //cujo ponteiro ficará em uma lista.
 
@@ -1299,7 +1301,7 @@ void *allocPages (int size);
 void *newPage (void);            
 
 
-void testingPageAlloc (void);     //@todo: Rotina de teste. deletar.
+void testingPageAlloc (void); 
 
 
 
@@ -1308,6 +1310,7 @@ unsigned long
 virtual_to_physical ( unsigned long virtual_address, 
                       unsigned long dir_va ) ;
 
+void pages_calc_mem(void);
 
 //
 // Debug support.
