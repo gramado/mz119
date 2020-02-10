@@ -2886,13 +2886,13 @@ do_compare:
     }
 
 
-	// new
-	if ( strncmp( prompt, "new", 3 ) == 0 )
-	{
-	    printf("~new - New file or directory\n");
-	    goto exit_cmp;
-	}
-	
+    // network
+    if ( strncmp( prompt, "network", 7 ) == 0 ){
+        //printf ("~\n");
+        gramado_system_call( 968,0,0,0);
+        goto exit_cmp;
+    }
+
     
 	// mbr
 	// ?? Talvez mostrar informações sobre o mbr ou realizar testes.

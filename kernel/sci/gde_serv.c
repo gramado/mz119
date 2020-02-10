@@ -831,9 +831,16 @@ void *gde_extra_services ( unsigned long number,
     if ( number == 967 )
     {
         return (void *) network_procedure ( NULL,
-                        (int) 2000, //envie dados para o processo.
-                        (unsigned long) arg2,   //fd
-                        (unsigned long) arg3 );  //fd
+                            (int) 2000, //envie dados para o processo.
+                            (unsigned long) arg2,   //fd
+                            (unsigned long) arg3 );  //fd
+    }
+    
+    
+    // Testing network.
+    if (number == 968){
+        network_test();
+        return NULL;
     }
 
 

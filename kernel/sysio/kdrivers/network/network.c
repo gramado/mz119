@@ -80,7 +80,7 @@ int notification_status;
 
 //usada para enviar mensagens para os processo.
 //isso é um ponteiro.
-FILE *network__stream;
+file *network__stream;
 
 
 //FILE *___default_network__stream;
@@ -303,31 +303,32 @@ int networkInit (void){
 // Algum aplicativo pode pegar essas informações, uma a uma.
 
 void show_network_info (void){
-	
-	printf ("show_network_info:\n");
-	
-	if ( network_status == 1 )
-	    printf ("Network initialized\n");
 
-	if ( network_status == 0 )
-	    printf ("Network uninitialized\n");
-	
-	
-	if ( (void *) HostInfo == NULL )
-	{
-		printf ("show_network_info: HostInfo");
-		return;	
-	}else{
+    printf ("show_network_info:\n");
+
+    if ( network_status == 1 )
+        printf ("Network initialized\n");
+
+    if ( network_status == 0 )
+        printf ("Network uninitialized\n");
+
+
+    if ( (void *) HostInfo == NULL ){
+        printf ("show_network_info: HostInfo");
+        return;
+
+    }else{
 
 	    //#todo: 
 	    printf ("Host name %s\n ", HostInfo->hostName );
 	    printf ("IP %s \n ", HostInfo->hostIP );
 	    printf ("MAC %s \n ", HostInfo->hostMAC );	
 	    //...
-	};
-	
-	//nic
-	show_current_nic_info ();
+    };
+
+
+    //nic
+    show_current_nic_info ();
 }
 
 
@@ -523,6 +524,26 @@ handle_ipv6 ( struct intel_nic_info_d *nic,
 
 
 
+
+
+
+void network_test(void)
+{
+    debug_print("network_test: \n");
+    
+    debug_print("network_test: Test NIC \n");
+    testNIC();
+
+    debug_print("network_test: Show info\n");
+    show_network_info();
+    
+    
+    refresh_screen();
+    debug_print("network_test: done\n");
+}
+
+
+
 /*
  **********************************************************
  * testNIC:
@@ -535,6 +556,9 @@ handle_ipv6 ( struct intel_nic_info_d *nic,
 // Essa rotina aciona uma flag que (DESTRAVA) o handler da interrupção.
 
 void testNIC (void){
+
+
+    debug_print ("testNIC:\n");
 
     printf ("\n\n ==== TEST NIC ==== \n\n"); 
 
@@ -640,7 +664,7 @@ network_SendIPV4_UDP ( uint8_t source_ip[4],
     int i=0;
     int j=0;
 
-	// ethernet, arp, ipv4, udp.
+    // ethernet, arp, ipv4, udp.
     struct ether_header *eh;
     struct ether_arp *h;
     struct ipv4_header_d *ipv4;
@@ -651,21 +675,19 @@ network_SendIPV4_UDP ( uint8_t source_ip[4],
 	// NIC Intel device structure.
 	//
 
-    if ( currentNIC == NULL )
-    {
+    if ( currentNIC == NULL ){
         printf ("network_SendIPV4_UDP: currentNIC fail\n");
         return -1;
 
     }else{
 
-		// Configurando a estrutura do dispositivo.
+        // Configurando a estrutura do dispositivo.
 
         currentNIC->ip_address[0] = source_ip[0];  //192;
         currentNIC->ip_address[1] = source_ip[1];  //168;
         currentNIC->ip_address[2] = source_ip[2];  //1;
         currentNIC->ip_address[3] = source_ip[3];  //112;
-
-		//...
+        //...
     };
 
 
@@ -677,8 +699,7 @@ network_SendIPV4_UDP ( uint8_t source_ip[4],
 
     eh = (void *) kmalloc ( sizeof(struct ether_header ) );
 
-    if ( (void *) eh == NULL)
-    {
+    if ( (void *) eh == NULL){
         printf ("network_SendIPV4_UDP: eh fail");
         return -1;
 
@@ -690,8 +711,7 @@ network_SendIPV4_UDP ( uint8_t source_ip[4],
 		// O endereço mac da origem está na estrutura do controlador nic intel. 
 		// O endereço mac do destino foi passado via argumento.
 
-        for ( i=0; i<6; i++)
-        {
+        for ( i=0; i<6; i++ ){
             eh->src[i] = currentNIC->mac_address[i];    // source 
             eh->dst[i] = target_mac[i];                 // dest. 
         };
@@ -710,8 +730,7 @@ network_SendIPV4_UDP ( uint8_t source_ip[4],
 
     ipv4 = (void *) kmalloc ( sizeof(struct ipv4_header_d) );
 
-    if ( (void *) ipv4 == NULL)
-    {
+    if ( (void *) ipv4 == NULL){
         printf ("network_SendIPV4_UDP: ipv4 fail\n");
         return -1;
 
@@ -750,8 +769,7 @@ network_SendIPV4_UDP ( uint8_t source_ip[4],
 
     udp = (void *) kmalloc ( sizeof(struct udp_header_d) );
 
-    if ( (void *) udp == NULL)
-    {
+    if ( (void *) udp == NULL){
         printf ("network_SendIPV4_UDP: udp fail\n");
         return -1;
 
@@ -834,31 +852,33 @@ network_SendIPV4_UDP ( uint8_t source_ip[4],
 
 	//Step1
 	//copia o header ethernet
-	for ( j=0; j<ETHERNET_HEADER_LENGHT; j++ )
-	{
-		buffer[j] = src_ethernet[j];
-	};
+	
+    for ( j=0; j<ETHERNET_HEADER_LENGHT; j++ )
+    {
+        buffer[j] = src_ethernet[j];
+    };
 
 	//Step2
 	//copia o ipv4
-	for ( j=0; j<IPV4_HEADER_LENGHT; j++ )
-	{
-		buffer[j + ETHERNET_HEADER_LENGHT] = src_ipv4[j];
-	};
+
+    for ( j=0; j<IPV4_HEADER_LENGHT; j++ )
+    {
+        buffer[j + ETHERNET_HEADER_LENGHT] = src_ipv4[j];
+    };
 
 	//Step3
 	//copia o udp
-	for ( j=0; j<UDP_HEADER_LENGHT; j++ )
-	{
-		buffer[j + ETHERNET_HEADER_LENGHT +IPV4_HEADER_LENGHT] = src_udp[j];
-	};
+    for ( j=0; j<UDP_HEADER_LENGHT; j++ )
+    {
+        buffer[j + ETHERNET_HEADER_LENGHT +IPV4_HEADER_LENGHT] = src_udp[j];
+    };
 
 	//Step4
 	//copia o xxxdata
-	for ( j=0; j<32; j++ )
-	{
-		buffer[j + ETHERNET_HEADER_LENGHT + IPV4_HEADER_LENGHT + UDP_HEADER_LENGHT] = data[j];
-	};
+    for ( j=0; j<32; j++ )
+    {
+        buffer[j + ETHERNET_HEADER_LENGHT + IPV4_HEADER_LENGHT + UDP_HEADER_LENGHT] = data[j];
+    };
 
 
 
@@ -913,12 +933,30 @@ network_SendIPV4_UDP ( uint8_t source_ip[4],
 	// Checamos o status do buffer old pra ver se ele foi enviado.
 	// Fica travado aqui até que seja enviado?
 	// Poderia ter um timemout?.
+	
 
+    int t;
+    for (t=0; t< 25000;t++)
+    {
+         if ( (currentNIC->legacy_tx_descs[old].status & 0xFF) == 1 )
+         {
+              printf ("Ok");
+              debug_print ("network_SendIPV4_UDP: done\n");
+              return 0;
+         }
+    }
+
+    //#todo
+    /*
     while ( !(currentNIC->legacy_tx_descs[old].status & 0xFF) )
     {
         // Nothing.
     };
-    
+    */    
+
+    printf (">>>> fail timeout\n");
+    debug_print ("network_SendIPV4_UDP: timeout\n");
+    debug_print ("network_SendIPV4_UDP: done\n");
     
     return 0;
 }
@@ -948,13 +986,13 @@ SendARP ( uint8_t source_ip[4],
     struct ether_header *eh;
     struct ether_arp *h;
 
+    debug_print ("SendARP:\n");
 
 	//
 	// nic device structure.
 	//
 
-    if ( currentNIC == NULL )
-    {
+    if ( currentNIC == NULL ){
         printf ("SendARP: currentNIC fail\n");
         return;
 
@@ -979,10 +1017,10 @@ SendARP ( uint8_t source_ip[4],
 
     eh = (void *) kmalloc ( sizeof(struct ether_header ) );
 
-    if ( (void *) eh == NULL)
-    {
+    if ( (void *) eh == NULL){
         printf ("SendARP: eh struct fail\n");
         return;
+ 
     }else{
 
 		// Coloca na estrutura do ethernet header os seguintes valores: 
@@ -1010,10 +1048,10 @@ SendARP ( uint8_t source_ip[4],
 
     h = (void *) kmalloc ( sizeof(struct  ether_arp) );
 
-    if ( (void *) h == NULL)
-    {
+    if ( (void *) h == NULL){
         printf ("SendARP: struct h fail");
         return;
+  
     }else{
 
 
@@ -1041,11 +1079,11 @@ SendARP ( uint8_t source_ip[4],
 		// O endereço mac de origem pegamos na estrutura no nic intel.
 		// O endereço mac de destino foi passado via argumento.
 
-        for( i=0; i<6; i++)
-        {
-		    h->arp_sha[i] = currentNIC->mac_address[i]; 
-		    h->arp_tha[i] = target_mac[i]; 
+        for ( i=0; i<6; i++ ){
+            h->arp_sha[i] = currentNIC->mac_address[i]; 
+            h->arp_tha[i] = target_mac[i]; 
         };
+
 
 		// ip
 		// Configurando na estrutura de arp o endereço do ip de origem e 
@@ -1054,8 +1092,7 @@ SendARP ( uint8_t source_ip[4],
 		// target ip
 		// Os endereços foram passados via argumento.
 		
-        for ( i=0; i<4; i++)
-        {
+        for ( i=0; i<4; i++ ){
             h->arp_spa[i] = source_ip[i]; 
             h->arp_tpa[i] = target_ip[i]; 
         };
@@ -1200,10 +1237,30 @@ SendARP ( uint8_t source_ip[4],
 	// Fica travado aqui até que seja enviado?
 	// Poderia ter um timemout?.
 
+
+    int t;
+    for (t=0; t< 25000;t++)
+    {
+         if ( (currentNIC->legacy_tx_descs[old].status & 0xFF) == 1 )
+         {
+              printf ("Ok");
+              debug_print ("SendARP: done\n");
+              return;
+         }
+    }
+    
+    //#todo
+    /*
     while ( !(currentNIC->legacy_tx_descs[old].status & 0xFF) )
     {
         // Nothing.
     };
+    */
+    
+    printf (">>>> fail timeout.\n");
+    debug_print ("SendARP: fail timeout.\n");    
+    
+    debug_print ("SendARP: done\n");
 }
 
 

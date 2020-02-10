@@ -1,6 +1,10 @@
+
 /*
  * File: network.h 
  *     header para o gerenciamento de rede.
+ * 
+ *  History: 
+ *      2019 - Created by Fred Nora.
  */
 
 
@@ -32,21 +36,21 @@
  *     Estrutura de rede.
  */ 
 
-typedef struct network_info_d network_info_t;
+
 struct network_info_d
 {
     int id;
-	
-	int used;
-	int magic;
-	
-	int networkIdentifier;  // Número identificador da rede.
-	char *networkName;      // Nome da rede.
+
+    int used;
+    int magic;
+
+    int networkIdentifier;  // Número identificador da rede.
+    char *networkName;      // Nome da rede.
     char *networkVersion;   // string mostrando a versão. ex: (1.1.1234)
-	unsigned short networkVersionMajor;
-	unsigned short networkVersionMinor; 
-	unsigned short networkVersionRevision;	
-	
+    unsigned short networkVersionMajor;
+    unsigned short networkVersionMinor; 
+    unsigned short networkVersionRevision;
+
 	//adaptador de rede.
 	//struct intel_nic_info_d *nic;
 	
@@ -54,10 +58,12 @@ struct network_info_d
 	//struct user_info_d *networkUserinfo;
 	
 	//..
-	
-	struct network_info_d *next;
+
+
+    struct network_info_d *next;
 };
 
+//struct network_info_d *Network;
 
 
 
@@ -73,21 +79,33 @@ network_procedure ( struct window_d *window,
                     unsigned long long2 );
 
 
+// Tests.
+
+void network_test(void);
+void testNIC (void);
+
+
+
 void networkSetstatus (int status);
 
 int networkGetStatus (void);
 
-void show_network_info (void);
 
+// Show info.
+void show_network_info (void);
 void show_current_nic_info (void);
 
 
 //manipular o pacote ipv6 recebido pelo handle do e1000.
 int handle_ipv6 ( struct intel_nic_info_d *nic, struct ipv6_header_d *header );
 
-void SendARP ( uint8_t source_ip[4], uint8_t target_ip[4], uint8_t target_mac[6] );
 
+// Send!
 
+void 
+SendARP ( uint8_t source_ip[4], 
+          uint8_t target_ip[4], 
+          uint8_t target_mac[6] );
 
 int
 network_SendIPV4_UDP ( uint8_t source_ip[4], 
@@ -96,7 +114,7 @@ network_SendIPV4_UDP ( uint8_t source_ip[4],
                        uint8_t data[32],
                        unsigned short port );
 
-void testNIC (void);
+
 
 
 // dialogo para o driver de rede.
@@ -109,6 +127,8 @@ network_driver_dialog ( struct window_d *window,
 int network_decode_buffer ( unsigned long buffer_address );
 
 
+
+// Handling requests.
 int do_ipv4 ( unsigned long buffer );
 int do_ipv6 ( unsigned long buffer );
 int do_arp ( unsigned long buffer );

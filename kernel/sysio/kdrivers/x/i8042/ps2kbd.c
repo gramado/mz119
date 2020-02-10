@@ -194,9 +194,9 @@ __local_ps2kbd_procedure ( struct window_d *window,
 
                 // 
                 case VK_F6:
-                    
-                    // #se o porcesso não existe vai dar problema.
-                    tty_send_message (103,buffer, 32, 444, 0, 0);
+                    testNIC();
+                    // #se o processo não existe vai dar problema.
+                    //tty_send_message (103,buffer, 32, 444, 0, 0);
                     //tty_send_message (104,buffer, 32, 444, 0, 0);
                     break;
 
