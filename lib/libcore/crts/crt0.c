@@ -26,14 +26,16 @@ static char *argv[] = {
 
 
 // Fake environment.
-//static char *envp[] = { 
-//    "VFSROOT=root:/volume0",           //root dir do vfs
-//    "BOOTVOLUMEROOT=root:/volume1",    //root dir do volume de boot
-//    "SYSTEMVOLUMEROOT=root:/volume2",  //root dir do volume do sistema
-//	NULL 
-//};
+static char *envp[] = { 
+    "PS0=TEST0",           
+    "PS1=TEST1",    
+    "PS2=TEST2",  
+	NULL 
+};
 
 
+
+extern char **environ;
 
 extern int main ( int argc, char *argv[] );
 
@@ -61,8 +63,11 @@ int crt0 (){
     // #importante
     // Linha de comandos passada pelo shell.
 
-    char *shared_memory = (char *) (0xC0800000 -0x100);	
+    char *shared_memory = (char *) (0xC0800000 -0x100);
 
+
+    //#todo getenvi vai precisar disso.
+    // environ = (char **) envp;
 
 /*
 #ifdef TEDITOR_VERBOSE	

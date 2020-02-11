@@ -529,6 +529,14 @@ int g_using_gui; //modo gráfico?
 
 // Fluxo padrão.
 //O alocador pode ignorar isso e criar outros buffers.
+
+// #bubgug
+// Isso não é um prompt, isso pe uma linha de comando.
+// O ideal seria mudar isso para cmdline[], desse modo
+// poderíamos criar a função prompt();
+//
+
+
 char prompt[PROMPT_MAX_DEFAULT];      //stdin
 char prompt_out[PROMPT_MAX_DEFAULT];  //stdout 
 char prompt_err[PROMPT_MAX_DEFAULT];  //stderr 

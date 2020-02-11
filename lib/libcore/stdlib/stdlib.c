@@ -1300,7 +1300,7 @@ char *__findenv ( const char *name, int *offset ){
  *     Credits: Apple open source.
  */
 
-char *getenv (const char *name){
+char *getenv2 (const char *name){
 
     int offset;
     char *result;
@@ -1326,8 +1326,8 @@ char *getenv (const char *name){
 /*linux klibc style*/
 //  char **environ é global nesse documento.
 // Talvez o lugar disso seja em ring0.
-/*
-char *getenv (const char *name);
+
+
 char *getenv (const char *name)
 {
     char **p, *q;
@@ -1336,7 +1336,7 @@ char *getenv (const char *name)
 
     for ( p = environ ; (q = *p) ; p++ )
     {
-        if ( !strncmp(name, q, len) && q[len] == '=' )
+        if ( !strncmp( (char *) name, q, len) && q[len] == '=' )
         {
              return q+(len+1);
         }
@@ -1344,7 +1344,7 @@ char *getenv (const char *name)
 
     return NULL;
 }
-*/
+
 
 
 

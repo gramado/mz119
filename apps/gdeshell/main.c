@@ -2330,16 +2330,7 @@ do_compare:
         goto exit_cmp;
 	}
 
-    // dialog-box
-	//Testing dialog box.
-	if ( strncmp( prompt, "dialog-box", 10 ) == 0 )
-	{
-		//@todo:testar os 4 tipos 
-	    gde_message_box ( 3, 
-	        "Shell dialog box","Testing dialog box...");
-        goto exit_cmp;
-    };		
-	
+
 	
 	// dir - Lista os arquivos no estilo DOS.
 	// ls  - Lista no estilu *NIX. Isso será um aplicativo.
@@ -2534,6 +2525,7 @@ do_compare:
         goto exit_cmp;
     };
 
+    /*
     // getusername 
     char *my_username;
 	if ( strncmp( prompt, "getusername", 11 ) == 0 )
@@ -2545,7 +2537,20 @@ do_compare:
 	    //printf (current_user_name);
         goto exit_cmp;
     };
+     */    
+
+
+    char *env_string;
+	if ( strncmp( prompt, "env", 3 ) == 0 )
+	{
+        env_string = (char *) getenv2("PS1");
+        printf(">>> %s .\n", env_string);
+        goto exit_cmp;
+
+        goto exit_cmp;
+    };
     
+
     
     // get names.
     
@@ -2658,15 +2663,7 @@ do_compare:
 		printf("done\n");
         goto exit_cmp;
     }	
-	
-	
-	// hd ??
-	// hd info maybe.
-    if ( strncmp( prompt, "hd", 2 ) == 0 )
-    {
-        printf ("~hd\n");
-        goto exit_cmp;
-    }
+
  
 
 	// help
@@ -2915,6 +2912,7 @@ do_compare:
     }
 
 
+
     // process-stats
     // Testando informações estatísticas sobre os processos.
     // #bugbug: Não mostra as informações dos processos clones.
@@ -3025,15 +3023,6 @@ do_compare:
     }
  
 
-	// rename - 
-	// rename directory or file.
-    if ( strncmp( prompt, "rename", 6 ) == 0 )
-    {
-        goto exit_cmp;
-    }
-
-
-
     // root
     // Show root file system info.
     if ( strncmp( prompt, "root", 4 ) == 0 )
@@ -3087,32 +3076,6 @@ do_compare:
     }
 
 
-    // show-screen-buffer
-    // Cancelada.
-    if ( strncmp( prompt, "show-screen-buffer", 18 ) == 0 )
-    {
-        goto exit_cmp;
-    }
-
-
-
-
-    // show-screen-buffer
-    // Cancelada.
-    if ( strncmp( prompt, "show-screen-buffer", 18 ) == 0 )
-    {
-        goto exit_cmp;
-    }
-
-
-    // shellinfo
-    // cancelada;
-    if ( strncmp( prompt, "shell-info", 10 ) == 0 )
-    {
-		printf ("nothing\n");
-        goto exit_cmp;
-    }
-
 
 	// socket
 	// Testando socket() da libc.
@@ -3160,7 +3123,6 @@ do_compare:
             
         goto exit_cmp;
     }
-
 
     // test-net
     // Testando a função socket() da libc
@@ -7739,7 +7701,8 @@ int main ( int argc, char *argv[] ){
   //extern int job_control;
 //#endif
 
-
+        
+        
 	
 	//
 	// Debug
