@@ -1,9 +1,0 @@
-
-
- #todo:
-     Create more libraries for this project.
-     The same application can use multiple libs.
-
-
-   #ps:
-     All the apps into this project is gonna run on the virtual terminal.

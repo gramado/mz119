@@ -10,8 +10,8 @@
 VERSION = 1
 PATCHLEVEL = 29
 SUBLEVEL = 0
-EXTRAVERSION = -rc9
-NAME = 
+EXTRAVERSION = 
+NAME = prek
 
 
 
@@ -77,7 +77,7 @@ ARCH ?= x86
 
 
 
-#GRAMADOINCLUDE := -I include/
+
 
 
 # Setup disk:
@@ -106,6 +106,8 @@ CFLAGS = -m32 \
 	-Werror=strict-prototypes 
 
 
+#TODO TEM O NASM TAMBEM.
+KINCLUDE = -I kernel/include/
 
 
 ##
@@ -230,231 +232,231 @@ KERNEL.BIN:
 	# /entry
 	
 	nasm kernel/sci/arch/x86/entry/head/boot.asm -I kernel/sci/arch/x86/entry/head/ -f elf -o boot.o
-	
-	gcc -c kernel/sci/arch/x86/entry/x86main.c  -I include/ $(CFLAGS) -o x86main.o
+
+	gcc -c kernel/sci/arch/x86/entry/x86main.c  $(KINCLUDE) $(CFLAGS) -o x86main.o
 	
     #main
-	gcc -c kernel/main.c  -I include/ $(CFLAGS) -o main.o
+	gcc -c kernel/main.c $(KINCLUDE) $(CFLAGS) -o main.o
 
 	# /hal
-	gcc -c kernel/sysio/hal/hal.c                -I include/ $(CFLAGS) -o hal.o
-	gcc -c kernel/sysio/hal/arch/detect.c        -I include/ $(CFLAGS) -o detect.o
-	gcc -c kernel/sysio/hal/arch/amd/cpuamd.c    -I include/ $(CFLAGS) -o cpuamd.o
-	gcc -c kernel/sysio/hal/arch/x86/portsx86.c  -I include/ $(CFLAGS) -o portsx86.o
-	gcc -c kernel/sysio/hal/arch/x86/syscall.c   -I include/ $(CFLAGS) -o syscall.o
-	gcc -c kernel/sysio/hal/arch/x86/x86.c       -I include/ $(CFLAGS) -o x86.o
+	gcc -c kernel/sysio/hal/hal.c                $(KINCLUDE) $(CFLAGS) -o hal.o
+	gcc -c kernel/sysio/hal/arch/detect.c        $(KINCLUDE) $(CFLAGS) -o detect.o
+	gcc -c kernel/sysio/hal/arch/amd/cpuamd.c    $(KINCLUDE) $(CFLAGS) -o cpuamd.o
+	gcc -c kernel/sysio/hal/arch/x86/portsx86.c  $(KINCLUDE) $(CFLAGS) -o portsx86.o
+	gcc -c kernel/sysio/hal/arch/x86/syscall.c   $(KINCLUDE) $(CFLAGS) -o syscall.o
+	gcc -c kernel/sysio/hal/arch/x86/x86.c       $(KINCLUDE) $(CFLAGS) -o x86.o
 
 	# /mk
-	gcc -c  kernel/sysmk/mk.c -I include/  $(CFLAGS) -o mk.o
+	gcc -c  kernel/sysmk/mk.c $(KINCLUDE)  $(CFLAGS) -o mk.o
 
 	# /ps/arch
-	gcc -c  kernel/sysmk/ps/arch/x86/x86cont.c   -I include/  $(CFLAGS) -o x86cont.o
-	gcc -c  kernel/sysmk/ps/arch/x86/x86fault.c  -I include/  $(CFLAGS) -o x86fault.o
-	gcc -c  kernel/sysmk/ps/arch/x86/x86start.c  -I include/  $(CFLAGS) -o x86start.o
+	gcc -c  kernel/sysmk/ps/arch/x86/x86cont.c   $(KINCLUDE)  $(CFLAGS) -o x86cont.o
+	gcc -c  kernel/sysmk/ps/arch/x86/x86fault.c  $(KINCLUDE)  $(CFLAGS) -o x86fault.o
+	gcc -c  kernel/sysmk/ps/arch/x86/x86start.c  $(KINCLUDE)  $(CFLAGS) -o x86start.o
 
 	# /ps/action
-	gcc -c  kernel/sysmk/ps/action/dispatch.c  -I include/  $(CFLAGS) -o dispatch.o
-	gcc -c  kernel/sysmk/ps/action/pheap.c     -I include/  $(CFLAGS) -o pheap.o
-	gcc -c  kernel/sysmk/ps/action/process.c   -I include/  $(CFLAGS) -o process.o
-	gcc -c  kernel/sysmk/ps/action/queue.c     -I include/  $(CFLAGS) -o queue.o
-	gcc -c  kernel/sysmk/ps/action/spawn.c     -I include/  $(CFLAGS) -o spawn.o
-	gcc -c  kernel/sysmk/ps/action/tasks.c     -I include/  $(CFLAGS) -o tasks.o
-	gcc -c  kernel/sysmk/ps/action/theap.c     -I include/  $(CFLAGS) -o theap.o
-	gcc -c  kernel/sysmk/ps/action/thread.c    -I include/  $(CFLAGS) -o thread.o
-	gcc -c  kernel/sysmk/ps/action/threadi.c   -I include/  $(CFLAGS) -o threadi.o
-	gcc -c  kernel/sysmk/ps/action/ts.c        -I include/  $(CFLAGS) -o ts.o
-	gcc -c  kernel/sysmk/ps/action/tstack.c    -I include/  $(CFLAGS) -o tstack.o
+	gcc -c  kernel/sysmk/ps/action/dispatch.c  $(KINCLUDE)  $(CFLAGS) -o dispatch.o
+	gcc -c  kernel/sysmk/ps/action/pheap.c     $(KINCLUDE)  $(CFLAGS) -o pheap.o
+	gcc -c  kernel/sysmk/ps/action/process.c   $(KINCLUDE)  $(CFLAGS) -o process.o
+	gcc -c  kernel/sysmk/ps/action/queue.c     $(KINCLUDE)  $(CFLAGS) -o queue.o
+	gcc -c  kernel/sysmk/ps/action/spawn.c     $(KINCLUDE)  $(CFLAGS) -o spawn.o
+	gcc -c  kernel/sysmk/ps/action/tasks.c     $(KINCLUDE)  $(CFLAGS) -o tasks.o
+	gcc -c  kernel/sysmk/ps/action/theap.c     $(KINCLUDE)  $(CFLAGS) -o theap.o
+	gcc -c  kernel/sysmk/ps/action/thread.c    $(KINCLUDE)  $(CFLAGS) -o thread.o
+	gcc -c  kernel/sysmk/ps/action/threadi.c   $(KINCLUDE)  $(CFLAGS) -o threadi.o
+	gcc -c  kernel/sysmk/ps/action/ts.c        $(KINCLUDE)  $(CFLAGS) -o ts.o
+	gcc -c  kernel/sysmk/ps/action/tstack.c    $(KINCLUDE)  $(CFLAGS) -o tstack.o
 
 	# /ps/ipc
-	gcc -c  kernel/sysmk/ps/ipc/callfar.c  -I include/  $(CFLAGS) -o callfar.o
-	gcc -c  kernel/sysmk/ps/ipc/callout.c  -I include/  $(CFLAGS) -o callout.o
-	gcc -c  kernel/sysmk/ps/ipc/ipc.c      -I include/  $(CFLAGS) -o ipc.o
-	gcc -c  kernel/sysmk/ps/ipc/ipccore.c  -I include/  $(CFLAGS) -o ipccore.o
-	gcc -c  kernel/sysmk/ps/ipc/sem.c      -I include/  $(CFLAGS) -o sem.o
+	gcc -c  kernel/sysmk/ps/ipc/callfar.c  $(KINCLUDE)  $(CFLAGS) -o callfar.o
+	gcc -c  kernel/sysmk/ps/ipc/callout.c  $(KINCLUDE)  $(CFLAGS) -o callout.o
+	gcc -c  kernel/sysmk/ps/ipc/ipc.c      $(KINCLUDE)  $(CFLAGS) -o ipc.o
+	gcc -c  kernel/sysmk/ps/ipc/ipccore.c  $(KINCLUDE)  $(CFLAGS) -o ipccore.o
+	gcc -c  kernel/sysmk/ps/ipc/sem.c      $(KINCLUDE)  $(CFLAGS) -o sem.o
 
 
 	# /ps/mm (memory manager)
 
 	#x86
-	gcc -c  kernel/sysmk/ps/mm/x86/memory.c  -I include/ $(CFLAGS) -o memory.o
-	gcc -c  kernel/sysmk/ps/mm/x86/mminfo.c  -I include/ $(CFLAGS) -o mminfo.o
-	gcc -c  kernel/sysmk/ps/mm/x86/mmpool.c  -I include/ $(CFLAGS) -o mmpool.o
-	gcc -c  kernel/sysmk/ps/mm/x86/pages.c   -I include/ $(CFLAGS) -o pages.o
+	gcc -c  kernel/sysmk/ps/mm/x86/memory.c  $(KINCLUDE) $(CFLAGS) -o memory.o
+	gcc -c  kernel/sysmk/ps/mm/x86/mminfo.c  $(KINCLUDE) $(CFLAGS) -o mminfo.o
+	gcc -c  kernel/sysmk/ps/mm/x86/mmpool.c  $(KINCLUDE) $(CFLAGS) -o mmpool.o
+	gcc -c  kernel/sysmk/ps/mm/x86/pages.c   $(KINCLUDE) $(CFLAGS) -o pages.o
 
 	#arm
 
 	# /ps/sched
-	gcc -c  kernel/sysmk/ps/sched/preempt.c   -I include/ $(CFLAGS) -o preempt.o
-	gcc -c  kernel/sysmk/ps/sched/priority.c  -I include/ $(CFLAGS) -o priority.o
-	gcc -c  kernel/sysmk/ps/sched/sched.c     -I include/ $(CFLAGS) -o sched.o
-	gcc -c  kernel/sysmk/ps/sched/schedi.c    -I include/ $(CFLAGS) -o schedi.o
+	gcc -c  kernel/sysmk/ps/sched/preempt.c   $(KINCLUDE) $(CFLAGS) -o preempt.o
+	gcc -c  kernel/sysmk/ps/sched/priority.c  $(KINCLUDE) $(CFLAGS) -o priority.o
+	gcc -c  kernel/sysmk/ps/sched/sched.c     $(KINCLUDE) $(CFLAGS) -o sched.o
+	gcc -c  kernel/sysmk/ps/sched/schedi.c    $(KINCLUDE) $(CFLAGS) -o schedi.o
 
 	#sysmk
-	gcc -c kernel/sysmk/create.c  -I include/  $(CFLAGS) -o create.o
+	gcc -c kernel/sysmk/create.c  $(KINCLUDE)  $(CFLAGS) -o create.o
 
 	#kernel
-	gcc -c  kernel/request.c  -I include/ $(CFLAGS) -o request.o
-	gcc -c  kernel/panic.c    -I include/ $(CFLAGS) -o panic.o
-	gcc -c  kernel/reboot.c   -I include/ $(CFLAGS) -o reboot.o
+	gcc -c  kernel/request.c  $(KINCLUDE) $(CFLAGS) -o request.o
+	gcc -c  kernel/panic.c    $(KINCLUDE) $(CFLAGS) -o panic.o
+	gcc -c  kernel/reboot.c   $(KINCLUDE) $(CFLAGS) -o reboot.o
 
 
 	# /execve
-	gcc -c kernel/syssm/execve/execve.c  -I include/ $(CFLAGS) -o execve.o
+	gcc -c kernel/syssm/execve/execve.c  $(KINCLUDE) $(CFLAGS) -o execve.o
 
 
 	# kernel/syslib/libcore
-	gcc -c kernel/syslib/libcore/pipe.c      -I include/ $(CFLAGS) -o pipe.o
-	gcc -c kernel/syslib/libcore/socket.c  -I include/ $(CFLAGS) -o socket.o
-	gcc -c kernel/syslib/libcore/ctype.c   -I include/ $(CFLAGS) -o ctype.o
-	gcc -c kernel/syslib/libcore/kstdio.c   -I include/ $(CFLAGS) -o kstdio.o
-	gcc -c kernel/syslib/libcore/stdlib.c  -I include/ $(CFLAGS) -o stdlib.o
-	gcc -c kernel/syslib/libcore/string.c  -I include/ $(CFLAGS) -o string.o
-	gcc -c kernel/syslib/libcore/unistd.c  -I include/ $(CFLAGS) -o unistd.o
+	gcc -c kernel/syslib/libcore/pipe.c    $(KINCLUDE) $(CFLAGS) -o pipe.o
+	gcc -c kernel/syslib/libcore/socket.c  $(KINCLUDE) $(CFLAGS) -o socket.o
+	gcc -c kernel/syslib/libcore/ctype.c   $(KINCLUDE) $(CFLAGS) -o ctype.o
+	gcc -c kernel/syslib/libcore/kstdio.c  $(KINCLUDE) $(CFLAGS) -o kstdio.o
+	gcc -c kernel/syslib/libcore/stdlib.c  $(KINCLUDE) $(CFLAGS) -o stdlib.o
+	gcc -c kernel/syslib/libcore/string.c  $(KINCLUDE) $(CFLAGS) -o string.o
+	gcc -c kernel/syslib/libcore/unistd.c  $(KINCLUDE) $(CFLAGS) -o unistd.o
 
 
-	gcc -c kernel/sysio/kdrivers/apic.c    -I include/ $(CFLAGS) -o apic.o
-	gcc -c kernel/sysio/kdrivers/pic.c     -I include/ $(CFLAGS) -o pic.o
-	gcc -c kernel/sysio/kdrivers/rtc.c     -I include/ $(CFLAGS) -o rtc.o
-	gcc -c kernel/sysio/kdrivers/serial.c  -I include/ $(CFLAGS) -o serial.o
-	gcc -c kernel/sysio/kdrivers/timer.c   -I include/ $(CFLAGS) -o timer.o
+	gcc -c kernel/sysio/kdrivers/apic.c    $(KINCLUDE) $(CFLAGS) -o apic.o
+	gcc -c kernel/sysio/kdrivers/pic.c     $(KINCLUDE) $(CFLAGS) -o pic.o
+	gcc -c kernel/sysio/kdrivers/rtc.c     $(KINCLUDE) $(CFLAGS) -o rtc.o
+	gcc -c kernel/sysio/kdrivers/serial.c  $(KINCLUDE) $(CFLAGS) -o serial.o
+	gcc -c kernel/sysio/kdrivers/timer.c   $(KINCLUDE) $(CFLAGS) -o timer.o
 
 
 	# kdrivers/ahci 
 	# todo
-	gcc -c kernel/sysio/kdrivers/ahci/ahci.c  -I include/ $(CFLAGS) -o ahci.o
+	gcc -c kernel/sysio/kdrivers/ahci/ahci.c  $(KINCLUDE) $(CFLAGS) -o ahci.o
 	
 		
 	#ide support
-	gcc -c kernel/sysio/kdrivers/ide/hdd.c      -I include/ $(CFLAGS) -o hdd.o
-	gcc -c kernel/sysio/kdrivers/ide/ata.c      -I include/ $(CFLAGS) -o ata.o
-	gcc -c kernel/sysio/kdrivers/ide/atainit.c  -I include/ $(CFLAGS) -o atainit.o
-	gcc -c kernel/sysio/kdrivers/ide/atairq.c   -I include/ $(CFLAGS) -o atairq.o
-	gcc -c kernel/sysio/kdrivers/ide/atapci.c   -I include/ $(CFLAGS) -o atapci.o	
-	gcc -c kernel/sysio/kdrivers/ide/atadma.c   -I include/ $(CFLAGS) -o atadma.o	
+	gcc -c kernel/sysio/kdrivers/ide/hdd.c      $(KINCLUDE) $(CFLAGS) -o hdd.o
+	gcc -c kernel/sysio/kdrivers/ide/ata.c      $(KINCLUDE) $(CFLAGS) -o ata.o
+	gcc -c kernel/sysio/kdrivers/ide/atainit.c  $(KINCLUDE) $(CFLAGS) -o atainit.o
+	gcc -c kernel/sysio/kdrivers/ide/atairq.c   $(KINCLUDE) $(CFLAGS) -o atairq.o
+	gcc -c kernel/sysio/kdrivers/ide/atapci.c   $(KINCLUDE) $(CFLAGS) -o atapci.o	
+	gcc -c kernel/sysio/kdrivers/ide/atadma.c   $(KINCLUDE) $(CFLAGS) -o atadma.o	
 	
 	# kdrivers/network
-	gcc -c kernel/sysio/kdrivers/network/channel.c   -I include/ $(CFLAGS) -o channel.o
-	gcc -c kernel/sysio/kdrivers/network/nicintel.c  -I include/ $(CFLAGS) -o nicintel.o
-	gcc -c kernel/sysio/kdrivers/network/network.c   -I include/ $(CFLAGS) -o network.o
-	gcc -c kernel/sysio/kdrivers/network/nsocket.c   -I include/ $(CFLAGS) -o nsocket.o
+	gcc -c kernel/sysio/kdrivers/network/channel.c   $(KINCLUDE) $(CFLAGS) -o channel.o
+	gcc -c kernel/sysio/kdrivers/network/nicintel.c  $(KINCLUDE) $(CFLAGS) -o nicintel.o
+	gcc -c kernel/sysio/kdrivers/network/network.c   $(KINCLUDE) $(CFLAGS) -o network.o
+	gcc -c kernel/sysio/kdrivers/network/nsocket.c   $(KINCLUDE) $(CFLAGS) -o nsocket.o
 
 	# kdrivers/pci
-	gcc -c kernel/sysio/kdrivers/pci/pci.c      -I include/ $(CFLAGS) -o pci.o
-	gcc -c kernel/sysio/kdrivers/pci/pciscan.c  -I include/ $(CFLAGS) -o pciscan.o
-	gcc -c kernel/sysio/kdrivers/pci/pciinfo.c  -I include/ $(CFLAGS) -o pciinfo.o
+	gcc -c kernel/sysio/kdrivers/pci/pci.c      $(KINCLUDE) $(CFLAGS) -o pci.o
+	gcc -c kernel/sysio/kdrivers/pci/pciscan.c  $(KINCLUDE) $(CFLAGS) -o pciscan.o
+	gcc -c kernel/sysio/kdrivers/pci/pciinfo.c  $(KINCLUDE) $(CFLAGS) -o pciinfo.o
 
 
 
 	# kdrivers/tty
-	gcc -c kernel/sysio/kdrivers/tty/console.c -I include/ $(CFLAGS) -o cedge.o
-	gcc -c kernel/sysio/kdrivers/tty/tty.c   -I include/ $(CFLAGS) -o tty.o
-	gcc -c kernel/sysio/kdrivers/tty/pty.c   -I include/ $(CFLAGS) -o pty.o
+	gcc -c kernel/sysio/kdrivers/tty/console.c $(KINCLUDE) $(CFLAGS) -o cedge.o
+	gcc -c kernel/sysio/kdrivers/tty/tty.c     $(KINCLUDE) $(CFLAGS) -o tty.o
+	gcc -c kernel/sysio/kdrivers/tty/pty.c     $(KINCLUDE) $(CFLAGS) -o pty.o
 
-	gcc -c kernel/sysio/kdrivers/tty/vt.c   -I include/ $(CFLAGS) -o vt.o
+	gcc -c kernel/sysio/kdrivers/tty/vt.c  $(KINCLUDE) $(CFLAGS) -o vt.o
 
 	# kdrivers/usb
-	gcc -c kernel/sysio/kdrivers/usb/usb.c  -I include/ $(CFLAGS) -o usb.o
+	gcc -c kernel/sysio/kdrivers/usb/usb.c   $(KINCLUDE) $(CFLAGS) -o usb.o
 	
 	# kdrivers/x
-	gcc -c kernel/sysio/kdrivers/x/xproc.c   -I include/ $(CFLAGS) -o xproc.o
+	gcc -c kernel/sysio/kdrivers/x/xproc.c   $(KINCLUDE) $(CFLAGS) -o xproc.o
 
 	# kdrivers/x/video
-	gcc -c kernel/sysio/kdrivers/x/video/screen.c  -I include/ $(CFLAGS) -o screen.o
-	gcc -c kernel/sysio/kdrivers/x/video/video.c   -I include/ $(CFLAGS) -o video.o
-	gcc -c kernel/sysio/kdrivers/x/video/vsync.c   -I include/ $(CFLAGS) -o vsync.o
+	gcc -c kernel/sysio/kdrivers/x/video/screen.c  $(KINCLUDE) $(CFLAGS) -o screen.o
+	gcc -c kernel/sysio/kdrivers/x/video/video.c   $(KINCLUDE) $(CFLAGS) -o video.o
+	gcc -c kernel/sysio/kdrivers/x/video/vsync.c   $(KINCLUDE) $(CFLAGS) -o vsync.o
 
 
 	# kdrivers/x/i8042
-	gcc -c kernel/sysio/kdrivers/x/i8042/i8042.c     -I include/ $(CFLAGS) -o i8042.o
-	gcc -c kernel/sysio/kdrivers/x/i8042/keyboard.c  -I include/ $(CFLAGS) -o keyboard.o
-	gcc -c kernel/sysio/kdrivers/x/i8042/mouse.c     -I include/ $(CFLAGS) -o mouse.o
-	gcc -c kernel/sysio/kdrivers/x/i8042/ps2kbd.c    -I include/ $(CFLAGS) -o ps2kbd.o
-	gcc -c kernel/sysio/kdrivers/x/i8042/ps2mouse.c  -I include/ $(CFLAGS) -o ps2mouse.o
-	gcc -c kernel/sysio/kdrivers/x/i8042/ldisc.c     -I include/ $(CFLAGS) -o ldisc.o
+	gcc -c kernel/sysio/kdrivers/x/i8042/i8042.c     $(KINCLUDE) $(CFLAGS) -o i8042.o
+	gcc -c kernel/sysio/kdrivers/x/i8042/keyboard.c  $(KINCLUDE) $(CFLAGS) -o keyboard.o
+	gcc -c kernel/sysio/kdrivers/x/i8042/mouse.c     $(KINCLUDE) $(CFLAGS) -o mouse.o
+	gcc -c kernel/sysio/kdrivers/x/i8042/ps2kbd.c    $(KINCLUDE) $(CFLAGS) -o ps2kbd.o
+	gcc -c kernel/sysio/kdrivers/x/i8042/ps2mouse.c  $(KINCLUDE) $(CFLAGS) -o ps2mouse.o
+	gcc -c kernel/sysio/kdrivers/x/i8042/ldisc.c     $(KINCLUDE) $(CFLAGS) -o ldisc.o
 
 
 	# devices/
-	gcc -c kernel/sysio/devmgr.c  -I include/ $(CFLAGS) -o devmgr.o
+	gcc -c kernel/sysio/devmgr.c  $(KINCLUDE) $(CFLAGS) -o devmgr.o
 
 
 
 	# /fs
-	gcc -c kernel/sysio/kservers/fs/fs.c      -I include/ $(CFLAGS) -o fs.o
-	gcc -c kernel/sysio/kservers/fs/read.c    -I include/ $(CFLAGS) -o read.o
-	gcc -c kernel/sysio/kservers/fs/write.c   -I include/ $(CFLAGS) -o write.o
-	gcc -c kernel/sysio/kservers/fs/cf.c      -I include/ $(CFLAGS) -o cf.o
-	gcc -c kernel/sysio/kservers/fs/search.c  -I include/ $(CFLAGS) -o search.o
-	gcc -c kernel/sysio/kservers/fs/format.c  -I include/ $(CFLAGS) -o format.o
+	gcc -c kernel/sysio/kservers/fs/fs.c $(KINCLUDE) $(CFLAGS) -o fs.o
+	gcc -c kernel/sysio/kservers/fs/read.c    $(KINCLUDE) $(CFLAGS) -o read.o
+	gcc -c kernel/sysio/kservers/fs/write.c   $(KINCLUDE) $(CFLAGS) -o write.o
+	gcc -c kernel/sysio/kservers/fs/cf.c      $(KINCLUDE) $(CFLAGS) -o cf.o
+	gcc -c kernel/sysio/kservers/fs/search.c  $(KINCLUDE) $(CFLAGS) -o search.o
+	gcc -c kernel/sysio/kservers/fs/format.c  $(KINCLUDE) $(CFLAGS) -o format.o
 	
 	# /vfs
-	gcc -c kernel/sysio/kservers/vfs/vfs.c  -I include/ $(CFLAGS) -o vfs.o
+	gcc -c kernel/sysio/kservers/vfs/vfs.c  $(KINCLUDE) $(CFLAGS) -o vfs.o
 
 
 
 
 	# /sm
-	gcc -c kernel/syssm/execve/sm/init.c    -I include/ $(CFLAGS) -o init.o
-	gcc -c kernel/syssm/execve/sm/system.c  -I include/ $(CFLAGS) -o system.o
+	gcc -c kernel/syssm/execve/sm/init.c    $(KINCLUDE) $(CFLAGS) -o init.o
+	gcc -c kernel/syssm/execve/sm/system.c  $(KINCLUDE) $(CFLAGS) -o system.o
 	
-	gcc -c kernel/syssm/storage/storage.c     -I include/ $(CFLAGS) -o storage.o
+	gcc -c kernel/syssm/storage/storage.c   $(KINCLUDE) $(CFLAGS) -o storage.o
 
-	gcc -c kernel/syssm/execve/sm/install/install.c  -I include/ $(CFLAGS) -o install.o
-	gcc -c kernel/syssm/execve/sm/rt/runtime.c       -I include/ $(CFLAGS) -o runtime.o
-	gcc -c kernel/syssm/execve/sm/sys/abort.c    -I include/ $(CFLAGS) -o abort.o
-	gcc -c kernel/syssm/execve/sm/sys/info.c     -I include/ $(CFLAGS) -o info.o
-	gcc -c kernel/syssm/execve/sm/sys/modules.c  -I include/ $(CFLAGS) -o modules.o
-	gcc -c kernel/syssm/execve/sm/sys/signal.c   -I include/ $(CFLAGS) -o signal.o
-	gcc -c kernel/syssm/execve/sm/sys/sm.c       -I include/ $(CFLAGS) -o sm.o
+	gcc -c kernel/syssm/execve/sm/install/install.c  $(KINCLUDE) $(CFLAGS) -o install.o
+	gcc -c kernel/syssm/execve/sm/rt/runtime.c       $(KINCLUDE) $(CFLAGS) -o runtime.o
+	gcc -c kernel/syssm/execve/sm/sys/abort.c    $(KINCLUDE) $(CFLAGS) -o abort.o
+	gcc -c kernel/syssm/execve/sm/sys/info.c     $(KINCLUDE) $(CFLAGS) -o info.o
+	gcc -c kernel/syssm/execve/sm/sys/modules.c  $(KINCLUDE) $(CFLAGS) -o modules.o
+	gcc -c kernel/syssm/execve/sm/sys/signal.c   $(KINCLUDE) $(CFLAGS) -o signal.o
+	gcc -c kernel/syssm/execve/sm/sys/sm.c       $(KINCLUDE) $(CFLAGS) -o sm.o
 
 
 #debug
-	gcc -c kernel/syssm/debug/debug.c  -I include/ $(CFLAGS) -o debug.o
+	gcc -c kernel/syssm/debug/debug.c  $(KINCLUDE) $(CFLAGS) -o debug.o
 
 #io
-	gcc -c kernel/sysio/io.c      -I include/ $(CFLAGS) -o io.o
+	gcc -c kernel/sysio/io.c  $(KINCLUDE) $(CFLAGS) -o io.o
 
 #ob
-	gcc -c kernel/syssm/ob/object.c  -I include/ $(CFLAGS) -o object.o
+	gcc -c kernel/syssm/ob/object.c  $(KINCLUDE) $(CFLAGS) -o object.o
 
 
 	# kservers/kgwm - Kernel Gramado Window Manager.
 
-	gcc -c kernel/sysio/kservers/kgwm/kgwm.c  -I include/ $(CFLAGS) -o kgwm.o
-	gcc -c kernel/sysio/kservers/kgwm/wm.c    -I include/ $(CFLAGS) -o wm.o
+	gcc -c kernel/sysio/kservers/kgwm/kgwm.c  $(KINCLUDE) $(CFLAGS) -o kgwm.o
+	gcc -c kernel/sysio/kservers/kgwm/wm.c    $(KINCLUDE) $(CFLAGS) -o wm.o
 
 
 	# kservers/kgws - Kernel Gramado Window Server.
 
-	gcc -c kernel/sysio/kservers/kgws/kgws/comp/bg.c       -I include/ $(CFLAGS) -o bg.o
-	gcc -c kernel/sysio/kservers/kgws/kgws/comp/bmp.c      -I include/ $(CFLAGS) -o bmp.o
-	gcc -c kernel/sysio/kservers/kgws/kgws/comp/button.c   -I include/ $(CFLAGS) -o button.o
-	gcc -c kernel/sysio/kservers/kgws/kgws/comp/char.c     -I include/ $(CFLAGS) -o char.o
-	gcc -c kernel/sysio/kservers/kgws/kgws/comp/createw.c  -I include/ $(CFLAGS) -o createw.o
-	gcc -c kernel/sysio/kservers/kgws/kgws/comp/dtext.c    -I include/ $(CFLAGS) -o dtext.o
-	gcc -c kernel/sysio/kservers/kgws/kgws/comp/font.c     -I include/ $(CFLAGS) -o font.o
-	gcc -c kernel/sysio/kservers/kgws/kgws/comp/grid.c     -I include/ $(CFLAGS) -o grid.o
-	gcc -c kernel/sysio/kservers/kgws/kgws/comp/line.c     -I include/ $(CFLAGS) -o line.o
-	gcc -c kernel/sysio/kservers/kgws/kgws/comp/menu.c     -I include/ $(CFLAGS) -o menu.o
-	gcc -c kernel/sysio/kservers/kgws/kgws/comp/menubar.c  -I include/ $(CFLAGS) -o menubar.o
-	gcc -c kernel/sysio/kservers/kgws/kgws/comp/pixel.c    -I include/ $(CFLAGS) -o pixel.o
-	gcc -c kernel/sysio/kservers/kgws/kgws/comp/rect.c     -I include/ $(CFLAGS) -o rect.o
-	gcc -c kernel/sysio/kservers/kgws/kgws/comp/sbar.c     -I include/ $(CFLAGS) -o sbar.o
-	gcc -c kernel/sysio/kservers/kgws/kgws/comp/toolbar.c  -I include/ $(CFLAGS) -o toolbar.o
+	gcc -c kernel/sysio/kservers/kgws/kgws/comp/bg.c       $(KINCLUDE) $(CFLAGS) -o bg.o
+	gcc -c kernel/sysio/kservers/kgws/kgws/comp/bmp.c      $(KINCLUDE) $(CFLAGS) -o bmp.o
+	gcc -c kernel/sysio/kservers/kgws/kgws/comp/button.c   $(KINCLUDE) $(CFLAGS) -o button.o
+	gcc -c kernel/sysio/kservers/kgws/kgws/comp/char.c     $(KINCLUDE) $(CFLAGS) -o char.o
+	gcc -c kernel/sysio/kservers/kgws/kgws/comp/createw.c  $(KINCLUDE) $(CFLAGS) -o createw.o
+	gcc -c kernel/sysio/kservers/kgws/kgws/comp/dtext.c    $(KINCLUDE) $(CFLAGS) -o dtext.o
+	gcc -c kernel/sysio/kservers/kgws/kgws/comp/font.c     $(KINCLUDE) $(CFLAGS) -o font.o
+	gcc -c kernel/sysio/kservers/kgws/kgws/comp/grid.c     $(KINCLUDE) $(CFLAGS) -o grid.o
+	gcc -c kernel/sysio/kservers/kgws/kgws/comp/line.c     $(KINCLUDE) $(CFLAGS) -o line.o
+	gcc -c kernel/sysio/kservers/kgws/kgws/comp/menu.c     $(KINCLUDE) $(CFLAGS) -o menu.o
+	gcc -c kernel/sysio/kservers/kgws/kgws/comp/menubar.c  $(KINCLUDE) $(CFLAGS) -o menubar.o
+	gcc -c kernel/sysio/kservers/kgws/kgws/comp/pixel.c    $(KINCLUDE) $(CFLAGS) -o pixel.o
+	gcc -c kernel/sysio/kservers/kgws/kgws/comp/rect.c     $(KINCLUDE) $(CFLAGS) -o rect.o
+	gcc -c kernel/sysio/kservers/kgws/kgws/comp/sbar.c     $(KINCLUDE) $(CFLAGS) -o sbar.o
+	gcc -c kernel/sysio/kservers/kgws/kgws/comp/toolbar.c  $(KINCLUDE) $(CFLAGS) -o toolbar.o
 
 	
-	gcc -c kernel/sysio/kservers/kgws/logon/logon.c    -I include/ $(CFLAGS) -o logon.o
-	gcc -c kernel/sysio/kservers/kgws/logoff/logoff.c  -I include/ $(CFLAGS) -o logoff.o
+	gcc -c kernel/sysio/kservers/kgws/logon/logon.c    $(KINCLUDE) $(CFLAGS) -o logon.o
+	gcc -c kernel/sysio/kservers/kgws/logoff/logoff.c  $(KINCLUDE) $(CFLAGS) -o logoff.o
 
-	gcc -c kernel/sysio/kservers/kgws/terminal/input.c     -I include/ $(CFLAGS) -o input.o
-	gcc -c kernel/sysio/kservers/kgws/terminal/output.c    -I include/ $(CFLAGS) -o output.o
-	gcc -c kernel/sysio/kservers/kgws/terminal/terminal.c  -I include/ $(CFLAGS) -o terminal.o
+	gcc -c kernel/sysio/kservers/kgws/terminal/input.c     $(KINCLUDE) $(CFLAGS) -o input.o
+	gcc -c kernel/sysio/kservers/kgws/terminal/output.c    $(KINCLUDE) $(CFLAGS) -o output.o
+	gcc -c kernel/sysio/kservers/kgws/terminal/terminal.c  $(KINCLUDE) $(CFLAGS) -o terminal.o
 	
-	gcc -c kernel/sysio/kservers/kgws/user/userenv.c   -I include/ $(CFLAGS) -o userenv.o
-	gcc -c kernel/sysio/kservers/kgws/user/desktop.c   -I include/ $(CFLAGS) -o desktop.o
-	gcc -c kernel/sysio/kservers/kgws/user/room.c      -I include/ $(CFLAGS) -o room.o
-	gcc -c kernel/sysio/kservers/kgws/user/usession.c  -I include/ $(CFLAGS) -o usession.o
+	gcc -c kernel/sysio/kservers/kgws/user/userenv.c   $(KINCLUDE) $(CFLAGS) -o userenv.o
+	gcc -c kernel/sysio/kservers/kgws/user/desktop.c   $(KINCLUDE) $(CFLAGS) -o desktop.o
+	gcc -c kernel/sysio/kservers/kgws/user/room.c      $(KINCLUDE) $(CFLAGS) -o room.o
+	gcc -c kernel/sysio/kservers/kgws/user/usession.c  $(KINCLUDE) $(CFLAGS) -o usession.o
 	
-	gcc -c kernel/sysio/kservers/kgws/kgws.c  -I include/ $(CFLAGS) -o kgws.o
+	gcc -c kernel/sysio/kservers/kgws/kgws.c $(KINCLUDE) $(CFLAGS) -o kgws.o
 
 
 
@@ -462,14 +464,14 @@ KERNEL.BIN:
 	#  /sci - System Call Interface.
 	#
 	
-	gcc -c kernel/sci/gde_serv.c  -I include/ $(CFLAGS) -o gde_serv.o
+	gcc -c kernel/sci/gde_serv.c $(KINCLUDE) $(CFLAGS) -o gde_serv.o
 	
 	# services.
-	gcc -c kernel/sci/sys/sys.c   -I include/ $(CFLAGS) -o sys.o
-	gcc -c kernel/sysio/sysio.c   -I include/ $(CFLAGS) -o sysio.o
-	gcc -c kernel/syslib/syslib.c -I include/ $(CFLAGS) -o syslib.o
-	gcc -c kernel/sysmk/sysmk.c   -I include/ $(CFLAGS) -o sysmk.o
-	gcc -c kernel/syssm/syssm.c   -I include/ $(CFLAGS) -o syssm.o
+	gcc -c kernel/sci/sys/sys.c   $(KINCLUDE) $(CFLAGS) -o sys.o
+	gcc -c kernel/sysio/sysio.c   $(KINCLUDE) $(CFLAGS) -o sysio.o
+	gcc -c kernel/syslib/syslib.c $(KINCLUDE) $(CFLAGS) -o syslib.o
+	gcc -c kernel/sysmk/sysmk.c   $(KINCLUDE) $(CFLAGS) -o sysmk.o
+	gcc -c kernel/syssm/syssm.c   $(KINCLUDE) $(CFLAGS) -o syssm.o
 	
 	
 
@@ -496,7 +498,7 @@ vhd-create:
 	@echo "================================="
 	@echo "(Step 4) Creating a VHD in Assembly language ..."
 
-	nasm -I arch/x86/boot/vhd arch/x86/boot/vhd/main.asm -o GRAMADO.VHD 
+	nasm -I prek/arch/x86/boot/vhd prek/arch/x86/boot/vhd/main.asm -o GRAMADO.VHD 
 
 
 ## Step5 vhd-mount          - Mounting the VHD.
@@ -524,8 +526,8 @@ vhd-copy-files:
 
 
 #userland
-	sudo cp userland/base/bin/INIT2.BIN      /mnt/gramadovhd
-	sudo cp userland/base/bin/GRAMMGR.BIN    /mnt/gramadovhd
+	sudo cp init/base/bin/INIT2.BIN      /mnt/gramadovhd
+#	sudo cp init/base/bin/GRAMMGR.BIN    /mnt/gramadovhd
 
 
 #base
@@ -586,55 +588,73 @@ vhd-copy-files:
 # garden
 
 	#gwin
-	-sudo cp userland/ul1/garden/bin/GWINMGR.BIN   /mnt/gramadovhd
-	-sudo cp userland/ul1/garden/bin/GWS.BIN       /mnt/gramadovhd
+#	-sudo cp userland/ul1/garden/bin/GWINMGR.BIN   /mnt/gramadovhd
+
+
+
+# servers
+	-sudo cp servers/bin/GWS.BIN  /mnt/gramadovhd
+
 #	-sudo cp userland/ul1/garden/bin/GWM.BIN       /mnt/gramadovhd
 
-	#ili
-	-sudo cp userland/ul1/garden/bin/ILIINIT.BIN   /mnt/gramadovhd
-	-sudo cp userland/ul1/garden/bin/GLOGON.BIN    /mnt/gramadovhd
 
 	#apps
-	-sudo cp userland/ul1/garden/bin/NORATERM.BIN  /mnt/gramadovhd
-	-sudo cp userland/ul1/garden/bin/GDETERM.BIN   /mnt/gramadovhd 
-	-sudo cp userland/ul1/garden/bin/GDESHELL.BIN  /mnt/gramadovhd 
-	-sudo cp userland/ul1/garden/bin/GRAMCODE.BIN  /mnt/gramadovhd 
-	-sudo cp userland/ul1/garden/bin/GRAMTEXT.BIN  /mnt/gramadovhd 
-	-sudo cp userland/ul1/garden/bin/GFE.BIN       /mnt/gramadovhd 
-	-sudo cp userland/ul1/garden/bin/SPR.BIN       /mnt/gramadovhd 
-	-sudo cp userland/ul1/garden/bin/SYSMON.BIN    /mnt/gramadovhd
-	-sudo cp userland/ul1/garden/bin/REBOOT2.BIN   /mnt/gramadovhd
-	-sudo cp userland/ul1/garden/bin/LAUNCHER.BIN  /mnt/gramadovhd
-	-sudo cp userland/ul1/garden/bin/WINTEST.BIN   /mnt/gramadovhd 
+	-sudo cp apps/bin/ILIINIT.BIN   /mnt/gramadovhd
+
+#	-sudo cp apps/bin/GLOGON.BIN    /mnt/gramadovhd
+
+#apps
+	-sudo cp apps/bin/NORATERM.BIN  /mnt/gramadovhd
+
+
+#	-sudo cp userland/ul1/garden/bin/GDETERM.BIN   /mnt/gramadovhd 
+
+#apps
+	-sudo cp apps/bin/GDESHELL.BIN  /mnt/gramadovhd 
+
+
+	-sudo cp apps/bin/GRAMCODE.BIN  /mnt/gramadovhd 
+#	-sudo cp userland/ul1/garden/bin/GRAMTEXT.BIN  /mnt/gramadovhd 
+	-sudo cp apps/bin/GFE.BIN       /mnt/gramadovhd 
+	-sudo cp apps/bin/SPR.BIN       /mnt/gramadovhd 
+	-sudo cp apps/bin/SYSMON.BIN    /mnt/gramadovhd
+	-sudo cp apps/bin/REBOOT2.BIN   /mnt/gramadovhd
+	-sudo cp apps/bin/LAUNCHER.BIN  /mnt/gramadovhd
+#	-sudo cp userland/ul1/garden/bin/WINTEST.BIN   /mnt/gramadovhd 
 #	-sudo cp userland/ul1/garden/bin/GDEINIT.BIN   /mnt/gramadovhd 
 #	-sudo cp userland/ul1/garden/bin/GDETM.BIN     /mnt/gramadovhd 
-	-sudo cp userland/ul1/garden/bin/GDEWM.BIN     /mnt/gramadovhd
+	-sudo cp apps/bin/GDEWM.BIN     /mnt/gramadovhd
 
 
-# atacama
-	-sudo cp userland/ul2/atacama/bin/TRUE.BIN      /mnt/gramadovhd
-	-sudo cp userland/ul2/atacama/bin/FALSE.BIN     /mnt/gramadovhd
-	-sudo cp userland/ul2/atacama/bin/CAT.BIN       /mnt/gramadovhd
-	-sudo cp userland/ul2/atacama/bin/ECHO.BIN      /mnt/gramadovhd
-	-sudo cp userland/ul2/atacama/bin/SUM.BIN       /mnt/gramadovhd
-	-sudo cp userland/ul2/atacama/bin/SPLIT.BIN     /mnt/gramadovhd
-	-sudo cp userland/ul2/atacama/bin/CMP.BIN       /mnt/gramadovhd
-	-sudo cp userland/ul2/atacama/bin/SHOWFUN.BIN   /mnt/gramadovhd
+# cmd
+	-sudo cp cmd/bin/TRUE.BIN      /mnt/gramadovhd
+	-sudo cp cmd/bin/FALSE.BIN     /mnt/gramadovhd
+	-sudo cp cmd/bin/CAT.BIN       /mnt/gramadovhd
+	-sudo cp cmd/bin/ECHO.BIN      /mnt/gramadovhd
+	-sudo cp cmd/bin/SUM.BIN       /mnt/gramadovhd
+	-sudo cp cmd/bin/SPLIT.BIN     /mnt/gramadovhd
+	-sudo cp cmd/bin/CMP.BIN       /mnt/gramadovhd
+	-sudo cp cmd/bin/SHOWFUN.BIN   /mnt/gramadovhd
+
 #	-sudo cp userland/ul2/atacama/bin/DUMPIT.BIN    /mnt/gramadovhd
-	-sudo cp userland/ul2/atacama/bin/HELLO.BIN     /mnt/gramadovhd
-	-sudo cp userland/ul2/atacama/bin/HELLO2.BIN    /mnt/gramadovhd
-	-sudo cp userland/ul2/atacama/bin/HELLO3.BIN    /mnt/gramadovhd
+
+	-sudo cp cmd/bin/HELLO.BIN     /mnt/gramadovhd
+	-sudo cp cmd/bin/HELLO2.BIN    /mnt/gramadovhd
+	-sudo cp cmd/bin/HELLO3.BIN    /mnt/gramadovhd
+
 #	-sudo cp userland/ul2/atacama/bin/JACKPOT.BIN   /mnt/gramadovhd
 #	-sudo cp userland/ul2/atacama/bin/LISP.BIN      /mnt/gramadovhd
-	-sudo cp userland/ul2/atacama/bin/REBOOT.BIN    /mnt/gramadovhd
+
+	-sudo cp cmd/bin/REBOOT.BIN    /mnt/gramadovhd
+
 #	-sudo cp userland/ul2/atacama/bin/TASCII.BIN    /mnt/gramadovhd
 #	-sudo cp userland/ul2/atacama/bin/GLIBCT1.BIN   /mnt/gramadovhd 
 #	-sudo cp userland/ul2/atacama/bin/SHELL3.BIN    /mnt/gramadovhd
 
 
 # atacama/gt/gramcc
-	-sudo cp userland/ul2/atacama/bin/GRAM.BIN      /mnt/gramadovhd 
-	-sudo cp userland/ul2/atacama/bin/GRAMC.BIN     /mnt/gramadovhd 
+#	-sudo cp userland/ul2/atacama/bin/GRAM.BIN      /mnt/gramadovhd 
+#	-sudo cp userland/ul2/atacama/bin/GRAMC.BIN     /mnt/gramadovhd 
 
 # 3rd party
 # Each app has your own folder.
@@ -676,7 +696,8 @@ vhd-copy-files:
 
 	#-sudo cp userland/ul1/garden/bin/*         /mnt/gramadovhd/BIN 
 	#-sudo cp userland/ul2/atacama/bin/*        /mnt/gramadovhd/BIN 
-	-sudo cp userland/ul2/atacama/bin/HELLO3.BIN  /mnt/gramadovhd/BIN 
+
+#	-sudo cp userland/ul2/atacama/bin/HELLO3.BIN  /mnt/gramadovhd/BIN 
 	
 #
 # ======== Files in the /BOOT/ folder. ========
@@ -790,7 +811,7 @@ clean:
 makeiso-x86:
 	#todo:  
 	#nasm -I arch/x86/boot/iso/stage1/ \
-	#-I arch/x86/boot/iso/???/  arch/x86/boot/iso/main.asm  -o  GRAMADO.ISO
+	#-I prek/arch/x86/boot/iso/???/  prek/arch/x86/boot/iso/main.asm  -o  GRAMADO.ISO
 	
 	@echo "#todo Create ISO using nasm"
 	
@@ -801,7 +822,7 @@ makeiso-x86:
 geniso-x86:
 	
 	#stage1
-	nasm arch/x86/boot/iso/stage1/stage1.asm -f bin -o stage1.bin
+	nasm prek/arch/x86/boot/iso/stage1/stage1.asm -f bin -o stage1.bin
 	cp stage1.bin bin/boot/gramado/
 	rm stage1.bin
 
@@ -882,13 +903,13 @@ clean-userland-base:
 
 
 clean-garden:
-	-rm userland/ul1/garden/bin/*.o
-	-rm userland/ul1/garden/bin/*.BIN
+#	-rm userland/ul1/garden/bin/*.o
+#	-rm userland/ul1/garden/bin/*.BIN
 
 
 clean-atacama:
-	-rm userland/ul2/atacama/bin/*.o
-	-rm userland/ul2/atacama/bin/*.BIN
+#	-rm userland/ul2/atacama/bin/*.o
+#	-rm userland/ul2/atacama/bin/*.BIN
 
 
 

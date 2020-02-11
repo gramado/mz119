@@ -1,0 +1,11 @@
+
+
+
+   em cmd/ e apps/
+
+   mudar o Makefile dos comandos e dos apps.
+   >>tem que mudar a inclusão da biblioteca para nnovo endereço lib/
+   >>tem que mudar a parte final onde move o binário para mover para 
+    o lugar certo;
+   
+  so isso. mas são muitos programas.

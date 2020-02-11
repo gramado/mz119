@@ -14,7 +14,7 @@
  
 Folders:
 
-/arch     - Archtechture stuff.
+
 /bin      - .bin compiled files.
 /docs     - Documentation.
 /drivers  - Ring3 loadable drivers.
@@ -23,6 +23,7 @@ Folders:
 /kernel   - The base kernel.
 /lib      - Libs. Source code and binaries.
 /licenses - Licenses.
+/prek     - pre-kernel environment.
 /scripts  - Scripts.
 /servers  - Ring3 loadable servers.
 /user     - User config files and user ideas.
