@@ -163,8 +163,12 @@ int atoi (const char *str);
 
 void itoa (int n, char s[]);
 
-char *getenv2 (const char *name);
+
+
+
+
 char *getenv (const char *name);
+
 
 //setenv - change or add an environment variable
 //POSIX.1-2001, POSIX.1-2008, 4.3BSD.

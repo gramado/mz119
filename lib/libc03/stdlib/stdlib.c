@@ -22,6 +22,7 @@
 #include <sys/ioctl.h>
 #include <fcntl.h>
 
+#include <unistd.h>
 
 //system calls.
 #include <stubs/gramado.h> 
@@ -38,7 +39,6 @@
 unsigned int randseed;
 
 
-char **environ = NULL;
 
 //
 // -----------------
@@ -1255,144 +1255,7 @@ int stdlib_strncmp ( char *s1, char *s2, int len ){
 }
 
 
-/*
- * _simple_getenv:
- *    Getenv stuff.
- *    Credits: Apple open source.
- */
-/*
-const char *_simple_getenv(const char *envp[], const char *var);
-const char *_simple_getenv(const char *envp[], const char *var){
 
-    const char **p;
-    size_t var_len;
-
-    var_len = strlen(var);
-
-    for (p = envp; p && *p; p++) {
-        size_t p_len = strlen(*p);
-
-        if (p_len >= var_len &&
-            memcmp(*p, var, var_len) == 0 &&
-            (*p)[var_len] == '=') {
-            return &(*p)[var_len + 1];
-        }
-    }
-    return NULL;
-}
-*/
-
-
-
-
-/*
- * __findenv:
- *     Interna de suporte à getenv. 
- *     Credits: apple open source.
- */
-
-char *__findenv ( const char *name, int *offset ){
-
-    size_t len;
-	const char *np;
-	char **p, *c;  //??
-
-	if (name == NULL || environ == NULL)
-	{	
-        return (char *) 0;
-        //return NULL;
-	}
-	
-	for (np = name; *np && *np != '='; ++np)
-	{	
-        continue;
-	};
-	
-	len = (size_t) (np - name);
-	
-	for ( p = environ; (c = *p) != NULL; ++p )
-	{
-        if ( strncmp( c, (char*) name, len ) == 0 && c[len] == '=' ) 
-		{
-			*offset = p - environ;
-			
-			return c + len + 1;
-		};
-	};
-	
-	*offset = p - environ;
-
-
-//done:
-    return (char *) 0;
-	//return NULL;
-}
-
-
-// glibc
-/* Return the value of the environment variable NAME.  */
-/*
-char *glibc_getenv (const char *name);
-char *glibc_getenv (const char *name)
-{
-    register const size_t len = strlen(name);
-    register char **ep;
-
-    // #todo:
-    // Onde isso é definido?
-    if (__environ == NULL)
-        return NULL;
-
-    for (ep = __environ; *ep != NULL; ++ep)
-        if (!strncmp(*ep, name, len) && (*ep)[len] == '=')
-            return &(*ep)[len + 1];
-
-    return NULL;
-}
-*/
-
-/*
- ***********************************
- * getenv:
- *     Credits: Apple open source.
- */
-
-char *getenv2 (const char *name)
-{
-    int offset;
-    char *result;
-
-	//_DIAGASSERT(name != NULL);
-
-    if ( (void *) name == NULL )
-    {
-        return (char *) 0;
-    }
-
-	//rwlock_rdlock(&__environ_lock);
-    result = __findenv(name, &offset);
-	//rwlock_unlock(&__environ_lock);
-
-    return (char *) result;
-}
-
-
-//
-// getenv
-//
-
-
-//unix v7
-char *getenv ( char *name )
-{
-	register char **p = environ;
-	register char *v;
-
-	while (*p != NULL)
-		if ((v = nvmatch(name, *p++)) != NULL)
-			return(v);
-	return(NULL);
-}
 
 
 /*
@@ -1415,67 +1278,150 @@ static char *nvmatch ( char *s1, char *s2 )
 	return(NULL);
 }
 
-
-
-
-
-//serenity os.
-/*
-char* getenv(const char* name)
+//unix v7
+char *v7_getenv ( char *name )
 {
-    size_t vl = strlen(name);
-    for (size_t i = 0; environ[i]; ++i) {
-        const char* decl = environ[i];
-        char* eq = strchr(decl, '=');
-        if (!eq)
-            continue;
-        size_t varLength = eq - decl;
-        if (vl != varLength)
-            continue;
-        if (strncmp(decl, name, varLength) == 0) {
-            return eq + 1;
-        }
-    }
-    return nullptr;
+	register char **p = environ;
+	register char *v;
+
+	while (*p != NULL)
+		if ((v = nvmatch(name, *p++)) != NULL)
+			return(v);
+	return(NULL);
 }
-*/
 
 
-/*linux klibc style*/
-//  char **environ é global nesse documento.
-// Talvez o lugar disso seja em ring0.
+
+
 /*
-char *getenv (const char *name);
-char *getenv (const char *name)
-{
-    char **p, *q;
+ * __findenv:
+ *     Interna de suporte à getenv. 
+ *     Credits: apple open source.
+ */
 
-    int len = strlen (name);
+char *__findenv ( const char *name, int *offset ){
 
-    for ( p = environ ; (q = *p) ; p++ )
+    size_t len;
+	const char *np;
+	char **p, *c;  //??
+
+    if ( (void *) name == NULL )
     {
-        if ( !strncmp(name, q, len) && q[len] == '=' )
+        printf ("__findenv: name NULL\n");
+        return (char *) 0;
+    }
+
+    if ( (char **) environ == 0 )
+    {	
+        printf ("__findenv: environ is 0\n");
+        return (char *) 0;
+        //return NULL;
+	}
+
+
+    //tamanho da string do argumento.
+	for (np = name; *np && *np != '='; ++np)
+	{	
+        continue;
+	};
+	len = (size_t) (np - name);
+	
+	//printf (">>> len  %d \n", len);
+    //return (char *) 0;
+
+    int fail;
+    int i;
+
+    for ( p = environ; (c = *p) != NULL; ++p )
+    {
+        
+        //#obs: isso funcionou mostrando a primeira string do environ.
+        //return c + len + 1;
+        
+        fail = 0;
+        
+        for (i=0; i<len; i++)
         {
-             return q+(len+1);
+			 //se um deles for diferente.
+             //se todos forem iguais, fail continua sendo 0.
+             if ( c[i] != name[i] )
+                 fail = 1;
         }
+ 
+        //if ( strncmp ( c, (char *) name, len ) == 0 && c[len] == '=' ) 
+        //if ( strncmp2 ( (const char *) c, (const char *) name, len ) == 0 && c[len] == '=' ) 
+        
+        
+        //if ( c[0] == name[0] && c[len] == '=' )  //ok
+        if (fail == 0)
+        {
+            *offset = p - environ;
+
+            // OK.
+            return c + len + 1;
+        };
     };
 
-    return NULL;
+
+    *offset = p - environ;
+
+
+	printf ("__findenv: overflow\n");
+
+//done:
+    return (char *) 0;
+	//return NULL;
 }
-*/
 
 
 
+/*
+ ***********************************
+ * getenv:
+ *     Credits: Apple open source.
+ */
+
+char *getenv (const char *name)
+{
+
+    int offset;
+    char *result;
+
+	//_DIAGASSERT(name != NULL);
+
+    //printf ("getenv2: %s \n", (const char *) name);
+    //return NULL;
+
+    if ( (void *) name == NULL )
+    {
+        return (char *) 0;
+    }
+
+
+	//rwlock_rdlock(&__environ_lock);
+    result = __findenv (name, &offset);
+	//rwlock_unlock(&__environ_lock);
+
+
+    return (char *) result;
+}
+
+
+//#todo
 int setenv (const char *name, const char *value, int overwrite)
 {
     return (int) (-1);
 }
 
 
+//#todo
 int unsetenv (const char *name)
 {
     return (int) (-1);
 }
+
+
+
 
 
 

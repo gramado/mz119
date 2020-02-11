@@ -2538,9 +2538,9 @@ do_compare:
 
 
     char *env_string;
-	if ( gramado_strncmp( prompt, "env", 3 ) == 0 )
-	{
-        env_string = (char *) getenv2("PS1");
+    if ( gramado_strncmp( prompt, "env", 3 ) == 0 )
+    {
+        env_string = (char *) getenv ("PS1");
         printf(">>> %s .\n", env_string);
         goto exit_cmp;
     }

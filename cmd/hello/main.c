@@ -523,7 +523,10 @@ int main ( int argc, char *argv[] )
     //printf ("\x1b[8E test\n");   // Cursor Next Line
     //printf ("\x1b[8F test\n");   // Cursor Previous Line
     
+    char *env_string;
     
+    env_string = (char *) getenv ("PS1");
+    printf(">>> %s .\n", env_string);
     
     //Torvalds_printf("hello.bin: \x1b[H Writing into the virtual console 0!\n");
     

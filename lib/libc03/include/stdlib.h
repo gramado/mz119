@@ -163,36 +163,23 @@ void itoa (int n, char s[]);
 
 
 
-//
-// getenv
-//
-
-char *getenv ( char *name );
+// unix v7 - like.
 static char *nvmatch ( char *s1, char *s2 );
+char *v7_getenv ( char *name );
 
 
 
+//
+// environ
+//
 
 
-
-
-char *getenv2 (const char *name);
-
-
-
-//setenv - change or add an environment variable
-//POSIX.1-2001, POSIX.1-2008, 4.3BSD.
-// RETURN VALUE:
-// The setenv() function returns zero on success, or -1 on error, with
-// errno set to indicate the cause of the error.
+char *getenv (const char *name);
 int setenv (const char *name, const char *value, int overwrite);
-
-
-//POSIX.1-2001, POSIX.1-2008, 4.3BSD.
-// RETURN VALUE:
-// The unsetenv() function returns zero on success, or -1 on error, with
-// errno set to indicate the cause of the error.
 int unsetenv (const char *name);
+
+
+
 
 
 // mktemp - make a unique temporary filename

@@ -24,16 +24,15 @@ static char *argv[] = {
 };
 
 
-/*
-// default environment.
-// reafazer isso nos padrões.
-static char *default_env[] = { 
-    "VFSROOT=root:/volume0",           //root dir do vfs
-    "BOOTVOLUMEROOT=root:/volume1",    //root dir do volume de boot
-    "SYSTEMVOLUMEROOT=root:/volume2",  //root dir do volume do sistema
+
+static char *my_environ[] = { 
+    "PS0=$test0",  
+    "PS1=:test1",  
+    "PS2=>test2",  
 	NULL 
 };
-*/
+
+
 
 //See: sysdeps/x86/x86start.c
 //int x86start ( int argc, char *argv[], char *envp[] );
@@ -57,6 +56,8 @@ extern int main ( int argc, char *argv[] );
 
 int crt0 (){
 
+
+    environ = my_environ;
 
     // Token support.
     char *tokenList[TOKENLIST_MAX_DEFAULT];

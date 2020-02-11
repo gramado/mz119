@@ -13,6 +13,10 @@
 #include <sys/types.h>
 
 
+
+extern char **environ;
+
+
 //The <unistd.h> header shall declare the following external variables:
 extern char  *optarg;
 extern int    opterr, optind, optopt;
