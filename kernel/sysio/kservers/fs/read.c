@@ -1035,15 +1035,14 @@ unsigned long fsGetFileSize ( unsigned char *file_name ){
     // o tamanho da string falhou
     //vamos ajustar.
     if ( size > 11 ){
-	     printf ("fsGetFileSize: size fail %d\n",size );   
-	     size = 11;	
-	}
+        printf ("fsGetFileSize: name size fail %d\n",size );   
+        size = 11;
+    }
 
-	
+
 	//
 	// Compare.
 	//
-	
 	
 	while ( i < max )
 	{
@@ -1100,7 +1099,7 @@ found:
 	//pegando o tamanho do arquivo.
     // 28 29 30 31
 
-    FileSize = *(unsigned long*) (VOLUME1_ROOTDIR_ADDRESS + (z*2) + 28 );	
+    FileSize = *(unsigned long*) (VOLUME1_ROOTDIR_ADDRESS + (z*2) + 28 );
 	
 	//printf ("%d \n" , root[ z+14 ]);
 	//printf ("%d \n" , root[ z+15 ]);
@@ -1111,8 +1110,8 @@ found:
 	//while(1){ asm("hlt"); }
 	
 	//#debug
-	//printf ("fsGetFileSize: FileSize=%d \n" , FileSize);
-    //refresh_screen ();
+	printf ("fsGetFileSize: FileSize=%d \n" , FileSize);
+    refresh_screen ();
 
 
     return (unsigned long) FileSize;

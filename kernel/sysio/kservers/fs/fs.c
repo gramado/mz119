@@ -1401,150 +1401,6 @@ void fs_pathname_backup ( int pid, int n ){
 }
 
 
-/*
- **************************
- * sys_read_file2
- *     carrega do diretório alvo. 
- */
-
-file *fs_load_file ( unsigned long name, unsigned long address ){
- 
-    file *__file;
-    
-    int i;
-    int Ret = -1;
-    unsigned long new_address;
-
-
-    __file = (file *) kmalloc ( sizeof(file) );
-
-    if ( (void *) __file == NULL ){
-        return NULL;
-        
-    }else{
-
-
-		 //__file->_base = (char *) address;
-		 //__file->_p = stream->_base;
-		 //__file->_cnt = 0;
-		 //__file->_flag = 0;
-		 //...
-		 
-	     //printf("sys_read_file2: struct ok \n");
-		 //printf("base=%x \n",stream->_base);
-		 //printf("ptr=%x  \n",stream->_ptr);
-		
-	 };
-	
-
-	 //#importante, 
-	 //A atualizaçao do nome é feita aqui.
-
-	//update name.
-    fsUpdateWorkingDiretoryString ( (char *) name );
-
-
-	//#importante
-	//temos que respeitar o endereço passaro pelo usu'ario.
-	
-	new_address = address;
-
-
-    if ( new_address == 0 ){
-        printf ("fs_load_file: address fail\n");
-        return NULL;
-    }
-
-
-	//#bugbug
-	//tenta carregar o diret'orio que tem o endereço indicado aqui, 
-	//se falhar carregue o root por enquanto.
-
-	if ( current_target_dir.current_dir_address == 0 )
-	{
-	    printf ("fs_load_file: current_target_dir.current_dir_address fail \n");
-		
-		//reset.
-		current_target_dir.current_dir_address = VOLUME1_ROOTDIR_ADDRESS;
-		
-		for ( i=0; i< 11; i++ )
-		{
-			current_target_dir.name[i] = '\0';
-		}		
-
-		return NULL;
-	}
-
-
-	//#debug
-	//printf ("sys_read_file2: dir_name=(%s) dir_addr=(%x) #debug \n",
-	//    current_target_dir.name, current_target_dir.current_dir_address );
-
-
-    size_t s = (size_t) fsGetFileSize ( (unsigned char *) name );
-
-
-    __file->_base = (char *) new_address;
-    __file->_p  = (char *) new_address;
-    __file->_cnt = s;
-
-    __file->_tmpfname = (char *) name;
-
-
-    // #bugbug
-    // Precisamos de um número na lista de arquivos abertos 
-    // pelo processo.
-    
-    __file->_file = 0;  
-
-
-	//#debug
-    //printf ("sys_read_file2: struct ok \n");
-    printf ("_base=%x \n", __file->_base);
-    printf ("_p=%x  \n", __file->_p);
-
-
-    //++
-    taskswitch_lock ();
-    scheduler_lock ();
-
-    Ret = (int) fsLoadFile ( VOLUME1_FAT_ADDRESS,  
-                    current_target_dir.current_dir_address,    //src dir address 
-                    (unsigned char *) current_target_dir.name, 
-                    (unsigned long) new_address );             //dst dir address
-
-    scheduler_unlock ();
-    taskswitch_unlock ();
-    //--
-
-
-    // Ok.
-    // Done!
-    
-    if ( Ret == 0)
-    {
-        printf ("fs_load_file: Done\n");
-
-        current_target_dir.current_dir_address = new_address;
-        
-        return (file *) __file;
-
-
-    // Fail!
-    
-    }else{
-
-        current_target_dir.current_dir_address = 0;
-        //fclose(__file);
-
-        return NULL;
-    };
-
-
-    return NULL;
-}
-
-
 
 // usada por open()
 // tem que retornar o fd e colocar o ponteiro na lista de arquivos
@@ -1552,16 +1408,26 @@ file *fs_load_file ( unsigned long name, unsigned long address ){
 // Carrega um arquivo do disco para a memória.
 // funcionou.
 
-int fs_load_file_2 ( char *file_name, unsigned long file_address )
-{
+// #bugbug
+// Na minha máquina real, às vezes dá problemas no tamanho do arquivo.
 
+
+// #bugbug
+// Estamos alocando memória em ring para carregar o arquivo
+// e depois estamos usando o buffer em ring3 passado pelo usuário.
+// >>> vamos confiar no usuário e usarmos
+
+int sys_read_file ( char *file_name,  int flags, mode_t mode )
+{
     struct process_d *p;
     file *__file;
     
     int Status = -1;
-    int i;
     
-    int __fd = -1;
+    int __slot = -1;
+
+
+
 
     // Convertendo o formato do nome do arquivo.    
     // >>> "12345678XYZ"
@@ -1573,17 +1439,13 @@ int fs_load_file_2 ( char *file_name, unsigned long file_address )
 
     Status = (int) KiSearchFile ( file_name, VOLUME1_ROOTDIR_ADDRESS );
     
-    if (Status == 1){
-
-        //#debug
-        //printf ("found\n");
-    
-    }else{
-
-         printf ("file not found\n");
+    if (Status != 1){
+         printf ("sys_read_file: File not found!\n");
          refresh_screen();
          return -1;
-    };
+    }
+    
+    
 
 
     //
@@ -1599,15 +1461,19 @@ int fs_load_file_2 ( char *file_name, unsigned long file_address )
         return -1;
         
         
-    for (i=0; i<32; i++)
+    for (__slot=0; __slot<32; __slot++)
     {
-         if ( p->Objects[i] == 0 )
-         {
-             __fd = i;
+         if ( p->Objects[__slot] == 0 ){
              goto __OK;
          }
     };
-    panic ("fs_load_file_2: No slots!\n");
+    
+    // #todo
+    // Esse limite pertence somente à um processo.
+    // Poderíamos avisar que o processo não pode mais abrir arquivos
+    // depois retornar.
+    
+    panic ("sys_read_file: No slots!\n");
 
 
 __OK:
@@ -1616,8 +1482,18 @@ __OK:
     
     if ( (void *) __file == NULL )
         return -1;
-
-    __file->_file = i;
+        
+        
+    if ( __slot < 0 || __slot >= 32 )
+    {
+        printf ("Slot fail\n");
+        refresh_screen();
+        return -1;
+    }
+    
+    __file->_file = __slot;
+    
+    
     __file->used = 1;
     __file->magic = 1234;
     
@@ -1642,7 +1518,8 @@ __OK:
         // limite - 1MB.
         if (s > 1024*1024)
         {
-            printf ("fs_load_file_2: File size out of limits\n");
+            printf ("sys_read_file: File size out of limits\n");
+            printf ("%d bytes \n",s);
             refresh_screen();
             return -1;
         }
@@ -1652,7 +1529,7 @@ __OK:
         
         if ( (void *) __file->_base == NULL )
         {
-            printf ("fs_load_file_2: Couldn't create a new buffer\n");
+            printf ("sys_read_file: Couldn't create a new buffer\n");
             refresh_screen();
             return -1;             
         }
@@ -1666,19 +1543,20 @@ __OK:
     
     // limits - 1MB
     if (s > 1024*1024){
-        printf ("fs_load_file_2: File size out of limits\n");
+        printf ("sys_read_file: File size out of limits\n");
         refresh_screen();
         return -1;
     }
 
-        
-        
+
     //limits?
     
-    __file->_base = (unsigned char *) file_address;
-    
     if ( (void *) __file->_base == NULL )
+    {
+        printf ("sys_read_file: buffer fail\n");
+        refresh_screen();
         return -1;
+    }
     
     
     __file->_p = __file->_base;
@@ -1688,16 +1566,15 @@ __OK:
     Status = (int) fsLoadFile ( VOLUME1_FAT_ADDRESS, 
                        VOLUME1_ROOTDIR_ADDRESS, 
                        file_name, 
-                       (unsigned long) file_address );
+                       (unsigned long) __file->_base );
    
     if ( Status != 0 )
         return -1;
         
         
-        
-    // salva o ponteiro.
-    if ( __fd >= 0 )    
-        p->Objects[__fd] = (unsigned long) __file;
+    // salva o ponteiro.  
+    // ja checamos fd.
+    p->Objects[__slot] = (unsigned long) __file;
         
     
         
@@ -1710,23 +1587,11 @@ __OK:
     // Pois essa rotina é usada por open();
     //      
           
-    return (int) __fd;
+    return (int) __file->_file;
 }
 
 
 
-/*
- * sys_read_file:
- *     Interface para carregar arquivo ou diretório.
- *     Essa rotina é chamada por services em services.c
- */
-
-int sys_read_file ( char *file_name, unsigned long file_address )
-{
-
-    return (int) fs_load_file_2 ( (char *) file_name, 
-                     (unsigned long) file_address );
-}
 
 
 

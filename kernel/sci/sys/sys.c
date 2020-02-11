@@ -144,78 +144,12 @@ int sys_open (const char *pathname, int flags, mode_t mode ){
         return -1;
 
 
-	//
-	// Carregando
-	//
-	
-	unsigned long address = (unsigned long) kmalloc(Size);
-	
-	if (address == 0)
-	    return -1;
-	
 
-	// Isso funciona.
-	// IN: filename, address
-	int _ret = (int) fs_load_file_2 ( (char *) pathname, (unsigned long) address );
-	
-	if (_ret<0)
-	    return -1;
-	
-	
-	
-	if (current_process < 0)
-		return -1;
-	
-	p = (void *) processList[current_process];
-	
-	if ( (void *) p == NULL )
-	{
-	    return -1;
-	}else{
-		
-
-        stream = (file *) kmalloc( sizeof(file) );
-        
-		if ( (void *) stream == NULL ){
-			printf ("klibc-unistd-open: stream fail\n"); 
-		    return -1;
-	
-		}else{
-	
-	         stream->used = 1;
-	         stream->magic = 1234;
-	         
-	         //#importante
-	         //Esse buffer não é acessível pela libc em ring3.
-	         //Então open só abre dispositivo?
-	         stream->_base = (unsigned char *) address;
-	         stream->_p = stream->_base; 
-		     
-		     // agora temos uma stream va'lida. 
-			 // procurar um slot vazio na lista de arquivos abertos do 
-			 // processo atual.
-	
-			 //NUMBER_OF_FILES = número máximo de arquivos abertos em um processo.
-		     for ( i=0; i< NUMBER_OF_FILES; i++ )
-			 {
-				 // Se encontramos um slot vazio, 
-				 // colocamos o ponteiro para a stream nele e retornamos o pid.
-				 // tipo: unsigned long
-			     if ( p->Objects[0] == 0 )
-				 {
-				     p->Objects[i] = (unsigned long) stream ;
-					 return (int) i;
-				 }
-			 }
-			 		
-			 //Nao encontramos um slot vazio.
-			 return -1;
-		}		
-	};
-	
-//fail:
-	//printf("klibc-unistd-open(): todo!\n");
-    return -1;
+    // igual open();
+    // #todo: flags e mode.
+    // IN: name, flags, mode;
+    // OUT: fd.
+    return (int) sys_read_file ( (char *) pathname, 0, 0 );
 }
 
 

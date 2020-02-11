@@ -32,21 +32,40 @@ int main ( int argc, char *argv[] ){
     FILE *fp;
     register int c;
     
+    char buffer[1024];
+    
     
     // #todo
     // validation
     
     
     // fopen.
+    // Ok. O arquivo á carregado em ring0.
+    // temos que ler com base do fd usando read();
+    
     fp = fopen ( (char *) argv[1], "r+" );
+    
     if ( (void *) fp == NULL )
-        return -1;     
+    {
+        printf("cat: fopen fail\n");
+        exit(-1);
+        //return -1;     
+    }
 
+
+
+
+    read ( fileno(fp), buffer, sizeof(buffer) );
+
+    printf (">>>> %s \n",buffer);
     
     // show
     
-    while ( (c = fgetc(fp)) >= 0 )
-        printf ("%c", c);
+    //while ( (c = fgetc(fp)) >= 0 )
+        //printf ("%c", c);
+
+
+
 
     return 0;
     

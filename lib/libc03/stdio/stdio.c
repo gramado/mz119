@@ -405,9 +405,57 @@ int fclose (FILE *stream){
 
 
 
+FILE *fopen ( const char *filename, const char *mode )
+{
+
+    FILE *__stream;   
+    int fd;       /* File descriptor.  */
+    int flags;    /* Stream flags.     */
+    int oflags;   /* Flags for open(). */
+
+
+
+    __stream = (FILE *) malloc( sizeof(FILE) );
+    
+    if ( (void *) __stream == NULL )
+        return NULL;
+
+
+
+    //Failed to open file. 
+    //fd = open (filename, oflags, MAY_READ | MAY_WRITE) )
+    fd = open (filename, 0, 0);  //no flags for now!
+    
+    if (fd < 0)
+    {
+        printf (" fopen: open() fail\n");
+        //free(__stream);
+        
+        return NULL;
+    }
+
+
+	
+	__stream->_file = fd;
+	__stream->_flags = flags;
+	
+	// #importante:
+	// Dessa forma fopen não permite que os aplicativos
+	// leiam o conteúdo do arquivo no buffer.
+	// Então o aplicativo terá que usar read pra ler 
+	// o conteúdo no buffer em ring0.
+
+	__stream->_base = NULL;    // ??
+	__stream->_cnt = 0;         // ??
+
+
+    return (__stream);
+}
+
+
 /*
  ***************************************
- * fopen:
+ * fopen2:
  *     Open a file.
  *     @todo: Abrir onde? saída padrão?
  *     @retorna o que? o endereço do buffer?
@@ -419,7 +467,7 @@ int fclose (FILE *stream){
  * falhar e retornar null.
  */
 
-FILE *fopen ( const char *filename, const char *mode )
+FILE *fopen2 ( const char *filename, const char *mode )
 {
     FILE *__stream;
     
@@ -474,24 +522,23 @@ FILE *fopen ( const char *filename, const char *mode )
     // ring 3.
     unsigned long address = (unsigned long) malloc(s);
     
-    if (address == 0)
-    {
+    if (address == 0){
         printf ("fopen: address\n");
         return NULL;
     }
 
 
     // load the file into the address.
-    
-    int status = -1;
+    // Vai retornar o fd.
+    int fd = -1;
     
     //IN: service, name, address, 0, 0 
-    status = (int) gramado_system_call ( 3, 
-                      (unsigned long) filename, 
-                      (unsigned long) address,  
-                      0 );
+    fd = (int) gramado_system_call ( 3, 
+                  (unsigned long) filename, 
+                  (unsigned long) address,  
+                  0 );
 
-    if (status < 0){
+    if (fd < 0){
         printf ("fopen: Couldn't load the file\n");
         return NULL;
     }
@@ -512,9 +559,12 @@ FILE *fopen ( const char *filename, const char *mode )
     };
 
 
-    //#todo    
-    //Isso deve ser o retorno de open() ou creat()
-    __stream->_file = -1;  //fd    
+    // #todo    
+    // Isso deve ser o retorno de open() ou creat()
+    // Me parece que a chamada acima também retorna o fd.
+    
+    __stream->_file = fd;    
+
 
     //base.
     __stream->_base = (unsigned char *) address; 

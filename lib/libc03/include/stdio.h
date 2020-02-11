@@ -534,7 +534,13 @@ int fileno ( FILE *stream );
  * File Operations
  */ 
  
-FILE *fopen( const char *filename, const char *mode ); 
+ 
+ 
+FILE *fopen ( const char *filename, const char *mode ); 
+
+FILE *fopen2 ( const char *filename, const char *mode ); 
+
+
 int fclose(FILE *stream); 
 //#define fileno(p)   ((p)->fd)
  

@@ -1065,11 +1065,11 @@ void *gde_extra_services ( unsigned long number,
     }
     
     
-    //socket() la libc.
-    //chamaremos a rotina na crts/klibc
-    //family, type, protocol
- 
-    //#todo: mudar para sys_socket.
+    // socket() da libc
+    // See: socket.c
+    // family, type, protocol
+    // #todo: mudar para sys_socket.
+    
     if ( number == 7000 ){
         return (void *) socket ( (int) arg2, (int) arg3, (int) arg4 );
     }
@@ -1405,13 +1405,19 @@ void *gde_services ( unsigned long number,
         // 3 
         // Carregar um arquivo do disco para a memória.
         // See: kernel/sysio/kservers/fs/fs.c
-        // IN: name, address
-        // #todo: Mudar para: case SYS_LOAD_FILE:
+        
+        
+        // #atenção
+        // Isso será usado por open(),
+        // Então podemos usar argumentos que combinem com open.
+        // Não receberemos um endereço em ring3, pois não dá pra confiar
+        // na libc.
+
+        // IN: name, flags, mode
         case SYS_READ_FILE:
-
             return (void *) sys_read_file ( (char *) a2, 
-                                (unsigned long) arg3 );
-
+                                (int) arg3, 
+                                (mode_t) arg4 ); 
             break;
 
 

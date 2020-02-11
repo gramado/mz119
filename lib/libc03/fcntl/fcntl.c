@@ -107,28 +107,24 @@ int open (const char *pathname, int flags, mode_t mode){
     }
 
 
-    // endereço desejando.
-    // ring 3.
-    unsigned long address = (unsigned long) malloc(s);
-    
-    if (address == 0){
-        printf ("open: address\n");
-        return -1;
-    }
-
-
     // load the file into the address.
-    
+    // O arquivo será carregado no buffer em ring0,
+    // A chamada não oferecerá um endereço em ring3,
+    // pois não dá pra confiar na biblioteca,
+    // o kernel não pode confiar na qualidade da libc.
+        
     int __fd = -1;
     
+    
     //IN: service, name, address, 0, 0 
-    __fd = (int) gramado_system_call( 3, 
-                      (unsigned long) pathname, 
-                      (unsigned long) address,  
-                      0 );
+
+    __fd = (int) gramado_system_call ( 3,  
+                     (unsigned long) pathname, 
+                     (unsigned long) flags,  
+                     (unsigned long) mode );
 
     if (__fd < 0){
-        printf ("open: __fd < 0 .Couldn't load the file\n");
+        printf ("open: Couldn't load the file. fd fail.\n");
         return -1;
     }
 
