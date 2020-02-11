@@ -1941,7 +1941,7 @@ this_directory:
 
     __background = 0;
 
-    if ( strncmp( (char*) tokenList[ ____last ], "&", 1 ) == 0 )
+    if ( gramado_strncmp( (char*) tokenList[ ____last ], "&", 1 ) == 0 )
         __background = 1;
     //--
 
@@ -2022,16 +2022,16 @@ do_compare:
 	//
 	//
 
-    if ( strncmp( (char *) tokenList[0], "dobin", 5 ) == 0 ){
+    if ( gramado_strncmp ( (char *) tokenList[0], "dobin", 5 ) == 0 ){
 	    goto dobin;	
 	}
 
-    if ( strncmp( (char *) tokenList[0], "dotry", 5 ) == 0 ){
+    if ( gramado_strncmp ( (char *) tokenList[0], "dotry", 5 ) == 0 ){
 		goto dotry;
 	} 
 	
 	//um comando no shell pede para executar um script
-    if ( strncmp( (char *) tokenList[0], "dosh", 4 ) == 0 ){
+    if ( gramado_strncmp ( (char *) tokenList[0], "dosh", 4 ) == 0 ){
 		goto dosh;
 	} 	
 
@@ -2041,7 +2041,7 @@ do_compare:
 	// comando usado para testes de comando.
 	int __z;
 
-    if ( strncmp( prompt, "token", 5 ) == 0 )
+    if ( gramado_strncmp ( prompt, "token", 5 ) == 0 )
     {
         printf ("Testing tokenList ...\n");
         printf ("Total={%d}\n\n", ____token_count );
@@ -2071,7 +2071,7 @@ do_compare:
         // & = Commencial 'and'.
         // When you run a command in the background, you do not have to wait for the 
         // command to finish before running another command.
-        if ( strncmp( (char*) tokenList[ ____last ], "&", 1 ) == 0 )
+        if ( gramado_strncmp ( (char*) tokenList[ ____last ], "&", 1 ) == 0 )
         {
             printf ("The last comand is %s\n", tokenList[ ____last ] );
             //__background = 1;
@@ -2096,7 +2096,7 @@ do_compare:
 	// mostra informações sobre o aplicativo usando 
 	// um message box ou uma janela.
 
-    if ( strncmp( prompt, "about", 5 ) == 0 )
+    if ( gramado_strncmp ( prompt, "about", 5 ) == 0 )
     {
         shellSendMessage ( NULL, MSG_COMMAND, CMD_ABOUT, 0);
         goto exit_cmp;
@@ -2105,7 +2105,7 @@ do_compare:
 
     //arp-test
     //chama a rotina que faz um teste de arp.
-    if ( strncmp( prompt, "arp-test", 8 ) == 0 )
+    if ( gramado_strncmp ( prompt, "arp-test", 8 ) == 0 )
     {
         testSendARP ();
         goto exit_cmp;
@@ -2115,7 +2115,7 @@ do_compare:
 	
 	// Imprime a tabela ascii usando a fonte atual.
     // 128 chars.	
-    //if( strncmp( prompt, "ascii", 5 ) == 0 )
+    //if( gramado_strncmp ( prompt, "ascii", 5 ) == 0 )
     //{
 		//shellASCII();
 	//	goto exit_cmp;
@@ -2125,7 +2125,7 @@ do_compare:
 	// bmp
 	// bmp exemplo.bmp
 	
-    if ( strncmp( prompt, "bmp", 3 ) == 0 )
+    if ( gramado_strncmp ( prompt, "bmp", 3 ) == 0 )
 	{
 		i++;
 		token = (char *) tokenList[i];
@@ -2155,7 +2155,7 @@ do_compare:
     // #bugbug
     // Cuidado.
     unsigned long __bi_disk_number;
-    if ( strncmp( prompt, "boot", 4 ) == 0 )
+    if ( gramado_strncmp ( prompt, "boot", 4 ) == 0 )
     {
         __bi_disk_number = (unsigned long) gramado_system_call ( 293, 3, 0, 0 );
         printf ("disk_number %x \n", __bi_disk_number );
@@ -2164,7 +2164,7 @@ do_compare:
 
 
 	// cd - Change dir.
-	if ( strncmp( prompt, "cd", 2 ) == 0 )
+	if ( gramado_strncmp ( prompt, "cd", 2 ) == 0 )
 	{	
 		i++;
 		token = (char *) tokenList[i];
@@ -2176,10 +2176,10 @@ do_compare:
 			
 			//#bugbug: não é possivel fazer isso por enquanto,
 			//pois não estamos fazendo parse de char por char.
-			//if( strncmp( (char*) tokenList[i], ".", 2 ) == 0 )
+			//if( gramado_strncmp( (char*) tokenList[i], ".", 2 ) == 0 )
 			//{}
 				
-			if( strncmp( (char*) tokenList[i], "..", 2 ) == 0 )
+			if( gramado_strncmp( (char*) tokenList[i], "..", 2 ) == 0 )
 			{
 				//Apaga o nome do último diretório.
 			    shell_pathname_backup ( current_workingdiretory_string, 1 ); 
@@ -2203,31 +2203,29 @@ do_compare:
 
 
     // clear - Clear the screen.
-    if ( strncmp( prompt, "clear", 5 ) == 0 )
-    {
+    if ( gramado_strncmp( prompt, "clear", 5 ) == 0 ){
         cls_builtins ();
         goto exit_cmp;
     }
 
 
 	// clear-screen-buffer
-	if ( strncmp( prompt, "clear-screen-buffer", 19 ) == 0 )
-	{
+	if ( gramado_strncmp ( prompt, "clear-screen-buffer", 19 ) == 0 ){
 		shellClearBuffer ();
 		goto exit_cmp;
 	}	
 	
 	
 	//close
-	if ( strncmp( prompt, "close", 5 ) == 0 )
+	if ( gramado_strncmp( prompt, "close", 5 ) == 0 )
 	{
 		shellSendMessage ( NULL, MSG_CLOSE, 0, 0 );
 	    goto exit_cmp;
 	}
 
     // cls - Clear the screen.
-    if ( strncmp( prompt, "CLS", 3 ) == 0 || 
-         strncmp( prompt, "cls", 3 ) == 0 )
+    if ( gramado_strncmp( prompt, "CLS", 3 ) == 0 || 
+         gramado_strncmp( prompt, "cls", 3 ) == 0 )
     {
         cls_builtins ();
         goto exit_cmp;
@@ -2238,8 +2236,8 @@ do_compare:
 	// color-scheme
 	// Seleciona um dos 2 modos de cores padrão do sistema.
 	
-    if ( strncmp( prompt, "color", 5 ) == 0 || 
-	     strncmp( prompt, "color-scheme", 12 ) == 0 )
+    if ( gramado_strncmp( prompt, "color", 5 ) == 0 || 
+	     gramado_strncmp( prompt, "color-scheme", 12 ) == 0 )
 	{
 		i++;
 		token = (char *) tokenList[i];
@@ -2251,7 +2249,7 @@ do_compare:
 		}else{
             
 			//humility
-			if ( strncmp( (char *) tokenList[i], "--humility", 10 ) == 0 )
+			if ( gramado_strncmp( (char *) tokenList[i], "--humility", 10 ) == 0 )
 			{ 
 		        printf("Selecting Humility color scheme\n"); 
                 system_call ( 119, 
@@ -2263,7 +2261,7 @@ do_compare:
 			}
 			
 			//pride
-			if ( strncmp( (char *) tokenList[i], "--pride", 7 ) == 0 )
+			if ( gramado_strncmp( (char *) tokenList[i], "--pride", 7 ) == 0 )
 			{
 				printf("Selecting Pride color scheme\n");
                 system_call ( 119, 
@@ -2282,7 +2280,7 @@ do_compare:
 	
 
 	// copy
-	if ( strncmp( prompt, "copy", 4 ) == 0 )
+	if ( gramado_strncmp( prompt, "copy", 4 ) == 0 )
 	{	
 		// o que segue o comando copy são dois pathname.
 		//@todo: podemos checar se o pathname é absoluto,
@@ -2294,7 +2292,7 @@ do_compare:
 	
 			
 	// date
-	if ( strncmp( prompt, "date", 4 ) == 0 )
+	if ( gramado_strncmp( prompt, "date", 4 ) == 0 )
 	{
 		date_builtins();
         goto exit_cmp;
@@ -2302,7 +2300,7 @@ do_compare:
 
 	
 	// del
-	if ( strncmp( prompt, "del", 3 ) == 0 )
+	if ( gramado_strncmp( prompt, "del", 3 ) == 0 )
 	{	
 		// o que segue o comando del é um pathname.
 		//@todo: podemos checar se o pathname é absoluto,
@@ -2313,15 +2311,14 @@ do_compare:
 
 	
     // desktop.
-	if ( strncmp( prompt, "desktop", 7 ) == 0 )
-	{
+	if ( gramado_strncmp( prompt, "desktop", 7 ) == 0 ){
         desktopInitialize ();
         goto exit_cmp;
-	};
+	}
 
     // devices.
     // Mostra a lista de dispositivos deviceList[]
-	if ( strncmp( prompt, "devices", 7 ) == 0 )
+	if ( gramado_strncmp( prompt, "devices", 7 ) == 0 )
 	{
         gramado_system_call (770,
              (unsigned long) 0,
@@ -2334,8 +2331,8 @@ do_compare:
 	
 	// dir - Lista os arquivos no estilo DOS.
 	// ls  - Lista no estilu *NIX. Isso será um aplicativo.
-	if ( strncmp ( prompt, "dir", 3 ) == 0 || 
-	     strncmp ( prompt, "ls", 2 ) == 0 )
+	if ( gramado_strncmp ( prompt, "dir", 3 ) == 0 || 
+	     gramado_strncmp ( prompt, "ls", 2 ) == 0 )
 	{
 		char dir_name[] = "volume1";
 		
@@ -2375,24 +2372,22 @@ do_compare:
     };
 	
     // disk-info
-	if ( strncmp( prompt, "disk-info", 9 ) == 0 )
-	{	
+	if ( gramado_strncmp( prompt, "disk-info", 9 ) == 0 ){
 	    shellShowDiskInfo ();
         goto exit_cmp;
-    };	
+    }
 	
 	
 	// echo - Echo de terminal.
-    if ( strncmp( prompt, "echo", 4 ) == 0 )
-	{
+    if ( gramado_strncmp( prompt, "echo", 4 ) == 0 ){
 		echo_builtins (tokenList);
 		goto exit_cmp;
-    };
+    }
 
 	
 	// editbox
 	// Cria uma edibox.
-    if ( strncmp( prompt, "editbox", 7 ) == 0 )
+    if ( gramado_strncmp( prompt, "editbox", 7 ) == 0 )
     {
         gde_enter_critical_section ();
         shellCreateEditBox ();
@@ -2403,7 +2398,7 @@ do_compare:
 
 	
 	// exec - Executa um programa fechando o shell.
-    if ( strncmp( prompt, "exec", 4 ) == 0 )
+    if ( gramado_strncmp ( prompt, "exec", 4 ) == 0 )
 	{
 		// o que segue o comando exec é um pathname.
 		//@todo: podemos checar se o pathname é absoluto,
@@ -2416,12 +2411,12 @@ do_compare:
 
 
 	// exit - Exit the application.
-    if ( strncmp( prompt, "exit", 4 ) == 0 )
+    if ( gramado_strncmp( prompt, "exit", 4 ) == 0 )
 	{
 		exit_builtins();
 		ShellFlag = SHELLFLAG_EXIT;
 		goto exit_cmp;
-    };
+    }
 
 
 
@@ -2429,7 +2424,7 @@ do_compare:
 	// Retorna no filho e chamamos execve.
 	// #todo: Não usar fork no garden, use apenas no atacama!
 	
-    if ( strncmp ( prompt, "fork", 4 ) == 0 )
+    if ( gramado_strncmp ( prompt, "fork", 4 ) == 0 )
     {
         printf ("gdeshell: Tentando clonar o processo atual ...\n");
 
@@ -2508,7 +2503,7 @@ do_compare:
     // gethostname 
     char *my_hostname;
     char hostbuffer[256]; 
-	if ( strncmp( prompt, "gethostname", 11 ) == 0 )
+	if ( gramado_strncmp ( prompt, "gethostname", 11 ) == 0 )
 	{
 		gethostname (hostbuffer, sizeof(hostbuffer));
 		printf(">>> ");
@@ -2528,7 +2523,7 @@ do_compare:
     /*
     // getusername 
     char *my_username;
-	if ( strncmp( prompt, "getusername", 11 ) == 0 )
+	if ( gramado_strncmp ( prompt, "getusername", 11 ) == 0 )
 	{
 		//vai colocar num buffer ba libc
 		my_username = (char *) getlogin();
@@ -2541,7 +2536,7 @@ do_compare:
 
 
     char *env_string;
-	if ( strncmp( prompt, "env", 3 ) == 0 )
+	if ( gramado_strncmp( prompt, "env", 3 ) == 0 )
 	{
         env_string = (char *) getenv2("PS1");
         printf(">>> %s .\n", env_string);
@@ -2555,7 +2550,7 @@ do_compare:
   
     //see stdlib.c  
     char *my_ptsname;  //ponteiro para um buffer na libcore.
-	if ( strncmp( prompt, "get-ptsname", 11 ) == 0 )
+	if ( gramado_strncmp ( prompt, "get-ptsname", 11 ) == 0 )
 	{
 		//vai colocar num buffer ba libc
 		//IN: fd do master.
@@ -2568,7 +2563,7 @@ do_compare:
     //ptsname_r
     //see stdlib.c
     char ptsname_buffer[64]; 
-	if ( strncmp( prompt, "get-ptsname2", 12 ) == 0 )
+	if ( gramado_strncmp ( prompt, "get-ptsname2", 12 ) == 0 )
 	{
 		//IN: fd do master, buf, buflen
 		ptsname_r ( 1,ptsname_buffer, sizeof(ptsname_buffer));
@@ -2577,7 +2572,7 @@ do_compare:
 	}        
 
     // getpids
-    if ( strncmp( prompt, "getpids", 7 ) == 0 )
+    if ( gramado_strncmp ( prompt, "getpids", 7 ) == 0 )
     {
         printf ( "Window Server PID %d\n", gde_get_pid (GETPID_WS) );
         printf ( "Window Manager PID %d\n", gde_get_pid (GETPID_WM) );
@@ -2585,14 +2580,14 @@ do_compare:
     }
 
     // getpid
-	if ( strncmp( prompt, "getpid", 6 ) == 0 )
+	if ( gramado_strncmp( prompt, "getpid", 6 ) == 0 )
 	{
 	    getpid_builtins ();
         goto exit_cmp;
     };
 	
     // getppid
-	if ( strncmp( prompt, "getppid", 7 ) == 0 )
+	if ( gramado_strncmp( prompt, "getppid", 7 ) == 0 )
 	{
 	    getppid_builtins();
         goto exit_cmp;
@@ -2600,7 +2595,7 @@ do_compare:
 	
 	
     // getuid - get user id
-	if ( strncmp( prompt, "getuid", 6 ) == 0 )
+	if ( gramado_strncmp( prompt, "getuid", 6 ) == 0 )
 	{
 	    getuid_builtins();
         goto exit_cmp;
@@ -2608,14 +2603,14 @@ do_compare:
 	
 	
     // getgid - get group id
-	if ( strncmp( prompt, "getgid", 6 ) == 0 )
+	if ( gramado_strncmp( prompt, "getgid", 6 ) == 0 )
 	{
 	    getgid_builtins();
         goto exit_cmp;
     };
 	
     //get-usersession
-	if ( strncmp( prompt, "get-usersession", 15 ) == 0 )
+	if ( gramado_strncmp( prompt, "get-usersession", 15 ) == 0 )
 	{
 	    shellShowUserSessionID();
         goto exit_cmp;
@@ -2623,14 +2618,14 @@ do_compare:
 	
 	
     //get-windowstation
-	if ( strncmp( prompt, "get-room", 8 ) == 0 )
+	if ( gramado_strncmp( prompt, "get-room", 8 ) == 0 )
 	{
 	    shellShowWindowStationID(); //mudar o nome;
         goto exit_cmp;
     };
 	
     //get-desktop
-	if ( strncmp( prompt, "get-desktop", 11 ) == 0 )
+	if ( gramado_strncmp( prompt, "get-desktop", 11 ) == 0 )
 	{
 	    shellShowDesktopID();
         goto exit_cmp;
@@ -2644,7 +2639,7 @@ do_compare:
 	//unsigned char *heaptest = (unsigned char *) system_call ( 184, thisprocess_id, 0, 0 );
 	
     // heap
-	if ( strncmp( prompt, "heap", 4 ) == 0 )
+	if ( gramado_strncmp( prompt, "heap", 4 ) == 0 )
 	{
 		printf ("Testando heap\n");
 				
@@ -2668,9 +2663,9 @@ do_compare:
 	// ?
 	// Mostra ajuda.
  
-    if ( strncmp( prompt, "HELP", 4 ) == 0 || 
-         strncmp( prompt, "help", 4 ) == 0 || 
-         strncmp( prompt, "?", 1 ) == 0 )
+    if ( gramado_strncmp( prompt, "HELP", 4 ) == 0 || 
+         gramado_strncmp( prompt, "help", 4 ) == 0 || 
+         gramado_strncmp( prompt, "?", 1 ) == 0 )
     {
 		i++;
 		token = (char *) tokenList[i];
@@ -2681,12 +2676,12 @@ do_compare:
 
 		}else{
 
-			if ( strncmp( (char*) tokenList[i], "--all", 5 ) == 0 )
+			if ( gramado_strncmp( (char*) tokenList[i], "--all", 5 ) == 0 )
 			{ 
                 help_builtins (1); 
 			}
 			
-			if ( strncmp( (char*) tokenList[i], "--min", 5 ) == 0 )
+			if ( gramado_strncmp( (char*) tokenList[i], "--min", 5 ) == 0 )
 			{
                 help_builtins (2);
 			}
@@ -2700,7 +2695,7 @@ do_compare:
     // Testing libc funciton.
     // See: http://man7.org/linux/man-pages/man2/ioctl.2.html
 	int32_t ____value;
-	if ( strncmp( prompt, "ioctl", 5 ) == 0 )
+	if ( gramado_strncmp( prompt, "ioctl", 5 ) == 0 )
 	{
 	    printf ("~ioctl\n");
 	    
@@ -2720,7 +2715,7 @@ do_compare:
     /*
     // install
     // Isso pode ser um aplicativo. 
-    if ( strncmp( prompt, "install", 7 ) == 0 )
+    if ( gramado_strncmp( prompt, "install", 7 ) == 0 )
     {
         printf ("~install\n");
         goto exit_cmp;
@@ -2748,7 +2743,7 @@ do_compare:
     unsigned long __profiler_ints_irq14;
     unsigned long __profiler_ints_irq15;
     unsigned long __profiler_ints_gde_services;
-    if ( strncmp( prompt, "ints", 4 ) == 0 )
+    if ( gramado_strncmp( prompt, "ints", 4 ) == 0 )
     {
         __profiler_ints_irq0 = gde_get_system_metrics (100);
         __profiler_ints_irq1 = gde_get_system_metrics (101);
@@ -2793,8 +2788,7 @@ do_compare:
 
 
     // kernel-info
-    if ( strncmp( prompt, "kernel-info", 11 ) == 0 )
-    {
+    if ( gramado_strncmp( prompt, "kernel-info", 11 ) == 0 ){
         shellShowKernelInfo ();
         goto exit_cmp;
     }
@@ -2806,7 +2800,7 @@ do_compare:
     // message-box
 	// Testing message box.
 	// #todo: testar os 4 tipos 
-    if ( strncmp( prompt, "message-box", 11 ) == 0 )
+    if ( gramado_strncmp( prompt, "message-box", 11 ) == 0 )
     {
         //gde_message_box ( 1, "MessageBox", "type 1" );
         //gde_message_box ( 2, "MessageBox", "type 2" );
@@ -2817,7 +2811,7 @@ do_compare:
 
 
     // mkdir - Criar um diretório dado o nome.
-    if ( strncmp( prompt, "mkdir", 5 ) == 0 )
+    if ( gramado_strncmp( prompt, "mkdir", 5 ) == 0 )
     {
         gde_create_empty_directory ( (char *) tokenList[1] );
         goto exit_cmp;
@@ -2825,14 +2819,14 @@ do_compare:
 
 
     // mkfile - Criar um arquivo dado o nome.
-    if ( strncmp( prompt, "mkfile", 6 ) == 0 )
+    if ( gramado_strncmp( prompt, "mkfile", 6 ) == 0 )
     {
         gde_create_empty_file ( (char *) tokenList[1] );
         goto exit_cmp;
     }
 
     // mm-info
-    if ( strncmp( prompt, "mm-info", 7 ) == 0 ){
+    if ( gramado_strncmp( prompt, "mm-info", 7 ) == 0 ){
         shellShowMemoryInfo ();
         goto exit_cmp;
     }
@@ -2841,7 +2835,7 @@ do_compare:
     // mm-size
     // mb
     unsigned long __mm_size_mb = 0;    
-    if ( strncmp( prompt, "mm-size", 7 ) == 0 )
+    if ( gramado_strncmp( prompt, "mm-size", 7 ) == 0 )
     {
         __mm_size_mb = (unsigned long) gramado_system_call (292,0,0,0);
         printf ("Memory size = %d MB \n",__mm_size_mb);
@@ -2850,14 +2844,14 @@ do_compare:
 
 
     // mm-kernelheap
-    if ( strncmp( prompt, "mm-kernelheap", 13 ) == 0 ){
+    if ( gramado_strncmp( prompt, "mm-kernelheap", 13 ) == 0 ){
         shellShowKernelHeapPointer ();
         goto exit_cmp;
     }
 
 
     // mm-processheap
-    if ( strncmp( prompt, "mm-processheap", 14 ) == 0 ){
+    if ( gramado_strncmp( prompt, "mm-processheap", 14 ) == 0 ){
         shellShowProcessHeapPointer ();
         goto exit_cmp;
     }
@@ -2865,7 +2859,7 @@ do_compare:
 
     // msg-test
     int mi;
-    if ( strncmp( prompt, "msg-test", 8 ) == 0 )
+    if ( gramado_strncmp( prompt, "msg-test", 8 ) == 0 )
     {
 		// enviando várias mensagens.
 		for (mi=0; mi<20;mi++)
@@ -2880,14 +2874,14 @@ do_compare:
 
     // metrics
     // Mostra algumas informações de métrica do sistema.
-    if ( strncmp( prompt, "metrics", 7 ) == 0 ){
+    if ( gramado_strncmp( prompt, "metrics", 7 ) == 0 ){
         shellShowMetrics ();
         goto exit_cmp;
     }
 
 
     // network
-    if ( strncmp( prompt, "network", 7 ) == 0 ){
+    if ( gramado_strncmp( prompt, "network", 7 ) == 0 ){
         //printf ("~\n");
         gramado_system_call( 968,0,0,0);
         goto exit_cmp;
@@ -2896,7 +2890,7 @@ do_compare:
     
 	// mbr
 	// ?? Talvez mostrar informações sobre o mbr ou realizar testes.
-    if ( strncmp( prompt, "mbr", 3 ) == 0 ){
+    if ( gramado_strncmp( prompt, "mbr", 3 ) == 0 ){
         shellTestMBR ();
         printf ("done\n");
         goto exit_cmp;
@@ -2904,7 +2898,7 @@ do_compare:
 
 
     // pci-info
-    if ( strncmp( prompt, "pci-info", 8 ) == 0 ){
+    if ( gramado_strncmp( prompt, "pci-info", 8 ) == 0 ){
         shellShowPCIInfo ();
         goto exit_cmp;
     }
@@ -2918,7 +2912,7 @@ do_compare:
     unsigned long __process_image_pa;    
     unsigned long __process_image_va;
     unsigned long __process_image_size;
-    if ( strncmp( prompt, "process-stats", 13 ) == 0 )
+    if ( gramado_strncmp( prompt, "process-stats", 13 ) == 0 )
     {
 
         //image size. A estrutura de processo ainda não tem esse valor.
@@ -2973,7 +2967,7 @@ do_compare:
 
     // current-process
     //?? mudar o nome desse comando. OU mudar de lugar.
-    if ( strncmp ( prompt, "current-process", 15 ) == 0 ){
+    if ( gramado_strncmp ( prompt, "current-process", 15 ) == 0 ){
         system_call ( SYSTEMCALL_CURRENTPROCESSINFO, 0, 0, 0 );
         goto exit_cmp; 
     }
@@ -2981,7 +2975,7 @@ do_compare:
 
     // pwd 
     // Print working directory.
-    if ( strncmp( prompt, "pwd", 3 ) == 0 ){
+    if ( gramado_strncmp( prompt, "pwd", 3 ) == 0 ){
         pwd_builtins ();
         goto exit_cmp;
     }
@@ -2998,7 +2992,7 @@ do_compare:
     unsigned long __memorysizeUsed;
     unsigned long __memorysizeFree;
     
-    if (strncmp ( prompt, "ram", 3 ) == 0)
+    if (gramado_strncmp ( prompt, "ram", 3 ) == 0)
     {
         __memorysizeBaseMemory = gde_get_system_metrics (30);
         __memorysizeOtherMemory = gde_get_system_metrics (31);
@@ -3023,7 +3017,7 @@ do_compare:
 
     // root
     // Show root file system info.
-    if ( strncmp( prompt, "root", 4 ) == 0 )
+    if ( gramado_strncmp( prompt, "root", 4 ) == 0 )
     {
         gramado_system_call (4444, 0, 0, 0);
         goto exit_cmp;
@@ -3033,7 +3027,7 @@ do_compare:
 
     // save
     // suspensa
-    if ( strncmp( prompt, "save", 4 ) == 0 )
+    if ( gramado_strncmp( prompt, "save", 4 ) == 0 )
     {
         printf("~save root\n");
         goto exit_cmp;
@@ -3041,7 +3035,7 @@ do_compare:
 
 
     // sethostname
-	if ( strncmp( prompt, "sethostname", 11 ) == 0 )
+	if ( gramado_strncmp( prompt, "sethostname", 11 ) == 0 )
 	{
 		i++;
 		token = (char *) tokenList[i];
@@ -3056,7 +3050,7 @@ do_compare:
 
 
     // setusername
-    if ( strncmp( prompt, "setusername", 11 ) == 0 )
+    if ( gramado_strncmp( prompt, "setusername", 11 ) == 0 )
     {
 		i++;
 		token = (char *) tokenList[i];
@@ -3086,7 +3080,7 @@ do_compare:
 
     int socket_fd = -1;
     char __socket_buffer[32];
-    if ( strncmp( prompt, "socket", 6 ) == 0 )
+    if ( gramado_strncmp( prompt, "socket", 6 ) == 0 )
     {
         printf("\n");
         socket_fd = (int) socket ( (int) AF_INET, 
@@ -3126,7 +3120,7 @@ do_compare:
     // Testando a função socket() da libc
     // Pedimos para o servidor de rede enviar dados para o
     // processo através da stream configurada anteriormente.
-    if ( strncmp( prompt, "test-net", 8 ) == 0 )
+    if ( gramado_strncmp( prompt, "test-net", 8 ) == 0 )
     {
         socket_fd = (int) socket ( (int) AF_INET, 
                               (int) SOCK_STREAM, 
@@ -3146,7 +3140,7 @@ do_compare:
 
 
     int __net_ret;
-    if ( strncmp( prompt, "test-net-2", 10 ) == 0 )
+    if ( gramado_strncmp( prompt, "test-net-2", 10 ) == 0 )
     {
 		//#obs: esse buffer é global para que o procedimento de janela possa acessalo
          __net_ret = (int) gde_setup_net_buffer ( getpid(), __net_buffer, sizeof(__net_buffer) );
@@ -3161,7 +3155,7 @@ do_compare:
     }
 
     // arp-test
-    if ( strncmp( prompt, "test-arp", 8 ) == 0 )
+    if ( gramado_strncmp( prompt, "test-arp", 8 ) == 0 )
     {
 		// net.c
         __shellTestARP ();
@@ -3173,7 +3167,7 @@ do_compare:
 	// socket-test
 	// Rotina de teste de soquetes.
 	// Atenção: Não é o soquete da libc.
-    if ( strncmp( prompt, "socket-test", 11 ) == 0 )
+    if ( gramado_strncmp( prompt, "socket-test", 11 ) == 0 )
     {
         shellSocketTest ();
         goto exit_cmp;
@@ -3182,7 +3176,7 @@ do_compare:
 
     // shutdown - 
     // Isso será um programa. shutdown.bin
-    if ( strncmp( prompt, "shutdown", 8 ) == 0 )
+    if ( gramado_strncmp( prompt, "shutdown", 8 ) == 0 )
     {
         printf ("~shutdown \n");
         goto exit_cmp;
@@ -3190,7 +3184,7 @@ do_compare:
 
 
 	// start
-    if ( strncmp( prompt, "start", 5 ) == 0 )
+    if ( gramado_strncmp( prompt, "start", 5 ) == 0 )
     {
         printf ("~start\n");
         goto exit_cmp;
@@ -3198,7 +3192,7 @@ do_compare:
 
 
     // streams
-    if ( strncmp( prompt, "streams", 7 ) == 0 )
+    if ( gramado_strncmp( prompt, "streams", 7 ) == 0 )
     {
         printf ("Streams: \n");
         printf ("__stdin_fd  = %d \n", __stdin_fd  );
@@ -3210,7 +3204,7 @@ do_compare:
 
 
     // systeminfo - Informações sobre o sistema.
-    if ( strncmp( prompt, "system-info", 11 ) == 0 )
+    if ( gramado_strncmp( prompt, "system-info", 11 ) == 0 )
     {
         shellShowSystemInfo ();
         goto exit_cmp;
@@ -3222,7 +3216,7 @@ do_compare:
     // Carrega um arquivo no buffer de words 
     // depois exibe todo o buffer mantendo o posicionamento 
     //no cursor. Isso força um scroll.
-    if ( strncmp( prompt, "t1", 2 ) == 0 ){
+    if ( gramado_strncmp( prompt, "t1", 2 ) == 0 ){
         shellTestLoadFile ();
         goto exit_cmp;
     }
@@ -3230,7 +3224,7 @@ do_compare:
 
 	// t2 - 
 	// Test bmp
-    if ( strncmp( prompt, "t2", 2 ) == 0 )
+    if ( gramado_strncmp( prompt, "t2", 2 ) == 0 )
     {
         shellTestDisplayBMP ();
         //refresh_screen();
@@ -3240,8 +3234,8 @@ do_compare:
 
     // t3
     // Test thread
-    if ( strncmp( prompt, "t3", 2 ) == 0 ||
-        strncmp( prompt, "test-thread", 11 ) == 0)
+    if ( gramado_strncmp( prompt, "t3", 2 ) == 0 ||
+        gramado_strncmp( prompt, "test-thread", 11 ) == 0)
     {
         shellTestThreads ();
         goto exit_cmp;
@@ -3254,7 +3248,7 @@ do_compare:
 	FILE *f1;
 	int ch_test;
 
-    if ( strncmp( prompt, "t4", 2 ) == 0 )
+    if ( gramado_strncmp( prompt, "t4", 2 ) == 0 )
     {
 		printf ("\n t4: Open init.txt \n");
         
@@ -3302,7 +3296,7 @@ do_compare:
     // Saving a file.
     // It's running on qemu.
     // It's not running on real machine.
-    if ( strncmp ( prompt, "t5", 2 ) == 0 )
+    if ( gramado_strncmp ( prompt, "t5", 2 ) == 0 )
     {
         printf ("t5: Saving a file\n");
 		shell_save_file ();
@@ -3312,7 +3306,7 @@ do_compare:
 
 
     // cancelada
-    if ( strncmp( prompt, "t6", 2 ) == 0 )
+    if ( gramado_strncmp( prompt, "t6", 2 ) == 0 )
     {
         printf("~Nothing\n");
         goto exit_cmp;
@@ -3321,10 +3315,10 @@ do_compare:
 
     // t7
     // Testando estado das teclas.
-    if ( strncmp( prompt, "KEYS", 4 ) == 0 ||
-         strncmp( prompt, "keys", 4 ) == 0 || 
-         strncmp( prompt, "T7", 2 ) == 0 || 
-         strncmp( prompt, "t7", 2 ) == 0 )
+    if ( gramado_strncmp( prompt, "KEYS", 4 ) == 0 ||
+         gramado_strncmp( prompt, "keys", 4 ) == 0 || 
+         gramado_strncmp( prompt, "T7", 2 ) == 0 || 
+         gramado_strncmp( prompt, "t7", 2 ) == 0 )
     {
         printf ("VK_CAPITAL %d \n", 
             system_call ( 138, VK_CAPITAL, VK_CAPITAL, VK_CAPITAL ) );
@@ -3351,7 +3345,7 @@ do_compare:
     // t18
     // Testando a criação de botão e a interação com ele 
     // através do mouse.
-    if ( strncmp( prompt, "t8", 2 ) == 0 )
+    if ( gramado_strncmp( prompt, "t8", 2 ) == 0 )
     {
         shellTestButtons ();
         gde_show_backbuffer ();
@@ -3360,7 +3354,7 @@ do_compare:
 
 
     // #cancelada
-    if ( strncmp( prompt, "t9", 2 ) == 0 )
+    if ( gramado_strncmp( prompt, "t9", 2 ) == 0 )
     {    
         printf ("~Nothing\n");
         goto exit_cmp;
@@ -3369,7 +3363,7 @@ do_compare:
 
 
     // #cancelada
-    if ( strncmp( prompt, "t10", 3 ) == 0 )
+    if ( gramado_strncmp( prompt, "t10", 3 ) == 0 )
     {   
         printf ("~Nothing\n");
         goto exit_cmp;
@@ -3380,7 +3374,7 @@ do_compare:
 	// Testando o envio de mensagens para o procedimento de janelas
 	// dess processo. Usando o kernel.
 	// Chama message box com mensagem about.
-    if ( strncmp( prompt, "t11", 3 ) == 0 )
+    if ( gramado_strncmp( prompt, "t11", 3 ) == 0 )
     {    
        gde_send_message ( (struct window_d *) 0, 
             (int) MSG_COMMAND, 
@@ -3397,7 +3391,7 @@ do_compare:
 	// + copia do buffer para o backbuffer 
 	//buffer de test;
 	unsigned long message_buffer[11];
-	if ( strncmp( prompt, "t12", 3 ) == 0 )
+	if ( gramado_strncmp( prompt, "t12", 3 ) == 0 )
 	{
         printf ("t12: test rect \n");
 		
@@ -3426,7 +3420,7 @@ do_compare:
 
 
     // # cancelado.
-    if ( strncmp( prompt, "t13", 3 ) == 0 )
+    if ( gramado_strncmp( prompt, "t13", 3 ) == 0 )
     {
         printf ("~Nothing\n");
         goto exit_cmp;
@@ -3435,7 +3429,7 @@ do_compare:
 
     // Create a window.
     // #bugbug: page fault.
-    if ( strncmp( prompt, "t14", 3 ) == 0 )
+    if ( gramado_strncmp( prompt, "t14", 3 ) == 0 )
     {
         testCreateWindow ();
         printf("t14: debug *hang");
@@ -3445,7 +3439,7 @@ do_compare:
 
 
     // # cancelado.
-    if ( strncmp( prompt, "t15", 3 ) == 0 )
+    if ( gramado_strncmp( prompt, "t15", 3 ) == 0 )
     {
         printf ("~Nothing\n");
         goto exit_cmp;
@@ -3457,7 +3451,7 @@ do_compare:
 	// Testando execve da libc
 	// Isso funcionou usando o processo init.
 	// #todo: Não usar exece no garden ... apenas no atacama.
-	if ( strncmp( prompt, "t16", 3 ) == 0 )
+	if ( gramado_strncmp( prompt, "t16", 3 ) == 0 )
 	{
 		//printf ("Testando execve da gde libc02. *hang\n" );
 		//execve ("gramcode.bin", NULL, NULL );
@@ -3471,7 +3465,7 @@ do_compare:
 
 	//t17 - create process
     void *P;
-    if ( strncmp( prompt, "t17", 3 ) == 0 )	
+    if ( gramado_strncmp( prompt, "t17", 3 ) == 0 )	
     {
         printf ("Creating processes ...\n");	
         
@@ -3492,7 +3486,7 @@ do_compare:
 	int x_ch;
 	int terminal_PID;
 	#define MSG_TERMINALCOMMAND 100 //provisório
-	if ( strncmp ( prompt, "t18", 3 ) == 0 )
+	if ( gramado_strncmp ( prompt, "t18", 3 ) == 0 )
 	{
 		//get tty stream
 		//o shell pega um stream para escrever.
@@ -3529,7 +3523,7 @@ do_compare:
 	
 	//t19
 	int xxx__PID;
-	if ( strncmp ( prompt, "t19", 3 ) == 0 )
+	if ( gramado_strncmp ( prompt, "t19", 3 ) == 0 )
 	{
 		xxx__PID = (int) system_call ( 900, (unsigned long) "noraterm.bin", 0, 0 );
 		//xxx__PID = (int) system_call ( 901, (unsigned long) "noraterm.bin", 0, 0 );
@@ -3563,7 +3557,7 @@ do_compare:
 	//t20 - Isso executa o terminal e manda uma mensagem pra ele.
 	int terminal___PID;
 	FILE *_fp;
-	if ( strncmp ( prompt, "t20", 3 ) == 0 )
+	if ( gramado_strncmp ( prompt, "t20", 3 ) == 0 )
 	{
 		terminal___PID = (int) gde_start_terminal ();
 	    if ( terminal___PID <= 0 )
@@ -3610,7 +3604,7 @@ do_compare:
 
     // t900 - Clona e executa o filho dado o nome do filho.
     // Isso funciona muito bem.
-    if ( strncmp ( prompt, "t900", 4 ) == 0 ){
+    if ( gramado_strncmp ( prompt, "t900", 4 ) == 0 ){
         system_call ( 900, (unsigned long) "gramcode.bin", 0, 0 );
         goto exit_cmp;
     }
@@ -3620,7 +3614,7 @@ do_compare:
     // clona um processo, retorna para o pai e inicializa o processo
     // filho do seu entrypoint. (#test)	
     int t901_ret;
-    if ( strncmp ( prompt, "t901", 4 ) == 0 )
+    if ( gramado_strncmp ( prompt, "t901", 4 ) == 0 )
     {
 	    t901_ret = (int) system_call ( 901, 0, 0, 0 );
 		printf ("t901: t901_ret = %d \n", t901_ret);
@@ -3641,7 +3635,7 @@ do_compare:
     char __rbuf2[128]; //line ? read 
     int __w_size2 = 0;
     
-    if ( strncmp ( prompt, "tty", 3 ) == 0 )
+    if ( gramado_strncmp ( prompt, "tty", 3 ) == 0 )
     {
         //__current_virtual_console = (int) gramado_system_call (277,0,0,0);
         //printf ("Current Virtual Console %d \n");
@@ -3692,7 +3686,7 @@ do_compare:
 
 	// tasklist - Lista informações sobre os processos.
 	//isso será um programa tasklist.bin
-    if ( strncmp( prompt, "tasklist", 8 ) == 0 )
+    if ( gramado_strncmp( prompt, "tasklist", 8 ) == 0 )
     {
         shellTaskList();
         goto exit_cmp;
@@ -3700,7 +3694,7 @@ do_compare:
 
 
 	// time
-    if ( strncmp( prompt, "time", 4 ) == 0 )
+    if ( gramado_strncmp( prompt, "time", 4 ) == 0 )
     {
         printf ("~time\n");
         goto exit_cmp;
@@ -3709,7 +3703,7 @@ do_compare:
 
    //teste da árvore de natal
    //tem que configurar MSG_TIMER
-    if ( strncmp( prompt, "timer-xmas", 10 ) == 0 )
+    if ( gramado_strncmp( prompt, "timer-xmas", 10 ) == 0 )
     {
         /*
 		//#teste de natal.
@@ -3733,7 +3727,7 @@ do_compare:
 	// timer-test
 	// Essa rotina cria um objeto timer que gera um interrupção 
 	// de tempos em tempos e é tratado pelo procedimento de janelas.
-	if ( strncmp( prompt, "timer-test", 10 ) == 0 )
+	if ( gramado_strncmp( prompt, "timer-test", 10 ) == 0 )
 	{
 		__count = 0; //tem que uinicializar;
 		
@@ -3771,29 +3765,10 @@ do_compare:
     }
 
 
-	
-	
-	// taskbar
-	// Cria uma top bar.
-    if ( strncmp( prompt, "taskbar", 7 ) == 0 )
-	{
-		goto exit_cmp;
-    }
-
-
-	// tree
-	// Desenha uma pequena árvore.
-    if ( strncmp( prompt, "tree", 4 ) == 0 )
-	{
-		shellTree ();
-		goto exit_cmp;
-    }
-
-
     // user info
     // Mas mostraremos as informações so usuário atual.
     // IN: service, user id.
-    if ( strncmp( prompt, "user-info", 9 ) == 0 ){
+    if ( gramado_strncmp( prompt, "user-info", 9 ) == 0 ){
         gramado_system_call (156, 0,0,0);
         goto exit_cmp;
     }
@@ -3801,7 +3776,7 @@ do_compare:
 
 	// version
 	//?? isso pode ser um programa
-    if ( strncmp( prompt, "version", 7 ) == 0 )
+    if ( gramado_strncmp( prompt, "version", 7 ) == 0 )
     {
         show_shell_version();
        //printf("\n Gramado version %s \n", OS_VERSION );
@@ -3810,14 +3785,14 @@ do_compare:
 
 
     // volume-info
-    if ( strncmp( prompt, "volume-info", 11 ) == 0 ){
+    if ( gramado_strncmp( prompt, "volume-info", 11 ) == 0 ){
         shellShowVolumeInfo();
         goto exit_cmp;
     }
 
 
 	// window
-    if ( strncmp( prompt, "window", 6 ) == 0 )
+    if ( gramado_strncmp( prompt, "window", 6 ) == 0 )
     {
         shellShowWindowInfo();
         goto exit_cmp;
@@ -3827,7 +3802,7 @@ do_compare:
 	// wscreen - test screen window (root window)
 	//#bugbug: isso não funcionou
     struct window_d *__screen_window;
-    if ( strncmp( prompt, "wscreen", 7 ) == 0 )
+    if ( gramado_strncmp( prompt, "wscreen", 7 ) == 0 )
 	{
 		//#obs: se minimizada, por isso não pode ser pintada ou repintada.
         __screen_window = (struct window_d *) gde_get_screen_window();
@@ -3840,7 +3815,7 @@ do_compare:
 	// wmain - test main window (main window)
     //#bugbug: isso não funcionou
     struct window_d *__main_window;
-    if ( strncmp( prompt, "wmain", 5 ) == 0 )
+    if ( gramado_strncmp( prompt, "wmain", 5 ) == 0 )
 	{
 		//#obs: se minimizada, por isso não pode ser pintada ou repintada.
         __main_window =  (struct window_d *) gde_get_main_window ();
@@ -3855,7 +3830,7 @@ do_compare:
     // write on virtual console.
     char __wbuf[128]; //line ? 
     int __w_size = 0;
-    if ( strncmp( prompt, "write", 5 ) == 0 )
+    if ( gramado_strncmp( prompt, "write", 5 ) == 0 )
     {
 		//isso retorna o tamanho da string ??.
 		//sprintf (__wbuf,"Testing tty_write ...\n");
@@ -3871,7 +3846,7 @@ do_compare:
 
 	// wait-test - Vamos esperar por qualquer um dos filhos.
 	int ___wait_status;
-    if ( strncmp( prompt, "wait-test", 9 ) == 0 )
+    if ( gramado_strncmp( prompt, "wait-test", 9 ) == 0 )
     {
         //wait (&___wait_status);
         wait (-1,&___wait_status,0);
@@ -3879,7 +3854,7 @@ do_compare:
     }
 
 
-    if ( strncmp ( prompt, "wait-reason", 11 ) == 0)
+    if ( gramado_strncmp ( prompt, "wait-reason", 11 ) == 0)
     {
 	    printf ("gdeshell: child ...\n");
         system_call ( 900, (unsigned long) "launcher.bin", 0, 0 );
@@ -4958,7 +4933,7 @@ int shellCheckPassword (){
 			printf(">>%s\n", buffer);
 #endif
 			
-            if( strncmp( username, buffer, 4 ) == 0 )
+            if( gramado_strncmp( username, buffer, 4 ) == 0 )
             {
 #ifdef SHELL_VERBOSE				
 				printf("# USERNAME OK #\n");
@@ -5002,7 +4977,7 @@ int shellCheckPassword (){
 			printf(">>%s\n", buffer);
 #endif			
 			
-            if ( strncmp( password, buffer, 4 ) == 0 )
+            if ( gramado_strncmp( password, buffer, 4 ) == 0 )
             {
 #ifdef SHELL_VERBOSE								
 				printf("# PASSWORD OK #\n");
@@ -7086,7 +7061,7 @@ void shell_print_tokenList ( char *token_list[], char *separator ){
         if ( token == NULL )
             return;
 		
-		if ( strncmp ( (char *) token_list[i], "echo", 4 ) == 0 )
+		if ( gramado_strncmp ( (char *) token_list[i], "echo", 4 ) == 0 )
 		    continue;	
 		
 		printf ("%s", token_list[i] );
@@ -7173,7 +7148,7 @@ int is_bin ( char *cmd ){
         return 0;
 
 
-    if ( strncmp ( (char *) p, "bin", 3 ) == 0 )
+    if ( gramado_strncmp ( (char *) p, "bin", 3 ) == 0 )
     {
         return 1;
     }
@@ -7204,7 +7179,7 @@ int is_sh1 ( char *cmd ){
         return 0;
 
 
-    if ( strncmp ( (char *) p, "sh1", 3 ) == 0 )
+    if ( gramado_strncmp ( (char *) p, "sh1", 3 ) == 0 )
     {
         return 1;
     }
@@ -8271,7 +8246,7 @@ get_input_filename:
 		//#todo: (possibilidades)
 		//As flags poderia começar com f. Ex: fInteractive, fLoginShell,
 		
-	    if ( strncmp ( (char *) argv[0], "-interactive", 12 ) == 0 ){
+	    if ( gramado_strncmp ( (char *) argv[0], "-interactive", 12 ) == 0 ){
 			
 			interactive = 1;
             
@@ -8282,12 +8257,12 @@ get_input_filename:
         //Se o shell foi iniciado com um arquivo de script para ser 
         //executado.
 		//a Flag -f indica que o que segue é um arquivo de script.
-        //if( strncmp( (char *) argv[0], "-f", 2 ) == 0 )
+        //if( gramado_strncmp( (char *) argv[0], "-f", 2 ) == 0 )
         //{
 		//	goto dosh2;
 		//}			
 		
-	    if ( strncmp ( (char *) argv[1], "-login", 6 ) == 0 ){
+	    if ( gramado_strncmp ( (char *) argv[1], "-login", 6 ) == 0 ){
 			
 			login_shell = 1;
 			

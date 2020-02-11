@@ -49,14 +49,19 @@ char *strreplace (char *s, char old, char new);
 
 char *strncpy(char *s1, const char *s2, size_t n);
 
-//@todo: Deve ser const char.
-int strcmp(char *s1, char *s2);
 
-//#bugbug: tem const.
-int strncmp(char *s1, char *s2, int len);
 
-//padrão
-int strncmp2 (const char *s1, const char *s2, size_t n);
+
+
+
+int strcmp (const char *s1, const char *s2);
+int strncmp (const char *s1, const char *s2, size_t n);
+
+
+// Padrão Gramado. Usando tipagem diferente.
+int gramado_strncmp (char *s1, char *s2, int len);
+
+
 
 //#bugbug deletando porque tá errado.
 //int str_cmp(unsigned char *str1, unsigned char *str2);

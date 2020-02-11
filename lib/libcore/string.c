@@ -379,7 +379,7 @@ char *strncpy (char *s1, const char *s2, size_t n){
  *     Compare two strings. 
  */
 
-int strcmp (char *s1, char *s2){
+int strcmp (const char *s1, const char *s2){
 
     int i;
 
@@ -395,19 +395,12 @@ int strcmp (char *s1, char *s2){
 }
 
 
-/*
- * strncmp:
- *     Compara duas strings.
- *     Obs: Essa tem funcionado bem. 
- */
 
-// #bugbug
-// o padrão tem const.
-// int strncmp(const char *s1, const char *s2, size_t n);
+//padrão
+int strncmp (const char *s1, const char *s2, size_t n){
 
-int strncmp ( char *s1, char *s2, int len ){
-
-    int n = len;
+    if ( n<0 )
+        return -1;
 
     while (n > 0)
     {
@@ -431,11 +424,18 @@ int strncmp ( char *s1, char *s2, int len ){
 }
 
 
-//padrão
-int strncmp2 (const char *s1, const char *s2, size_t n){
 
-    if ( n<0 )
-        return -1;
+/*
+ * gramado_strncmp:
+ *     Compara duas strings.
+ *     Padrão Gramado. Usando tipagem diferente.
+ *     Obs: Essa tem funcionado bem. 
+ */
+
+
+int gramado_strncmp ( char *s1, char *s2, int len ){
+
+    int n = len;
 
     while (n > 0)
     {

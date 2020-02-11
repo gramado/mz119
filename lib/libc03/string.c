@@ -384,9 +384,12 @@ char *strncpy (char *s1, const char *s2, size_t n){
  *     Compare two strings. 
  */
 
-int strcmp (char *s1, char *s2){
+// See:
+// http://man7.org/linux/man-pages/man3/strcmp.3.html
 
-    int i;
+int strcmp(const char *s1, const char *s2){
+
+    int i=0;
 
     for ( i=0; s1[i] == s2[i]; i++ )
     {
@@ -402,13 +405,13 @@ int strcmp (char *s1, char *s2){
 
 /*
  * strncmp:
- *     Compara duas strings.
- *     Obs: Essa tem funcionado bem. 
+ * compare two strings
  */
 
-int strncmp ( char *s1, char *s2, int len ){
+// See:
+// http://man7.org/linux/man-pages/man3/strcmp.3.html
 
-    int n = len;
+int strncmp (const char *s1, const char *s2, size_t n){
 
     while (n > 0)
     {
