@@ -91,8 +91,10 @@
 
 #include "shell.h"
 
+
+
 //para que o procedimento possa acessalo.
-    char __net_buffer[4096]; // #bugbug size
+char __net_buffer[4096]; // #bugbug size
 
 // A janela principal do aplicativo.
 struct window_d *hWindow;  

@@ -13,6 +13,17 @@
 #include <sys/types.h>
 
 
+
+/* NULL-terminated array of "NAME=VALUE" environment variables.  */
+extern char **__environ;
+
+//#ifdef __USE_GNU
+extern char **environ;
+//#endif
+
+
+
+
 //The <unistd.h> header shall declare the following external variables:
 extern char  *optarg;
 extern int    opterr, optind, optopt;

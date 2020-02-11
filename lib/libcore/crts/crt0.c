@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+
 #include <unistd.h>
 
 
@@ -28,7 +29,7 @@ static char *argv[] = {
 // Esperamos um extern em stdlib para pegar as informações
 // que estão aqui.
 
-static char *environ2[] = { 
+static char *my_environ[] = { 
     "PS0=@TEST0",           
     "PS1=@TEST1",    
     "PS2=@TEST2",  
@@ -46,6 +47,9 @@ extern int main ( int argc, char *argv[] );
 
 
 int crt0 (){
+	
+	
+	environ = my_environ;
 
     //
     // Token support.

@@ -19,13 +19,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <unistd.h>
 
 //system calls.
 #include <stubs/gramado.h> 
  
 
 //Número de serviços.
-#define	SYSTEMCALL_EXIT  70
+#define  SYSTEMCALL_EXIT  70
  
 
 //#define NULL ((void*)0)
@@ -34,15 +35,6 @@
 //static int randseed = 1234;
 unsigned int randseed;
 
-
-//extern char **environ;
-
-static char *environ[] = { 
-    "PS0=TEST0",           
-    "PS1=TEST1",    
-    "PS2=TEST2",  
-	NULL 
-};
 
 
 //
