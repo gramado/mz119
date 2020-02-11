@@ -25,17 +25,16 @@ static char *argv[] = {
 
 
 
-// Fake environment.
-static char *envp[] = { 
-    "PS0=TEST0",           
-    "PS1=TEST1",    
-    "PS2=TEST2",  
+// Esperamos um extern em stdlib para pegar as informações
+// que estão aqui.
+
+static char *environ2[] = { 
+    "PS0=@TEST0",           
+    "PS1=@TEST1",    
+    "PS2=@TEST2",  
 	NULL 
 };
 
-
-
-extern char **environ;
 
 extern int main ( int argc, char *argv[] );
 
@@ -64,10 +63,6 @@ int crt0 (){
     // Linha de comandos passada pelo shell.
 
     char *shared_memory = (char *) (0xC0800000 -0x100);
-
-
-    //#todo getenvi vai precisar disso.
-    // environ = (char **) envp;
 
 /*
 #ifdef TEDITOR_VERBOSE	

@@ -2546,9 +2546,7 @@ do_compare:
         env_string = (char *) getenv2("PS1");
         printf(">>> %s .\n", env_string);
         goto exit_cmp;
-
-        goto exit_cmp;
-    };
+    }
     
 
     

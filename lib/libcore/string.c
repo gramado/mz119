@@ -401,6 +401,10 @@ int strcmp (char *s1, char *s2){
  *     Obs: Essa tem funcionado bem. 
  */
 
+// #bugbug
+// o padrão tem const.
+// int strncmp(const char *s1, const char *s2, size_t n);
+
 int strncmp ( char *s1, char *s2, int len ){
 
     int n = len;
@@ -425,6 +429,35 @@ int strncmp ( char *s1, char *s2, int len ){
 
     return 0;
 }
+
+
+//padrão
+int strncmp2 (const char *s1, const char *s2, size_t n){
+
+    if ( n<0 )
+        return -1;
+
+    while (n > 0)
+    {
+        n--;
+
+        if ( *s1 != *s2 )
+        { 
+            return (int) 1; 
+        }
+
+        *s1++; 
+        *s2++;
+    };
+
+    if ( *s1 != '\0' || *s2 != '\0' )
+    {
+        return (int) 2;
+    };
+
+    return 0;
+}
+
 
 
 /*

@@ -35,7 +35,15 @@
 unsigned int randseed;
 
 
-char **environ = NULL;
+//extern char **environ;
+
+static char *environ[] = { 
+    "PS0=TEST0",           
+    "PS1=TEST1",    
+    "PS2=TEST2",  
+	NULL 
+};
+
 
 //
 // -----------------
@@ -1262,31 +1270,68 @@ char *__findenv ( const char *name, int *offset ){
 	const char *np;
 	char **p, *c;  //??
 
-	if (name == NULL || environ == NULL)
-	{	
+    if ( (void *) name == NULL )
+    {
+        printf ("__findenv: name NULL\n");
+        return (char *) 0;
+    }
+
+    if ( (char **) environ == 0 )
+    {	
+        printf ("__findenv: environ is 0\n");
         return (char *) 0;
         //return NULL;
 	}
-	
+
+
+    //tamanho da string do argumento.
 	for (np = name; *np && *np != '='; ++np)
 	{	
         continue;
 	};
-	
 	len = (size_t) (np - name);
 	
-	for ( p = environ; (c = *p) != NULL; ++p )
-	{
-        if ( strncmp( c, (char*) name, len ) == 0 && c[len] == '=' ) 
-		{
-			*offset = p - environ;
-			
-			return c + len + 1;
-		};
-	};
-	
-	*offset = p - environ;
+	//printf (">>> len  %d \n", len);
+    //return (char *) 0;
 
+    int fail;
+    int i;
+
+    for ( p = environ; (c = *p) != NULL; ++p )
+    {
+        
+        //#obs: isso funcionou mostrando a primeira string do environ.
+        //return c + len + 1;
+        
+        fail = 0;
+        
+        for (i=0; i<len; i++)
+        {
+			 //se um deles for diferente.
+             //se todos forem iguais, fail continua sendo 0.
+             if ( c[i] != name[i] )
+                 fail = 1;
+        }
+ 
+        //if ( strncmp ( c, (char *) name, len ) == 0 && c[len] == '=' ) 
+        //if ( strncmp2 ( (const char *) c, (const char *) name, len ) == 0 && c[len] == '=' ) 
+        
+        
+        //if ( c[0] == name[0] && c[len] == '=' )  //ok
+        if (fail == 0)
+        {
+            *offset = p - environ;
+
+            // OK.
+            return c + len + 1;
+        };
+    };
+
+
+    *offset = p - environ;
+
+
+	printf ("__findenv: overflow\n");
 
 //done:
     return (char *) 0;
@@ -1307,6 +1352,8 @@ char *getenv2 (const char *name){
 
 	//_DIAGASSERT(name != NULL);
 
+    //printf ("getenv2: %s \n", (const char *) name);
+    //return NULL;
 
     if ( (void *) name == NULL )
     {
@@ -1315,8 +1362,9 @@ char *getenv2 (const char *name){
 
 
 	//rwlock_rdlock(&__environ_lock);
-    result = __findenv(name, &offset);
+    result = __findenv (name, &offset);
 	//rwlock_unlock(&__environ_lock);
+
 
     return (char *) result;
 }
