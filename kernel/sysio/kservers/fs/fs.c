@@ -1486,7 +1486,7 @@ __OK:
         
     if ( __slot < 0 || __slot >= 32 )
     {
-        printf ("Slot fail\n");
+        printf ("sys_read_file: Slot fail\n");
         refresh_screen();
         return -1;
     }
@@ -1498,18 +1498,37 @@ __OK:
     __file->magic = 1234;
     
     //
+    // buffer padrão
+    //
+    
+    __file->_base = (char *) kmalloc (BUFSIZ);
+    
+    if ( (void *) __file->_base == NULL )
+    {
+        printf ("sys_read_file: buffer fail\n");
+        refresh_screen();
+        return -1;
+    }
+    __file->_lbfsize = BUFSIZ;
+    
+    //
     // File size.
     //
 
     size_t s = (size_t) fsGetFileSize ( (unsigned char *) file_name );
     
-    if (s <= 0)
+    if (s < 0)
+    {
+        printf ("sys_read_file: File size fail\n");
+        refresh_screen();
         return -1;
-        
-    // Se o tamanho do arquivo for menor que o buffer.
-    if (s < __file->_lbfsize)
-        s = (size_t) __file->_lbfsize;
- 
+    }
+
+    
+    if ( s < __file->_lbfsize )
+    {
+        s = __file->_lbfsize;
+    }
 
     // Se o arquivo for maior que buffer disponível.
     // Podemos almentar o buffer.
