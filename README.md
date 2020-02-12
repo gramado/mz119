@@ -47,7 +47,7 @@ Gramado (c) is a 32 bit multithreaded operating system.
 
 - API for GUI apps. (libgui)
 
-- Core lib for gui apps. (libcore)
+- Core lib for GUI apps. (libcore)
 
 - unix-like libc for commands. (libc03)
 
