@@ -25,6 +25,33 @@
 Gramado (c) is a 32 bit multithreaded operating system.
 
 
+## Kernel features.
+
+- FAT16 file system.
+
+- Paging.
+
+- Threads.
+
+- IDE PATA, e1000 NIC, Serial Port, ps2 mouse and keyboard.
+
+## Userland features.
+
+- GUI apps.
+
+- unix-like commands.
+
+- Working on a Window Server. (gws)
+
+## Libraries.
+
+- API for GUI apps. (libgui)
+
+- Core lib for gui apps. (libcore)
+
+- unix-like libc for commands. (libc03)
+
+
 ## Compiling Gramado on Linux.
 
 Linux 5.3.18-1-MANJARO x86_64
