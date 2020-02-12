@@ -26,10 +26,11 @@ CFLAGS = -m32 \
 	
 
 
-API     = ../../uapi/libgui/include/
-APIOBJ  = ../../uapi/libgui/obj
-LIBC    = ../../uapi/libcore/include/
-LIBCOBJ = ../../uapi/libcore/obj
+API     = ../../../../lib/libgui/include/
+APIOBJ  = ../../../../lib/libgui/obj
+
+LIBC    = ../../../../lib/libcore/include/
+LIBCOBJ = ../../../../lib/libcore/obj
 
 
 
@@ -45,6 +46,8 @@ stdlib.o \
 string.o \
 conio.o \
 unistd.o \
+termios.o \
+ioctl.o \
 stubs.o    
 
 
@@ -58,7 +61,7 @@ head.o:
 	# Nothing.
 
 crt0.o:
-	gcc  -c  crt0.c -I $(LIBC) -I $(API) $(CFLAGS) -o crt0.o
+#	gcc  -c  crt0.c -I $(LIBC) -I $(API) $(CFLAGS) -o crt0.o
 
 main.o:
 	gcc  -c  main.c -I $(LIBC) -I $(API) $(CFLAGS) -o main.o
@@ -68,6 +71,7 @@ all-c:
 # We need some api and libc objects.
 
 #obs: estamos usando um crt0.o compilado aqui mesmo.
+	cp $(LIBCOBJ)/crt0.o .
 	cp $(LIBCOBJ)/stubs.o .
 	
 	cp $(LIBCOBJ)/ctype.o .
@@ -77,6 +81,9 @@ all-c:
 	cp $(LIBCOBJ)/conio.o .
 	cp $(LIBCOBJ)/unistd.o .
 
+	cp $(LIBCOBJ)/termios.o .
+	cp $(LIBCOBJ)/ioctl.o .
+	
 	cp $(APIOBJ)/api.o .
 
 

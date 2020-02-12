@@ -109,7 +109,7 @@ void __debug_print (char *string)
 }
 
 
-static inline void pause (void){
+static inline void pause2 (void){
 	
     asm volatile("pause" ::: "memory"); 
 }; 
@@ -161,7 +161,7 @@ int main3 ( int argc, char *argv[] ){
     //
 
 	//window, x, y, color, string.
-    apiDrawText ( NULL, 
+    gde_draw_text ( NULL, 
         0, 0, COLOR_YELLOW, 
         "init2.bin: Init is alive! Calling int 129" );
  
@@ -242,11 +242,11 @@ int main3 ( int argc, char *argv[] ){
  
  
      //#test
-    apiDrawText ( NULL, 
+    gde_draw_text ( NULL, 
         400, 0, COLOR_YELLOW, runlevel_string );        
         
         
-     refresh_screen ();
+     gde_show_backbuffer ();
      //while(1){} //debug
 
 
@@ -339,7 +339,7 @@ fail1:
     // __debug_print ("Gramado Core: Run level fail");
     
 	//window, x, y, color, string.
-    apiDrawText ( NULL, 
+    gde_draw_text ( NULL, 
         0, 0, COLOR_YELLOW, 
         "init2: fail" );
 
@@ -354,10 +354,10 @@ int main ( int argc, char *argv[] ){
 
     __debug_print ("init2.bin: Initializing ...\n");
 
-    apiDrawText ( NULL, 
+    gde_draw_text ( NULL, 
         0, 0, COLOR_YELLOW, 
         "init2.bin: Init is alive! Calling int 129" );
-    refresh_screen ();
+    gde_show_backbuffer ();
 
     //
     // Habilita as interrupções mascaraveis.
