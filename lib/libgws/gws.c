@@ -7,6 +7,13 @@
 // as chamadas ao servidor.
 
 
+// #todo
+// Connection support.
+// O support para conexões deve ser uma bibliteca
+// separada, pois assim os processos cliente podem usar essa
+// biblioteca para se concetarem com outros servidores
+// do mesmo tipo.
+
 
 #include <types.h>  
 #include <stddef.h>

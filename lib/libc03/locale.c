@@ -1,8 +1,13 @@
+
+
 #include <stddef.h>
 
-char *setlocale(int category, const char *locale)
+
+
+char *setlocale (int category, const char *locale)
 {
-	return NULL;
+    
+    return NULL;
 }
 
 
