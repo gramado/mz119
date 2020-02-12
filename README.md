@@ -1,6 +1,6 @@
 <p align=center>
   <a href="https://github.com/frednora/gramado">
-    <img alt="Gramado" src="https://github.com/gramado/img/blob/master/gramado.png">
+    <img alt="Gramado" src="https://github.com/gramado/img/blob/master/gramado-gramcode.png">
   </a>
 </p>
 
@@ -22,28 +22,29 @@
 
 ## What is Gramado?
 
-Gramado (c) is a 32bit multithreaded operating system.
+Gramado (c) is a 32 bit multithreaded operating system.
 
 
 ## Compiling Gramado on Linux.
 
-Linux 4.20.7-1-MANJARO x86_64
+Linux 5.3.18-1-MANJARO x86_64
 
-gcc (GCC) 8.2.1
+gcc (GCC) 9.2.0
 
-GNU ld (GNU Binutils) 2.31.1
+GNU ld (GNU Binutils) 2.33.1
 
 NASM version 2.14.02 compiled on Nov 15 2018
 
 
 ## VHD
 
-You can run the VHD on Oracle Virtual Box.
+You can run the VHD on Oracle Virtual Box and qemu.
+$ make qemu-test
 
 
 ## Testing
 
-Please, give me some feedback.
+Please, give us some feedback.
 
 
 ## More information
