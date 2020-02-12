@@ -644,7 +644,7 @@ vhd-copy-files:
 	-sudo cp cmd/bin/HELLO2.BIN    /mnt/gramadovhd
 	-sudo cp cmd/bin/HELLO3.BIN    /mnt/gramadovhd
 
-#	-sudo cp userland/ul2/atacama/bin/JACKPOT.BIN   /mnt/gramadovhd
+	-sudo cp cmd/bin/JACKPOT.BIN   /mnt/gramadovhd
 #	-sudo cp userland/ul2/atacama/bin/LISP.BIN      /mnt/gramadovhd
 
 	-sudo cp cmd/bin/REBOOT.BIN    /mnt/gramadovhd

@@ -39,8 +39,9 @@ CFLAGS = -m32 \
 
 LIBC    = ../../lib/libc03/include/
 LIBCOBJ = ../../lib/libc03/obj
-API02   = ../../lib/api02/include/
-APIOBJ  = ../../lib/api02/obj
+API02   = ../../lib/libgui/include/
+APIOBJ  = ../../lib/libgui/obj
+
 
 	##
 	## Objects
@@ -54,6 +55,9 @@ stdlib.o \
 string.o \
 time.o \
 unistd.o \
+ioctl.o \
+termios.o \
+fcntl.o \
 stubs.o    
 
 
@@ -69,6 +73,8 @@ main.o:
 all-c:
 
 	cp $(LIBCOBJ)/crt0.o   .
+	cp $(LIBCOBJ)/stubs.o  .
+
 	
 	cp $(LIBCOBJ)/ctype.o   .
 	cp $(LIBCOBJ)/stdio.o .
@@ -76,15 +82,17 @@ all-c:
 	cp $(LIBCOBJ)/string.o .
 	cp $(LIBCOBJ)/time.o    .
 	cp $(LIBCOBJ)/unistd.o  .
-	cp $(LIBCOBJ)/stubs.o  .
-
+	cp $(LIBCOBJ)/fcntl.o  .
+	cp $(LIBCOBJ)/termios.o  .
+	cp $(LIBCOBJ)/ioctl.o  .
+	
 #	cp $(APIOBJ)/api.o      .
 
 jackpot-link:
 	ld -m elf_i386 -T link.ld -o JACKPOT.BIN $(myObjects) -Map map.s
 
 finalize:
-	cp JACKPOT.BIN  ../../bin
+	cp JACKPOT.BIN  ../bin
 
 clean:
 	-rm *.o

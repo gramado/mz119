@@ -1,3 +1,6 @@
+// split command;
+
+
 #include <stdio.h>
 
 unsigned count = 1000;
@@ -5,6 +8,7 @@ int	fnumber;
 char	fname[100];
 char	*ifil;
 char	*ofil;
+
 FILE	*is;
 FILE	*os;
 

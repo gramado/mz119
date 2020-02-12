@@ -124,7 +124,11 @@ read_more:
 
         memset(cmdbuf, 0, 128);
         
-        ret = read(0, cmdbuf, 128);
+        
+        // #
+        // Reading from stdin.
+        
+        ret = read (0, cmdbuf, 128);
         
         //printf("ret is %d\n", ret);
         

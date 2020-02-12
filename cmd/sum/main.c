@@ -1,5 +1,9 @@
 /*
+ * sum command.
+ * 
+ * 
  * Sum bytes in file mod 2^16
+ * unix v7 ?
  */
 
 
@@ -39,11 +43,17 @@ int main ( int argc, char *argv[] )
 			errflg++;
 			fprintf(stderr, "sum: read error on %s\n", argc>1?argv[i]:"-");
 		}
-		printf("%05u%6ld", sum, (nbytes+BUFSIZ-1)/BUFSIZ);
+		
+		
+		//printf("%05u%6ld", sum, (nbytes+BUFSIZ-1)/BUFSIZ);
+		printf("%d%d", sum, (nbytes+BUFSIZ-1)/BUFSIZ);
+		
 		if(argc > 2)
 			printf(" %s", argv[i]);
 		printf("\n");
 		fclose(f);
 	} while(++i < argc);
-	exit(errflg);
+	
+
+    exit (errflg);
 }

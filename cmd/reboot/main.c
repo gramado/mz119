@@ -8,14 +8,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
+
+//#include <time.h>
 
 
-
-/*
- * main:
- *     Entry point. 
- */
 
 // ??
 // Qual janela tem o foco de entrada ?
@@ -24,32 +20,42 @@
 	
 int main ( int argc, char *argv[] ){
 
-	int code = 0;
-	
-	printf ("\n");
-	printf ("####################################################\n");
-	  puts ("################### Reboot #########################\n");
-	printf ("####################################################\n");
-	printf ("\n");
-	
-	printf ("#todo: reboot the system ...\n");
+    int code = 0;
 
-	
+    printf ("\n");
+    printf ("####################################################\n");
+      puts ("################### Reboot #########################\n");
+    printf ("####################################################\n");
+    printf ("\n");
+
+
+
+    char *env_string;
+       
+    env_string = (char *) getenv ("USER");
+    printf(">>> Bye %s! :) \n", env_string);
+
+
+
 	// #todo
 	// salvamentos.
 	// fechar os processos e efetuar as rotinas
 	// de reboot do kernel.
-	
 
-	
-	while (1)
-	{
-		//#todo
-		//Usar uma função da libc.
+    printf ("#todo: reboot the system ...\n");
+
+
+    // #todo
+    // Usar uma função da libc.
+
+    while (1){
         gramado_system_call ( 110, 0, 0, 0 );
-	}
-	
-	return -1;
+    };
+
+
+    return -1;
 }
+
+
 
  

@@ -53,7 +53,6 @@ ctype.o \
 stdio.o \
 stdlib.o \
 string.o \
-time.o \
 unistd.o \
 termios.o \
 ioctl.o \
@@ -80,7 +79,6 @@ all-c:
 	cp $(LIBCOBJ)/stdio.o .
 	cp $(LIBCOBJ)/stdlib.o .
 	cp $(LIBCOBJ)/string.o .
-	cp $(LIBCOBJ)/time.o    .
 	cp $(LIBCOBJ)/unistd.o  .
 
 	cp $(LIBCOBJ)/termios.o  .

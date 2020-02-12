@@ -58,6 +58,12 @@ int main ( int argc, char *argv[] ){
    
    int  n;
    
+   
+   
+   printf ("s1: Testing socket functions ...\n");
+   
+   
+   
    /* First call to socket() function */
    sockfd = socket (AF_INET, SOCK_STREAM, 0);
    
@@ -113,6 +119,9 @@ int main ( int argc, char *argv[] ){
       perror("ERROR writing to socket");
       exit(1);
    }
+   
+   
+   printf ("s1: done\n");
       
    return 0;
 }
