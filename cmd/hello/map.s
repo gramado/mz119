@@ -387,68 +387,67 @@ Linker script and memory map
 .iplt           0x0000000000408000        0x0
  .iplt          0x0000000000408000        0x0 crt0.o
 
-.rodata         0x0000000000408000      0xfc1
- .rodata        0x0000000000408000       0x43 crt0.o
- *fill*         0x0000000000408043        0x1 
- .rodata        0x0000000000408044      0x324 main.o
- *fill*         0x0000000000408368       0x18 
- .rodata        0x0000000000408380      0x100 ctype.o
-                0x0000000000408380                _ctype
- .rodata        0x0000000000408480      0x524 stdio.o
-                0x00000000004086c0                hex2ascii_data
- .rodata        0x00000000004089a4       0x34 fcntl.o
- .rodata        0x00000000004089d8      0x560 stdlib.o
- .rodata        0x0000000000408f38       0x89 unistd.o
+.rodata         0x0000000000408000     0x1001
+ .rodata        0x0000000000408000       0x8a crt0.o
+ *fill*         0x000000000040808a        0x2 
+ .rodata        0x000000000040808c      0x324 main.o
+ *fill*         0x00000000004083b0       0x10 
+ .rodata        0x00000000004083c0      0x100 ctype.o
+                0x00000000004083c0                _ctype
+ .rodata        0x00000000004084c0      0x524 stdio.o
+                0x0000000000408700                hex2ascii_data
+ .rodata        0x00000000004089e4       0x34 fcntl.o
+ .rodata        0x0000000000408a18      0x560 stdlib.o
+ .rodata        0x0000000000408f78       0x89 unistd.o
 
-.eh_frame       0x0000000000408fc4     0x2814
- .eh_frame      0x0000000000408fc4       0x34 crt0.o
- .eh_frame      0x0000000000408ff8      0x12c main.o
+.eh_frame       0x0000000000409004     0x2814
+ .eh_frame      0x0000000000409004       0x34 crt0.o
+ .eh_frame      0x0000000000409038      0x12c main.o
                                         0x144 (size before relaxing)
- .eh_frame      0x0000000000409124      0xee8 stdio.o
+ .eh_frame      0x0000000000409164      0xee8 stdio.o
                                         0xf00 (size before relaxing)
- .eh_frame      0x000000000040a00c       0xa0 fcntl.o
+ .eh_frame      0x000000000040a04c       0xa0 fcntl.o
                                          0xb8 (size before relaxing)
- .eh_frame      0x000000000040a0ac      0x648 stdlib.o
+ .eh_frame      0x000000000040a0ec      0x648 stdlib.o
                                         0x660 (size before relaxing)
- .eh_frame      0x000000000040a6f4      0x5c0 string.o
+ .eh_frame      0x000000000040a734      0x5c0 string.o
                                         0x5d8 (size before relaxing)
- .eh_frame      0x000000000040acb4       0x40 time.o
+ .eh_frame      0x000000000040acf4       0x40 time.o
                                          0x58 (size before relaxing)
- .eh_frame      0x000000000040acf4      0x8e0 unistd.o
+ .eh_frame      0x000000000040ad34      0x8e0 unistd.o
                                         0x8f8 (size before relaxing)
- .eh_frame      0x000000000040b5d4      0x1c0 termios.o
+ .eh_frame      0x000000000040b614      0x1c0 termios.o
                                         0x1d8 (size before relaxing)
- .eh_frame      0x000000000040b794       0x20 ioctl.o
+ .eh_frame      0x000000000040b7d4       0x20 ioctl.o
                                          0x38 (size before relaxing)
- .eh_frame      0x000000000040b7b4       0x24 stubs.o
+ .eh_frame      0x000000000040b7f4       0x24 stubs.o
                                          0x3c (size before relaxing)
 
-.rel.dyn        0x000000000040b7d8        0x0
- .rel.got       0x000000000040b7d8        0x0 crt0.o
- .rel.iplt      0x000000000040b7d8        0x0 crt0.o
- .rel.text      0x000000000040b7d8        0x0 crt0.o
+.rel.dyn        0x000000000040b818        0x0
+ .rel.got       0x000000000040b818        0x0 crt0.o
+ .rel.iplt      0x000000000040b818        0x0 crt0.o
+ .rel.text      0x000000000040b818        0x0 crt0.o
 
-.data           0x000000000040b7d8      0x828
-                0x000000000040b7d8                data = .
-                0x000000000040b7d8                _data = .
-                0x000000000040b7d8                __data = .
+.data           0x000000000040b820      0x7e0
+                0x000000000040b820                data = .
+                0x000000000040b820                _data = .
+                0x000000000040b820                __data = .
  *(.data)
- .data          0x000000000040b7d8       0x24 crt0.o
- .data          0x000000000040b7fc        0x0 main.o
- .data          0x000000000040b7fc        0x0 ctype.o
- .data          0x000000000040b7fc        0x0 stdio.o
- .data          0x000000000040b7fc        0x0 fcntl.o
- *fill*         0x000000000040b7fc        0x4 
- .data          0x000000000040b800        0x8 stdlib.o
-                0x000000000040b800                _infinity
- .data          0x000000000040b808        0x0 string.o
- .data          0x000000000040b808        0x0 time.o
- .data          0x000000000040b808        0x0 unistd.o
- .data          0x000000000040b808        0x0 termios.o
- .data          0x000000000040b808        0x0 ioctl.o
- .data          0x000000000040b808        0x0 stubs.o
+ .data          0x000000000040b820       0x50 crt0.o
+ .data          0x000000000040b870        0x0 main.o
+ .data          0x000000000040b870        0x0 ctype.o
+ .data          0x000000000040b870        0x0 stdio.o
+ .data          0x000000000040b870        0x0 fcntl.o
+ .data          0x000000000040b870        0x8 stdlib.o
+                0x000000000040b870                _infinity
+ .data          0x000000000040b878        0x0 string.o
+ .data          0x000000000040b878        0x0 time.o
+ .data          0x000000000040b878        0x0 unistd.o
+ .data          0x000000000040b878        0x0 termios.o
+ .data          0x000000000040b878        0x0 ioctl.o
+ .data          0x000000000040b878        0x0 stubs.o
                 0x000000000040c000                . = ALIGN (0x1000)
- *fill*         0x000000000040b808      0x7f8 
+ *fill*         0x000000000040b878      0x788 
 
 .got            0x000000000040c000        0x0
  .got           0x000000000040c000        0x0 crt0.o

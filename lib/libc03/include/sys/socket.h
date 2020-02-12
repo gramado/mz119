@@ -200,35 +200,57 @@
 #define 	INADDR_ANY   (unsigned long)0x00000000 // Any IP address.
 #define 	INADDR_BROADCAST   (unsigned long)0xffffffff // Broadcast IP address.
 
+
+
+
 typedef unsigned socklen_t;
 
+
+
+
 /* Device structure */
+
 typedef struct socket_context {
-  struct socket_context *next, *prev;
-	unsigned fd;
-	int family;
-	int type;
-	int protocol;
+
+    struct socket_context *next, *prev;
+
+    unsigned fd;
+    int family;
+    int type;
+    int protocol;
+
 } socket_t;
+
+
+
 
 struct sockaddr
 {
-	unsigned short sa_family;
-	char sa_data[14];
+    unsigned short sa_family;
+    char sa_data[14];
 };
 
+
+
+/*
+ //See: in.h
 typedef struct
 {
-	int sin_family;
-	int sin_port;
-	char *sin_addr;
-} sockaddr_in;
+    int sin_family;
+    int sin_port;
+
+    char *sin_addr;
+
+}sockaddr_in;
+*/
+
 
 typedef struct
 {
-	char *h_addr;
-	unsigned h_length;
-} hostent;
+    char *h_addr;
+    unsigned h_length;
+
+}hostent;
 
 
 
@@ -242,6 +264,45 @@ struct ucred {
 */
 
 //=========
+
+
+// socket
+//socket -	create an endpoint for communication
+//4.4BSD, POSIX.1-2001.
+//The SOCK_NONBLOCK and SOCK_CLOEXEC flags	are Linux-specific.
+//socket()	 appeared in 4.2BSD.  It is generally portable to/from non-BSD
+//systems supporting clones of the	BSD socket layer (including  System  V
+//variants).
+// comments credits: freebsd.org	 
+// See: http://man7.org/linux/man-pages/man2/socket.2.html
+//POSIX.1-2001, POSIX.1-2008, 4.4BSD.
+
+//int socket ( int family, int type, int protocol );
+int socket ( int domain, int type, int protocol );
+
+
+//socketpair - create a pair of connected sockets
+// On success, zero is returned.  
+// On error, -1 is returned, errno is set
+// appropriately, and sv is left unchanged
+//POSIX.1-2001, POSIX.1-2008, 4.4BSD. 
+int socketpair (int domain, int type, int protocol, int sv[2]);
+
+
+
+int 
+connect ( int sockfd, 
+          const struct sockaddr *addr,
+          socklen_t addrlen );
+
+
+int accept (int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+
+
+int 
+bind ( int sockfd, 
+       const struct sockaddr *addr,
+       socklen_t addrlen );
 
 
 // listen -	listen for connections on a socket
@@ -271,27 +332,8 @@ int shutdown ( int	sockfd,	int how );
 
 
 
-// socket
-//socket -	create an endpoint for communication
-//4.4BSD, POSIX.1-2001.
-//The SOCK_NONBLOCK and SOCK_CLOEXEC flags	are Linux-specific.
-//socket()	 appeared in 4.2BSD.  It is generally portable to/from non-BSD
-//systems supporting clones of the	BSD socket layer (including  System  V
-//variants).
-// comments credits: freebsd.org	 
-// See: http://man7.org/linux/man-pages/man2/socket.2.html
-//POSIX.1-2001, POSIX.1-2008, 4.4BSD.
-
-//int socket ( int family, int type, int protocol );
-int socket ( int domain, int type, int protocol );
 
 
-//socketpair - create a pair of connected sockets
-// On success, zero is returned.  
-// On error, -1 is returned, errno is set
-// appropriately, and sv is left unchanged
-//POSIX.1-2001, POSIX.1-2008, 4.4BSD. 
-int socketpair (int domain, int type, int protocol, int sv[2]);
 
 
 

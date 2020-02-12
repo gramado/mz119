@@ -635,6 +635,8 @@ vhd-copy-files:
 	-sudo cp cmd/bin/SPLIT.BIN     /mnt/gramadovhd
 	-sudo cp cmd/bin/CMP.BIN       /mnt/gramadovhd
 	-sudo cp cmd/bin/SHOWFUN.BIN   /mnt/gramadovhd
+	-sudo cp cmd/bin/S1.BIN        /mnt/gramadovhd
+
 
 #	-sudo cp userland/ul2/atacama/bin/DUMPIT.BIN    /mnt/gramadovhd
 

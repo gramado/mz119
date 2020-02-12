@@ -24,11 +24,29 @@ static char *argv[] = {
 };
 
 
-
+/*
+$USER: Gives current user's name.
+$PATH: Gives search path for commands.
+$PWD: Gives the path of present working directory.
+$HOME: Gives path of home directory.
+$HOSTNAME: Gives name of the host.
+$LANG: Gives the default system language.
+$EDITOR: Gives default file editor.
+$UID: Gives user ID of current user.
+$SHELL: Gives location of current user's shell program.
+*/
 static char *my_environ[] = { 
-    "PS0=$test0",  
-    "PS1=:test1",  
-    "PS2=>test2",  
+    "USER=anon",  
+    "PATH=/",
+    "PWD=/",
+    "HOME=/",
+    "HOSTNAME=?",
+    "LANG=pt-br",
+    "EDITOR=gramcode",
+    "SHELL=?",
+    "TERM=noraterm",
+    "PS1=~$",  
+    "PS2=:>",  
 	NULL 
 };
 
@@ -149,7 +167,9 @@ int crt0 (){
 
 
 
-    // Inicializa a biblioteca.
+    // Initialize the library.
+    // See: libc03/stdlib/stdlib.c
+    
     libcInitRT ();
     stdioInitialize ();
 

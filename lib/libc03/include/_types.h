@@ -16,9 +16,8 @@ typedef	long long		__int64_t;
 /* LONGLONG */
 typedef	unsigned long long	__uint64_t;
 
-*
- * Standard type definitions.
- */
+// Standard type definitions.
+
 typedef	__uint32_t	__clock_t;		/* clock()... */
 typedef	__int32_t	__critical_t;
 typedef	double		__double_t;

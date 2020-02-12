@@ -22,44 +22,123 @@
 */
 
 
-
-//gnu
 /*
-int accept4(int sockfd, struct sockaddr *addr,
-           socklen_t *addrlen, int flags);
-int accept4(int sockfd, struct sockaddr *addr,
-           socklen_t *addrlen, int flags)
-{ return -1; }
-*/ 
+ *****************************************************
+ * socket:
+ *     Create an endpoint for communication.
+ */
+
+/*
+  socket() creates an endpoint for communication and 
+  returns a file descriptor that refers to that endpoint.  
+  The file descriptor returned by a successful call will be the 
+  lowest-numbered file descriptor not currently open for the process. 
+ */
+
+// Linux style.
+// See: http://man7.org/linux/man-pages/man2/socket.2.html
+
+//int socket ( int family, int type, int protocol ){
+int socket ( int domain, int type, int protocol )
+{
+    int __fd = -1;
+    
+    __fd = (int) gramado_system_call ( 7000, 
+                     (unsigned long) domain, 
+                     (unsigned long) type, 
+                     (unsigned long) protocol );
+
+    if(__fd<0)
+        printf ("socket: Couldn't create the socket!\n");
+        
+    return (int) __fd;
+}
+
+
+
+//interna
+//int __socket_pipe ( int pipefd[2] );
+int __socket_pipe ( int pipefd[2] ){
+
+    return (int) gramado_system_call ( 247, 
+                     (unsigned long) pipefd, 
+                     (unsigned long) pipefd, 
+                     (unsigned long) pipefd );
+}
+
+
+
+int socketpair (int domain, int type, int protocol, int sv[2]){
+
+    int fd = -1; 
+    int pipefd[2];
+
+
+
+    if ( domain == AF_UNSPEC || domain == AF_UNIX )
+    {
+        if ( protocol != 0 )
+            return (int) (-1);
+
+        //if ( type != SOCK_STREAM )
+            //return (int) (-1);
+
+        // Podemos colocar sv diretamente.
+        fd = (int) __socket_pipe (pipefd);
+
+        if ( fd  == -1 ) 
+        {    
+            printf ("socketpair: fail\n");
+            return (int) (-1);
+        }else{
+            sv[0] = pipefd[1];
+            sv[1] = pipefd[1];
+            return 0;
+        };
+    }
+
+
+    return (int) (-1);
+}
+
 
 
 
 // POSIX.1-2001, POSIX.1-2008, SVr4, 4.4BSD, 
 //(connect() first appeared in 4.2BSD).
+// initiate a connection on a socket
+           
+int 
+connect ( int sockfd, 
+          const struct sockaddr *addr,
+          socklen_t addrlen )
+{ 
+	
+	//#todo
+	
+   return -1; 
+}
+           
+           
+           
+           
 /*
-int connect(int sockfd, const struct sockaddr *addr,
-           socklen_t addrlen);
-int connect(int sockfd, const struct sockaddr *addr,
-           socklen_t addrlen)
-{ return -1; }
-*/           
-           
-           
-           
-/*
-The accept() system call is used with connection-based socket types
-       (SOCK_STREAM, SOCK_SEQPACKET).  It extracts the first connection
-       request on the queue of pending connections for the listening socket,
-       sockfd, creates a new connected socket, and returns a new file
-       descriptor referring to that socket.  The newly created socket is not
-       in the listening state.  The original socket sockfd is unaffected by
-       this call.
+  The accept() system call is used with connection-based socket 
+  types (SOCK_STREAM, SOCK_SEQPACKET).  
+  It extracts the first connection request on the queue of 
+  pending connections for the listening socket, sockfd, 
+  creates a new connected socket, and returns a new file descriptor 
+  referring to that socket.  
+  The newly created socket is not in the listening state.  
+  The original socket sockfd is unaffected by this call.
 */
-/*
-int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
-int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen)
-{ return -1; }
-*/
+
+int accept (int sockfd, struct sockaddr *addr, socklen_t *addrlen)
+{ 
+
+    return -1; 
+}
+
 
 
 /*
@@ -114,13 +193,21 @@ int pselect(int nfds, fd_set *readfds, fd_set *writefds,
             
             
             
-/*
-int bind(int sockfd, const struct sockaddr *addr,
-                socklen_t addrlen);
-int bind(int sockfd, const struct sockaddr *addr,
-                socklen_t addrlen)
-{ return -1; }
-*/
+
+//  bind a name to a socket.
+// “assigning a name to a socket”.
+//  POSIX.1-2001, POSIX.1-2008, SVr4, 
+//  4.4BSD (bind() first appeared in 4.2BSD).
+int 
+bind ( int sockfd, 
+       const struct sockaddr *addr,
+       socklen_t addrlen )
+{ 
+    return -1; 
+}
+
+
+
 
 /*
  * listen:
@@ -130,26 +217,6 @@ int listen (int sockfd, int backlog){
 
 	return -1; //#todo
 }
-
-
-/*
- * recv:
- */
-
-ssize_t recv ( int sockfd, void *buf, size_t len, int flags )
-{
-   //falta flags.
-   return (ssize_t) read ( sockfd, (const void *) buf, len );
-}
-
-
-//serenity os.
-/*
-ssize_t recv(int sockfd, void* buffer, size_t buffer_length, int flags)
-{
-    return recvfrom(sockfd, buffer, buffer_length, flags, nullptr, nullptr);
-}
-*/
 
 
 /*
@@ -164,13 +231,19 @@ ssize_t send ( int sockfd, const void *buf, size_t len, int flags )
 }
 
 
-//serenity os.
 /*
-ssize_t send(int sockfd, const void* data, size_t data_length, int flags)
+ * recv:
+ */
+
+ssize_t recv ( int sockfd, void *buf, size_t len, int flags )
 {
-    return sendto(sockfd, data, data_length, flags, nullptr, 0);
+   //falta flags.
+   return (ssize_t) read ( sockfd, (const void *) buf, len );
 }
-*/
+
+
+
+
 
 
 /*
@@ -184,83 +257,6 @@ int shutdown ( int	sockfd,	int how ){
 }
 
 
-/*
- *****************************************************
- * socket:
- *     Create an endpoint for communication
- */
-
-// Linux style.
-// See: http://man7.org/linux/man-pages/man2/socket.2.html
-
-/*
-socket() creates an endpoint for communication and returns a file
-       descriptor that refers to that endpoint.  The file descriptor
-       returned by a successful call will be the lowest-numbered file
-       descriptor not currently open for the process. 
- */
-
-//int socket ( int family, int type, int protocol ){
-int socket ( int domain, int type, int protocol )
-{
-    int __fd = -1;
-    
-    __fd = (int) gramado_system_call ( 7000, 
-                     (unsigned long) domain, 
-                     (unsigned long) type, 
-                     (unsigned long) protocol );
-
-    if(__fd<0)
-        printf ("socket: Couldn't create the socket!\n");
-        
-    return (int) __fd;
-}
-
-
-
-
-//interna
-//int socket_pipe ( int pipefd[2] );
-int socket_pipe ( int pipefd[2] ){
-
-    return (int) gramado_system_call ( 247, (unsigned long) pipefd, 
-                     (unsigned long) pipefd, (unsigned long) pipefd );
-}
-
-
-
-int socketpair (int domain, int type, int protocol, int sv[2]){
-
-    int fd = -1; 
-    int pipefd[2];
-
-
-
-    if ( domain == AF_UNSPEC || domain == AF_UNIX )
-    {
-        if ( protocol != 0 )
-            return (int) (-1);
-
-        //if ( type != SOCK_STREAM )
-            //return (int) (-1);
-
-        // Podemos colocar sv diretamente.
-        fd = (int) socket_pipe (pipefd);
-
-        if ( fd  == -1 ) 
-        {    
-            printf ("socketpair: fail\n");
-            return (int) (-1);
-        }else{
-            sv[0] = pipefd[1];
-            sv[1] = pipefd[1];
-            return 0;
-        };
-    }
-
-
-    return (int) (-1);
-}
 
 
 //
