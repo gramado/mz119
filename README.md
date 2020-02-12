@@ -39,6 +39,7 @@ NASM version 2.14.02 compiled on Nov 15 2018
 ## VHD
 
 You can run the VHD on Oracle Virtual Box and qemu.
+
 $ make qemu-test
 
 
