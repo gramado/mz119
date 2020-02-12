@@ -72,8 +72,12 @@ extern int main ( int argc, char *argv[] );
 // Esses aplicativos escrevem em stdout.
 // >>> O terminal precisa conhecer esse stdout para ler.
 
-int crt0 (){
 
+//#todo
+//int crt0 ( int argc, char **argv, char **envp ){
+//    environ = envp;
+
+int crt0 (){
 
     environ = my_environ;
 

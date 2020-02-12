@@ -1,5 +1,4 @@
-# libc03
+# libcore
 
- C library version 0.3 for GDE project.
-	
-	2019 - Created by Fred Nora.
+    Libcore for GUI apps.
+    It's not an unix-like libc. But it has some libc routines.

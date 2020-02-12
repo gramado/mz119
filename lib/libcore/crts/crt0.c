@@ -46,10 +46,13 @@ extern int main ( int argc, char *argv[] );
 #define TOKENLIST_MAX_DEFAULT 80
 
 
+//#todo
+//int crt0 ( int argc, char **argv, char **envp ){
+//    environ = envp;
+
 int crt0 (){
-	
-	
-	environ = my_environ;
+
+    environ = my_environ;
 
     //
     // Token support.
