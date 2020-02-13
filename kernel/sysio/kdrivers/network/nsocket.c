@@ -35,9 +35,9 @@ struct socket_d *create_socket ( unsigned long ip, unsigned short port ){
 
     s = (void *) kmalloc ( sizeof( struct socket_d ) );
 
-    if ( (void *) s ==  NULL )
-    {
+    if ( (void *) s ==  NULL ){
         printf ( "create_socket: allocation fail \n");
+        refresh_screen();
         return NULL;
 
     }else{

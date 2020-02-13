@@ -7,6 +7,44 @@
 #include <kernel.h>
 
 
+/*
+struct socket_d* socket_open (int type);
+struct socket_d* socket_open (int type){
+
+
+    struct socket_d *sock = (struct socket_d *) kmalloc ( sizeof(struct socket_d) );
+
+    memset ( sock, 0, sizeof(struct socket_d) );
+
+    sock->type = type;
+
+    return sock;
+}
+*/
+
+
+
+/*
+file *file_from_socket (struct socket_d *sock);
+file *file_from_socket (struct socket_d *sock)
+{
+    
+    file *filp = (file *) kmalloc ( sizeof(file) );
+    
+    if (!filp)
+        return NULL;
+
+    //filp->type = FILE_TYPE_SOCKET;
+    //filp->isdir = 0;
+    //filp->fpos = 0;
+    //filp->respath = NULL;
+    filp->priv = sock;
+    //filp->fops = &socket_fops;
+    //filp->refc = 1;
+
+    return filp;
+}
+*/
 
 /*
  ********************** 
@@ -35,6 +73,9 @@ int sys_socket ( int family, int type, int protocol ){
 
 
     file *socket_file;
+    
+    // See: nsocket.h
+    struct socket_d *__socket;
 
     struct process_d *Process;
 
@@ -61,6 +102,20 @@ int sys_socket ( int family, int type, int protocol ){
 
     //switch (protocol)
     //{}
+    
+    
+    // Criamos um socket vazio.
+    
+    // ip and port.
+    __socket = (struct socket_d *) create_socket ( (unsigned long) 0, (unsigned short) 0 );
+  
+    if ( (void *) __socket == NULL ){
+        printf ("sys_socket: __socket fail\n");
+        refresh_screen();
+        return -1;
+    }
+    
+
 
 
     Process = (void *) processList[current_process];
@@ -164,7 +219,14 @@ int sys_socket ( int family, int type, int protocol ){
 
 
         //quanto falta é igual ao tamanho.
-        socket_file->_cnt = socket_file->_lbfsize;   
+        socket_file->_cnt = socket_file->_lbfsize;  
+        
+        //
+        // socket
+        //
+        
+        // Salvamos o ponteiro privado de estrutura de socket.
+        socket_file->priv = (void *) __socket; 
 
         //Colocando na lista de arquivos abertos no processo.
         Process->Objects[i] = (unsigned long) socket_file;
@@ -231,7 +293,78 @@ sys_connect ( int sockfd,
               socklen_t addrlen )
 {
 
-    printf ("sys_connect: todo\n");
+    struct process_d *p;
+    struct file_d *f;
+    struct socket_d *s;
+
+
+
+    if ( sockfd < 0 || sockfd >= 32 )
+    {
+        printf ("sys_connect: sockfd fail\n");
+        refresh_screen();
+        return -1;
+    }
+   
+    //
+    // 
+    //
+    
+    
+    // process
+    p = (struct process_d *) processList[current_process];
+ 
+    if ( (void *) p == NULL )
+    {
+        printf ("sys_connect: p fail\n");
+        refresh_screen();
+        return -1;
+    }
+ 
+ 
+    //file
+    f = (file *) p->Objects[sockfd];
+
+    if ( (void *) f == NULL )
+    {
+        printf ("sys_connect: f fail\n");
+        refresh_screen();
+        return -1;
+    }
+    
+ 
+    //socket
+    s = (struct socket_d *) f->priv;
+
+    if ( (void *) s == NULL )
+    {
+        printf ("sys_connect: s fail\n");
+        refresh_screen();
+        return -1;
+    }
+ 
+    //
+    // socket ok.
+    //
+   
+    // Usando a estrutura que nos foi passada.
+    if ( (void *) addr == NULL )
+    {
+        printf ("sys_connect: addr fail\n");
+        refresh_screen();
+        return -1;
+    }
+
+
+    
+    
+     printf ("process %d ; family %d ; len %d \n", 
+         current_process, addr->sa_family, addrlen  );
+ 
+     
+    
+ 
+    printf ("sys_connect: #todo\n");
     refresh_screen();
     return -1;
 }   
@@ -241,10 +374,81 @@ sys_connect ( int sockfd,
 
 int sys_accept (int sockfd, struct sockaddr *addr, socklen_t *addrlen)
 {
-    printf ("sys_accept: todo\n");
+    struct process_d *p;
+    struct file_d *f;
+    struct socket_d *s;
+
+
+
+    if ( sockfd < 0 || sockfd >= 32 )
+    {
+        printf ("sys_accept: sockfd fail\n");
+        refresh_screen();
+        return -1;
+    }
+   
+    //
+    // 
+    //
+    
+    
+    // process
+    p = (struct process_d *) processList[current_process];
+ 
+    if ( (void *) p == NULL )
+    {
+        printf ("sys_accept: p fail\n");
+        refresh_screen();
+        return -1;
+    }
+ 
+ 
+    //file
+    f = (file *) p->Objects[sockfd];
+
+    if ( (void *) f == NULL )
+    {
+        printf ("sys_accept: f fail\n");
+        refresh_screen();
+        return -1;
+    }
+    
+ 
+    //socket
+    s = (struct socket_d *) f->priv;
+
+    if ( (void *) s == NULL )
+    {
+        printf ("sys_accept: s fail\n");
+        refresh_screen();
+        return -1;
+    }
+ 
+    //
+    // socket ok.
+    //
+   
+    // Usando a estrutura que nos foi passada.
+    if ( (void *) addr == NULL )
+    {
+        printf ("sys_accept: addr fail\n");
+        refresh_screen();
+        return -1;
+    }
+
+
+    
+    
+     printf ("process %d ; family %d ; len %d \n", 
+         current_process, addr->sa_family, addrlen  );
+ 
+     
+    
+ 
+    printf ("sys_accept: #todo\n");
     refresh_screen();
     return -1;
-}
+}   
 
 
 
@@ -254,10 +458,81 @@ sys_bind ( int sockfd,
        const struct sockaddr *addr,
        socklen_t addrlen )
 {
-    printf ("sys_bind: todo\n");
+    struct process_d *p;
+    struct file_d *f;
+    struct socket_d *s;
+
+
+
+    if ( sockfd < 0 || sockfd >= 32 )
+    {
+        printf ("sys_bind: sockfd fail\n");
+        refresh_screen();
+        return -1;
+    }
+   
+    //
+    // 
+    //
+    
+    
+    // process
+    p = (struct process_d *) processList[current_process];
+ 
+    if ( (void *) p == NULL )
+    {
+        printf ("sys_bind: p fail\n");
+        refresh_screen();
+        return -1;
+    }
+ 
+ 
+    //file
+    f = (file *) p->Objects[sockfd];
+
+    if ( (void *) f == NULL )
+    {
+        printf ("sys_bind: f fail\n");
+        refresh_screen();
+        return -1;
+    }
+    
+ 
+    //socket
+    s = (struct socket_d *) f->priv;
+
+    if ( (void *) s == NULL )
+    {
+        printf ("sys_bind: s fail\n");
+        refresh_screen();
+        return -1;
+    }
+ 
+    //
+    // socket ok.
+    //
+   
+    // Usando a estrutura que nos foi passada.
+    if ( (void *) addr == NULL )
+    {
+        printf ("sys_bind: addr fail\n");
+        refresh_screen();
+        return -1;
+    }
+
+
+    
+    
+     printf ("process %d ; family %d ; len %d \n", 
+         current_process, addr->sa_family, addrlen  );
+ 
+     
+    
+ 
+    printf ("sys_bind: #todo\n");
     refresh_screen();
     return -1;
-}
+}   
 
 
         

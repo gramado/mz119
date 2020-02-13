@@ -638,6 +638,11 @@ struct file_d
     unsigned char *_base;    
     int   _charbuf;
     char *_tmpfname;
+    
+    
+    // Private ?
+    // Vamos colocar aqui a estrutura de socket.
+    void *priv;
 };
 
 typedef struct file_d FILE;   //#todo: deletar isso. 

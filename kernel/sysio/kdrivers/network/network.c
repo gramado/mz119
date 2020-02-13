@@ -1585,6 +1585,18 @@ int do_arp ( unsigned long buffer ){
 }
 
 
+/*
+// ring3 oferece o buffer
+// colocamos os valores.
+int gethost ( char *name, int *ip );
+int gethost ( char *name, int *ip )
+{
+    return -1;
+}
+*/
+
+
+
 //
 // End
 //

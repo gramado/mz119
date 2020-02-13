@@ -2493,7 +2493,8 @@ void *gde_services ( unsigned long number,
 			
 		// 160
 		// Criar um socket e retornar o ponteiro para a estrutura.
-		// Gramado API socket support. (not libc)	
+		// Gramado API socket support. (not libc)
+		// See:
 		case 160:
             return (void *) create_socket ( (unsigned long) arg2, (unsigned short) arg3 );
 			break;

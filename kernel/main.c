@@ -32,15 +32,15 @@ int kernel_main (int arch_type){
     int z;
 
     //
-	// Current arch support.
-	//
+    // Current arch support.
+    //
 
-	// We received this arg from Assembly.
+    // We received this arg from Assembly.
 
-	current_arch = arch_type;
+    current_arch = arch_type;
 
     //#todo
-	//if(current_arch<=0)
+    //if(current_arch<=0)
 
 
     // #order

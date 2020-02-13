@@ -69,14 +69,13 @@ int main ( int argc, char *argv[] ){
    //
  
    
-   sockfd = socket (AF_INET, SOCK_STREAM, 0);
+    sockfd = socket (AF_INET, SOCK_STREAM, 0);
    
-   if (sockfd < 0)
-   {
-      panic("ERROR opening socket \n");
-      exit(1);
-   }
-    
+    if (sockfd < 0){
+        printf ("s1: ERROR opening socket \n");
+        exit(1);
+    }
+
 
    //
    // Address structure.
@@ -89,9 +88,9 @@ int main ( int argc, char *argv[] ){
    bzero((char *) &serv_addr, sizeof(serv_addr));
    portno = 5001;
      
-   serv_addr.sin_family = AF_INET;
-   serv_addr.sin_addr.s_addr = INADDR_ANY;
-   serv_addr.sin_port = htons(portno);
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = INADDR_ANY;
+    serv_addr.sin_port = htons(portno);
  
     //
     // bind.
@@ -99,11 +98,15 @@ int main ( int argc, char *argv[] ){
  
    
    /* Now bind the host address using bind() call.*/
-   if ( bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0 )
+
+   if ( bind ( sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0 )
    {
       printf ("ERROR on binding \n");
       exit (1);
    }
+    
+      
+      
       
    //
    // listen.
@@ -115,7 +118,7 @@ int main ( int argc, char *argv[] ){
     * go in sleep mode and will wait for the incoming connection
     */
    
-   listen(sockfd,5);
+   listen (sockfd,5);
    clilen = sizeof(cli_addr);
    
    
@@ -125,7 +128,7 @@ int main ( int argc, char *argv[] ){
    
    
    /* Accept actual connection from the client */
-   newsockfd = accept(sockfd, (struct sockaddr *)&cli_addr, &clilen);
+   newsockfd = accept (sockfd, (struct sockaddr *) &cli_addr, &clilen);
 	
    if (newsockfd < 0) {
       perror("ERROR on accept");

@@ -351,19 +351,26 @@ struct sockaddr_big {
 
 /* Device structure */
 typedef struct socket_context {
-  struct socket_context *next, *prev;
+    struct socket_context *next, *prev;
 	unsigned fd;
 	int family;
 	int type;
 	int protocol;
 } socket_t;
 
+
+
+// See:
+// http://alas.matf.bg.ac.rs/manuals/lspe/snode=25.html
 struct sockaddr
 {
-	unsigned short sa_family;
-	char sa_data[14];
+    unsigned short sa_family;
+    char sa_data[14];
 };
 
+
+//#todo
+//isso deve ficar em in.h
 typedef struct
 {
 	int sin_family;

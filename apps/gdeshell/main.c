@@ -3169,8 +3169,8 @@ do_compare:
 	// socket-test
 	// Rotina de teste de soquetes.
 	// Atenção: Não é o soquete da libc.
-    if ( gramado_strncmp( prompt, "socket-test", 11 ) == 0 )
-    {
+
+    if ( gramado_strncmp( prompt, "socket-test", 11 ) == 0 ){
         shellSocketTest ();
         goto exit_cmp;
     }
@@ -7571,7 +7571,7 @@ void shellSocketTest (){
     printf ("Creating client socket ...\n");
     ClientHandle = (void *) system_call ( 160, 
 	                            (unsigned long) 0xC0A80164,  // ip 192.168.1.100
-	                            (unsigned long) 8000,           // porta 8000
+	                            (unsigned long) 8000,        // porta 8000
 	                            (unsigned long) 0x22C3 );    // ??
 
     //printf ("Updating socket ...\n");
