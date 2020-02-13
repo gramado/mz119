@@ -10,7 +10,7 @@
 VERSION = 1
 PATCHLEVEL = 30
 SUBLEVEL = 0
-EXTRAVERSION = -rc5
+EXTRAVERSION = -rc6
 NAME = 
 
 
@@ -306,7 +306,7 @@ KERNEL.BIN:
 
 	# kernel/syslib/libcore
 	gcc -c kernel/syslib/libcore/pipe.c    $(KINCLUDE) $(CFLAGS) -o pipe.o
-	gcc -c kernel/syslib/libcore/socket.c  $(KINCLUDE) $(CFLAGS) -o socket.o
+
 	gcc -c kernel/syslib/libcore/ctype.c   $(KINCLUDE) $(CFLAGS) -o ctype.o
 	gcc -c kernel/syslib/libcore/kstdio.c  $(KINCLUDE) $(CFLAGS) -o kstdio.o
 	gcc -c kernel/syslib/libcore/stdlib.c  $(KINCLUDE) $(CFLAGS) -o stdlib.o
@@ -333,12 +333,21 @@ KERNEL.BIN:
 	gcc -c kernel/sysio/kdrivers/ide/atairq.c   $(KINCLUDE) $(CFLAGS) -o atairq.o
 	gcc -c kernel/sysio/kdrivers/ide/atapci.c   $(KINCLUDE) $(CFLAGS) -o atapci.o	
 	gcc -c kernel/sysio/kdrivers/ide/atadma.c   $(KINCLUDE) $(CFLAGS) -o atadma.o	
-	
+
+
 	# kdrivers/network
-	gcc -c kernel/sysio/kdrivers/network/channel.c   $(KINCLUDE) $(CFLAGS) -o channel.o
+
 	gcc -c kernel/sysio/kdrivers/network/nicintel.c  $(KINCLUDE) $(CFLAGS) -o nicintel.o
-	gcc -c kernel/sysio/kdrivers/network/network.c   $(KINCLUDE) $(CFLAGS) -o network.o
-	gcc -c kernel/sysio/kdrivers/network/nsocket.c   $(KINCLUDE) $(CFLAGS) -o nsocket.o
+
+
+
+	# net
+	gcc -c kernel/sci/net/network.c  $(KINCLUDE) $(CFLAGS) -o network.o
+	gcc -c kernel/sci/net/socket.c   $(KINCLUDE) $(CFLAGS) -o socket.o
+	gcc -c kernel/sci/net/nsocket.c  $(KINCLUDE) $(CFLAGS) -o nsocket.o
+	gcc -c kernel/sci/net/channel.c  $(KINCLUDE) $(CFLAGS) -o channel.o
+	
+
 
 	# kdrivers/pci
 	gcc -c kernel/sysio/kdrivers/pci/pci.c      $(KINCLUDE) $(CFLAGS) -o pci.o

@@ -26,6 +26,11 @@ struct socket_d
 {
     object_type_t objectType;
     object_class_t objectClass;
+    
+    
+    // Deve ser o mesmo fd do arquivo que possui
+    // um ponteiro para essa estrutura.
+    int _file;
 
     unsigned long ip_long;
 

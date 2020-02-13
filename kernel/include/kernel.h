@@ -97,7 +97,12 @@ extern void do_executa_new_task (void);
 #include <kernel/syslib/libcore/signal.h>
 #include <kernel/syslib/libcore/unistd.h>
 #include <kernel/syslib/libcore/fcntl.h>
-#include <kernel/syslib/libcore/sys/socket.h>
+
+
+//#net
+#include <kernel/sci/net/socket.h>
+
+
 #include <kernel/syslib/libcore/sys/ioctl.h>
 #include <kernel/syslib/libcore/sys/ioctls.h>
 #include <kernel/syslib/libcore/termios.h> 
@@ -240,18 +245,45 @@ extern void do_executa_new_task (void);
 #include <kernel/sysio/kdrivers/x/i8042/i8042.h>
 #include <kernel/sysio/kdrivers/x/i8042/ps2mouse.h>
 #include <kernel/sysio/kdrivers/x/i8042/ps2kbd.h>
-#include <kernel/sysio/kdrivers/network/connect.h> 
-#include <kernel/sysio/kdrivers/network/host.h>        //host info.
-#include <kernel/sysio/kdrivers/network/ethernet.h>
-#include <kernel/sysio/kdrivers/network/arp.h>
-#include <kernel/sysio/kdrivers/network/intel.h>       //intel nic - network interface controller.
-#include <kernel/sysio/kdrivers/network/nports.h>      //(network) Network Ports  (sw)
-#include <kernel/sysio/kdrivers/network/nsocket.h>     //(network) Sockets info. (sw) (not libc)
-#include <kernel/sysio/kdrivers/network/ip.h>          //(network) IP info.      (sw)
-#include <kernel/sysio/kdrivers/network/channel.h>     //(network) Channel       (sw)
-#include <kernel/sysio/kdrivers/network/client.h>      //(network) Client process support. 
-#include <kernel/sysio/kdrivers/network/ns.h>          //(network) Network Server.
-#include <kernel/sysio/kdrivers/network/network.h>     //(network) Gerenciamento de rede. 
+
+//#net
+#include <kernel/sci/net/connect.h> 
+#include <kernel/sci/net/host.h>    
+#include <kernel/sci/net/ethernet.h>
+
+
+#include <kernel/sci/net/arp.h>
+#include <kernel/sci/net/udp.h>
+#include <kernel/sci/net/tcp.h>
+
+
+// #kserver - nic intel
+//intel nic - network interface controller.
+#include <kernel/sysio/kdrivers/network/intel.h>       
+
+
+// #net/netinet
+#include <kernel/sci/net/netinet/in.h>
+
+// #net
+#include <kernel/sci/net/nports.h>      //(network) Network Ports  (sw)
+#include <kernel/sci/net/nsocket.h>     //(network) Sockets info. (sw) (not libc)
+
+#include <kernel/sci/net/ip.h>          //(network) IP info.      (sw)
+#include <kernel/sci/net/ipv4.h> 
+//#include <kernel/sci/net/ipv6.h> 
+#include <kernel/sci/net/mac.h> 
+#include <kernel/sci/net/icmp.h> 
+
+
+
+
+#include <kernel/sci/net/channel.h>     //(network) Channel       (sw)
+#include <kernel/sci/net/client.h>      //(network) Client process support. 
+#include <kernel/sci/net/ns.h>          //(network) Network Server.
+#include <kernel/sci/net/network.h>     //(network) Gerenciamento de rede.  
+
+
 #include <kernel/sysio/kdrivers/dd.h>
 
 // devices

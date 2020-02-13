@@ -207,6 +207,8 @@ int sys_socket ( int family, int type, int protocol ){
         socket_file->used = 1;
         socket_file->magic = 1234;
         
+        socket_file->_file = __slot;
+        
         // This file represents a object of type socket.
         socket_file->____object = ObjectTypeSocket;
 
@@ -227,6 +229,8 @@ int sys_socket ( int family, int type, int protocol ){
         
         // Salvamos o ponteiro privado de estrutura de socket.
         socket_file->priv = (void *) __socket; 
+        
+        __socket->_file = socket_file->_file;
 
         //Colocando na lista de arquivos abertos no processo.
         Process->Objects[i] = (unsigned long) socket_file;
