@@ -314,7 +314,13 @@
   4002    sys_fopen
   4003    sys_fopen
   
-  7000    socket
+  7000    sys_socket                    syslib/libcore/socket.c
+  7001    sys_connect                   syslib/libcore/socket.c
+  7002    sys_accept                    syslib/libcore/socket.c
+  7003    sys_bind                      syslib/libcore/socket.c
+  7004    sys_listen                    syslib/libcore/socket.c
+  //...
+  
   
   8000    sys_ioctl                     sci/sys/sys.c
   8001    sys_fcntl                     sci/sys/sys.c
