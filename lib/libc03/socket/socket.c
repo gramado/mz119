@@ -112,11 +112,22 @@ int
 connect ( int sockfd, 
           const struct sockaddr *addr,
           socklen_t addrlen )
-{ 
-	
-	//#todo
-	
-   return -1; 
+{
+    int __status = -1;
+    
+    __status = (int) gramado_system_call ( 7001, 
+                     (unsigned long) sockfd, 
+                     (unsigned long) addr, 
+                     (unsigned long) addrlen );
+
+    if(__status<0)
+        printf ("connect: Couldn't connect\n");
+     
+     
+    //If the connection or binding succeeds, zero is returned.  On error,
+    //   -1 is returned, and errno is set appropriately.
+          
+    return (int) __status;
 }
            
            
@@ -134,11 +145,25 @@ connect ( int sockfd,
 */
 
 int accept (int sockfd, struct sockaddr *addr, socklen_t *addrlen)
-{ 
+{
+    int __fd = -1;
+    
+    __fd = (int) gramado_system_call ( 7002, 
+                     (unsigned long) sockfd, 
+                     (unsigned long) addr, 
+                     (unsigned long) addrlen );
 
-    return -1; 
+    if(__fd<0)
+        printf ("accept: Couldn't accept the connection\n");
+   
+       /*
+       On success, these system calls return a nonnegative integer that is a
+       file descriptor for the accepted socket.  On error, -1 is returned,
+       errno is set appropriately, and addrlen is left unchanged.
+       */
+            
+    return (int) __fd;
 }
-
 
 
 /*
@@ -202,8 +227,23 @@ int
 bind ( int sockfd, 
        const struct sockaddr *addr,
        socklen_t addrlen )
-{ 
-    return -1; 
+{
+    int __status = -1;
+    
+    __status = (int) gramado_system_call ( 7003, 
+                     (unsigned long) sockfd, 
+                     (unsigned long) addr, 
+                     (unsigned long) addrlen );
+
+    if(__status<0)
+        printf ("connect: Couldn't bind\n");
+     
+     
+    //On success, zero is returned.  On error, -1 is returned, and errno is
+    //   set appropriately.
+
+          
+    return (int) __status;
 }
 
 
@@ -213,10 +253,24 @@ bind ( int sockfd,
  * listen:
  */
 
-int listen (int sockfd, int backlog){
+int listen (int sockfd, int backlog)
+{
+    int __status = -1;
+    
+    __status = (int) gramado_system_call ( 7004, 
+                     (unsigned long) sockfd, 
+                     (unsigned long) backlog, 
+                     (unsigned long) 0 );
 
-	return -1; //#todo
+    if(__status<0)
+        printf ("connect: Couldn't listen\n");
+     
+    // On success, zero is returned.  On error, -1 is returned, and errno is
+    //   set appropriately.     
+          
+    return (int) __status;
 }
+
 
 
 /*

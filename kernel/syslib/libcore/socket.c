@@ -23,10 +23,8 @@
 // Se o protocolo for '0', então precisamos encontrar o 
 // protocolo adequado.
 
-// #todo: 
-// mudar para sys_socket.
     
-int socket ( int family, int type, int protocol ){
+int sys_socket ( int family, int type, int protocol ){
 	
 	//#todo:
 	//vai retornar o descritor de uma stream.
@@ -188,13 +186,13 @@ int socket ( int family, int type, int protocol ){
 // #todo: rever os números.
 
 unsigned long 
-socket_services ( unsigned long number, 
-                  unsigned long arg2, 
-                  unsigned long arg3, 
-                  unsigned long arg4 )
+socket_ioctl ( unsigned long number, 
+               unsigned long arg2, 
+               unsigned long arg3, 
+               unsigned long arg4 )
 {
-	
-	printf ("socket_services: number=%d \n", number);
+
+	printf ("socket_ioctl: number=%d \n", number);
 	
 	if ( number < 7000 || number >= 8000 )
 		return 0;
@@ -206,7 +204,7 @@ socket_services ( unsigned long number,
 		//family, type, protocol
 		//vai retornar o descritor de uma stream.	
 		case 7000:
-			return (unsigned long) socket ( (int) arg2, (int) arg3, (int) arg4 );
+			return (unsigned long) sys_socket ( (int) arg2, (int) arg3, (int) arg4 );
 			break;
 			
 		//send	
@@ -217,7 +215,7 @@ socket_services ( unsigned long number,
 		//...
 			
 	    default:
-			printf ("socket_services: Default\n");
+			printf ("socket_ioctl: Default\n");
 			break;
 	}
 	
@@ -225,3 +223,52 @@ socket_services ( unsigned long number,
 }
 
 
+
+
+int 
+sys_connect ( int sockfd, 
+              const struct sockaddr *addr,
+              socklen_t addrlen )
+{
+
+    printf ("sys_connect: todo\n");
+    refresh_screen();
+    return -1;
+}   
+
+
+
+
+int sys_accept (int sockfd, struct sockaddr *addr, socklen_t *addrlen)
+{
+    printf ("sys_accept: todo\n");
+    refresh_screen();
+    return -1;
+}
+
+
+
+
+int 
+sys_bind ( int sockfd, 
+       const struct sockaddr *addr,
+       socklen_t addrlen )
+{
+    printf ("sys_bind: todo\n");
+    refresh_screen();
+    return -1;
+}
+
+
+        
+
+int sys_listen (int sockfd, int backlog)      
+{
+    printf ("sys_listen: todo\n");
+    refresh_screen();
+    return -1;
+}
+
+
+
+          

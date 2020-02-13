@@ -1064,16 +1064,61 @@ void *gde_extra_services ( unsigned long number,
         return NULL;
     }
     
+
+
+    //7000 ~ 7020 for network sockets
     
-    // socket() da libc
+        
+    // socket() 
     // See: socket.c
     // family, type, protocol
-    // #todo: mudar para sys_socket.
-    
     if ( number == 7000 ){
-        return (void *) socket ( (int) arg2, (int) arg3, (int) arg4 );
+        return (void *) sys_socket ( (int) arg2, (int) arg3, (int) arg4 );
     }
 
+    
+    // connect()
+    // fd, sockaddr struct pointer, addr len.
+    if ( number == 7001 ){
+
+        return (void *) sys_connect ( (int) arg2, 
+                            (const struct sockaddr *) arg3,
+                            (socklen_t) arg4 );
+
+    }
+    
+    
+    // accept()
+    // fd, sockaddr struct pointer, addr len pointer.
+    if ( number == 7002 ){
+    
+        return (void *) sys_accept ( (int) arg2, 
+                            (struct sockaddr *) arg3, 
+                            (socklen_t *) arg4 ); 
+    }
+
+    // bind()
+    // fd, sockaddr struct pointer, addr len.
+    if ( number == 7003 ){
+
+        return (void *) sys_bind ( (int) arg2, 
+                            (const struct sockaddr *) arg3,
+                            (socklen_t) arg4 );
+
+     }
+    
+    
+    // listen()
+    // fd, backlog
+    if ( number == 7004 ){
+        return (void *) sys_listen ( (int) arg2, (int) arg3 );  
+    }
+    
+    
+    //...
+    
+    
+    
 
     // ioctl ()
     // IN: fd, request, arg

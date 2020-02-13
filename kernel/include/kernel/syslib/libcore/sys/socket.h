@@ -423,14 +423,34 @@ struct sockcred {
 
 
 
-int socket ( int family, int type, int protocol );
+int sys_socket ( int family, int type, int protocol );
 
 // Essa rotina sera' chamada se os serviços forem superios a 7000 ou inferiores a 8000
-unsigned long socket_services ( unsigned long number, unsigned long arg2, unsigned long arg3, unsigned long arg4 );
+unsigned long 
+socket_ioctl ( unsigned long number, 
+               unsigned long arg2, 
+               unsigned long arg3, 
+               unsigned long arg4 );
 
 
 
-
+int 
+sys_connect ( int sockfd, 
+              const struct sockaddr *addr,
+              socklen_t addrlen );
+              
+              
+int sys_accept (int sockfd, struct sockaddr *addr, socklen_t *addrlen);             
+              
+int 
+sys_bind ( int sockfd, 
+           const struct sockaddr *addr,
+           socklen_t addrlen );
+       
+       
+       
+int sys_listen (int sockfd, int backlog);          
+               
 
 
 
