@@ -2,7 +2,8 @@
  * Gramado Operating System - The main file for the kernel.
  * (c) Copyright 2015~2019 - Fred Nora.
  *
- * File: kernel/entry/x86/x86main.c 
+ * File: x86/entry/x86main.c 
+ * 
  * 
  * Description:
  *     This is the Kernel Base. 
@@ -24,6 +25,7 @@
  *      + startStartIdle
  *      + x86main - The entry point for a C part of the Kernel.
  *
+ * 
  * Revision History:
  *     2015      - Created by Fred Nora.
  *     2016~2018 - Revision.
@@ -99,24 +101,22 @@ void x86mainStartFirstThread ( void ){
     Thread = InitThread; 
     
 
-    if ( (void *) Thread == NULL )
-    {
+    if ( (void *) Thread == NULL ){
         panic ("x86mainStartFirstThread: Thread\n");
 
     } else {
 
-        if ( Thread->saved != 0 )
-        {
+        if ( Thread->saved != 0 ){
             panic ("x86mainStartFirstThread: saved\n");
-            
-        };
+        }
 
-        if ( Thread->used != 1 || Thread->magic != 1234)
-        {
+
+        if ( Thread->used != 1 || Thread->magic != 1234){
             printf ("x86mainStartFirstThread: tid={%d} magic \n", 
                 Thread->tid);
             die ();
-        };
+        }
+
 
         set_current ( Thread->tid );       
         //...
@@ -403,79 +403,91 @@ void x86main (void){
 
     int Status = 0;
 
-	// Se usaremos todos os processos do x server.
+    // ??
+    // #todo: rever isso.
+    // Se usaremos todos os processos do x server.
     int gramado_core = 0;
+
+    //
+    // Arch.
+    //
+
+    if (current_arch != CURRENT_ARCH_X86){
+        debug_print ("[x86] x86main: Arch fail\n");
+        panic ("[x86] x86main: Arch fail\n"); 
+    }
 
 
     debug_print ("==============\n");
     debug_print ("[x86] x86main:\n");
 
 
-#ifdef ENTRY_VERBOSE
-    debug_print ("[x86] x86main: Starting x86 kernel ..\n");
-	//printf("x86main: Starting kernel..\n");
-	//refresh_screen(); 
-#endif
-
 
 //initializeSystem:
 
 
+    //#todo:
     //x86_sse_init ();
+    
+    //
+    // Threads counter.
+    //
 
-
-    // Inicializando a contagem de threads.
     UPProcessorBlock.threads_counter = 0;
 
 
 	//
-	// ## system ##
+	// # system
 	//
 
-	//#importante
-	//#obs: É durante essa rotina que começamos a ter mensagens.
-	
-	//#importante
-	//Daqui pra frente tem coisa que é dependente da arquitetura x86 e coisa
-	//que não é ... talvez possamos mandar coisas
-	//que não são dependentes para main.c
-	
-	//system.c
 
-	// Construtor.
-	// status.
-    systemSystem (); 
+	// #bugbug
+	// Daqui pra frente tem coisa que é dependente da arquitetura x86 e 
+	// coisa que não é ... 
+	// Talvez possamos mandar coisas que não são dependentes 
+	// para main.c
+
+
+
+    // System initialization.
+    // See: sm/system.c
 
     Status = (int) systemInit ();
 
-    if ( Status != 0 )
-    {
+    if ( Status != 0 ){
         debug_print ("[x86] x86main: systemInit fail\n");
         printf ("[x86] x86main: systemInit fail\n");
-
         KernelStatus = KERNEL_ABORTED;
-
         goto fail;
     }
 
 
-	//
-	//    #### GDT ####
-	//
-	
-	// #obs
-	// Vamos criar uma TSS e configurarmos a GDT,
-	// assim poderemos usar a current_tss quando criarmos as threads
-	// Essa função faz as duas coisas, cria a tss e configura a gdt.
 
+	//
+	// # GDT
+	//
+
+    // # Caution.
+    // Lets create a TSS and setup a GDT.
+    // This way we can use 'current_tss' when we create threads.
+    // This function creates a TSS and sets up a GDT.
+    // See: sysio/hal/arch/x86/x86.c
+
+    debug_print ("[x86] x86main: Initializing GDT\n");
+    
     init_gdt ();
+
+
+    //
+    // Processes and threads.
+    //
 
 
     debug_print ("[x86] x86main: processes and threads\n");
 
 
 	//
-	//  ## Processes ##
+	// # Processes
 	//
 
     //=================================================

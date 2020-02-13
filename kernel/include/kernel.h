@@ -375,6 +375,8 @@ typedef enum {
 // ==== current ====
 //
 
+int current_arch;
+
 
 // Organização de usuários.
 int current_user; 
@@ -671,8 +673,20 @@ struct platform_d
 struct platform_d *Platform; 
 
 
+
+
+#define CURRENT_ARCH_X86      1000
+#define CURRENT_ARCH_X86_64   1001
+// ...
+
+//#define CURRENT_ARCH_ARM      2000
+//...
+
+
+
 // inicialização do kernel, independente da arquitetura.
-int kernel_main (void);
+// See: kernel/main.c
+int kernel_main (int arch_type);
 
 //inicialização da arquitetura x86.
 void x86main (void);

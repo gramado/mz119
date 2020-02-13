@@ -1855,6 +1855,12 @@ done:
 int systemInit (void){
 
     int Status;
+    
+    //
+    // Flag.
+    //
+    
+    gSystemStatus = 1;
 
     debug_print ("====\n");
     debug_print ("====systemInit:\n");
@@ -1917,11 +1923,12 @@ int systemInit (void){
  * o construtor pode inicializar alguma variável. 
  */
 
+/*
 void systemSystem (void)
 {
     gSystemStatus = 1;
 }
-
+*/
 
 //
 // End.

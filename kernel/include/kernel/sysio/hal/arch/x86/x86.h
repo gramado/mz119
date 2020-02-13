@@ -61,34 +61,31 @@
 
 // Instructions.
 
-int enable (void);
-int disable (void);
+
+
+void enable (void);
+void disable (void);
+
+
+void farReturn (void);
+void intReturn (void);
+
+void stopCpu (void); 
+
 
 int getFlags (int variable);
 int setFlags (int variable);
 
-int Push (int value);
-int Pop (int variable);
 
-int pushRegs (void);
-int popRegs (void);
 
-int pushFlags (void);
-int popFlags (void);
-
-int getStackPointer (int addr);
-int setStackPointer (int addr);
-
-int farReturn (void);
-
-int intReturn (void);
-
-int stopCpu (void);  
 
 
 // Cache.
 
 void cpux86_enable_caches (void);
+
+
+
 
 //
 // Init.

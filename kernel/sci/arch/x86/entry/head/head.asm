@@ -37,7 +37,7 @@
 
 
 
-
+HEAD_CURRENT_ARCH_X86 EQU 1000
 
 
 ;
@@ -446,14 +446,14 @@ head_init:
     ; Me parece que nesse momento precisamos de um jmp far, 
     ; semelhante ao que usamos na comuta��o do modo real para o 
     ; modo protegido.	
-	
-	jmp 8:dummyJmpAfterLTR
-    nop	
+
+    jmp 8:dummyJmpAfterLTR
+    nop
 dummyJmpAfterLTR:
-	
+
 	;; Selecting the 'Processor Interrup Mode'.
 	;; * PIC MODE *
-		
+
     ;; Todos os componentes APIC s�o ignorados e o sistema opera
     ;; no modo single-thread usando LINT0.
 
@@ -644,7 +644,14 @@ dummyJmpAfterLTR:
 	;jmp $
 	
 	
-   
+	;;
+	;; Setup arch type.
+	;;
+
+    mov eax, dword HEAD_CURRENT_ARCH_X86
+    push eax
+
+
 	; Chama o c�digo em C e checa o retorno.
 	; Se n�o terminou de forma normal, halt system.
 	
@@ -654,20 +661,20 @@ dummyJmpAfterLTR:
 	;; enviaremos argumentos para a fun��o main.
 	;; os argumentos recebidos pelo kernel no entrypoint em head
 	;; dever�o ser passador pelo assebly para vari�veis em C.
-	
-
-    ;;  kernel/main.c 
+    ;; See: kernel/main.c 
+    
     call _kernel_main
 
 
     ;; #bugbug
     ;; Estamos no modo gr�fico
     ;; N�o conseguiremos exibir uma mensagem.
+    ;; See: headlib.asm
 
 .hang:
     cli
     hlt
-    jmp __die   ;; headlib.asm
+    jmp __die   
     jmp .hang
 
 

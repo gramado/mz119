@@ -213,33 +213,65 @@ static inline void native_store_gdt ( struct gdt_ptr_d *dtr)
 
 
 
+// Set gate.
+// Probably stolen from minix or netbsd.
 
 void
-setgate(struct gate_descriptor_d *gd, void *func, int args, int type, int dpl,
-    int sel);
+setgate ( struct gate_descriptor_d *gd, 
+          void *func, 
+          int args, 
+          int type, 
+          int dpl,
+          int sel );
+
+
+// Unset gate.
+// Probably stolen from minix or netbsd.
+
+void unsetgate (struct gate_descriptor_d *gd);
+
+
+
+// Set region.
+// Probably stolen from minix or netbsd.
 
 void
-unsetgate(struct gate_descriptor_d *gd);
+setregion ( struct region_descriptor_d *rd, 
+            void *base, 
+            size_t limit );
+
+
+
+// Set segment.
+// Probably stolen from minix or netbsd.
 
 void
-setregion(struct region_descriptor_d *rd, void *base, size_t limit);
+setsegment ( struct segment_descriptor_d *sd, 
+             const void *base, 
+             size_t limit,
+             int type, 
+             int dpl, 
+             int def32, 
+             int gran );
 
-void
-setsegment(struct segment_descriptor_d *sd, const void *base, size_t limit,
-    int type, int dpl, int def32, int gran);
+
+// Set segment nr.
+// Probably stolen from minix or netbsd.
 
 void
 setsegmentNR ( int number, 
-			   const void *base, 
-			   size_t limit,
+               const void *base, 
+               size_t limit,
                int type, 
-			   int dpl, 
-			   int def32, 
-			   int gran);
+               int dpl, 
+               int def32, 
+               int gran );
 
 
-// Isso poderia ser int.
-void init_gdt (void);
+
+
+int init_gdt (void);
+
 
 //
 // End.

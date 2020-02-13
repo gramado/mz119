@@ -33,45 +33,57 @@
  */
 
 int init_runtime (void){
-	
-	// Init Memory Manager:
-	// Heap, Stack, Pages, mmblocks, memory sizes, memory zones ...
-	// ?? onde fica ??
 
-	init_mm ();
-	
-	
-    //printf ("init_runtime: debug breakpoint, real machine, gigabyte/intel ..\n");
-    //refresh_screen (); 
-    //while(1){}	
-	
-	
-	// Nessa hora a memória já funciona e o malloc tambem. e mensagens.
-	//
-	// o video esta usando ainda as configurações de buffer e lfb faitas pelo boot loader.
-	
-	//
-	//@todo: Suspensa a configurações de páginas
-	//       por enquanto fica tudo como foi configurado pelo bootloader.
-	//
-	
-	
-	//Cria o diretório de páginas do processo kernel, page tables e 
-	//area para pageframes de memória paginada.
-	//pages.c
 
-    SetUpPaging ();
+    debug_print ("[Kernel] init_runtime: Initializing runtime ...\n");
 
-	
-    //printf ("init_runtime: 2 debug breakpoint, real machine, gigabyte/intel ..\n");
-    //refresh_screen (); 
-    //while(1){}
+    //
+    // Current arch.
+    //
 
-	
-    // Continua ...
-	
-    g_module_runtime_initialized = 1;
 
+    switch (current_arch)
+    {
+
+        // Init Memory Manager for x86:
+        // Heap, Stack, Pages, mmblocks, memory sizes, memory zones ...
+        // See: mm/86/memory.c
+        case CURRENT_ARCH_X86:
+            debug_print ("[x86] init_runtime: Initializing mm ...\n");
+            init_mm ();
+            
+            debug_print ("[x86] init_runtime: Initializing paging ...\n");
+            SetUpPaging ();
+            
+            //...
+            break;
+
+
+        case CURRENT_ARCH_X86_64:
+            debug_print ("[x86_64] init_runtime: Initializing mm ...\n");
+            debug_print ("[x86_64] init_runtime: Current arch not supported !\n *hang");
+            return -1;
+            break;
+
+        // armmain (); ??
+
+        // ...
+
+        default:
+            debug_print ("[Kernel] kernel_main: Current arch not defined!\n *hang");
+            return -1;
+            break; 
+    };
+
+ 
+    // obs:
+    // Now we have malloc, free and messages support.
+    // The video support is using the boot loader configuration yet.
+
+
+    //
+    // Done!
+    //
 
     return 0; 
 }
@@ -93,14 +105,17 @@ int KiInitRuntime (void){
 
     int Status = 0;
 
-    debug_print("KiInitRuntime\n");
+    debug_print ("KiInitRuntime:\n");
 
 
 	//#todo 
-	//preparar a tela para as mesagens;
+	//preparar a tela para as mensagens;
 	//mas somente se a flag de debug estiver acionada.
 
     Status = (int) init_runtime ();
+
+    if (Status<0)
+        debug_print ("KiInitRuntime: init_runtime fail.\n");
 
 
 	// #### importante ####
@@ -127,6 +142,11 @@ int KiInitRuntime (void){
 	while (1){ asm ("hlt"); };
 #endif
 
+    //
+    // Done!
+    //
+
+    g_module_runtime_initialized = 1;
 
     return (int) Status;
 }

@@ -1,15 +1,11 @@
 /*
- * File: x86.c
+ * File: hal/arch/x86.c
  *
- * Descrição:
- *     Suporte às portas na arquitetura x86.
- *
- *     O acesso as portas também será oferecido na forma de serviços, para
- * que processos servidores também possam configurar o hardware diretamente.
- * Logicamente algum tipo de filtro será criado, para conferir a permissão.
- *
- *  @todo: Muita função aqui deveria ter o retorno do tipo void.
- *
+ * 
+ *    x86 misc support.
+ *    #todo: Review all this thing.
+ * 
+ *    2005 - Created by Fred Nora.
  */
 
  
@@ -24,6 +20,7 @@
 
 #define NDYNSLOTS 8
 
+
 typedef struct {
 	
 	//bool busy[NDYNSLOTS];
@@ -34,6 +31,9 @@ typedef struct {
 
 /* bitmap of busy slots */
 static gdt_bitmap_t gdt_bitmap;
+
+
+
 
 
 /*
@@ -63,6 +63,9 @@ gdt_get_slot(void)
 }
 */
 
+
+
+
 /*
 //libera
 static void
@@ -75,6 +78,9 @@ gdt_put_slot(int slot)
 	gdt_bitmap.busy[slot] = false;
 }
 */
+
+
+
 
 /*
 int
@@ -94,7 +100,10 @@ tss_alloc(const struct i386tss *tss)
 }
 */
 
-/*	
+
+
+
+/*
 void
 tss_free(int sel);	
 void
@@ -122,59 +131,55 @@ get_cs(void)
 */
 
 
-// habilita as interrupções
-int enable (void){
-	
+
+
+
+// x86 enable interrupts.
+
+void enable (void)
+{
     asm ("sti");
-
-    //@todo: Porque habilitar as interrupções deveria mudar o valor do registrador eax.
-    //talvez deveria ser void o tipo da função.	
-    
-	return 0;
 }
 
+// x86 disable interrupts.
 
-// desabilita as interrupções
-int disable (void){
-	
+void disable (void)
+{
     asm ("cli"); 
-
-    //@todo: Porque desabilitar as interrupções deveria mudar o valor do registrador eax.
-    //talvez deveria ser void o tipo da função.		
-    
-	return 0;
 }
 
 
-int farReturn (void){
-	
-    __asm ("lret");
+void farReturn (void)
+{
+    asm ("lret");
 }
 
 
-int intReturn (void){
-	
-    __asm ("iret");
-}
-
-int stopCpu (void){
-	
-    __asm (" cli \n \t " 
-		   " hlt ");
+void intReturn (void)
+{
+    asm ("iret");
 }
 
 
+void stopCpu (void)
+{
+    asm (" cli \n \t "); 
+    asm (" hlt \n \t ");
+}
 
+
+// ?? return value
 int getFlags (int variable){
-	
+
     __asm (" pushfl \n \t "     
            " popl %0 "         
            : "=r" (variable) );
 }
 
 
+// ?? return value
 int setFlags (int variable){
-	
+
     __asm ("pushl %0 \n\t"   
            "popfl"           
            : : "r" (variable) );
@@ -182,115 +187,55 @@ int setFlags (int variable){
 
 
 
-int Push (int value){
-	
-	// #bugbug
-	// gcc 9 não aceita isso.
-	// Mas não estamos usando esse código. Então vamos suspender.
-    //__asm ("pushl %0" : : "r" (value) : "%esp");
-    
-}
-
-
-int Pop (int variable){
-	
-	// #bugbug
-	// gcc 9 não aceita isso.
-	// Mas não estamos usando esse código. Então vamos suspender.	
-    //__asm ("popl %0" : "=r" (variable) : : "%esp");
-}
-
-
-int pushRegs (void){
-
-	// #bugbug
-	// gcc 9 não aceita isso.
-	// Mas não estamos usando esse código. Então vamos suspender.	
-    //__asm ("pushal" : : : "%esp");
-}
-
-
-int popRegs (void){
-	
-	// #bugbug
-	// gcc 9 não aceita isso.
-	// Mas não estamos usando esse código. Então vamos suspender.	
-    //__asm ("popal" : : : "%esp");
-}
-
-
-int pushFlags (void){
-	
-	// #bugbug
-	// gcc 9 não aceita isso.
-	// Mas não estamos usando esse código. Então vamos suspender.	
-    //__asm ("pushfl" : : : "%esp");
-}
-
-
-int popFlags (void){
-
-	// #bugbug
-	// gcc 9 não aceita isso.
-	// Mas não estamos usando esse código. Então vamos suspender.	
-    //__asm ("popfl" : : : "%esp");
-}
-
-
-int getStackPointer (int addr){
-
-	// #bugbug
-	// gcc 9 não aceita isso.
-	// Mas não estamos usando esse código. Então vamos suspender.	
-    //__asm ("movl %%esp, %0" : "=r" (addr) );
-}
-
-
-int setStackPointer (int addr){
-
-	// #bugbug
-	// gcc 9 não aceita isso.
-	// Mas não estamos usando esse código. Então vamos suspender.	
-    //__asm ("movl %0, %%esp" : : "r" (addr) : "%esp");
-}
 
 
 
-//habilita cache.
-//credits: barrelfish
+// Enable cache.
+// credits: barrelfish.
+// #todo: Test it on my real machine.
 
 void cpux86_enable_caches (void){
-	
-    uint32_t cr0;
 
-    __asm volatile ("mov %%cr0, %[cr0]" : [cr0] "=r" (cr0) );
-	
+    uint32_t cr0 = 0;
+
+    asm volatile ("mov %%cr0, %[cr0]" : [cr0] "=r" (cr0) );
+
     cr0 &= ~CPUX86_CR0_CD;
     cr0 &= ~CPUX86_CR0_NW;
     
-	__asm volatile ("mov %[cr0], %%cr0" :: [cr0] "r" (cr0) );
+    asm volatile ("mov %[cr0], %%cr0" :: [cr0] "r" (cr0) );
 }
  
 
+// Set gate.
+// Probably stolen from minix or netbsd.
+// See: sysio/hal/arch/x86/x86gdt.h
 
 void
-setgate(struct gate_descriptor_d *gd, void *func, int args, int type, int dpl,
-    int sel)
+setgate ( struct gate_descriptor_d *gd, 
+          void *func, 
+          int args, 
+          int type, 
+          int dpl,
+          int sel )
 {
 
-	gd->gd_looffset = (int)func;
-	gd->gd_selector = sel;
-	gd->gd_stkcpy = args;
-	gd->gd_xx = 0;
-	gd->gd_type = type;
-	gd->gd_dpl = dpl;
-	gd->gd_p = 1;
-	gd->gd_hioffset = (int)func >> 16;
+    gd->gd_looffset = (int)func;
+    gd->gd_selector = sel;
+    gd->gd_stkcpy = args;
+    gd->gd_xx = 0;
+    gd->gd_type = type;
+    gd->gd_dpl = dpl;
+    gd->gd_p = 1;
+    gd->gd_hioffset = (int)func >> 16;
 }
 
 
-void
-unsetgate(struct gate_descriptor_d *gd)
+// Unset gate.
+// Probably stolen from minix or netbsd.
+// See: sysio/hal/arch/x86/x86gdt.h
+
+void unsetgate (struct gate_descriptor_d *gd)
 {
 	gd->gd_p = 0;
 	gd->gd_hioffset = 0;
@@ -301,184 +246,232 @@ unsetgate(struct gate_descriptor_d *gd)
 	gd->gd_type = 0;
 	gd->gd_dpl = 0;
 }
- 
+
+
+// Set region.
+// Probably stolen from minix or netbsd.
+// See: sysio/hal/arch/x86/x86gdt.h
  
 void
-setregion(struct region_descriptor_d *rd, void *base, size_t limit)
+setregion ( struct region_descriptor_d *rd, 
+            void *base, 
+            size_t limit )
 {
-
-	rd->rd_limit = (int)limit;
-	rd->rd_base = (int)base;
+    rd->rd_limit = (int)limit;
+    rd->rd_base = (int)base;
 }
 
+
+
+// Set segment.
+// Probably stolen from minix or netbsd.
+// See: sysio/hal/arch/x86/x86gdt.h
 
 void
 setsegment ( struct segment_descriptor_d *sd, 
-			 const void *base, 
-			 size_t limit,
+             const void *base, 
+             size_t limit,
              int type, 
-			 int dpl, 
-			 int def32, 
-			 int gran )
+             int dpl, 
+             int def32, 
+             int gran )
 {
-	sd->sd_lolimit = (int) limit;
-	sd->sd_lobase = (int) base;
-	sd->sd_type = type;
-	sd->sd_dpl = dpl;
-	sd->sd_p = 1;
-	sd->sd_hilimit = (int) limit >> 16;
-	sd->sd_xx = 0;
-	sd->sd_def32 = def32;
-	sd->sd_gran = gran;
-	sd->sd_hibase = (int) base >> 24;
+    sd->sd_lolimit = (int) limit;
+    sd->sd_lobase = (int) base;
+    sd->sd_type = type;
+    sd->sd_dpl = dpl;
+    sd->sd_p = 1;
+    sd->sd_hilimit = (int) limit >> 16;
+    sd->sd_xx = 0;
+    sd->sd_def32 = def32;
+    sd->sd_gran = gran;
+    sd->sd_hibase = (int) base >> 24;
 }
 
 
+// Set segment nr.
+// Probably stolen from minix or netbsd.
+// See: sysio/hal/arch/x86/x86gdt.h
+
 void
 setsegmentNR ( int number, 
-			   const void *base, 
-			   size_t limit,
+               const void *base, 
+               size_t limit,
                int type, 
-			   int dpl, 
-			   int def32, 
-			   int gran)
+               int dpl, 
+               int def32, 
+               int gran)
 {
-	
-	setsegment ((struct segment_descriptor_d *)  &xxx_gdt[number] , 
-	    base, 
-		limit,
-        type, 
-		dpl, 
-		def32, 
-		gran );
+
+    setsegment ((struct segment_descriptor_d *)  &xxx_gdt[number] , 
+        base, limit, type, dpl, def32, gran );
 }
 
 
 /*
  ***********************************
  * init_gdt:
- *     Cria uma TSS e configura algumas entradas na GDT.
- *     #todo O desafio aqui é configurar a TSS e testar na máquina real.
+ * 
+ *     It creates a TSS and sets up some entries in the GDT.
+ *     
  */
 
-	// #bugbug
-	// Na máquina real o sistema é sensível a essa configuração.
-	// É nela que vamos trabalhar para que não falhe na hora do salto para ring3.
+// See:
+// sysio/hal/arch/x86/x86gdt.h
 
-void init_gdt (void){
-	
-	struct i386tss_d *tss;
-	
-	//
-	// Criando a estrutura de TSS e inicializando ela.
-	//
-	
-	
-	tss = (void *) kmalloc ( sizeof(struct i386tss_d) );
-	
-	if ( (void *) tss == NULL )
-	{
-	    panic ("x86-init_gdt:");
-		
-	}else{
-    
-		 tss_init ( (struct i386tss_d *) tss, (void *) 0x003FFFF0, (void *) 0x401000 );
+int init_gdt (void){
 
-		 // #importante
-		 // Dessa forma as threads poderão usar a mesma tss.
-		
-		 current_tss = tss;
-	};
-	
+    struct i386tss_d *tss;
+
+
+    debug_print ("[x86] init_gdt: Danger!\n");
+
+
+    // Creating a TSS and initializing it.
+
+    tss = (void *) kmalloc ( sizeof(struct i386tss_d) );
+
+    if ( (void *) tss == NULL ){
+        debug_print ("[x86] init_gdt: \n");
+        panic ("[x86] init_gdt: \n");
+
+    }else{
+ 
+
+        // Init TSS. 
+        tss_init ( (struct i386tss_d *) tss, 
+            (void *) 0x003FFFF0, 
+            (void *) 0x401000 );
+
+
+         // Setup current.
+         // ps: All threads are using the same tss.
+
+         current_tss = tss;
+         
+         // #bugbug
+         // #todo: Validation
+         
+         //if ( (void *) current_tss == NULL )
+             //panic( ...
+    };
+
+
 	//
-	// Inicializando a GDT.
+	// Initializing the GDT.
 	//
-	
-	
-	// NULL
-    setsegment ( &xxx_gdt[GNULL_SEL], 0, 0, 0, 0, 0, 0);
-	
-	// ring 0
-	// SDT_MEMERA = 27 = 0x1B
-	// SDT_MEMRWA = 19 = 0x13
-	// SEL_KPL = 0
-	setsegment ( &xxx_gdt[GCODE_SEL], 0, 0xfffff, SDT_MEMERA, SEL_KPL, 1, 1);
-	setsegment ( &xxx_gdt[GDATA_SEL], 0, 0xfffff, SDT_MEMRWA, SEL_KPL, 1, 1);
-	
-	// ring 3
-	// SDT_MEMERA = 27 = 0x1B
-	// SDT_MEMRWA = 19 = 0x13
-	// SEL_UPL = 3
-	setsegment ( &xxx_gdt[GUCODE_SEL], 0, 0xfffff, SDT_MEMERA, SEL_UPL, 1, 1);
-	setsegment ( &xxx_gdt[GUDATA_SEL], 0, 0xfffff, SDT_MEMRWA, SEL_UPL, 1, 1);
-	
-	
-	// TSS selector.
-	// (SDT_SYS386TSS=9=not busy) 
-	// (11 = busy)
-	setsegment ( &xxx_gdt[GTSS_SEL], &tss, sizeof( struct i386tss_d ) - 1, SDT_SYS386TSS,  SEL_KPL, 0, 0);
-	//setsegment ( &xxx_gdt[GTSS_SEL], &tss, sizeof ( struct i386tss_d ) - 1, 11,  SEL_KPL, 0, 0);
-	
-	// LDT selector.
-	//#bugbug: todo LDT size;
-	setsegment ( &xxx_gdt[GLDT_SEL], 0, 0xff, SDT_SYSLDT,  SEL_KPL, 0, 0);
+
+
+    // NULL
+    setsegment ( &xxx_gdt[GNULL_SEL], 0, 0, 0, 0, 0, 0 );
+
+
+    // ring 0
+    // SDT_MEMERA = 27 = 0x1B
+    // SDT_MEMRWA = 19 = 0x13
+    // SEL_KPL = 0
+    setsegment ( &xxx_gdt[GCODE_SEL], 
+        0, 0xfffff, SDT_MEMERA, SEL_KPL, 1, 1);
+    setsegment ( &xxx_gdt[GDATA_SEL], 
+        0, 0xfffff, SDT_MEMRWA, SEL_KPL, 1, 1);
+
+
+    // ring 3
+    // SDT_MEMERA = 27 = 0x1B
+    // SDT_MEMRWA = 19 = 0x13
+    // SEL_UPL = 3
+    setsegment ( &xxx_gdt[GUCODE_SEL], 
+        0, 0xfffff, SDT_MEMERA, SEL_UPL, 1, 1);
+    setsegment ( &xxx_gdt[GUDATA_SEL], 
+        0, 0xfffff, SDT_MEMRWA, SEL_UPL, 1, 1);
+
+
+    // TSS selector.
+    // (SDT_SYS386TSS=9=not busy) 
+    // (11 = busy)
+    setsegment ( &xxx_gdt[GTSS_SEL], 
+        &tss, sizeof( struct i386tss_d ) - 1, 
+        SDT_SYS386TSS,  SEL_KPL, 0, 0);
+
+    //setsegment ( &xxx_gdt[GTSS_SEL], 
+    //    &tss, sizeof ( struct i386tss_d ) - 1, 11,  SEL_KPL, 0, 0);
+
+
+
+    // LDT selector.
+    // #bugbug: 
+    // #todo LDT size;
+    setsegment ( &xxx_gdt[GLDT_SEL], 
+        0, 0xff, SDT_SYSLDT,  SEL_KPL, 0, 0);
+
 	//...
-	
-	
+
+
 	//
 	// Load GDT.
 	//
-	
-	
-	xxx_gdt_ptr.limit = (unsigned short) ((32 * sizeof(struct segment_descriptor_d) ) -1);
-	xxx_gdt_ptr.base  = (unsigned int) &xxx_gdt[GNULL_SEL];
-		
-	load_gdt (&xxx_gdt_ptr);
+
+    // Limit and base.
+    xxx_gdt_ptr.limit = (unsigned short) ((32 * sizeof(struct segment_descriptor_d) ) -1);
+    xxx_gdt_ptr.base  = (unsigned int) &xxx_gdt[GNULL_SEL];
+
+    //register.
+    load_gdt (&xxx_gdt_ptr);
+
+
+    //
+    // Done!
+    //
+
+    return 0;
 }
 
 
 
-
+// ?? internal
 static void
 tss_init ( struct i386tss_d *tss, void *stack, void *func )
 {
+	
 	//KASSERT(curcpu()->ci_pmap == pmap_kernel());
-	
-	if ( (void *) tss == NULL )
-	{
-	    printf ("tss_init");
-		die();
-	}
 
-	//limpa
-	memset ( tss, 0, sizeof *tss );
-	
+
+    if ( (void *) tss == NULL ){
+        panic ("[x86] tss_init:\n");
+    }
+
+
+
+    // Clean.
+    memset ( tss, 0, sizeof *tss );
+
+
 	//ring 0 stack
-	tss->tss_esp0 = 0x003FFFF0;    // (int)((char *)stack + USPACE - 16);   //0x003FFFF0
-	tss->tss_ss0 = GSEL(GDATA_SEL, SEL_KPL);	
+    tss->tss_esp0 = 0x003FFFF0;    // (int)((char *)stack + USPACE - 16);   //0x003FFFF0
+    tss->tss_ss0 = GSEL(GDATA_SEL, SEL_KPL);	
 	//tss->tss_ss0 = 0x10; //GSEL(GDATA_SEL, SEL_KPL);
 	
-	
+
 
 	/* %cr3 contains the value associated to pmap_kernel */
-	tss->tss_cr3 = 0x9C000;             //rcr3();   // 0x9C000   Thread->Directory ??
-	tss->__tss_eip = (int) 0x401000;    //(int) func;
+    tss->tss_cr3 = 0x9C000;             //rcr3();   // 0x9C000   Thread->Directory ??
+    tss->__tss_eip = (int) 0x401000;    //(int) func;
 	/* XXX not needed? */
-	tss->__tss_eflags = 0x3200;   //PSL_MBO | PSL_NT;	  // PSL_IOPL PSL_I
+    tss->__tss_eflags = 0x3200;   //PSL_MBO | PSL_NT;	  // PSL_IOPL PSL_I
 
-	tss->tss_esp = 0x0044FFF0; //(int)((char *)stack + USPACE - 16);  //0x0044FFF0
-	
+    tss->tss_esp = 0x0044FFF0; //(int)((char *)stack + USPACE - 16);  //0x0044FFF0
 
-	tss->__tss_es = GSEL(GUDATA_SEL, SEL_UPL); 	
-	tss->__tss_cs = GSEL(GUCODE_SEL, SEL_UPL);  //0x1B 
-	tss->__tss_ss = GSEL(GUDATA_SEL, SEL_UPL); 
-	tss->__tss_ds = GSEL(GUDATA_SEL, SEL_UPL);  //0x23
-	tss->tss_fs = GSEL(GUDATA_SEL, SEL_UPL); 	
-	tss->tss_gs = GSEL(GUDATA_SEL, SEL_UPL); 
-	tss->tss_ldt = GSEL(GLDT_SEL, SEL_KPL);
+
+    tss->__tss_es = GSEL(GUDATA_SEL, SEL_UPL); 
+    tss->__tss_cs = GSEL(GUCODE_SEL, SEL_UPL);  //0x1B 
+    tss->__tss_ss = GSEL(GUDATA_SEL, SEL_UPL); 
+    tss->__tss_ds = GSEL(GUDATA_SEL, SEL_UPL);  //0x23
+    tss->tss_fs = GSEL(GUDATA_SEL, SEL_UPL); 
+    tss->tss_gs = GSEL(GUDATA_SEL, SEL_UPL); 
+    tss->tss_ldt = GSEL(GLDT_SEL, SEL_KPL);
     
-	
- 	/*
+
+	/*
 	tss->__tss_es = 0x23; // GSEL(GUDATA_SEL, SEL_UPL); //GSEL(GDATA_SEL, SEL_KPL);	
 	tss->__tss_cs = 0x1B; //GSEL(GUCODE_SEL, SEL_UPL); //GSEL(GCODE_SEL, SEL_KPL);
 	tss->__tss_ss = 0x23; //GSEL(GUDATA_SEL, SEL_UPL); //GSEL(GCODE_SEL, SEL_KPL);
@@ -486,14 +479,16 @@ tss_init ( struct i386tss_d *tss, void *stack, void *func )
 	tss->tss_fs =  0x23; //GSEL(GUDATA_SEL, SEL_UPL); //GSEL(GDATA_SEL, SEL_KPL);  	//tss->tss_fs = GSEL(GCPU_SEL, SEL_KPL);	
 	tss->tss_gs = 0x23;  // GSEL(GUDATA_SEL, SEL_UPL); //GSEL(GDATA_SEL, SEL_KPL);
 	tss->tss_ldt = 0x30; ////GSEL ( GLDT_SEL, SEL_KPL );
-    */
-	
-	
-	tss->tss_iobase = IOMAP_VALIDOFF << 16;
+	*/
+
+
+    tss->tss_iobase = IOMAP_VALIDOFF << 16;
 }
 
 
+
 /*
+// ??
 // Atualizando a pilha de ring 0 na tss atual.
 void tss_set_kernel_stack (unsigned long stack_address );
 void tss_set_kernel_stack (unsigned long stack_address )
@@ -512,20 +507,33 @@ void tss_set_kernel_stack (unsigned long stack_address )
  * init_intel:
  *     Inicializa processador Intel.
  */
+
+// See:
+// sysio/hal/arch/x86/x86.h
  
 int init_intel (void){
-	
-	
-	// #bugbug
-	// Suspenso.
-	// Estamos testando os efeitos dessa rotina.
-	
-	//cpux86_enable_caches ();
-	
-	// Get info.
-	get_cpu_intel_parameters ();
-	
-	return 0;
+
+
+    debug_print ("[x86] init_intel:");
+
+    // #bugbug
+    // Suspended.
+    // We need to teste the effects os this routine in the real machine.
+    // See: sysio/hal/arch/x86/x86.h
+    // See: sysio/hal/arch/x86/x86.c
+    
+    cpux86_enable_caches ();
+
+    // Get info.
+    get_cpu_intel_parameters ();
+
+
+    //
+    // Done.
+    //
+    
+    
+    return 0;
 }
  
 

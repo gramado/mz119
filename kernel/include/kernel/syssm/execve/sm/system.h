@@ -604,7 +604,7 @@ int systemStartUp (void);   // Inicialização do sistema.
 
 int systemInit (void);      // Inicializador.
 
-void systemSystem (void);   // Construtor.
+//void systemSystem (void);   // Construtor.
 
 
 //
