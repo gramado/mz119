@@ -391,11 +391,11 @@ KERNEL.BIN:
 	# sci/fs
 	gcc -c kernel/sci/fs/fs.c   $(KINCLUDE) $(CFLAGS) -o fs.o
 	gcc -c kernel/sci/fs/vfs.c  $(KINCLUDE) $(CFLAGS) -o vfs.o
-
+	gcc -c kernel/sci/fs/cf.c   $(KINCLUDE) $(CFLAGS) -o cf.o
+	
 
 	gcc -c kernel/sysio/kservers/fs/read.c    $(KINCLUDE) $(CFLAGS) -o read.o
 	gcc -c kernel/sysio/kservers/fs/write.c   $(KINCLUDE) $(CFLAGS) -o write.o
-	gcc -c kernel/sysio/kservers/fs/cf.c      $(KINCLUDE) $(CFLAGS) -o cf.o
 	gcc -c kernel/sysio/kservers/fs/search.c  $(KINCLUDE) $(CFLAGS) -o search.o
 	gcc -c kernel/sysio/kservers/fs/format.c  $(KINCLUDE) $(CFLAGS) -o format.o
 	

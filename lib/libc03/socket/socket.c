@@ -68,11 +68,16 @@ int __socket_pipe ( int pipefd[2] ){
 
 
 
+
+// socketpair - create a pair of connected sockets
+// POSIX.1-2001, POSIX.1-2008, 4.4BSD.  socketpair() first appeared in
+// 4.2BSD.  It is generally portable to/from non-BSD systems supporting
+// clones of the BSD socket layer (including System V variants).
+
 int socketpair (int domain, int type, int protocol, int sv[2]){
 
     int fd = -1; 
     int pipefd[2];
-
 
 
     if ( domain == AF_UNSPEC || domain == AF_UNIX )
@@ -86,10 +91,10 @@ int socketpair (int domain, int type, int protocol, int sv[2]){
         // Podemos colocar sv diretamente.
         fd = (int) __socket_pipe (pipefd);
 
-        if ( fd  == -1 ) 
-        {    
+        if ( fd  == -1 ) { 
             printf ("socketpair: fail\n");
             return (int) (-1);
+
         }else{
             sv[0] = pipefd[1];
             sv[1] = pipefd[1];
@@ -297,17 +302,57 @@ ssize_t recv ( int sockfd, void *buf, size_t len, int flags )
 
 
 
+ssize_t 
+recvfrom ( int sockfd, 
+           void *buf, 
+           size_t len, 
+           int flags,
+           struct sockaddr *src_addr, 
+           socklen_t *addrlen )
+{
+     return -1;
+}
+
+
+ssize_t recvmsg (int sockfd, struct msghdr *msg, int flags)
+{
+    return -1;
+}
 
 
 
+int 
+getpeername ( int sockfd, 
+              struct sockaddr *addr, 
+              socklen_t *addrlen )
+{
+    return -1;
+}
+
+
+
+int 
+getsockname ( int sockfd, 
+              struct sockaddr *addr, 
+              socklen_t *addrlen )
+{
+    return -1;
+}
+
+
+
+
+
+
+       
 /*
  * shutdown:
  *     shut down part of a full-duplex connection    
  */
 
-int shutdown ( int	sockfd,	int how ){
-	
-	return -1; //#todo
+int shutdown ( int sockfd, int how ){
+
+    return -1; //#todo
 }
 
 

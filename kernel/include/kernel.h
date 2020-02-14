@@ -270,6 +270,11 @@ extern void do_executa_new_task (void);
 // #net/netinet
 #include <kernel/sci/net/netinet/in.h>
 
+// #un.h
+#include <kernel/sci/net/sys/un.h>
+
+
+
 // #net
 #include <kernel/sci/net/nports.h>      //(network) Network Ports  (sw)
 

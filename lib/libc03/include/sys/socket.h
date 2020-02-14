@@ -263,6 +263,26 @@ struct ucred {
 };
 */
 
+
+
+struct iovec {                    /* Scatter/gather array items */
+    void  *iov_base;              /* Starting address */
+    size_t iov_len;               /* Number of bytes to transfer */
+};
+
+struct msghdr {
+    void         *msg_name;       /* optional address */
+    socklen_t     msg_namelen;    /* size of address */
+    struct iovec *msg_iov;        /* scatter/gather array */
+    size_t        msg_iovlen;     /* # elements in msg_iov */
+    void         *msg_control;    /* ancillary data, see below */
+    size_t        msg_controllen; /* ancillary data buffer len */
+    int           msg_flags;      /* flags on received message */
+};
+
+
+
+
 //=========
 
 
@@ -310,9 +330,6 @@ bind ( int sockfd,
 // The  listen()  function	call first appeared in 4.2BSD.
 int listen(int sockfd, int backlog);
 
-//recv - receive a message from	a socket
-
-ssize_t recv ( int sockfd,	void *buf, size_t len, int flags );
 
 
 //send
@@ -323,6 +340,29 @@ ssize_t recv ( int sockfd,	void *buf, size_t len, int flags );
 // comments credits: freebsd.org	 
 ssize_t send ( int sockfd, const void *buf, size_t len, int flags );
 
+
+//recv - receive a message from a socket
+ssize_t recv ( int sockfd, void *buf, size_t len, int flags );
+
+ssize_t 
+recvfrom ( int sockfd, 
+           void *buf, 
+           size_t len, 
+           int flags,
+           struct sockaddr *src_addr, 
+           socklen_t *addrlen );
+           
+
+ssize_t recvmsg(int sockfd, struct msghdr *msg, int flags);
+
+
+
+int 
+getpeername ( int sockfd, 
+              struct sockaddr *addr, 
+              socklen_t *addrlen );
+
+int getsockname (int sockfd, struct sockaddr *addr, socklen_t *addrlen);
 
 //shutdown	- shut down part of a full-duplex connection
 //POSIX.1-2001, 

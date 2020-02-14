@@ -451,6 +451,14 @@ sys_write_file ( char *file_name,
                  char flag );
  
 
+
+//
+// Create
+//
+
+int fs_create_empty_file ( char *file_name, int type );
+int fs_create_empty_directory ( char *dir_name, int type );
+
 int sys_create_empty_file ( char *file_name );
 int sys_create_empty_directory ( char *dir_name );
 
@@ -557,10 +565,16 @@ int KiSearchFile( unsigned char *file_name, unsigned long address);
 void set_file( void *file, int Index);
 void *get_file(int Index);
 
-unsigned long fs_create_dir( char *name , unsigned long id);
+
+
+
+
+//
+// Create
+//
 
 int fs_create_file( char *name );
-
+unsigned long fs_create_dir( char *name , unsigned long id);
 
 
 void 

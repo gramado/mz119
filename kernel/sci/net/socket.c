@@ -7,6 +7,16 @@
 #include <kernel.h>
 
 
+
+/*
+int socket_create (struct file_d *f, int domain, int type, int protocol);
+int socket_create (struct file_d *f, int domain, int type, int protocol)
+{
+    return -1;
+}
+*/
+
+
 /*
 int socket_udp_initialize (struct socket_d *sock);
 int socket_udp_initialize (struct socket_d *sock)
@@ -386,8 +396,7 @@ sys_connect ( int sockfd,
 
 
 
-    if ( sockfd < 0 || sockfd >= 32 )
-    {
+    if ( sockfd < 0 || sockfd >= 32 ){
         printf ("sys_connect: sockfd fail\n");
         refresh_screen();
         return -1;

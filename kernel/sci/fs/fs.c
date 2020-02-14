@@ -1715,6 +1715,39 @@ sys_write_file ( char *file_name,
 }
 
 
+//
+// Create
+//
+
+
+int fs_create_empty_file ( char *file_name, int type )
+{
+
+    file *f;
+    
+    char buffer[512];
+    int number_of_sectors = 1;
+    int size_in_bytes = 512;  
+    int __ret;
+    
+    f = (file *) kmalloc( sizeof(size_in_bytes) );
+    
+    if( (void*) f == NULL )
+        return -1;
+        
+    //f->type = type;
+    // #todo: fd ...
+    
+    __ret = (int) fsSaveFile ( (char *) file_name,    
+                    (unsigned long) number_of_sectors,       
+                    (unsigned long) size_in_bytes,  
+                    (char *) &buffer[0],          
+                    (char) 0x20 );  //0x20 = file.                  
+
+
+
+    return __ret;
+}
 
 int sys_create_empty_file ( char *file_name )
 {
@@ -1735,6 +1768,37 @@ int sys_create_empty_file ( char *file_name )
 }
 
 
+
+int fs_create_empty_directory ( char *dir_name, int type )
+{
+    file *f;
+
+    char buffer[512];
+    int number_of_sectors = 1;
+    int size_in_bytes = 512;  
+    int __ret;
+    
+    f = (file *) kmalloc( sizeof(size_in_bytes) );
+    
+    if( (void*) f == NULL )
+        return -1;
+        
+    //f->type = type;
+    // #todo: fd ...
+    
+    __ret = (int) fsSaveFile ( (char *) dir_name,    
+                    (unsigned long) number_of_sectors,       
+                    (unsigned long) size_in_bytes,  
+                    (char *) &buffer[0],          
+                    (char) 0x10 );  //0x10 = directory.                  
+
+
+
+    return __ret;
+}
+
+
+
 int sys_create_empty_directory ( char *dir_name )
 {
     char buffer[512];
@@ -1752,6 +1816,10 @@ int sys_create_empty_directory ( char *dir_name )
 
     return __ret;
 }
+
+
+
+
 
 
 

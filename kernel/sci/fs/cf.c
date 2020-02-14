@@ -14,22 +14,13 @@
 #include <kernel.h>
 
 
-/*
- * fs_create_dir:
- *     Cria um diretório.
- */
-unsigned long fs_create_dir ( char *name, unsigned long id ){
-	
-	return 1;
-	//return fs_create_file( name, id ); 
-};
-
 
 /*
  *****************************************************
  * fs_create_file:
  *     Cria um arquivo.
  */
+ 
 int fs_create_file ( char *name ){
 	
     unsigned long fat_entry;
@@ -97,7 +88,20 @@ done:
 	
 fail:   
 	return (int) 1;
-};
+}
+
+/*
+ * fs_create_dir:
+ *     Cria um diretório.
+ */
+unsigned long fs_create_dir ( char *name, unsigned long id )
+{
+	
+	return 1;
+	//return fs_create_file( name, id ); 
+}
+
+
 
 	
 void fs_create_entry( char *name,            //nome do arquivo
@@ -108,14 +112,14 @@ void fs_create_entry( char *name,            //nome do arquivo
 					                         //continua
 {
    // return;
-};   
+}   
 
 
 
 void fs_create_name( char *name, unsigned long id,unsigned long eid)
 {
     //return;
-};   
+}  
 
 
 
