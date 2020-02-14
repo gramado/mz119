@@ -45,6 +45,41 @@
 
 
 
+int fs_get_free_fd ( int pid )
+{
+
+    struct process_d *p;
+    int __slot;
+
+
+    if (pid<0 || pid >= 32)
+        return -1;
+
+    //
+    // Process.
+    //
+  
+    p = (struct process_d *) processList[pid];
+
+    if ( (void *) p == NULL )
+        return -1;
+
+    if ( p->used != 1 || p->magic != 1234 )
+        return -1;
+        
+        
+    // Pick a free one.
+    for (__slot=0; __slot<32; __slot++)
+    {
+         if ( p->Objects[__slot] == 0 ){
+             return (int) __slot;
+         }
+    };
+ 
+     return -1;
+}
+
+
 /*
 int vfs_root_mounted(void);
 int vfs_root_mounted(void)

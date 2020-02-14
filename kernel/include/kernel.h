@@ -100,7 +100,7 @@ extern void do_executa_new_task (void);
 
 
 //#net
-#include <kernel/sci/net/socket.h>
+#include <kernel/net/socket.h>
 
 
 #include <kernel/syslib/libcore/sys/ioctl.h>
@@ -252,14 +252,14 @@ extern void do_executa_new_task (void);
 #include <kernel/sysio/kdrivers/x/i8042/ps2kbd.h>
 
 //#net
-#include <kernel/sci/net/connect.h> 
-#include <kernel/sci/net/host.h>    
-#include <kernel/sci/net/ethernet.h>
+#include <kernel/net/network/connect.h> 
+#include <kernel/net/host/host.h>    
+#include <kernel/net/ethernet/ethernet.h>
 
 
-#include <kernel/sci/net/arp.h>
-#include <kernel/sci/net/udp.h>
-#include <kernel/sci/net/tcp.h>
+#include <kernel/net/ipv4/arp.h>
+#include <kernel/net/ipv4/udp.h>
+#include <kernel/net/ipv4/tcp.h>
 
 
 // #kserver - nic intel
@@ -267,32 +267,19 @@ extern void do_executa_new_task (void);
 #include <kernel/sysio/kdrivers/network/intel.h>       
 
 
-// #net/netinet
-#include <kernel/sci/net/netinet/in.h>
-
-// #un.h
-#include <kernel/sci/net/sys/un.h>
-
-
-
 // #net
-#include <kernel/sci/net/nports.h>      //(network) Network Ports  (sw)
-
-//#include <kernel/sci/net/nsocket.h>     //(network) Sockets info. (sw) (not libc)
-
-#include <kernel/sci/net/ip.h>          //(network) IP info.      (sw)
-#include <kernel/sci/net/ipv4.h> 
-//#include <kernel/sci/net/ipv6.h> 
-#include <kernel/sci/net/mac.h> 
-#include <kernel/sci/net/icmp.h> 
-
-
-
-
-#include <kernel/sci/net/channel.h>     //(network) Channel       (sw)
-#include <kernel/sci/net/client.h>      //(network) Client process support. 
-#include <kernel/sci/net/ns.h>          //(network) Network Server.
-#include <kernel/sci/net/network.h>     //(network) Gerenciamento de rede.  
+#include <kernel/net/netinet/in.h>
+#include <kernel/net/sys/un.h>
+#include <kernel/net/network/nports.h>      //(network) Network Ports  (sw)
+#include <kernel/net/ipv4/ip.h>          //(network) IP info.      (sw)
+#include <kernel/net/ipv4/ipv4.h> 
+//#include <kernel/net/ipv6.h> 
+#include <kernel/net/ipv4/mac.h> 
+#include <kernel/net/ipv4/icmp.h> 
+#include <kernel/net/network/channel.h>     //(network) Channel       (sw)
+#include <kernel/net/network/client.h>      //(network) Client process support. 
+#include <kernel/net/network/ns.h>          //(network) Network Server.
+#include <kernel/net/network/network.h>     //(network) Gerenciamento de rede.  
 
 
 #include <kernel/sysio/kdrivers/dd.h>

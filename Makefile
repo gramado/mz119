@@ -10,7 +10,7 @@
 VERSION = 1
 PATCHLEVEL = 30
 SUBLEVEL = 0
-EXTRAVERSION = -rc7
+EXTRAVERSION = -rc8
 NAME = 
 
 
@@ -342,10 +342,12 @@ KERNEL.BIN:
 
 
 	# net
-	gcc -c kernel/sci/net/network.c  $(KINCLUDE) $(CFLAGS) -o network.o
-	gcc -c kernel/sci/net/socket.c   $(KINCLUDE) $(CFLAGS) -o socket.o
-	gcc -c kernel/sci/net/channel.c  $(KINCLUDE) $(CFLAGS) -o channel.o
-	
+	gcc -c kernel/net/channel/channel.c  $(KINCLUDE) $(CFLAGS) -o channel.o
+	gcc -c kernel/net/network/network.c  $(KINCLUDE) $(CFLAGS) -o network.o
+
+
+	# net - socket - main access point
+	gcc -c kernel/net/socket.c   $(KINCLUDE) $(CFLAGS) -o socket.o	
 
 
 	# kdrivers/pci

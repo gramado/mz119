@@ -1,6 +1,6 @@
 /*
  * File: socket.c
- *     Socket support for klibc.
+ *     SOCKET network access protocol.
  */
 
 

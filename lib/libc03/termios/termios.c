@@ -14,6 +14,15 @@
 
 
 
+/*
+int
+tcgetwinsize(int fd, struct winsize *ws)
+{
+	return ioctl(fd, TIOCGWINSZ, ws);
+}
+*/
+
+
 pid_t tcgetpgrp ( int fd){
 
     int s;

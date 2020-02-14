@@ -381,6 +381,9 @@ struct file_access_d *CurrentFileAccess;
 
 
 
+int fs_get_free_fd ( int pid );
+
+
 //atualiza a string do pwd na estrutura do processo. 
 int fs_initialize_process_pwd ( int pid, char *string ); 
 
