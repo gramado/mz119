@@ -290,6 +290,32 @@ ssize_t send ( int sockfd, const void *buf, size_t len, int flags )
 }
 
 
+//4.4BSD, SVr4, POSIX.1-2001.  
+//These interfaces first appeared in 4.2BSD.
+       
+ssize_t 
+sendto ( int sockfd, 
+         const void *buf, 
+         size_t len, 
+         int flags,
+         const struct sockaddr *dest_addr, 
+         socklen_t addrlen )
+{
+    return -1;
+}
+
+
+
+ssize_t sendmsg (int sockfd, const struct msghdr *msg, int flags)
+{
+    return -1;
+}
+
+
+
+
+
+
 /*
  * recv:
  */
@@ -330,6 +356,9 @@ getpeername ( int sockfd,
 }
 
 
+
+//POSIX.1-2001, POSIX.1-2008, SVr4, 4.4BSD (getsockname() first
+//appeared in 4.2BSD).
 
 int 
 getsockname ( int sockfd, 
