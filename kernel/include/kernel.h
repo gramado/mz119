@@ -130,11 +130,16 @@ extern void do_executa_new_task (void);
 #include <kernel/sysio/kservers/ascii.h>   
 #include <kernel/sysio/kservers/fs/path.h>                // path.
 #include <kernel/sysio/kservers/fs/fat.h>                 // fat.
-#include <kernel/sysio/kservers/fs/fs.h>                  // fs.
-#include <kernel/sysio/kservers/vfs/vfs.h>                // vfs.
+
+
+// sci/fs
+#include <kernel/sci/fs/pipe.h> 
+#include <kernel/sci/fs/fs.h> 
+#include <kernel/sci/fs/vfs.h>  
+
+
 #include <kernel/sysio/kservers/kgws/kgws/prompt.h>
 #include <kernel/sysio/kservers/kgws/kgws/bmp2.h>
-
 
 
 // hal
@@ -267,7 +272,8 @@ extern void do_executa_new_task (void);
 
 // #net
 #include <kernel/sci/net/nports.h>      //(network) Network Ports  (sw)
-#include <kernel/sci/net/nsocket.h>     //(network) Sockets info. (sw) (not libc)
+
+//#include <kernel/sci/net/nsocket.h>     //(network) Sockets info. (sw) (not libc)
 
 #include <kernel/sci/net/ip.h>          //(network) IP info.      (sw)
 #include <kernel/sci/net/ipv4.h> 

@@ -8,6 +8,89 @@
 
 
 /*
+int socket_udp_initialize (struct socket_d *sock);
+int socket_udp_initialize (struct socket_d *sock)
+{
+    if( (void*) sock == NULL )
+        return -1;
+        
+
+    sock->objectType
+    sock->objectClass
+
+
+    sock->type = SOCK_DGRAM;
+    
+        
+    sock->_file = -1;
+    
+    sock->ip_long = 0;
+    sock->port = 0;
+
+    //...
+    
+    return 0;
+}
+*/
+
+
+/*
+int socket_tcp_initialize (struct socket_d *sock);
+int socket_tcp_initialize (struct socket_d *sock)
+{
+    if( (void*) sock == NULL )
+        return -1;
+        
+
+    sock->objectType
+    sock->objectClass
+
+
+    sock->type = SOCK_STREAM;
+    
+        
+    sock->_file = -1;
+    
+    sock->ip_long = 0;
+    sock->port = 0;
+
+    //...
+    
+    return 0;
+}
+*/
+
+
+/*
+int socket_inet_create (struct socket_d *sock, int type);
+int socket_inet_create (struct socket_d *sock, int type)
+{
+    if( (void*) sock == NULL )
+        return -1;
+
+
+    sock->sock_domain = AF_INET;
+
+    switch(type) {
+
+        case SOCK_DGRAM:
+            return socket_udp_create(sock);
+
+        case SOCK_STREAM:
+            return socket_tcp_create(sock);
+
+        default:
+            return -1;
+    }
+    
+    return -1;
+}
+*/
+
+
+
+
+/*
 struct socket_d* socket_open (int type);
 struct socket_d* socket_open (int type){
 
@@ -547,6 +630,312 @@ int sys_listen (int sockfd, int backlog)
     refresh_screen();
     return -1;
 }
+
+/*
+ **********************************************
+ * create_socket: 
+ *     Cria um socket. 
+ *     Retorna o ponteiro para a estrutura.
+ */
+
+struct socket_d *create_socket ( unsigned long ip, unsigned short port ){
+
+    struct socket_d *s;
+
+
+    s = (void *) kmalloc ( sizeof( struct socket_d ) );
+
+    if ( (void *) s ==  NULL ){
+        printf ( "create_socket: allocation fail \n");
+        refresh_screen();
+        return NULL;
+
+    }else{
+
+        s->ip_long = ip;
+        s->port = port;
+    };
+
+
+    return (struct socket_d *) s;
+}
+
+
+unsigned long getSocketIP ( struct socket_d *socket ){
+
+    if ( (void *) socket ==  NULL )
+    {
+        return 0;
+    }else{
+
+        return (unsigned long) socket->ip_long;
+    };
+}
+
+unsigned long getSocketPort ( struct socket_d *socket ){
+
+    if ( (void *) socket ==  NULL )
+    {
+        return 0;
+    }else{
+
+        return (unsigned long) socket->port;
+    };
+}
+
+
+
+int 
+update_socket ( struct socket_d *socket, 
+                unsigned long ip, 
+                unsigned short port )
+{
+
+    if ( (void *) socket ==  NULL )
+    {
+        return (int) 1;
+
+    }else{
+
+        socket->ip_long = (unsigned long) ip;
+        socket->port = (unsigned short) port;
+        return 0;
+    };
+}
+
+
+
+
+int socket_read (unsigned int fd, char *buf, int count)
+{
+    struct process_d *__P;
+    
+    file *__file;
+    
+    int len;
+    
+    
+    
+    // linux 0.01 style.
+	//if (fd>=NR_OPEN || count <0 || !(file=current->filp[fd]))
+		//return -EINVAL;
+	//if (!count)
+		//return 0;
+
+
+
+    
+    // fd?
+    // Não pode ser maior que o número de arquivos abertos 
+    // pelo processo atual.
+    
+    
+    if (fd<0)
+        return -1;
+        
+    if (fd >= 32)
+        return -1;
+        
+        
+        
+     //if (count<=0)
+         //return -1;
+
+
+    //
+    // Size of the buffer.
+    //
+
+    // len
+    len = strlen( (const char *) buf );
+    
+    if (len > count )
+        len = count;
+    
+    // #bugbug: 
+    // Precisamos da opção de salvarmos vários setores em
+    // dispositivos de bloco.
+    if (len > 64 )
+        len = 64;
+    
+    
+    //
+    // Process pointer.
+    //
+    
+    
+    
+    __P = (struct process_d *) processList[current_process];
+
+    if ( (void *) __P == NULL ){
+        printf ("socket_read: __P\n");
+        refresh_screen ();
+        return -1; 
+    }
+
+
+    //
+    // file.
+    //
+
+    // #importante
+    // Arquivo. Mas significa objeto.
+
+    __file = ( file * ) __P->Objects[fd];  
+    
+    
+    if ( (void *) __file == NULL ){
+		printf ("socket_read: __file\n");
+		refresh_screen();
+        return -1; 
+    }
+
+
+
+    //#todo:
+    //tipo socket.
+
+    //switch
+    // is_char_dev?     read_char(...)
+    // is_block_dev?    read_block(...)
+    // is_
+    
+    
+    //if ( __file->____object == ObjectTypeFile )
+        //return (int) unistd_file_read ( (file *) __file, (char *) buf, (int) count );
+
+
+    //if ( __file->____object == ObjectTypeDisk )
+        // todo disk_read(...)
+
+
+    //if ( __file->____object == ObjectTypeTTY )
+        // tty_read (...) #todo criar função se não existe.
+
+
+
+    //See: unistd.c
+    // #todo
+    // Tem que retornar a quantidade de bytes lido.
+    
+    return (int) unistd_file_read ( (file *) __file, (char *) buf, (int) count );
+}
+
+
+
+int socket_write (unsigned int fd,char *buf,int count)
+{
+    struct process_d *__P;
+    
+    file *__file;
+    
+    int len;
+    
+    
+    
+    // linux 0.01 style.
+	//if (fd>=NR_OPEN || count <0 || !(file=current->filp[fd]))
+		//return -EINVAL;
+	//if (!count)
+		//return 0;
+
+
+
+    
+    // fd?
+    // Não pode ser maior que o número de arquivos abertos 
+    // pelo processo atual.
+    
+    
+    if (fd<0)
+        return -1;
+        
+    if (fd >= 32)
+        return -1;
+        
+        
+    //if(count<=0)
+        //return -1;
+
+
+    //
+    // Size of the buffer.
+    //
+
+    // len
+    len = strlen( (const char *) buf );
+    
+    if (len > count )
+        len = count;
+    
+    // #bugbug: 
+    // Precisamos da opção de salvarmos vários setores em
+    // dispositivos de bloco.
+    if (len > 64 )
+        len = 64;
+    
+    
+    //
+    // Process pointer.
+    //
+    
+    
+    
+    __P = (struct process_d *) processList[current_process];
+
+    if ( (void *) __P == NULL ){
+        printf ("socket_write: __P\n");
+        refresh_screen ();
+        return -1; 
+    }
+
+
+    //
+    // file.
+    //
+
+    // #importante
+    // Arquivo. Mas significa objeto.
+
+    __file = ( file * ) __P->Objects[fd];   //#todo: Use this one!
+    
+    if ( (void *) __file == NULL ){
+		printf ("socket_write: __file\n");
+		refresh_screen();
+        return -1; 
+    }
+    
+    // #todo:
+    // tipo socket.
+    
+    //switch
+    // is_char_dev?     read_char(...)
+    // is_block_dev?    read_block(...)
+    // is_
+
+
+    // Se o descritor usado por write() for de um arquivo
+    // do tipo console, escreveremos no console 0.
+    /*
+    if ( __file->____object == ObjectTypeVirtualConsole )
+    {
+       // console number, buffer, size.
+       return (int) console_write ( 
+                        (int) 0,       // Console 0 
+                        (const void *) buf, 
+                        (size_t) count );
+    }
+    */
+    
+
+    //tem que retonar o tanto de bytes escritos.
+    //See: unistd.c
+    // Escreve em uma stream uma certa quantidade de chars.
+    return (int) unistd_file_write ( (file *) __file, (char *) buf, (int) count );
+}
+
+
+
 
 
 

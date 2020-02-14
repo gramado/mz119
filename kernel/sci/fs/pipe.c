@@ -11,18 +11,23 @@
 #include <kernel.h>
 
 
+// Duplicate a file stream.
 int sys_dup ( int oldfd ){
 
-	file *stream_old;
-	file *stream_new;
-	
+	file *f_old;
+	file *f_new;
+
 	struct process_d *Process;
+
+    int i;
+    int slot = -1;	
+
 
 	Process = (void *) processList[current_process];
 	
-	if ( (void *) Process == NULL )
-	{
+	if ( (void *) Process == NULL ){
 		return -1;
+
 	}else{
 	
 	     if ( Process->used != 1 || Process->magic != 1234 )
@@ -32,10 +37,6 @@ int sys_dup ( int oldfd ){
 		
 		 //ok
 	};
-
-	
-    int i;
-    int slot = -1;	
 	
 	
 	for ( i=3; i< NUMBER_OF_FILES; i++ )
@@ -51,45 +52,46 @@ int sys_dup ( int oldfd ){
 	}	
 	
 	
-	if ( slot == -1 ) 
-	{
+	if ( slot == -1 ){
 		Process->Objects[i] = (unsigned long) 0;
 	    return -1;
 	}	
 	
-	//#todo: filtrar oldfd
+
+    // #todo: 
+    // Filtrar oldfd
+
+	f_old = (file *) Process->Objects[oldfd];
 	
-	stream_old = (file *) Process->Objects[oldfd];
-	
-    if ( (void *) stream_old == NULL ){
+    if ( (void *) f_old == NULL ){
         Process->Objects[i] = (unsigned long) 0;
         return -1;
  
     }else{
         
-		stream_new = (void *) kmalloc ( sizeof(file) );
+		f_new = (void *) kmalloc ( sizeof(file) );
 		
-		if ( (void *) stream_new == NULL ){
+		if ( (void *) f_new == NULL ){
 		    Process->Objects[i] = (unsigned long) 0;
 	        return -1;			
 		}
 
 
-        stream_new->used = 1;
-		stream_new->magic = 1234;	
+        f_new->used = 1;
+		f_new->magic = 1234;	
 		
-		stream_new->_base = stream_old->_base;	
-		stream_new->_p = stream_old->_p;
+		f_new->_base = f_old->_base;	
+		f_new->_p    = f_old->_p;
 		
-		stream_new->_tmpfname = stream_old->_tmpfname;
+		f_new->_tmpfname = f_old->_tmpfname;
 		
-		stream_new->_lbfsize = stream_old->_lbfsize; 
+		f_new->_lbfsize = f_old->_lbfsize; 
 		
 		//quanto falta é igual ao tamanho.
-		stream_new->_cnt = stream_old->_cnt; 
+		f_new->_cnt = f_old->_cnt; 
 		
 
-		Process->Objects[slot] = (unsigned long) stream_new;
+		Process->Objects[slot] = (unsigned long) f_new;
 
 
         return (int) slot;
@@ -106,8 +108,8 @@ fail:
 
 int sys_dup2 (int oldfd, int newfd){
 
-    file *stream_old;
-    file *stream_new;
+    file *f_old;
+    file *f_new;
 
     struct process_d *Process;
 
@@ -140,35 +142,34 @@ int sys_dup2 (int oldfd, int newfd){
 
 	//#todo: filtrar oldfd
 	
-    stream_old = (file *) Process->Objects[oldfd];
+    f_old = (file *) Process->Objects[oldfd];
 	
-	if ( (void *) stream_old == NULL ){
+	if ( (void *) f_old == NULL ){
 		Process->Objects[slot] = (unsigned long) 0;
 	    return -1;
 	    
 	}else{
         
 				
-		stream_new = (file *) Process->Objects[slot];
+		f_new = (file *) Process->Objects[slot];
 		
-		if ( (void *) stream_new == NULL )
-		{
+		if ( (void *) f_new == NULL ){
 		    Process->Objects[slot] = (unsigned long) 0;
 	        return -1;			
 		}
 
-        stream_new->used = 1;
-        stream_new->magic = 1234;			
+        f_new->used = 1;
+        f_new->magic = 1234;			
 
-		stream_new->_base = stream_old->_base;	
-		stream_new->_p = stream_old->_p;
+		f_new->_base = f_old->_base;	
+		f_new->_p    = f_old->_p;
 		
-		stream_new->_tmpfname = stream_old->_tmpfname;
+		f_new->_tmpfname = f_old->_tmpfname;
 		
-		stream_new->_lbfsize = stream_old->_lbfsize; 
+		f_new->_lbfsize  = f_old->_lbfsize; 
 		
 		//quanto falta é igual ao tamanho.
-		stream_new->_cnt = stream_old->_cnt; 
+		f_new->_cnt = f_old->_cnt; 
 				
 		return (int) slot;
 	}
@@ -187,10 +188,11 @@ int sys_dup3 (int oldfd, int newfd, int flags){
 	
 	//#todo: flags.
 
-	file *stream_old;
-	file *stream_new;
+	file *f_old;
+	file *f_new;
 	
 	struct process_d *Process;
+
 
 	Process = (void *) processList[current_process];
 	
@@ -210,43 +212,42 @@ int sys_dup3 (int oldfd, int newfd, int flags){
 	
     int slot = newfd;	
 	
-	if ( slot == -1 ) 
-	{
+	if ( slot == -1 ) {
 		Process->Objects[slot] = (unsigned long) 0;
 	    return -1;
 	}	
 	
 	//#todo: filtrar oldfd
 	
-	stream_old = (file *) Process->Objects[oldfd];
+	f_old = (file *) Process->Objects[oldfd];
 	
-    if ( (void *) stream_old == NULL ){
+    if ( (void *) f_old == NULL ){
 		Process->Objects[slot] = (unsigned long) 0;
 	    return -1;
 
     }else{
 
 	
-        stream_new = (file *) Process->Objects[slot];
+        f_new = (file *) Process->Objects[slot];
 		
-		if ( (void *) stream_new == NULL ){
+		if ( (void *) f_new == NULL ){
 		    Process->Objects[slot] = (unsigned long) 0;
 	        return -1;			
 		}
 
 
-        stream_new->used = 1;
-        stream_new->magic = 1234;
+        f_new->used = 1;
+        f_new->magic = 1234;
 
-		stream_new->_base = stream_old->_base;	
-		stream_new->_p = stream_old->_p;
+		f_new->_base = f_old->_base;	
+		f_new->_p = f_old->_p;
 		
-		stream_new->_tmpfname = stream_old->_tmpfname;
+		f_new->_tmpfname = f_old->_tmpfname;
 		
-		stream_new->_lbfsize = stream_old->_lbfsize; 
+		f_new->_lbfsize = f_old->_lbfsize; 
 		
 		//quanto falta é igual ao tamanho.
-		stream_new->_cnt = stream_old->_cnt; 
+		f_new->_cnt = f_old->_cnt; 
 				
 		return (int) slot;
 	}
@@ -261,16 +262,28 @@ fail:
  }
 
 
+/*
+ * sys_pipe:
+ *     It creates two structures of stream that point 
+ * to the same buffer.
+ *     It has no name.
+ *     It return two file descriptors.
+ */
 
-// criar duas estruturas de stream que apontam para o mesmo buffer.
-// retorna os descritores de arquivo que estão na estrutura do processo atual.
+// #bugbug
+// Maybe we need just one stream and two pointer.
+// So we need to control the reader and the writer.
 
 int sys_pipe ( int *pipefd ){
 	
-    file *stream1;
-    file *stream2;
+    file *f1;
+    file *f2;
 
     struct process_d *Process;
+
+    int i;
+    int slot1 = -1;
+	int slot2 = -1;
 
 
 	Process = (void *) processList[current_process];
@@ -295,9 +308,6 @@ int sys_pipe ( int *pipefd ){
 	// process_find_empty_stream_slot ( struct process_d *process );
 	
 	// procurar 2 slots livres.
-    int i;
-    int slot1 = -1;
-	int slot2 = -1;
 	
 	// #improvisando
 	// 0, 1, 2 são reservados para o fluxo padrão.
@@ -352,42 +362,42 @@ int sys_pipe ( int *pipefd ){
 	}
 	
 	//estruturas 
-	stream1 = (void *) kmalloc ( sizeof(file) );
-	stream2 = (void *) kmalloc ( sizeof(file) );
+	f1 = (void *) kmalloc ( sizeof(file) );
+	f2 = (void *) kmalloc ( sizeof(file) );
 	
-	if ( (void *) stream1 == NULL || (void *) stream2 == NULL )
-	{
+	if ( (void *) f1 == NULL || (void *) f2 == NULL ){
 		Process->Objects[i] = (unsigned long) 0;
 		Process->Objects[i] = (unsigned long) 0;		
 	    return -1;
+
 	}else{
 
 
 		// As duas estruturas compartilham o mesmo buffer.
 		
-        stream1->used = 1;
-		stream1->magic = 1234;
-		stream2->used = 1;
-		stream2->magic = 1234;
+        f1->used = 1;
+		f1->magic = 1234;
+		f2->used = 1;
+		f2->magic = 1234;
 			
-		stream1->_base = buff;	
-	    stream2->_base = buff;
-		stream1->_p = buff;
-		stream2->_p = buff;
+		f1->_base = buff;	
+	    f2->_base = buff;
+		f1->_p = buff;
+		f2->_p = buff;
 		
-		stream1->_tmpfname = NULL;
-		stream2->_tmpfname = NULL;
+		f1->_tmpfname = NULL;
+		f2->_tmpfname = NULL;
 		
-		stream1->_lbfsize = BUFSIZ; 
-		stream2->_lbfsize = BUFSIZ; 
+		f1->_lbfsize = BUFSIZ; 
+		f2->_lbfsize = BUFSIZ; 
 		
 		//quanto falta é igual ao tamanho.
-		stream1->_cnt = stream1->_lbfsize;   
-		stream2->_cnt = stream2->_lbfsize; 
+		f1->_cnt = f1->_lbfsize;   
+		f2->_cnt = f2->_lbfsize; 
 		
 		
-		Process->Objects[i] = (unsigned long) stream1;
-		Process->Objects[i] = (unsigned long) stream2;
+		Process->Objects[i] = (unsigned long) f1;
+		Process->Objects[i] = (unsigned long) f2;
 		
 		// #importante
 		// Esse é o retorno esperado.

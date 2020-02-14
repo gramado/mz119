@@ -10,7 +10,7 @@
 VERSION = 1
 PATCHLEVEL = 30
 SUBLEVEL = 0
-EXTRAVERSION = -rc6
+EXTRAVERSION = -rc7
 NAME = 
 
 
@@ -131,7 +131,7 @@ ifeq ($(ARCH),x86)
 	#deveria ser headx86.o
 	ENTRY_OBJECTS := boot.o main.o x86main.o 
 
-	EXECVE_OBJECTS := pipe.o socket.o ctype.o  kstdio.o stdlib.o string.o unistd.o \
+	EXECVE_OBJECTS := socket.o ctype.o  kstdio.o stdlib.o string.o unistd.o \
 	devmgr.o \
 	gde_serv.o \
 	debug.o storage.o install.o object.o runtime.o \
@@ -144,7 +144,7 @@ ifeq ($(ARCH),x86)
 	
 	KDRIVERS_OBJECTS := ahci.o \
 	ata.o atadma.o atainit.o atairq.o atapci.o hdd.o \
-	channel.o network.o nicintel.o nsocket.o \
+	channel.o network.o nicintel.o \
 	pci.o pciinfo.o pciscan.o \
 	tty.o pty.o vt.o\
 	usb.o \
@@ -152,7 +152,7 @@ ifeq ($(ARCH),x86)
 	i8042.o keyboard.o mouse.o ps2kbd.o ps2mouse.o ldisc.o \
 	apic.o pic.o rtc.o serial.o timer.o  
 	
-	KSERVERS_OBJECTS := cf.o format.o fs.o read.o search.o write.o \
+	KSERVERS_OBJECTS := cf.o format.o pipe.o fs.o read.o search.o write.o \
 	cedge.o bg.o bmp.o button.o char.o createw.o dtext.o font.o grid.o \
 	line.o menu.o menubar.o pixel.o rect.o sbar.o toolbar.o wm.o \
 	logoff.o \
@@ -305,7 +305,7 @@ KERNEL.BIN:
 
 
 	# kernel/syslib/libcore
-	gcc -c kernel/syslib/libcore/pipe.c    $(KINCLUDE) $(CFLAGS) -o pipe.o
+	gcc -c kernel/sci/fs/pipe.c    $(KINCLUDE) $(CFLAGS) -o pipe.o
 
 	gcc -c kernel/syslib/libcore/ctype.c   $(KINCLUDE) $(CFLAGS) -o ctype.o
 	gcc -c kernel/syslib/libcore/kstdio.c  $(KINCLUDE) $(CFLAGS) -o kstdio.o
@@ -344,7 +344,6 @@ KERNEL.BIN:
 	# net
 	gcc -c kernel/sci/net/network.c  $(KINCLUDE) $(CFLAGS) -o network.o
 	gcc -c kernel/sci/net/socket.c   $(KINCLUDE) $(CFLAGS) -o socket.o
-	gcc -c kernel/sci/net/nsocket.c  $(KINCLUDE) $(CFLAGS) -o nsocket.o
 	gcc -c kernel/sci/net/channel.c  $(KINCLUDE) $(CFLAGS) -o channel.o
 	
 
@@ -389,16 +388,19 @@ KERNEL.BIN:
 
 
 
-	# /fs
-	gcc -c kernel/sysio/kservers/fs/fs.c $(KINCLUDE) $(CFLAGS) -o fs.o
+	# sci/fs
+	gcc -c kernel/sci/fs/fs.c   $(KINCLUDE) $(CFLAGS) -o fs.o
+	gcc -c kernel/sci/fs/vfs.c  $(KINCLUDE) $(CFLAGS) -o vfs.o
+
+
 	gcc -c kernel/sysio/kservers/fs/read.c    $(KINCLUDE) $(CFLAGS) -o read.o
 	gcc -c kernel/sysio/kservers/fs/write.c   $(KINCLUDE) $(CFLAGS) -o write.o
 	gcc -c kernel/sysio/kservers/fs/cf.c      $(KINCLUDE) $(CFLAGS) -o cf.o
 	gcc -c kernel/sysio/kservers/fs/search.c  $(KINCLUDE) $(CFLAGS) -o search.o
 	gcc -c kernel/sysio/kservers/fs/format.c  $(KINCLUDE) $(CFLAGS) -o format.o
 	
-	# /vfs
-	gcc -c kernel/sysio/kservers/vfs/vfs.c  $(KINCLUDE) $(CFLAGS) -o vfs.o
+
+
 
 
 

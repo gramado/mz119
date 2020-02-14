@@ -1,35 +1,35 @@
 /*
  * File: fs/fs.c 
  *
- * Descrição:
+ * Descriï¿½ï¿½o:
  *    Arquivo principal do file system manager.
- *    Módulo em kernel mode, incluido no kernel base. 
+ *    Mï¿½dulo em kernel mode, incluido no kernel base. 
  *    
  * IMPORTANTE: 
- * A idéia principal é que esse módulo de o suporte ao acesso a qualquer 
+ * A idï¿½ia principal ï¿½ que esse mï¿½dulo de o suporte ao acesso a qualquer 
  * sistema de arquivo suportado, esteja ele em user mode ou em kernel mode.
  *
- * Arquivo principal do módulo fs do executive do kernel..
+ * Arquivo principal do mï¿½dulo fs do executive do kernel..
  * Gerenciador de arquivos do kernel.
- * Na verdade o Kernel não tem atribuições de carregar arquivos. Mas ele 
- * ofereçe serviços básicos que podem ser chamados pelos aplicativos.
+ * Na verdade o Kernel nï¿½o tem atribuiï¿½ï¿½es de carregar arquivos. Mas ele 
+ * ofereï¿½e serviï¿½os bï¿½sicos que podem ser chamados pelos aplicativos.
  *
  * Objetivo:
- * Ofereçer operações nos sistemas de arquivos suportados pelo kernel.
- * Esse gerenciador chama as funções em kernel mode do sistema de arquivos
- * interno e chama as serviços oferecidos pelos drivers em user mode.
+ * Ofereï¿½er operaï¿½ï¿½es nos sistemas de arquivos suportados pelo kernel.
+ * Esse gerenciador chama as funï¿½ï¿½es em kernel mode do sistema de arquivos
+ * interno e chama as serviï¿½os oferecidos pelos drivers em user mode.
  *
- * Os drivers em user mode podem oferecer acesso à sistemas de arquivos
+ * Os drivers em user mode podem oferecer acesso ï¿½ sistemas de arquivos
  * variados.
  *
- * Ao kernel, compete as funções básicas de operações com hardware.
- * O sistema de arquivos suportado pelo kernel é fat16.
+ * Ao kernel, compete as funï¿½ï¿½es bï¿½sicas de operaï¿½ï¿½es com hardware.
+ * O sistema de arquivos suportado pelo kernel ï¿½ fat16.
  * Continua ...
  *
- * Observação: 
+ * Observaï¿½ï¿½o: 
  *    Os valores das estruturas do sistema de arquivos podem ser salvos 
  * em um registro.
- *    No registro pode ter um registro das operações efetuadas 
+ *    No registro pode ter um registro das operaï¿½ï¿½es efetuadas 
  * no sistema de arquivo.
  *   Continua ...
  *   
@@ -45,7 +45,31 @@
 
 
 
-//Variáveis internas.
+/*
+int vfs_root_mounted(void);
+int vfs_root_mounted(void)
+{
+    return (root)?1:0;
+}
+*/
+
+
+
+/*
+int fs_file_seek (file *f, int pos);
+int fs_file_seek (file *f, int pos)
+{
+    if( (void*) f == NULL )
+        return -1;
+        
+    f->_w = 0;
+    f->_r = 0;
+    return 0;
+}
+*/
+
+
+//Variï¿½veis internas.
 //int fsStatus;
 //int fsError;
 //...
@@ -100,8 +124,8 @@ int fsCheckELFFile ( unsigned long address ){
 
 
 
-// Checando a validade de arquivos binários no formato PE.
-// #bugbug: Isso não deve ficar no kernel, pois PE é proprietário.
+// Checando a validade de arquivos binï¿½rios no formato PE.
+// #bugbug: Isso nï¿½o deve ficar no kernel, pois PE ï¿½ proprietï¿½rio.
 // Nem usaremos PE no futuro.
 
 int fsCheckPEFile ( unsigned long address ){
@@ -131,8 +155,8 @@ int fsCheckPEFile ( unsigned long address ){
 /*
  *********************************
  * fsListFiles:
- *     Lista os arquivos em um diretório, dados os índices de disco, 
- * volume e diretório.
+ *     Lista os arquivos em um diretï¿½rio, dados os ï¿½ndices de disco, 
+ * volume e diretï¿½rio.
  */
 
 void 
@@ -151,7 +175,7 @@ fsListFiles ( int disk_id,
         disk_id, volume_id, directory_id );
 
 	// Show!
-	// Se o diretório selecionado é o diretório raiz do VFS.
+	// Se o diretï¿½rio selecionado ï¿½ o diretï¿½rio raiz do VFS.
 
     if ( current_disk == 0 && current_volume == 0 && current_directory == 0 )
     {
@@ -159,7 +183,7 @@ fsListFiles ( int disk_id,
         goto done;
     }
 
-	// @todo: Suportar outros diretórios.
+	// @todo: Suportar outros diretï¿½rios.
 	// ...
 
     goto done;
@@ -185,31 +209,13 @@ int fsIsFAT12()
 */
 
 
-/*
-int fsIsFAT16();
-int fsIsFAT16()
-{
-    //testa o tipo de fat.
-    return 0;
-};
-*/
-
-
-/*
-int fsIsFAT32();
-int fsIsFAT32()
-{
-    //testa o tipo de fat.
-    return 0;
-};
-*/
 
 
 /*
  **********************
  * fsList
- *     comando 'dir'.
- *     Listando arquivos em um diretório dado o nome. 
+ *     dir command support.
+ *     #bugbug: We don't want this in the kernel.
  */
 
 int fsList ( const char *dir_name ){
@@ -246,12 +252,12 @@ int fsList ( const char *dir_name ){
 
 /*
  * fsFAT16ListFiles:
- *     Mostra os nomes dos arquivos de um diretório.
+ *     Mostra os nomes dos arquivos de um diretï¿½rio.
  *     Sistema de arquivos fat16.
  *
  * IN:
- *     dir_address = Ponteiro para um endereço de memória 
- *                   onde foi carregado o diretório. 
+ *     dir_address = Ponteiro para um endereï¿½o de memï¿½ria 
+ *                   onde foi carregado o diretï¿½rio. 
  */
  
 void 
@@ -260,18 +266,18 @@ fsFAT16ListFiles ( const char *dir_name,
                    int number_of_entries )
 {
 	// #todo: 
-	// O número de entradas é maior no diretório raiz.(512 ?)
+	// O nï¿½mero de entradas ï¿½ maior no diretï¿½rio raiz.(512 ?)
 
     int i = 0;
-    int max = number_of_entries;         // Número máximo de entradas.
+    int max = number_of_entries;         // Nï¿½mero mï¿½ximo de entradas.
 
     unsigned long j = 0;  // Deslocamento
 
     unsigned short *DirBaseAddress = (unsigned short *) dir_address;
 
 
-    if ( number_of_entries <= 0 )
-    {
+
+    if ( number_of_entries <= 0 ){
         return;
     }
 
@@ -285,11 +291,11 @@ fsFAT16ListFiles ( const char *dir_name,
 		// Diferente de vazio.
 		if ( DirBaseAddress[j] != 0 )
 		{
-			//O problema é a terminação da string '\0'
+			//O problema ï¿½ a terminaï¿½ï¿½o da string '\0'
 			printf ("%s\n", &DirBaseAddress[j] );
         } 
 		
-		//(32/2) próxima entrada! (16 words) 512 vezes!
+		//(32/2) prï¿½xima entrada! (16 words) 512 vezes!
         j += 16;  
         i++;  
     }; 
@@ -306,23 +312,17 @@ fsFAT16ListFiles ( const char *dir_name,
 
 /*
  * get_file:
- *     Obtêm o ponteiro da estrutura do arquivo, dado seu id.
- *     Com um índice da lista de arquivos, a função retorna o ponteiro da
- *     estrutura do arquivo. 
+ *     Get the pointer given the index in fileList[].
  */
- 
-// void *get_stream (int Index)
 
 void *get_file (int Index){
 	
 	//Limits.
 	//@todo: max.
 
-    if (Index < 0)
-    {
+    if (Index < 0){
         return NULL;
     }
-
 
     return (void *) fileList[Index];
 }
@@ -330,10 +330,8 @@ void *get_file (int Index){
 
 /*
  * set_file:
- *     Coloca na lista de arquivos o ponteiro de estrutura, dado seu ID. 
+ *     Put the pointer in the list, given the index.
  */
- 
-//void set_stream ( FILE *stream, int Index ){ 
 
 void set_file ( void *file, int Index ){
 
@@ -343,7 +341,7 @@ void set_file ( void *file, int Index ){
     }
 
 	// #todo:
-	// Limite máximo da lista.
+	// Limite mï¿½ximo da lista.
 
 	// Structure.
 
@@ -361,47 +359,51 @@ void set_file ( void *file, int Index ){
 
 void fs_test_fat_vector (void)
 {
-	//Ainda não implementada.
+    // Nothing for now.
 }
 
 
 unsigned long fs_get_fat_entry (unsigned long n)
 {
-    //Ainda não implementada.
+    // Nothing for now.
     return 0; 
 }
 
 
 void fs_set_fat_entry ( unsigned long n, unsigned long value )
 {
-    //Ainda não implementada.
+    // Nothing for now.
 }
 
 
 
-void fs_set_entry ( unsigned long id, unsigned long eid ){
-	//suspensa
+void fs_set_entry ( unsigned long id, unsigned long eid )
+{
+    // Nothing for now.
 }
 
 
-void fs_get_entry ( unsigned long id, unsigned long eid ){
-	//suspensa
+void fs_get_entry ( unsigned long id, unsigned long eid )
+{
+    // Nothing for now.
 }
 
 
-void fs_show_dir_entry ( unsigned long id, unsigned long eid ){
-    //Ainda não implementada.
+void fs_show_dir_entry ( unsigned long id, unsigned long eid )
+{
+    // Nothing for now.
 }
 
 
-void fs_show_dir (unsigned long id){
-	//Ainda não implementada.
+void fs_show_dir (unsigned long id)
+{
+    // Nothing for now.
 }
 
 
-//confere clusers de um diretorio.
-unsigned long fs_check_cluster (unsigned long id){
-	//Ainda não implementada.
+unsigned long fs_check_cluster (unsigned long id)
+{
+    // Nothing for now.
 	return 0; 
 }
 
@@ -410,15 +412,17 @@ unsigned long fs_check_cluster (unsigned long id){
  * fs_check_fat:
  *     Check FAT. 
  */
-unsigned long fs_check_fat (void){
-	
-	//Ainda não implementada.
+
+unsigned long fs_check_fat (void)
+{
+    // Nothing for now.
 	return 1; 
 }
 
 
-void fs_show_entry ( unsigned long id, unsigned long eid ){
-	//Ainda não implementada.
+void fs_show_entry ( unsigned long id, unsigned long eid )
+{
+    // Nothing for now.
 }
 
 
@@ -426,7 +430,7 @@ unsigned long
 fs_get_entry_status ( unsigned long id, 
                       unsigned long eid )
 {
-	//Ainda não implementada.
+    // Nothing for now.
 	return 0; 
 }
 
@@ -436,39 +440,23 @@ fs_set_entry_status ( unsigned long id,
                       unsigned long eid, 
                       unsigned long status )
 {
-	//Ainda não implementada.
+    // Nothing for now.
 }
 
 
 /*
  ***************************************************
- * fsCheckMbrFile: (Essa rotina pode ser usada pra checar se o volume é fat.)
- *     Checamos um mbr carregado em algum endereço de memória.
- *
- *     Checa o registro do disco. (MBR). (disco do sistema).
- *
- *     Obs: O MBR desse sistema não tem o bpb no inicio do primeiro setor e 
- * sim no final do primeiro setor, antes da tabela de partições.
- *
- * Endereço da memória onde o MBR é carregado na inicialização. 0x00020000.   
- *
- * @todo: Talvez essa rotina pudesse fornecer o endereço do buffer como 
- * argumento.
- * @todo: O mbr do sisco do sistema precisa de uma estruura que 
- * coordene o acesso a ele.
- *
- * #todo: precisa colocar tudo na estrutura que está em fs.h
+ * fsCheckMbrFile: 
+ *     Check mbr file, given a buffer.
  */
-
-//void fsCheckMBR(unsigned char* buffer)  //@todo
 
 void fsCheckMbrFile ( unsigned char *buffer ){
 
 	//#todo
 	//mudar os argumentos para chamarmos as portas ide.
 
-    int i;
     unsigned char *mbr = (unsigned char *) buffer; 
+    int i;
 
 	//setor 0.
     my_read_hd_sector ( (unsigned long) &mbr[0] , 0, 0 , 0 ); 
@@ -479,7 +467,7 @@ void fsCheckMbrFile ( unsigned char *buffer ){
 
 	// @todo:
 	// Checar uma estrutura do mbr do disco do sistema,
-	// para validar o acesso à ele.	
+	// para validar o acesso ï¿½ ele.	
 
 	// Check signature.
     if ( mbr[0x1FE] != 0x55 || mbr[0x1FF] != 0xAA )
@@ -524,8 +512,8 @@ done:
 /*
  * fsCheckVbr:
  *     Checa o registro de boot de um volume.
- *     Vai no endereço onde está armazenado o VBR do volume atual
- *     e confere as informações sobre o volume.
+ *     Vai no endereï¿½o onde estï¿½ armazenado o VBR do volume atual
+ *     e confere as informaï¿½ï¿½es sobre o volume.
  */
 
 void fsCheckVbrFile ( unsigned char *buffer ){
@@ -536,7 +524,7 @@ void fsCheckVbrFile ( unsigned char *buffer ){
 
 	// #todo:
 	// Checar uma estrutura do mbr do disco do sistema, para validar o 
-	// acesso à ele.
+	// acesso ï¿½ ele.
 
 	// Check signature.
 
@@ -605,7 +593,7 @@ MountShortFileName ( char *buffer,
 
 /*
  * set_spc:
- *     Configura spc, 'Sector Per Cluster' em variável global.
+ *     Configura spc, 'Sector Per Cluster' em variï¿½vel global.
  *     ?? #bugbug: De qual disco ?? 
  */
  
@@ -687,20 +675,20 @@ void fs_init_fat (void){
     }else{
 
         // Info.
-
         fat->address = root->fat_address; 
         fat->type    = root->type;
+
 
         // Continua ...
     };
 
 
 	// #bugbug
-	// Não fizemos nada com a estrutura 'fat'
+	// Nï¿½o fizemos nada com a estrutura 'fat'
 	// tem que passar esse ponteiro para algum lugar.
 
 
-	// Continua a inicialização da fat.
+	// Continua a inicializaï¿½ï¿½o da fat.
 }
 
 
@@ -756,8 +744,8 @@ void fs_init_structures (void){
         panic ("fs_init_structures error: Type");
 
     }else{
-
             root->type = (int) Type;
+    
     };
 
 
@@ -778,7 +766,7 @@ void fs_init_structures (void){
 	        root->dataarea_lba = VOLUME1_DATAAREA_LBA;
 	        
 			//sectors per cluster.
-			root->spc = (int) get_spc(); //variável
+			root->spc = (int) get_spc(); //variï¿½vel
 	        root->rootdir_entries = FAT16_ROOT_ENTRIES;
 	        root->entry_size = FAT16_ENTRY_SIZE;
             
@@ -857,18 +845,18 @@ int fsInit (void){
 	// Type - Configura o tipo de sistema de arquivos usado. 
 	// No caso, (fat16).
 	//
-	// @todo: Deve-se checar o volume ativo e ver qual sistema de arquivos está
-	//        sendo usado, então depois definir configurar o tipo.
+	// @todo: Deve-se checar o volume ativo e ver qual sistema de arquivos estï¿½
+	//        sendo usado, entï¿½o depois definir configurar o tipo.
 	//        O sistema operacional pode salvar o tipo usado. Nesse caso 
-	//        apenas checar se ouve alterações nas configurações de sistema de arquivos.
-	//        O registro de configurações de disco pode ser armazenado em arquivos de metadados.
+	//        apenas checar se ouve alteraï¿½ï¿½es nas configuraï¿½ï¿½es de sistema de arquivos.
+	//        O registro de configuraï¿½ï¿½es de disco pode ser armazenado em arquivos de metadados.
 
     set_filesystem_type (FS_TYPE_FAT16);
 
 
 	// SPC 
-	// Configura o número de setores por cluster.
-	// Nesse caso, são (512 bytes por setor, um setor por cluster).
+	// Configura o nï¿½mero de setores por cluster.
+	// Nesse caso, sï¿½o (512 bytes por setor, um setor por cluster).
 
 	set_spc (1);
 
@@ -876,17 +864,17 @@ int fsInit (void){
 	// ## initialize currents ##
 
 
-	//selecionando disco, volume e diretório.
-	//estamos resetando tudo e selecionando o diretório raiz 
-	//do vfs ... mas na verdade o diretório selecionado 
-	//deveria ser o diretório onde ficam a maioria dos aplicativos.
-	//para que o usuário possa chamar o maior número de apps usando 
+	//selecionando disco, volume e diretï¿½rio.
+	//estamos resetando tudo e selecionando o diretï¿½rio raiz 
+	//do vfs ... mas na verdade o diretï¿½rio selecionado 
+	//deveria ser o diretï¿½rio onde ficam a maioria dos aplicativos.
+	//para que o usuï¿½rio possa chamar o maior nï¿½mero de apps usando 
 	//apenas comandos simples.
 	//#bugbug: isso deveria se passado pelo boot ??	
 
 
 	//#bugbug: 
-	//Deixaremos cada módulo inicializar sua variável.
+	//Deixaremos cada mï¿½dulo inicializar sua variï¿½vel.
 	//Mas aqui podemos zerar esses valores.
 	
 	//current_disk = 0;
@@ -915,7 +903,7 @@ int fsInit (void){
 
 	// Agora inicialzamos as stream 4 e 5.
 	// As anteriores foram inicializadas em stdio,
-	// pois são o fluxo padrão.
+	// pois sï¿½o o fluxo padrï¿½o.
 	
 	
 	//
@@ -988,7 +976,7 @@ int fsInit (void){
 	
 	//gramado core init execve 
 	
-	//aloca memória para a estrutura.
+	//aloca memï¿½ria para a estrutura.
     pipe_gramadocore_init_execve = (FILE *) kmalloc ( sizeof(FILE) );
 	
     if ( (void *) pipe_gramadocore_init_execve == NULL )
@@ -997,7 +985,7 @@ int fsInit (void){
 
     }else{
 
-        //aloca memória para o buffer.
+        //aloca memï¿½ria para o buffer.
         unsigned long pipe0base = (unsigned long) kmalloc (512);
 
         if ( (void *) pipe0base == NULL )
@@ -1055,8 +1043,8 @@ int fsInit (void){
 /*
  *****************************************
  * fsInitializeWorkingDiretoryString:
- *     Atualiza a string do diretório de trabalho.
- * Essa é a string que será mostrada antes do prompt.
+ *     Atualiza a string do diretï¿½rio de trabalho.
+ * Essa ï¿½ a string que serï¿½ mostrada antes do prompt.
  * 'pwd'> 
  * ?? isso deve sser todo o pathname do pwd ?? 
  * ex: root:/volume0>
@@ -1195,8 +1183,7 @@ int fs_initialize_process_pwd ( int pid, char *string ){
             panic ("fs_initialize_process_pwd: validation\n");
         }
 
-        for ( i=0; i<32; i++ )
-        {
+        for ( i=0; i<32; i++ ){
             p->pwd_string[i] = string[i];
         }
     };
@@ -1208,7 +1195,7 @@ int fs_initialize_process_pwd ( int pid, char *string ){
 
 /*
  * fs_print_process_pwd
- *     Cada processo tem seu próprio pwd.
+ *     Cada processo tem seu prï¿½prio pwd.
  *     Essa rotina mostra o pathname usado pelo processo. 
  */
 
@@ -1257,15 +1244,15 @@ int fs_print_process_pwd (int pid){
  */ 
  
 void fsUpdateWorkingDiretoryString ( char *string ){
-	
-	int i;    
-	struct process_d *p;
-	
-	char *tmp;
-	
-	tmp = string;
 
-	
+    int i;    
+    struct process_d *p;
+    char *tmp;
+
+
+    tmp = string;
+
+
     if ( pwd_initialized == 0 ){
         printf ("fsUpdateWorkingDiretoryString: pwd not initialized\n"); 
         return;
@@ -1287,12 +1274,11 @@ void fsUpdateWorkingDiretoryString ( char *string ){
             panic ("fsUpdateWorkingDiretoryString: validation\n");
         }
 
-        if ( (void *) string == NULL )
-	    {
-			printf ("fsUpdateWorkingDiretoryString: string\n");
-		    return;
+        if ( (void *) string == NULL ){
+            printf ("fsUpdateWorkingDiretoryString: string\n");
+            return;
 
-		} else {
+        } else {
 
 
 			//#importante
@@ -1301,11 +1287,11 @@ void fsUpdateWorkingDiretoryString ( char *string ){
 			
             strcat ( p->pwd_string, string );
 
-	        // ## separador ##
+            // ## separador ##
             strcat ( p->pwd_string, FS_PATHNAME_SEPARATOR );
 
-	        //atualiza a string global.
-			//usando a string do processo atual.
+            //atualiza a string global.
+            //usando a string do processo atual.
 
 			for ( i=0; i<32; i++ )
 			{
@@ -1313,21 +1299,19 @@ void fsUpdateWorkingDiretoryString ( char *string ){
 			}
 			
 			//name
-			
-			for ( i=0; i< 11; i++ )
-			{
-				current_target_dir.name[i] = *tmp;
-				tmp++;
-			}
-		}
-	}
+            for ( i=0; i< 11; i++ ){
+                current_target_dir.name[i] = *tmp;
+                tmp++;
+            }
+        }
+    }
 }
 
 
 /* 
  ************************************************
  * fs_pathname_backup:
- *     Remove n nomes de diretório do pathname do processo indicado no 
+ *     Remove n nomes de diretï¿½rio do pathname do processo indicado no 
  * argumento.
  *     Copia o nome para a string global.
  *     Remove the last N directories from PATH.  
@@ -1405,17 +1389,17 @@ void fs_pathname_backup ( int pid, int n ){
 // usada por open()
 // tem que retornar o fd e colocar o ponteiro na lista de arquivos
 // abertos.
-// Carrega um arquivo do disco para a memória.
+// Carrega um arquivo do disco para a memï¿½ria.
 // funcionou.
 
 // #bugbug
-// Na minha máquina real, às vezes dá problemas no tamanho do arquivo.
+// Na minha mï¿½quina real, ï¿½s vezes dï¿½ problemas no tamanho do arquivo.
 
 
 // #bugbug
-// Estamos alocando memória em ring para carregar o arquivo
-// e depois estamos usando o buffer em ring3 passado pelo usuário.
-// >>> vamos confiar no usuário e usarmos
+// Estamos alocando memï¿½ria em ring para carregar o arquivo
+// e depois estamos usando o buffer em ring3 passado pelo usuï¿½rio.
+// >>> vamos confiar no usuï¿½rio e usarmos
 
 int sys_read_file ( char *file_name,  int flags, mode_t mode )
 {
@@ -1469,8 +1453,8 @@ int sys_read_file ( char *file_name,  int flags, mode_t mode )
     };
     
     // #todo
-    // Esse limite pertence somente à um processo.
-    // Poderíamos avisar que o processo não pode mais abrir arquivos
+    // Esse limite pertence somente ï¿½ um processo.
+    // Poderï¿½amos avisar que o processo nï¿½o pode mais abrir arquivos
     // depois retornar.
     
     panic ("sys_read_file: No slots!\n");
@@ -1498,7 +1482,7 @@ __OK:
     __file->magic = 1234;
     
     //
-    // buffer padrão
+    // buffer padrï¿½o
     //
     
     __file->_base = (char *) kmalloc (BUFSIZ);
@@ -1530,7 +1514,7 @@ __OK:
         s = __file->_lbfsize;
     }
 
-    // Se o arquivo for maior que buffer disponível.
+    // Se o arquivo for maior que buffer disponï¿½vel.
     // Podemos almentar o buffer.
     if (s > __file->_lbfsize)
     {
@@ -1603,7 +1587,7 @@ __OK:
     //
     // Done.
     // Vamos retornar o fd.
-    // Pois essa rotina é usada por open();
+    // Pois essa rotina ï¿½ usada por open();
     //      
           
     return (int) __file->_file;
@@ -1617,8 +1601,8 @@ __OK:
 /*
  ********************************
  * fsLoadFileFromCurrentTargetDir:
- *     Carrega o diretório que está configurado como target dir 
- * em algum lugar qualquer da memória. 
+ *     Carrega o diretï¿½rio que estï¿½ configurado como target dir 
+ * em algum lugar qualquer da memï¿½ria. 
  */
 
 int fsLoadFileFromCurrentTargetDir (void){
@@ -1642,7 +1626,7 @@ int fsLoadFileFromCurrentTargetDir (void){
 	}
 	
 	//#bugbug
-	//tenta carregar o diret'orio que tem o endereço indicado aqui, 
+	//tenta carregar o diret'orio que tem o endereï¿½o indicado aqui, 
 	//se falhar carregue o root por enquanto.
 	
 	if ( current_target_dir.current_dir_address == 0 )
@@ -1692,13 +1676,13 @@ int fsLoadFileFromCurrentTargetDir (void){
 
 /*
  * sys_write_file:
- *     Interface para salvar arquivo ou diretório.
- *     Isso pode ser usado para criar um diretório ou copiar um diretório. 
+ *     Interface para salvar arquivo ou diretï¿½rio.
+ *     Isso pode ser usado para criar um diretï¿½rio ou copiar um diretï¿½rio. 
  */
 
 	//#todo:
 	//vamos fazer igual ao sys_read_file 
-	//e criarmos opções ... se possível.
+	//e criarmos opï¿½ï¿½es ... se possï¿½vel.
 
 
 // IN: name, size in sectors, size in bytes, adress, flag.

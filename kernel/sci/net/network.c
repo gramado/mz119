@@ -1,5 +1,5 @@
 /*
- * File: kdrivers/network/network.c
+ * File: sci/net/network.c
  *     
  *     Network sopport. 
  *     Ring 0, kernel base.
@@ -71,22 +71,19 @@ uint16_t switch_endian16(uint16_t nb) {
 //status do driver de network
 int network_status;   
 
-//status para notificações.
-//podemos ou não notificar os processo sobre os eventos de rede.
-//o shell vai habilitar essa notificação no momento em que
+//status para notificaï¿½ï¿½es.
+//podemos ou nï¿½o notificar os processo sobre os eventos de rede.
+//o shell vai habilitar essa notificaï¿½ï¿½o no momento em que
 //envia um stream para mensagens de texto.
 int notification_status; 
 
 
-//usada para enviar mensagens para os processo.
-//isso é um ponteiro.
+// ??
 file *network__stream;
 
 
-//FILE *___default_network__stream;
 
-
-//diálogo com o driver de rede.
+// Dialog with this module.
 unsigned long 
 network_procedure ( struct window_d *window,
                     int msg,
@@ -108,7 +105,7 @@ network_procedure ( struct window_d *window,
     switch (msg)
     {
 		//o processo em ring3 envia a stream para mensagens de texto
-		//nesse momento vamos habilitar a notificação de processos.
+		//nesse momento vamos habilitar a notificaï¿½ï¿½o de processos.
 		//>long1 tem o descritor na lista de arquivos abertos do processo.
 		case 1000:
 	        network__stream = (file *) __process->Objects[long1];
@@ -145,25 +142,25 @@ network_procedure ( struct window_d *window,
 
 		//send ARP packet
 		//O processo controi um pacote e envia o buffer em long1.
-		//copiamos o conteúdo do buffer par ao buffer usado pelo driver.    
+		//copiamos o conteï¿½do do buffer par ao buffer usado pelo driver.    
 		//case 2001:
 		    //break;
 		    
 		//send UDP/IP packet
 		//O processo controi um pacote e envia o buffer em long1.
-		//copiamos o conteúdo do buffer par ao buffer usado pelo driver.    
+		//copiamos o conteï¿½do do buffer par ao buffer usado pelo driver.    
 		//case 2001:
 		    //break;
 
 		//send TCP/IP packet
 		//O processo controi um pacote e envia o buffer em long1.
-		//copiamos o conteúdo do buffer par ao buffer usado pelo driver.    
+		//copiamos o conteï¿½do do buffer par ao buffer usado pelo driver.    
 		//case 2001:
 		    //break;
 		    
 		//notificando o processo atual de que recebemos um ipv4
 		////notificando ...(ok funcionou.)
-		//reaproveitando um soquete se a conecção está estabelecida.
+		//reaproveitando um soquete se a conecï¿½ï¿½o estï¿½ estabelecida.
 		case 3000:
 		    if ( notification_status != 1 ){ break; }
 		    //network__stream = (FILE *) __process->Streams[long1]; 
@@ -200,9 +197,6 @@ network_procedure ( struct window_d *window,
 
 
 
-
-
- 
 void networkSetstatus (int status){
 
 	if ( status < 0 || status > 1 )
@@ -221,13 +215,13 @@ int networkGetStatus (void){
 /*
  **********************************************************
  * networkInit:
- *     Inicializa estruturas de rede. Os adaptadores são inicializados
- * quando é feita a sondagem pci.
+ *     It only initializes the some network structures. Not the 
+ * adapters.
  */ 
 
 int networkInit (void){
 
-	// Zera status.
+	// Status.
 	networkSetstatus (0);
 
 
@@ -236,9 +230,9 @@ int networkInit (void){
 
     HostInfo = (struct host_info_d *) kmalloc ( sizeof( struct host_info_d ) ); 
 
-    if ( (void *) HostInfo == NULL )
-    {
+    if ( (void *) HostInfo == NULL ){
         panic ("networkInit: HostInfo");
+
     }else{
 
 		//#todo object header
@@ -252,7 +246,7 @@ int networkInit (void){
 		
 		
 		//#bugbug
-		//falha na máquina real... acho que está falhando.
+		//falha na mï¿½quina real... acho que estï¿½ falhando.
 		//see: klibc
 		//__sethostname ( (char *) HOST_DEFAULTNAME);
 
@@ -278,16 +272,8 @@ int networkInit (void){
 	//...
 	
 
-	//
-	// Status
-	//
-	
-	//ok
-	//todos os componentes da rede estão inicializados.
-	// #todo: 
-	// Só acionaremos essa flag quando realmente tudo estiver inicializado.
-	
-	//networkSetstatus (1);
+	// Status ?? No, not now!	
+	// networkSetstatus (1);
 	
 	return 0;
 }
@@ -295,12 +281,9 @@ int networkInit (void){
 
 
 
-
-
-
 // #todo:
-// Isso não precisa ficar dentro do kernel base.
-// Algum aplicativo pode pegar essas informações, uma a uma.
+// DEbug routine.
+// It just shows some network info.
 
 void show_network_info (void){
 
@@ -337,38 +320,31 @@ void show_network_info (void){
 /*
  ********************************************
  * show_current_nic_info:
- * 
+ *     nic info
  */
- 
-// #todo:
-// Isso não precisa ficar dentro do kernel base.
-// Algum aplicativo pode pegar essas informações, uma a uma.
 
 void show_current_nic_info (void){
 	
 	printf ("show_current_nic_info:\n");
 
     // #bugbug
-    // Essa estrutura está falhando.
+    // Essa estrutura estï¿½ falhando.
 
-	if ( (void *) currentNIC ==  NULL )
-	{
-		printf ("show_current_nic_info: struct fail\n");
-	    return;
+    if ( (void *) currentNIC ==  NULL ){
+        printf ("show_current_nic_info: struct fail\n");
+        return;
+
+    }else{
 		
-	}else{
+        if ( currentNIC->used != 1 || currentNIC->magic != 1234 ){
+            printf ("show_current_nic_info: validation fail\n");
+            return;
+        }
 		
-		if ( currentNIC->used != 1 || currentNIC->magic != 1234 )
-		{
-		    printf("show_current_nic_info: validation fail\n");
-	        return;
-		}
-		
-		if ( (void *) currentNIC->pci == NULL )
-		{
-		    printf ("show_current_nic_info: pci struct fail\n");
-	        return;
-		}
+        if ( (void *) currentNIC->pci == NULL ){
+            printf ("show_current_nic_info: pci struct fail\n");
+            return;
+        }
 
         //messages 
 		printf ("NIC device info:\n");
@@ -473,6 +449,9 @@ void show_current_nic_info (void){
  * outro adaptador.
  */
 
+//#todo
+//ipv6 needs to have its own document.
+
 int 
 handle_ipv6 ( struct intel_nic_info_d *nic, 
               struct ipv6_header_d *header )
@@ -480,17 +459,17 @@ handle_ipv6 ( struct intel_nic_info_d *nic,
     //printf("\n");
     //printf("handle_ipv6: Initializing ...\n");
 
-    if ( (void *) nic == NULL )
-	{
+
+    if ( (void *) nic == NULL ){
 		printf ("handle_ipv6: nic fail\n");
 		return -1;
-	};
+	}
 
-    if ( (void *) header == NULL )
-	{
+
+    if ( (void *) header == NULL ){
 		printf ("handle_ipv6: header fail\n");
 		return -2;
-		
+
 	}else{
 		
 		//printf("ver_tc_label=%x len=%d next_header=%x hop_limit=%d \n",
@@ -524,16 +503,20 @@ handle_ipv6 ( struct intel_nic_info_d *nic,
 
 
 
-
-
+/*
+ * Network_test:
+ *     Debug routine.
+ */
 
 void network_test(void)
 {
     debug_print("network_test: \n");
     
+    // Nic info.
     debug_print("network_test: Test NIC \n");
     testNIC();
 
+    // Network info.
     debug_print("network_test: Show info\n");
     show_network_info();
     
@@ -553,7 +536,7 @@ void network_test(void)
 
 // #IMPORTANTE
 // Chamada por F6 no procedimento de janela do sistema.
-// Essa rotina aciona uma flag que (DESTRAVA) o handler da interrupção.
+// Essa rotina aciona uma flag que (DESTRAVA) o handler da interrupï¿½ï¿½o.
 
 void testNIC (void){
 
@@ -592,7 +575,7 @@ void testNIC (void){
 	//tests
 	
 	//mudar network.
-	//tem que ter uma abstração que selecione o nic atual
+	//tem que ter uma abstraï¿½ï¿½o que selecione o nic atual
 
     printf ("testNIC: Sending arp request \n");
 	SendARP ( source_ip_address, target_ip_address, target_mac_address );
@@ -616,7 +599,7 @@ void testNIC (void){
         target_mac_address, xxxdata, 20 );
 
 
-	//se tivermos informações para mostrar é sinal que a inicialização do kernel 
+	//se tivermos informaï¿½ï¿½es para mostrar ï¿½ sinal que a inicializaï¿½ï¿½o do kernel 
 	//funcionou. 
 	
 
@@ -646,6 +629,10 @@ void testNIC (void){
  *     target_mac. (It's in the layer 2 of the OSI model. data link layer)
  *     data. (The data we want to send via ipv4. 32 bytes)
  */
+
+// #todo
+// udp needs to have its own document.
+
 
 // #todo
 // Change the return type to 'int'. 
@@ -706,10 +693,10 @@ network_SendIPV4_UDP ( uint8_t source_ip[4],
     }else{
 
 		// Coloca na estrutura do ethernet header os seguintes valores: 
-		// > endereço mac da origem.
-		// > endereço mac do destion.
-		// O endereço mac da origem está na estrutura do controlador nic intel. 
-		// O endereço mac do destino foi passado via argumento.
+		// > endereï¿½o mac da origem.
+		// > endereï¿½o mac do destion.
+		// O endereï¿½o mac da origem estï¿½ na estrutura do controlador nic intel. 
+		// O endereï¿½o mac do destino foi passado via argumento.
 
         for ( i=0; i<6; i++ ){
             eh->src[i] = currentNIC->mac_address[i];    // source 
@@ -744,7 +731,7 @@ network_SendIPV4_UDP ( uint8_t source_ip[4],
         ipv4->TimeToLive = 0x40;
 
 		// #importante
-		// Existem vários protocolos para ip.
+		// Existem vï¿½rios protocolos para ip.
 		// TCP=0x6 UDP=0x11
 		
 		//default protocol: UDP
@@ -784,7 +771,7 @@ network_SendIPV4_UDP ( uint8_t source_ip[4],
         // A porta de origem representa o processo cliente
         // A porta de destino representa o processo servidor.
         // Se o argumento passado for a estrutura (channel)
-        // então teremos muita informação.
+        // entï¿½o teremos muita informaï¿½ï¿½o.
  
         //20 FTP-DATA File Transfer [Default Data]
         //21 FTP File Transfer [Control]
@@ -815,7 +802,7 @@ network_SendIPV4_UDP ( uint8_t source_ip[4],
 
 	// ??
 	// Quem?
-	// Estamos pegando o offset que nos levará ao endereço do buffer.
+	// Estamos pegando o offset que nos levarï¿½ ao endereï¿½o do buffer.
 	// Usaremos esse offset logo abaixo.
 	// Pegamos esse offset na estrutura do controlador nic intel.
 
@@ -827,7 +814,7 @@ network_SendIPV4_UDP ( uint8_t source_ip[4],
 	// Copiando o pacote no buffer.
 	//
 
-	// Pegando o endereço virtual do buffer na estrutura do controlador 
+	// Pegando o endereï¿½o virtual do buffer na estrutura do controlador 
 	// nic intel. Para isso usamos o offset obtido logo acima.
 
     unsigned char *buffer = (unsigned char *) currentNIC->tx_descs_virt[old];
@@ -899,7 +886,7 @@ network_SendIPV4_UDP ( uint8_t source_ip[4],
     currentNIC->legacy_tx_descs[old].status = 0;
 
 	// Current TX.
-	// Qual é o buffer atual para transmissão.
+	// Qual ï¿½ o buffer atual para transmissï¿½o.
     currentNIC->tx_cur = ( currentNIC->tx_cur + 1 ) % 8;
 
 
@@ -910,7 +897,7 @@ network_SendIPV4_UDP ( uint8_t source_ip[4],
 
 
 	// #importante: 
-	// Diga ao controlador qual é o índice do descritor a ser usado para  
+	// Diga ao controlador qual ï¿½ o ï¿½ndice do descritor a ser usado para  
 	// transmitir dados.
 	// TDH	= 0x3810,    /* Tx Descriptor Head */
 	// TDT	= 0x3818,    /* Tx Descriptor Tail */
@@ -922,7 +909,7 @@ network_SendIPV4_UDP ( uint8_t source_ip[4],
 
 	// #debug
 	// Colocamos essa mensagem antes de entrarmos no while.
-	// Pois precisamos implementar algum contador no while para não
+	// Pois precisamos implementar algum contador no while para nï¿½o
 	// ficarmos preso nele pra sempre.
 
     printf ("network_SendIPV4_UDP: Sending UDP/IP. *debug *while\n");
@@ -931,7 +918,7 @@ network_SendIPV4_UDP ( uint8_t source_ip[4],
 	// #perigo:
 	// Status.
 	// Checamos o status do buffer old pra ver se ele foi enviado.
-	// Fica travado aqui até que seja enviado?
+	// Fica travado aqui atï¿½ que seja enviado?
 	// Poderia ter um timemout?.
 	
 
@@ -965,13 +952,16 @@ network_SendIPV4_UDP ( uint8_t source_ip[4],
 /*
  ***************************************************************
  * SendARP:
- *     Enviar um pacote ARP.
+ *     It sends a ARP packet.
  * 
  * IN: 
  *     source_ip. (It's in the layer 3 of the OSI model. network layer)
  *     target_ip. (It's in the layer 3 of the OSI model. network layer)
  *     target_mac. (It's in the layer 2 of the OSI model. data link layer)
  */
+
+// #todo
+// arp needs to have its own document.
 
 // #todo
 // Change the return type to 'int'. 
@@ -981,16 +971,16 @@ SendARP ( uint8_t source_ip[4],
           uint8_t target_ip[4], 
           uint8_t target_mac[6] )
 {
-    int i=0;
 
     struct ether_header *eh;
     struct ether_arp *h;
+    int i=0;
+
 
     debug_print ("SendARP:\n");
 
-	//
-	// nic device structure.
-	//
+
+    // nic device structure.
 
     if ( currentNIC == NULL ){
         printf ("SendARP: currentNIC fail\n");
@@ -1024,10 +1014,10 @@ SendARP ( uint8_t source_ip[4],
     }else{
 
 		// Coloca na estrutura do ethernet header os seguintes valores: 
-		// > endereço mac da origem.
-		// > endereço mac do destion.
-		// O endereço mac da origem está na estrutura do controlador nic intel. 
-		// O endereço mac do destino foi passado via argumento.
+		// > endereï¿½o mac da origem.
+		// > endereï¿½o mac do destion.
+		// O endereï¿½o mac da origem estï¿½ na estrutura do controlador nic intel. 
+		// O endereï¿½o mac do destino foi passado via argumento.
 
         for( i=0; i<6; i++)
         {
@@ -1073,11 +1063,11 @@ SendARP ( uint8_t source_ip[4],
 
 
 		// mac
-		// Configurando na estrutura de arp o endereço mac de origem e destino.
+		// Configurando na estrutura de arp o endereï¿½o mac de origem e destino.
 		// sender mac
 		// target mac
-		// O endereço mac de origem pegamos na estrutura no nic intel.
-		// O endereço mac de destino foi passado via argumento.
+		// O endereï¿½o mac de origem pegamos na estrutura no nic intel.
+		// O endereï¿½o mac de destino foi passado via argumento.
 
         for ( i=0; i<6; i++ ){
             h->arp_sha[i] = currentNIC->mac_address[i]; 
@@ -1086,11 +1076,11 @@ SendARP ( uint8_t source_ip[4],
 
 
 		// ip
-		// Configurando na estrutura de arp o endereço do ip de origem e 
+		// Configurando na estrutura de arp o endereï¿½o do ip de origem e 
 		// o ip de destino.
 		// sender ip
 		// target ip
-		// Os endereços foram passados via argumento.
+		// Os endereï¿½os foram passados via argumento.
 		
         for ( i=0; i<4; i++ ){
             h->arp_spa[i] = source_ip[i]; 
@@ -1132,7 +1122,7 @@ SendARP ( uint8_t source_ip[4],
 
 	// ??
 	// Quem?
-	// Estamos pegando o offset que nos levará ao endereço do buffer.
+	// Estamos pegando o offset que nos levarï¿½ ao endereï¿½o do buffer.
 	// Usaremos esse offset logo abaixo.
 	// Pegamos esse offset na estrutura do controlador nic intel.
 
@@ -1142,7 +1132,7 @@ SendARP ( uint8_t source_ip[4],
 	// Copiando o pacote no buffer.
 	//
 
-	// Pegando o endereço virtual do buffer na estrutura do controlador 
+	// Pegando o endereï¿½o virtual do buffer na estrutura do controlador 
 	// nic intel. Para isso usamos o offset obtido logo acima.
 
     unsigned char *buffer = (unsigned char *) currentNIC->tx_descs_virt[old];
@@ -1159,7 +1149,7 @@ SendARP ( uint8_t source_ip[4],
 
 	// Copiando as estruturas para o buffer.
 	// >Copiando o header ethernet.
-	// >Copiando o arp logo após do header ethernet.
+	// >Copiando o arp logo apï¿½s do header ethernet.
 
 	// ethernet, arp.
     for (i=0; i<14;i++){ buffer[i]      = src_ethernet[i]; };
@@ -1193,7 +1183,7 @@ SendARP ( uint8_t source_ip[4],
     currentNIC->legacy_tx_descs[old].status = 0;
 
 	// Current TX.
-	// Qual é o buffer atual para transmissão.
+	// Qual ï¿½ o buffer atual para transmissï¿½o.
     currentNIC->tx_cur = ( currentNIC->tx_cur + 1 ) % 8;
 
 
@@ -1214,7 +1204,7 @@ SendARP ( uint8_t source_ip[4],
 
 
 	// #importante: 
-	// Diga ao controlador qual é o índice do descritor a ser usado para  
+	// Diga ao controlador qual ï¿½ o ï¿½ndice do descritor a ser usado para  
 	// transmitir dados.
 	// TDH	= 0x3810,    /* Tx Descriptor Head */
 	// TDT	= 0x3818,    /* Tx Descriptor Tail */
@@ -1225,7 +1215,7 @@ SendARP ( uint8_t source_ip[4],
 
 	// #debug
 	// Colocamos essa mensagem antes de entrarmos no while.
-	// Pois precisamos implementar algum contador no while para não
+	// Pois precisamos implementar algum contador no while para nï¿½o
 	// ficarmos preso nele pra sempre.
 
     printf ("SendARP: Sending broadcast ARP. *debug *while\n");
@@ -1234,7 +1224,7 @@ SendARP ( uint8_t source_ip[4],
 	// #perigo:
 	// Status.
 	// Checamos o status do buffer old pra ver se ele foi enviado.
-	// Fica travado aqui até que seja enviado?
+	// Fica travado aqui atï¿½ que seja enviado?
 	// Poderia ter um timemout?.
 
 
@@ -1269,13 +1259,11 @@ SendARP ( uint8_t source_ip[4],
 /*
  **************************
  * network_driver_dialog: 
- * 
- * Esse é o dialogo principal do servidor de rede.
- * O loop do servido deve direcionar a mensagem recebida para esse diálogo.
+ *     Dialog for the network driver.
  */
 
 // #bugbug
-// Estamos chamando isso de server, então essas rotinas precisam ir para
+// Estamos chamando isso de server, entï¿½o essas rotinas precisam ir para
 // par a pasta kservers?
 
 unsigned long 
@@ -1289,7 +1277,7 @@ network_driver_dialog ( struct window_d *window,
     //printf ("network_driver_dialog:\n");
 
 	// Vamos tratar as mensagens recebidas. Entre elas:
-	// MSG_BUFFERFULL  - (O buffer está cheio)
+	// MSG_BUFFERFULL  - (O buffer estï¿½ cheio)
 	//  x     -  Inicializar o servidor de rede.
 	//  x     -  Finalizar o servidor de rede.
 	//...
@@ -1354,8 +1342,7 @@ int network_decode_buffer ( unsigned long buffer_address ){
     struct ether_header *eh;
 
 
-    if ( buffer_address == 0 )
-    {
+    if ( buffer_address == 0 ){
         printf ("network_decode_buffer: buffer\n");
         return 1;
     }
@@ -1368,10 +1355,10 @@ int network_decode_buffer ( unsigned long buffer_address ){
 	//eh = (void *) &buffer[0];
     eh = (void *) buffer_address;
 
-    if ( (void *) eh == NULL )
-    {
+    if ( (void *) eh == NULL ){
         printf ("network_decode_buffer: eh");
         return 1;
+
     }else{
 
         //printf("src: ");
@@ -1412,7 +1399,7 @@ int network_decode_buffer ( unsigned long buffer_address ){
 
 		//::: ARP
 		//0x0806	Address Resolution Protocol (ARP)
-		//#todo: devemos chamar uma rotina para tratamento de ARP e não
+		//#todo: devemos chamar uma rotina para tratamento de ARP e nï¿½o
 		//fazermos tudo aqui. kkk.
         case 0x0806:
             //printf("\nARP ");
@@ -1446,7 +1433,7 @@ int network_decode_buffer ( unsigned long buffer_address ){
 
 
 // decodificando um pacote ipv4.
-// Precisamos olhar no pacote para sabermos qual é a porta
+// Precisamos olhar no pacote para sabermos qual ï¿½ a porta
 // para assim reenviarmos o pacote ao processo conectado a essa porta.
 int do_ipv4 ( unsigned long buffer )
 {
@@ -1470,13 +1457,13 @@ int do_ipv6 ( unsigned long buffer )
 // decodifica um pacote arp.
 int do_arp ( unsigned long buffer ){
 
+    struct ether_header *eh;
+    struct ether_arp *arp_h;
+    int i;
+
    //debug
    // printf ("do_arp: \n");
 
-    int i;
-
-    struct ether_header *eh;
-    struct ether_arp *arp_h;
 
 
     eh = (struct ether_header *) (buffer + 0);
@@ -1490,9 +1477,9 @@ int do_arp ( unsigned long buffer ){
         return 1;
 
     // Recebemos um reply.
-    // Não faremos nada por enquanto.
+    // Nï¿½o faremos nada por enquanto.
     // Mas provavelmente nesse momento recebemos
-    // alguma informação que solicitamos, como o MAC de um dispositivo.
+    // alguma informaï¿½ï¿½o que solicitamos, como o MAC de um dispositivo.
     if ( arp_h->op == ToNetByteOrder16(ARP_OPC_REPLY) )
     {
         //#debug
@@ -1548,7 +1535,7 @@ int do_arp ( unsigned long buffer ){
                         (const void *) &eh->src[0], 
                          6 );
 
-					// Sinaliza que está em uso.
+					// Sinaliza que estï¿½ em uso.
                     currentNIC->arp_cache[i].magic = 4321;
                  }
               }
@@ -1557,7 +1544,7 @@ int do_arp ( unsigned long buffer ){
          // ??
          // vamos responder.
          // Pra isso precisamos saber o tamanho do buffer.
-         // vamos rever isso pois não podemos mais consultar o controlador 
+         // vamos rever isso pois nï¿½o podemos mais consultar o controlador 
          // por enquanto.
          
          uint16_t arp_tx_old = currentNIC->tx_cur;

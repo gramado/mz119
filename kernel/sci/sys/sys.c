@@ -328,6 +328,12 @@ int sys_read (unsigned int fd, char *buf, int count)
         // tty_read (...) #todo criar função se não existe.
 
 
+    //if pipe
+    
+    
+    //if socket
+    // socket_read()
+
 
     //See: unistd.c
     // #todo
@@ -346,6 +352,7 @@ int sys_read (unsigned int fd, char *buf, int count)
 // See:
 // https://github.com/zavg/linux-0.01/blob/master/fs/read_write.c
 // ...
+
 int sys_write (unsigned int fd,char *buf,int count)
 {
     struct process_d *__P;
@@ -447,6 +454,15 @@ int sys_write (unsigned int fd,char *buf,int count)
                         (size_t) count );
     }
 
+    
+    //if pipe
+    
+    
+    //if socket
+    // socket_write()
+    
+    
+    
     
 
     //tem que retonar o tanto de bytes escritos.

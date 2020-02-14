@@ -4,6 +4,68 @@
 // #todo: isso deve ir para sys/socket
 
 
+int current_socket;
+
+/*
+ **********************
+ * socket_d:
+ *     Socket strutuct.
+ */
+
+struct socket_d
+{
+    object_type_t objectType;
+    object_class_t objectClass;
+    
+    
+    int sock_domain;
+    
+    
+    // Deve ser o mesmo fd do arquivo que possui
+    // um ponteiro para essa estrutura.
+    int _file;
+    
+    
+    //socket type.
+    int type;
+
+    unsigned long ip_long;
+
+	//unsigned char ip[4];
+    unsigned short port;
+
+	// podemos fazer mais coisa aqui.
+	// talvez um arquivo
+	//talvez um descritor, pra ficar igual na libc
+	//talvez incluir ponteiros para as estruturas em sys/socket.h
+	//...
+};
+struct socket_d *CurrentSocket;
+struct socket_d *LocalHostHTTPSocket;
+//...
+
+
+
+//#todo: 
+// Refazer esse limite proviório.
+#define SOCKET_COUNT_MAX 32
+
+unsigned long socketList[SOCKET_COUNT_MAX];
+
+
+struct socket_d *create_socket ( unsigned long ip, unsigned short port );
+
+unsigned long getSocketIP ( struct socket_d *socket );
+unsigned long getSocketPort ( struct socket_d *socket );
+
+int 
+update_socket ( struct socket_d *socket, 
+                unsigned long ip, 
+                unsigned short port );
+
+
+
+
 
 /*
 #ifndef sa_family_t
@@ -458,6 +520,16 @@ sys_bind ( int sockfd,
        
 int sys_listen (int sockfd, int backlog);          
                
+
+int socket_read (unsigned int fd, char *buf, int count);
+int socket_write (unsigned int fd,char *buf,int count);
+
+
+
+
+
+
+
 
 
 
