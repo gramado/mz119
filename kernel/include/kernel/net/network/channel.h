@@ -109,22 +109,17 @@ unsigned long channelList[32];
 // Prototypes.
 //
 
-void *CreateChannel ( struct process_d *OwnerProcess,
-                      struct thread_d *SenderThread,
-                      struct thread_d *ReceiverThread );
+//#todo: arguments.
+void *CreateChannel (void);
 
 int DestroyChannel (struct channel_d *channel);
 
 
-int 
-OpenChannel ( struct channel_d *channel, 
-              struct process_d *OwnerProcess,
-              struct thread_d *SenderThread,
-              struct thread_d *ReceiverThread );
+//#todo: arguments.
+int OpenChannel ( void );
 
 
-int 
-CloseChannel (struct channel_d *channel);
+int CloseChannel (struct channel_d *channel);
 
 
 

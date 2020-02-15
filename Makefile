@@ -342,7 +342,7 @@ KERNEL.BIN:
 
 
 	# net
-	gcc -c kernel/net/channel/channel.c  $(KINCLUDE) $(CFLAGS) -o channel.o
+	gcc -c kernel/net/network/channel.c  $(KINCLUDE) $(CFLAGS) -o channel.o
 	gcc -c kernel/net/network/network.c  $(KINCLUDE) $(CFLAGS) -o network.o
 
 

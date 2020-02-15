@@ -2168,6 +2168,7 @@ void *gde_services ( unsigned long number,
 			
 			if ( arg3 == 12345678 )
 			{
+				/*
 				if( current_taskman_server == arg4 )
 				{
 					if( gui->taskmanWindow->newmessageFlag == 0 )
@@ -2190,6 +2191,8 @@ void *gde_services ( unsigned long number,
 						return NULL;
 					};
 				};
+				*/
+				return NULL;
 			};
 			break;
 
@@ -2294,81 +2297,68 @@ void *gde_services ( unsigned long number,
 				(unsigned long) message_address[3],   
 				(unsigned char *) message_address[4] ); 
 			break;
-			
-			
-		//131
-		// Pintar o caractere especificamente na janela com o foco de entrada.          
-		case SYS_BUFFER_DRAWCHAR_WWF: 
-			focusWnd = (void *) windowList[window_with_focus];
-			if ( (void *) focusWnd == NULL )
-			{
-			    break;	
-			};
-			
-			my_buffer_char_blt( (unsigned long) (arg2 + focusWnd->left), //x.
-			                    (unsigned long) (arg3 + focusWnd->top),  //y.
-								COLOR_BLACK,                             //color. 
-								(unsigned long) arg4);                   //char.
-    		break;
 
 
-        // save rect ?
-		case 132:
-		    //#bugbug: pagefault
-			//save_rect (  message_address[0],  message_address[1],  message_address[2],  message_address[3] );
-			break;
+        // 131
+        // Pintar o caractere especificamente na janela com o 
+        // foco de entrada.          
+        case SYS_BUFFER_DRAWCHAR_WWF: 
+            focusWnd = (void *) windowList[window_with_focus];
+            if ( (void *) focusWnd == NULL ){
+                break;
+            }
+            // x,y,color,char.
+            my_buffer_char_blt ( (unsigned long) (arg2 + focusWnd->left),
+                (unsigned long) (arg3 + focusWnd->top),
+                COLOR_BLACK,     
+                (unsigned long) arg4);  
+            break;
 
 
-        // show a saved rect ?
-        case 133: 		
-		    //#bugbug: pagefault
-			//show_saved_rect (  message_address[0],  message_address[1],  message_address[2],  message_address[3] );
-			break; 
+        // save rect.
+        // Suspenso, pois vamos criar o gws em ring3.
+        case 132:
+            break;
+
+        // show a saved rect.
+        // Suspenso, pois vamos criar o gws em ring3.        
+        case 133:
+            break; 
 
 
 		// 134
 		// Pegar informações sobre a área de cliente de uma janela;
 		// #bugbug: temos que checar mais validade de estrutura.
-		// obs: No começo dessa função, colocamos o arg3 como ponteiro para a3.
-		// um buffer de longs.
-		case 134:
-				hWnd = (struct window_d *) arg3;
-
-				if ( (void *) hWnd != NULL )
-				{	
-					a3[0] = (unsigned long) hWnd->rcClient->left;
-					a3[1] = (unsigned long) hWnd->rcClient->top;     
-					a3[2] = (unsigned long) hWnd->rcClient->width;
-					a3[3] = (unsigned long) hWnd->rcClient->height;
-					a3[4] = (unsigned long) hWnd->rcClient->bg_color;
-				}
-			break;
+		// obs: No começo dessa função, colocamos o arg3 como 
+		// ponteiro para a3. um buffer de longs.
+        // #bugbug: Ja podemos deletar esse trem ?!
+        case 134:
+            hWnd = (struct window_d *) arg3;
+            if ( (void *) hWnd != NULL )
+            {
+                a3[0] = (unsigned long) hWnd->rcClient->left;
+                a3[1] = (unsigned long) hWnd->rcClient->top;     
+                a3[2] = (unsigned long) hWnd->rcClient->width;
+                a3[3] = (unsigned long) hWnd->rcClient->height;
+                a3[4] = (unsigned long) hWnd->rcClient->bg_color;
+            }
+            break;
 
 
 		// 135
-		// Coloca caracteres na estrutura de terminal, para aplicativos pegarem
+		// Coloca caracteres na estrutura de terminal, 
+		// para aplicativos pegarem;
+		// Suspenso.
         case SYS_FEEDTERMINAL:
-            //@todo:
-			// Colocar o caractere enviado no argumento para 
-			//a estrutura de terminal do terminal indicado no argumento.
-			//terminalFeed( (int) arg2, (int) arg3 );
-			
-			//arg2 = número do terminal
-			//arg3 = ch 
-			//arg4 - ch 
-			
-			//terminal.h
-			//teminalfeedCH = (char) arg3;
-			//teminalfeedCHStatus = (int) 1;
-		    break;	
+            break;
 
 
-		//136
-		//fgetc
-		case 136:
-			return NULL;
-			//return (void *) sys_fgetc ( (FILE *) arg2 );
-			break;
+		// 136
+		// fgetc
+		// Cancelado. Isso é coisa da libc.
+        case 136:
+            return NULL;
+            break;
 
 
 		// 137
@@ -2376,22 +2366,24 @@ void *gde_services ( unsigned long number,
 		// na função 'getchar()'
 		// Pega caractere no stdin do teclado.
 		// Isso funciona.
+		// #bugbug: Rever isso.
         case SYS_GETCH:  
-			return (void *) thread_getchar ();
+            return (void *) thread_getchar ();
             break;
 
-			
-		//138 - get key state.	
+
+		//138
+		// get key state.
 		//#importante: 
 		//#todo: isso precisa ir para a API.
         case 138:
-		    return (void *) keyboardGetKeyState ( (unsigned char) arg2 );
+            return (void *) keyboardGetKeyState ( (unsigned char) arg2 );
             break;
 
 
-		//139
+        // 139
         case SYS_GETSCANCODE:
-		    return (void *) get_scancode ();
+            return (void *) get_scancode ();
             break;
 
 
@@ -2415,41 +2407,47 @@ void *gde_services ( unsigned long number,
 		    return (void *) get_current_mouse_responder ();
 			break;
 
-			
-		//144	
-		//Pega o ponteiro da client area.	
-		case SYS_GETCLIENTAREARECT:	
-		    //#bugbug: pegamos o ponteiro mas não temos permissão para acessar a estrutura.
-			return (void *) getClientAreaRect ();	
-			break;
-		
-		//145
-        //configura a client area	
-        //@todo: O ponteiro para estrutura de retângulo é passado via argumento.
-		case SYS_SETCLIENTAREARECT:
-			setClientAreaRect ( arg2, arg3, arg4, 0);
+
+		// 144
+		// Pega o ponteiro da client area.
+		// #bugbug: pegamos o ponteiro mas não temos permissão 
+		// para acessar a estrutura.
+        case SYS_GETCLIENTAREARECT:
+            return (void *) getClientAreaRect ();
             break;
 
-		//146	
-		//#bugbug: isso não parece seguro, precismos checar a validade da estrutura antes,
-        //mas vai ficar assim por enquanto.
-		case 146:	
-		    //#todo: criar a rotina de tratamento.
-		    //return (void *) gwsScreenWindow(); //#todo
-		    return (void *) gui->screen;
-			break;
-			
-		//147	
-		//#bugbug: isso não parece seguro, precismos checar a validade da estrutura antes,
-        //mas vai ficar assim por enquanto.
+
+        // 145
+        // configura a client area	
+        // @todo: 
+        // O ponteiro para estrutura de retângulo é passado 
+        // via argumento.
+        case SYS_SETCLIENTAREARECT:
+            setClientAreaRect ( arg2, arg3, arg4, 0);
+            break;
+
+        // 146
+        // #bugbug: 
+        // isso não parece seguro, precismos checar a validade 
+        // da estrutura antes, mas vai ficar assim por enquanto.
+        // Perigo!
+        case 146:
+            return (void *) gui->screen;
+            break;
+
+
+        // 147
+        // #bugbug: 
+        // isso não parece seguro, precismos checar a validade da 
+        // estrutura antes, mas vai ficar assim por enquanto.
+        // Perigo!
         case 147:
-            //#todo: criar a rotina de tratamento.
-		    //return (void *) gwsMainWindow(); //#todo
-			return (void *) gui->main;
-			break;
+            return (void *) gui->main;
+            break;
 
 
-		// 148 - Create grid and itens.
+		// 148 
+		// Create grid and itens.
 		// window, n, view. 
         case 148:
            return (void *) grid ( (struct window_d *) arg2, 
@@ -2466,11 +2464,12 @@ void *gde_services ( unsigned long number,
 
 
 
-		//152 - get user id
-		case SYS_GETCURRENTUSERID:
-		    return (void *) current_user;
-			break;
-		
+        //152 - get user id
+        case SYS_GETCURRENTUSERID:
+            return (void *) current_user;
+            break;
+
+
 		//154 - get group id	
 		case SYS_GETCURRENTGROUPID:
 		    return (void *) current_group;
@@ -2504,38 +2503,43 @@ void *gde_services ( unsigned long number,
 		// Criar um socket e retornar o ponteiro para a estrutura.
 		// Gramado API socket support. (not libc)
 		// See:
-		case 160:
-            return (void *) create_socket ( (unsigned long) arg2, (unsigned short) arg3 );
-			break;
-			
-		// 161
-        // get socket IP
-		// Gramado API socket support. (not libc)
-		case 161:
-		    return (void *) getSocketIP ( (struct socket_d *) arg2 );
-            break;		
+        case 160:
+            return (void *) create_socket ( (unsigned long) arg2, 
+                                (unsigned short) arg3 );
+            break;
 
-		// 162
-        // get socket port		
-		// Gramado API socket support. (not libc)	
-		case 162:
-		    return (void *) getSocketPort( (struct socket_d *) arg2 );
-            break;		
-			
-		// 163
+
+        // 161
+        // get socket IP
+        // Gramado API socket support. (not libc)
+        case 161:
+            return (void *) getSocketIP ( (struct socket_d *) arg2 );
+            break;
+
+        // 162
+        // get socket port
+        // Gramado API socket support. (not libc)
+        case 162:
+            return (void *) getSocketPort( (struct socket_d *) arg2 );
+            break;
+
+
+        // 163
         // update socket  
         // retorno 0=ok 1=fail		
-        // Gramado API socket support. (not libc)	
-		case 163:
+        // Gramado API socket support. (not libc)
+        case 163:
             return (void *) update_socket ( (struct socket_d *) arg2, 
-                                (unsigned long) arg3, (unsigned short) arg4 );
-			break;
+                                (unsigned long) arg3, 
+                                (unsigned short) arg4 );
+            break;
 
-		//#todo: a chamada está no shell em net.c
+		// #todo: 
+		// a chamada está no shell em net.c
 		//netStream
         case 164:
             //IN: ( service, (unsigned long) stream, option, option )
-			break;	
+            break;
 
 		//#todo: a chamada está no shell em net.c	
 		//netSocket
