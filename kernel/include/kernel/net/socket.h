@@ -533,7 +533,11 @@ int socket_read (unsigned int fd, char *buf, int count);
 int socket_write (unsigned int fd,char *buf,int count);
 
 
-
+// #test
+// vamos pegar um descritor que aponta para
+// um arquivo do tipo soquete que deseja se concetar 
+// em o processo
+int sys_accept_sender(int n);
 
 
 

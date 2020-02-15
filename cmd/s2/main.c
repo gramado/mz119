@@ -54,15 +54,14 @@ int main ( int argc, char *argv[] )
     // AF_GRAMADO
     client_fd = socket ( 8000, SOCK_STREAM, 0 );
     
-    if ( client_fd < 0 )
-    {
+    if ( client_fd < 0 ){
        printf ("s2: Couldn't create socket\n");
     }
     
     struct sockaddr addr;
     addr.sa_family = 8000; //AF_GRAMADO
     addr.sa_data[0] = 'w';
-    addr.sa_data[0] = 's';    
+    addr.sa_data[1] = 's';    
     
  
     if (connect (client_fd, (struct sockaddr *) &addr, sizeof(addr)) < 0) 
@@ -72,6 +71,19 @@ int main ( int argc, char *argv[] )
     }    
     
     //send(client_fd , hello , strlen(hello) , 0 ); 
+
+    char __buffer[32];
+    int n=-1;
+    while(1){
+        n = read(client_fd, __buffer, sizeof(__buffer));
+        if(n>0)
+        {
+            //break;
+            printf ("s2: Received: %s \n",__buffer);            
+        }
+    }
+
+    printf ("s2: Received: %s \n",__buffer);
     
     return 0;
 

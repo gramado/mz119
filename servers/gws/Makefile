@@ -36,10 +36,10 @@ CFLAGS = -m32 \
 
 #todo
 #path longo. vamos mudar  as libs de lugar para gramado/libs.
-LIBC    = ../../userland/ul1/garden/lib/libcore/include/
-LIBCOBJ = ../../userland/ul1/garden/lib/libcore/obj
-API02   = ../../userland/ul1/garden/lib/libgui/include/
-APIOBJ  = ../../userland/ul1/garden/lib/libgui/obj
+LIBC    = ../../lib/libcore/include/
+LIBCOBJ = ../../lib/libcore/obj
+API02   = ../../lib/libgui/include/
+APIOBJ  = ../../lib/libgui/obj
 
 
 GWS  = gwscore/include/   

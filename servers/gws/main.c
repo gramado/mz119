@@ -226,13 +226,14 @@ int main (int argc, char **argv){
         COLOR_RED, "gws: Calling child" );
       
 
-    // fail !!!
-    // Não está rodando o aplicativo que chamamos.     
-    gde_clone_and_execute ("iliinit.bin");        
-    //gde_clone_and_execute ("gdeshell.bin");        
-    //gde_clone_and_execute ("iliinit.bin");        
-    // ...
 
+    // #test
+    // Nesse test, s2 usará socket para se conectar
+    // AF_GRAMADO.
+    gde_clone_and_execute ("s2.bin");        
+    //gde_clone_and_execute ("iliinit.bin");        
+
+    // ...
 
     //
     // Refresh screen.
@@ -269,6 +270,33 @@ int main (int argc, char **argv){
     gramado_system_call ( 513, 
         __desktop, __ws_pid, __ws_pid);
 
+
+
+
+    //
+    //  Accepting one connection.
+    //
+    int client_fd = -1;
+    char __buffer[32];
+    while(1){
+
+        client_fd = gramado_system_call(7005,0,0,0);
+        if(client_fd>0)
+        {
+            //printf ("gws: accepted socket %d",client_fd);
+            dtextDrawText ( (struct window_d *) __mywindow,
+                60, 60, 
+                COLOR_RED, 
+                "gws: The server accepted a socket\n" );
+           
+            gde_show_backbuffer ();
+
+            sprintf(__buffer,"gws: Magic message!\n");
+            write(client_fd, __buffer, sizeof(__buffer));
+
+            break;
+        }
+    }
 
 
     //

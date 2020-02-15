@@ -52,8 +52,8 @@ int fs_get_free_fd ( int pid )
     int __slot;
 
 
-    if (pid<0 || pid >= 32)
-        return -1;
+    //if (pid<0 || pid >= max????)
+        //return -1;
 
     //
     // Process.

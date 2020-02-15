@@ -495,8 +495,7 @@ sys_connect ( int sockfd,
      // process
      tp = (struct process_d *) processList[target_pid];
  
-     if ( (void *) tp == NULL )
-     {
+     if ( (void *) tp == NULL ){
          printf ("sys_connect: tp fail\n");
          refresh_screen();
          return -1;
@@ -506,9 +505,8 @@ sys_connect ( int sockfd,
      int freefd = -1;
      freefd = fs_get_free_fd ( target_pid );
  
-     if(freefd<0)
-     {
-        printf ("sys_connect: freefd.\n");
+     if(freefd<0){
+        printf ("sys_connect: freefd fail\n");
         refresh_screen();
         return -1;
      }
@@ -523,7 +521,7 @@ sys_connect ( int sockfd,
      // no máximo 5.
      tp->accept[0] = freefd;
      
-     printf ("sys_connect: done.\n");
+     printf ("sys_connect: *done.\n");
      refresh_screen();
      return 1;
      
@@ -554,6 +552,26 @@ sys_connect ( int sockfd,
 }   
 
 
+// #test
+// vamos pegar um descritor que aponta para
+// um arquivo do tipo soquete que deseja se concetar 
+// em o processo
+int sys_accept_sender(int n)
+{
+    struct process_d *p;
+
+    if(n<0 || n>4)
+        return -1;
+
+    p = (struct process_d *) processList[current_process];
+    if( (void *)p == NULL)
+        return -1;
+
+    //todo: validation.
+
+    //todo: tem 5 possíveis conexões.
+    return (int) p->accept[n];
+}
 
 
 int sys_accept (int sockfd, struct sockaddr *addr, socklen_t *addrlen)
