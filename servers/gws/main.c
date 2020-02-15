@@ -257,6 +257,11 @@ int main (int argc, char **argv){
          //"Drawing some text inside a window!" );
 
 
+    //
+    // Register.
+    //
+
+
     __ws_pid = (int) getpid();
 
     // Set ws PID

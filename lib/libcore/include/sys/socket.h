@@ -282,7 +282,12 @@ int socket ( int domain, int type, int protocol );
 //POSIX.1-2001, POSIX.1-2008, 4.4BSD. 
 int socketpair (int domain, int type, int protocol, int sv[2]);
 
-
+int 
+connect ( int sockfd, 
+          const struct sockaddr *addr,
+          socklen_t addrlen );
+          
+          
 
 #endif //socket.h
 

@@ -808,6 +808,10 @@ struct process_d
 	// diálogo com o processo.
 	// importante no caso de servidores e drivers
 	unsigned long dialog_address;
+	
+	
+	// list of sockets to accept connection.
+	int accept[5];
 			
 	// Navigation:
 	// Prev and Next.

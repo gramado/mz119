@@ -4,6 +4,14 @@
 // #todo: isso deve ir para sys/socket
 
 
+
+// ports for local servers
+// What pid is on each port.
+// AF_GRAMADO
+int gramado_ports[32];
+
+
+
 int current_socket;
 
 /*

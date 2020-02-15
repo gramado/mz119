@@ -11,6 +11,8 @@
 #include <api.h>
 
 
+#include <sys/types.h>
+#include <sys/socket.h>
 
 
 //#bugbug: temos que usar o id.
@@ -34,6 +36,8 @@ int main (int argc, char **argv){
     // gde_message_box ( 3, "iliinit", "hola!" );            
     // while(1){}
     
+    
+ 
     //
     // Desktop
     //

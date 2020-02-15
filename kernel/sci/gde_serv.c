@@ -375,6 +375,8 @@ void *gde_extra_services ( unsigned long number,
 
 
 	// 513 - set ws PID for a given desktop
+	// Register a window server.
+	// gramado_ports[11] = ws_pid
     if ( number == SYS_SET_WS_PID )
     {
         __desktop = ( struct desktop_d *) arg2;
@@ -383,7 +385,14 @@ void *gde_extra_services ( unsigned long number,
             if ( __desktop->desktopUsed == 1 && 
                  __desktop->desktopMagic == 1234 )
             {
-                 __desktop->ws = (int) arg3;
+                __desktop->ws = (int) arg3;
+                
+                
+                // What is the process listen to the port 11.
+                gramado_ports[11] = (int) current_process;
+                
+                // returning ok.
+                // But, we could return the port number.
                 return (void *) 1;  //ok 
             }
         }

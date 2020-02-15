@@ -49,6 +49,7 @@ unistd.o \
 termios.o \
 ioctl.o \
 api.o \
+socket.o \
 stubs.o
 
 
@@ -77,6 +78,8 @@ all-c:
 	cp $(LIBCOBJ)/ioctl.o  .
 	cp $(APIOBJ)/api.o      .
 
+	cp $(LIBCOBJ)/socket.o  .
+	
 	
 cat-link:
 	ld -m elf_i386 -T link.ld -o ILIINIT.BIN $(myObjects) -Map map.s

@@ -391,16 +391,45 @@ sys_connect ( int sockfd,
 {
 
     struct process_d *p;
+    struct process_d *tp;  //target process.
+    
     struct file_d *f;
     struct socket_d *s;
 
 
+    //sockfd é um soquete de quem quer se conecta
+    //o addr indica o alvo.
 
     if ( sockfd < 0 || sockfd >= 32 ){
         printf ("sys_connect: sockfd fail\n");
         refresh_screen();
         return -1;
     }
+    
+    //target.
+   // Usando a estrutura que nos foi passada.
+    if ( (void *) addr == NULL )
+    {
+        printf ("sys_connect: addr fail\n");
+        refresh_screen();
+        return -1;
+    }
+
+    
+    
+    int target_pid = -1;
+     
+    if( addr->sa_family == 8000 ) //AF_GRAMADO )
+    {
+        // Temos o número do processo alvo.
+        if ( addr->sa_data[0] == 'w' && addr->sa_data[1] == 's' ) 
+        {   
+            target_pid = (int) gramado_ports[11]; 
+        }
+    }
+   
+    
+    
    
     //
     // 
@@ -439,17 +468,65 @@ sys_connect ( int sockfd,
         return -1;
     }
  
-    //
-    // socket ok.
-    //
-   
-    // Usando a estrutura que nos foi passada.
-    if ( (void *) addr == NULL )
-    {
-        printf ("sys_connect: addr fail\n");
+     //
+     // target process
+     //
+ 
+     if (target_pid<0)
+     {
+        printf ("sys_connect: target_pid.\n");
         refresh_screen();
         return -1;
-    }
+     }
+
+ 
+     // process
+     tp = (struct process_d *) processList[target_pid];
+ 
+     if ( (void *) tp == NULL )
+     {
+         printf ("sys_connect: tp fail\n");
+         refresh_screen();
+         return -1;
+     }
+
+     //share file
+     int freefd = -1;
+     freefd = fs_get_free_fd ( target_pid );
+ 
+     if(freefd<0)
+     {
+        printf ("sys_connect: freefd.\n");
+        refresh_screen();
+        return -1;
+     }
+
+         
+         
+     // Now the target has a file to read.
+     tp->Objects[freefd] = p->Objects[sockfd];
+ 
+ 
+     // O accept decide se quer esse arquivo.
+     // no máximo 5.
+     tp->accept[0] = freefd;
+     
+     printf ("sys_connect: done.\n");
+     refresh_screen();
+     return 1;
+     
+     //
+     // socket ok.
+     //
+   
+     /*
+     // Usando a estrutura que nos foi passada.
+     if ( (void *) addr == NULL )
+     {
+         printf ("sys_connect: addr fail\n");
+         refresh_screen();
+         return -1;
+     }
 
 
     
@@ -458,11 +535,10 @@ sys_connect ( int sockfd,
          current_process, addr->sa_family, addrlen  );
  
      
-    
- 
     printf ("sys_connect: #todo\n");
     refresh_screen();
-    return -1;
+    return -1; 
+    */   
 }   
 
 

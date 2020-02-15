@@ -244,6 +244,33 @@ int socketpair (int domain, int type, int protocol, int sv[2]){
 }
 
 
+// POSIX.1-2001, POSIX.1-2008, SVr4, 4.4BSD, 
+//(connect() first appeared in 4.2BSD).
+// initiate a connection on a socket
+           
+int 
+connect ( int sockfd, 
+          const struct sockaddr *addr,
+          socklen_t addrlen )
+{
+    int __status = -1;
+    
+    __status = (int) gramado_system_call ( 7001, 
+                     (unsigned long) sockfd, 
+                     (unsigned long) addr, 
+                     (unsigned long) addrlen );
+
+    if(__status<0)
+        printf ("connect: Couldn't connect\n");
+     
+     
+    //If the connection or binding succeeds, zero is returned.  On error,
+    //   -1 is returned, and errno is set appropriately.
+          
+    return (int) __status;
+}
+
+
 //
 // End.
 //
