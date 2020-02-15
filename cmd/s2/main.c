@@ -1,0 +1,79 @@
+
+
+// s2.c - socket test 2
+ 
+// tutorial example taken from. 
+// https://www.tutorialspoint.com/unix_sockets/socket_server_example.htm
+ 
+/*
+ 
+To make a process a TCP server, you need to follow the steps given below −
+
+    Create a socket with the socket() system call.
+
+    Bind the socket to an address using the bind() system call. 
+    * For a server socket on the Internet, an address consists of a 
+    * port number on the host machine.
+
+    Listen for connections with the listen() system call.
+
+    Accept a connection with the accept() system call. 
+    * This call typically blocks until a client connects with the server.
+
+    Send and receive data using the read() and write() system calls.
+ 
+
+
+
+*/ 
+ 
+ 
+#include <types.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <string.h>
+
+#include <netdb.h>
+#include <netinet/in.h>
+
+#include <arpa/inet.h>
+
+#include <sys/socket.h>
+
+
+
+
+
+int main ( int argc, char *argv[] )
+{
+    int client_fd;
+    
+    // cria o soquete.
+    // AF_GRAMADO
+    client_fd = socket ( 8000, SOCK_STREAM, 0 );
+    
+    if ( client_fd < 0 )
+    {
+       printf ("s2: Couldn't create socket\n");
+    }
+    
+    struct sockaddr addr;
+    addr.sa_family = 8000; //AF_GRAMADO
+    addr.sa_data[0] = 'w';
+    addr.sa_data[0] = 's';    
+    
+ 
+    if (connect (client_fd, (struct sockaddr *) &addr, sizeof(addr)) < 0) 
+    { 
+        printf("s2: Connection Failed \n"); 
+        return -1; 
+    }    
+    
+    //send(client_fd , hello , strlen(hello) , 0 ); 
+    
+    return 0;
+
+}
+

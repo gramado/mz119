@@ -1,7 +1,6 @@
 /*
  * File: console.c 
  *
- * 
  *     Writing on the console device.
  */
 
@@ -18,7 +17,6 @@
 // See:
 // https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences
 //
-
 
 
 
@@ -138,7 +136,7 @@ void __local_insert_char ( int console_number )
     console_putchar (0x20, console_number);
 }
 
-void __local_insert_line(int console_number)
+void __local_insert_line (int console_number)
 {
 
 	int oldtop,oldbottom;
@@ -196,7 +194,6 @@ void __local_delete_line(int console_number)
 
 	TTY[console_number].cursor_top    = oldtop;
 	TTY[console_number].cursor_bottom = oldbottom;
-
 }
 
 
@@ -303,7 +300,6 @@ void csi_M ( int nr, int console_number )
 		nr=1;
 	while (nr--)
 		__local_delete_line(console_number);
-   
 }
 
 
@@ -316,7 +312,6 @@ void csi_L (int nr, int console_number)
 		nr=1;
 	while (nr--)
 		__local_insert_line(console_number);
-
 }
 
 
@@ -329,7 +324,6 @@ void csi_P (int nr, int console_number)
 		nr=1;
 	while (nr--)
 		__local_delete_char(console_number);
-
 }
 
 
@@ -342,7 +336,6 @@ void csi_at (int nr, int console_number)
 		nr=1;
 	while (nr--)
 		__local_insert_char(console_number);
-
 }
 
 
@@ -353,13 +346,10 @@ void csi_at (int nr, int console_number)
  ***************************************
  * _console_outbyte:
  * 
- * 
  *    Outputs a char on the console device;
- * 
  */
  
 
-// see stdio.h 
 void _console_outbyte (int c, int console_number){
 	
     unsigned long i;
@@ -380,23 +370,19 @@ void _console_outbyte (int c, int console_number){
 	int cWidth = get_char_width ();
 	int cHeight = get_char_height ();
 	
-	if ( cWidth == 0 || cHeight == 0 )
-	{
-		//#debug
-		debug_print ("_outbyte: char w h");
-		printf ("_outbyte: fail w h ");
-		die ();
+
+	if ( cWidth == 0 || cHeight == 0 ){
+		debug_print ("_console_outbyte: char w h");
+		panic ("_console_outbyte: fail w h ");
 	}
 	
 	// #bugbug
 	// Caso estejamos em modo texto.
 	// Isso ainda não é suportado.
 	
-	if ( VideoBlock.useGui == 0 )
-	{
-		debug_print ("_outbyte: kernel in text mode");
-	    kprintf ("_outbyte: kernel in text mode");
-		die ();
+	if ( VideoBlock.useGui == 0 ){
+		debug_print ("_console_outbyte: kernel in text mode");
+	    panic ("_console_outbyte: kernel in text mode");
 	}
 	
 	
@@ -406,16 +392,14 @@ void _console_outbyte (int c, int console_number){
 
 
     // Caso estivermos em modo gráfico.
+    // #importante: 
+    // Essa rotina de pintura deveria ser exclusiva para dentro do terminal.
+    // Então essa flag não faz sentido.		
 	 
-	if ( VideoBlock.useGui == 1 )
-	{
-
-        //#importante: Essa rotina de pintura deveria ser exclusiva para 
-        //dentro do terminal.
-        //então essa flag não faz sentido.		
- 
-		if ( stdio_terminalmode_flag == 1 )
-		{
+    if ( VideoBlock.useGui == 1 )
+    {
+        if ( stdio_terminalmode_flag == 1 )
+        {
 			
 			// ## NÃO TRANPARENTE ##
             // se estamos no modo terminal então usaremos as cores 
@@ -441,11 +425,7 @@ void _console_outbyte (int c, int console_number){
 				c );
 		};
 		
-		//#testando ...
-		//g_cursor_x++;
-     	
-		//goto done;
-        //return;
+		// Nothing.
 	};
 }
 
@@ -459,9 +439,6 @@ void _console_outbyte (int c, int console_number){
  * Essa rotina é chamada pelas funções: /putchar/scroll/.
  * @todo: Colocar no buffer de arquivo.
  */
-
- 
- 
 
 void console_outbyte (int c, int console_number){
 
@@ -592,13 +569,13 @@ void console_outbyte (int c, int console_number){
     //};
  
 
-    //Apenas voltar ao início da linha.
-    if( c == '\r' )
+    // Apenas voltar ao início da linha.
+    if ( c == '\r' )
     {
         TTY[console_number].cursor_x = TTY[console_number].cursor_left;  
         prev = c;
         return;    
-    }; 
+    }
 
 
     //#@todo#bugbug 
@@ -620,7 +597,7 @@ void console_outbyte (int c, int console_number){
         TTY[console_number].cursor_x--; 
         prev = c;
         return;
-    };
+    }
 
 
 	//
@@ -665,7 +642,7 @@ void console_outbyte (int c, int console_number){
         console_scroll (console_number);
 
         TTY[console_number].cursor_y = TTY[console_number].cursor_bottom;
-    };
+    }
 
 	//
 	// Imprime os caracteres normais.
@@ -682,16 +659,23 @@ void console_outbyte (int c, int console_number){
 
 
 
-// #importante
-// Colocamos um caractere na tela de um terminal virtual.
+/*
+ *************************************** 
+ * console_putchar:
+ *     Put a char into the screen of a virtual console.
+ */
 
-// #bugbug: Como essa rotina escreve na memória de vídeo,
+// #importante
+// Colocamos um caractere na tela de um console virtual.
+
+// #bugbug: 
+// Como essa rotina escreve na memória de vídeo,
 // então precisamos, antes de uma string efetuar a
 // sincronização do retraço vertical e não a cada char.
 
 void console_putchar ( int c, int console_number ){
 	
-	// Pegamos as dimensões do caractere.
+    // Getting char info.
 	
 	int cWidth = get_char_width ();
 	int cHeight = get_char_height ();
@@ -705,9 +689,7 @@ void console_putchar ( int c, int console_number ){
 	stdio_terminalmode_flag = 1;  
 
 
-    //
     //  Console limits
-    //
 
     if ( console_number < 0 || console_number >= 4 ){
         panic ("console_putchar: console_number");        
@@ -715,7 +697,8 @@ void console_putchar ( int c, int console_number ){
 
     // Desenhar o char no backbuffer
 	
-	// #todo: Escolher um nome de função que reflita
+	// #todo: 
+	// Escolher um nome de função que reflita
 	// essa condição de desenharmos o char no backbuffer.
 	
     console_outbyte  ( (int) c, console_number );
@@ -733,34 +716,43 @@ void console_putchar ( int c, int console_number ){
 	stdio_terminalmode_flag = 0;  
 }
 
-// Não tem escape sequence
-// Funciona na máquina real
+
+
+// No escape sequence support.
 ssize_t __console_write (int console_number, const void *buf, size_t count)
 {
-   if ( console_number < 0 || console_number > 3 )
+    char ch; 
+    size_t __i;
+    char *data = (char *) buf;
+
+
+    if ( console_number < 0 || console_number > 3 )
        return -1;
+
+ 
+    //#testing.
+    if ( (void *) buf == NULL ){
+        printf ("__console_write: buf\n");
+        refresh_screen();
+        return -1;
+    }
+
 
     if (!count)
         return -1;
 
-    char *data = (char *) buf;
-       
-    char ch; 
        
     //
     // Write string
     //   
        
     // original - backup
-    size_t __i;
+
     for (__i=0; __i<count; __i++)
         console_putchar ( (int) data[__i], console_number);
     
     return count;
-
 }
-
-
 
 
 
@@ -776,61 +768,40 @@ ssize_t console_read (int console_number, const void *buf, size_t count)
 ssize_t console_write (int console_number, const void *buf, size_t count)
 {
 
-   if ( console_number < 0 || console_number > 3 )
-   {
-       printf ("console_write: console_number\n");
-       refresh_screen();
-       return -1;
-   }
-
-
-    if (!count)
-   {
-       printf ("console_write: count\n");
-       refresh_screen();
-       return -1;
-   }
-
-
-    if ( (void *) buf == NULL )
-   {
-       printf ("console_write: buf\n");
-       refresh_screen();
-       return -1;
-   }
-    
-
-    //#DEBUG    
-    //printf ("console_write: >>> \n");
-       
-       
-    char *data = (char *) buf;
-       
     char ch; 
-    
-    
-    // #debug
-    //console_putchar ( '@',console_number);
-    //console_putchar ( ' ',console_number);
-    //console_putchar ( '\n',console_number);
-    //...       
-           
-           
+    int i;  
+    char *data = (char *) buf;
+
+
+    if ( console_number < 0 || console_number > 3 )
+    {
+        printf ("console_write: console_number\n");
+        refresh_screen();
+        return -1;
+    }
+
+    if ( (void *) buf == NULL ){
+        printf ("console_write: buf\n");
+        refresh_screen();
+        return -1;
+    }
+
+    if (!count){
+        printf ("console_write: count\n");
+        refresh_screen();
+        return -1;
+    }
+
+
     //
     // Write string
     //   
-       
-    
-    // #debug
-    // Ok, libc do atacama usa essa rotina. 
-    // console_putchar ( '@', console_number);
- 
+
+
     // Inicializando.
     // Dão dá mais pra confiar !
     __state = 0; 
  
- 
-    int i;  
     for (i=0; i<count; i++){
 
         ch = data[i];

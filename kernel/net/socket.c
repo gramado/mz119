@@ -156,12 +156,12 @@ file *file_from_socket (struct socket_d *sock)
 
     
 int sys_socket ( int family, int type, int protocol ){
-	
+
 	//#todo:
 	//vai retornar o descritor de uma stream.
 
     //#debug
-    printf ("syslib-libcore-socket:\n");
+    printf ("sys_socket:\n");
     refresh_screen();
 
 
@@ -419,61 +419,73 @@ sys_connect ( int sockfd,
     
     int target_pid = -1;
      
-    if( addr->sa_family == 8000 ) //AF_GRAMADO )
+    
+    switch (addr->sa_family)
     {
-        // Temos o número do processo alvo.
-        if ( addr->sa_data[0] == 'w' && addr->sa_data[1] == 's' ) 
-        {   
-            target_pid = (int) gramado_ports[11]; 
-        }
+        //AF_GRAMADO
+        case 8000:
+            // Temos o número do processo alvo.
+            if ( addr->sa_data[0] == 'w' && addr->sa_data[1] == 's' )
+            {   
+                target_pid = (int) gramado_ports[11]; 
+                
+            }else{
+                printf ("sa_data[] fail \n"); 
+            };
+            printf ("target pid %d \n", target_pid);
+            break;
+
+        //... 
+        
+        default:
+            printf ("Family not supported! %d \n",addr->sa_family);
+            refresh_screen();
+            return -1;
+            break;
     }
-   
     
-    
-   
+
     //
-    // 
+    // Sender process.
     //
     
     
-    // process
+    // sender's process
     p = (struct process_d *) processList[current_process];
  
-    if ( (void *) p == NULL )
-    {
+    if ( (void *) p == NULL ){
         printf ("sys_connect: p fail\n");
         refresh_screen();
         return -1;
     }
  
  
-    //file
+    // sender's file
     f = (file *) p->Objects[sockfd];
 
-    if ( (void *) f == NULL )
-    {
+    if ( (void *) f == NULL ){
         printf ("sys_connect: f fail\n");
         refresh_screen();
         return -1;
     }
     
  
-    //socket
+    // socket structure in the senders file.
     s = (struct socket_d *) f->priv;
 
-    if ( (void *) s == NULL )
-    {
+    if ( (void *) s == NULL ){
         printf ("sys_connect: s fail\n");
         refresh_screen();
         return -1;
     }
  
+ 
      //
      // target process
      //
  
-     if (target_pid<0)
-     {
+     // target pid.
+     if (target_pid<0){
         printf ("sys_connect: target_pid.\n");
         refresh_screen();
         return -1;
