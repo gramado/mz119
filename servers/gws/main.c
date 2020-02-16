@@ -272,10 +272,16 @@ int main (int argc, char **argv){
 
 
 
+    // Isso registra uma gramado port.
+    // a porta do ws.
+    // mas isso ja foi feito na rotina que registra o ws.
+    //gramado_system_call (7006, 11, getpid(), 0 );
+
 
     //
     //  Accepting one connection.
     //
+    
     int client_fd = -1;
     char __buffer[32];
     while(1){

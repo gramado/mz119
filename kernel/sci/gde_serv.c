@@ -377,6 +377,7 @@ void *gde_extra_services ( unsigned long number,
 	// 513 - set ws PID for a given desktop
 	// Register a window server.
 	// gramado_ports[11] = ws_pid
+
     if ( number == SYS_SET_WS_PID )
     {
         __desktop = ( struct desktop_d *) arg2;
@@ -389,7 +390,7 @@ void *gde_extra_services ( unsigned long number,
                 
                 
                 // What is the process listen to the port 11.
-                gramado_ports[11] = (int) current_process;
+                gramado_ports[GRAMADO_WS_PORT] = (int) current_process;
                 
                 // returning ok.
                 // But, we could return the port number.
@@ -397,9 +398,7 @@ void *gde_extra_services ( unsigned long number,
             }
         }
         return NULL; //fail
-    }
-    
-    
+    }    
     
 	// 514 - get wm PID for a given desktop
 	// IN: desktop
@@ -1129,10 +1128,16 @@ void *gde_extra_services ( unsigned long number,
         return (void *) sys_accept_sender ( (int) arg2 );  
     }
     
+    
+    // Salvar um pid em uma das portas.
+    // IN: gramado port, PID
+    if (number == 7006){
+        return (void *) socket_set_gramado_port( (int) arg2, (int) arg3 );
+    }
+
     //...
     
-    
-    
+        
 
     // ioctl ()
     // IN: fd, request, arg

@@ -3019,21 +3019,11 @@ do_compare:
 
     // root
     // Show root file system info.
-    if ( gramado_strncmp( prompt, "root", 4 ) == 0 )
-    {
+    if ( gramado_strncmp( prompt, "root", 4 ) == 0 ){
         gramado_system_call (4444, 0, 0, 0);
         goto exit_cmp;
     }
 
-
-
-    // save
-    // suspensa
-    if ( gramado_strncmp( prompt, "save", 4 ) == 0 )
-    {
-        printf("~save root\n");
-        goto exit_cmp;
-    }
 
 
     // sethostname
@@ -3066,6 +3056,17 @@ do_compare:
 		//sprintf ( __username, (const char*) tokenList[i] ); 
 	    //setusername ( __username, (size_t) 64);
 
+        goto exit_cmp;
+    }
+
+    // shell
+    if ( gramado_strncmp( prompt, "shell", 5 ) == 0 )
+    {
+        printf ("~shell: Register shell on a gramado port.\n");
+        
+        // Registrando uma gramado port.
+        // IN: shell port, pid
+        gramado_system_call (7006, 8, getpid(), 0 );
         goto exit_cmp;
     }
 

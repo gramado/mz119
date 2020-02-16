@@ -5,6 +5,13 @@
 
 
 
+// ...
+#define GRAMADO_SH_PORT 8
+#define GRAMADO_WS_PORT 11
+#define GRAMADO_WM_PORT 12
+// ...
+
+
 // ports for local servers
 // What pid is on each port.
 // AF_GRAMADO
@@ -541,6 +548,7 @@ int sys_accept_sender(int n);
 
 
 
+int socket_set_gramado_port(int port, int pid);
 
 
 

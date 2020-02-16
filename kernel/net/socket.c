@@ -422,16 +422,27 @@ sys_connect ( int sockfd,
     
     switch (addr->sa_family)
     {
-        //AF_GRAMADO
+        // AF_GRAMADO
+        // Vamos obter o número do processo alvo.
         case 8000:
-            // Temos o número do processo alvo.
-            if ( addr->sa_data[0] == 'w' && addr->sa_data[1] == 's' )
-            {   
-                target_pid = (int) gramado_ports[11]; 
-                
-            }else{
-                printf ("sa_data[] fail \n"); 
-            };
+
+            // shell
+            if ( addr->sa_data[0] == 's' && addr->sa_data[1] == 'h' ){   
+                target_pid = (int) gramado_ports[GRAMADO_SH_PORT]; 
+            }
+            
+            // window server
+            if ( addr->sa_data[0] == 'w' && addr->sa_data[1] == 's' ){   
+                target_pid = (int) gramado_ports[GRAMADO_WS_PORT]; 
+            }
+
+            // window manager
+            if ( addr->sa_data[0] == 'w' && addr->sa_data[1] == 'm' ){   
+                target_pid = (int) gramado_ports[GRAMADO_WM_PORT]; 
+            }
+            
+            // ...
+
             printf ("target pid %d \n", target_pid);
             break;
 
@@ -1047,6 +1058,23 @@ int socket_write (unsigned int fd,char *buf,int count)
     //See: unistd.c
     // Escreve em uma stream uma certa quantidade de chars.
     return (int) unistd_file_write ( (file *) __file, (char *) buf, (int) count );
+}
+
+
+
+int socket_set_gramado_port(int port, int pid)
+{
+ 
+    if( port<0 || port >31)
+        return -1;
+          
+    //todo: max
+    if(pid<0)
+        return -1;       
+    
+    gramado_ports[port] = (int) pid;
+    
+    return 0;
 }
 
 
