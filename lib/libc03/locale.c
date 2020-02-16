@@ -4,10 +4,12 @@
 
 
 
+//#todo
 char *setlocale (int category, const char *locale)
 {
-    
-    return NULL;
+    return "en_US";
 }
+
+
 
 

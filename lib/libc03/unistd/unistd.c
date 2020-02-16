@@ -111,37 +111,19 @@ void *unistd_system_call ( unsigned long ax,
  * execv:
  * 
  */
- 
-// #todo: Trabalhar o environment.
-// #isso é um teste
+
+// #todo
+// Testar essa rotina usando a variável **environ. 
 
 char *__execv_environ[] = { NULL, NULL, NULL };
 
 int execv (const char *path, char *const argv[] )
 {
     return execve ( path, (char **) argv, __execv_environ );
+    //return execve ( path, (char **) argv, environ ); //#todo: use this one.
 }
 
 
-//#tod: usar a variavel environ padrão. 
-/*
-int execv(const char* path, char* const argv[])
-{
-    return execve(path, argv, environ);
-}
-*/ 
- 
- 
- 
-//Credits: serenity os
-/*
-int execvp(const char* filename, char* const argv[])
-{
-    int rc = execvpe(filename, argv, environ);
-    dbg() << "execvp() about to return " << rc << " with errno=" << errno;
-    return rc;
-} 
-*/ 
  
 
 // unistd ?
@@ -1263,16 +1245,17 @@ void *sbrk(intptr_t increment)
 
 
 
-
-
-int execvp(const char *file, char *const argv[])
+int execvp (const char *file, char *const argv[])
 {
 	return -1;
+    //return = execvpe ( file, argv, environ );
 }
 
 
-int execvpe(const char *file, char *const argv[],
-char *const envp[])
+int 
+execvpe ( const char *file, 
+          char *const argv[],
+          char *const envp[] )
 {
 	return -1;
 }

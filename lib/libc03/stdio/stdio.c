@@ -404,40 +404,43 @@ int fclose (FILE *stream){
 
 
 
-
 FILE *fopen ( const char *filename, const char *mode )
 {
 
-    FILE *__stream;   
     int fd;       /* File descriptor.  */
     int flags;    /* Stream flags.     */
     int oflags;   /* Flags for open(). */
 
-
-
-    __stream = (FILE *) malloc( sizeof(FILE) );
-    
-    if ( (void *) __stream == NULL )
-        return NULL;
-
-
+    FILE *__stream;   
+ 
 
     //Failed to open file. 
     //fd = open (filename, oflags, MAY_READ | MAY_WRITE) )
     fd = open (filename, 0, 0);  //no flags for now!
     
-    if (fd < 0)
-    {
+    if (fd < 0){
         printf (" fopen: open() fail\n");
-        //free(__stream);
-        
         return NULL;
     }
 
+    //
+	// Stream
+	//
+	
+	__stream = (FILE *) malloc( sizeof(FILE) );
+    
+    if ( (void *) __stream == NULL )
+        return NULL;
 
 	
+	__stream->used = 1;
+	__stream->magic = 1234;
+
 	__stream->_file = fd;
 	__stream->_flags = flags;
+
+	__stream->_tmpfname = (char *) strdup(filename);
+
 	
 	// #importante:
 	// Dessa forma fopen não permite que os aplicativos
@@ -447,7 +450,9 @@ FILE *fopen ( const char *filename, const char *mode )
 
 	__stream->_base = NULL;    // ??
 	__stream->_cnt = 0;         // ??
-
+    
+	__stream->_r = 0;
+	__stream->_w = 0;
 
     return (__stream);
 }
@@ -5110,21 +5115,12 @@ int fgetpos (FILE *stream, fpos_t *pos )
 }
 
 
-/*
-int fsetpos(FILE* stream, const fpos_t* pos)
-{
-    assert(stream);
-    assert(pos);
-    return fseek(stream, (long) *pos, SEEK_SET);
-}
-*/
-
-int fsetpos(FILE *stream, const fpos_t *pos)       
+int fsetpos (FILE *stream, const fpos_t *pos)       
 { 
     if ( (void *) stream == NULL )
        return EOF;
 
-	return -1; 
+    return fseek(stream, (long) *pos, SEEK_SET);
 }
 
 
