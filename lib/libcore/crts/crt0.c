@@ -30,9 +30,9 @@ static char *argv[] = {
 // que estão aqui.
 
 static char *my_environ[] = { 
-    "PS0=@TEST0",           
-    "PS1=@TEST1",    
-    "PS2=@TEST2",  
+    "PS0=$",           
+    "PS1=>",    
+    "WS=KGWS",   // Window server in the kernel.  
 	NULL 
 };
 

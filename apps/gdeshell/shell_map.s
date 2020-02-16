@@ -703,10 +703,10 @@ Linker script and memory map
  .iplt          0x0000000000410000        0x0 crt0.o
 
 .rodata         0x0000000000410000     0x45ae
- .rodata        0x0000000000410000       0x43 crt0.o
- *fill*         0x0000000000410043       0x1d 
- .rodata        0x0000000000410060     0x1ef8 main.o
- *fill*         0x0000000000411f58        0x8 
+ .rodata        0x0000000000410000       0x36 crt0.o
+ *fill*         0x0000000000410036        0xa 
+ .rodata        0x0000000000410040     0x1f08 main.o
+ *fill*         0x0000000000411f48       0x18 
  .rodata        0x0000000000411f60      0x536 net.o
  *fill*         0x0000000000412496        0xa 
  .rodata        0x00000000004124a0      0x6cf shellui.o
