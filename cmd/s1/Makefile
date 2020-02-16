@@ -1,12 +1,7 @@
-#
 
-#history:
-#2019 - Created by Fred Nora.
 
-#todo:
-#fazer um makefile pra compilar o shell
-#obs: #bugbug tem que arrumas as coisas aqui.
 
+#PROGRAM = S1
 
 
 VERSION = 0
