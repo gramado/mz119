@@ -2413,8 +2413,7 @@ do_compare:
 
 
 	// exit - Exit the application.
-    if ( gramado_strncmp( prompt, "exit", 4 ) == 0 )
-	{
+    if ( gramado_strncmp( prompt, "exit", 4 ) == 0 ){
 		exit_builtins();
 		ShellFlag = SHELLFLAG_EXIT;
 		goto exit_cmp;
@@ -2428,18 +2427,16 @@ do_compare:
 	
     if ( gramado_strncmp ( prompt, "fork", 4 ) == 0 )
     {
-        printf ("gdeshell: Tentando clonar o processo atual ...\n");
+        printf ("gdeshell: Trying to fork the current process ...\n");
 
 		int pidFORK = (int) fork ();
 
 		// Erro.
-		if ( pidFORK < 0 )
-		{
+		if ( pidFORK < 0 ){
 		    printf ("gdeshell: fork() falhou\n");
 			printf ("getpid=%d ", getpid());
 			printf ("pidFORK=%d \n", pidFORK);
             while(1){}
-            //exit (1);
 		}
 		
 		// Pai.
@@ -2461,12 +2458,10 @@ do_compare:
 		    printf ("gdeshell: estamos no >>>> FILHO\n");
 			printf ("getpid=%d ", getpid());
 			printf ("pidFORK=%d \n", pidFORK);
-			
-			execve ("launcher.bin", NULL, NULL );
-			
 			printf ("gdeshell: *hang Parando no filho.\n");
 			while(1){}
 			
+			//execve ("launcher.bin", NULL, NULL );
 			//execve ("jackpot.bin", NULL, NULL );
 			//execve ("gramcode.bin", NULL, NULL );
 			//execve ("jackpot.bin", NULL, NULL );

@@ -1,22 +1,22 @@
 /*
  * File: ps/action/process.c 
  *
- * Descrição:
+ * Descriï¿½ï¿½o:
  *     Gerenciamento de processos.
  *     PM - Process Manager (Parte fundamental do Kernel Base).
  *     Interfaces para o kernel chamar as rotinas de gerenciamento de
  * processos. 
- *     As rotinas aqui são independentes da arquitetura, quem se preocupa
- * com a arquitetura são as rotinas de inicialização comecadas por Ki.
- *     'Ki' para módulos internos do kernel.
+ *     As rotinas aqui sï¿½o independentes da arquitetura, quem se preocupa
+ * com a arquitetura sï¿½o as rotinas de inicializaï¿½ï¿½o comecadas por Ki.
+ *     'Ki' para mï¿½dulos internos do kernel.
  *
- * Atribuições:
- *     Rotinas de gerenciamento das processos, criação, inicialização,
- * finalização, task switch e outros.
+ * Atribuiï¿½ï¿½es:
+ *     Rotinas de gerenciamento das processos, criaï¿½ï¿½o, inicializaï¿½ï¿½o,
+ * finalizaï¿½ï¿½o, task switch e outros.
  *
  *    Tipos de Processos:
  *
- *    PB - Processos incluídos no Kernel Base.
+ *    PB - Processos incluï¿½dos no Kernel Base.
  *    P0 - Processos em ring0.
  *    P1 - Processos em ring1.
  *    P2 - Processos em ring2.
@@ -24,8 +24,8 @@
  *
  * @todo: 
  * Essas interfaces devem ser padronizadas, obedecendo roteiros de abertura, 
- * fechamento, salvamento e restauração de pilha ou argumento.
- * +Criar a função get_current_pid. (obs: Isso já existe)
+ * fechamento, salvamento e restauraï¿½ï¿½o de pilha ou argumento.
+ * +Criar a funï¿½ï¿½o get_current_pid. (obs: Isso jï¿½ existe)
  *
  * In this file:
  * ============
@@ -41,7 +41,7 @@
  
  
 /*
-    Fluxo padrão:
+    Fluxo padrï¿½o:
 	
 	The Standard Streams.
 	
@@ -59,9 +59,9 @@
     Standard error - your process writes error information here.
 	
     Quando um programa inicia, 
-	o sistema operacional automaticamente define quem é 
-	a entrada padrão (geralmente o teclado) e quem é 
-	a saída padrão (geralmente a tela).
+	o sistema operacional automaticamente define quem ï¿½ 
+	a entrada padrï¿½o (geralmente o teclado) e quem ï¿½ 
+	a saï¿½da padrï¿½o (geralmente a tela).
 */ 
  
  
@@ -70,14 +70,14 @@
 
 
 //
-// Funções importadas.
+// Funï¿½ï¿½es importadas.
 //
 
 extern unsigned long get_page_dir (void);
 
 
 //
-// Variáveis internas.
+// Variï¿½veis internas.
 //
 
 //int processmanagerStatus;
@@ -340,13 +340,13 @@ unsigned long __GetProcessStats ( int pid, int index )
             break;
            
         // Image size.
-        // Isso é importante.
+        // Isso ï¿½ importante.
         case 51:
             return (unsigned long) p->ImageSize;
             break;
            
         // #todo:
-        // Precisamos da quantidade de páginas usadas.
+        // Precisamos da quantidade de pï¿½ginas usadas.
     
         // ...
     };
@@ -392,22 +392,22 @@ int getprocessname ( int pid, char *buffer )
  ****************************************************
  * do_clone_execute_process:  
  * 
- *     serviço 900.
+ *     serviï¿½o 900.
  *     Clona o processo atual e executa o processo filho.
  *     O processo pai continua rodando.
- *     Isso é usado pelo processo noraterm.
+ *     Isso ï¿½ usado pelo processo noraterm.
  *     #obs: Isso funciona.
  */
 
-// Se o processo filho herdar o floxo padrão, então o processo filho
+// Se o processo filho herdar o floxo padrï¿½o, entï¿½o o processo filho
 // pode escrever no seu stdout e o processo pai pode ler no seu
-// próprio stdout.
+// prï¿½prio stdout.
 
 
 // #importante
 // >>>> Isso funciona. 
-// ( * Não * ) mexa pois ainda estamos
-// trabalahndo os outros métodos.
+// ( * Nï¿½o * ) mexa pois ainda estamos
+// trabalahndo os outros mï¿½todos.
 
 // IN: ??
 // OUT: ??
@@ -424,7 +424,7 @@ pid_t do_clone_execute_process (char *filename){
     unsigned long *dir;
     unsigned long old_dir_entry1;
     
-    // retorno da função de carregamento.
+    // retorno da funï¿½ï¿½o de carregamento.
     //int __load_ret = -1;
     int Status = -1;
 
@@ -486,7 +486,7 @@ pid_t do_clone_execute_process (char *filename){
         old_dir_entry1 = dir[1]; //salvando
 
 
-		//salvando o endereço físico da imagem que existe no processo.
+		//salvando o endereï¿½o fï¿½sico da imagem que existe no processo.
 		//old_image_pa = (unsigned long) virtual_to_physical ( Current->Image, gKernelPageDirectoryAddress ); 
 
 	    //#debug
@@ -502,7 +502,7 @@ pid_t do_clone_execute_process (char *filename){
 	
 do_clone:
 	
-	//Cria uma estrutura do tipo processo, mas não inicializada.
+	//Cria uma estrutura do tipo processo, mas nï¿½o inicializada.
 
     Clone = (struct process_d *) processObject ();
 
@@ -512,7 +512,7 @@ do_clone:
 
     } else {
 		
-		// Obtêm um índice para um slot vazio na lista de processos.
+		// Obtï¿½m um ï¿½ndice para um slot vazio na lista de processos.
 		
         PID = (int) getNewPID ();
 
@@ -529,8 +529,8 @@ do_clone:
 		Clone->magic = 1234;
 		
 		//#obs: Na hora de copiar o processo, a estrutura do clone 
-		//receberá os valores da estrutura do processo atual,
-		//até mesmo o endereço do diretório de páginas.
+		//receberï¿½ os valores da estrutura do processo atual,
+		//atï¿½ mesmo o endereï¿½o do diretï¿½rio de pï¿½ginas.
 		
 		//...
 		
@@ -545,7 +545,7 @@ do_clone:
 		// Clone.
 		//
 		
-		// Copia a memória usada pela imagem do processo.
+		// Copia a memï¿½ria usada pela imagem do processo.
 
         processCopyMemory ( Current );
 
@@ -571,7 +571,7 @@ do_clone:
 		//
 
  
-		// Isso cria um diretório de páginas para o processo clone;
+		// Isso cria um diretï¿½rio de pï¿½ginas para o processo clone;
 		
         Ret = processCopyProcess ( Current->pid, Clone->pid );
 
@@ -592,15 +592,15 @@ do_clone:
         // #importante: 
         // Carregando a imagem do porcesso filho.
         // Se o carregamento falhar, temos que abortar a clonagem
-        // caso contrário executa a cópia da imagem do pai.
+        // caso contrï¿½rio executa a cï¿½pia da imagem do pai.
 
         // #bugbug
-        // Essa rotina começou a falhar aqui.
+        // Essa rotina comeï¿½ou a falhar aqui.
         // Convertendo num formato errado.
         
         // #test
-        // Movemos essa conversão para o início dessa função,
-        // onde checaremos se o arquivo está no diretório.
+        // Movemos essa conversï¿½o para o inï¿½cio dessa funï¿½ï¿½o,
+        // onde checaremos se o arquivo estï¿½ no diretï¿½rio.
         
         // read_fntos ( (char *) filename );
 
@@ -617,7 +617,7 @@ do_clone:
        {
 
             // #bugbug
-            // Isso não está funcionando direito.
+            // Isso nï¿½o estï¿½ funcionando direito.
             // E uma thread defeituosa fica remanescente quando
             // digitamos um comando errado.
             
@@ -641,7 +641,7 @@ do_clone:
 
        // Check ELF signature.
        // OK. O comando existe e o arquivo foi carregado, mas 
-       // precisamos saber se a assinatura de ELF é válida.
+       // precisamos saber se a assinatura de ELF ï¿½ vï¿½lida.
        Status = (int) fsCheckELFFile ( (unsigned long) Clone->Image );
        
        if ( Status != 0 )
@@ -666,12 +666,12 @@ do_clone:
         //
         
         // #obs:
-        // Lembrando que ja criamos o diretório de páginas.
+        // Lembrando que ja criamos o diretï¿½rio de pï¿½ginas.
 
         // #importante
-        // Remapeando a imagem, mas agora no diretório de páginas
+        // Remapeando a imagem, mas agora no diretï¿½rio de pï¿½ginas
         // do processo filho.
-        // >> Esse número de entrada é para o endereço virtual padrão
+        // >> Esse nï¿½mero de entrada ï¿½ para o endereï¿½o virtual padrï¿½o
         // para aplicativos em ring3. = 0x400000
      
         CreatePageTable ( (unsigned long) Clone->DirectoryVA, 
@@ -708,10 +708,10 @@ do_clone:
 
 		//====
 		// #bugbug : 
-		// Essa pilha está dentro da imagem. ...
-		// Como o gramado core não existe mais. Vamos
-		// aproveitar para colocar a pilha num lugar mais confotável
-		// dentro dos 4MB da área de aplicativo.
+		// Essa pilha estï¿½ dentro da imagem. ...
+		// Como o gramado core nï¿½o existe mais. Vamos
+		// aproveitar para colocar a pilha num lugar mais confotï¿½vel
+		// dentro dos 4MB da ï¿½rea de aplicativo.
 		// veja o exemplo da thread do processo init.
 		// e se o aplicativo tiver mais que 63KB.???
 		//Clone->control->esp = 0x400000 + (1024 * 63);
@@ -768,9 +768,9 @@ do_clone:
 		SelectForExecution (Clone->control);
 
 
-        // Se o processo filho herdar o floxo padrão, então o 
+        // Se o processo filho herdar o floxo padrï¿½o, entï¿½o o 
         // processo filho pode escrever no seu stdout e o processo 
-        // pai pode ler no seu próprio stdout.
+        // pai pode ler no seu prï¿½prio stdout.
 
 
 		//#test
@@ -809,10 +809,10 @@ fail:
 /*
  ***************************************
  * do_fork_process2 (t901)
- *     (Função em desenvolvimento)
- *     Isso está clonando o processo atual e executando o processo filho.
+ *     (Funï¿½ï¿½o em desenvolvimento)
+ *     Isso estï¿½ clonando o processo atual e executando o processo filho.
  *     O Processo pai continua rodando.
- *     #todo: A intenção é modificar essa rotina para ela ser um fork();
+ *     #todo: A intenï¿½ï¿½o ï¿½ modificar essa rotina para ela ser um fork();
  */
 
 // t901
@@ -862,7 +862,7 @@ pid_t do_fork_process2 (void){
         dir = (unsigned long *) Current->DirectoryVA;	
 		old_dir_entry1 = dir[1]; //salvando
 		
-		//salvando o endereço físico da imagem que existe no processo.
+		//salvando o endereï¿½o fï¿½sico da imagem que existe no processo.
 		//old_image_pa = (unsigned long) virtual_to_physical ( Current->Image, gKernelPageDirectoryAddress ); 		
 		
 	    //#debug
@@ -878,7 +878,7 @@ pid_t do_fork_process2 (void){
 	
 do_clone:
 	
-	//Cria uma estrutura do tipo processo, mas não inicializada.
+	//Cria uma estrutura do tipo processo, mas nï¿½o inicializada.
 	
 	Clone = (struct process_d *) processObject ();
 	
@@ -891,7 +891,7 @@ do_clone:
 	} else {
 		
 		
-		// Obtêm um índice para um slot vazio na lista de processos.
+		// Obtï¿½m um ï¿½ndice para um slot vazio na lista de processos.
 		
 	    PID = (int) getNewPID ();
 		
@@ -909,8 +909,8 @@ do_clone:
 		Clone->magic = 1234;
 		
 		//#obs: Na hora de copiar o processo, a estrutura do clone 
-		//receberá os valores da estrutura do processo atual,
-		//até mesmo o endereço do diretório de páginas.
+		//receberï¿½ os valores da estrutura do processo atual,
+		//atï¿½ mesmo o endereï¿½o do diretï¿½rio de pï¿½ginas.
 		
 		//...
 		
@@ -922,7 +922,7 @@ do_clone:
 		// ## clone  ##
 		//
 		
-		// Copia a memória usada pela imagem do processo.
+		// Copia a memï¿½ria usada pela imagem do processo.
 		
 		processCopyMemory ( Current );	
 		
@@ -949,7 +949,7 @@ do_clone:
 		// Clone process.
 		//
 		
-		// Isso cria um diretório de páginas para o processo clone;
+		// Isso cria um diretï¿½rio de pï¿½ginas para o processo clone;
 		
 	    Ret = processCopyProcess ( Current->pid, Clone->pid );
 		
@@ -964,18 +964,18 @@ do_clone:
 		
 		
 		//#test
-		// recuperamos a informação que o pai perdeu quando 
+		// recuperamos a informaï¿½ï¿½o que o pai perdeu quando 
 		// sobrescrevemos uma pagedir.
 		//Current->Image = va da imagem do processo pai
 		//unsigned long old_image_pa;
 		//old_image_pa = (unsigned long) virtual_to_physical ( Current->Image, gKernelPageDirectoryAddress ); 
 		
-		//usando valores salvos anteriormente. é do pai.
+		//usando valores salvos anteriormente. ï¿½ do pai.
 		//CreatePageTable ( (unsigned long) Current->DirectoryVA, ENTRY_USERMODE_PAGES, old_image_pa );			
 		    
 		//dir[1] = old_dir_entry1;
 		
-		// Ok, retornando o número do processo clonado.
+		// Ok, retornando o nï¿½mero do processo clonado.
 
 				
 		//
@@ -984,14 +984,14 @@ do_clone:
 		
         //#test
 		// Vamos associar ao primeiro tty, mesmo que seja um aplicatibo GUI.
-		// Se ele for um aplicativo GUI ele irá atualizar o foco.
-		// Se for um aplicativo de terminal então terá uma janela 
+		// Se ele for um aplicativo GUI ele irï¿½ atualizar o foco.
+		// Se for um aplicativo de terminal entï¿½o terï¿½ uma janela 
 		// para rodar. Pois o ldisc manda mensagens para a thread de controle 
 		// da janela com foco de entrada. Vamos fazer isso manualmente.
 		
 		/*
 		 ## bugbug: 
-		 Essa rotina faz o input não funcionar quando retornamos para o pai.
+		 Essa rotina faz o input nï¿½o funcionar quando retornamos para o pai.
 		
 		if ( (void *) CurrentTTY != NULL )
 		{
@@ -1007,7 +1007,7 @@ do_clone:
 				
 				//#importante
 				//a thread de controle da janela, para qual
-				//serão enviadas as mensagens pelo ldisc
+				//serï¿½o enviadas as mensagens pelo ldisc
 				CurrentTTY->window->control = Clone->control;
 			}
 			
@@ -1018,10 +1018,10 @@ do_clone:
 		
 		/*
 #bug: Quando o kernel salta 
-para eip do novo processo ele está usando o seu próprio endereçamento. Mas o kernel
-deve considerar o endereçamento do novo processo, pois isso aponta para
+para eip do novo processo ele estï¿½ usando o seu prï¿½prio endereï¿½amento. Mas o kernel
+deve considerar o endereï¿½amento do novo processo, pois isso aponta para
 um nodo eip fisico.
-os processo anteriores deram certo pois os endereçamentos eram iguais, todos clones do endereçamento do kernel.		
+os processo anteriores deram certo pois os endereï¿½amentos eram iguais, todos clones do endereï¿½amento do kernel.		
 		*/
 		
 		
@@ -1054,11 +1054,11 @@ os processo anteriores deram certo pois os endereçamentos eram iguais, todos clo
 		// printf ("Clone.DirectoryPA = %x \n",Clone->DirectoryPA);
 		// printf ("Clone.Image = %x \n",Clone->Image);
 		// printf ("Clone.ImagePA = %x \n",Clone->ImagePA);
-		// #bugbug: Esse é o endereço l[ogico em que deve estar a imagem do clone
-		// na visão do diretório do clone.
+		// #bugbug: Esse ï¿½ o endereï¿½o l[ogico em que deve estar a imagem do clone
+		// na visï¿½o do diretï¿½rio do clone.
 		// Clone->Image = 0x400000;
 		// Clone->ImagePA = (unsigned long) virtual_to_physical ( Clone->Image  , Clone->DirectoryVA ); 
-		// agora visto com o diretório do processo clone.
+		// agora visto com o diretï¿½rio do processo clone.
 		// printf ("Clone.Image = %x \n",Clone->Image);
 		// printf ("***Clone.ImagePA = %x \n",Clone->ImagePA);
 		// Clone->control->eipPA = (unsigned long) virtual_to_physical ( Clone->control->eip  , Clone->DirectoryVA ); 		
@@ -1089,7 +1089,7 @@ os processo anteriores deram certo pois os endereçamentos eram iguais, todos clo
 		
 		
 		//#test - Clonando manualmente a thread de controle.
-		//só a imagem ... falta a pilha.
+		//sï¿½ a imagem ... falta a pilha.
 		memcpy ( (void *) Clone->Image, (const void *) Current->Image, ( 0x50000 ) ); 
 		//====
 		Clone->control->type  = Current->control->type; 
@@ -1138,10 +1138,10 @@ os processo anteriores deram certo pois os endereçamentos eram iguais, todos clo
 		//exit_code	
 		//====
 		
-		//#bugbug ATENÇÃO ATENÇÃO
+		//#bugbug ATENï¿½ï¿½O ATENï¿½ï¿½O
 		//Funciona que iniciamos o filho no seu entrypoint,
-		//mas não funciona quando iniciamos no mesmo eip do pai.
-		//A diferença entre os dois casos é só o eip.
+		//mas nï¿½o funciona quando iniciamos no mesmo eip do pai.
+		//A diferenï¿½a entre os dois casos ï¿½ sï¿½ o eip.
 		
 			//====
 		Clone->control->eip = 0x400000 + 0x1000;
@@ -1208,22 +1208,19 @@ fail:
 /*
  ***************************************
  * do_fork_process 
- *     Isso está clonando o processo atual e executando o processo filho.
- *     Essa é a rotina que implementa a função fork() padrão da libc. 
- *     O Processo pai continua rodando.
- * 
- *     Esse rotina é chamada pela função gde_fork() em gdeserv.c
- *      
+ *
+ *     fork() implementation for libcore.
+ *     This function was called by gde_fork().
+ *     It has its own interrupt number. (133)  
  */
  
 // #todo
-// Criar um fork() usando essa rotina.
-// Estamos testando com o aplicativo gdeshell, usando o comando fork.
-// * Falta pouco. :)
+// We're testing it with the embedded command 'fork' on gdeshell.
+// Status: We are almost there. :)
 
 pid_t do_fork_process (void){
 
-    int PID;
+    int PID = -1;
 
     struct process_d *Current;
     struct process_d *Clone;
@@ -1237,211 +1234,154 @@ pid_t do_fork_process (void){
     int w;
 
 
-
     // #debug: 
-    // Message.
-    //printf ("do_fork_process: Cloning the current process..\n");
+    printf ("do_fork_process: Cloning the current process..\n");
 
 
-	// ## Current ##
-	// Checando a validade do processo atual.
+	//
+	// # Current.
+	//
+
+    // Validation.
 	
-	//if ( current_process < 0 )
-	//    return 0;
+    if ( current_process < 0 ){
+        printf("do_fork_process: current_process\n");
+        goto fail;
+    } 
 
-
-	Current = (struct process_d *) processList[current_process];
+    Current = (struct process_d *) processList[current_process];
 	
-	if ( (void *) Current == NULL )
-	{
-		printf ("do_fork_process: Current struct \n");
-		goto fail;
+    if ( (void *) Current == NULL ){
+        printf ("do_fork_process: Current struct \n");
+        goto fail;
 	
-	}else{
+    }else{
 		
-		if ( Current->used != 1 || Current->magic != 1234 )
-		{    
-			printf ("do_fork_process: Current validation \n");
-			goto fail;
-		}
-		
-		//#test
+        if ( Current->used != 1 || Current->magic != 1234 ){    
+            printf ("do_fork_process: Current validation \n");
+            goto fail;
+        }
+
+
+        // #test
+        // Virtual Address of the current process.
         dir = (unsigned long *) Current->DirectoryVA;
-		old_dir_entry1 = dir[1];    //salvando
-		
-		//salvando o endereço físico da imagem que existe no processo.
+        old_dir_entry1 = dir[1];    // Saving it.
+
+
+        // Saving the physical address.
 		//old_image_pa = (unsigned long) virtual_to_physical ( Current->Image, gKernelPageDirectoryAddress ); 		
 		
-	    //#debug
-	    //printf(">>> check current process: %d %d \n", current_process, Current->pid );		
+	    // #debug
+	    // printf(">>> check current process: %d %d \n", current_process, Current->pid );		
 		goto do_clone;
 		//...
 	};
 
 
 	//
-	// # Clone #
+	// # Clone.
 	//
 
-	// Cria uma estrutura do tipo processo, mas não inicializada.
+	// Cria uma estrutura do tipo processo, mas nï¿½o inicializada.
 	
 do_clone:
 
+    // Creating a struct of type process.
+    // It's not initialized yet.
+
     Clone = (struct process_d *) processObject ();
 
-    if ( (void *) Clone == NULL )
-    {
-		printf ("do_fork_process: Clone struct fail \n");
-		goto fail;
+    if ( (void *) Clone == NULL ){
+        printf ("do_fork_process: Clone struct fail \n");
+        goto fail;
+
     } else {
-		
-		// Obtêm um índice para um slot vazio na lista de processos.
-		
+
+        // Get a empty slot in the list of processes.
+
         PID = (int) getNewPID ();
 
-        //#todo: melhorar essa checagem.
-		//if ( PID <= 0 ){
-		if ( PID == -1 || PID == 0 )
-		{	
-			printf ("do_fork_process: getNewPID fail %d \n", PID );
-			goto fail;
-		}
+        if ( PID <= 0 ){
+            printf ("do_fork_process: getNewPID fail %d \n", PID );
+            goto fail;
+        }
 
-		Clone->pid = PID;
-		
-		Clone->used = 1;
-		Clone->magic = 1234;
+        Clone->pid = PID;
+        Clone->used = 1;
+        Clone->magic = 1234;
 
-		// #obs: 
-		// Na hora de copiar o processo, a estrutura do clone 
-		// receberá os valores da estrutura do processo atual,
-		// até mesmo o endereço do diretório de páginas.
-
-
-		// Salvando na lista.
+        // Saving into the list.
         processList[PID] = (unsigned long) Clone;
 
+        //
+        // # Copy memory.
+        //
 
-		//
-		// # clone #
-		//
+        // Copy memory.
+        // Copy all the process's image.
+        // Save the address in: 
+        // Current->childImage and Current->childImage_PA.
 
-		// Copia a memória usada pela imagem do processo.
-		// Isso copiará a imagem do processo e colocará o novo endereço
-		// em Current->childImage  e Current->childImage_PA
-		processCopyMemory ( Current );
+        processCopyMemory ( Current );
 
-		//
-		// Debug messages.
-		//
-		
+
+
+        //
+        // #debug 
+        //
+
+        // Breakpoint to see some critical info.
+
         //unsigned long *xxx = (unsigned long *) Current->DirectoryVA;	
-	    //printf ("DirectoryVA = %x \n",Current->DirectoryVA);
-	    //printf ("Directory Entry 1 = %x \n", xxx[1] );
-	    //printf ("childImage_PA = %x \n",Current->childImage_PA);	
-	
-	    //mmShowPDEForAllProcesses (1);
-	    
-		//printf ("DirectoryVA = %x \n",Current->DirectoryVA);
-	    //printf ("Directory Entry 1 = %x \n", xxx[1] );
-	    
-		//kprintf ("debug *breakpoint");	
-	    //refresh_screen();
-	    //while (1){}	
-		
-		
-		//
-		// Clone process.
-		//
-		
-		// Isso cria um diretório de páginas para o processo clone;
+        //printf ("DirectoryVA = %x \n",Current->DirectoryVA);
+        //printf ("Directory Entry 1 = %x \n", xxx[1] );
+        //printf ("childImage_PA = %x \n",Current->childImage_PA);	
+
+        //mmShowPDEForAllProcesses (1);
+
+        //printf ("DirectoryVA = %x \n",Current->DirectoryVA);
+        //printf ("Directory Entry 1 = %x \n", xxx[1] );
+
+        //kprintf ("debug *breakpoint");
+        //refresh_screen();
+        //while (1){}
+
+
+        //
+        // Copy structure.
+        //
+
+        // Creating a page directory for the child, and
+        // Copying the father's structure.
+
         Ret = processCopyProcess ( Current->pid, Clone->pid );
 
-        if ( Ret != 0 )
-        {
+        if ( Ret != 0 ){
             panic ("do_fork_process: processCopyProcess fail\n");
         }
 
+        // Creating a new pagetable for the child process's image.
+        // We are using the child process's directory fo this.
+
         CreatePageTable ( (unsigned long) Clone->DirectoryVA, 
-            ENTRY_USERMODE_PAGES, 
-            Current->childImage_PA );
+            ENTRY_USERMODE_PAGES, Current->childImage_PA );
 
 
-		//#test
-		// recuperamos a informação que o pai perdeu quando 
-		// sobrescrevemos uma pagedir.
-		//Current->Image = va da imagem do processo pai
-		//unsigned long old_image_pa;
-		//old_image_pa = (unsigned long) virtual_to_physical ( Current->Image, gKernelPageDirectoryAddress ); 
-		
-		//usando valores salvos anteriormente. é do pai.
-		//CreatePageTable ( (unsigned long) Current->DirectoryVA, ENTRY_USERMODE_PAGES, old_image_pa );			
-		    
-		//dir[1] = old_dir_entry1;
-		
-		// Ok, retornando o número do processo clonado.
-		
-		//printf ("do_fork_process: done\n");
-				
-		//
-		// Current thread.
-		//
-		
-        //#test
-		// Vamos associar ao primeiro tty, mesmo que seja um aplicatibo GUI.
-		// Se ele for um aplicativo GUI ele irá atualizar o foco.
-		// Se for um aplicativo de terminal então terá uma janela 
-		// para rodar. Pois o ldisc manda mensagens para a thread de controle 
-		// da janela com foco de entrada. Vamos fazer isso manualmente.
-		
-		/*
-		 ## bugbug: 
-		 Essa rotina faz o input não funcionar quando retornamos para o pai.
-		
-		if ( (void *) CurrentTTY != NULL )
-		{
-			if ( CurrentTTY->used == 1 && CurrentTTY->magic == 1234 )
-			{
-				current_tty = CurrentTTY->index;
-				
-				Clone->control->tty_id = current_tty;
-				
-				// #terminal window.
-				window_with_focus = CurrentTTY->window->id;
-                terminal_window = CurrentTTY->window->id;
-				
-				//#importante
-				//a thread de controle da janela, para qual
-				//serão enviadas as mensagens pelo ldisc
-				CurrentTTY->window->control = Clone->control;
-			}
-			
-		}else{
-		    //Thread->tty_id = 0; //-1
-        } 
-		*/
+
+        //
+        // # debug.
+        //
+
+        // #important:
+        // Checking if it's all right with the saved info.
+        // #todo: Show the structure and the registers.
+
+        // ??
+        // mmShowPDEForAllProcesses (1);
+        // show_thread_information (); 
 
 
-		/*
-        #bug: 
-        Quando o kernel salta para eip do novo processo ele está 
-        usando o seu próprio endereçamento. Mas o kernel deve 
-        considerar o endereçamento do novo processo, pois isso 
-        aponta paraum nodo eip físico.
-        Os processo anteriores deram certo pois os endereçamentos 
-        eram iguais, todos clones do endereçamento do kernel.
-		*/
-
-		
-		//
-		// Debug messages.
-		//
-		
-		
-		// mmShowPDEForAllProcesses (1);
-		
-		// show_thread_information (); 
-		
 		// printf ("\n");
 		
 		// [current]
@@ -1462,11 +1402,11 @@ do_clone:
 		// printf ("Clone.DirectoryPA = %x \n",Clone->DirectoryPA);
 		// printf ("Clone.Image = %x \n",Clone->Image);
 		// printf ("Clone.ImagePA = %x \n",Clone->ImagePA);
-		// #bugbug: Esse é o endereço l[ogico em que deve estar a imagem do clone
-		// na visão do diretório do clone.
+		// #bugbug: Esse ï¿½ o endereï¿½o l[ogico em que deve estar a imagem do clone
+		// na visï¿½o do diretï¿½rio do clone.
 		// Clone->Image = 0x400000;
 		// Clone->ImagePA = (unsigned long) virtual_to_physical ( Clone->Image  , Clone->DirectoryVA ); 
-		// agora visto com o diretório do processo clone.
+		// agora visto com o diretï¿½rio do processo clone.
 		// printf ("Clone.Image = %x \n",Clone->Image);
 		// printf ("***Clone.ImagePA = %x \n",Clone->ImagePA);
 		// Clone->control->eipPA = (unsigned long) virtual_to_physical ( Clone->control->eip  , Clone->DirectoryVA ); 		
@@ -1494,11 +1434,11 @@ do_clone:
 		
 		
 		// Clonando manualmente a thread de controle.
-		// Só a imagem ... falta a pilha.
+		// Sï¿½ a imagem ... falta a pilha.
 
         // #bugbug: size ???
-        // Ja não fizemos isso quando chamamos processCopyMemory ???
-        // lá copiamos 200kb
+        // Ja nï¿½o fizemos isso quando chamamos processCopyMemory ???
+        // lï¿½ copiamos 200kb
 		memcpy ( (void *) Clone->Image, (const void *) Current->Image, ( 0x50000 ) ); 
 		//memcpy ( (void *) Clone->Image, (const void *) Current->Image, (1024*200) );  //bugbug
 		//====
@@ -1513,7 +1453,7 @@ do_clone:
 		Clone->control->quantum = Current->control->quantum;
 		Clone->control->quantum_limit = Current->control->quantum_limit;
 		
-		// A thread do processo clone ainda não rodou.
+		// A thread do processo clone ainda nï¿½o rodou.
 		Clone->control->standbyCount = 0;
 		Clone->control->runningCount = 0;
 		Clone->control->initial_time_ms = get_systime_ms();
@@ -1525,17 +1465,17 @@ do_clone:
 		Clone->control->waiting_limit = WAITING_LIMIT;
 		Clone->control->blockedCount = 0;
 		Clone->control->blocked_limit = BLOCKED_LIMIT;
-		
-		for ( w=0; w<8; w++ ){
-			Clone->control->wait_reason[w] = (int) 0;
-		}
+
+        for ( w=0; w<8; w++ ){
+            Clone->control->wait_reason[w] = (int) 0;
+        }
 
 		Clone->control->ticks_remaining = Current->control->ticks_remaining;
 		Clone->control->signal = Current->control->signal;
 		Clone->control->signalMask = Current->control->signalMask;
 		
 		// CPU context
-		
+
 		// stack
 		Clone->control->ss          = Current->control->ss;
 		Clone->control->esp         = Current->control->esp;  
@@ -1557,28 +1497,10 @@ do_clone:
 		Clone->control->esi = Current->control->esi;
 		Clone->control->edi = Current->control->edi;
 		Clone->control->ebp = Current->control->ebp;
-		
 
-		
-		// #bugbug 
-		// ATENÇÃO ATENÇÃO
-		// Funciona que iniciamos o filho no seu entrypoint,
-		// mas não funciona quando iniciamos no mesmo eip do pai.
-		// A diferença entre os dois casos é só o eip.
+        // tss
+        Clone->control->tss = Current->control->tss;
 
-		//====
-		//Clone->control->eip = 0x400000 + 0x1000;
-		//Clone->control->eip = Current->control->eip; //#bug fail
-		//====
-
-       //#debug
-       //printf ("#debug Current_control_eip = %x *hang \n",Current->control->eip);
-       //refresh_screen();
-       //while(1){}
-		
-		// tss
-		Clone->control->tss = Current->control->tss;
-        
         Clone->control->Next = NULL;
         Clone->control->exit_code = 0;
         //====
@@ -1612,49 +1534,60 @@ do_clone:
        Clone->iopl = Current->iopl;
        //Clone->prev = NULL;
        Clone->next = NULL;
-       
-       // lista de arquivos abertos.
-       //for (i=0; i<NUMBER_OF_FILES; i++)
-       //{  Clone->Streams[i] = Current->Streams[i]; }
-       
-       for (i=0; i<64; i++)
-       {  Clone->Objects[i] = Current->Objects[i]; }
+
+        // Objects.
+        for (i=0; i<64; i++){  
+            Clone->Objects[i] = Current->Objects[i]; 
+        }
 
 
-		//ok
-		//printf ("Current: %s\n", Current->Image + 0x1000);
-		//printf ("Clone: %s\n", Clone->Image + 0x1000);
+        //
+        // # debug
+        //
 
-        //mostra_reg (Clone->control->tid);
-		//refresh_screen();
-		//while(1){}
-		
-		
+        // Showing registers.
+
+        // #obs
+        // regs ok ?!
+
+        // Current.
+        //printf("\n\n");
+        //printf ("==== Current: control thread ====\n");
+        //show_reg (Current->control->tid);
+
+        // Clone.
+        //printf("\n\n");
+        //printf ("==== Clone: control thread ====\n");
+        //show_reg (Clone->control->tid);
+
+        // #hang
+        //refresh_screen();
+        //while(1){}
+
 		
 		// #importante
-		// O dispatcher precis disso na hora que restaura
+		// O dispatcher precisa disso na hora que restaura
 		// o contexto.
 		// Mas isso ja foi feito antes quando copiamos o processo.
 		
-		Clone->control->DirectoryPA = Clone->DirectoryPA;
-		
+        //#debug
+        //printf("Directory PA %x \n",Clone->DirectoryPA);
+        //refresh_screen();
+        //while(1){}
 
-        // #hackhack
+        Clone->control->DirectoryPA = Clone->DirectoryPA;
 
-        // #bugbug
-        // Chamar a função que muda a prioridade. Ela afeta o quantum.
 
         // [pai]
         Current->control->quantum = 30;
-        Current->control->saved = 0;
-        Current->control->state = READY;
+        //Current->control->saved = 1;
+        //Current->control->state = READY;
 
 
         // [filho]
         Clone->control->quantum = 30;
         Clone->control->saved = 1;
         Clone->control->state = READY;
-
 
 
         //
@@ -1684,7 +1617,7 @@ fail:
 
 /*
  * processObject:
- *     Cria uma estrutura do tipo processo, mas não inicializada.
+ *     Cria uma estrutura do tipo processo, mas nï¿½o inicializada.
  *     #todo: Criar a mesma rotina para threads e janelas.
  */
  
@@ -1715,7 +1648,7 @@ pid_t getNewPID (void){
 	struct process_d *p;
 	
 	
-	// Começaremos a busca onde começa o range de IDs de processos de usuário.
+	// Comeï¿½aremos a busca onde comeï¿½a o range de IDs de processos de usuï¿½rio.
 	
 	int i = USER_BASE_PID;
 	
@@ -1725,7 +1658,7 @@ pid_t getNewPID (void){
 	    p = (struct process_d *) processList[i];	
 		
 		// Se encontramos um slot vazio.
-		// retornaremos o índice.
+		// retornaremos o ï¿½ndice.
 		
 		if ( (void *) p == NULL )
 		{	
@@ -1743,9 +1676,9 @@ pid_t getNewPID (void){
 
 /*
  * processTesting:
- *     Testando se o processo é válido. Se for válido retorna 1234.
+ *     Testando se o processo ï¿½ vï¿½lido. Se for vï¿½lido retorna 1234.
  *     @todo: repensar os valores de retorno. 
- * system call (serviço 88.)
+ * system call (serviï¿½o 88.)
  */
 
 int processTesting (int pid){
@@ -1776,7 +1709,7 @@ int processTesting (int pid){
 /*
  * processSendSignal:
  *     Envia um sinal para um processo.
- *     Se o sinal e o processo forem válidos, um sinal é colocado
+ *     Se o sinal e o processo forem vï¿½lidos, um sinal ï¿½ colocado
  * no PCB do processo.
  *     @todo: Rotinas envolvendo sinais devem ir para outro arquivo.
  */
@@ -1845,7 +1778,7 @@ int processCopyMemory ( struct process_d *process ){
 	
 	
 	// 200 KB.
-	// Alocando memória para a imagem do processo.
+	// Alocando memï¿½ria para a imagem do processo.
 	//>>  ring 3 ??.
 
     __new_base = (unsigned long) allocPages ( (1024*200)/4096 ); 
@@ -1869,7 +1802,7 @@ int processCopyMemory ( struct process_d *process ){
              ( 1024 * 200 ) );
 
 
-	// Transformando o endereço virtual em físico.
+	// Transformando o endereï¿½o virtual em fï¿½sico.
 	unsigned long new_base_PA = (unsigned long) virtual_to_physical ( __new_base, gKernelPageDirectoryAddress ); 
 	
 	
@@ -1885,21 +1818,21 @@ int processCopyMemory ( struct process_d *process ){
 	//printf ("DirectoryPA=%x \n",clone->DirectoryPA);
 	
 	// Load here.
-	// Altera uma pagetable do diretório de páginas de um processo.
-	// IN: endereço físico do diretório de páginas do processo, indice da entrada
-	// que vamos alterar, endereço físico da região de 4MB que vamos mapear.
-	// ENTRY_USERMODE_PAGES referece ao indice para o endereço virtual 0x400000
+	// Altera uma pagetable do diretï¿½rio de pï¿½ginas de um processo.
+	// IN: endereï¿½o fï¿½sico do diretï¿½rio de pï¿½ginas do processo, indice da entrada
+	// que vamos alterar, endereï¿½o fï¿½sico da regiï¿½o de 4MB que vamos mapear.
+	// ENTRY_USERMODE_PAGES referece ao indice para o endereï¿½o virtual 0x400000
 	
 	// #bugbug
-	// Essa função está falhando. #PF.
-	// >> Essa parte est'a falhando na m'aquina real, mas não na VirtualBox.
+	// Essa funï¿½ï¿½o estï¿½ falhando. #PF.
+	// >> Essa parte est'a falhando na m'aquina real, mas nï¿½o na VirtualBox.
 	
 	//status: 0 = fail; address = ok
 	
  
 
-	// O processo está num novo endereço segundo o diretório 
-	// de páginas do kernel.
+	// O processo estï¿½ num novo endereï¿½o segundo o diretï¿½rio 
+	// de pï¿½ginas do kernel.
     process->childImage = (unsigned long) __new_base;
     process->childImage_PA = (unsigned long) new_base_PA;
 
@@ -1919,10 +1852,10 @@ int processCopyMemory ( struct process_d *process ){
  ****************************************
  * processCopyProcess
  *     + Copia os elementos da estrutura de processo.
- *     + Cria um diretório de páginas e salva os endereços 
- *       virtual e físico dele na estrutura de processo.
+ *     + Cria um diretï¿½rio de pï¿½ginas e salva os endereï¿½os 
+ *       virtual e fï¿½sico dele na estrutura de processo.
  *
- *     Isso é chamado por do_fork_process.
+ *     Isso ï¿½ chamado por do_fork_process.
  */
  
 // 1 = atual.
@@ -1992,7 +1925,7 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 
 	//Identificadores.
     Process2->pid  = (int) p2;          // PID.  O pid do clone.
-    Process2->ppid = Process1->pid;     // PPID. O parent do clone é o pid do pai. 
+    Process2->ppid = Process1->pid;     // PPID. O parent do clone ï¿½ o pid do pai. 
     Process2->uid  = Process1->uid;     // UID. 
     Process2->gid  = Process1->gid;     // GID. 
 
@@ -2004,7 +1937,7 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 	//State of process
     Process2->state = Process1->state;  
 
-	//Plano de execução.
+	//Plano de execuï¿½ï¿½o.
     Process2->plane = Process1->plane;
 
 
@@ -2021,28 +1954,28 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 	//
 
 	// #bugbug
-	// Precisamos clonar o diretório de páginas
-	// senão alguma alteração feita na pagetable da imagem pode
-	// corromper o processo que está sendo clonado.
+	// Precisamos clonar o diretï¿½rio de pï¿½ginas
+	// senï¿½o alguma alteraï¿½ï¿½o feita na pagetable da imagem pode
+	// corromper o processo que estï¿½ sendo clonado.
 
     // #importante:
-    // Deve retornar o endereço do diretório de páginas criado,
-    // que é um clone do diretório de páginas do kernel.
-    // Retornaremos o endereço virtual, para que a função create_process 
-    // possa usar tanto o endereço virtual quanto o físico.
+    // Deve retornar o endereï¿½o do diretï¿½rio de pï¿½ginas criado,
+    // que ï¿½ um clone do diretï¿½rio de pï¿½ginas do kernel.
+    // Retornaremos o endereï¿½o virtual, para que a funï¿½ï¿½o create_process 
+    // possa usar tanto o endereï¿½o virtual quanto o fï¿½sico.
 
 	// #bugbug
-	// Na verdade precisamos clonar o diretório do processo e não o 
-	// diretório do kernel.
+	// Na verdade precisamos clonar o diretï¿½rio do processo e nï¿½o o 
+	// diretï¿½rio do kernel.
 
 	// #importante
-	// Isso clona o diretório de páginas do kernel. Isso facilita as coisas.
-	// Retorna o endereço virtual do novo diretório de páginas.
+	// Isso clona o diretï¿½rio de pï¿½ginas do kernel. Isso facilita as coisas.
+	// Retorna o endereï¿½o virtual do novo diretï¿½rio de pï¿½ginas.
 
 	// #importante:
-	// Vamos converter porque precisamos de endereço físico para colocarmos no cr3.
-	// Mas o taskswitch faz isso pegando o endereço que estiver na thread, então
-	// esse endereço precisa ir pra thread.
+	// Vamos converter porque precisamos de endereï¿½o fï¿½sico para colocarmos no cr3.
+	// Mas o taskswitch faz isso pegando o endereï¿½o que estiver na thread, entï¿½o
+	// esse endereï¿½o precisa ir pra thread.
 
     Process2->DirectoryVA = (unsigned long) CreatePageDirectory ();
 
@@ -2058,18 +1991,18 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 
 	// ??
 	// #bugbug
-	// Se o endereço for virtual, ok fazer isso. 
-	// Usaremos o mesmo endereço virtual da imagem.
-	// #importante: se bem que esse endereço virtual de imagem
+	// Se o endereï¿½o for virtual, ok fazer isso. 
+	// Usaremos o mesmo endereï¿½o virtual da imagem.
+	// #importante: se bem que esse endereï¿½o virtual de imagem
 	// pode ser diferente para o kernel. Pois no momento
-	// que ele alocar memória para a imagem ele terá o
-	// endereço lógico retornado pelo alocador.
+	// que ele alocar memï¿½ria para a imagem ele terï¿½ o
+	// endereï¿½o lï¿½gico retornado pelo alocador.
 
     // #bugbug
-    // Conseguimos o endereço da imagem copiada,
+    // Conseguimos o endereï¿½o da imagem copiada,
     // mas teremos que refazer isso mais a frente quando
     // carregarmos, (isso no caso da rotina de clonagem)
-    // Isso é válido só para o fork.
+    // Isso ï¿½ vï¿½lido sï¿½ para o fork.
 
 	//Process2->Image = Process1->Image;
     Process2->Image = Process1->childImage;
@@ -2096,7 +2029,7 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 
     
     // Herdar todos arquivos.
-    // O fluxo padrão foi criando antes em kstdio.c
+    // O fluxo padrï¿½o foi criando antes em kstdio.c
             
     int i;
     for (i=0;i<32;i++){
@@ -2114,22 +2047,22 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 	// Vamos clonar a thread de controle do processo pai.
 	
 	// obs:
-	// Me parece que a função que clona apenas a thread de controle 
+	// Me parece que a funï¿½ï¿½o que clona apenas a thread de controle 
 	// chama-se fork1. #todo
 	
 	// #todo: Precisamos copiar todas as threads
-	// vamos começar pela thread de controle.
-	// teoriacamente elas precisam ter o mesmo endereço virtual ...
-	// mas estão em endereços físicos diferentes.
+	// vamos comeï¿½ar pela thread de controle.
+	// teoriacamente elas precisam ter o mesmo endereï¿½o virtual ...
+	// mas estï¿½o em endereï¿½os fï¿½sicos diferentes.
 	// #bugbug precisamos clonar a thread.
 	
 	// ############### #IMPORTANTE #################
 	// #bugbug
-	// Ainda não temos um salvamento de contexto apropriado para essa system call.
-	// Só o timer tem esse tipo de salvamento.
-	// Precisamos salvar o contexto antes de chamarmos o serviço fork()
-	// Pois se não iremos retomar a thread clone em um ponto antes de 
-	// chamarmos o fork, que é onde está o último ponto de salvamento.
+	// Ainda nï¿½o temos um salvamento de contexto apropriado para essa system call.
+	// Sï¿½ o timer tem esse tipo de salvamento.
+	// Precisamos salvar o contexto antes de chamarmos o serviï¿½o fork()
+	// Pois se nï¿½o iremos retomar a thread clone em um ponto antes de 
+	// chamarmos o fork, que ï¿½ onde estï¿½ o ï¿½ltimo ponto de salvamento.
 	
 	// Clonando a thread de controle.
 
@@ -2148,11 +2081,11 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
     //
 
 	// #importante
-	// Um diretório de páginas para a thread de controle.
-	// O diretório de páginas da thread de controle será o mesmo
+	// Um diretï¿½rio de pï¿½ginas para a thread de controle.
+	// O diretï¿½rio de pï¿½ginas da thread de controle serï¿½ o mesmo
 	// do processo.
-	// É importante deixarmos esse endereço na estrutura da thread, pois
-	// é aí que o taskswitch espera encontra-lo.
+	// ï¿½ importante deixarmos esse endereï¿½o na estrutura da thread, pois
+	// ï¿½ aï¿½ que o taskswitch espera encontra-lo.
 
 
     Process2->control->DirectoryPA = Process2->DirectoryPA;
@@ -2192,7 +2125,7 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
     
     // #test
     // No caso da clonagem, vamos herdar a tty,
-    // talvezz isso facilite a comunicação.
+    // talvezz isso facilite a comunicaï¿½ï¿½o.
     
     Process2->tty = Process1->tty;
 
@@ -2225,32 +2158,32 @@ done:
  *
  * @todo: 
  *     Um processo na verdade inclui tudo sobre a tarefa,
- *     Desde o nome do arquivo até o carregamento, registro e execução.
+ *     Desde o nome do arquivo atï¿½ o carregamento, registro e execuï¿½ï¿½o.
  *
  * Obs:
- *     Um job é um conjunto de processos.
+ *     Um job ï¿½ um conjunto de processos.
  *     Tudo depende do tipo (funcionalidade): 
  *     SYSTEM, PERIODIC, ROUND_ROBIN, IDLE.
  *
- *    Classes de processos (tipo de nível):
+ *    Classes de processos (tipo de nï¿½vel):
  *
- *    PB - Processos incluídos no Kernel Base.
+ *    PB - Processos incluï¿½dos no Kernel Base.
  *    P0 - Processos em ring0.
  *    P1 - Processos em ring1.
  *    P2 - Processos em ring2.
  *    P3 - Processos em ring3, User Mode.
  *
  * @todo: 
- * Esse função deve chamar uma rotina de criação de diretório. 
- * Quando um processo é criado deve-se criar o seu diretório e criar 
+ * Esse funï¿½ï¿½o deve chamar uma rotina de criaï¿½ï¿½o de diretï¿½rio. 
+ * Quando um processo ï¿½ criado deve-se criar o seu diretï¿½rio e criar 
  * as pagetables que o processo vai usar de acordo com o tamanho do 
  * processo. 
  *
  * @todo: processCreateProcess(...)
  *
  * @todo: 
- * Aumetar o número de argumentos para dar o suporte necessário para 
- * criar um processo do jeito que for necessário
+ * Aumetar o nï¿½mero de argumentos para dar o suporte necessï¿½rio para 
+ * criar um processo do jeito que for necessï¿½rio
  */
 
 // Cria uma estrutura de processo.
@@ -2277,9 +2210,9 @@ struct process_d *create_process ( struct room_d *room,
     int i=0;
 
 	// @todo:
-	// Melhorar esse esquema de numeração e 
+	// Melhorar esse esquema de numeraï¿½ï¿½o e 
 	// contagem de processos criados.
-	// processNewPID é global ?
+	// processNewPID ï¿½ global ?
 
     if ( processNewPID < USER_BASE_PID || processNewPID >= PROCESS_COUNT_MAX )
     {
@@ -2315,7 +2248,7 @@ get_next:
 	if ( i >= PROCESS_COUNT_MAX )
 	{
 		// #bugbug: 
-		// Isso deixa o sistema devagar caso não apareça 
+		// Isso deixa o sistema devagar caso nï¿½o apareï¿½a 
 		// a mensagem.
 		
 		printf("pc-process-create_process: End of list");
@@ -2330,7 +2263,7 @@ get_next:
 
 
 	// Get empty.
-	// Obtêm um índice para um slot vazio na lista de processos.
+	// Obtï¿½m um ï¿½ndice para um slot vazio na lista de processos.
 
     PID = (int) processNewPID;  // deletar!!
     
@@ -2346,8 +2279,8 @@ get_next:
 
 
 
-	//Se o slot estiver ocupado tentaremos o próximo.
-	//Na verdade podemos usar aquela função que procura por um vazio. 
+	//Se o slot estiver ocupado tentaremos o prï¿½ximo.
+	//Na verdade podemos usar aquela funï¿½ï¿½o que procura por um vazio. 
 
 
     Empty = (void *) processList[PID];
@@ -2395,7 +2328,7 @@ get_next:
         
         
         //#test
-        //64 bytes máx.
+        //64 bytes mï¿½x.
         strcpy ( Process->__processname, (const char *) name); 
         
 
@@ -2419,7 +2352,7 @@ get_next:
             Process->Objects[i] = 0;
         }
 
-        // O fluxo padrão foi criando antes em kstdio.c
+        // O fluxo padrï¿½o foi criando antes em kstdio.c
         Process->Objects[0] = (unsigned long) stdin;
         Process->Objects[1] = (unsigned long) stdout;
         Process->Objects[2] = (unsigned long) stderr;
@@ -2442,9 +2375,9 @@ get_next:
 		
 		// Inicializando a lista de framepools do processo.
 		// @todo: Todo processo deve ser criado com pelo menos um 
-		// frame pool, o que é equivalente a 4MB. (uma partição)
-		// Obs: Um framepool indica onde é a área de memória fisica
-		// que será usada para mapeamento das páginas usadas pelo processo.
+		// frame pool, o que ï¿½ equivalente a 4MB. (uma partiï¿½ï¿½o)
+		// Obs: Um framepool indica onde ï¿½ a ï¿½rea de memï¿½ria fisica
+		// que serï¿½ usada para mapeamento das pï¿½ginas usadas pelo processo.
 
         Process->framepoolListHead = NULL;
 
@@ -2456,27 +2389,27 @@ get_next:
 		//Process->processStackMemory =
 		
 	    // ORDEM: 
-		// O que segue é referenciado durante o processo de task switch.
+		// O que segue ï¿½ referenciado durante o processo de task switch.
 
 		// Page Directory: 
-		//     Alocar um endereço físico para o diretório de páginas do 
-		// processo a ser criado, depois chamar a função que cria o diretório.
+		//     Alocar um endereï¿½o fï¿½sico para o diretï¿½rio de pï¿½ginas do 
+		// processo a ser criado, depois chamar a funï¿½ï¿½o que cria o diretï¿½rio.
 		//
 		// @todo:
-		// *IMPORTANTE: Por enquanto os processos são criadas usando o 
-		// diretório de páginas do processo Kernel. Mas temos que criar 
-		// um diretório novo pra cada processo criado.
-		// O diretório de todos os processos de usuário serão iguais. 
-		// Terão uma área de usário particular e uma área compartilhada 
+		// *IMPORTANTE: Por enquanto os processos sï¿½o criadas usando o 
+		// diretï¿½rio de pï¿½ginas do processo Kernel. Mas temos que criar 
+		// um diretï¿½rio novo pra cada processo criado.
+		// O diretï¿½rio de todos os processos de usuï¿½rio serï¿½o iguais. 
+		// Terï¿½o uma ï¿½rea de usï¿½rio particular e uma ï¿½rea compartilhada 
 		// em kernel mode.
 		//
-		//@todo: Alocar um endereço físico antes, depois chamar a função que 
+		//@todo: Alocar um endereï¿½o fï¿½sico antes, depois chamar a funï¿½ï¿½o que 
 		// cria o pagedirectory.
 		//@todo: 
-        //opção: KERNEL_PAGEDIRECTORY; //@todo: Usar um pra cada processo.
+        //opï¿½ï¿½o: KERNEL_PAGEDIRECTORY; //@todo: Usar um pra cada processo.
 
 		// #obs:
-		// Variável recebida via argumento.
+		// Variï¿½vel recebida via argumento.
 
         if (directory_address == 0)
         {
@@ -2497,76 +2430,76 @@ get_next:
 		
 		
 		// #todo: 
-		// Precisa alocar espaço na memória física.
+		// Precisa alocar espaï¿½o na memï¿½ria fï¿½sica.
 		// Precisa criar page tables para essas areas de cada processo.
-		// Os endereços virtuais dessas areas dos processos são sempre os mesmos.
-		// mas os endereços físicos dessas areas variam de processo pra processo.
+		// Os endereï¿½os virtuais dessas areas dos processos sï¿½o sempre os mesmos.
+		// mas os endereï¿½os fï¿½sicos dessas areas variam de processo pra processo.
 
 		// Imagem do processo.
-		// ?? Provavelmente esse endereço é virtual.
-		// Queremos que esse endereço seja padronizado e que todos 
-		// os processos usem o mesmo endereço.
+		// ?? Provavelmente esse endereï¿½o ï¿½ virtual.
+		// Queremos que esse endereï¿½o seja padronizado e que todos 
+		// os processos usem o mesmo endereï¿½o.
 		
 		// #bugbug
-		// Todos os processos de usuário começam no mesmo endereço virtual.
-		// Porém temos os processos em kernel mode e os processos do gramado core
-		// que usam endereços virtuais diferentes.
+		// Todos os processos de usuï¿½rio comeï¿½am no mesmo endereï¿½o virtual.
+		// Porï¿½m temos os processos em kernel mode e os processos do gramado core
+		// que usam endereï¿½os virtuais diferentes.
 		// #todo: Rever isso.
-		// #todo: estamos suspendendo essa informação.
+		// #todo: estamos suspendendo essa informaï¿½ï¿½o.
 		
 		//
 		// # IMPORTANTE 
 		//
 		
 		// Base da imagem do processo.
-		// Na verdade precisamos aceitar o endereço passado via 
-		// argumento, pois nem todos processos começam no endereço 
+		// Na verdade precisamos aceitar o endereï¿½o passado via 
+		// argumento, pois nem todos processos comeï¿½am no endereï¿½o 
 		// default.
 
-        // Endereço virtual e endereço físico.
+        // Endereï¿½o virtual e endereï¿½o fï¿½sico.
         Process->Image = base_address;  
         Process->ImagePA = (unsigned long) virtual_to_physical ( Process->Image, 
                                                gKernelPageDirectoryAddress ); 
                                                
         
-        // Endereço virtual e endereço físico de um processo filho.
-        // Isso é usado durante a clonagem.
+        // Endereï¿½o virtual e endereï¿½o fï¿½sico de um processo filho.
+        // Isso ï¿½ usado durante a clonagem.
         Process->childImage = 0;
         Process->childImage_PA = 0;
 
 
         // #todo
         // Precisamos saber o tamanho da imagem do processo para
-        // calcularmos quantas páginas ele vai usar.
+        // calcularmos quantas pï¿½ginas ele vai usar.
         // Precisamos dividir a imagem em code, data, heap e stack
-        // Pois a área de dados poderá sofrer swap.
+        // Pois a ï¿½rea de dados poderï¿½ sofrer swap.
 
 		// Tamanho da imagem do processo.
-		// Temos que chamar a função que pega o tamanho de um arquivo,
-		// #bugbug: Porem, no momento o kernel não consegue ler arquivos
-		// que estão em subdiretórios corretamente e os programas estão 
-		// em subdiretórios.
-		// #obs: O tamanho também poderia ser passado por arguemento.
-		// #ou um argumento com ponteiro pra estrutura de informação 
+		// Temos que chamar a funï¿½ï¿½o que pega o tamanho de um arquivo,
+		// #bugbug: Porem, no momento o kernel nï¿½o consegue ler arquivos
+		// que estï¿½o em subdiretï¿½rios corretamente e os programas estï¿½o 
+		// em subdiretï¿½rios.
+		// #obs: O tamanho tambï¿½m poderia ser passado por arguemento.
+		// #ou um argumento com ponteiro pra estrutura de informaï¿½ï¿½o 
 		// sobre uma imagem.
         Process->ImageSize = 0;
 
-		//#todo: estrutura com informações sobre a imagem do processo.
+		//#todo: estrutura com informaï¿½ï¿½es sobre a imagem do processo.
         Process->image_info = NULL;
 
 		// Heap e Stack:
 		//
 		// @todo: #BugBug 
-		// O Heap e a Stack devem estar dentro da área de memória do processo.
-		// Uma pagetable do diretório é para o heap e outra para a stack.
-        // Cada pagetable no diretório do processo é pra uma coisa.
+		// O Heap e a Stack devem estar dentro da ï¿½rea de memï¿½ria do processo.
+		// Uma pagetable do diretï¿½rio ï¿½ para o heap e outra para a stack.
+        // Cada pagetable no diretï¿½rio do processo ï¿½ pra uma coisa.
         //
-		// Obs: O endereço virtual do heap e da stack dos processos serão 
-		// os mesmos para todos os processos, assim como o endereço virtual 
+		// Obs: O endereï¿½o virtual do heap e da stack dos processos serï¿½o 
+		// os mesmos para todos os processos, assim como o endereï¿½o virtual 
 		// de carregamento da imagem.
 		
 		// Heap and Stack. 
-		// #importante: (Endereços virtuais).
+		// #importante: (Endereï¿½os virtuais).
 		// Por isso pode ser o mesmo para todos os processos.
 		
 		
@@ -2579,8 +2512,8 @@ get_next:
 		//Process->Heap = (unsigned long) 0xC0C00000; //funciona
 		
 		// g_heappool_va
-		// endereço virtual do pool de heaps.
-		// os heaps nessa área serão dados para os processos.
+		// endereï¿½o virtual do pool de heaps.
+		// os heaps nessa ï¿½rea serï¿½o dados para os processos.
 		// base + (n*size)
 
         if ( g_heap_count < 0 || g_heap_count >= g_heap_count_max )
@@ -2598,8 +2531,8 @@ get_next:
 		//Process->Heap = (unsigned long) allocPages (64); 
 		//Process->Heap = (unsigned long) kmalloc (1024*32); //32kb
 
-		// Endereço do início do Heap do processo.
-		// #bubug: Endereço do fim do heap.
+		// Endereï¿½o do inï¿½cio do Heap do processo.
+		// #bubug: Endereï¿½o do fim do heap.
 		// Tamanho do heap, dado em KB.
 	    //Process->Heap = UPROCESS_DEFAULT_HEAP_BASE;    
 	    //Process->HeapEnd = 0; // @todo: (UPROCESS_DEFAULT_HEAP_BASE + UPROCESS_DEFAULT_HEAP_SIZE);
@@ -2609,11 +2542,11 @@ get_next:
 		//Process->HeapLastValid
 		//Process->HeapLastSize
 	    
-		// Endereço do início da Stack do processo.
-		// Endereço do fim da stack do processo.
+		// Endereï¿½o do inï¿½cio da Stack do processo.
+		// Endereï¿½o do fim da stack do processo.
 		// Tamanho da pilha, dada em KB.
-		// #importante: Deslocamento do endereço do início da pilha em relação 
-		// ao início do processo. 
+		// #importante: Deslocamento do endereï¿½o do inï¿½cio da pilha em relaï¿½ï¿½o 
+		// ao inï¿½cio do processo. 
 
         Process->Stack = UPROCESS_DEFAULT_STACK_BASE;   
         Process->StackEnd = 0; // @todo: (UPROCESS_DEFAULT_STACK_BASE+UPROCESS_DEFAULT_STACK_SIZE);
@@ -2625,7 +2558,7 @@ get_next:
         Process->iopl = iopl; 
 
 		//PPL - (Process Permition Level).(gdef.h)
-		//Determina as camadas de software que um processo terá acesso irrestrito.
+		//Determina as camadas de software que um processo terï¿½ acesso irrestrito.
 		//Process->ppl = pplK0;
 
 
@@ -2660,7 +2593,7 @@ get_next:
 		//Process->ThreadQuantum   
 
 
-		//Process->threadCount = 0;    //Número de threads do processo.
+		//Process->threadCount = 0;    //Nï¿½mero de threads do processo.
 		
 		//Process->tList[32] 
 		
@@ -2679,10 +2612,10 @@ get_next:
 		// user session, room and desktop.
 
 		// #bugbug: 
-		// Não temos informação sobre a user session, 
+		// Nï¿½o temos informaï¿½ï¿½o sobre a user session, 
 		// devemos pegar a estrutura de current user session. 
-		// Para isso ela deve ser configurada na inicialização do gws,
-		// antes da criação dos processo.
+		// Para isso ela deve ser configurada na inicializaï¿½ï¿½o do gws,
+		// antes da criaï¿½ï¿½o dos processo.
 		
         Process->usession = CurrentUserSession;  // Current.
         Process->room = room;                    // Passado via argumento.
@@ -2693,11 +2626,11 @@ get_next:
 	
         // wait4pid: 
         // O processo esta esperando um processo filho fechar.
-        // Esse é o PID do processo que ele está esperando fechar.
+        // Esse ï¿½ o PID do processo que ele estï¿½ esperando fechar.
 
         Process->wait4pid = (pid_t) 0;
         
-        // Número de processos filhos.
+        // Nï¿½mero de processos filhos.
         Process->nchildren = 0;
 
         Process->zombieChildListHead = NULL;
@@ -2770,7 +2703,7 @@ void CloseAllProcesses (void){
     struct process_d *P;
 
 	// #importante:
-	// Menos o 0, pois é o kernel. 
+	// Menos o 0, pois ï¿½ o kernel. 
 
     for ( Index = 1; Index < PROCESS_COUNT_MAX; Index++ )
     {
@@ -2844,15 +2777,15 @@ void show_currentprocess_info (void){
 
 /*
  * show_process_information:
- *     Mostra informações sobre os processos. 
+ *     Mostra informaï¿½ï¿½es sobre os processos. 
  *     #todo: na verdade um aplicativo em user mode deve fazer esse trabalho
- * solicitando informações sobre cada processo através de chamadas.
+ * solicitando informaï¿½ï¿½es sobre cada processo atravï¿½s de chamadas.
  */
 
-// Mostrar informações sobre os processos da lista.
-// obs: as imagens são carregadas em endereços virtuais diferentes
-// e o endereço mostrado é em relação ao diretório de páginas do kernel
-// pois o kernel é que controla o posicionamento das imagens.
+// Mostrar informaï¿½ï¿½es sobre os processos da lista.
+// obs: as imagens sï¿½o carregadas em endereï¿½os virtuais diferentes
+// e o endereï¿½o mostrado ï¿½ em relaï¿½ï¿½o ao diretï¿½rio de pï¿½ginas do kernel
+// pois o kernel ï¿½ que controla o posicionamento das imagens.
 
 void show_process_information (void){
 
@@ -2900,8 +2833,8 @@ void show_process_information (void){
 /*
  **************************************************************
  * SetProcessDirectory:
- *     Configura o endereço do diretório de páginas do processo.
- *     @todo: Isso pode ser um serviço oferecido pelo kernel,
+ *     Configura o endereï¿½o do diretï¿½rio de pï¿½ginas do processo.
+ *     @todo: Isso pode ser um serviï¿½o oferecido pelo kernel,
  * para um gerenciador de processos em user mode usar.
  * @todo: processSetDirectory(...)
  */
@@ -2919,8 +2852,8 @@ SetProcessDirectory ( struct process_d *process, unsigned long Address )
 /*
  ************************************************************
  * GetProcessDirectory:
- *     Pega o endereço do diretório de páginas do processo.
- *     @todo: Isso pode ser um serviço oferecido pelo kernel,
+ *     Pega o endereï¿½o do diretï¿½rio de pï¿½ginas do processo.
+ *     @todo: Isso pode ser um serviï¿½o oferecido pelo kernel,
  * para um gerenciador de processos em user mode usar.
  * @todo: processGetDirectory(...)
  */
@@ -2941,7 +2874,7 @@ unsigned long GetProcessDirectory ( struct process_d *process ){
 /*
  ****************************************************
  * GetPageDirValue:
- *     Pega o endereço do diretório de páginas do processo.
+ *     Pega o endereï¿½o do diretï¿½rio de pï¿½ginas do processo.
  *     processGetPageDirValue()
  */
 
@@ -2975,18 +2908,18 @@ int init_task (int id)
 /*
  *************************************************************
  * init_tasks: 
- *     Inicia as variáveis.
+ *     Inicia as variï¿½veis.
  *
  * @todo: 
- *     Bug bug, problemas na inicialização das estruturas.
- *     Implementar a alocação dinâmica na criação das tarefas.
+ *     Bug bug, problemas na inicializaï¿½ï¿½o das estruturas.
+ *     Implementar a alocaï¿½ï¿½o dinï¿½mica na criaï¿½ï¿½o das tarefas.
  */
 
 //#bugbug
 //rever e deletar, se poss'ivel.
 
 //#bugbug
-//os conceitos de tasks ainda estão misturados, hora é thread e hora é processo
+//os conceitos de tasks ainda estï¿½o misturados, hora ï¿½ thread e hora ï¿½ processo
 
 void init_tasks (void)
 {
@@ -3007,14 +2940,14 @@ void init_processes (void){
     int i;
 	
 	//
-	// Iniciando variáveis globais.
+	// Iniciando variï¿½veis globais.
 	//
 	
 	kernel_request = 0;    // O que fazer com a tarefa atual.
 	
 	
-	// ?? Contagem de tempo de execução da tarefa atual.
-	//não precisa, isso é atualizado pelo request()
+	// ?? Contagem de tempo de execuï¿½ï¿½o da tarefa atual.
+	//nï¿½o precisa, isso ï¿½ atualizado pelo request()
 	//kernel_tick = 0;                                 
 
     kernel_switch = 0;     // ?? Ativa o kernel switch do scheduler.
@@ -3044,11 +2977,11 @@ void init_processes (void){
  * exit_process:
  *
  *     Exit process.
- *     Coloca o processo no estado PROCESS_TERMINATED, mas não destrói a 
- * estrutura do processo. Outra rotina destruirá as informações.
+ *     Coloca o processo no estado PROCESS_TERMINATED, mas nï¿½o destrï¿½i a 
+ * estrutura do processo. Outra rotina destruirï¿½ as informaï¿½ï¿½es.
  *
  * @todo: 
- * Liberar a memória e os recursos usado pelo processo. Ou ainda apenas 
+ * Liberar a memï¿½ria e os recursos usado pelo processo. Ou ainda apenas 
  * sinalizar a flag magic para que o GC a reutilize.
  *
  * @todo: 
@@ -3090,7 +3023,7 @@ void exit_process ( pid_t pid, int code ){
 
 
 	// Pega o ponteiro para a estrutura, 
-	// muda o código de saída e o status.
+	// muda o cï¿½digo de saï¿½da e o status.
 
 
     Process = (struct process_d *) processList[pid];
@@ -3133,19 +3066,19 @@ void exit_process ( pid_t pid, int code ){
 
 
     // #obs
-    // Acho que ainda não estamos usando a lista.
+    // Acho que ainda nï¿½o estamos usando a lista.
     // Mas podemos ao fim disso deletarmos a thread de controle
     // caso ela ainda exista.
 
-	// Agora temos que terminar as threads que estão na lista 
+	// Agora temos que terminar as threads que estï¿½o na lista 
 	// de threads do processo.
 	// Pegaremos a primeira da lista.
-	// Se o head da list não foi inicializado corretamente 
-	// dá page fault.
+	// Se o head da list nï¿½o foi inicializado corretamente 
+	// dï¿½ page fault.
 
     __Thread = (void *) Process->threadListHead;
 
-    // Se não há nada na head.
+    // Se nï¿½o hï¿½ nada na head.
     if ( __Thread == NULL )
     {
 		// #todo: 
@@ -3156,14 +3089,14 @@ void exit_process ( pid_t pid, int code ){
 
     }else{
 		
-		// Ok, se o primeiro da lista é válido, podemos 
+		// Ok, se o primeiro da lista ï¿½ vï¿½lido, podemos 
 		// tentar fechar todas.
         // ... 
     };
 
 
-	// Se a primeira thread da lista é válida, 
-	// então tentaremos fechar toda a lista.
+	// Se a primeira thread da lista ï¿½ vï¿½lida, 
+	// entï¿½o tentaremos fechar toda a lista.
 
     while (1)
     {
@@ -3172,7 +3105,7 @@ void exit_process ( pid_t pid, int code ){
 		printf (".\n");
 		refresh_screen ();
 		
-		// Salva o ponteiro para o próximo thread.
+		// Salva o ponteiro para o prï¿½ximo thread.
 		Next = (void *) __Thread->Next;
 		
 		// Confere se chegamos ao fim da lista.
@@ -3194,7 +3127,7 @@ void exit_process ( pid_t pid, int code ){
 			kill_thread ( __Thread->tid ); 
 
 			// Prepara qual deve fechar agora.
-		    // Havíamos salvo e agora é vez dela.
+		    // Havï¿½amos salvo e agora ï¿½ vez dela.
 		    // Obs: Estamos reusando o ponteiro.
 			
 			__Thread = (void *) Next;
@@ -3210,7 +3143,7 @@ done:
 	//    Escalonar o processo atual. Se o processo fechado foi o processo 
 	// atual, precisamos de um novo processo atual. Usaremos o processo zero 
 	// por enquanto. Obs: Devemos fazer aqui apenas escalonameto de processo
-	// e não de thread.	
+	// e nï¿½o de thread.	
 
 	//Zerando por enquanto.
 
@@ -3286,7 +3219,7 @@ int processmanagerInit ()
 
 /*
  * GetProcessHeapStart:
- *     Pega o endereço do heap do processo.
+ *     Pega o endereï¿½o do heap do processo.
  */
 
 unsigned long GetProcessHeapStart ( pid_t pid ){
@@ -3364,11 +3297,11 @@ fail:
 }
 
 
-// Isso vai alterar uma das entradas do diretório de páginas do processo.
-// Criando uma pagetable e mapeando nela 4MB da memória física.
+// Isso vai alterar uma das entradas do diretï¿½rio de pï¿½ginas do processo.
+// Criando uma pagetable e mapeando nela 4MB da memï¿½ria fï¿½sica.
 // Usaremos isso para carregar a imagem do programa em 0x400000.
-// #bugbug: Na verdade precisamos saber quantas páginas o programa precisa.
-// e Carregarmos só as páginas que ele precisa, ou menos caso a paginação
+// #bugbug: Na verdade precisamos saber quantas pï¿½ginas o programa precisa.
+// e Carregarmos sï¿½ as pï¿½ginas que ele precisa, ou menos caso a paginaï¿½ï¿½o
 // por demanda esteja funcionando..
 
 /*
@@ -3385,8 +3318,8 @@ int xxxloadHere4MB ( struct process_d *process, unsigned long region4MB_PA )
         return -1;
     
     
-    // Cria uma pagetable em um dado diretório de páginas.
-    // Uma região de 4MB da memória física é mapeanda nessa pt.
+    // Cria uma pagetable em um dado diretï¿½rio de pï¿½ginas.
+    // Uma regiï¿½o de 4MB da memï¿½ria fï¿½sica ï¿½ mapeanda nessa pt.
     
     CreatePageTable ( process->DirectoryVA, ENTRY_USERMODE_PAGES, region4MB_PA );
     
@@ -3552,7 +3485,7 @@ __execute_new_process ( const char *filename,
       
  
 
-// Pega o número da tty de um processo, dado o pid.
+// Pega o nï¿½mero da tty de um processo, dado o pid.
 int process_get_tty ( int pid )
 {
     // Usada para debug.
@@ -3608,23 +3541,23 @@ int process_get_tty ( int pid )
 /*
  *******************************************
  * do_execve:
- *     Efetua o serviço execve, rodando um novo programa no 
+ *     Efetua o serviï¿½o execve, rodando um novo programa no 
  * processo atual.
- *     Tá usando a thread atual e transformando ela em 
+ *     Tï¿½ usando a thread atual e transformando ela em 
  * thread de controle.
  * 
  *     #todo: 
- *     Melhorar a descrição do objetivo dessa rotina.
+ *     Melhorar a descriï¿½ï¿½o do objetivo dessa rotina.
  * 
- *     args:  ?(serviço), name, arg, env.
+ *     args:  ?(serviï¿½o), name, arg, env.
  */
  
-// #Atenção
+// #Atenï¿½ï¿½o
 // Isso foi chamado depois de um fork(), nesse caso funciona as vezes 
 // e em outra falha. 
 
 
-// IN: ?(serviço), name, arg, env.
+// IN: ?(serviï¿½o), name, arg, env.
 int 
 process_execve ( int i, 
             const char *arg1, 
@@ -3637,7 +3570,7 @@ process_execve ( int i,
     struct thread_d *Thread;
 
 	//??
-	//Esse é o primeiro argumento.
+	//Esse ï¿½ o primeiro argumento.
     int Plane = 0;
 
     char *s;
@@ -3656,23 +3589,23 @@ process_execve ( int i,
 
 	// #importante
 	// Testando carregar um programa para rodar no processo INIT, 
-	// usando a thread primária do processo !
-	// É o mesmo que consierar que o processo INIT já seja o clone 
-	// de outro válido.
+	// usando a thread primï¿½ria do processo !
+	// ï¿½ o mesmo que consierar que o processo INIT jï¿½ seja o clone 
+	// de outro vï¿½lido.
 
 	//??
 	//array de ponteiros.
     unsigned long *p = (unsigned long *) arg2;
 
 	// #importante:
-	// Memória compartilhada entre o kernel e o aplicativo.
+	// Memï¿½ria compartilhada entre o kernel e o aplicativo.
 	// O aplicativo vai ler esse trem 
     unsigned char *shared_memory = (unsigned char *) (0xC0800000 - 0x100);
 
 	// #IMPORTANTE:
 	// PRECISAMOS ENVIAR A MENSAGEM SOMENTE DEPOIS QUE O NOVO PROGRAMA FOR 
-	// COLOCADO NA MEMÓRIA, SENÃO AO COLOCAR O PROGRAMA NA MEMÓRIA A MENSAGEM 
-	// SERÁ SOBRESCRITA.
+	// COLOCADO NA MEMï¿½RIA, SENï¿½O AO COLOCAR O PROGRAMA NA MEMï¿½RIA A MENSAGEM 
+	// SERï¿½ SOBRESCRITA.
 	// #TODO: CRIAR UM MECANISMO DE TROCA DE MENSAGENS MAIS EFICIENTE,
 	// BASEADO NESSE.
 
@@ -3681,8 +3614,8 @@ process_execve ( int i,
 
 	//#importante.
 	//antes de tudo vamos testar o comando.
-	//se ele não existir então nem vamos mexer na estrutura da trhead.
-	//se não mexermos na estrutura da thread ele continuará presa no while 
+	//se ele nï¿½o existir entï¿½o nem vamos mexer na estrutura da trhead.
+	//se nï¿½o mexermos na estrutura da thread ele continuarï¿½ presa no while 
 	//do exit da libc.
 	
 	
@@ -3693,11 +3626,11 @@ process_execve ( int i,
 	// #bugbug
 	// # arg1=name ##
 	
-	// Devemos ver se a string não passa dos limites.
+	// Devemos ver se a string nï¿½o passa dos limites.
 
-	// Como essa rotina é para executar um arquivo .bin,
-	// caso não exista uma extensão .bin e o nome seja menor que 8, 
-	// podemos adicionar a extensão .bin.
+	// Como essa rotina ï¿½ para executar um arquivo .bin,
+	// caso nï¿½o exista uma extensï¿½o .bin e o nome seja menor que 8, 
+	// podemos adicionar a extensï¿½o .bin.
 
 
 
@@ -3707,7 +3640,7 @@ process_execve ( int i,
 	printf ("filename %s   \n", &arg1[0] );
 	printf ("name size %d  \n", l );
 
-    // O tamanho máximo é 12.
+    // O tamanho mï¿½ximo ï¿½ 12.
     // '8' '.' '3'
 
     if ( l > 12 )
@@ -3716,7 +3649,7 @@ process_execve ( int i,
         panic ("do_execve: l. The filename is too long ! \n");
         
 		// #obs: 
-		// Não sairemos da função pois isso é um teste ainda.
+		// Nï¿½o sairemos da funï¿½ï¿½o pois isso ï¿½ um teste ainda.
 		// goto fail;
 
     }
@@ -3724,9 +3657,9 @@ process_execve ( int i,
     // 
     if (l < 9)
     {
-		// Se não existe um ponto entre os oito primeiros chars,
-		// então colocamos a extensão .bin logo após o nome passado.
-		// Ele é pelo menos menor que 11, mas deveria ser menor que oito.
+		// Se nï¿½o existe um ponto entre os oito primeiros chars,
+		// entï¿½o colocamos a extensï¿½o .bin logo apï¿½s o nome passado.
+		// Ele ï¿½ pelo menos menor que 11, mas deveria ser menor que oito.
 
             if ( arg1[0] != '.' && 
                  arg1[1] != '.' && 
@@ -3742,7 +3675,7 @@ process_execve ( int i,
                     panic ("do_execve: File without ext is too long\n");
                     
 					// Obs: 
-					// Não sairemos da função pois isso é um teste ainda.
+					// Nï¿½o sairemos da funï¿½ï¿½o pois isso ï¿½ um teste ainda.
 					// goto fail;
                 }
 
@@ -3752,13 +3685,13 @@ process_execve ( int i,
 			// #obs:
 			// Se estamos aqui, isso significa existe um ponto 
 			// nos primeiros oito bytes.
-			// Ainda não sabemos se todo o nome do arquivo está certo,
-			// mas ja sabemos que não precisamos incluir uma extenção.
+			// Ainda nï¿½o sabemos se todo o nome do arquivo estï¿½ certo,
+			// mas ja sabemos que nï¿½o precisamos incluir uma extenï¿½ï¿½o.
     };
 
 
 	// #importante
-	// Transformando o nome do arquivo em maiúscula, pois estamos 
+	// Transformando o nome do arquivo em maiï¿½scula, pois estamos 
 	// usando FAT16, que exige isso.
 
     read_fntos ( (char *) arg1 );
@@ -3769,7 +3702,7 @@ process_execve ( int i,
     //
     
     //#todo
-    //Testar isso, é mais segura checar se o arquivo existe.
+    //Testar isso, ï¿½ mais segura checar se o arquivo existe.
     
     /*
     int __Status = -1;
@@ -3791,23 +3724,23 @@ process_execve ( int i,
 	//
 
 	// #importante:
-	// Carregaremos o programa no endereço lógico 0x400000, usando o
-	// diretório de páginas do processo kernel.
+	// Carregaremos o programa no endereï¿½o lï¿½gico 0x400000, usando o
+	// diretï¿½rio de pï¿½ginas do processo kernel.
 
 	// #todo:
-	// Nas rotinas de execução, temos que usar o diretorio de páginas
-	// do processo que está solicitando o carregamento e execução.
-	// Ou carregarmos em um endereço físico e mapearmos no
-	// diretório de páginas do processo na posição 0x400000.
+	// Nas rotinas de execuï¿½ï¿½o, temos que usar o diretorio de pï¿½ginas
+	// do processo que estï¿½ solicitando o carregamento e execuï¿½ï¿½o.
+	// Ou carregarmos em um endereï¿½o fï¿½sico e mapearmos no
+	// diretï¿½rio de pï¿½ginas do processo na posiï¿½ï¿½o 0x400000.
 
 	// #bugbug
-	// Esse carregamento é feito usando o diretório de páginas do kernel,
-	// mas o certo é usarmos o diretório de páginas do processo atual.
-	// A questão é que sempre carregaremos em endereços físicos diferentes,
-	// mas todo diretório de páginas terá o mesmo endereço lógico.
-	// Essa rotina de carregamento tem que usar o endereço lógico
-	// referente ao endereço físico desejado e esse endereço lógico
-	// deve pertencer ao diretório de páginas do kernel.
+	// Esse carregamento ï¿½ feito usando o diretï¿½rio de pï¿½ginas do kernel,
+	// mas o certo ï¿½ usarmos o diretï¿½rio de pï¿½ginas do processo atual.
+	// A questï¿½o ï¿½ que sempre carregaremos em endereï¿½os fï¿½sicos diferentes,
+	// mas todo diretï¿½rio de pï¿½ginas terï¿½ o mesmo endereï¿½o lï¿½gico.
+	// Essa rotina de carregamento tem que usar o endereï¿½o lï¿½gico
+	// referente ao endereï¿½o fï¿½sico desejado e esse endereï¿½o lï¿½gico
+	// deve pertencer ao diretï¿½rio de pï¿½ginas do kernel.
 
     process = (struct process_d *) processList[current_process];
 
@@ -3835,7 +3768,7 @@ process_execve ( int i,
 
 	// Check ELF signature.
 	// OK. O comando existe e o arquivo foi carregado, mas 
-	// precisamos saber se a assinatura de ELF é válida.
+	// precisamos saber se a assinatura de ELF ï¿½ vï¿½lida.
 
     Status = (int) fsCheckELFFile ( (unsigned long) process->Image );
 
@@ -3862,13 +3795,13 @@ format_ok:
 
 	// # ISSO DEU CERTO #
 	// testando se o shell transferiu toda alinha de comandos para a 
-	// memória compartilhada.
+	// memï¿½ria compartilhada.
 	//printf(">>>cmdline2={%s}\n", shared_memory);
 	
 	//#IMPORTANTE:
-	//se a linha de comandos está na memória compartilhada 
-	//e o nome do arquivo programa foi passado via endereço 
-	//então temos tudo o que é preciso 
+	//se a linha de comandos estï¿½ na memï¿½ria compartilhada 
+	//e o nome do arquivo programa foi passado via endereï¿½o 
+	//entï¿½o temos tudo o que ï¿½ preciso 
 	//para enviarmos a linha de comandos para o aplicativo.
 
 	//...
@@ -3899,21 +3832,21 @@ format_ok:
 	//for( i=0; i<512; i++ )
 	//{
         
-		//Não queremos transferir o primeiro ponteiro 
-		//pois ele é o nome do programa e não um argumento.
+		//Nï¿½o queremos transferir o primeiro ponteiro 
+		//pois ele ï¿½ o nome do programa e nï¿½o um argumento.
 	//	shared_p[i] = p[i+1];
 		
 		//pipe[i] = src[i];
 		//shared_memory[i] = src[i];
 	//};
 	
-	//os ponteiros estão na memória compartilhada, 
-	//mas as strings estão onde ??
-	//provavelmente as strings ainda esteja na memória 
-	//do shell, e o aplicativo não pode ler as strings que estão 
-	//na memória do shell.
+	//os ponteiros estï¿½o na memï¿½ria compartilhada, 
+	//mas as strings estï¿½o onde ??
+	//provavelmente as strings ainda esteja na memï¿½ria 
+	//do shell, e o aplicativo nï¿½o pode ler as strings que estï¿½o 
+	//na memï¿½ria do shell.
 	//obs: o shell poderia copiar toda a linha de comando para 
-	//a memória compartilhada.
+	//a memï¿½ria compartilhada.
 	//printf(">>>shared_p0={%s}\n"     ,shared_p[0]);
 	//printf(">>>shared_p1={%s}\n"     ,shared_p[1]);
 	//printf(">>>shared_p2={%s}\n\n"   ,shared_p[2]);
@@ -3926,20 +3859,20 @@ format_ok:
 	//printf("Showsharedmemory={%s}\n",shared_memory);
 	
 	
-	// Pegar o ponteiro da thread primária do processo INIT.
+	// Pegar o ponteiro da thread primï¿½ria do processo INIT.
     // o ponteiro vai continuar existindo mesmo que o deadthread collector 
 	// tenha destruido a estrutura depois de um app mudar o estado para zombie 
 	// por causa de um exit.
-	//Então é melhor criarmos uma thread nova. Mas se fizermos isso
+	//Entï¿½o ï¿½ melhor criarmos uma thread nova. Mas se fizermos isso
 	//sem antes o deadthread collector ter destruido a estrutua e 
-	// liberado a memória 
-	//então a antiga estrutura de thread ficará sem porteiro e poderemos 
-	//desalocar a memória 
-	//usanda, ou pior, se não mudarmos o status ele pode querer destruir a 
+	// liberado a memï¿½ria 
+	//entï¿½o a antiga estrutura de thread ficarï¿½ sem porteiro e poderemos 
+	//desalocar a memï¿½ria 
+	//usanda, ou pior, se nï¿½o mudarmos o status ele pode querer destruir a 
 	//que estamos criando
-	//então só criaremos se o ponteiro for NULL, significando que o 
+	//entï¿½o sï¿½ criaremos se o ponteiro for NULL, significando que o 
 	// deadthread collector 
-	//ja destruiu a estrutura e aproveitou a memória se conseguiu.
+	//ja destruiu a estrutura e aproveitou a memï¿½ria se conseguiu.
 
 	//#importante:
 	//Podemos eswperar que essa thread esteja no estado ZOMBIE.
@@ -3948,7 +3881,7 @@ format_ok:
 	
 	// #importante
 	// Esperamos que tenha limpado InitThread antes de usarmos o ponteiro.
-	// Isso é trabalho do exit e do deadthread collector.
+	// Isso ï¿½ trabalho do exit e do deadthread collector.
 	
 	// #bugbug
 	// Esse ponteiro ode dar problemas.
@@ -3974,12 +3907,12 @@ format_ok:
 	// #obs
 	// A thread que chamou essa rotina deve ser a current_thread. 
 	// Certo ?
-	// +Não podemos retornar para ela após essa chamada. 
+	// +Nï¿½o podemos retornar para ela apï¿½s essa chamada. 
 	// +Devemos reinicializar a thread ou fazermos um spawn.
 	// #bugbug: Perderemos a pilha salva na chamada.
 	// #bugbug: Se retornarmos teremos problema pois a thread foi 
 	// alterada.
-	// Só nos resta reinicializarmos a thread atual e rodarmos ela.
+	// Sï¿½ nos resta reinicializarmos a thread atual e rodarmos ela.
 
     Thread = (struct thread_d *) threadList[current_thread];
 
@@ -3990,12 +3923,12 @@ format_ok:
     }else{
 
 		// #importante:
-		// Não podemos voltar para essa trhead.
+		// Nï¿½o podemos voltar para essa trhead.
 
 		// #importante:
 		// Checar a flag de reaproveitamento.
-		// Se a flag do reaproveitamento falhar então o exit no kernel
-		// não acionou ela para a threa InitThread, que é nossa única reaproveitável.
+		// Se a flag do reaproveitamento falhar entï¿½o o exit no kernel
+		// nï¿½o acionou ela para a threa InitThread, que ï¿½ nossa ï¿½nica reaproveitï¿½vel.
 		// por enquanto.
 		
 		//if ( Thread->used != 1 || Thread->magic != 1234 )
@@ -4010,14 +3943,14 @@ format_ok:
 		// ## state ##
 		//
 
-		// Vamos seguir a sequência de nacimento de um thread e 
-		// cancelaremos, caso não for possível carregar o arquivo do programa.
+		// Vamos seguir a sequï¿½ncia de nacimento de um thread e 
+		// cancelaremos, caso nï¿½o for possï¿½vel carregar o arquivo do programa.
 		// INITIALIZED >> STANDBY >> READY >> RUNNING ...
 
         Thread->state = INITIALIZED;
 
 		// '0'. Significa que o contexto nunca foi salvo, pois o spawn 
-		// não funciona em thread com o contexto salvo.
+		// nï¿½o funciona em thread com o contexto salvo.
 
         Thread->saved = 0; 
 
@@ -4028,8 +3961,8 @@ format_ok:
 
 		//#test
 		// Vamos associar ao primeiro tty, mesmo que seja um aplicatibo GUI.
-		// Se ele for um aplicativo GUI ele irá atualizar o foco.
-		// Se for um aplicativo de terminal então terá uma janela 
+		// Se ele for um aplicativo GUI ele irï¿½ atualizar o foco.
+		// Se for um aplicativo de terminal entï¿½o terï¿½ uma janela 
 		// para rodar. Pois o ldisc manda mensagens para a thread de controle 
 		// da janela com foco de entrada. Vamos fazer isso manualmente.
 
@@ -4047,7 +3980,7 @@ format_ok:
 
 				//#importante
 				//a thread de controle da janela, para qual
-				//serão enviadas as mensagens pelo ldisc
+				//serï¿½o enviadas as mensagens pelo ldisc
                 CurrentTTY->window->control = Thread;
             }
 
@@ -4137,12 +4070,12 @@ done:
 	//printf("done\n");	
 
 	// #Obs: 
-	// +Não devemos emitir mensagens no caso de acerto.
-	// +refresh_screen só no caso de erro.
+	// +Nï¿½o devemos emitir mensagens no caso de acerto.
+	// +refresh_screen sï¿½ no caso de erro.
 
 	// #bugbug
 	// #obs: 
-	// Estamos usando isso só por enquanto para debug.
+	// Estamos usando isso sï¿½ por enquanto para debug.
 
     refresh_screen ();
 

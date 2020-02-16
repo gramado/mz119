@@ -3215,18 +3215,15 @@ void servicesPutChar ( int c )
 /*
  ***************************************
  * gde_fork:
- *     Implementa a fun��o fork() da libc padr�o.
  *
- *     Essa rotina foi chamada pela interrup��o 133,
- *     cujo handler est� em: x86/entry/head/sw.inc 
- *     na fun��o: _int133_fork.
+ *     fork() implementation for libcore.
+ *     This function was called by gde_fork().
+ *     It has its own interrupt number. (133)  
  *
- *     Essa fun��es tem sua pr�pria interrup��o. 
+ *     This routine was called by the interrupt 133.
+ *     See the handler at: x86/entry/head/sw.inc.
+ *     At function: _int133_fork.
  */
-
-	// #todo:
-	// Tendo a fork() uma chamada s� pra ela, ent�o
-	// podemos usar um conjunto de argumentos de forma confort�vel.
 
 void *gde_fork ( unsigned long number, 
                  unsigned long arg2, 
@@ -3240,7 +3237,7 @@ void *gde_fork ( unsigned long number,
     save_current_context ();
 
 
-    // Chama a rotina que implementa a fun��o fork() em ring 0.
+    // fork() implementation.
     // See: ps/action/process.c
 
     ret = (void *) do_fork_process ();
@@ -3249,21 +3246,21 @@ void *gde_fork ( unsigned long number,
 	//Restaura os registradores e o cr3.
     restore_current_context ();
 
-		// #debug
-		// Mostrando informa��es.
+	// #debug
+	// #important
+    // We can use this breakpoint to see the register
+    // for the current thread.
+    // But the current thread is the father, and the father 
+    // is running well.
+    // #todo: We need to see the register for the child.
 
-        /*
-		//#importante
-		//#DEBUG #DEBUG #DEBUG #DEBUG #DEBUG
-		//MOSTRAR AS INFORMA��ES DO PROCESSO CLONE.
-		//show_currentprocess_info ();
-		//show_process_information ();
-		//mostra_slot (current_thread);
-		//mostra_reg (current_thread);
-		//printf ("*breakpoint\n\n");
-		//refresh_screen();
-		//while(1){}
-        */
+	//show_currentprocess_info ();
+	//show_process_information ();
+	//mostra_slot (current_thread);
+	//mostra_reg (current_thread);
+	//printf ("*breakpoint\n\n");
+	//refresh_screen();
+	//while(1){}
 
     return (void *) ret; 
 }
