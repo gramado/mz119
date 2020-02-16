@@ -1,4 +1,6 @@
-#api01
+
+# Client-side library for gws window server.
+# 2020 - Created by Fred Nora.
 
 
 VERSION = 0
@@ -25,16 +27,16 @@ CFLAGS = -m32 \
 	-fno-stack-protector \
 	-s
 
-#	-fleading-underscore \
-#	-fno-stack-protector \
-#	-s
+
+LIBS  = -I. -I ../libcore/include/
 
 
-#.PHONY: all all-c jackpot-link finalize clean
-.PHONY: all all-c api01-link finalize clean
 
-#all: main.o all-c jackpot-link finalize clean
-all: main.o all-c api01-link finalize clean
+.PHONY: all all-c gws-link finalize clean
+
+
+
+all: main.o all-c gws-link finalize clean
 	@echo "Ok?"
 
 main.o:
@@ -47,15 +49,17 @@ main.o:
 all-c:
 
 
-	gcc  -c  gws.c   $(CFLAGS) -I ../libcore/include/ -o gws.o
+	gcc -c connect.c  $(CFLAGS) $(LIBS) -o connect.o
+	gcc -c events.c   $(CFLAGS) $(LIBS) -o events.o
+	gcc -c gws.c      $(CFLAGS) $(LIBS) -o gws.o
 
 
 #create 'ar'
-api01-link:
-#	ld -m i386pe -T link.ld -o JACKPOT.BIN $(myObjects) -Map app_map.s
+gws-link:
+#nothing.
+
 
 finalize:
-#	cp JACKPOT.BIN  ../../../bin
 	-mkdir obj/
 	-cp *.o obj/
 	

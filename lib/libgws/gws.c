@@ -15,12 +15,16 @@
 // do mesmo tipo.
 
 
+
+//libcore
 #include <types.h>  
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <heap.h>   
 
+
+//libgws
 #include "include/gws.h"  
 
 
