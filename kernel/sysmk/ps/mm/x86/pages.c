@@ -156,6 +156,73 @@ void *clone_kernel_page_directory (void){
 
 
 
+int initialize_frame_table(void)
+{
+    int i;
+
+    FT.total_frames = (FT.frame_table_size_in_bytes/4096);
+
+    //número de páginas necessárias para termos uma tabela.
+    //cada página pode conter 4096 entradas de i byte
+    FT.n_pages = (FT.total_frames/4096) ; 
+
+    FT.frame_table = (unsigned char *) allocPages (FT.n_pages);
+
+    if ((void *) FT.frame_table ==NULL){
+        panic("invalid FT.frame_table");        
+    }
+
+    //#todo: limits
+    if( FT.frame_table_size_in_bytes == 0 ){
+        panic("frame_table_size_in_bytes");
+    }
+
+
+    // Clear frame table.
+    for (i=0; i< FT.total_frames; i++)
+    {
+        FT.frame_table[i] = 0; // livres.
+    }
+
+    //#debug
+    printf ("table size in pages %d\n",FT.n_pages);
+    printf ("Total frames %d\n",FT.total_frames);
+    refresh_screen();
+
+    FT.frame_table_status = 1;
+
+    //ok
+    return 0;
+}
+
+
+
+unsigned long get_new_frame(void)
+{
+    if (FT.frame_table_status != 1)
+        return 0;
+
+    //#todo: limits
+    if(FT.frame_table_start == 0){
+        panic("invalid FT.frame_table_start");
+    }
+
+    int i;
+    for (i=0; i< FT.total_frames; i++)
+    {
+        if ( FT.frame_table[i] == 0)
+        {
+            FT.frame_table[i] = 1; // não free.
+            return (unsigned long) ( FT.frame_table_start + (i * 4096) ); 
+        }
+    }
+
+    //fail;
+    return 0;
+}
+
+
+
 
 
 // #importante: PERIGO !!!
@@ -1427,11 +1494,11 @@ int SetUpPaging (void){
     // (1024*1024)KB
     if ( memorysizeTotal > (1024*1024)  )
     {
-        frame_table_start = FRAME_TABLE_START;  // 32mb mark. 
-        frame_table_end   = (0x40000000 - 1);   // 1GB -1 mark.
-        frame_table_size_in_bytes  = (frame_table_end - frame_table_start);
+        FT.frame_table_start = FRAME_TABLE_START;  // 32mb mark. 
+        FT.frame_table_end   = (0x40000000 - 1);   // 1GB -1 mark.
+        FT.frame_table_size_in_bytes  = (FT.frame_table_end - FT.frame_table_start);
         //memória utilizada para isso.dado em kb.
-        mm_used_frame_table = (frame_table_size_in_bytes/1024); 
+        mm_used_frame_table = (FT.frame_table_size_in_bytes/1024); 
 
 
     // Size in KB.
@@ -1439,44 +1506,44 @@ int SetUpPaging (void){
     // (512*1024)KB
     } else if ( memorysizeTotal > (512*1024) ){
 
-        frame_table_start = FRAME_TABLE_START;  // 32mb mark. 
-        frame_table_end   = (0x20000000 - 1);   // 512MB -1 mark.
-        frame_table_size_in_bytes  = (frame_table_end - frame_table_start);
+        FT.frame_table_start = FRAME_TABLE_START;  // 32mb mark. 
+        FT.frame_table_end   = (0x20000000 - 1);   // 512MB -1 mark.
+        FT.frame_table_size_in_bytes  = (FT.frame_table_end - FT.frame_table_start);
         //memória utilizada para isso.dado em kb.
-        mm_used_frame_table = (frame_table_size_in_bytes/1024); 
+        mm_used_frame_table = (FT.frame_table_size_in_bytes/1024); 
 
     // Size in KB.
     // Se for maior que 256 MB.
     // (256*1024)KB
     } else if ( memorysizeTotal > (256*1024) ){
 
-        frame_table_start = FRAME_TABLE_START;  // 32mb mark. 
-        frame_table_end   = (0x10000000 - 1);   // 256MB -1 mark.
-        frame_table_size_in_bytes  = (frame_table_end - frame_table_start);
+        FT.frame_table_start = FRAME_TABLE_START;  // 32mb mark. 
+        FT.frame_table_end   = (0x10000000 - 1);   // 256MB -1 mark.
+        FT.frame_table_size_in_bytes  = (FT.frame_table_end - FT.frame_table_start);
         //memória utilizada para isso.dado em kb.
-        mm_used_frame_table = (frame_table_size_in_bytes/1024); 
+        mm_used_frame_table = (FT.frame_table_size_in_bytes/1024); 
 
     // Size in KB.
     // Se for maior que 128 MB.
     // (128*1024)KB
     } else if ( memorysizeTotal > (128*1024) ){
 
-        frame_table_start = FRAME_TABLE_START;  // 32mb mark. 
-        frame_table_end   = (0x08000000 - 1);   // 128MB -1 mark.
-        frame_table_size_in_bytes  = (frame_table_end - frame_table_start);
+        FT.frame_table_start = FRAME_TABLE_START;  // 32mb mark. 
+        FT.frame_table_end   = (0x08000000 - 1);   // 128MB -1 mark.
+        FT.frame_table_size_in_bytes  = (FT.frame_table_end - FT.frame_table_start);
         //memória utilizada para isso.dado em kb.
-        mm_used_frame_table = (frame_table_size_in_bytes/1024); 
+        mm_used_frame_table = (FT.frame_table_size_in_bytes/1024); 
 
     // Size in KB.
     // Se for maior que 64 MB.
     // (64*1024)KB
     } else if ( memorysizeTotal > (64*1024) ){
 
-        frame_table_start = FRAME_TABLE_START;  // 32mb mark. 
-        frame_table_end   = (0x04000000 - 1);   // 64MB -1 mark.
-        frame_table_size_in_bytes  = (frame_table_end - frame_table_start);
+        FT.frame_table_start = FRAME_TABLE_START;  // 32mb mark. 
+        FT.frame_table_end   = (0x04000000 - 1);   // 64MB -1 mark.
+        FT.frame_table_size_in_bytes  = (FT.frame_table_end - FT.frame_table_start);
         //memória utilizada para isso.dado em kb.
-        mm_used_frame_table = (frame_table_size_in_bytes/1024); 
+        mm_used_frame_table = (FT.frame_table_size_in_bytes/1024); 
 
     // #ERROR
     // A memória tem menos de 64MB,

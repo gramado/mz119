@@ -1172,9 +1172,39 @@ unsigned long mm_used_extraheap3;  // start = (0x01000000 + 0xC00000) size = 4MB
 // 0x02000000 - 32mb mark. 
 unsigned long mm_used_frame_table;
 
-unsigned long frame_table_start; // 0x02000000 - 32mb mark. 
-unsigned long frame_table_end;
-unsigned long frame_table_size_in_bytes;
+
+// #bugbug
+// Só pra lembrar que temos estruturas de bancos de memória.
+// eles deverão ser usados no futuro.
+
+
+// #importante
+// Como é uma tabela de bytes,
+// 0 pode indicar livre e um valor acima de zero
+// pode indicar o número de processos que
+// estão compartilhando a mesma página.
+
+struct frame_table_d 
+{
+    unsigned char *frame_table;
+    int frame_table_status;
+
+    unsigned long frame_table_start; // 0x02000000 - 32mb mark. 
+    unsigned long frame_table_end;
+    unsigned long frame_table_size_in_bytes;
+
+	int total_frames;
+	int n_pages;
+
+	int total_free;
+	int total_used;
+};
+
+// frame table struct.
+struct frame_table_d FT;
+
+
+
 
 
 
@@ -1330,6 +1360,10 @@ void show_memory_structs (void);
 
 //mostra as estruturas de pagina usadas para pagina��o no pagedpool.
 void showFreepagedMemory ( int max );
+
+
+int initialize_frame_table(void);
+unsigned long get_new_frame(void);
 
 
 //
