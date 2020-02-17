@@ -1,8 +1,8 @@
 /*
  * File: spawn.c
  *
- * Descrição:
- *     Executa uma thread pela primeira vez usando o método Spawn. 
+ * Descriï¿½ï¿½o:
+ *     Executa uma thread pela primeira vez usando o mï¿½todo Spawn. 
  *     Faz parte do Process Manager, parte fundamental do Kernel Base.
  * Obs: Spawn significa 'desovar'.
  *
@@ -33,7 +33,7 @@ static inline void spawnSetCr3 ( unsigned long value ){
 /*
  **********************************************************************
  * KiSpawnTask:
- *     Interface para chamada de módulo interno para rotina de 
+ *     Interface para chamada de mï¿½dulo interno para rotina de 
  * spawn de thread.
  */
  
@@ -93,12 +93,12 @@ void spawn_thread (int id){
 	//
 
 	// Pega e salva a atual.
-	// Será usada no caso de falha.
+	// Serï¿½ usada no caso de falha.
 
     Current = (void *) threadList[current_thread];
 
 	// #importante:
-	// Struct para a thread que será executada.
+	// Struct para a thread que serï¿½ executada.
 	// O id foi passado via argumento.
 
     spawn_Pointer = (void *) threadList[id]; 
@@ -109,6 +109,13 @@ void spawn_thread (int id){
 
     } else {
 
+
+        // ?? spawn_Pointer->tid == id ???
+        if (spawn_Pointer->tid != id)
+        {
+            panic("spawn_thread: #debug spawn_Pointer->tid != id");
+        }
+
         // State ~ Checa o estado da thread.
         if ( spawn_Pointer->state != STANDBY ){
             printf ("spawn_thread: State TID={%d}\n", id );
@@ -116,7 +123,7 @@ void spawn_thread (int id){
         }
 
 
-        // Saved ~ Se o contexto está salvo, é porque não é a primeira vez.
+        // Saved ~ Se o contexto estï¿½ salvo, ï¿½ porque nï¿½o ï¿½ a primeira vez.
         if ( spawn_Pointer->saved == 1 ){
             printf ("spawn_thread: Saved TID={%d}\n", id );
             die ();
@@ -134,18 +141,23 @@ void spawn_thread (int id){
 
 
 	// Context:
-	// Se a thread NÃO está com contexto salvo, então pode ser que ela nunca 
+	// Se a thread Nï¿½O estï¿½ com contexto salvo, entï¿½o pode ser que ela nunca 
 	// tenha sido executada.
 
     if ( spawn_Pointer->saved == 0 )
     {
 
-		// Configura a variável global.
+		// Configura a variï¿½vel global.
 
-        current_thread = (int) spawn_Pointer->tid;    
+        current_thread = (int) spawn_Pointer->tid;   
 
-		// Configura a próxima.
-		// A next será a antiga current salva anteriormente.
+        //fazemos isso logo abaixo.
+        //    current_process = spawn_Pointer->process->pid;
+
+        // ?? e o current_process ?? 
+
+		// Configura a prï¿½xima.
+		// A next serï¿½ a antiga current salva anteriormente.
 
         spawn_Pointer->Next = (void *) Current;        
 
@@ -173,8 +185,8 @@ void spawn_thread (int id){
 
 
 	// #importante
-	// Se o status estiver diferente de RUNNING, então algo 
-	// deu errado na preparação.
+	// Se o status estiver diferente de RUNNING, entï¿½o algo 
+	// deu errado na preparaï¿½ï¿½o.
 
     if ( spawn_Pointer->state != RUNNING ){
         printf ("spawn_thread: State TID={%d}\n", id );
@@ -186,7 +198,7 @@ void spawn_thread (int id){
     //printf ("spawn_thread: iret\n");
     //refresh_screen();
 
-	// Configura a variável global.
+	// Configura a variï¿½vel global.
 
     current_process = spawn_Pointer->process->pid;
 
@@ -206,47 +218,40 @@ void spawn_thread (int id){
     asm ("movl %eax, %cr3");
 
 
-
-	//#bugbug
-	//mensagem e refesh screeen dao problema nesse momento.
-	//vamos tentar atualizar a gdt sem emitir mensagem.
-	
-	
-	//#test
-	//printf ("Test ");
-	//printf ("updating gdt ...");
+ 
+	//Isso mostra que o contexto da thread clonada em fork estÃ¡ certo nesse momento.
+	//show_reg(spawn_Pointer->tid);
 	//refresh_screen();
+    //while(1){}
 	
-	//Ok 
-	//Isso funcionou e irá para outro lugar. Vai para a inicialização.
-	
-	//init_gdt ();
-	//while(1){}
 	
 	
 	// #bugbug
-	// Isso está falando na máquina real.
+	// Isso estï¿½ falando na mï¿½quina real.
 	// Talvez seja porque estamos colocando os calores da pilha do kernel
-	// e não na pilha do aplicaitvo como faz a irq0.
-	// #test vamos tentar usar a pilha do aplicativo pra ver se o iret funciona na máquina real.
+	// e nï¿½o na pilha do aplicaitvo como faz a irq0.
+	// #test vamos tentar usar a pilha do aplicativo pra ver se o iret funciona na mï¿½quina real.
 	
     // #problema
 	// Como faremos para que o aplicativo pegue esses valores.
 	// pois o ponteiro de pilha aponta para um valor em ring 0,
-	// então o aplicativo estaria proibido de usar essa pilha ??!!
-	// Porvavelmente sim ,,,, mas um aplicativo em ring0 não.
-	// talvez se a memória do kernel para ring3 e fazermos um iret para
-	// dentro do kernel seja possível fazer um segundo iret para fora.
+	// entï¿½o o aplicativo estaria proibido de usar essa pilha ??!!
+	// Porvavelmente sim ,,,, mas um aplicativo em ring0 nï¿½o.
+	// talvez se a memï¿½ria do kernel para ring3 e fazermos um iret para
+	// dentro do kernel seja possï¿½vel fazer um segundo iret para fora.
 	
 	//lembrando que o handler do irq0 recebe uma pilha em ring3 por isso consegue voltar.
-	//como não temos uma pilha em ring3 , enão não consegumos voltar.
+	//como nï¿½o temos uma pilha em ring3 , enï¿½o nï¿½o consegumos voltar.
 	
     // Spiritual quote:
 	// "Body and Things"
 
     //Segmentos.
-	  
-	
+
+    //#bugbug
+    //Eax sujou. Isso Ã© um problema para a thread clonada de fork()
+    //Por isso que ela nÃ£o deve usar o spawn ... e sim ficar ready.
+
     asm volatile (" cli\n"
                   " mov $0x23, %ax \n"
                   " mov %ax, %ds \n"
@@ -258,15 +263,20 @@ void spawn_thread (int id){
 	//unsigned long argc = 1234;
 	//#test
 	//Tentando enviar linha de comando para crt0 ou main() do aplicativo.
-	//#importante: O aplicativo não pode ler uma string que esteja escrito 
-	//em kernel mode, então não adianta passar o ponteiro.
+	//#importante: O aplicativo nï¿½o pode ler uma string que esteja escrito 
+	//em kernel mode, entï¿½o nï¿½o adianta passar o ponteiro.
 
 	//asm("pushl %0" :: "r" ((unsigned long) ? ) : "%esp");
 	//asm("pushl %0" :: "r" ((unsigned long) argc ) : "%esp");  //argc 
 
 	//argc 
-	//Ok. isso funcionou ... main no aplicativo recebeu argc do crt0.
-	asm (" mov $0x1234, %ebx \n");
+	//Ok. isso funcionou ... 
+    // main no aplicativo recebeu argc do crt0.
+	//atÃ© mesmo na thread clonada no fork();
+    // o que nÃ£o Ã© bom ... pois a thread clonada tem que ter os valores
+    //da thread do processo pai. >> vamos suprimir isso.
+    
+    //asm (" mov $0x1234, %ebx \n");
 	
 	//#test
 	//Mudando eflags para iopl 3 antes de usarmos a pilha.
@@ -276,7 +286,7 @@ void spawn_thread (int id){
 	
 	// #bugbug
 	// Os carinhas do gcc 9.1.0 resolveram sacanear.
-	// Não posso usar mais isso porque eles tiveram um ataque de pelanca.
+	// Nï¿½o posso usar mais isso porque eles tiveram um ataque de pelanca.
 	// Warning:
 	// "Listening the stack pointer register in a clobber list is deprecated."  
 	
@@ -284,20 +294,13 @@ void spawn_thread (int id){
 	// Pilha para iret.
     // ss, esp, eip, cs, eip;
 
-    /*
-    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->ss)     : "%esp"); 
-    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->esp)    : "%esp"); 
-    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->eflags) : "%esp"); 
-    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->cs)     : "%esp"); 
-    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->eip)    : "%esp"); 
-    */
-
-	//Pilha para iret.
-    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->ss)     );    //ss.
-    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->esp)    );    //esp.
-    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->eflags) );    //eflags.
-    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->cs)     );    //cs.
-    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->eip)    );    //eip.
+    //Pilha para iret.
+    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->ss     & 0xffff )  );    //ss.
+    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->esp             )  );    //esp.
+    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->eflags          )  );    //eflags.
+    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->cs     & 0xffff )  );    //cs.
+    asm ("pushl %0" :: "r" ((unsigned long) spawn_Pointer->eip             )  );    //eip.
+    
 
 	// #importante
 	// Precismos disso pois foi o irq0 quem nos trouxe aqui.
@@ -310,12 +313,12 @@ void spawn_thread (int id){
 	// Fly!
 	//
 
-	asm ("iret \n");    
+    asm ("iret \n");    
 
     /*
 	// # teste sujo
 	//tss
-	//isso será um test para taskswitch via hardware,
+	//isso serï¿½ um test para taskswitch via hardware,
 	//precisa habilitar flag nt antes,
 	//asm  ("ljmp $0x2B, $0x401000 \n\t");
 	//asm ("sti  \n"); 

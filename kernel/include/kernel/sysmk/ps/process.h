@@ -1,37 +1,37 @@
 /*
  * File: mk/ps/process.h
  *
- * Descrição:
+ * Descriï¿½ï¿½o:
  *     Header principal para as rotinas de gerenciamento de processos.
  *
- * Classes de processos (tipo de nível):
+ * Classes de processos (tipo de nï¿½vel):
  * ====================================
- *    PB - Processos incluídos no Kernel Base.
+ *    PB - Processos incluï¿½dos no Kernel Base.
  *    P0 - Processos em ring0.
  *    P1 - Processos em ring1.
  *    P2 - Processos em ring2.
  *    P3 - Processos em ring3, User Mode.
  *
  *
- * @todo: Taskman e outros programas gerenciadores de tarefas precisam de informações
- * sobre os processos. A barra de tarefas também precisa.
+ * @todo: Taskman e outros programas gerenciadores de tarefas precisam de informaï¿½ï¿½es
+ * sobre os processos. A barra de tarefas tambï¿½m precisa.
  * @todo: Contagem de processos.
  * @todo: Contar a quantidade de objetos alocados para um processo.
  *        contar a quantidade de objetos por classe de objetos.
- *        Saber a classe dos objetos alocados é importante, pois isso
- *        oferece informações sobre o comportamento do processo. 
- * @todo: Fazer contagem de faltas de página.
- * @todo: suporte a workset.(quantidade de memória numa faixa de tempo.)
- * +em qual cpi o processo está.?
+ *        Saber a classe dos objetos alocados ï¿½ importante, pois isso
+ *        oferece informaï¿½ï¿½es sobre o comportamento do processo. 
+ * @todo: Fazer contagem de faltas de pï¿½gina.
+ * @todo: suporte a workset.(quantidade de memï¿½ria numa faixa de tempo.)
+ * +em qual cpi o processo estï¿½.?
  * + com qual cpu o processo tem afinidade?.
- * + o processo está confinado ou não.?
- * +prioridade básica e atual?
- * medir quantidade de operações de leitura e saída.
+ * + o processo estï¿½ confinado ou nï¿½o.?
+ * +prioridade bï¿½sica e atual?
+ * medir quantidade de operaï¿½ï¿½es de leitura e saï¿½da.
  * +name, pathname e cmd(command line).
  *
- * Histórico:
- *     Versão: 1.0, 2015 - Esse arquivo foi criado por Fred Nora.
- *     Versão: 1.0, 2016 - Aprimoramento geral das rotinas básicas.
+ * Histï¿½rico:
+ *     Versï¿½o: 1.0, 2015 - Esse arquivo foi criado por Fred Nora.
+ *     Versï¿½o: 1.0, 2016 - Aprimoramento geral das rotinas bï¿½sicas.
  *     ...
  */
 
@@ -48,7 +48,7 @@ struct process_d *xxxClonedProcess;
 #define gramado_pid_t pid_t
 
 
-//Limite para criação de processos. 
+//Limite para criaï¿½ï¿½o de processos. 
 #define PROCESS_COUNT_MAX 1024   
  
 //
@@ -57,37 +57,37 @@ struct process_d *xxxClonedProcess;
 
  
 //
-// Endereços virtuais usados pelos processos.
+// Endereï¿½os virtuais usados pelos processos.
 //
 
 
 // Image. 
-// (Base da imagem de um processo de usuário).
+// (Base da imagem de um processo de usuï¿½rio).
 //
-// "Todo processo terá seu próprio diretório de páginas
-//  e será carregado no endereço virtual 0x400000, logicamente
-//  cada processo será carregado em um endereço físico diferente."
+// "Todo processo terï¿½ seu prï¿½prio diretï¿½rio de pï¿½ginas
+//  e serï¿½ carregado no endereï¿½o virtual 0x400000, logicamente
+//  cada processo serï¿½ carregado em um endereï¿½o fï¿½sico diferente."
 
 #define UPROCESS_IMAGE_BASE 0x400000 
 
 //Process Limit. (User process) 
-//(O limite é o início do kernel).
+//(O limite ï¿½ o inï¿½cio do kernel).
 #define UPROCESS_PROCESS_LIMIT 0xC0000000    
 
 
 
 // Heap.
 // Base default do heap do processo.
-// "Endereço virtual de onde começa o heap de um processo,
-//  evidentemente, cada processo terá seu heap em um 
-//  endereço físico diferente".
+// "Endereï¿½o virtual de onde comeï¿½a o heap de um processo,
+//  evidentemente, cada processo terï¿½ seu heap em um 
+//  endereï¿½o fï¿½sico diferente".
 //
 #define UPROCESS_DEFAULT_HEAP_BASE  0x80000000 
 //Tamanho default do heap do processo.  
 #define UPROCESS_DEFAULT_HEAP_SIZE  0x2000     
 
 //Stack.
-//Deslocamento default do início da pilha em relação ao início do kernel. #bugbug
+//Deslocamento default do inï¿½cio da pilha em relaï¿½ï¿½o ao inï¿½cio do kernel. #bugbug
 #define UPROCESS_DEFAULT_STACK_OFFSET 0x2000   
 //Base default da pilha do processo.
 #define UPROCESS_DEFAULT_STACK_BASE ( UPROCESS_PROCESS_LIMIT - UPROCESS_DEFAULT_STACK_OFFSET )  
@@ -98,20 +98,20 @@ struct process_d *xxxClonedProcess;
 
  
 //
-// Bases para a contagem de processos, do sistema e de usuários.
+// Bases para a contagem de processos, do sistema e de usuï¿½rios.
 // 
  
-//Primeiro índice na contagem das processos do sistema.
+//Primeiro ï¿½ndice na contagem das processos do sistema.
 #define SYSTEM_BASE_PID 0
-//Primeiro índice na contagem das processos dos usuários.  
+//Primeiro ï¿½ndice na contagem das processos dos usuï¿½rios.  
 #define USER_BASE_PID 100    
  
  
 /*
- * Constantes para níveis de prioridade.
+ * Constantes para nï¿½veis de prioridade.
  */
  
-//Definições principais. 
+//Definiï¿½ï¿½es principais. 
 #define PRIORITY_LOW4      1  //4
 #define PRIORITY_LOW3      2  //3
 #define PRIORITY_LOW2      3  //2
@@ -122,7 +122,7 @@ struct process_d *xxxClonedProcess;
 #define PRIORITY_HIGH3     8  //3
 #define PRIORITY_HIGH4     9  //4
 
-//Definições secundárias.
+//Definiï¿½ï¿½es secundï¿½rias.
 #define PRIORITY_LOW        PRIORITY_LOW1
 #define PRIORITY_MIN        PRIORITY_LOW4
 #define PRIORITY_HIGH       PRIORITY_HIGH1 
@@ -130,7 +130,7 @@ struct process_d *xxxClonedProcess;
 
 
 
-// #todo: Criar uma variável para esse multiplicador.
+// #todo: Criar uma variï¿½vel para esse multiplicador.
 // para fazermos testes;
 //unsigned long g_timeslice_multiplier;
 //#define TIMESLICE_MULTIPLIER 1
@@ -142,12 +142,12 @@ struct process_d *xxxClonedProcess;
 
 
 /*
- * Constantes para níveis de quantum.
- * Tempo de processamento atribuido pelo scheduler à cada processo.
+ * Constantes para nï¿½veis de quantum.
+ * Tempo de processamento atribuido pelo scheduler ï¿½ cada processo.
  * dado em quantidades de ticks ...
- * para saber quanto tempo tem que multiplicar por 10ms ... que é 
- * o tempo de cada interrupção ... e somar o tempo perdido com taskswitch ...
- *  100ms + 5ms(que o timer fica esperando o kernel habilitar as interrupções).
+ * para saber quanto tempo tem que multiplicar por 10ms ... que ï¿½ 
+ * o tempo de cada interrupï¿½ï¿½o ... e somar o tempo perdido com taskswitch ...
+ *  100ms + 5ms(que o timer fica esperando o kernel habilitar as interrupï¿½ï¿½es).
  */
 
 // #test
@@ -161,17 +161,17 @@ struct process_d *xxxClonedProcess;
 #define BLOCKED_LIMIT (PRIORITY_MAX *TIMESLICE_MULTIPLIER)
  
  
-//Lista de status na criação de um processo.     
+//Lista de status na criaï¿½ï¿½o de um processo.     
 #define ERRO_SLOT_OCUPADO  0xfffff    //Slot ocupado.      
 #define ERRO_DEFAULT       0xffffe
 //...
 
 
 //Process runtime stack.
-//??? Deve ser o limite máximo para a pilha de um processo.
+//??? Deve ser o limite mï¿½ximo para a pilha de um processo.
 #define MAXSTACK 128    //dwords.
  
-//Número total de slots para criação de processo.
+//Nï¿½mero total de slots para criaï¿½ï¿½o de processo.
 //@todo: deletar, definido em threads. ??? 
 #define NUMERO_TOTAL_DE_SLOTS 256   
  
@@ -180,8 +180,8 @@ struct process_d *xxxClonedProcess;
 /*
  * Globais.
  *
- * @todo: Talvez o certo é não ter globais aqui, e
- *        as estruturas e variáveis relativas ao gerenciamento
+ * @todo: Talvez o certo ï¿½ nï¿½o ter globais aqui, e
+ *        as estruturas e variï¿½veis relativas ao gerenciamento
  *        de processos fique dentro do arquivo process.c.
  *        Encapsulamento.?? 
  */ 
@@ -192,8 +192,8 @@ struct process_d *xxxClonedProcess;
  * process_state_t
  *     Status de um processo.
  *     @todo: Pode-se usar mais status.
- *            como estado de transição.
- *  Os status de um processo são diferentes do status de uma thread.
+ *            como estado de transiï¿½ï¿½o.
+ *  Os status de um processo sï¿½o diferentes do status de uma thread.
  */ 
 
 typedef enum {
@@ -202,8 +202,8 @@ typedef enum {
     PROCESS_RUNNING,
     PROCESS_BLOCKED,
     PROCESS_TERMINATED,
-    PROCESS_IN_MEMORY,        //O processo está carregado na memória.
-    PROCESS_OUT_OF_MEMORY,    //O processo não está carregado na memória.
+    PROCESS_IN_MEMORY,        //O processo estï¿½ carregado na memï¿½ria.
+    PROCESS_OUT_OF_MEMORY,    //O processo nï¿½o estï¿½ carregado na memï¿½ria.
 	//...
 }process_state_t;
 
@@ -214,16 +214,16 @@ typedef enum {
  Importante:
  
  APPMODE_TERMINAL = O kernel cria uma estrutura de terminal 
- com uma janela associada a essa estrutura, essa janela será a 
+ com uma janela associada a essa estrutura, essa janela serï¿½ a 
  janela de terminal para o aplicativo.
- APPMODE_WINDOW = O kernel não cria estrutura de terminal para 
- esse processo e o processo criará janelas.
+ APPMODE_WINDOW = O kernel nï¿½o cria estrutura de terminal para 
+ esse processo e o processo criarï¿½ janelas.
  */
 
 typedef enum {
     APPMODE_NULL,      // Isso se aplica ao processo kernel e ao processo idle por exemplo.
     APPMODE_TERMINAL,  // O kernel cria uma janela de terminal para o aplicativo.
-    APPMODE_WINDOW,    // O kernel não cria janela de terminal para o aplicativo
+    APPMODE_WINDOW,    // O kernel nï¿½o cria janela de terminal para o aplicativo
 }appmode_t;
 
 
@@ -234,7 +234,7 @@ typedef enum {
   
 /*
  #todo: Pensando nisso
- o kernel vai armazenar todas essas informações sobre process?  
+ o kernel vai armazenar todas essas informaï¿½ï¿½es sobre process?  
 struct process_info_d
 {
     //#todo object header
@@ -258,28 +258,28 @@ struct process_info_d
  *    PCB - Process Control Block.
  *
  *    Estruturas para processos.
- *    Estrutura onde se guarda informações sobre os processos.
- *    Cada estrutura terá informações necessárias para
- *    gerenciar um processo específico.
- *    São os SLOTS. 
+ *    Estrutura onde se guarda informaï¿½ï¿½es sobre os processos.
+ *    Cada estrutura terï¿½ informaï¿½ï¿½es necessï¿½rias para
+ *    gerenciar um processo especï¿½fico.
+ *    Sï¿½o os SLOTS. 
  *
  *    Obs:
- *        Devem ter informações sobre o carregamento,
- *        se estão na memoria ou não, 
- *        se estão em processo de transição. etc.
+ *        Devem ter informaï¿½ï¿½es sobre o carregamento,
+ *        se estï¿½o na memoria ou nï¿½o, 
+ *        se estï¿½o em processo de transiï¿½ï¿½o. etc.
  *        *IMPOTANTE: Uso de cotas de recursos.
  *
  *    @todo: 
- *        Deve-se começar listando os recursos que o processo usa.
+ *        Deve-se comeï¿½ar listando os recursos que o processo usa.
  *        Ex: Lista de arquivos, 
  *            lista de recursos que pretende usar.
- *            permissões, acessos, 
- *            (isso tem a ver com o usuário, dono do processo).
+ *            permissï¿½es, acessos, 
+ *            (isso tem a ver com o usuï¿½rio, dono do processo).
  *
- *     Obs: Fica por último o que for referenciado com menor frequência.
- *          Onde ficarão os diretórios e as páginas dos processos.(mm)
+ *     Obs: Fica por ï¿½ltimo o que for referenciado com menor frequï¿½ncia.
+ *          Onde ficarï¿½o os diretï¿½rios e as pï¿½ginas dos processos.(mm)
  *          O kernel precisa aloca memoria para os PDs PTs.
- *          O kernel precisa alocar memória para Heap e Stack dos processos.
+ *          O kernel precisa alocar memï¿½ria para Heap e Stack dos processos.
  *          //...
  */
 
@@ -291,7 +291,7 @@ struct process_d
     object_class_t objectClass;
 
   
-    struct object_d *object;  //Talvez não.
+    struct object_d *object;  //Talvez nï¿½o.
 
 
     int used;  
@@ -310,13 +310,13 @@ struct process_d
 	//
  
 	//PID, (Process Identification), 
-	//Número que identifica unicamente um processo.	
+	//Nï¿½mero que identifica unicamente um processo.	
 	//PPID, (Parent Process Identification),
-	//Número de identificação do processo pai.	
+	//Nï¿½mero de identificaï¿½ï¿½o do processo pai.	
 	//UID, (User Identification),
-	//Número de identificação do usuário que criou o processo.	
+	//Nï¿½mero de identificaï¿½ï¿½o do usuï¿½rio que criou o processo.	
 	//GID, (Group Identification),
-	//Número do grupo do dono do processo.
+	//Nï¿½mero do grupo do dono do processo.
 
     pid_t pid;
     pid_t ppid;
@@ -328,7 +328,7 @@ struct process_d
 	// flag ?
     process_state_t state; 
 
-	//plano de execução.
+	//plano de execuï¿½ï¿½o.
     int plane;
 
 	// error.
@@ -342,10 +342,10 @@ struct process_d
 	//char *pathname;              //@todo: Incluir.	
 	char *cmd;                     //Nome curto que serve de comando.
 	char *name;                    //Nome do processo. 
-	//unsigned long name_address;    //@todo: não usar isso.
+	//unsigned long name_address;    //@todo: nï¿½o usar isso.
 
     //#test
-    //Assim fica mais fácil enviar para o aplicativo.
+    //Assim fica mais fï¿½cil enviar para o aplicativo.
     char __processname[64];    // HOSTNAME_BUFFER_SIZE
     size_t processName_len;    // len 
 
@@ -357,7 +357,7 @@ struct process_d
     // De onde vem o o input do processo. (stdin)
     // O stdin pode vim de um terminal. Pois um terminal
     // pode estar gerenciando o input de teclado ou mouse e
-    // transferindo os dados para o processo através de uma 
+    // transferindo os dados para o processo atravï¿½s de uma 
     // disciplina de linhas.
     // ex: #todo INPUTTYPE_TTY INPUTTYPE_RAW ...
     int input_type;
@@ -366,29 +366,29 @@ struct process_d
 	// tty support
 	//
     
-    // Essa é a tty do processo.
-    // Ela será master se o processo for um shell e
-    // Será slave se o processo for um terminal.
-    // O terminal(slave) encontrará o shell(master) em tty->link.
+    // Essa ï¿½ a tty do processo.
+    // Ela serï¿½ master se o processo for um shell e
+    // Serï¿½ slave se o processo for um terminal.
+    // O terminal(slave) encontrarï¿½ o shell(master) em tty->link.
     struct tty_d *tty;
     
     // Um buffer no app en ring3
-    // onde o driver de rede pode colocar conteúdo e depois
+    // onde o driver de rede pode colocar conteï¿½do e depois
     // avisar o processo via mensagem.
     char *net_buffer;
 
  
-    // Qual é apersonalidade do processo.
+    // Qual ï¿½ apersonalidade do processo.
     // Ele deve agir como unix-like, gramado-like, etc ?
     int personality;
 
 	//Importante:
-	//isso substituirá a flag 'terminal'
+	//isso substituirï¿½ a flag 'terminal'
 	//APPMODE_TERMINAL = O kernel cria uma estrutura de terminal 
-	//com uma janela associada a essa estrutura, essa janela será a 
+	//com uma janela associada a essa estrutura, essa janela serï¿½ a 
 	//janela de terminal para o aplicativo.
-	//APPMODE_WINDOW = O kernel não cria estrutura de terminal para 
-	//esse processo e o processo criará janelas.
+	//APPMODE_WINDOW = O kernel nï¿½o cria estrutura de terminal para 
+	//esse processo e o processo criarï¿½ janelas.
 	
 	appmode_t appMode;
 
@@ -398,21 +398,21 @@ struct process_d
 
 
 	// Obs: 
-	// Um processo é um cliente de banco de dados.
+	// Um processo ï¿½ um cliente de banco de dados.
 	// Um processo tem contas conjuntas e pessoais.
-	// Um processo poderá compartilhar esses objetos.	
+	// Um processo poderï¿½ compartilhar esses objetos.	
 
 	//
 	// BANCOS
 	//
 
-	//Acesso ao banco de dados do kernel. (não é uma lista).
+	//Acesso ao banco de dados do kernel. (nï¿½o ï¿½ uma lista).
 	struct bank_d *kdb;
 
-	//Lista de acessos à bancos de contas conjuntas.
+	//Lista de acessos ï¿½ bancos de contas conjuntas.
 	struct bank_d *gdbListHead;
 
-	//Lista de acessos à bancos de contas pessoais.
+	//Lista de acessos ï¿½ bancos de contas pessoais.
 	struct bank_d *ldbListHead;
 
 
@@ -434,44 +434,44 @@ struct process_d
 
 	//Testing...
 	//Process Page Table. (PPT)
-	//Quais são as páginas que o processo está usando e onde elas estão.
-	//na tabela tem que ter: O número da página. onde ela está, se no disco ou se na memória
-	//qual é o número do pageframe da página e qual o status de modificação
-	// Bom, acho que pra isso, o processo deve trabalhar em um número limitado de pagetables
-	// pois o número do frame deve ser o índice da pte dentro da page table.
-	// Uma pagetable tem 1024 entradas, garantindo um número de 1024 frames, o que dá 4MB.
-	// Mas se um processo tiver mais que 4MB? Então o diretório de páginas do processo
-	// terá que ter mais de uma page table.
+	//Quais sï¿½o as pï¿½ginas que o processo estï¿½ usando e onde elas estï¿½o.
+	//na tabela tem que ter: O nï¿½mero da pï¿½gina. onde ela estï¿½, se no disco ou se na memï¿½ria
+	//qual ï¿½ o nï¿½mero do pageframe da pï¿½gina e qual o status de modificaï¿½ï¿½o
+	// Bom, acho que pra isso, o processo deve trabalhar em um nï¿½mero limitado de pagetables
+	// pois o nï¿½mero do frame deve ser o ï¿½ndice da pte dentro da page table.
+	// Uma pagetable tem 1024 entradas, garantindo um nï¿½mero de 1024 frames, o que dï¿½ 4MB.
+	// Mas se um processo tiver mais que 4MB? Entï¿½o o diretï¿½rio de pï¿½ginas do processo
+	// terï¿½ que ter mais de uma page table.
 	// Obs: O kernel deve manter uma lista de frames que podem ser usados.
 	//      na hora de criar uma pagetable pra um page directory de um processo
-	// é necessário pegar na lista de frames 1024 frames livres ou quanto for necessário.
+	// ï¿½ necessï¿½rio pegar na lista de frames 1024 frames livres ou quanto for necessï¿½rio.
 
 	// **** IMPORTANTE ****
-	// Uma lista de framepool. (Lista de partições de memória física).
-	// Cada framepool é composto de 1024 frames.
-	// Obs: *IMPORTANTE: Quando um processo é criado, pelo menos um framepool 
-	// deve ser atribuído a ele, mesmo antes de mapear os frames desse 
+	// Uma lista de framepool. (Lista de partiï¿½ï¿½es de memï¿½ria fï¿½sica).
+	// Cada framepool ï¿½ composto de 1024 frames.
+	// Obs: *IMPORTANTE: Quando um processo ï¿½ criado, pelo menos um framepool 
+	// deve ser atribuï¿½do a ele, mesmo antes de mapear os frames desse 
 	// framepool em alguma pagetable do page directory do processo.
 
 	struct frame_pool_d *framepoolListHead;
 
 
-	//Quantidade de memória física usada pelo processo que não pode ser compartilhada
+	//Quantidade de memï¿½ria fï¿½sica usada pelo processo que nï¿½o pode ser compartilhada
 	//com outros processos. (em KB).
 	unsigned long private_memory_size;
 
-	//Quantidade de memória física usada pelo processo que pode ser compartilhada
+	//Quantidade de memï¿½ria fï¿½sica usada pelo processo que pode ser compartilhada
 	//com outros processos. (em KB).
 	unsigned long shared_memory_size;
 
-	//Quantidade de memória usada por um processo em determinado espaço de tempo.
+	//Quantidade de memï¿½ria usada por um processo em determinado espaï¿½o de tempo.
 	// workset = (private + shared);
 	unsigned long workingset_size;
 	unsigned long workingset_peak_size;	
 
 
 	//Qualquer pagefault deve ser registrada na estrutura do processo corrente.
-	//?? não seria na thread ??
+	//?? nï¿½o seria na thread ??
 	unsigned long pagefaultCount;
 	//...
 
@@ -479,7 +479,7 @@ struct process_d
 	//unsigned long Cycles;  // ?? double ??  
 	
 	//quantas vezes no total o dispacher atuou sobre ele.
-	//Essa contagem não deve ser feita na thread.
+	//Essa contagem nï¿½o deve ser feita na thread.
 	//Ou colocaremos aqui o total de todos os context switches das threads ??
 	//unsigned long ContextSwitches;   
 
@@ -488,8 +488,8 @@ struct process_d
 	// The working set of a process is the set of pages in the 
 	// virtual address space of the process that are currently 
 	// resident in physical memory. 
-	// Quantas trocas de context sofreu durante um determinado tempo de análise.
-	// Esse deve ser o mesmo tempo de análise usado para calcular o working set.
+	// Quantas trocas de context sofreu durante um determinado tempo de anï¿½lise.
+	// Esse deve ser o mesmo tempo de anï¿½lise usado para calcular o working set.
 
 
 	//unsigned long ContextSwitchesDelta;  
@@ -504,28 +504,28 @@ struct process_d
 	// stack = Stack do proceso.
 
 	// #bugbug
-	// Me parece que isso considera que o processo só tem um programa.
-	// Como ficaria no caso do processo ter vários programas.
-	// Podemos fazer aqui só as informações para o programa principal.
+	// Me parece que isso considera que o processo sï¿½ tem um programa.
+	// Como ficaria no caso do processo ter vï¿½rios programas.
+	// Podemos fazer aqui sï¿½ as informaï¿½ï¿½es para o programa principal.
 	// Para os outros programas teremos apenas uma lista de ponteiros
 	// para as estruturas que gerenciam eles.
 
 	// ORDEM: 
-	// O que segue é referenciado durante o processo de task switch.
+	// O que segue ï¿½ referenciado durante o processo de task switch.
 
 	
 	// Page directory information:
 	// ==========================
-	//     Todo processo deve ter seu próprio diretório.
-	//     As threads usam o diretório do processo ao qual pertencem.
-	//     O endereço do diretório é carregado no CR3.
+	//     Todo processo deve ter seu prï¿½prio diretï¿½rio.
+	//     As threads usam o diretï¿½rio do processo ao qual pertencem.
+	//     O endereï¿½o do diretï¿½rio ï¿½ carregado no CR3.
  
 	 
 	unsigned long DirectoryVA;                  
 	unsigned long DirectoryPA;
 
 	
-	//ponteiro para a estrutura do diretório de páginas do processo.
+	//ponteiro para a estrutura do diretï¿½rio de pï¿½ginas do processo.
 	struct page_directory_d *page_directory;  
 
 	//
@@ -534,19 +534,19 @@ struct process_d
 	
 	// #IMPORTANTE
 	// Com base na origem da imagem e no seu tamanho podemos
-	// determinar a quantidade de páginas que o programa principal do processo
-	// está usando.
-	// Como o programa foi caregado pelo boot loader, ainda não temos a lista
-	// de páginas usadas por esse processo.
-	// #obs: A lista é grande. Então devemos fazer apenas um ponteiro para 
+	// determinar a quantidade de pï¿½ginas que o programa principal do processo
+	// estï¿½ usando.
+	// Como o programa foi caregado pelo boot loader, ainda nï¿½o temos a lista
+	// de pï¿½ginas usadas por esse processo.
+	// #obs: A lista ï¿½ grande. Entï¿½o devemos fazer apenas um ponteiro para 
 	// ela, ou colocarmos um ponteiro de estrutura head de uma lista encadeada.
 	// #importante: esssa estrutura tem que ser simples. Com poucos elementos.
-	// Poderemos usar essas informações para clonar o processo.
+	// Poderemos usar essas informaï¿½ï¿½es para clonar o processo.
 
 
 	// Base da imagem do processo.
 	// Tamanho da imagem do processo.
-	// Quantas páginas foram usadas por essa imagem. ImageSize/PageSize
+	// Quantas pï¿½ginas foram usadas por essa imagem. ImageSize/PageSize
 	 
 	unsigned long Image; 
 	unsigned long ImagePA; 
@@ -559,7 +559,7 @@ struct process_d
     unsigned long childImage_PA;  
     //unsigned long childImage2; 
 	
-	//#todo: estrutura com informações sobre a imagem do processo.
+	//#todo: estrutura com informaï¿½ï¿½es sobre a imagem do processo.
 	//see: pc/image.h
 	struct image_info_d *image_info;
 	
@@ -570,23 +570,23 @@ struct process_d
 	// ## Heap ##     
 
 	//#importante 
-	unsigned long Heap;            //Endereço do início do Heap do processo.
+	unsigned long Heap;            //Endereï¿½o do inï¿½cio do Heap do processo.
 	unsigned long HeapEnd;
 	unsigned long HeapSize;        //Tamanho do heap.
 	
-	//?? Isso serve para manipulação do heap do processo.
-	unsigned long HeapPointer;     //Ponteiro do heap do processo para o próxima alocação.
-	unsigned long HeapLastValid;   //Último ponteiro válido.
-	unsigned long HeapLastSize;    //Último tamanho alocado..	
+	//?? Isso serve para manipulaï¿½ï¿½o do heap do processo.
+	unsigned long HeapPointer;     //Ponteiro do heap do processo para o prï¿½xima alocaï¿½ï¿½o.
+	unsigned long HeapLastValid;   //ï¿½ltimo ponteiro vï¿½lido.
+	unsigned long HeapLastSize;    //ï¿½ltimo tamanho alocado..	
 	//struct heap_d *processHeap;  //@todo: Usar essa estrutura.
 
 
 	//  ## Stack ##
 
-	unsigned long Stack;          //Endereço do início da Stack do processo.
+	unsigned long Stack;          //Endereï¿½o do inï¿½cio da Stack do processo.
 	unsigned long StackEnd;
 	unsigned long StackSize;      //Tamanho da pilha.	
-	unsigned long StackOffset;    //Deslocamento da pilha em relação ao início do kernel.	
+	unsigned long StackOffset;    //Deslocamento da pilha em relaï¿½ï¿½o ao inï¿½cio do kernel.	
 	//struct stack_d *processStack;  //@todo: Criar essa estrutura.
 
 	// Teste: 
@@ -595,7 +595,7 @@ struct process_d
 	//struct mmblock_d mmBlocks[32];    //estruturas 
 	//unsigned long mmblockList[32];    //ponteiros para estruturas.
 
-	//Muitas informações sobre a memória usada pro um processo.
+	//Muitas informaï¿½ï¿½es sobre a memï¿½ria usada pro um processo.
 	//struct process_memory_info_d *processMemoryInfo;
 
 
@@ -608,38 +608,38 @@ struct process_d
 	unsigned long iopl;      
 
 	// Priority.
-	// Um processo tem uma prioridade básica estática e também uma prioridade 
-	// atual dinâmica, que pode ser incrementada ou decrementada. Se afastando 
-	// ou se aproximando da prioridade básica. Isso acontece no OpenVMS e no NT.
+	// Um processo tem uma prioridade bï¿½sica estï¿½tica e tambï¿½m uma prioridade 
+	// atual dinï¿½mica, que pode ser incrementada ou decrementada. Se afastando 
+	// ou se aproximando da prioridade bï¿½sica. Isso acontece no OpenVMS e no NT.
 	
-	unsigned long base_priority; //básica. 
-	unsigned long priority;      //dinâmica.
+	unsigned long base_priority; //bï¿½sica. 
+	unsigned long priority;      //dinï¿½mica.
 
 	//Que tipo de scheduler o processo utiliza. (rr, realtime ...).
 	//int scheduler_type;    
  
 	//
-	// Temporização da tarefa. 
+	// Temporizaï¿½ï¿½o da tarefa. 
 	//
 	
 	unsigned long step;               //Quantas vezes a tarefa usou o processador. 
 	unsigned long quantum;            //thread quantum
 	unsigned long timeout;            //Tempo em modo de espera. 
-	unsigned long ticks_remaining;    //rt, quanto tempo a tarefa tem disponível para ser concluida.
+	unsigned long ticks_remaining;    //rt, quanto tempo a tarefa tem disponï¿½vel para ser concluida.
 
-	//unsigned long alarm;            //Tempo para o próximo alarme, dado em ticks.
+	//unsigned long alarm;            //Tempo para o prï¿½ximo alarme, dado em ticks.
 
 	//unsigned long ThreadQuantum;    //As threads do processo iniciam com esse quantum.
 
 	/*
 	 * QUANTUM:
 	 * =======
-	 *     Quantum é a cota atrituida à cada processo pelo
+	 *     Quantum ï¿½ a cota atrituida ï¿½ cada processo pelo
 	 *     scheduler. (time slice) 
-	 *     Esse é o tempo limite imposto pelo scheduler para
-	 *     execução de um processo. Ocorre então uma preempção por tempo.
+	 *     Esse ï¿½ o tempo limite imposto pelo scheduler para
+	 *     execuï¿½ï¿½o de um processo. Ocorre entï¿½o uma preempï¿½ï¿½o por tempo.
 	 *      
-	 *     'ProcessingTime' é atribuído pelo processo. É o quanto
+	 *     'ProcessingTime' ï¿½ atribuï¿½do pelo processo. ï¿½ o quanto
 	 *     ele precisa. o quanto ele deseja.
 	 */
 	 
@@ -651,7 +651,7 @@ struct process_d
 	//...
 	
 	//quanto por cento do tempo o processo ficou rodando.
-	//é a soma do quanto ficou rodando todas as suas threads.
+	//ï¿½ a soma do quanto ficou rodando todas as suas threads.
 	unsigned long profiler_percentage_running;
 	unsigned long profiler_ticks_running;
 	unsigned long profiler_last_ticks;
@@ -660,16 +660,16 @@ struct process_d
 	//  +++++ Thread support +++++
 	//
 	
-	//Número de threads do processo.
+	//Nï¿½mero de threads do processo.
 	
 	int threadCount;     
 	
 	/*
 	 * threadList:
 	 *     Lista com ponteiros de estrutura das threads do processo.
-	 *     O indice dessa lista serve para enumerálas.
+	 *     O indice dessa lista serve para enumerï¿½las.
 	 *	 
-	 *     @todo: Usar array de estruturas dinâmico. (Alocar).
+	 *     @todo: Usar array de estruturas dinï¿½mico. (Alocar).
 	 */ 
 	unsigned long tList[32];      //@todo: deletar  
 	//struct thread_d *Threads;   //@todo: usar esse.
@@ -702,10 +702,10 @@ struct process_d
 	
 	// ??
 	// preempted:
-	//     flag ~ Sinaliza que uma tarefa pode ou não sofrer preempção.
+	//     flag ~ Sinaliza que uma tarefa pode ou nï¿½o sofrer preempï¿½ï¿½o.
 	//     Uma tarefa de menor prioridade pode deixar o estado running 
 	// para assumir o estado ready em favor de uma tarefa de maior prioridade
-	// que assumirá o estado running.
+	// que assumirï¿½ o estado running.
 
 	unsigned long preempted;
 
@@ -735,14 +735,14 @@ struct process_d
 	
 
 	//
-	// ORDEM: O que segue é referenciado com pouca frequência.
+	// ORDEM: O que segue ï¿½ referenciado com pouca frequï¿½ncia.
 	//
 	
 	//lista de arquivos ??
-	//fluxo padrão. stdio, stdout, stderr
+	//fluxo padrï¿½o. stdio, stdout, stderr
 	//unsigned long iob[8];
 
-	//ponteiros para as streams do fluxo padrão.
+	//ponteiros para as streams do fluxo padrï¿½o.
 	unsigned long standard_streams[3];
 	
 	struct _iobuf *root;	// 4 root directory
@@ -750,44 +750,44 @@ struct process_d
 	//...
 
 
-	//#todo: esse tamanho deve ser igual ao encontrado no módulo /fs.	
+	//#todo: esse tamanho deve ser igual ao encontrado no mï¿½dulo /fs.	
 	char pwd_string[32];	
 	
 	// @todo:
 	// Outros:
 	//tempo de cpu.
-	//prioridade básica. //Obs: prioridade poderia ser uma estrutura.
+	//prioridade bï¿½sica. //Obs: prioridade poderia ser uma estrutura.
 	//contagem de threads usadas no momento.
-	//path name - Endereço completo do arquivo ex:/root/users/fred/text.bin
+	//path name - Endereï¿½o completo do arquivo ex:/root/users/fred/text.bin
 	//comando. - Comando que abre o programa.
 	//Contagem de objetos sendo usado. (estatisticas ajudam melhorar o sistema.)
 	//i/o read count - Contagem de leituras de disco feitas pelo processo.
-	//i/o write count - Contagem de gravações de disco feitas pelo processo.
-	//generic i/o - Outras operações de i/o que não são leitura e escrita em disco.
+	//i/o write count - Contagem de gravaï¿½ï¿½es de disco feitas pelo processo.
+	//generic i/o - Outras operaï¿½ï¿½es de i/o que nï¿½o sï¿½o leitura e escrita em disco.
 	//todal de bytes lidos do disco pelo processo.
 	//total de bytes gravados no disco pelo processo.
-	//generic bytes i/o. contagem de bytes para operações genéricas de i/o, excluindo disco.
+	//generic bytes i/o. contagem de bytes para operaï¿½ï¿½es genï¿½ricas de i/o, excluindo disco.
 	
 
 	// wait4pid: 
 	// O processo esta esperando um processo filho fechar.
-	// Esse é o PID do processo que ele está esperando fechar.
+	// Esse ï¿½ o PID do processo que ele estï¿½ esperando fechar.
 
 	pid_t wait4pid;
 	
 	//Motivo do processo fechar.
 	int exit_code;
 	
-	// Número de processos filhos.
+	// Nï¿½mero de processos filhos.
 	int nchildren;
 	
-	// Lista de processos filhos que estão no estado zumbi.
+	// Lista de processos filhos que estï¿½o no estado zumbi.
 	// List of terminated childs
 	struct process_d *zombieChildListHead;           
 	
 	//?? mensagens pendentes.	
 	//struct thread_d *sendersList; //Lista encadeada de processos querendo enviar mensagem
-	//struct thread_d *nextSender;  //próximo processo a enviar mensagem.
+	//struct thread_d *nextSender;  //prï¿½ximo processo a enviar mensagem.
 
 	//
 	//   ## IPC ##
@@ -805,7 +805,7 @@ struct process_d
 	//unsigned long long1;        //arg3.
 	//unsigned long long2;        //arg4.
 
-	// diálogo com o processo.
+	// diï¿½logo com o processo.
 	// importante no caso de servidores e drivers
 	unsigned long dialog_address;
 	
@@ -844,9 +844,9 @@ struct process_d *CurrentProcess;    //Current.
  *
  *    **** LONG-TERM SCHEDULER FOR PROCESSES ****
  *
- *     Essa é a thread job list, ou job queue.
+ *     Essa ï¿½ a thread job list, ou job queue.
  *     Armazena todos os processos do sistema.
- *     os que estão residentes na memoria ram e as que não estão.
+ *     os que estï¿½o residentes na memoria ram e as que nï¿½o estï¿½o.
  */  
 
 unsigned long processList[PROCESS_COUNT_MAX];
@@ -879,9 +879,9 @@ struct proc_list_d
 	
 }; 
 struct proc_list_d *system_procs;      //Processos do sistema.
-struct proc_list_d *periodic_procs;    //Processos periódicos.
+struct proc_list_d *periodic_procs;    //Processos periï¿½dicos.
 struct proc_list_d *rr_procs;          //Processos do tipo round robin.
-struct proc_list_d *waiting_procs;     //Processos que estão esperando.
+struct proc_list_d *waiting_procs;     //Processos que estï¿½o esperando.
 //...  
 
 
@@ -889,7 +889,7 @@ struct proc_list_d *waiting_procs;     //Processos que estão esperando.
 
 /*
  * process_info_d:
- *    Informações básicas sobre um processo. 
+ *    Informaï¿½ï¿½es bï¿½sicas sobre um processo. 
  *    Quick access.
  */
 
@@ -914,7 +914,7 @@ struct process_info_d
 
 
 //
-// Protótipos de função.
+// Protï¿½tipos de funï¿½ï¿½o.
 //
 
 unsigned long __GetProcessStats ( int pid, int index );
@@ -929,16 +929,10 @@ int getprocessname ( int pid, char *buffer );
 pid_t do_clone_execute_process (char *filename);
 
 
-// t901
-//clona um processo, retorna par ao pai e inicializa o processo
-//filho do seu entrypoint. (#test)
-pid_t do_fork_process2 (void);
-
-
 /*
  ***************************************
  * do_fork_process
- *     (Função em desenvolvimento)
+ *     (Funï¿½ï¿½o em desenvolvimento)
  *     Clona um processo sem thread.
  *     Clona o processo atual.
  *     Retorna o PID do clone.
@@ -947,7 +941,7 @@ pid_t do_fork_process2 (void);
 pid_t do_fork_process (void);
 
 
-//cria uma estrutura do tipo processo, mas não inicializada.
+//cria uma estrutura do tipo processo, mas nï¿½o inicializada.
 struct process_d *processObject (void);
 
 
@@ -995,7 +989,7 @@ void show_currentprocess_info (void);
 void show_process_information (void);
 
 
-// Copia a imagem do processo que está carregada na memória.
+// Copia a imagem do processo que estï¿½ carregada na memï¿½ria.
 int processCopyMemory ( struct process_d *process );
 
 // copia os recursos do processo.
@@ -1015,7 +1009,7 @@ struct process_d *create_process ( struct room_d *room,
 
 
 //
-// Finalizações.
+// Finalizaï¿½ï¿½es.
 //
 
 void CloseAllProcesses (void);
@@ -1025,9 +1019,9 @@ void CloseAllProcesses (void);
  * exit_process:
  *     exit process..
  *     Torna o estado PROCESS_TERMINATED.
- *     mas não destrói a estrutura DO PROCESSO.
- *     Outra rotina destruirá as informações.
- *     liberara a memória.     
+ *     mas nï¿½o destrï¿½i a estrutura DO PROCESSO.
+ *     Outra rotina destruirï¿½ as informaï¿½ï¿½es.
+ *     liberara a memï¿½ria.     
  */
 
 void exit_process ( pid_t pid, int code );
@@ -1051,7 +1045,7 @@ __execute_new_process ( const char *filename,
 
 
 
-// Pega o número da tty de um processo, dado o pid.
+// Pega o nï¿½mero da tty de um processo, dado o pid.
 int process_get_tty ( int pid );
 
 

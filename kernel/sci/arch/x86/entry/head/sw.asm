@@ -1,15 +1,15 @@
 ;
 ; File: x86/entry/head/sw.inc 
 ;
-; Descrição:
-;     Interrupções de software.
-;     * As primeiras são em ordem numérica.
-;     * As outras são genéricas ou especiais.
-;	  * As interrupções de software começam na 48! vão até 255.
+; Descriï¿½ï¿½o:
+;     Interrupï¿½ï¿½es de software.
+;     * As primeiras sï¿½o em ordem numï¿½rica.
+;     * As outras sï¿½o genï¿½ricas ou especiais.
+;	  * As interrupï¿½ï¿½es de software comeï¿½am na 48! vï¿½o atï¿½ 255.
 ;
-; Histórico:
-; Versão: 1.0, 2015 - Created.
-; Versão: 1.0, 2016 - Revisão.
+; Histï¿½rico:
+; Versï¿½o: 1.0, 2015 - Created.
+; Versï¿½o: 1.0, 2016 - Revisï¿½o.
 ;
 
 
@@ -88,8 +88,8 @@ _int54:
 
 ;------------------------
 ; _int100: 
-;     Interrupção de sistema. 
-;     (opcional, segunda opção).
+;     Interrupï¿½ï¿½o de sistema. 
+;     (opcional, segunda opï¿½ï¿½o).
 ; 
 
 global _int100
@@ -104,8 +104,8 @@ _int100:
 ;;=====================================
 ;; _int133_fork:
 ;;
-;;     Interrupção 133.
-;;     usada exclusivamente para a função fork();
+;;     Interrupï¿½ï¿½o 133.
+;;     usada exclusivamente para a funï¿½ï¿½o fork();
 ;;
 
 extern _gde_fork
@@ -115,8 +115,8 @@ _int133_fork:
 
     cli 
 
-	;
-	;stack
+    ;
+    ;stack
     pop dword [_contextEIP]         ; eip (DOUBLE).
     pop dword [_contextCS]          ; cs  (DOUBLE).
     pop dword [_contextEFLAGS]      ; eflags (DOUBLE).
@@ -168,10 +168,10 @@ _int133_fork:
     push dword [_contextEDX]    ;edx ; arg4.
     push dword [_contextECX]    ;ecx ; arg3. 
     push dword [_contextEBX]    ;ebx ; arg2. 
-    push dword [_contextEAX]    ;eax ; arg1 = {Número do serviço}.
+    push dword [_contextEAX]    ;eax ; arg1 = {Nï¿½mero do serviï¿½o}.
 
-    ;; Chamando o handler exclusivo para a função fork().
-    ;; Está em: execve/sci/gde/gde_serv.c
+    ;; Chamando o handler exclusivo para a funï¿½ï¿½o fork().
+    ;; Estï¿½ em: execve/sci/gde/gde_serv.c
 
     call _gde_fork
     mov dword [__int133Ret], eax    
@@ -239,7 +239,7 @@ dummy_flush2:
 
     iretd
 
-;Variável interna usada na função acima.
+;Variï¿½vel interna usada na funï¿½ï¿½o acima.
 __int133Ret: dd 0
 
 ;;============================================
@@ -250,7 +250,7 @@ __int133Ret: dd 0
 
 ;======================================
 ; _int128:  0x80
-;    Interrupção de SISTEMA. (padrão).
+;    Interrupï¿½ï¿½o de SISTEMA. (padrï¿½o).
 ;
 ; eax = ;arg1 (numero)
 ; ebx = ;arg2 (arg2)
@@ -260,7 +260,7 @@ __int133Ret: dd 0
 ; _systemcall_entry
 ; _systemcall_services
 ; 
-; @todo: Pelo jeito é natural entrar com muito mais argumentos.
+; @todo: Pelo jeito ï¿½ natural entrar com muito mais argumentos.
 ;        passados pelos registradores ebp, esi, edi.
 ;++
 
@@ -286,17 +286,17 @@ _int128:
 	;;teste: esperamos que os pops restaurem os registradores de segmento.
 	
 	;;#importante
-	;;a questão é que o kernel está usando a pilha do aplicativo,
+	;;a questï¿½o ï¿½ que o kernel estï¿½ usando a pilha do aplicativo,
 	;;se mudamos a pilha como faremos o pop.
-	;;se mudarmos a pilha para pilha do kernel, então temos que fazer isso antes do push
+	;;se mudarmos a pilha para pilha do kernel, entï¿½o temos que fazer isso antes do push
 	;;e recuperarmos a pilha depois do pop .... isso seria um inferno.
 	;;##bugbug pelo jeito o kernel usa a pilha do aplicativo mesmo.
 	
 	;;-------------------
 	;;##bugbug: como pegaremos as mensagens de aplicativo se mudarmos o 
 	;;os registradores de segmento.	
-	;;no caso da interrupção de timer isso talvez não seja problema,
-	;;pois todos os registradores são salvos.
+	;;no caso da interrupï¿½ï¿½o de timer isso talvez nï¿½o seja problema,
+	;;pois todos os registradores sï¿½o salvos.
 	;;--------------------
 	
 
@@ -313,10 +313,10 @@ _int128:
     push dword edx    ;arg4.
     push dword ecx    ;arg3. 
     push dword ebx    ;arg2. 
-    push dword eax    ;arg1 = {Número do serviço}.
+    push dword eax    ;arg1 = {Nï¿½mero do serviï¿½o}.
 	
 
-	;;O handler padrão é gde_services, que é um wrapper para os outros diálogos.
+	;;O handler padrï¿½o ï¿½ gde_services, que ï¿½ um wrapper para os outros diï¿½logos.
 	call _gde_services
 	
 	mov dword [.int128Ret], eax    
@@ -337,7 +337,7 @@ _int128:
     pop ds
 
     ;; #importante
-    ;; Não pode ter eoi.
+    ;; Nï¿½o pode ter eoi.
 
     popad	
     mov eax, dword [.int128Ret] 
@@ -351,9 +351,9 @@ _int128:
 ;;==========================
 ;; _int129:
 ;;
-;; Isso é chamado pelo processo INIT do Gramado Core.
-;; Uma interrupção para habilitar as interrupções mascaráveis.
-;; quem usará isso será a thread primária do processo init.
+;; Isso ï¿½ chamado pelo processo INIT do Gramado Core.
+;; Uma interrupï¿½ï¿½o para habilitar as interrupï¿½ï¿½es mascarï¿½veis.
+;; quem usarï¿½ isso serï¿½ a thread primï¿½ria do processo init.
 ;; apenas uma vez.
 
 global _int129
@@ -395,8 +395,8 @@ _int213:
 	
 ;------------------------------------------------------
 ; _int216:
-;     Chamada rápida e direta para criação de janela.
-;     Obs: Isso ainda é um experimento.
+;     Chamada rï¿½pida e direta para criaï¿½ï¿½o de janela.
+;     Obs: Isso ainda ï¿½ um experimento.
 ; IN:
 ;	eax    ;; x
 ;	ebx    ;; y 
@@ -417,7 +417,7 @@ _int216:
 	pushad 
 	
 	;
-	; Salvando os registradores com parâmetros.
+	; Salvando os registradores com parï¿½metros.
 	;
 	
 	mov dword [.arg5], eax    ;; x
@@ -489,7 +489,7 @@ _int216:
 .res:  dd 0 ;;reserved.
 ;--  	
 ;-----------------------------------------------
-; Handler's genéricos para interrupções negligenciadas. 
+; Handler's genï¿½ricos para interrupï¿½ï¿½es negligenciadas. 
 ; 
 
 ;; #importante
