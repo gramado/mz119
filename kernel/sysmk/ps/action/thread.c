@@ -1,21 +1,21 @@
 /*
  * File: ps/action/thread.c
  *
- * Descrição:
+ * Descriï¿½ï¿½o:
  *     TM - Thread Manager (Parte fundamental do Kernel Base).
  *     Rotinas com threads. 
  *     Criar, deletar ...
  *
- * Obs: As threads podem acessar o espaço virtual do processo ao qual 
- * pertencem, mas não podem acessar memória de outro processo.
- *      Existe a memória compartilhada entre processos. Nesse caso
- * uma thread vai acessar uma memória sua que também pertence a outro 
+ * Obs: As threads podem acessar o espaï¿½o virtual do processo ao qual 
+ * pertencem, mas nï¿½o podem acessar memï¿½ria de outro processo.
+ *      Existe a memï¿½ria compartilhada entre processos. Nesse caso
+ * uma thread vai acessar uma memï¿½ria sua que tambï¿½m pertence a outro 
  * processo. 
  *
  * #bugbug
- * Obs: Nesse arquivo há uma mistura de inicialização independente de
- * de arquitetura e inicialização da arquitetura i386. Essas inicializações
- * precisam estar em arquivos e diretórios diferentes.
+ * Obs: Nesse arquivo hï¿½ uma mistura de inicializaï¿½ï¿½o independente de
+ * de arquitetura e inicializaï¿½ï¿½o da arquitetura i386. Essas inicializaï¿½ï¿½es
+ * precisam estar em arquivos e diretï¿½rios diferentes.
  * 
  * History:
  *     2015 - Create by Fred Nora.
@@ -338,7 +338,7 @@ int thread_profiler( int service )
     };
     
 		// salva a contagem de vezes que a thread rodou
-		// durante o período.
+		// durante o perï¿½odo.
 
     return -1;
 }
@@ -393,7 +393,7 @@ void thread_show_profiler_info (void)
  ***********************************
  * threadCopyThread:
  *     Clona uma thread.
- *     Usado no suporte a fork e execução de novos processos.
+ *     Usado no suporte a fork e execuï¿½ï¿½o de novos processos.
  */
 
 struct thread_d *threadCopyThread ( struct thread_d *thread ){
@@ -416,7 +416,7 @@ struct thread_d *threadCopyThread ( struct thread_d *thread ){
                                     current_process,       // pid.
                                     "clone-thread" );      // name
 
-	// A cópia.
+	// A cï¿½pia.
 
     if ( (void *) clone == NULL ){
         panic ("threadCopyThread: clone\n");
@@ -434,10 +434,10 @@ struct thread_d *threadCopyThread ( struct thread_d *thread ){
     clone->type = thread->type; 
 
 	// #importante
-	// Esse momento é critico.
-	// dependendo do estado da thread ele pode não rodar.
-	// ou ela pode rodar e falhar por não esta pronta,
-	// vamos testar opções.
+	// Esse momento ï¿½ critico.
+	// dependendo do estado da thread ele pode nï¿½o rodar.
+	// ou ela pode rodar e falhar por nï¿½o esta pronta,
+	// vamos testar opï¿½ï¿½es.
 
 
     clone->state = BLOCKED;  //isso funcionou.
@@ -445,18 +445,18 @@ struct thread_d *threadCopyThread ( struct thread_d *thread ){
     //clone->state = READY;  
 
 
-		//Apenas Initialized, pois a função SelectForExecution
-		//seleciona uma thread para a execução colocando ela no
+		//Apenas Initialized, pois a funï¿½ï¿½o SelectForExecution
+		//seleciona uma thread para a execuï¿½ï¿½o colocando ela no
 		//state Standby.	
 		
 	// #todo: 
 	// ISSO DEVERIA VIR POR ARGUMENTO
     clone->plane = thread->plane;
 
-	// A prioridade básica da thread é igual a prioridade básica 
+	// A prioridade bï¿½sica da thread ï¿½ igual a prioridade bï¿½sica 
 	// do processo.
 	// Process->base_priority;
-	// priority; A prioridade dinâmica da thread foi 
+	// priority; A prioridade dinï¿½mica da thread foi 
 	// passada por argumento.
 	
     clone->base_priority = thread->base_priority; 
@@ -469,7 +469,7 @@ struct thread_d *threadCopyThread ( struct thread_d *thread ){
 
     clone->iopl = thread->iopl;            // Process->iopl;
     clone->saved = thread->saved;          // Saved flag.
-    clone->preempted = thread->preempted;  // Se pode ou não sofrer preempção.
+    clone->preempted = thread->preempted;  // Se pode ou nï¿½o sofrer preempï¿½ï¿½o.
 
 
 	//Heap and Stack.
@@ -480,7 +480,7 @@ struct thread_d *threadCopyThread ( struct thread_d *thread ){
 
     // Temporizadores. 
     // step - Quantas vezes ela usou o processador no total.
-    // quantum_limit - (9*2);  O boost não deve ultrapassar o limite. 
+    // quantum_limit - (9*2);  O boost nï¿½o deve ultrapassar o limite. 
 
     clone->step = thread->step; 
     clone->quantum = thread->quantum; 
@@ -488,7 +488,7 @@ struct thread_d *threadCopyThread ( struct thread_d *thread ){
 
 		
 	// runningCount - Tempo rodando antes de parar.
-	// readyCount - Tempo de espera para retomar a execução.
+	// readyCount - Tempo de espera para retomar a execuï¿½ï¿½o.
 	// blockedCount - Tempo bloqueada.
 	
     clone->standbyCount = thread->standbyCount;
@@ -519,22 +519,22 @@ struct thread_d *threadCopyThread ( struct thread_d *thread ){
 
 
 	// #todo: 
-	// Essa parte é dependente da arquitetura i386.
-	// Poderá ir pra outro arquivo.
+	// Essa parte ï¿½ dependente da arquitetura i386.
+	// Poderï¿½ ir pra outro arquivo.
 
 	// init_stack:
-	// O endereço de início da pilha é passado via argumento.
-	// Então quem chama precisa alocar memória para a pilha.
-	// @todo: Podemos checar a validade dessa pilha ou é problema 
+	// O endereï¿½o de inï¿½cio da pilha ï¿½ passado via argumento.
+	// Entï¿½o quem chama precisa alocar memï¿½ria para a pilha.
+	// @todo: Podemos checar a validade dessa pilha ou ï¿½ problema 
 	// na certa.
 		
 	// init_eip:
-	// O endereço início da sessão de código da thread é 
-	// passado via argumento. Então quem chama essa rotina 
-	// deve providendiar um endereço válido.
-	// Obs: init_eip Aceita endereços inválidos pois a thread 
+	// O endereï¿½o inï¿½cio da sessï¿½o de cï¿½digo da thread ï¿½ 
+	// passado via argumento. Entï¿½o quem chama essa rotina 
+	// deve providendiar um endereï¿½o vï¿½lido.
+	// Obs: init_eip Aceita endereï¿½os invï¿½lidos pois a thread 
 	// fecha nesses casos por PG fault. Mas o sistema pode travar 
-	// se for a única thread e um único processo. 
+	// se for a ï¿½nica thread e um ï¿½nico processo. 
 		
 	//if( init_stack == 0 ){ ... }
 	//if( init_eip == 0 ){ ... }
@@ -553,7 +553,7 @@ struct thread_d *threadCopyThread ( struct thread_d *thread ){
     clone->cs     = thread->cs;
     clone->eip    = thread->eip; 
 		
-	//O endereço incial, para controle.
+	//O endereï¿½o incial, para controle.
 	
     clone->initial_eip = thread->initial_eip; 
 		
@@ -582,8 +582,8 @@ struct thread_d *threadCopyThread ( struct thread_d *thread ){
 	//Thread->NextProcessor = 0;
 		
 	// @todo: 
-    // O processo dono da thread precisa ter um diretório 
-	// de páginas válido.
+    // O processo dono da thread precisa ter um diretï¿½rio 
+	// de pï¿½ginas vï¿½lido.
 		
 	// #bugbug
 	// Page Directory. (#CR3).
@@ -605,12 +605,12 @@ struct thread_d *threadCopyThread ( struct thread_d *thread ){
 	//Thread->event
 		
 	// ORDEM: 
-	// O que segue é referenciado com pouca frequência.
+	// O que segue ï¿½ referenciado com pouca frequï¿½ncia.
 
 	clone->waitingCount = thread->waitingCount;    //Tempo esperando algo.
 	clone->blockedCount = thread->blockedCount;    //Tempo bloqueada.	
 	
-    //À qual processo pertence a thread.  
+    //ï¿½ qual processo pertence a thread.  
     clone->process = thread->process; 
 
 	//Thread->window_station
@@ -620,7 +620,7 @@ struct thread_d *threadCopyThread ( struct thread_d *thread ){
 		
 	//Thread->wait4pid =
 
-	//razões para esperar.
+	//razï¿½es para esperar.
 	
 	int w;
 
@@ -665,13 +665,13 @@ struct thread_d *threadCopyThread ( struct thread_d *thread ){
 
 /*
  * Obs:
- * Uma forma de proteger a estrutura de thread é deixa-la aqui 
- * restringindo o acesso à ela.
+ * Uma forma de proteger a estrutura de thread ï¿½ deixa-la aqui 
+ * restringindo o acesso ï¿½ ela.
  *
  */
 
 //
-// Variáveis internas.
+// Variï¿½veis internas.
 // 
 
 //int threadmanagerStatus;
@@ -686,7 +686,7 @@ struct thread_d *threadNew()
     struct thread_d *New;	
 	
 	//@todo: Implementar.
-	//Cria uma thread genérica e retorna o ponteiro.
+	//Cria uma thread genï¿½rica e retorna o ponteiro.
 	
 	//
 done:	
@@ -700,24 +700,24 @@ done:
  * create_thread:
  *     Cria um thread para rodar em user mode. (just Ring 3) 
  *
- * @todo: O processo ao qual o thread vai ser atribuído deve ser passado 
- * via argumento, se o argumento for nulo, então usa-se o 
+ * @todo: O processo ao qual o thread vai ser atribuï¿½do deve ser passado 
+ * via argumento, se o argumento for nulo, entï¿½o usa-se o 
  * processo atual como dono do thread.
  *
- * Obs: Essa rotina deve fazer a inicialização da parte independente
- * da arquitetura e chamar as rotinas referentes à inicializaçções
- * dependentes da arquitetura, que ficarão em outro diretório.
+ * Obs: Essa rotina deve fazer a inicializaï¿½ï¿½o da parte independente
+ * da arquitetura e chamar as rotinas referentes ï¿½ inicializaï¿½ï¿½ï¿½es
+ * dependentes da arquitetura, que ficarï¿½o em outro diretï¿½rio.
  *
  * IN:
  *     @todo: Esses argumentos presisam ser melhorados.
  *
  * OUT:
  *     Retorno do tipo ponteiro de estrutura.
- *     Retorna o endereço da estrutura da thread.
+ *     Retorna o endereï¿½o da estrutura da thread.
  *     Retorna NULL se der errado.
  *
  * 2015, Created - Fred Nora.
- * 2016, Revisão - FN.
+ * 2016, Revisï¿½o - FN.
  */		
  
 struct thread_d *create_thread ( struct room_d *room,
@@ -746,8 +746,8 @@ struct thread_d *create_thread ( struct room_d *room,
 	
 	// Limits da thread atual.
 	// #bugbug: 
-	// Não sei pra que isso. 
-	// Pois a thread atual não importa.
+	// Nï¿½o sei pra que isso. 
+	// Pois a thread atual nï¿½o importa.
 	// @todo: deletar isso. 
 	
 	
@@ -760,11 +760,11 @@ struct thread_d *create_thread ( struct room_d *room,
 	}
 	
 	//@todo:
-	//Checar se a prioridade é um argumento válido.
+	//Checar se a prioridade ï¿½ um argumento vï¿½lido.
 	//if( priority == 0 ){}
 	
 	
-	// Filtrar o processo ao qual a thread pertencerá.
+	// Filtrar o processo ao qual a thread pertencerï¿½.
 	
 	ProcessID = (int) pid;
 	
@@ -772,12 +772,12 @@ struct thread_d *create_thread ( struct room_d *room,
 	    ProcessID >= PROCESS_COUNT_MAX )
 	{
 		// #bugbug:
-		// Não sabemos a condição do processo atual para 
+		// Nï¿½o sabemos a condiï¿½ï¿½o do processo atual para 
 		// permitirmos que ele seja o dono da thread.
 		ProcessID = current_process;
 	}
 	
-	// Já temos um PID para o processo que é dono da thread.
+	// Jï¿½ temos um PID para o processo que ï¿½ dono da thread.
 
     Process = (void *) processList[ProcessID]; 
     if ( (void *) Process == NULL )
@@ -785,8 +785,8 @@ struct thread_d *create_thread ( struct room_d *room,
         panic ("create_thread: Process\n");
     }
 
-	//Alocando memória para a estrutura da thread.
-	//Obs: Estamos alocando memória dentro do heap do kernel.
+	//Alocando memï¿½ria para a estrutura da thread.
+	//Obs: Estamos alocando memï¿½ria dentro do heap do kernel.
 	
 	Thread = (void *) kmalloc ( sizeof(struct thread_d) );	
 	
@@ -794,7 +794,7 @@ struct thread_d *create_thread ( struct room_d *room,
     {
         panic ("create_thread: Thread\n");
     }else{  
-        //Indica à qual proesso a thread pertence.
+        //Indica ï¿½ qual proesso a thread pertence.
        //Thread->process = (void*) Process;
     };
 
@@ -809,7 +809,7 @@ get_next:
 	i++;
 	if( i >= THREAD_COUNT_MAX )
 	{
-		// Recomeça o loop na base para id de usuários.
+		// Recomeï¿½a o loop na base para id de usuï¿½rios.
 		i = USER_BASE_TID;    
 	}
 
@@ -821,7 +821,7 @@ get_next:
 	if( (void *) Empty != NULL )
 	{
 		// Voltamos.
-		// #bugbug: Isso pode não parar nunca.
+		// #bugbug: Isso pode nï¿½o parar nunca.
         goto get_next;
     }else{
 		
@@ -848,7 +848,7 @@ get_next:
 		
 		
         //#test
-        //64 bytes máx.
+        //64 bytes mï¿½x.
         strcpy ( Thread->__threadname, (const char *) name); 
 
         //Thread->process = (void*) Process;
@@ -897,16 +897,16 @@ get_next:
 		// TYPE_IDLE;    //?? //Type...@todo: Rever. 
 	    Thread->type = TYPE_SYSTEM; 
 	    Thread->state = INITIALIZED;  
-		//Apenas Initialized, pois a função SelectForExecution
-		//seleciona uma thread para a execução colocando ela no
+		//Apenas Initialized, pois a funï¿½ï¿½o SelectForExecution
+		//seleciona uma thread para a execuï¿½ï¿½o colocando ela no
 		//state Standby.	
 		
 		//@TODO: ISSO DEVERIA VIR POR ARGUMENTO
         Thread->plane = FOREGROUND;	
 		
-		// A prioridade básica da thread é igual a prioridade básica do processo.
+		// A prioridade bï¿½sica da thread ï¿½ igual a prioridade bï¿½sica do processo.
 		// Process->base_priority;
-		// priority; A prioridade dinâmica da thread foi passada por argumento.
+		// priority; A prioridade dinï¿½mica da thread foi passada por argumento.
 		Thread->base_priority = (unsigned long) PRIORITY_NORMAL; 
 		Thread->priority = (unsigned long) Thread->base_priority;			
 		
@@ -915,7 +915,7 @@ get_next:
 		//@todo: herdar o mesmo do processo.
 		Thread->iopl = RING3;             // Process->iopl;  		
 		Thread->saved = 0;                // Saved flag.	
-		Thread->preempted = PREEMPTABLE;  // Se pode ou não sofrer preempção.
+		Thread->preempted = PREEMPTABLE;  // Se pode ou nï¿½o sofrer preempï¿½ï¿½o.
 		
 		//Heap and Stack.
 	    //Thread->Heap;
@@ -925,14 +925,14 @@ get_next:
 
         // Temporizadores. 
         // step - Quantas vezes ela usou o processador no total.  		
-	    // quantum_limit - (9*2);  O boost não deve ultrapassar o limite. 
+	    // quantum_limit - (9*2);  O boost nï¿½o deve ultrapassar o limite. 
 		Thread->step = 0;                           
         Thread->quantum = QUANTUM_BASE;    
         Thread->quantum_limit = QUANTUM_LIMIT; 
 		
 		
 		// runningCount - Tempo rodando antes de parar.
-		// readyCount - Tempo de espera para retomar a execução.
+		// readyCount - Tempo de espera para retomar a execuï¿½ï¿½o.
 		// blockedCount - Tempo bloqueada.
         Thread->standbyCount = 0;
 	    
@@ -962,26 +962,30 @@ get_next:
 
 
 		// @todo: 
-		// Essa parte é dependente da arquitetura i386.
-		// Poderá ir pra outro arquivo.
+		// Essa parte ï¿½ dependente da arquitetura i386.
+		// Poderï¿½ ir pra outro arquivo.
 		
 		// init_stack:
-		// O endereço de início da pilha é passado via argumento.
-		// Então quem chama precisa alocar memória para a pilha.
-		// @todo: Podemos checar a validade dessa pilha ou é problema 
+		// O endereï¿½o de inï¿½cio da pilha ï¿½ passado via argumento.
+		// Entï¿½o quem chama precisa alocar memï¿½ria para a pilha.
+		// @todo: Podemos checar a validade dessa pilha ou ï¿½ problema 
 		// na certa.
 		
 		// init_eip:
-		// O endereço início da sessão de código da thread é 
-		// passado via argumento. Então quem chama essa rotina 
-		// deve providendiar um endereço válido.
-		// Obs: init_eip Aceita endereços inválidos pois a thread 
+		// O endereï¿½o inï¿½cio da sessï¿½o de cï¿½digo da thread ï¿½ 
+		// passado via argumento. Entï¿½o quem chama essa rotina 
+		// deve providendiar um endereï¿½o vï¿½lido.
+		// Obs: init_eip Aceita endereï¿½os invï¿½lidos pois a thread 
 		// fecha nesses casos por PG fault. Mas o sistema pode travar 
-		// se for a única thread e um único processo. 
+		// se for a ï¿½nica thread e um ï¿½nico processo. 
 		
 		//if( init_stack == 0 ){ ... }
 		//if( init_eip == 0 ){ ... }
 
+
+        //
+        // Stack frame.
+        //
 
         // x86 Context.
         // #todo: Usar uma estrutura de contexto.
@@ -989,13 +993,13 @@ get_next:
         // cs (0x18 | 3)
         // eflags for ring3: (0x3200).
 
-        Thread->ss = 0x23;    //RING 3.
+        Thread->ss = 0x23;    
         Thread->esp = (unsigned long) init_stack; 
         Thread->eflags = 0x3200;
-        Thread->cs = 0x1B;                                
+        Thread->cs = 0x1B; 
         Thread->eip = (unsigned long) init_eip; 
 
-        //O endereço incial, para controle.
+        //O endereï¿½o incial, para controle.
         Thread->initial_eip = (unsigned long) init_eip; 
 
         // (0x20 | 3)
@@ -1022,8 +1026,8 @@ get_next:
 		//Thread->NextProcessor = 0;
 		
 		// @todo: 
-        // O processo dono da thread precisa ter um diretório 
-		// de páginas válido.
+        // O processo dono da thread precisa ter um diretï¿½rio 
+		// de pï¿½ginas vï¿½lido.
 		
 		// #bugbug
 		// Page Directory. (#CR3).
@@ -1045,10 +1049,10 @@ get_next:
 		//Thread->event
 		
 	    // ORDEM: 
-		// O que segue é referenciado com pouca frequência.
+		// O que segue ï¿½ referenciado com pouca frequï¿½ncia.
 
 	
-        //À qual processo pertence a thread.  
+        //ï¿½ qual processo pertence a thread.  
 		Thread->process = (void *) Process; 
         
         //Thread->usession
@@ -1078,7 +1082,7 @@ get_next:
 		//@todo: Incrementar a contagem de threads no processo.
 		//Process->threadCount++;
 		
-		//Próxima thread da lista.
+		//Prï¿½xima thread da lista.
 		Thread->Next = NULL;
 		
 		//Coloca na lista.
@@ -1089,7 +1093,7 @@ get_next:
     // #importante
     // Contador de threads
     // Vamos atualizar o contador de threads, 
-    // pois mais uma thread existe, mesmo que não esteja rodando ainda.
+    // pois mais uma thread existe, mesmo que nï¿½o esteja rodando ainda.
     //ProcessorBlock.threads_counter++;
     UPProcessorBlock.threads_counter++;
     
@@ -1103,8 +1107,8 @@ get_next:
 done:
     
 	// Warning !!! 
-	// ( NÃO COLOCAR PARA EXECUÇÃO, 
-	//   OUTRA FUNÇÃO DEVE COLOCAR PARA EXECUÇÃO )
+	// ( Nï¿½O COLOCAR PARA EXECUï¿½ï¿½O, 
+	//   OUTRA FUNï¿½ï¿½O DEVE COLOCAR PARA EXECUï¿½ï¿½O )
 
     //SelectForExecution(t);  //***MOVEMENT 1 (Initialized ---> Standby)
     return (void *) Thread;
@@ -1115,7 +1119,7 @@ done:
  *********************************************
  * GetCurrentThreadId
  *     Pega o id da thread atual.
- *     Obs: current_thread já é o id.
+ *     Obs: current_thread jï¿½ ï¿½ o id.
  */
 
 int GetCurrentThreadId (void){
@@ -1126,7 +1130,7 @@ int GetCurrentThreadId (void){
 
 /*
  * GetCurrentThread:
- *     Retorna o endereço da estrutura da thread atual.
+ *     Retorna o endereï¿½o da estrutura da thread atual.
  */
 
 void *GetCurrentThread (void){
@@ -1153,7 +1157,7 @@ void *GetCurrentThread (void){
  *******************************************************
  * FindReadyThread:
  *     Pega a primeira thread READY que encontrar.
- *     E se não encontrar nenhuma, retorna NULL.
+ *     E se nï¿½o encontrar nenhuma, retorna NULL.
  */
 
 void *FindReadyThread (void){
@@ -1190,16 +1194,16 @@ void *FindReadyThread (void){
 /*
  ********************************************************
  * SelectForExecution:
- *     Um thread entra em standby, sinalizando que está pronto para entrar 
- * em execução.
+ *     Um thread entra em standby, sinalizando que estï¿½ pronto para entrar 
+ * em execuï¿½ï¿½o.
  *     Nesse caso, durante a rotina de taskswitch, checar-se-a se existe um 
- * thread em estado standby, caso haja, a thread é colocada pra executar pelo 
- * método spawn. 
- * Esse método de spawn já foi testado, segundo a contagem, duas thread 
- * começaram a rodas através desse método de spawn. 
- * Provavelmente as threads 'shell' e 'taskman', pois a thread 'idle' é 
- * chamada com um spawn exclusivo para ela, o que é desnecessário e 
- * poderá ser revisto. @todo
+ * thread em estado standby, caso haja, a thread ï¿½ colocada pra executar pelo 
+ * mï¿½todo spawn. 
+ * Esse mï¿½todo de spawn jï¿½ foi testado, segundo a contagem, duas thread 
+ * comeï¿½aram a rodas atravï¿½s desse mï¿½todo de spawn. 
+ * Provavelmente as threads 'shell' e 'taskman', pois a thread 'idle' ï¿½ 
+ * chamada com um spawn exclusivo para ela, o que ï¿½ desnecessï¿½rio e 
+ * poderï¿½ ser revisto. @todo
  *     
  *  *** MOVIMENTO 1, (Initialized --> Standby).
  */
@@ -1214,12 +1218,12 @@ void SelectForExecution ( struct thread_d *Thread ){
 	// @todo: if initialized ---> Standby.
 	// @todo: if zombie ---> Standby.
 	//
-	// Talvez aqui seja necessário checar o estado da thread.
+	// Talvez aqui seja necessï¿½rio checar o estado da thread.
 	// Quem pode entrar no estado standby??
 	// >> Uma thread no estado initialized pode entrar no estado standby 
 	// >> Uma thread no estado zombie pode entrar no estado standby.
 	// >> @todo: se uma thread estiver em qualquer um dos outros estados ela 
-	// não pode entrar em stadby.
+	// nï¿½o pode entrar em stadby.
 	
 //setState:
     
@@ -1230,7 +1234,7 @@ void SelectForExecution ( struct thread_d *Thread ){
 }
 
 
-//Get State. (Zero é tipo NULL?).
+//Get State. (Zero ï¿½ tipo NULL?).
 int GetThreadState (struct thread_d *Thread){
 
     if ( (void *) Thread == NULL )
@@ -1243,7 +1247,7 @@ int GetThreadState (struct thread_d *Thread){
 }
 
 
-//Get Type. (Zero é tipo NULL?).
+//Get Type. (Zero ï¿½ tipo NULL?).
 int GetThreadType (struct thread_d *Thread){
 
     if ( (void *) Thread == NULL )
@@ -1259,7 +1263,7 @@ int GetThreadType (struct thread_d *Thread){
 /*
  ********************************************
  * show_thread_information:
- *     Mostra informações sobre as threads.
+ *     Mostra informaï¿½ï¿½es sobre as threads.
  */
 
 void show_thread_information (void){
@@ -1329,7 +1333,7 @@ void show_thread_information (void){
 	 * @todo: 
 	 *     Mostra filas: Ready, Waiting ...
 	 *     checar estruturas de filas no debug.
-	 *     Erro: Mostrar filas não deve fazer parte dessa rotina.
+	 *     Erro: Mostrar filas nï¿½o deve fazer parte dessa rotina.
 	 */
 	//show_queue_information(queue);
 	
@@ -1345,7 +1349,7 @@ void show_thread_information (void){
  *******************************************************
  * init_threads:
  *     Inicializa o thread manager.
- *     Inicializa as estruturas e variáveis 
+ *     Inicializa as estruturas e variï¿½veis 
  *     que lidam com threads.
  */
 
@@ -1356,23 +1360,23 @@ int init_threads (void){
 	//Globais.	 
 	current_thread = 0;                        //Atual. 
 	
-	//ProcessorBlock.threads_counter = (int) 0;  //Número de threads no processador.	
-	UPProcessorBlock.threads_counter = (int) 0;  //Número de threads no processador.	
+	//ProcessorBlock.threads_counter = (int) 0;  //Nï¿½mero de threads no processador.	
+	UPProcessorBlock.threads_counter = (int) 0;  //Nï¿½mero de threads no processador.	
 	
     old = 0;                                   //?
     forkid = 0;                                //
     task_count = (unsigned long) 0;            //Zera o contador de tarefas criadas.
 	//...
 	
-	// @todo: Porque essas variáveis usam o termo 'task'?
-	//        task é sinonimo de process.
+	// @todo: Porque essas variï¿½veis usam o termo 'task'?
+	//        task ï¿½ sinonimo de process.
 	
-	//Variáveis usadas na inicialização de uma nova tarefa.	
-	start_new_task_status  = (unsigned long) 0;    //Se há uma nova tarefa.
-	start_new_task_id = (int) 0;                   //Id dá nova tarefa.
-	start_new_task_address = (unsigned long) 0;    //Endereço da nova tarefa.
+	//Variï¿½veis usadas na inicializaï¿½ï¿½o de uma nova tarefa.	
+	start_new_task_status  = (unsigned long) 0;    //Se hï¿½ uma nova tarefa.
+	start_new_task_id = (int) 0;                   //Id dï¿½ nova tarefa.
+	start_new_task_address = (unsigned long) 0;    //Endereï¿½o da nova tarefa.
 	
-	//@todo: Há mais variáveis para serem inicializadas??!!
+	//@todo: Hï¿½ mais variï¿½veis para serem inicializadas??!!
 	
 	
 	//Zerando a lista de threads.
@@ -1396,8 +1400,8 @@ int init_threads (void){
 /*
  **********************************************************
  * thread_getchar:
- *     Esse é o serviço 137.
- *     Isso é usado pela biblioteca stdio em user mode na função getchar().
+ *     Esse ï¿½ o serviï¿½o 137.
+ *     Isso ï¿½ usado pela biblioteca stdio em user mode na funï¿½ï¿½o getchar().
  *     Isso funciona.
  */
 
@@ -1407,7 +1411,7 @@ int thread_getchar (void){
 	int save;
 	
 	// #bugbug
-	// Pode ser que esse aplicativo não tenha janela,
+	// Pode ser que esse aplicativo nï¿½o tenha janela,
 	// mas esteja rodando na janela do shell.
 
 	struct window_d *w;
@@ -1416,13 +1420,13 @@ int thread_getchar (void){
 	
 	//
 	// Bloqueia pra que nenhum aplicativo pegue mensagens 
-	// na estrutura de janela até que window_getch termine.
+	// na estrutura de janela atï¿½ que window_getch termine.
 	//
 	
 	//window_getch_lock = 1;
  
 	//pega o char em current_stdin.
-	//isso está em kdrivers/x/i8042/keyboard.c
+	//isso estï¿½ em kdrivers/x/i8042/keyboard.c
 	
 	SC = (unsigned char) get_scancode ();
 	
@@ -1478,12 +1482,12 @@ int thread_getchar (void){
 	    goto fail;	
 	}	
 	
-	//salva só o char.
+	//salva sï¿½ o char.
 	save = (int) t->long1;
 		
 	// #importante:
 	// >Limpa.
-	// >Sinaliza que a mensagem foi consumida, e que não 
+	// >Sinaliza que a mensagem foi consumida, e que nï¿½o 
 	// temos nova mensagem.
 	
 	t->window = 0;
@@ -1548,7 +1552,7 @@ thread_queue_put ( struct thread_d *thread,
         thread->MsgQueueTail = 0;
     
     
-    // O processo não está respondendo.
+    // O processo nï¿½o estï¿½ respondendo.
     //if ( thread->MsgQueueTail == thread->MsgQueueHead )
         //return -1;
         

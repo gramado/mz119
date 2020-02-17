@@ -37,8 +37,8 @@
 
 
 //init thread. 1mb de tamaho ???
-#define INITTHREAD_ENTRYPOINT  0x00401000  //entrypoint
-#define INITTHREAD_STACK       0x004FFFF0  //pilha
+#define CONTROLTHREAD_ENTRYPOINT  0x00401000  // entry point
+#define CONTROLTHREAD_STACK       0x007FFFF0  // stack
 
 
 

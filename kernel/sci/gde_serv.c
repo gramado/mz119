@@ -1988,7 +1988,11 @@ void *gde_services ( unsigned long number,
             break;
 
 
-        // 82 - livre.
+        // 82
+        // Mostra informações sobre todos os processos.
+        case 82:
+            show_process_information();
+            break;
   
 			
 		// 83

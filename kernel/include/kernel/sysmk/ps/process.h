@@ -554,11 +554,14 @@ struct process_d
 	unsigned long ImageSize;      
 	unsigned long PagesPerImage; 
 
-	//usado no fork()
+
+    // Usado durante fork().
     unsigned long childImage; 
-    unsigned long childImage_PA;  
-    //unsigned long childImage2; 
-	
+    unsigned long childImage_PA; 
+    unsigned long childStack; 
+    unsigned long childStackPA; 
+
+
 	//#todo: estrutura com informa��es sobre a imagem do processo.
 	//see: pc/image.h
 	struct image_info_d *image_info;

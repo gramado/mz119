@@ -102,7 +102,6 @@ int process_profiler()
 
 unsigned long __GetProcessStats ( int pid, int index )
 {
-	
     struct process_d *p;
 
     //#todo:
@@ -111,8 +110,7 @@ unsigned long __GetProcessStats ( int pid, int index )
 	//Struct.
     p = (void *) processList[pid];
 
-    if ( (void *) p == NULL )
-    {
+    if ( (void *) p == NULL ){
         printf ("__GetProcessStats: struct \n");
         return 0; 
 
@@ -357,10 +355,10 @@ unsigned long __GetProcessStats ( int pid, int index )
 
 
 //pega o nome do processo.
-int getprocessname ( int pid, char *buffer )
-{
-	struct process_d *p;
-	
+int getprocessname ( int pid, char *buffer ){
+
+    struct process_d *p;
+
     char *name_buffer = (char *) buffer;
 
     //#todo
@@ -375,14 +373,15 @@ int getprocessname ( int pid, char *buffer )
     
         if ( p->used != 1 || p->magic != 1234 )
         {
-             return -1;
+            return -1;
         }
         
         // 64 bytes
-        strcpy ( name_buffer, (const char *) p->__processname );       
+        strcpy ( name_buffer, (const char *) p->__processname );  
         
         return (int) p->processName_len;
     };
+
     return -1;
 }
 
@@ -570,9 +569,10 @@ do_clone:
 		// Clone the process. 
 		//
 
- 
-		// Isso cria um diret�rio de p�ginas para o processo clone;
-		
+        // Lets create the page directory for the clone.
+        // Now we need to map the physical addresses we got 
+        // in the allocation routine.
+
         Ret = processCopyProcess ( Current->pid, Clone->pid );
 
         if ( Ret != 0 ){
@@ -694,40 +694,44 @@ do_clone:
 
 
         //
-        // eip
+        // Entry point and stack
         //
 
-        // Entry point para clonagem.
-        Clone->control->eip = 0x400000 + 0x1000;
+        // # Caution
+        // We are clonning only the control thread.
+
+        Clone->control->eip = CONTROLTHREAD_ENTRYPOINT; 
+        Clone->control->esp = CONTROLTHREAD_STACK; 
+
+        //
+        // Heap for CLone.
+        //
+
+        // #Cuidado
+        // Essa é a rotina usada na criação de processo 
+        // pra gerar um heap para ele.
+        // Vamos tentar usar isso na rotina de clonagem.
+
+        Clone->Heap = (unsigned long) g_heappool_va + (g_heap_count * g_heap_size);
+        Clone->HeapSize = (unsigned long) g_heap_size;
+        Clone->HeapEnd = (unsigned long) (Clone->Heap + Clone->HeapSize); 
+        
+        g_heap_count++;
+
+        //
+        // Stack for the clone.
+        //
+
+        Clone->Stack = Clone->control->esp; 
+        Clone->StackSize = (128*1024);    //isso foi usado na rotina de alocação.
+        Clone->StackEnd = Clone->Stack - Clone->StackSize;
+
 
 
         //
-        // esp
+        // Debug
         //
 
-
-		//====
-		// #bugbug : 
-		// Essa pilha est� dentro da imagem. ...
-		// Como o gramado core n�o existe mais. Vamos
-		// aproveitar para colocar a pilha num lugar mais confot�vel
-		// dentro dos 4MB da �rea de aplicativo.
-		// veja o exemplo da thread do processo init.
-		// e se o aplicativo tiver mais que 63KB.???
-		//Clone->control->esp = 0x400000 + (1024 * 63);
-		//Clone->control->esp = 0x400000 + (1024 * 200);   //funciona
-		Clone->control->esp = 0x004FFFF0; // funcionou.
-		//Clone->control->eip = Current->control->eip; //#bug fail
-		//Clone->control->esp = Current->control->esp; //#bug fail
-		//====
-
-
-
-
-		//
-		// Debug
-		//
-		
 		
 		// mmShowPDEForAllProcesses (1);
 		// show_thread_information (); 
@@ -828,11 +832,12 @@ pid_t do_fork_process (void){
 
     unsigned long *dir;
     unsigned long old_dir_entry1; 
-	//unsigned long old_image_pa; //usado para salvamento.
+    //unsigned long old_image_pa; //usado para salvamento.
 
     int Ret = -1;
     int i;
     int w;
+
 
 
     // #debug: 
@@ -963,12 +968,23 @@ do_clone:
         }
 
         // Creating a new pagetable for the child process's image.
-        // We are using the child process's directory fo this.
+        // We are using the child process's directory to this.
+        // This is the physical address for the child's image,
+        // we got this when allocating memory. It's ok.
+        // #important: It's pointing to 0x400000. (ENTRY_USERMODE_PAGES)
+        // 4MB ??
 
         CreatePageTable ( (unsigned long) Clone->DirectoryVA, 
             ENTRY_USERMODE_PAGES, Current->childImage_PA );
 
 
+        // #bugbug
+        // A rotina acima resolve o mapeamento da imagem do processo clone.
+        // Porém não resolve a pilha, que foi alocada em um endereço diferente.
+        // Salvamos esse endereço precisamos mapear;
+
+       // Talvez mapear a pilha em outra pagetable
+       // possa ser uma solução.
 
         //
         // # debug.
@@ -1040,9 +1056,10 @@ do_clone:
         // #bugbug: size ???
         // Ja n�o fizemos isso quando chamamos processCopyMemory ???
         // l� copiamos 200kb
-		memcpy ( (void *) Clone->Image, (const void *) Current->Image, ( 0x50000 ) ); 
+	//	memcpy ( (void *) Clone->Image, (const void *) Current->Image, ( 0x50000 ) ); 
 		//memcpy ( (void *) Clone->Image, (const void *) Current->Image, (1024*200) );  //bugbug
-		//====
+
+        //====
 		Clone->control->ownerPID = Clone->pid;
 		Clone->control->type  = Current->control->type; 
 		Clone->control->plane = Current->control->plane;
@@ -1077,14 +1094,25 @@ do_clone:
 		
 		// CPU context
 
-		// stack
-		Clone->control->ss          = Current->control->ss;
-		Clone->control->esp         = Current->control->esp;  
-		//Clone->control->esp = 0x400000 + (1024 * 100);    //bugbug
-		Clone->control->eflags      = Current->control->eflags;
-		Clone->control->cs          = Current->control->cs;
-		Clone->control->eip         = Current->control->eip; 
-		Clone->control->initial_eip = Current->control->initial_eip;
+
+        //
+        // Stack frame.
+        //
+
+        // # Caution
+        // In the fork() routine we need the same esp from father,
+        // and not the start of the stack.
+
+        Clone->control->ss          = Current->control->ss;
+        
+        // O conteúdo da pilha foi copiado, porém elas possuem endereço virtual diferentes.
+        //Clone->control->esp         = Current->control->esp;  // #Atention!
+        Clone->control->esp         = Current->childStack;  // #Atention!
+
+        Clone->control->eflags      = Current->control->eflags;
+        Clone->control->cs          = Current->control->cs;
+        Clone->control->eip         = Current->control->eip; 
+        Clone->control->initial_eip = Current->control->initial_eip;
 
 		// more registers.
 		Clone->control->ds = Current->control->ds;
@@ -1356,89 +1384,118 @@ int processSendSignal (struct process_d *p, unsigned long signal){
 /*
  ****************************
  * processCopyMemory:
- *     Copia a imagem.
- *     Usado no fork.
+ *     Copia a imagem de um processo.
+ *     Isso é usado na implementação de fork() e
+ * na implementação da rotina de clonagem.
  */
+
+// O que copiar?
+// >> code, data, bss, heap and stack.
+// For now, all the processes has 4MB,
+// and the stack begins at CONTROLTHREAD_STACK.
+// We just use the control thread.
 
 int processCopyMemory ( struct process_d *process ){
 
-    unsigned long __new_base;
 
 
-	// #todo: 
-	// Mensagem de erro.
-
-    if ( (void *) process == NULL )
-        return -1;
+    unsigned long __new_base = 0;    // base
+    unsigned long __new_stack = 0;   // stack
 
 
-	//#todo: Mensagem.	
-	//if ( (void *) clone == NULL )
-	//	return -1;
-	
-    //
-	// Image base.
-	//
-	
-	
-	// 200 KB.
-	// Alocando mem�ria para a imagem do processo.
-	//>>  ring 3 ??.
-
-    __new_base = (unsigned long) allocPages ( (1024*200)/4096 ); 
-
-    if ( __new_base == 0 ){
-        printf ("processCopyMemory: fail\n");
+    if ( (void *) process == NULL ){
+        printf("processCopyMemory: process \n");
+        refresh_screen();
         return -1;
     }
 
 
-	//
-	// Copying memory.
-	//
-	
-	//#debug
-	//printf ("copying memory ...\n");
-	
-	//copia 200 KB
-    memcpy ( (void *) __new_base, 
-             (const void *) process->Image, 
-             ( 1024 * 200 ) );
+    //
+    // Image base.
+    //
+
+    // #bugbug
+    // Precisamos de memória física para a imagem e para a pilha.
+    // 4mb de memória física nos permite criarmos um processo
+    // com sua pilha no topo dos 4mb.
+    // Por isso que precisamos de um alocador de frames,
+    // que considere a memória ram inteira.
+    // E precisamos de uma rotina que mapeie esses frames individualmente,
+    // mesmos que eles sejam pegos esparçamente.
+
+    // #bugbug
+    // Esse alocador abaixo está limitado à uma região de 4MB,
+    // previamente mapeado.
+
+    // #obs:
+    // A não ser que a pilha possa ficar em endereço
+    // virtual aleatório.
+    // Me parece que endereço virtual aleatório é
+    // usado por questão de segurança.
+    // Podemos tentar usar pilha com endereço virtual aleatório.
+
+    // 200 KB.
+    // Allocating memory for the process's image.
+    // #todo: We need this size.
+
+    __new_base = (unsigned long) allocPages ( (1024*200)/4096 ); 
+
+    if ( __new_base == 0 ){
+        printf ("processCopyMemory: __new_base fail\n");
+        refresh_screen();
+        return -1;
+    }
 
 
-	// Transformando o endere�o virtual em f�sico.
-	unsigned long new_base_PA = (unsigned long) virtual_to_physical ( __new_base, gKernelPageDirectoryAddress ); 
-	
-	
-	//#debug
-	//printf ("base da imagem new_base_PA=%x  \n", new_base_PA );
-	
-	
-	//
-	// directory
-	//
-	
-	//printf ("DirectoryPA=%x \n",process->DirectoryPA);
-	//printf ("DirectoryPA=%x \n",clone->DirectoryPA);
-	
-	// Load here.
-	// Altera uma pagetable do diret�rio de p�ginas de um processo.
-	// IN: endere�o f�sico do diret�rio de p�ginas do processo, indice da entrada
-	// que vamos alterar, endere�o f�sico da regi�o de 4MB que vamos mapear.
-	// ENTRY_USERMODE_PAGES referece ao indice para o endere�o virtual 0x400000
-	
-	// #bugbug
-	// Essa fun��o est� falhando. #PF.
-	// >> Essa parte est'a falhando na m'aquina real, mas n�o na VirtualBox.
-	
-	//status: 0 = fail; address = ok
-	
- 
+    //
+    // Image stack
+    //
 
-	// O processo est� num novo endere�o segundo o diret�rio 
-	// de p�ginas do kernel.
-    process->childImage = (unsigned long) __new_base;
+    // 128 KB.
+    // Allocating memory for the process's stack.
+    // #todo: We need this size.
+
+    __new_stack = (unsigned long) allocPages ( (1024*128)/4096 ); 
+
+    if ( __new_stack == 0 ){
+        printf ("processCopyMemory: __new_stack fail\n");
+        refresh_screen();
+        return -1;
+    }
+
+
+
+    //
+    // Copying memory.
+    //
+
+    // Copying base and stack.
+
+    memcpy ( (void *) __new_base, (const void *) 0x00400000, ( 1024 * 200 ) );
+    memcpy ( (void *) __new_stack, (const void *) (CONTROLTHREAD_STACK-( 1024 * 128 )), ( 1024 * 128 ) );
+
+    // getting the physical addresses.
+    unsigned long new_base_PA = (unsigned long) virtual_to_physical ( __new_base, gKernelPageDirectoryAddress ); 
+    unsigned long new_stack_PA = (unsigned long) virtual_to_physical ( __new_base, gKernelPageDirectoryAddress ); 
+
+    // #todo
+    // Agora temos que fazer esses endereços físicos serem
+    // mapeados em 0x400000 do diretório de páginas do processo filho.
+    // Lembrando que o diretório de páginas do processo filho
+    // será uma cópia do diretório do processo pai.
+    // Como a cópia do diretórios anda não foi feita,
+    // vamos salvar esses endereços para mapearmos depois.
+
+
+    process->childImage    = (unsigned long) __new_base;
     process->childImage_PA = (unsigned long) new_base_PA;
+    process->childStack    = (unsigned long)  __new_stack;
+    process->childStackPA  = (unsigned long) new_stack_PA;
+
+
+    //#debug
+    //printf ("new_base_PA=%x  \n", new_base_PA );
+    //printf ("new_stack_PA=%x  \n", new_stack_PA );
 
 
 
@@ -1593,6 +1650,14 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 
 
 
+    // #bugbug
+    // Lembrando que na rotina de fork() nos obtemos
+    // os endereços físicos da imagem do clone e de sua pilha.
+    // precisamos mapear esses endereços em 0x400000, caso contrário
+    // o processo filho apontará para a imagem do processo pai,
+    // como estava antes de copiarmos o diretório de páginas do kernel.
+
+
 	// ??
 	// #bugbug
 	// Se o endere�o for virtual, ok fazer isso. 
@@ -1608,11 +1673,19 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
     // carregarmos, (isso no caso da rotina de clonagem)
     // Isso � v�lido s� para o fork.
 
-	//Process2->Image = Process1->Image;
-    Process2->Image = Process1->childImage;
-    Process2->ImagePA = Process1->childImage_PA;
-    Process2->childImage = 0;
+    // Atenção
+    // O processo pai armazenava o  novo endereço da imagem do processo
+    // filho. Isso foi criado durante a alocação de memória
+    // para o processo filho.
+    // porém esse endereço virtual não aponta para o 
+    // entry point da imagem do processo filho, e sim para
+    // o endereço virtual obtido na alocação.
+
+    Process2->Image    = Process1->childImage; // #bugbug: Esse endereço não é 0x400000
+    Process2->ImagePA  = Process1->childImage_PA;
+    Process2->childImage    = 0;
     Process2->childImage_PA = 0;
+
 
     //heap
     Process2->Heap = Process1->Heap;    
@@ -2125,37 +2198,44 @@ get_next:
             panic ("create_process: g_heap_count limits");
         }
 
+        // #atenção
+        // Estamos usando o heappool pra pegarmos esses
+        // endereços.
+        // me parece que isso é memória compartilhada em ring3
+        // e que o malloc da libc está usando isso sem problemas.
+
+        // #todo: 
+        // #test: A stack de um process recem criado
+        // poderia ficar no fim de seu heap ???
 
         Process->Heap = (unsigned long) g_heappool_va + (g_heap_count * g_heap_size);
         Process->HeapSize = (unsigned long) g_heap_size;
         Process->HeapEnd = (unsigned long) (Process->Heap + Process->HeapSize); 
-
+        
         g_heap_count++;
 
-		//Process->Heap = (unsigned long) allocPages (64); 
-		//Process->Heap = (unsigned long) kmalloc (1024*32); //32kb
 
-		// Endere�o do in�cio do Heap do processo.
-		// #bubug: Endere�o do fim do heap.
-		// Tamanho do heap, dado em KB.
-	    //Process->Heap = UPROCESS_DEFAULT_HEAP_BASE;    
-	    //Process->HeapEnd = 0; // @todo: (UPROCESS_DEFAULT_HEAP_BASE + UPROCESS_DEFAULT_HEAP_SIZE);
-		//Process->HeapSize = (UPROCESS_DEFAULT_HEAP_SIZE/1024);    
 
-		//Process->HeapPointer
-		//Process->HeapLastValid
-		//Process->HeapLastSize
-	    
 		// Endere�o do in�cio da Stack do processo.
 		// Endere�o do fim da stack do processo.
 		// Tamanho da pilha, dada em KB.
 		// #importante: Deslocamento do endere�o do in�cio da pilha em rela��o 
 		// ao in�cio do processo. 
 
-        Process->Stack = UPROCESS_DEFAULT_STACK_BASE;   
-        Process->StackEnd = 0; // @todo: (UPROCESS_DEFAULT_STACK_BASE+UPROCESS_DEFAULT_STACK_SIZE);
-        Process->StackSize = (UPROCESS_DEFAULT_STACK_SIZE/1024);   	
-        Process->StackOffset = UPROCESS_DEFAULT_STACK_OFFSET; 
+        // #bugbug
+        // Isso indica que a stack será no endereço virtual tradicional,
+        // porém qual é o endereço físico da stack do processo criado
+        // com essa rotina.
+        // #bugbug: Com esse erro todos os processo criados
+        // estão usando a mesma stack, pois todas apontam para o mesmo
+        // endereço físico.
+
+        Process->Stack = UPROCESS_DEFAULT_STACK_BASE; 
+        Process->StackSize = UPROCESS_DEFAULT_STACK_SIZE; //?? usamos isso na hora de criar a stack?? 
+        Process->StackEnd = Process->Stack - Process->StackSize;  
+        Process->StackOffset = UPROCESS_DEFAULT_STACK_OFFSET;  //??
+
+
 
 
 		//ring.
@@ -2327,7 +2407,7 @@ void CloseAllProcesses (void){
     }
 }
 
-
+// usado pelo comando "current-process" no shell
 void show_currentprocess_info (void){
 
     struct process_d *Current;
@@ -2397,7 +2477,7 @@ void show_process_information (void){
     struct process_d *p;
 
 
-    printf ("show_process_information: \n");
+    printf ("\n\n show_process_information: \n\n");
 
 
     for ( i=0; i<PROCESS_COUNT_MAX; i++ )
@@ -2408,21 +2488,19 @@ void show_process_information (void){
                       p->used == 1 && 
                       p->magic == 1234 )
         { 
-            // #bugbug
-            // #todo Change that thing.
+
+            //printf("\n");
+            printf("\n=====================================\n");
+            printf(">>[%s]\n",p->__processname);
+            printf("PID=%d PPID=%d \n", p->pid,  p->ppid );
             
-			printf ("PID=%d PPID=%d State=%d Base=%x Size=%d DirPA=%x DirVA=%x iopl=%d prio=%d wait4pid=%d Name={%s}\n\n", 
-				p->pid, 
-			    p->ppid,
-				p->state,
-				p->Image,
-				p->ImageSize,
-				p->DirectoryPA,
-				p->DirectoryVA,
-				p->iopl,
-				p->priority,
-				p->wait4pid,
-				p->name ); //p->name_address );
+            printf("image-base =%x image-size =%d \n", p->Image, p->ImageSize );
+            printf("heap-base  =%x heap-size  =%d \n", p->Heap, p->HeapSize );
+            printf("stack-base =%x stack-size =%d \n", p->Stack, p->StackSize );
+
+            printf("dir-pa=%x dir-va=%x \n", p->DirectoryPA, p->DirectoryVA );
+
+            printf("iopl=%d prio=%d state=%d \n", p->iopl, p->priority, p->state );
         }
 
 		//Nothing.

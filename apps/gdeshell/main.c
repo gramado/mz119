@@ -2964,9 +2964,14 @@ do_compare:
 
 
     // current-process
-    //?? mudar o nome desse comando. OU mudar de lugar.
     if ( gramado_strncmp ( prompt, "current-process", 15 ) == 0 ){
         system_call ( SYSTEMCALL_CURRENTPROCESSINFO, 0, 0, 0 );
+        goto exit_cmp; 
+    }
+
+    // process-info
+    if ( gramado_strncmp ( prompt, "process-info", 12 ) == 0 ){
+        system_call ( 82, 0, 0, 0 );
         goto exit_cmp; 
     }
 

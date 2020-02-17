@@ -14,7 +14,7 @@
  * createCreateInitThread:
  * 
  *     Criando init-thread manualmente.
- *     Essa é a thread do processo init. (init2.bin)
+ *     Essa ï¿½ a thread do processo init. (init2.bin)
  */
 
 void *createCreateInitThread (void){
@@ -48,7 +48,7 @@ void *createCreateInitThread (void){
             // ??
             // e a validade da estrutura de processo? 
 
-            //Indica à qual processo a thread pertence.
+            //Indica ï¿½ qual processo a thread pertence.
             InitThread->process = (void *) InitProcess;
        
            // ...
@@ -61,10 +61,10 @@ void *createCreateInitThread (void){
 
 	// @todo: 
 	// #bugbug: #importante
-	// A stack da idle não deve ficar no heap do kernel.
-	// Pois a idle está em user mode e deve ter sua stack 
-	// em user mode para ter permissão de acesso.
-	// Mas ficará aqui por enquanto.
+	// A stack da idle nï¿½o deve ficar no heap do kernel.
+	// Pois a idle estï¿½ em user mode e deve ter sua stack 
+	// em user mode para ter permissï¿½o de acesso.
+	// Mas ficarï¿½ aqui por enquanto.
 	// Obs: Mais abaixo a pilha foi configurada manualmente 
 	// no lugar certo.
 	
@@ -73,15 +73,15 @@ void *createCreateInitThread (void){
 	//InitThread->Stack = ?;
 	//InitThread->StackSize = ?;	
 	
-	//Stack. @todo: A stack deve ser a que está na TSS
+	//Stack. @todo: A stack deve ser a que estï¿½ na TSS
 	//#BugBug.
-	// Estamos alocando mas não etamos usando.
-	//# podemos usar o alocador de páginas e alocar uma página para isso.
+	// Estamos alocando mas nï¿½o etamos usando.
+	//# podemos usar o alocador de pï¿½ginas e alocar uma pï¿½gina para isso.
 
     // Stack.
     
     // #bugbug
-    // Não estamos usando isso.
+    // Nï¿½o estamos usando isso.
 
     __initStack = (void *) kmalloc (4*1024);
 
@@ -91,9 +91,9 @@ void *createCreateInitThread (void){
 
 
 	// #todo: 
-	//     É possível usar a função create_thread nesse momento.
-	//     Mas é mais veloz fazer o máximo em uma função só.
-	//     Mas por enquanto serão feitas à mão essas primeiras threads. 
+	//     ï¿½ possï¿½vel usar a funï¿½ï¿½o create_thread nesse momento.
+	//     Mas ï¿½ mais veloz fazer o mï¿½ximo em uma funï¿½ï¿½o sï¿½.
+	//     Mas por enquanto serï¿½o feitas ï¿½ mï¿½o essas primeiras threads. 
 
 
 	// #todo: 
@@ -109,7 +109,7 @@ void *createCreateInitThread (void){
 
     InitThread->name_address = (unsigned long) ThreadName; 
 
-    // Obs: Já fizemos isso no início da rotina.
+    // Obs: Jï¿½ fizemos isso no inï¿½cio da rotina.
     InitThread->process = (void *) InitProcess;
 
 
@@ -155,15 +155,15 @@ void *createCreateInitThread (void){
     InitThread->MsgQueueTail = 0;
 
 
-    // Características.
+    // Caracterï¿½sticas.
     InitThread->type = TYPE_IDLE;    //TYPE_SYSTEM.
-    InitThread->iopl = RING3;        //Idle thread é uma thread de um processo em user mode.
+    InitThread->iopl = RING3;        //Idle thread ï¿½ uma thread de um processo em user mode.
     InitThread->state = INITIALIZED;   
 
 
     // Priorities.
     InitThread->base_priority = PRIORITY_NORMAL;
-    InitThread->priority = InitThread->base_priority;          //dinâmica.
+    InitThread->priority = InitThread->base_priority;          //dinï¿½mica.
 
 
     InitThread->saved = 0; 
@@ -176,7 +176,7 @@ void *createCreateInitThread (void){
 
     InitThread->standbyCount = 0;
     InitThread->runningCount = 0;    //Tempo rodando antes de parar.
-    InitThread->readyCount = 0;      //Tempo de espera para retomar a execução.
+    InitThread->readyCount = 0;      //Tempo de espera para retomar a execuï¿½ï¿½o.
 
 	InitThread->initial_time_ms = get_systime_ms ();
 	InitThread->total_time_ms = 0;
@@ -201,7 +201,7 @@ void *createCreateInitThread (void){
 	//...
 	
 	//
-	// Obs: Essa parte é dependente da arquitetura, deveria estar em 
+	// Obs: Essa parte ï¿½ dependente da arquitetura, deveria estar em 
 	//      uma pasta, por exemplo, microkernel\i386.
 	//	
 	
@@ -214,12 +214,14 @@ void *createCreateInitThread (void){
     // Isso deve ser uma estrutura de contexto.
 
     // Stack frame.
-	InitThread->ss  = 0x23;                          //RING 3.
-	InitThread->esp = (unsigned long) INITTHREAD_STACK; //0x004FFFF0 (*** RING 3)
-	InitThread->eflags = 0x3200;  //0x3202, pois o bit 1 é reservado e está sempre ligado.
-	InitThread->cs = 0x1B;                                
-	InitThread->eip = (unsigned long) INITTHREAD_ENTRYPOINT; //0x00401000;                                       
-	
+
+    InitThread->ss  = 0x23; 
+    InitThread->esp = (unsigned long) CONTROLTHREAD_STACK; 
+    InitThread->eflags = 0x3200; 
+    InitThread->cs = 0x1B;  
+    InitThread->eip = (unsigned long) CONTROLTHREAD_ENTRYPOINT; 
+
+
 	InitThread->ds = 0x23; 
 	InitThread->es = 0x23; 
 	InitThread->fs = 0x23; 
@@ -236,20 +238,20 @@ void *createCreateInitThread (void){
 	//...
 	
 	
-	//O endereço incial, para controle.
+	//O endereï¿½o incial, para controle.
 	InitThread->initial_eip = (unsigned long) InitThread->eip; 
 	
 	//#bugbug
-	//Obs: As estruturas precisam já estar devidamente inicializadas.
+	//Obs: As estruturas precisam jï¿½ estar devidamente inicializadas.
 	//IdleThread->root = (struct _iobuf *) file_root;
 	//IdleThread->pwd  = (struct _iobuf *) file_pwd;
 
 	
 	//CPU configuration.
 	//IdleThread->cpuID = 0;              //Qual processador.
-	//IdleThread->confined = 1;           //Flag, confinado ou não.
+	//IdleThread->confined = 1;           //Flag, confinado ou nï¿½o.
 	//IdleThread->CurrentProcessor = 0;   //Qual processador.
-	//IdleThread->NextProcessor = 0;      //Próximo processador. 
+	//IdleThread->NextProcessor = 0;      //Prï¿½ximo processador. 
 	
 	//Coloca na lista de estruturas.
 	threadList[ InitThread->tid ] = (unsigned long) InitThread;
@@ -260,30 +262,30 @@ void *createCreateInitThread (void){
 	// # current idle thread #
 	//current_idle_thread = IdleThread->tid;
 	
-	//Próxima thread.
+	//Prï¿½xima thread.
 	InitThread->Next = NULL;
-	//InitThread->Next = (void *) InitThread;    //Opção.
+	//InitThread->Next = (void *) InitThread;    //Opï¿½ï¿½o.
 
 
 	// #importante
     // Contador de threads
     // Vamos atualizar o contador de threads, 
-	// pois mais uma thread existe, mesmo que não esteja rodando ainda.
+	// pois mais uma thread existe, mesmo que nï¿½o esteja rodando ainda.
 	
 	//#importante 
 	//nesse caso o contador foi configurado manualmente. 
 	//isso acontece com as threads do gramado core.
 
 	// #importante
-	// A criação da thread idle vai inicializar o contador,
-	// para depois só incrementarmos.
+	// A criaï¿½ï¿½o da thread idle vai inicializar o contador,
+	// para depois sï¿½ incrementarmos.
 	
     //ProcessorBlock.threads_counter = (int) 1;
     UPProcessorBlock.threads_counter++;
     
     // #bugbug
-	// Não há a necessidade de colocar na fila de inicializadas
-	// se logo em seguida estamos selecionando para execução 
+	// Nï¿½o hï¿½ a necessidade de colocar na fila de inicializadas
+	// se logo em seguida estamos selecionando para execuï¿½ï¿½o 
 	// colocando no estado standby.
     
     queue_insert_data ( queue, 
