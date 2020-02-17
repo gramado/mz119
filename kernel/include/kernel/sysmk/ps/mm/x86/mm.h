@@ -1205,6 +1205,39 @@ struct frame_table_d FT;
 
 
 
+/*
+// #test
+
+//
+// Frame structure.
+//
+
+// This structure is gonna handle a free frame.
+struct frame_d
+{
+    // O número da entrada na tabela FT.frame_table[entry_number].
+    // Também é o índice que representa o offset de lba
+    // no armazenamento secindário.
+    int entry_number;
+    
+    // Se esse frame está no disco.
+    // Isso significa que o frame pode ser considerado livre.
+    int swapped;
+};
+
+// O armazenamento secundário pode ser um arquivo
+// ou uma partição de swap.
+
+// 1024 frames de fácil acesso.
+// pode ser usado pra alocar rapidamente memória para um novo processo.
+// NULL = entrada vazi
+// !NULL = ponteiro para a estrutura do tipo free_frame_d.
+struct frame_d FREE_FRAMES[1024];
+struct frame_d SWAPPED_FRAMES[1024];
+*/
+
+
+
 
 
 
