@@ -1,23 +1,23 @@
 /*
  * File: pc/mm/x86/pages.c
  *
- * Descrição:
- *     Faz a configuração da paginação de memória e oferece rotinas de
- * suporte ao mapeamento de memória física.
+ * Descriï¿½ï¿½o:
+ *     Faz a configuraï¿½ï¿½o da paginaï¿½ï¿½o de memï¿½ria e oferece rotinas de
+ * suporte ao mapeamento de memï¿½ria fï¿½sica.
  *     Faz parte do modulo /mm da classe ram.
  *
  * *Importante:
- *     Essa rotina pertence ao módulo de gerenciamento de memória. Não possui
- * informações sobre processos. Qualquer informação sobre processos deve ser 
- * conseguida através de invocação de métodos pertencentes ao módulo 
+ *     Essa rotina pertence ao mï¿½dulo de gerenciamento de memï¿½ria. Nï¿½o possui
+ * informaï¿½ï¿½es sobre processos. Qualquer informaï¿½ï¿½o sobre processos deve ser 
+ * conseguida atravï¿½s de invocaï¿½ï¿½o de mï¿½todos pertencentes ao mï¿½dulo 
  * /microkernel.
  *
  * @todo: 
  *    IMPORTANTE:
- *    +FAZER GERENCIAMENTO DA MEMÓRIA FÍSICA. 
- *    +DIVIDIR A MEMÓRIA FÍSICA EM PARTIÇÕES DE 4MB E 
- *    +DIVIDIR CADA PARTIÇÃO EM FRAMES DE 4KB, O QUE DÁ 1024 FRAMES POR 
- * PARTIÇÃO.
+ *    +FAZER GERENCIAMENTO DA MEMï¿½RIA Fï¿½SICA. 
+ *    +DIVIDIR A MEMï¿½RIA Fï¿½SICA EM PARTIï¿½ï¿½ES DE 4MB E 
+ *    +DIVIDIR CADA PARTIï¿½ï¿½O EM FRAMES DE 4KB, O QUE Dï¿½ 1024 FRAMES POR 
+ * PARTIï¿½ï¿½O.
  *
  * Obs: 
  *     Chamaremos de 'framepool' o conjunto de 1024 frames.
@@ -26,22 +26,22 @@
  * @todo:
  * *Importante:
  * Obs: 
- *     Os processos Idle, Shell e Taskman estão usando o diretório de páginas 
- * do processo Kernel. É preciso criar um diretório para cada processo e 
- * criar uma rotina de automação na criação de diretórios de páginas.
+ *     Os processos Idle, Shell e Taskman estï¿½o usando o diretï¿½rio de pï¿½ginas 
+ * do processo Kernel. ï¿½ preciso criar um diretï¿½rio para cada processo e 
+ * criar uma rotina de automaï¿½ï¿½o na criaï¿½ï¿½o de diretï¿½rios de pï¿½ginas.
  *
  * @todo: 
- *     Criar rotinas para ver o conteúdo da lista de diretórios de páginas.
- *     ?? Cada diretório deve ter uma estrutura, cujo ponteiro vai pra dentro 
+ *     Criar rotinas para ver o conteï¿½do da lista de diretï¿½rios de pï¿½ginas.
+ *     ?? Cada diretï¿½rio deve ter uma estrutura, cujo ponteiro vai pra dentro 
  * da lista.
- *     ?? A estrutura mostrará informações sobre o diretório de páginas.
+ *     ?? A estrutura mostrarï¿½ informaï¿½ï¿½es sobre o diretï¿½rio de pï¿½ginas.
  *
  * @todo: 
- *     Criar rotinas que manipulem as estruturas de diretório de páginas e de 
+ *     Criar rotinas que manipulem as estruturas de diretï¿½rio de pï¿½ginas e de 
  * pagetables. 
  *
- * Obs: Todas as pagetables podem ficar em sequência em uma mesma região do endereço
- * lógico do processo kernel.
+ * Obs: Todas as pagetables podem ficar em sequï¿½ncia em uma mesma regiï¿½o do endereï¿½o
+ * lï¿½gico do processo kernel.
  *
  * In this file:
  * =============
@@ -58,7 +58,7 @@
  */
 
 
-// Algumas áreas de memória:
+// Algumas ï¿½reas de memï¿½ria:
 // =========================
 //
 // + kernel area    = 1024 pageframes (4MB).
@@ -67,26 +67,26 @@
 // + vga            = 1024 pageframes (4MB).
 //     (Obs: Isso transpassa o real tamanho da vga).
 // + lfb (frontbuffer) = 1024 pageframes (4MB).
-//     (Obs: Isso é muito pouco, placas de video possuem muita memo'ria)
+//     (Obs: Isso ï¿½ muito pouco, placas de video possuem muita memo'ria)
 // + backbuffer     = 1024 pageframes (4MB). 
-//     (Obs: Isso realmente é pouco, no backbuffer deve caber uma imagem 
-// grande, que será dividida em vários monitores).
-// + ?? tem ainda um pool de pageframes usados para alocaçao.
+//     (Obs: Isso realmente ï¿½ pouco, no backbuffer deve caber uma imagem 
+// grande, que serï¿½ dividida em vï¿½rios monitores).
+// + ?? tem ainda um pool de pageframes usados para alocaï¿½ao.
 
 
 #include <kernel.h>
 
 
 //
-// Variáveis passadas pelo Boot Loader.
+// Variï¿½veis passadas pelo Boot Loader.
 //
 
 
 // Obs: 
 // Teremos que rever os argumentos passados pelo Boot Loader ao Kernel 
-// Pois podemos tornar o Kernel compatível com GRUB.
+// Pois podemos tornar o Kernel compatï¿½vel com GRUB.
 
-extern unsigned long SavedBootBlock;    //Parâmtros passados pelo Boot Loader.
+extern unsigned long SavedBootBlock;    //Parï¿½mtros passados pelo Boot Loader.
 extern unsigned long SavedLFB;          //LFB address.
 extern unsigned long SavedX;            //Screen width.
 extern unsigned long SavedY;            //Screen height.
@@ -95,7 +95,7 @@ extern unsigned long SavedBPP;          //Bits per pixel.
 
 
 //
-// Funções importadas.
+// Funï¿½ï¿½es importadas.
 //
 
 extern void set_page_dir (void);
@@ -160,20 +160,20 @@ void *clone_kernel_page_directory (void){
 
 // #importante: PERIGO !!!
 //#bugbug
-//isso é um improviso, precisamos de outro endereço.
+//isso ï¿½ um improviso, precisamos de outro endereï¿½o.
 // >>>> 0x1000
-// O sistema está usando esse endereço como início de um heap
-// onde pegamos páginas de memória para criarmos diretórios de páginas.
-// Isso porque precisamos de endereços que terminem com pelo menos 
+// O sistema estï¿½ usando esse endereï¿½o como inï¿½cio de um heap
+// onde pegamos pï¿½ginas de memï¿½ria para criarmos diretï¿½rios de pï¿½ginas.
+// Isso porque precisamos de endereï¿½os que terminem com pelo menos 
 // 12bits zerados.
 // #todo: 
 // Precisamos encontrar outro lugar para esse heap, tendo em vista que
-// o número de diretórios criados será grande e o heap invadirá 
-// outras áreas.
+// o nï¿½mero de diretï¿½rios criados serï¿½ grande e o heap invadirï¿½ 
+// outras ï¿½reas.
 
 // #bugbug
 // Vamos improvisar um limite por enquanto.
-// O limite será o início da cga em modo texto.
+// O limite serï¿½ o inï¿½cio da cga em modo texto.
 // See: gpa.h
 
 unsigned long table_pointer_heap_base = 0x1000;
@@ -202,19 +202,19 @@ unsigned long get_table_pointer (void)
  * CreatePageDirectory:
  *
  *     Cria um page directory para um processo.
- *     Vamos clonar o diretório de páginas do kernel
+ *     Vamos clonar o diretï¿½rio de pï¿½ginas do kernel
  *
  * #importante:
- * Deve retornar o endereço do diretório de páginas criado,
- * que é um clone do diretório de páginas do kernel.
+ * Deve retornar o endereï¿½o do diretï¿½rio de pï¿½ginas criado,
+ * que ï¿½ um clone do diretï¿½rio de pï¿½ginas do kernel.
  *
  * #importante:
- * Retornaremos o endereço virtual, para que a função create_process possa usar 
- * tanto o endereço virtual quanto o físico.
+ * Retornaremos o endereï¿½o virtual, para que a funï¿½ï¿½o create_process possa usar 
+ * tanto o endereï¿½o virtual quanto o fï¿½sico.
  */
 
-// Clonando o diretório do kernel.
-// Isso aparentemente está funcionando bem,
+// Clonando o diretï¿½rio do kernel.
+// Isso aparentemente estï¿½ funcionando bem,
 // mas poderia se chamar CloneKernelPageDirectory.
 
 void *CreatePageDirectory (void){
@@ -224,7 +224,7 @@ void *CreatePageDirectory (void){
 
 	
 	// virtual address.
-	// Alocaremos uma página apenas, pois tem 4KB.	
+	// Alocaremos uma pï¿½gina apenas, pois tem 4KB.	
 
     //
     //  # PERIGO.
@@ -233,8 +233,8 @@ void *CreatePageDirectory (void){
 	// #BUGBUG
 	// #PERIGO.
 	// Isso deu certo.
-	// >>> O endereço precisa ter 12 bits zerados para flags,
-	// então essa alocação é de 4KB em 4KB.
+	// >>> O endereï¿½o precisa ter 12 bits zerados para flags,
+	// entï¿½o essa alocaï¿½ï¿½o ï¿½ de 4KB em 4KB.
 
 
 	//destAddressVA = (unsigned long) newPage (); 
@@ -254,15 +254,15 @@ void *CreatePageDirectory (void){
 	//	
 
 	// src.
-	// O endereço do diretório de páginas do kernel.
+	// O endereï¿½o do diretï¿½rio de pï¿½ginas do kernel.
 	// #importante: 
-	// Os endereços físico e virtual dessa tabela são iguais.
+	// Os endereï¿½os fï¿½sico e virtual dessa tabela sï¿½o iguais.
 	
 	// dst.
-	// O endereço do diretório de páginas clone.
+	// O endereï¿½o do diretï¿½rio de pï¿½ginas clone.
 	// #importante:
-    // Precisamos usar o endereço virtual para manipularmos os dados,
-	// pois estamos no esquema de memória do kernel base.
+    // Precisamos usar o endereï¿½o virtual para manipularmos os dados,
+	// pois estamos no esquema de memï¿½ria do kernel base.
 
 
     unsigned long *src = (unsigned long *) gKernelPageDirectoryAddress;  
@@ -275,20 +275,20 @@ void *CreatePageDirectory (void){
 	//
 
 	// #obs:
-    // Nesse momento já temos o endereço da origem e do destino.
-    // O endereço lógico e físico do diretório de páginas do kernel 
-    // são iguais, porém os endereços físico e virtual do diretório 
-    // de páginas clone são diferentes.
+    // Nesse momento jï¿½ temos o endereï¿½o da origem e do destino.
+    // O endereï¿½o lï¿½gico e fï¿½sico do diretï¿½rio de pï¿½ginas do kernel 
+    // sï¿½o iguais, porï¿½m os endereï¿½os fï¿½sico e virtual do diretï¿½rio 
+    // de pï¿½ginas clone sï¿½o diferentes.
     // #importante: 
-	// A rotina de cópia do conteúdo entre os buffers precisa usar 
-    // endereços lógicos, pois estamos usando o kernel base e sua 
-    // configuração de memória.	
+	// A rotina de cï¿½pia do conteï¿½do entre os buffers precisa usar 
+    // endereï¿½os lï¿½gicos, pois estamos usando o kernel base e sua 
+    // configuraï¿½ï¿½o de memï¿½ria.	
 	
-	// Agora vamos apenas copiar o diretório de páginas do kernel 
-	// para o diretório de páginas clone. São 1024 dwords.	
+	// Agora vamos apenas copiar o diretï¿½rio de pï¿½ginas do kernel 
+	// para o diretï¿½rio de pï¿½ginas clone. Sï¿½o 1024 dwords.	
 	
 	// #importante
-	// Retornamos um endereço lógico, que será transformado em físico
+	// Retornamos um endereï¿½o lï¿½gico, que serï¿½ transformado em fï¿½sico
 	// para colocarmos no cr3.	
 	
 	for ( i=0; i < 1024; i++ )
@@ -300,7 +300,7 @@ void *CreatePageDirectory (void){
 	// Done.
 	//
 	
-	// Retornamos o endereço virtual do novo diretório de páginas.
+	// Retornamos o endereï¿½o virtual do novo diretï¿½rio de pï¿½ginas.
 	
 	return (void *) destAddressVA;
 }
@@ -309,42 +309,42 @@ void *CreatePageDirectory (void){
 /*
  *******************
  * CreatePageTable:
- *     Cria uma page table em um diretório.
+ *     Cria uma page table em um diretï¿½rio.
  *     Obs:
- *     + O endereço precisa ser alocado antes.
- *     + Precisa ser um endereço físico.
- *     + O diretório precisa ser um diretório válido.
+ *     + O endereï¿½o precisa ser alocado antes.
+ *     + Precisa ser um endereï¿½o fï¿½sico.
+ *     + O diretï¿½rio precisa ser um diretï¿½rio vï¿½lido.
  *
  * Argumentos:
  *
  *     [directory_address]
- *         O endereço do diretório onde colocaremos o endereço 
- * do início da tabela de página que criaremos.
+ *         O endereï¿½o do diretï¿½rio onde colocaremos o endereï¿½o 
+ * do inï¿½cio da tabela de pï¿½gina que criaremos.
  *
  *     [offset]
- *         O deslocamento dentro do diretório para sabermos o 
- * lugar para salvarmos o endereço da tabela de páginas 
+ *         O deslocamento dentro do diretï¿½rio para sabermos o 
+ * lugar para salvarmos o endereï¿½o da tabela de pï¿½ginas 
  * que estamos criando.
- * @todo: Na hora de salvarmos esse endereço também 
+ * @todo: Na hora de salvarmos esse endereï¿½o tambï¿½m 
  * temos que incluir as flags.
  * #importante:
- * O offset é um índice dentro do diretório de páginas.
+ * O offset ï¿½ um ï¿½ndice dentro do diretï¿½rio de pï¿½ginas.
  *
  *     [region_address]
- * O endereço da região que estamos mapeando na pagetable.
- * Obs: Precisamos alocar memória para a pagetable 
+ * O endereï¿½o da regiï¿½o que estamos mapeando na pagetable.
+ * Obs: Precisamos alocar memï¿½ria para a pagetable 
  * que estamos criando, isso antes de chamarmos essa rotina. 
  * Obs: Uma pagetable tem 4096 bytes de tamanho.
- * Obs: Criamos uma tabela de páginas, com páginas em user mode.
+ * Obs: Criamos uma tabela de pï¿½ginas, com pï¿½ginas em user mode.
  *
  */ 
 
 // #importante:
-// Cria uma pagetable em um dado diretório de páginas.
-// Uma região de 4MB da memória física é mapeanda nessa pt.
+// Cria uma pagetable em um dado diretï¿½rio de pï¿½ginas.
+// Uma regiï¿½o de 4MB da memï¿½ria fï¿½sica ï¿½ mapeanda nessa pt.
 
 // #bugbug:
-// Isso aparentemente está com problema. #testando ...
+// Isso aparentemente estï¿½ com problema. #testando ...
 
 void *CreatePageTable ( unsigned long directory_address_va, 
                         int dir_index, 
@@ -361,8 +361,8 @@ void *CreatePageTable ( unsigned long directory_address_va,
 	//	
 
 	// #importante:
-	// Endereço virtual do diretório de páginas.
-	// Precisamos do endereço virtual do diretório para editá-lo.
+	// Endereï¿½o virtual do diretï¿½rio de pï¿½ginas.
+	// Precisamos do endereï¿½o virtual do diretï¿½rio para editï¿½-lo.
 
 	if ( directory_address_va == 0 )
 	{
@@ -377,20 +377,20 @@ void *CreatePageTable ( unsigned long directory_address_va,
 	//	
 	
 	// #importante:
-	// Endereço virtual da tabela de páginas que vamos criar.
-	// Precisamos de um endereço virtual para manipularmos a tabela,
-	// pois o kernel trabalha com os endereços virtuais,
-	// só depois converteremos para físico e salvaremos na 
-	// entrada do diretório o ponteiro que é um endereço físico.
+	// Endereï¿½o virtual da tabela de pï¿½ginas que vamos criar.
+	// Precisamos de um endereï¿½o virtual para manipularmos a tabela,
+	// pois o kernel trabalha com os endereï¿½os virtuais,
+	// sï¿½ depois converteremos para fï¿½sico e salvaremos na 
+	// entrada do diretï¿½rio o ponteiro que ï¿½ um endereï¿½o fï¿½sico.
 
     //unsigned long ptVA = (unsigned long) kmalloc (4096);
     //unsigned long ptVA = (unsigned long) allocPages (1);
 	
 	//#bugbug
-	//Temos que criar um alocador de memória para os ponteiros
+	//Temos que criar um alocador de memï¿½ria para os ponteiros
 	//das tabelas, esses ponteiros precisam de 12 bits zerados.
-	//então tem que alocar de 4kb em 4kb.
-	//precisamos encontrar alguma área dentro do kernel para isso.
+	//entï¿½o tem que alocar de 4kb em 4kb.
+	//precisamos encontrar alguma ï¿½rea dentro do kernel para isso.
 	
 	//unsigned long ptVA = (unsigned long) newPage ();    //bug (pf)
 	//unsigned long ptVA = (unsigned long) kmalloc(4096);  //bug (precisa 12bits zerados)
@@ -403,7 +403,7 @@ void *CreatePageTable ( unsigned long directory_address_va,
 		kprintf ("CreatePageTable: ptVA #bugbug\n");
 	}	
 	
-	// O endereço virtual permite manipularmos a pagetable daqui do kernel.
+	// O endereï¿½o virtual permite manipularmos a pagetable daqui do kernel.
 	unsigned long *newPT = (unsigned long *) ptVA;
 
 
@@ -439,14 +439,14 @@ void *CreatePageTable ( unsigned long directory_address_va,
 	//
 	
 	// #importante:
-	// Agora vamos mapear a região de memória física na nova pagetable.
+	// Agora vamos mapear a regiï¿½o de memï¿½ria fï¿½sica na nova pagetable.
 
 	// #obs:
-	// + Já criamos uma pagetable e temos seu endereço lógico.
-	// + Vamos mapear 4MB de memória física.
-	// + Serão páginas em user mode.
-	// + A pagetable será usado por um processo em user mode. 
-	// + Note as flags.(7). 7 decimal é igual a 111 binário.
+	// + Jï¿½ criamos uma pagetable e temos seu endereï¿½o lï¿½gico.
+	// + Vamos mapear 4MB de memï¿½ria fï¿½sica.
+	// + Serï¿½o pï¿½ginas em user mode.
+	// + A pagetable serï¿½ usado por um processo em user mode. 
+	// + Note as flags.(7). 7 decimal ï¿½ igual a 111 binï¿½rio.
 	// ...
 	
 	//#debug
@@ -472,25 +472,25 @@ void *CreatePageTable ( unsigned long directory_address_va,
     //		
 	
 	// #importante:
-	// Agora vamos colocar o endereço físico da nova pagetable em 
-	// uma das entradas do diretório de páginas. 
-	// O número da entrada é o índice passado via argumento. dir_index.
-    // Antes precisamos converter o endereço lógico da tabela de páginas
-	// em um endereço físico.
+	// Agora vamos colocar o endereï¿½o fï¿½sico da nova pagetable em 
+	// uma das entradas do diretï¿½rio de pï¿½ginas. 
+	// O nï¿½mero da entrada ï¿½ o ï¿½ndice passado via argumento. dir_index.
+    // Antes precisamos converter o endereï¿½o lï¿½gico da tabela de pï¿½ginas
+	// em um endereï¿½o fï¿½sico.
 	
 	// obs:
-    // + Precisamos colocar o endereço físico da tabela em uma entrada 
-	// do diretório.	
-	// + Aqui devemos incluir as flags também.
+    // + Precisamos colocar o endereï¿½o fï¿½sico da tabela em uma entrada 
+	// do diretï¿½rio.	
+	// + Aqui devemos incluir as flags tambï¿½m.
     // ...
 
 	// #importante:
-	// Para chamarmos essa rotina, temos que ter o diretório do kernel 
+	// Para chamarmos essa rotina, temos que ter o diretï¿½rio do kernel 
 	// corretamente configurado.
 	
 	// #obs: 
-	// Poderíamos passar as flags via argumento.
-	// O endereço do diretório de paginas do kernel precisa ser um endereço virtual.
+	// Poderï¿½amos passar as flags via argumento.
+	// O endereï¿½o do diretï¿½rio de paginas do kernel precisa ser um endereï¿½o virtual.
 	
     unsigned long ptPA = (unsigned long) virtual_to_physical ( ptVA, 
                                              gKernelPageDirectoryAddress ); 
@@ -510,7 +510,7 @@ void *CreatePageTable ( unsigned long directory_address_va,
 	// Done.
 	//
 	
-	// Retornaremos o endereço virtual da pagetable,
+	// Retornaremos o endereï¿½o virtual da pagetable,
 	// para que a tabela possa ser manipulada pelo kernel.
 
     return (void *) ptVA;
@@ -523,14 +523,14 @@ void *CreatePageTable ( unsigned long directory_address_va,
  * 
  */
 
-// Coloca o endereço do diretório de páginas de um processo
+// Coloca o endereï¿½o do diretï¿½rio de pï¿½ginas de um processo
 // no registrador cr3 da arquitetura Intel.
 
 void x86_SetCR3 (unsigned long pa)
 {
 
-    // Não podemos usar um diretório de páginas que esteja
-    // no início da memória RAM.
+    // Nï¿½o podemos usar um diretï¿½rio de pï¿½ginas que esteja
+    // no inï¿½cio da memï¿½ria RAM.
     if (pa == 0)
     {
         panic ("x86_SetCR3: 0 is not a valid address!");
@@ -547,7 +547,7 @@ void x86_SetCR3 (unsigned long pa)
 /*
  ************************************************************
  * mapping_ahci0_device_address:
- *     Mapeando um endereçi fícico usado pelo driver AHCI.    
+ *     Mapeando um endereï¿½i fï¿½cico usado pelo driver AHCI.    
  */
 
 unsigned long 
@@ -559,8 +559,8 @@ mapping_ahci1_device_address ( unsigned long pa )
     int i;
 	
 	//##bugbug: 
-	//Esse endereço é improvisado. Parece que não tem nada nesse endereço.
-	//#todo: temos que alocar memória e converter o endereço lógico em físico.
+	//Esse endereï¿½o ï¿½ improvisado. Parece que nï¿½o tem nada nesse endereï¿½o.
+	//#todo: temos que alocar memï¿½ria e converter o endereï¿½o lï¿½gico em fï¿½sico.
 	
 	// ?? //0x00083000 
 	unsigned long *ahci1_page_table = (unsigned long *) PAGETABLE_AHCI1; 
@@ -577,8 +577,8 @@ mapping_ahci1_device_address ( unsigned long pa )
 	
 	// #imporatante
 	// #todo:
-	// Ainda não calculamos o uso de memória física.
-	// Precisamos saber quanta memória física esse dispositivo está usando.
+	// Ainda nï¿½o calculamos o uso de memï¿½ria fï¿½sica.
+	// Precisamos saber quanta memï¿½ria fï¿½sica esse dispositivo estï¿½ usando.
 	// 10=cache desable 8= Write-Through 0x002 = Writeable 0x001 = Present
 	// 0001 1011
 
@@ -602,14 +602,14 @@ mapping_ahci1_device_address ( unsigned long pa )
 /*
  ***********************************
  * mapping_nic0_device_address:
- *     Mapeando um endereço fícico usado pelo NIC1.    
+ *     Mapeando um endereï¿½o fï¿½cico usado pelo NIC1.    
  */
 
 //82540 test
-//e, 88000h ficará a pagetable para mapear o endereço físico em f0000000va
+//e, 88000h ficarï¿½ a pagetable para mapear o endereï¿½o fï¿½sico em f0000000va
 //mapeando o nic principal.
 //considerando que tenhamos mais de uma placa de rede, 
-//esse mapeamento só será válido para o primeiro.
+//esse mapeamento sï¿½ serï¿½ vï¿½lido para o primeiro.
 
 unsigned long 
 mapping_nic1_device_address ( unsigned long pa )
@@ -620,8 +620,8 @@ mapping_nic1_device_address ( unsigned long pa )
     int i;    
 	
 	//##bugbug: 
-	//Esse endereço é improvisado. Parece que não tem nada nesse endereço.
-	//#todo: temos que alocar memória e converter o endereço lógico em físico.
+	//Esse endereï¿½o ï¿½ improvisado. Parece que nï¿½o tem nada nesse endereï¿½o.
+	//#todo: temos que alocar memï¿½ria e converter o endereï¿½o lï¿½gico em fï¿½sico.
 	
 	//unsigned long volatile *nic0_page_table = (unsigned long volatile *) PAGETABLE_NIC1; //0x88000;
 	unsigned long *nic0_page_table = (unsigned long *) PAGETABLE_NIC1; //0x88000;
@@ -638,8 +638,8 @@ mapping_nic1_device_address ( unsigned long pa )
 	
 	// #imporatante
 	// #todo:
-	// Ainda não calculamos o uso de memória física.
-	// Precisamos saber quanta memória física esse dispositivo está usando.
+	// Ainda nï¿½o calculamos o uso de memï¿½ria fï¿½sica.
+	// Precisamos saber quanta memï¿½ria fï¿½sica esse dispositivo estï¿½ usando.
 	// 10=cache desable 8= Write-Through 0x002 = Writeable 0x001 = Present
 	// 0001 1011
 
@@ -663,41 +663,41 @@ mapping_nic1_device_address ( unsigned long pa )
 /*
  *************************************************************
  * SetUpPaging:
- *     Configura o diretório de páginas do processo Kernel e 
- * algumas tabelas de páginas.
+ *     Configura o diretï¿½rio de pï¿½ginas do processo Kernel e 
+ * algumas tabelas de pï¿½ginas.
  *
  * Obs: 
- *     Na hora em que um processo é criado deve-se criar seu diretório de 
- * páginas e as tabelas de páginas usadas por ele, de acordo com o tamanho 
+ *     Na hora em que um processo ï¿½ criado deve-se criar seu diretï¿½rio de 
+ * pï¿½ginas e as tabelas de pï¿½ginas usadas por ele, de acordo com o tamanho 
  * do processo.
  *
- * Diretório:
- *     page_directory = 0x0009C000. (Endereço físico).#kernel
+ * Diretï¿½rio:
+ *     page_directory = 0x0009C000. (Endereï¿½o fï¿½sico).#kernel
  *
  * Obs:
- *     Esse diretório criado será usado pelo processo Kernel e também por 
- * outros processos também durante essa fase de construção do sistema. 
- * Depois cada processo terá seu próprio diretório de páginas. Isso está em 
- * fase de implementação. O ideal é um diretório por processo.
- *     Toda vez que o Kernel iniciar a execução de um processo ele deve 
- * carregar o endereço do diretório do processo no registrador de controle CR3.
+ *     Esse diretï¿½rio criado serï¿½ usado pelo processo Kernel e tambï¿½m por 
+ * outros processos tambï¿½m durante essa fase de construï¿½ï¿½o do sistema. 
+ * Depois cada processo terï¿½ seu prï¿½prio diretï¿½rio de pï¿½ginas. Isso estï¿½ em 
+ * fase de implementaï¿½ï¿½o. O ideal ï¿½ um diretï¿½rio por processo.
+ *     Toda vez que o Kernel iniciar a execuï¿½ï¿½o de um processo ele deve 
+ * carregar o endereï¿½o do diretï¿½rio do processo no registrador de controle CR3.
  * 
  * @todo: 
- *     Por enquanto só um diretório foi criado.
+ *     Por enquanto sï¿½ um diretï¿½rio foi criado.
  *     
  * @tod:
  *     o Mudar para pagesSetUpPaging.
  *
- * @TODO: AS COISAS ESTÃO MEIO BAGUNÇADAS AQUI. A INTENÇÃO É QUE 
- * A PARTE BAIXA DA MEMÓRIA VIRTURAL DO PROCESSO PERTENÇA AO PROCESSO 
- * E A PARTE ALTA DA MEMÓRIA VIRTUAL DO PROCESSO PERTENÇA AO KERNEL.
- * QUANTO A MEMÓRIA FÍSICA, DESEJAMOS QUE APENAS O KERNEL ACESSE A 
- * PARTE BAIXA DA MEMÓRIA FÍSICA, OS PROGRAMAS EM USER MODE MANIPULARÃO
- * APENAS A MEMÓRIA QUE LHES FOR CONCEDIDA.
+ * @TODO: AS COISAS ESTï¿½O MEIO BAGUNï¿½ADAS AQUI. A INTENï¿½ï¿½O ï¿½ QUE 
+ * A PARTE BAIXA DA MEMï¿½RIA VIRTURAL DO PROCESSO PERTENï¿½A AO PROCESSO 
+ * E A PARTE ALTA DA MEMï¿½RIA VIRTUAL DO PROCESSO PERTENï¿½A AO KERNEL.
+ * QUANTO A MEMï¿½RIA Fï¿½SICA, DESEJAMOS QUE APENAS O KERNEL ACESSE A 
+ * PARTE BAIXA DA MEMï¿½RIA Fï¿½SICA, OS PROGRAMAS EM USER MODE MANIPULARï¿½O
+ * APENAS A MEMï¿½RIA QUE LHES FOR CONCEDIDA.
  *
- * Histórico:
- *     2015 - Essa função foi criada por Fred Nora.
- *     2016 - Revisão.
+ * Histï¿½rico:
+ *     2015 - Essa funï¿½ï¿½o foi criada por Fred Nora.
+ *     2016 - Revisï¿½o.
  *     ...
  */
 //int pagesSetUpPaging() 
@@ -709,10 +709,10 @@ int SetUpPaging (void){
 	
 	
 	// #importante
-	// Inicializando as variáveis que vamos usr aqui.
-	// São endereços de memória física.
-	// As variáveis são globais para podermos gerenciar o uso de
-	// memória física.
+	// Inicializando as variï¿½veis que vamos usr aqui.
+	// Sï¿½o endereï¿½os de memï¿½ria fï¿½sica.
+	// As variï¿½veis sï¿½o globais para podermos gerenciar o uso de
+	// memï¿½ria fï¿½sica.
 	// See:  mm/x86/mm.h
 	
 	
@@ -763,39 +763,39 @@ int SetUpPaging (void){
 
 
 	// ** bank 1 ** //
-	// O primeiro banco representa o mínimo de memória RAM que o sistema 
+	// O primeiro banco representa o mï¿½nimo de memï¿½ria RAM que o sistema 
 	// operacional suporta, 32MB. 
-	// Dentro deve conter tudo. Até cache e frames para memória paginada.
-	// Endereços da memória físicas acessíveis em Kernel Mode.
+	// Dentro deve conter tudo. Atï¿½ cache e frames para memï¿½ria paginada.
+	// Endereï¿½os da memï¿½ria fï¿½sicas acessï¿½veis em Kernel Mode.
 	// Kernel process.
-	// >> Os 4 primeiros mega da memória fisica.     
-	// >> A imagem do kernel que começa no primeiro mega.
-	// >> Endereços da memória físicas acessíveis em User Mode.
+	// >> Os 4 primeiros mega da memï¿½ria fisica.     
+	// >> A imagem do kernel que comeï¿½a no primeiro mega.
+	// >> Endereï¿½os da memï¿½ria fï¿½sicas acessï¿½veis em User Mode.
 	// >> VGA, VESA LFB, BACKBUFFER e PAGEDPOOL
 	// *Importante.
-    // Esse endereço servirá para sistema de 32Mb e para sistemas com mais que 32Mb de RAM.
-	// Para um sistema de 32MB a área de pagedpool deve acabar em 0x01FFFFFF.
+    // Esse endereï¿½o servirï¿½ para sistema de 32Mb e para sistemas com mais que 32Mb de RAM.
+	// Para um sistema de 32MB a ï¿½rea de pagedpool deve acabar em 0x01FFFFFF.
 	
 	
 	//=====================================================
-	// A memória física é dividida em duas partes principais: 
-	// + System Zone. (oito bancos de 32MB começando em 0)
-	// + Window Zone. (Uma user session começando em 0x10000000)
+	// A memï¿½ria fï¿½sica ï¿½ dividida em duas partes principais: 
+	// + System Zone. (oito bancos de 32MB comeï¿½ando em 0)
+	// + Window Zone. (Uma user session comeï¿½ando em 0x10000000)
 	//
 	//=====================================================	
 
 
-	// O número máximo de bancos no sistema será 8.
+	// O nï¿½mero mï¿½ximo de bancos no sistema serï¿½ 8.
 	// Se o sistema for pequeno, teremos menos bancos.
 	// Se o sistema for grande o bastante, teremos 8 bancos e uma user session.
-	// Mas o sistema sempre será composto de bancos e uma user session.
-	// A quantidade de bancos será contada em variáveis globais.
+	// Mas o sistema sempre serï¿½ composto de bancos e uma user session.
+	// A quantidade de bancos serï¿½ contada em variï¿½veis globais.
 	
 	
 	//=========================================================================
 	
 	//
-	// **** Endereços iniciais áreas de memória 'não paginada'.
+	// **** Endereï¿½os iniciais ï¿½reas de memï¿½ria 'nï¿½o paginada'.
 	//
 	
 	
@@ -805,18 +805,18 @@ int SetUpPaging (void){
 	
 	//=========================================================================
 	// ### importante ###
-	// Essa rotina vai configurar só o deiretório de páginas do processo kernel.
+	// Essa rotina vai configurar sï¿½ o deiretï¿½rio de pï¿½ginas do processo kernel.
 	
 	
 	// DIRECTORY:
-	//     Diretório do processo Kernel. Esse diretório já foi criado nesse 
-	// endereço físico pelo Boot Loader. Aqui o kernel apenas reconfigura, 
-	// utilizando a mesma localizaçao. KERNEL_PAGEDIRECTORY.
+	//     Diretï¿½rio do processo Kernel. Esse diretï¿½rio jï¿½ foi criado nesse 
+	// endereï¿½o fï¿½sico pelo Boot Loader. Aqui o kernel apenas reconfigura, 
+	// utilizando a mesma localizaï¿½ao. KERNEL_PAGEDIRECTORY.
 	// ??
 
-	// Esse valor precisa ser determinado, pois ainda não temos 
-	// como usar algum alocador, pois sem a memória inicializada,
-	// não temos alocador.
+	// Esse valor precisa ser determinado, pois ainda nï¿½o temos 
+	// como usar algum alocador, pois sem a memï¿½ria inicializada,
+	// nï¿½o temos alocador.
 
     //
     // Directory.
@@ -830,43 +830,43 @@ int SetUpPaging (void){
 
 
 
-	// O que temos logo abaixo são pequenas partições de memória física.
-	// cada partição tem 1024 unsigned longs. o que dá 4KB cada. 
+	// O que temos logo abaixo sï¿½o pequenas partiï¿½ï¿½es de memï¿½ria fï¿½sica.
+	// cada partiï¿½ï¿½o tem 1024 unsigned longs. o que dï¿½ 4KB cada. 
 	
 	
 	// TABLES: 
-	//     Tabelas de páginas para o diretório do processo Kernel. Essas 
-	// tabelas já foram criadas nesses endereços físicos pelo Boot Loader. 
-	// Aqui o Kernel apenas reconfigura utilizando as mesmas localizações.
+	//     Tabelas de pï¿½ginas para o diretï¿½rio do processo Kernel. Essas 
+	// tabelas jï¿½ foram criadas nesses endereï¿½os fï¿½sicos pelo Boot Loader. 
+	// Aqui o Kernel apenas reconfigura utilizando as mesmas localizaï¿½ï¿½es.
 	
 	
-	// Poderíamos alocar memória para as page tables ??
-	// Sim, mas precisa ser um mecanismo que devolva o endereço físico 
-	// de onde foi alocado memória para a page table.
-	// Na verdade deve haver uma área de memória reservada para a alocação 
-	// de page tables. Todas as que serão criadas ocuparão muito espaço.
+	// Poderï¿½amos alocar memï¿½ria para as page tables ??
+	// Sim, mas precisa ser um mecanismo que devolva o endereï¿½o fï¿½sico 
+	// de onde foi alocado memï¿½ria para a page table.
+	// Na verdade deve haver uma ï¿½rea de memï¿½ria reservada para a alocaï¿½ï¿½o 
+	// de page tables. Todas as que serï¿½o criadas ocuparï¿½o muito espaï¿½o.
 
 	//
 	// SYSTEM MEMORY * NONPAGED POOLS 
 	//
 	
 	//*Importante:
-	// @todo: Não mudar o endereço onde essas tabelas foram construidas.
-	// Esses endereços estão bem organizados, essa será o início da memória 
-	// não paginada do processo kernel.
-	// Todas as páginas mapeadas aqui nunca serão enviadas para a memória secundária 
-	// ou seja nunca mudarão de endereço físico.
+	// @todo: Nï¿½o mudar o endereï¿½o onde essas tabelas foram construidas.
+	// Esses endereï¿½os estï¿½o bem organizados, essa serï¿½ o inï¿½cio da memï¿½ria 
+	// nï¿½o paginada do processo kernel.
+	// Todas as pï¿½ginas mapeadas aqui nunca serï¿½o enviadas para a memï¿½ria secundï¿½ria 
+	// ou seja nunca mudarï¿½o de endereï¿½o fï¿½sico.
 	//
-	// 0x0008F000 Tabela para mapear a parte mais baixa da memória física. Começa em 0.
-	// 0x0008E000 Tabela para mapear a memória usada pela imagem do kernel. Começa em 0x100000.
-	// 0x0008D000 Tabela para mapear uma área em user mode onde rodam códigos. Começa em 0x400000.
-	// 0x0008C000 Tabela para mapear a vga. Começa em 0xb8000.
-	// 0x0008B000 Tabela para mapear o frontbuffer, O começo é passado pelo Boot.
-	// 0x0008A000 Tabela para mapear o backbuffer, o começo é em (0x01000000 - 0x400000) no small system.
-	// 0x00089000 Tabela de páginas para o pagedpool.
+	// 0x0008F000 Tabela para mapear a parte mais baixa da memï¿½ria fï¿½sica. Comeï¿½a em 0.
+	// 0x0008E000 Tabela para mapear a memï¿½ria usada pela imagem do kernel. Comeï¿½a em 0x100000.
+	// 0x0008D000 Tabela para mapear uma ï¿½rea em user mode onde rodam cï¿½digos. Comeï¿½a em 0x400000.
+	// 0x0008C000 Tabela para mapear a vga. Comeï¿½a em 0xb8000.
+	// 0x0008B000 Tabela para mapear o frontbuffer, O comeï¿½o ï¿½ passado pelo Boot.
+	// 0x0008A000 Tabela para mapear o backbuffer, o comeï¿½o ï¿½ em (0x01000000 - 0x400000) no small system.
+	// 0x00089000 Tabela de pï¿½ginas para o pagedpool.
 
 
-    // kernel mode. (Endereços). 0x0008F000
+    // kernel mode. (Endereï¿½os). 0x0008F000
     unsigned long *km_page_table = (unsigned long *) PAGETABLE_KERNELAREA; 
 
     // kernel mode. (O kernel). 0x0008E000
@@ -887,7 +887,7 @@ int SetUpPaging (void){
     // pagetable para o pagedpool 0x00089000
     unsigned long *pagedpool_page_table = (unsigned long *) PAGETABLE_PAGEDPOOL;
 
-    // um endereço físico para a pagetable que mapeará os buffers.
+    // um endereï¿½o fï¿½sico para a pagetable que mapearï¿½ os buffers.
     unsigned long *heappool_page_table = (unsigned long *) PAGETABLE_HEAPPOOL; 
 
 
@@ -907,7 +907,7 @@ int SetUpPaging (void){
 	//
 
 
-    //Criaremos por enquanto apenas uma pagetable com memória paginada.
+    //Criaremos por enquanto apenas uma pagetable com memï¿½ria paginada.
     //unsigned long *paged_page_table = (unsigned long *) ??;  //BUFFER_PAGETABLE.	
 
 
@@ -924,19 +924,19 @@ int SetUpPaging (void){
 	// # DIRECTORIES
 	//
 
-	// Preenchendo todo o diretório de páginas do kernel com páginas 
-	// não presentes. Usando um endereço nulo de página.
+	// Preenchendo todo o diretï¿½rio de pï¿½ginas do kernel com pï¿½ginas 
+	// nï¿½o presentes. Usando um endereï¿½o nulo de pï¿½gina.
 
-	// Inicializando quatro diretórios.
+	// Inicializando quatro diretï¿½rios.
 	// o bit 7 da entrada permanece em 0, 
-	// indicando que temos páginas de 4KB.
+	// indicando que temos pï¿½ginas de 4KB.
 	// kernel
-	// Diretório de páginas do processo kernel.
+	// Diretï¿½rio de pï¿½ginas do processo kernel.
 	// 0 no bit 2 indica qual level ??
-	// 010 em binário.
+	// 010 em binï¿½rio.
 
     // #importante:
-    // O endereço físico e virtual são iguais para essa tabela.
+    // O endereï¿½o fï¿½sico e virtual sï¿½o iguais para essa tabela.
     
     for ( i=0; i < 1024; i++ ){
         page_directory[i] = (unsigned long) 0 | 2; 
@@ -951,33 +951,33 @@ int SetUpPaging (void){
 	//===========================================================
 	// kernel mode pages (0fis = 0virt)
 	// SMALL_kernel_address = 0.
-	// Mapear os primeiros 4MB da memória. (kernel mode). Preenchendo a tabela 
-	// km_page_table. A entrada 0 do diretório refere-se aos primeiros 4 megas 
-	// de endereço virtual.
+	// Mapear os primeiros 4MB da memï¿½ria. (kernel mode). Preenchendo a tabela 
+	// km_page_table. A entrada 0 do diretï¿½rio refere-se aos primeiros 4 megas 
+	// de endereï¿½o virtual.
 	//
-    // Aqui estamos pegando uma partição de memória física de 4MB que começa no 
-	// início da memória RAM.
-    // Obs: Essa page table dá acesso aos primeiros 4MB da memória física,
-	// Isso inclu a área do kernel base que começa no primeiro MB. Manipular
-	// esse espaço pode corromper o kernel base.
+    // Aqui estamos pegando uma partiï¿½ï¿½o de memï¿½ria fï¿½sica de 4MB que comeï¿½a no 
+	// inï¿½cio da memï¿½ria RAM.
+    // Obs: Essa page table dï¿½ acesso aos primeiros 4MB da memï¿½ria fï¿½sica,
+	// Isso inclu a ï¿½rea do kernel base que comeï¿½a no primeiro MB. Manipular
+	// esse espaï¿½o pode corromper o kernel base.
 	//
-	// A intenção aqui é que o kernel base possa manipular as áreas baixas da 
-	// memória física com facilidade. Porém, para os outros processos, os endereços 
-	// lógicos mais baixos não devem corresponder aos endereços físicos mais baixos,
-	// por segurança, apenas o kernel base deve ter acesso à essa área.
-	// Para alguns processos especiais, algum tipo de permissão poderá ser concedida.
+	// A intenï¿½ï¿½o aqui ï¿½ que o kernel base possa manipular as ï¿½reas baixas da 
+	// memï¿½ria fï¿½sica com facilidade. Porï¿½m, para os outros processos, os endereï¿½os 
+	// lï¿½gicos mais baixos nï¿½o devem corresponder aos endereï¿½os fï¿½sicos mais baixos,
+	// por seguranï¿½a, apenas o kernel base deve ter acesso ï¿½ essa ï¿½rea.
+	// Para alguns processos especiais, algum tipo de permissï¿½o poderï¿½ ser concedida.
 	//
     
 	
 	// Configurando uma pagetable.
-	// a pagetable para os primeiros 4MB de memória física. 
+	// a pagetable para os primeiros 4MB de memï¿½ria fï¿½sica. 
 	// kernel mode pages (0fis = 0virt)
-	// 011 binário.
+	// 011 binï¿½rio.
 	// >>> kernel mode.
-	// Criando a entrada número '0' do diretório de páginas do processo Kernel.
-	// que apontará para a pagetable que criamos.
-	// o bit 7 da entrada permanece em 0, indicando que temos páginas de 4KB.
-	// Salva no diretório o endereço físico da tabela.
+	// Criando a entrada nï¿½mero '0' do diretï¿½rio de pï¿½ginas do processo Kernel.
+	// que apontarï¿½ para a pagetable que criamos.
+	// o bit 7 da entrada permanece em 0, indicando que temos pï¿½ginas de 4KB.
+	// Salva no diretï¿½rio o endereï¿½o fï¿½sico da tabela.
 	// Configurando os atributos.	
 	
     // 4096 KB = (4 MB).
@@ -985,7 +985,7 @@ int SetUpPaging (void){
 
 
     // #importante:
-    // O endereço físico e virtual são iguais para essa tabela.
+    // O endereï¿½o fï¿½sico e virtual sï¿½o iguais para essa tabela.
 
     for ( i=0; i < 1024; i++ )
     {
@@ -1006,27 +1006,27 @@ int SetUpPaging (void){
     //===============================================
     // kernel mode pages (0x00100000fis = 0xC0000000virt)
     // SMALL_kernel_base = 0x00100000 = KERNEL_BASE.
-    // Mapear 4MB começando do primeiro mega. (kernel mode).
+    // Mapear 4MB comeï¿½ando do primeiro mega. (kernel mode).
     // Preenchendo a tabela km2_page_table.
     //
-    // Aqui estamos pegando uma partição de memória física de 4MB 
-    // que começa no endereço físico que carregamos a imagem do kernel.
-    // São 4MB de memória física, começando do primeiro MB, 
+    // Aqui estamos pegando uma partiï¿½ï¿½o de memï¿½ria fï¿½sica de 4MB 
+    // que comeï¿½a no endereï¿½o fï¿½sico que carregamos a imagem do kernel.
+    // Sï¿½o 4MB de memï¿½ria fï¿½sica, comeï¿½ando do primeiro MB, 
     // onde o KERNEL.BIN foi carregado.
 
     // Criando uma pagetable.
-    // 4MB de memória física, começando em 1MB.
+    // 4MB de memï¿½ria fï¿½sica, comeï¿½ando em 1MB.
     // kernel mode pages (0x00100000fis = 0xC0000000virt)
-    // 011 binário.
+    // 011 binï¿½rio.
     // >>> (kernel mode).
-    // Criando a  entrada do diretório de páginas do processo kernel.
+    // Criando a  entrada do diretï¿½rio de pï¿½ginas do processo kernel.
     // O bit 7 da entrada permanece em 0, indicando que 
-    // temos páginas de 4 KB.
-    // Salva no diretório o endereço físico.
+    // temos pï¿½ginas de 4 KB.
+    // Salva no diretï¿½rio o endereï¿½o fï¿½sico.
     // Configurando os atributos.
 
     // #importante:
-    // O endereço físico e virtual são iguais para essa tabela.
+    // O endereï¿½o fï¿½sico e virtual sï¿½o iguais para essa tabela.
 
     for ( i=0; i < 1024; i++ )
     {
@@ -1038,10 +1038,10 @@ int SetUpPaging (void){
 
 
     // Obs: 
-    // Percebe-se que houve uma sobreposição. Os megas 0,1,2,3 para
+    // Percebe-se que houve uma sobreposiï¿½ï¿½o. Os megas 0,1,2,3 para
     // kernel mode e os megas 1,2,3,4 para o kernel base.
     // Isso significa que o Kernel Base pode acessar o primeiro mega
-    // da memória física, usando endereço virtual igual ao endereço físico.
+    // da memï¿½ria fï¿½sica, usando endereï¿½o virtual igual ao endereï¿½o fï¿½sico.
 
 
 	//
@@ -1051,38 +1051,38 @@ int SetUpPaging (void){
     //==============================================================
     // user mode pages - (0x00400000fis = 0x00400000virt)
     // SMALL_user_address = 0x00400000 = USER_BASE.
-    // Mapear 4MB da memória começando em 0x00400000fis. (user mode).
+    // Mapear 4MB da memï¿½ria comeï¿½ando em 0x00400000fis. (user mode).
     //
-    // Aqui estamos pegando uma partição de memória física de 4MB 
-    // que começa no endereço físico 0x00400000, no quarto mega da 
-    // memória física. 
-    // É nesse endereço lógico que ficarão os processos em user mode.
-    // Cada processo terá um diretório de páginas, e nesse diretório de 
-    // páginas terá uma page table que atribuirá o endereço lógico 
-    // de 0x400000 à algum endereço físico alocado dinâmicamente 
+    // Aqui estamos pegando uma partiï¿½ï¿½o de memï¿½ria fï¿½sica de 4MB 
+    // que comeï¿½a no endereï¿½o fï¿½sico 0x00400000, no quarto mega da 
+    // memï¿½ria fï¿½sica. 
+    // ï¿½ nesse endereï¿½o lï¿½gico que ficarï¿½o os processos em user mode.
+    // Cada processo terï¿½ um diretï¿½rio de pï¿½ginas, e nesse diretï¿½rio de 
+    // pï¿½ginas terï¿½ uma page table que atribuirï¿½ o endereï¿½o lï¿½gico 
+    // de 0x400000 ï¿½ algum endereï¿½o fï¿½sico alocado dinï¿½micamente 
     // para receber a imagem do processo.
     // Obs: 
-    // Se o processo tiver mais que 4MB de tamanho, então será preciso 
+    // Se o processo tiver mais que 4MB de tamanho, entï¿½o serï¿½ preciso 
     // de mais de uma pagetable.
 
 
     // Criando uma pagetable.
-    // 4MB de memória física, começando do querto mega.
+    // 4MB de memï¿½ria fï¿½sica, comeï¿½ando do querto mega.
     // user mode pages - (0x00400000fis = 0x00400000virt)
-    // será usado pelo processo em user mode. Note as flags.(7).
-    // 7 decimal é igual a 111 binário.
+    // serï¿½ usado pelo processo em user mode. Note as flags.(7).
+    // 7 decimal ï¿½ igual a 111 binï¿½rio.
     // >>> (user mode).
-    // Criando a entrada do diretório de páginas do processo kernel.
+    // Criando a entrada do diretï¿½rio de pï¿½ginas do processo kernel.
     // o bit 7 da entrada permanece em 0, indicando que temos 
-    // páginas de 4KB.
-    // Salva no diretório o endereço físico.
+    // pï¿½ginas de 4KB.
+    // Salva no diretï¿½rio o endereï¿½o fï¿½sico.
     // Configurando os atributos.
 
     // 4096 KB = (4 MB).
     mm_used_user_area = (1024 * 4);  
 
     // #importante:
-    // O endereço físico e virtual são iguais para essa tabela.
+    // O endereï¿½o fï¿½sico e virtual sï¿½o iguais para essa tabela.
 
     for ( i=0; i < 1024; i++ )
     {
@@ -1095,12 +1095,12 @@ int SetUpPaging (void){
 
 
     // Obs: 
-    // Novamente aqui há uma sobreposição. 
-    // O primeiro mega dessa área destinada à user mode, é o mesmo 
-    // último mega da área destinada ao Kernel Base. 
-    // Isso significa uma área de memória compartilhada. 
-    // O que está no primeiro mega dessa área em user mode também está 
-    // no último mega da área do kernel base.
+    // Novamente aqui hï¿½ uma sobreposiï¿½ï¿½o. 
+    // O primeiro mega dessa ï¿½rea destinada ï¿½ user mode, ï¿½ o mesmo 
+    // ï¿½ltimo mega da ï¿½rea destinada ao Kernel Base. 
+    // Isso significa uma ï¿½rea de memï¿½ria compartilhada. 
+    // O que estï¿½ no primeiro mega dessa ï¿½rea em user mode tambï¿½m estï¿½ 
+    // no ï¿½ltimo mega da ï¿½rea do kernel base.
 
   
     //
@@ -1110,32 +1110,32 @@ int SetUpPaging (void){
     // ==============================================================
     // user mode VGA pages - ( 0x000B8000fis = 0x00800000virt)
     // SMALL_vga_address  = VM_BASE;   //0x000B8000;
-    // Mapear 4MB da memória começando em 0x000B8000fis. (user mode).
+    // Mapear 4MB da memï¿½ria comeï¿½ando em 0x000B8000fis. (user mode).
     // todo: 
-    // Aqui na verdade não precisa configurar 4 megas, 
-    // apenas o tamanho da memória de vídeo presente em 0xb8000.
-    // Aqui estamos pegando uma partição de memória física de 4MB 
-    // que começa no endereço físico 0x000B8000.
+    // Aqui na verdade nï¿½o precisa configurar 4 megas, 
+    // apenas o tamanho da memï¿½ria de vï¿½deo presente em 0xb8000.
+    // Aqui estamos pegando uma partiï¿½ï¿½o de memï¿½ria fï¿½sica de 4MB 
+    // que comeï¿½a no endereï¿½o fï¿½sico 0x000B8000.
     // todo: 
-    // bugbug: ESSA É CGA E NÃO A VGA.
+    // bugbug: ESSA ï¿½ CGA E Nï¿½O A VGA.
     // Mudar o nome para cga.
  
  
     // Criando uma pagetable.
-    // 4MB de memória física, começando 0x000B8000fis.
+    // 4MB de memï¿½ria fï¿½sica, comeï¿½ando 0x000B8000fis.
     // user mode VGA pages - ( 0x000B8000fis = 0x00800000virt)
     // Podemos permitir que alguns processos em user mode acessem
-    // essa área diretamente.
-    // 7 decimal é igual a 111 binário.
+    // essa ï¿½rea diretamente.
+    // 7 decimal ï¿½ igual a 111 binï¿½rio.
     // >>> (user mode).
-    // Criando a entrada do diretório de páginas do processo kernel.
+    // Criando a entrada do diretï¿½rio de pï¿½ginas do processo kernel.
     // o bit 7 da entrada permanece em 0, indicando que temos 
-    // páginas de 4KB.
-    // Salva no diretório o endereço físico.
+    // pï¿½ginas de 4KB.
+    // Salva no diretï¿½rio o endereï¿½o fï¿½sico.
     // Configurando os atributos.
 
     // #importante:	
-    // O endereço físico e virtual são iguais para essa tabela.
+    // O endereï¿½o fï¿½sico e virtual sï¿½o iguais para essa tabela.
 
     for ( i=0; i < 1024; i++ )
     {
@@ -1148,8 +1148,8 @@ int SetUpPaging (void){
 
 
     // Obs: 
-    // 4MB, começando do endereço físico 0x000B8000, 
-    // são acessíveis em user mode à partir do endereço virtual 
+    // 4MB, comeï¿½ando do endereï¿½o fï¿½sico 0x000B8000, 
+    // sï¿½o acessï¿½veis em user mode ï¿½ partir do endereï¿½o virtual 
     // 0x00800000virt.
 
 
@@ -1166,14 +1166,14 @@ int SetUpPaging (void){
     // user mode LFB pages - (0x????????fis = 0xC0400000virt).
     // SMALL_frontbuffer_address  = SavedLFB = g_lbf_pa, 
     // Foi passado pelo boot manager.
-    // Mapear 4MB da memória física começando no valor do 
-    // endereço físico do LFB que foi passado pelo Boot Manager.
-    // O endereço de memória lógica utilizada é 4MB à partir de 
+    // Mapear 4MB da memï¿½ria fï¿½sica comeï¿½ando no valor do 
+    // endereï¿½o fï¿½sico do LFB que foi passado pelo Boot Manager.
+    // O endereï¿½o de memï¿½ria lï¿½gica utilizada ï¿½ 4MB ï¿½ partir de 
     // 0xC0400000.
     //
-    // Aqui estamos pegando uma partição de memória física de 4MB 
-    // que começa no endereço físico do LFB, de valor desconhecido. 
-    // Foi configurado em modo real, pelo método VESA.
+    // Aqui estamos pegando uma partiï¿½ï¿½o de memï¿½ria fï¿½sica de 4MB 
+    // que comeï¿½a no endereï¿½o fï¿½sico do LFB, de valor desconhecido. 
+    // Foi configurado em modo real, pelo mï¿½todo VESA.
     //
     // todo: 
     // LFB needs to be bigger. 
@@ -1182,22 +1182,22 @@ int SetUpPaging (void){
     //
 
     // Criando uma pagetable. (user mode)
-    // Os quatro primeiros MB da memória de vídeo.
+    // Os quatro primeiros MB da memï¿½ria de vï¿½deo.
     // user mode LFB pages - (0x????????fis = 0xC0400000virt).
-    // provavelmente o endereço físico é 0xE0000000
+    // provavelmente o endereï¿½o fï¿½sico ï¿½ 0xE0000000
     // >>> (user mode).
-    // 7 decimal é igual a 111 binário.
-    // Criando a entrada do diretório de páginas do processo kernel.
+    // 7 decimal ï¿½ igual a 111 binï¿½rio.
+    // Criando a entrada do diretï¿½rio de pï¿½ginas do processo kernel.
     // o bit 7 da entrada permanece em 0, indicando que temos 
-    // páginas de 4KB.
-    // Salva no diretório o endereço físico.
+    // pï¿½ginas de 4KB.
+    // Salva no diretï¿½rio o endereï¿½o fï¿½sico.
     // Configurando os atributos.
 
     // 4096 KB = (4 MB).
     mm_used_lfb = (1024 * 4);  
 
     // #importante:	
-    // O endereço físico e virtual são iguais para essa tabela.
+    // O endereï¿½o fï¿½sico e virtual sï¿½o iguais para essa tabela.
 
     for ( i=0; i < 1024; i++ )
     {
@@ -1223,38 +1223,38 @@ int SetUpPaging (void){
     // (0x01000000 - 0x800000 fis) = 0xC0800000virt).
     //
     // BackBuffer: 
-    // É o buffer onde se pinta o que aparecerá na tela. O conteúdo 
-    // desse buffer é copiado no LFB da memória de vídeo, 
+    // ï¿½ o buffer onde se pinta o que aparecerï¿½ na tela. O conteï¿½do 
+    // desse buffer ï¿½ copiado no LFB da memï¿½ria de vï¿½deo, 
     // (refresh_screen).
-    // SMALL_backbuffer_address = , #Provisório.
-    // O endereço de memória lógica utilizada é 4MB à partir de 
+    // SMALL_backbuffer_address = , #Provisï¿½rio.
+    // O endereï¿½o de memï¿½ria lï¿½gica utilizada ï¿½ 4MB ï¿½ partir de 
     // 0xC0800000.
     //
-    // Aqui estamos pegando uma partição de memória física de 4MB, 
-    // que começa no endereço físico, no decimo sexto mega da 
-    // memória física. 
+    // Aqui estamos pegando uma partiï¿½ï¿½o de memï¿½ria fï¿½sica de 4MB, 
+    // que comeï¿½a no endereï¿½o fï¿½sico, no decimo sexto mega da 
+    // memï¿½ria fï¿½sica. 
  
  
     // criando uma page table.
-    // 4MB de meória física, começando em 16MB, que serão usados 
+    // 4MB de meï¿½ria fï¿½sica, comeï¿½ando em 16MB, que serï¿½o usados 
     // para backbuffer. 
     // Obs 
-    // Essa área deve ter no mínimo o mesmo tamanho do frontbuffer.
+    // Essa ï¿½rea deve ter no mï¿½nimo o mesmo tamanho do frontbuffer.
     // user mode BUFFER1 pages - ((0x01000000 - 0x800000 fis) = 
     // 0xC0800000virt).
     // >>> (user mode).
-    // 7 decimal é igual a 111 binário.
-    // Criando a entrada do diretório de páginas do processo kernel.
-    // o bit 7 da entrada permanece em 0, indicando que temos páginas 
+    // 7 decimal ï¿½ igual a 111 binï¿½rio.
+    // Criando a entrada do diretï¿½rio de pï¿½ginas do processo kernel.
+    // o bit 7 da entrada permanece em 0, indicando que temos pï¿½ginas 
     // de 4KB.
-    // Salva no diretório o endereço físico.
+    // Salva no diretï¿½rio o endereï¿½o fï¿½sico.
     // Configurando os atributos.
 
     // 4096 KB = (4 MB).
     mm_used_backbuffer = (1024 * 4);  
 
     // #importante:
-    // O endereço físico e virtual são iguais para essa tabela.
+    // O endereï¿½o fï¿½sico e virtual sï¿½o iguais para essa tabela.
 
     for ( i=0; i < 1024; i++ )
     {
@@ -1266,10 +1266,10 @@ int SetUpPaging (void){
 
 
     // Obs: 
-    // 4MB da memória física, à partir do endereço físico 0x01000000 
-    // (marca de 16MB), são destinados ao back buffer. 
+    // 4MB da memï¿½ria fï¿½sica, ï¿½ partir do endereï¿½o fï¿½sico 0x01000000 
+    // (marca de 16MB), sï¿½o destinados ao back buffer. 
     // Obs: 
-    // Isso é bem pouco, uma tela com alta resolução usa mais que isso.
+    // Isso ï¿½ bem pouco, uma tela com alta resoluï¿½ï¿½o usa mais que isso.
 
 
 
@@ -1283,11 +1283,11 @@ int SetUpPaging (void){
 
 
     // >>> (user mode)
-    // 7 decimal é igual a 111 binário.
-    // Criando a entrada do diretório de páginas do processo kernel.
-    // O bit 7 da entrada permanece em 0, indicando que temos páginas 
+    // 7 decimal ï¿½ igual a 111 binï¿½rio.
+    // Criando a entrada do diretï¿½rio de pï¿½ginas do processo kernel.
+    // O bit 7 da entrada permanece em 0, indicando que temos pï¿½ginas 
     // de 4KB.
-    // Salva no diretório o endereço físico.
+    // Salva no diretï¿½rio o endereï¿½o fï¿½sico.
     // Configurando os atributos.
 
 
@@ -1295,7 +1295,7 @@ int SetUpPaging (void){
     mm_used_pagedpool = (1024 * 4);  
 
     // #importante:
-    // O endereço físico e virtual são iguais para essa tabela.
+    // O endereï¿½o fï¿½sico e virtual sï¿½o iguais para essa tabela.
 
     for ( i=0; i < 1024; i++ )
     {
@@ -1306,8 +1306,8 @@ int SetUpPaging (void){
     page_directory[ENTRY_PAGEDPOOL_PAGES] = (unsigned long) page_directory[ENTRY_PAGEDPOOL_PAGES] | 7; 
 
 
-    // Endereço virtual do pool de heaps.
-    // Os heaps nessa área serão dados para os processos.
+    // Endereï¿½o virtual do pool de heaps.
+    // Os heaps nessa ï¿½rea serï¿½o dados para os processos.
 
     g_heappool_va = (unsigned long) XXXHEAPPOOL_VA; //0xC1000000;
     g_heap_count = 0;
@@ -1317,7 +1317,7 @@ int SetUpPaging (void){
 
     // >> (user mode).
     // Heaps support.
-    // Preparando uma área de memória grande o bastante para conter 
+    // Preparando uma ï¿½rea de memï¿½ria grande o bastante para conter 
     // o heap de todos os processos.
     // ex: 
     // Podemos dar 128 KB para cada processo inicialmente.
@@ -1326,7 +1326,7 @@ int SetUpPaging (void){
     mm_used_heappool = (1024 * 4);  
 
     // #importante:
-    // O endereço físico e virtual são iguais para essa tabela.
+    // O endereï¿½o fï¿½sico e virtual sï¿½o iguais para essa tabela.
 
     for ( i=0; i < 1024; i++ )
     {
@@ -1354,7 +1354,7 @@ int SetUpPaging (void){
     mm_used_extraheap1 = (1024 * 4);  
 
     // #importante:
-    // O endereço físico e virtual são iguais para essa tabela.
+    // O endereï¿½o fï¿½sico e virtual sï¿½o iguais para essa tabela.
     
     for ( i=0; i < 1024; i++ )
     {
@@ -1378,7 +1378,7 @@ int SetUpPaging (void){
     mm_used_extraheap2 = (1024 * 4);  
 
     // #importante:	
-    // O endereço físico e virtual são iguais para essa tabela.
+    // O endereï¿½o fï¿½sico e virtual sï¿½o iguais para essa tabela.
 
     for ( i=0; i < 1024; i++ )
     {
@@ -1400,7 +1400,7 @@ int SetUpPaging (void){
     mm_used_extraheap3 = (1024 * 4);  
 
     // #importante:
-    // O endereço físico e virtual são iguais para essa tabela.
+    // O endereï¿½o fï¿½sico e virtual sï¿½o iguais para essa tabela.
 
     for ( i=0; i < 1024; i++ )
     {
@@ -1414,25 +1414,102 @@ int SetUpPaging (void){
 
 
     //
+    // Frame table.
+    //
+
+    // Vamos configurar a frame table de acordo com o
+    // total de memÃ³ria ram.
+
+
+    // Size in KB.
+    // Se for maior que 1 GB.
+    // Se for maior que 1024 MB. 
+    // (1024*1024)KB
+    if ( memorysizeTotal > (1024*1024)  )
+    {
+        frame_table_start = FRAME_TABLE_START;  // 32mb mark. 
+        frame_table_end   = (0x40000000 - 1);   // 1GB -1 mark.
+        frame_table_size_in_bytes  = (frame_table_end - frame_table_start);
+        //memÃ³ria utilizada para isso.dado em kb.
+        mm_used_frame_table = (frame_table_size_in_bytes/1024); 
+
+
+    // Size in KB.
+    // Se for maior que 512 MB.
+    // (512*1024)KB
+    } else if ( memorysizeTotal > (512*1024) ){
+
+        frame_table_start = FRAME_TABLE_START;  // 32mb mark. 
+        frame_table_end   = (0x20000000 - 1);   // 512MB -1 mark.
+        frame_table_size_in_bytes  = (frame_table_end - frame_table_start);
+        //memÃ³ria utilizada para isso.dado em kb.
+        mm_used_frame_table = (frame_table_size_in_bytes/1024); 
+
+    // Size in KB.
+    // Se for maior que 256 MB.
+    // (256*1024)KB
+    } else if ( memorysizeTotal > (256*1024) ){
+
+        frame_table_start = FRAME_TABLE_START;  // 32mb mark. 
+        frame_table_end   = (0x10000000 - 1);   // 256MB -1 mark.
+        frame_table_size_in_bytes  = (frame_table_end - frame_table_start);
+        //memÃ³ria utilizada para isso.dado em kb.
+        mm_used_frame_table = (frame_table_size_in_bytes/1024); 
+
+    // Size in KB.
+    // Se for maior que 128 MB.
+    // (128*1024)KB
+    } else if ( memorysizeTotal > (128*1024) ){
+
+        frame_table_start = FRAME_TABLE_START;  // 32mb mark. 
+        frame_table_end   = (0x08000000 - 1);   // 128MB -1 mark.
+        frame_table_size_in_bytes  = (frame_table_end - frame_table_start);
+        //memÃ³ria utilizada para isso.dado em kb.
+        mm_used_frame_table = (frame_table_size_in_bytes/1024); 
+
+    // Size in KB.
+    // Se for maior que 64 MB.
+    // (64*1024)KB
+    } else if ( memorysizeTotal > (64*1024) ){
+
+        frame_table_start = FRAME_TABLE_START;  // 32mb mark. 
+        frame_table_end   = (0x04000000 - 1);   // 64MB -1 mark.
+        frame_table_size_in_bytes  = (frame_table_end - frame_table_start);
+        //memÃ³ria utilizada para isso.dado em kb.
+        mm_used_frame_table = (frame_table_size_in_bytes/1024); 
+
+    // #ERROR
+    // A memÃ³ria tem menos de 64MB,
+    // EntÃ£o nÃ£o conseguiremos criar uma frame_table 
+    // que comeÃ§e na marca de 32mb.
+    }else{
+
+        debug_print ("pages-c: #PANIC: Less than 64MB\n");
+        panic ("pages-c: #PANIC: Less than 64MB\n");
+    };
+
+
+
+    //
     // Memory size.
     //
 
 
 
     // #Importante
-    // Agora vamos calcular a quantidade de memória física usada 
-    // até agora.
-    // Levando em conta a inicialização que fizemos nessa rotina.
-    // Estamos deixando de fora a memória dos dispositivos, pois a 
-    // memória usada pelos dispositivos possuem endereço físico, 
-    // mas está na parte alta do endereçamento físico, muito além da 
-    // memória RAM instalada.
-    // Com a exceção da vga, que fica antes de 1MB.
-    // Os dispositivos por enquanto são memória de vídeo e placa 
+    // Agora vamos calcular a quantidade de memï¿½ria fï¿½sica usada 
+    // atï¿½ agora.
+    // Levando em conta a inicializaï¿½ï¿½o que fizemos nessa rotina.
+    // Estamos deixando de fora a memï¿½ria dos dispositivos, pois a 
+    // memï¿½ria usada pelos dispositivos possuem endereï¿½o fï¿½sico, 
+    // mas estï¿½ na parte alta do endereï¿½amento fï¿½sico, muito alï¿½m da 
+    // memï¿½ria RAM instalada.
+    // Com a exceï¿½ï¿½o da vga, que fica antes de 1MB.
+    // Os dispositivos por enquanto sï¿½o memï¿½ria de vï¿½deo e placa 
     // de rede.
-    // Tem a questão do dma a se considerar também.
+    // Tem a questï¿½o do dma a se considerar tambï¿½m.
     // Tem dma abaixo da marca de 16mb.
-    // Tem dma que usa memória virtual.
+    // Tem dma que usa memï¿½ria virtual.
 
 
 
@@ -1442,7 +1519,8 @@ int SetUpPaging (void){
         mm_used_backbuffer + 
         mm_used_pagedpool + 
         mm_used_heappool + 
-        mm_used_extraheap1 + mm_used_extraheap2 + mm_used_extraheap3 );
+        mm_used_extraheap1 + mm_used_extraheap2 + mm_used_extraheap3 +
+        mm_used_frame_table );
 
 
     // Free.
@@ -1453,72 +1531,72 @@ int SetUpPaging (void){
     // #todo:  
 	// (sobre heaps para processos em user mode).
 	// O que precisa ser feito no momento:
-	// + Os processos em user mode precisam alocação dinâmica de memória, 
-	// para isso será usado o heap do processo ou o heap do desktop ao qual o 
+	// + Os processos em user mode precisam alocaï¿½ï¿½o dinï¿½mica de memï¿½ria, 
+	// para isso serï¿½ usado o heap do processo ou o heap do desktop ao qual o 
 	// processo pertence.
 
 	// #todo:
 	// *IMPORTANTE: 
-	// (sobre heaps para gerenciamento de recursos gráficos).
-	// + Os buffers de janela serão alocados no heap do processo em user mode 
-	// que gerencia a criação de janelas, portanto esse processo tem que ter 
-	// bastante heap disponível. Talvez quem faça esse papel seja o próprio 
-	// kernel base, aí quem precisa de bastante heap é o kernel base.
-	// Talvez seja um módulo em kernel mode que gerencie as janelas.
-	// Por enquanto é a camada superior do kernel base. Mas interfaces poderão
-	// chamar essa camada no kernel base e oferecerem serviços de gerenciamento
-	// de recursos gráficos, utilizando apenas as primitivas oferecidas pelo 
-	// kernel base. Essas bibliotecas que oferecem recursos gráficos podem 
-	// ser processos em kernel mode ou em user mode. Elas oferecerão recursos 
+	// (sobre heaps para gerenciamento de recursos grï¿½ficos).
+	// + Os buffers de janela serï¿½o alocados no heap do processo em user mode 
+	// que gerencia a criaï¿½ï¿½o de janelas, portanto esse processo tem que ter 
+	// bastante heap disponï¿½vel. Talvez quem faï¿½a esse papel seja o prï¿½prio 
+	// kernel base, aï¿½ quem precisa de bastante heap ï¿½ o kernel base.
+	// Talvez seja um mï¿½dulo em kernel mode que gerencie as janelas.
+	// Por enquanto ï¿½ a camada superior do kernel base. Mas interfaces poderï¿½o
+	// chamar essa camada no kernel base e oferecerem serviï¿½os de gerenciamento
+	// de recursos grï¿½ficos, utilizando apenas as primitivas oferecidas pelo 
+	// kernel base. Essas bibliotecas que oferecem recursos grï¿½ficos podem 
+	// ser processos em kernel mode ou em user mode. Elas oferecerï¿½o recursos 
 	// bem elaborados e completos, chamando o kernel base apenas para 
-	// as rotinas primitivas. Isso facilita a criação de recursos gráficos,
-	// porém prejudica o desempenho, por isso o kernel base também oferece 
-	// seu conjunto de recursos gráficos mais elaborados, além das primitivas,
-	// é claro.
+	// as rotinas primitivas. Isso facilita a criaï¿½ï¿½o de recursos grï¿½ficos,
+	// porï¿½m prejudica o desempenho, por isso o kernel base tambï¿½m oferece 
+	// seu conjunto de recursos grï¿½ficos mais elaborados, alï¿½m das primitivas,
+	// ï¿½ claro.
 
 
 	// @todo: 
-	// Continuar: Mais páginas podem ser criadas manualmente agora.
-	// Porem a intenção é utilizar rotinas de automação da criação 
-	// de paginas, pagetable e diretórios.
+	// Continuar: Mais pï¿½ginas podem ser criadas manualmente agora.
+	// Porem a intenï¿½ï¿½o ï¿½ utilizar rotinas de automaï¿½ï¿½o da criaï¿½ï¿½o 
+	// de paginas, pagetable e diretï¿½rios.
 
 
 	// @todo: 
-	// Até agora tem uma sobreposição danada no mapeamento um mesmo 
-	// endereço físico de memória é mapeado para vários endereços virtuais. 
-	// Isso não é proibido, é assim que se comaprtilha memória. Na prática
-	// podemos acessar a mesma região de memória de várias maneira diferentes.
-	// Mas devemos tomar cuidado, principalmente para não corrompermos o 
+	// Atï¿½ agora tem uma sobreposiï¿½ï¿½o danada no mapeamento um mesmo 
+	// endereï¿½o fï¿½sico de memï¿½ria ï¿½ mapeado para vï¿½rios endereï¿½os virtuais. 
+	// Isso nï¿½o ï¿½ proibido, ï¿½ assim que se comaprtilha memï¿½ria. Na prï¿½tica
+	// podemos acessar a mesma regiï¿½o de memï¿½ria de vï¿½rias maneira diferentes.
+	// Mas devemos tomar cuidado, principalmente para nï¿½o corrompermos o 
 	// kernel base.
-	// O acesso a memória compartilhada será gerenciado pelos mecanismos
-	// padrão de comunicação e compartilhamento. Semáforos e mutexes ...
+	// O acesso a memï¿½ria compartilhada serï¿½ gerenciado pelos mecanismos
+	// padrï¿½o de comunicaï¿½ï¿½o e compartilhamento. Semï¿½foros e mutexes ...
 
 
 	// @todo: 
 	// *IMPORTANTE.
-	// O que queremos é utilizar uma lista de frames livres na hora
+	// O que queremos ï¿½ utilizar uma lista de frames livres na hora
 	// configurarmos o mapeamento. Queremos pegar um frame livre e
-	// associarmos ele com uma PTE, (entrada na tabela de páginas).
-	// O que está faltando é o gerenciamento de memória física.
-	// O gerenciamento de memória física é feito dividindo a memória física 
-	// em partições, pedaços grandes de memória. Tem um módulo que trata
+	// associarmos ele com uma PTE, (entrada na tabela de pï¿½ginas).
+	// O que estï¿½ faltando ï¿½ o gerenciamento de memï¿½ria fï¿½sica.
+	// O gerenciamento de memï¿½ria fï¿½sica ï¿½ feito dividindo a memï¿½ria fï¿½sica 
+	// em partiï¿½ï¿½es, pedaï¿½os grandes de memï¿½ria. Tem um mï¿½dulo que trata
 	// de bancos, aspaces no kernel base.
 	
 	
 	// @todo:
 	// *SUPER IMPORTANTE.
-	// para gerenciarmos a meória física, precisamos saber o tamanho 
-	// da memória física disponpivel. tem um módulo no kernel base 
+	// para gerenciarmos a meï¿½ria fï¿½sica, precisamos saber o tamanho 
+	// da memï¿½ria fï¿½sica disponpivel. tem um mï¿½dulo no kernel base 
 	// que trata disso.
-	// * Depois de alocarmos uma região grande da memória física,
-	// destinada para frames, então criaremos a lista de frames livres.
-	// que significará uma quantidade de frames livres dentro da área 
-	// destinadas à frames. Não significa área toda a área livre
-	// na memória física, mas apenas os frames livres dentro da região 
+	// * Depois de alocarmos uma regiï¿½o grande da memï¿½ria fï¿½sica,
+	// destinada para frames, entï¿½o criaremos a lista de frames livres.
+	// que significarï¿½ uma quantidade de frames livres dentro da ï¿½rea 
+	// destinadas ï¿½ frames. Nï¿½o significa ï¿½rea toda a ï¿½rea livre
+	// na memï¿½ria fï¿½sica, mas apenas os frames livres dentro da regiï¿½o 
 	// destinada aos frames.
 
 	// Debug:
-	//     Mostrando os endereços do diretório e das páginas.
+	//     Mostrando os endereï¿½os do diretï¿½rio e das pï¿½ginas.
 	//     #verbose.
 
 
@@ -1544,21 +1622,21 @@ int SetUpPaging (void){
 	// Podemos reaproveitas pagetables em diferentes processos.
 
 
-    // Salvando o endereço do diretório do processo Kernel no CR3. 
+    // Salvando o endereï¿½o do diretï¿½rio do processo Kernel no CR3. 
 
     x86_SetCR3 ( (unsigned long) &page_directory[0] );
 
 
 
     // LISTAS:
-    // Configurando a lista de diretórios e a lista de 
-    // tabelas de páginas.
-    // Salvando na lista o endereço físico dos diretórios e 
-    // das tabelas de páginas.
+    // Configurando a lista de diretï¿½rios e a lista de 
+    // tabelas de pï¿½ginas.
+    // Salvando na lista o endereï¿½o fï¿½sico dos diretï¿½rios e 
+    // das tabelas de pï¿½ginas.
 
 
     //
-    // Inicializar a lista de diretórios de páginas.
+    // Inicializar a lista de diretï¿½rios de pï¿½ginas.
     // 
 
 
@@ -1567,7 +1645,7 @@ int SetUpPaging (void){
         pagedirectoryList[Index] = (unsigned long) 0;
     };
 
-    //O primeiro diretório da lista é o diretório do kernel.
+    //O primeiro diretï¿½rio da lista ï¿½ o diretï¿½rio do kernel.
     pagedirectoryList[0] = (unsigned long) &page_directory[0]; //kernel.
     //pagedirectoryList[1] = (unsigned long) 0;
     //...
@@ -1594,7 +1672,7 @@ int SetUpPaging (void){
 
 
 	//
-	// Inicializando a lista de framepools. (partições)
+	// Inicializando a lista de framepools. (partiï¿½ï¿½es)
 	//
 	
 	for ( Index=0; Index < FRAMEPOOL_COUNT_MAX; Index++ ){
@@ -1626,7 +1704,7 @@ int SetUpPaging (void){
 		kfp->used = 1;
 		kfp->magic = 1234;
 		
-		//?? Começa em 0 MB. ??
+		//?? Comeï¿½a em 0 MB. ??
 		kfp->address = (unsigned long) (0 * MB);   
 		
 		//pertence ao processo kernel.
@@ -1661,7 +1739,7 @@ int SetUpPaging (void){
 		small_fp->used = 1;
 		small_fp->magic = 1234;
 		
-		//Começa em 4 MB.
+		//Comeï¿½a em 4 MB.
 		small_fp->address = (unsigned long) (4 * MB);   
 
 		//pertence ao processo kernel.
@@ -1696,12 +1774,12 @@ int SetUpPaging (void){
 
 	if( (void *) pageable_fp != NULL  )
 	{
-		pageable_fp->id = 5;   //quinto índice.
+		pageable_fp->id = 5;   //quinto ï¿½ndice.
 		
 		pageable_fp->used = 1;
 		pageable_fp->magic = 1234;
 		
-		//Começa em 20 MB.
+		//Comeï¿½a em 20 MB.
 		pageable_fp->address = (unsigned long) (20 * MB);   
 
 		//pertence ao processo kernel.
@@ -1735,14 +1813,14 @@ int SetUpPaging (void){
 
 
 
-//checar se a estrutura de p'agina é nula
+//checar se a estrutura de p'agina ï¿½ nula
 int pEmpty (struct page_d *p){
 	
     return p == NULL ? 1 : 0;
 }
 
 
-//selecionar a página como livre.
+//selecionar a pï¿½gina como livre.
 void freePage (struct page_d *p){
 	
 	if (p == NULL)
@@ -1757,7 +1835,7 @@ void freePage (struct page_d *p){
 }
 
 
-//selecionar a página como não livre.
+//selecionar a pï¿½gina como nï¿½o livre.
 void notfreePage (struct page_d *p){
 	
 	if(p == NULL){
@@ -1798,7 +1876,7 @@ virtual_to_physical ( unsigned long virtual_address,
 
 
 
-	// Temos o endereço da pt junto com as flags.
+	// Temos o endereï¿½o da pt junto com as flags.
     tmp = (unsigned long) dir[d];
 
 
@@ -1806,7 +1884,7 @@ virtual_to_physical ( unsigned long virtual_address,
     unsigned long *pt = (unsigned long *) (tmp & 0xFFFFF000);
 
 
-	// Encontramos o endereço base do page frame.
+	// Encontramos o endereï¿½o base do page frame.
     tmp = (unsigned long) pt[t];
 
     address = (tmp & 0xFFFFF000);

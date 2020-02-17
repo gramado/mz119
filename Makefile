@@ -884,7 +884,7 @@ oracle-virtual-box-test:
 
 # qemu 
 qemu-test:
-	qemu-system-x86_64 -hda GRAMADO.VHD -m 128 -serial stdio 
+	qemu-system-x86_64 -hda GRAMADO.VHD -m 512 -serial stdio 
 #	qemu-system-x86_64 -hda GRAMADO.VHD -m 128 -device e1000 -show-cursor -serial stdio -device e1000
 
 

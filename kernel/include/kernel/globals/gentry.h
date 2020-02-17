@@ -2,7 +2,9 @@
 //gentry.h
 // números de entradas em diretórios de páginas e tabelas de páginas.
 
- 
+// #bugbug
+// Isso pertence à arquitetura Intel.
+// Deveria estar em outro lugar.
 
 //...
 
@@ -46,24 +48,38 @@
 // O sistema deve gerenciar tudas as suas coisas 
 // nesse giga superior da memoria virtual.
 
+//0xC0000000
 #define ENTRY_KERNELBASE_PAGES 768
 #define KERNEL_IMAGE_PAGE_DIRECTORY_ENTRY  768  // A imagem do kernel.
 
+
+//0xC0400000
 #define ENTRY_FRONTBUFFER_PAGES 769 
 #define LFB_PAGE_DIRECTORY_ENTRY           769  // Frontbuffer.
 
+//0xC0800000
 #define ENTRY_BACKBUFFER_PAGES  770
 #define BACKBUFFER_PAGE_DIRECTORY_ENTRY    770  // Backbuffer.
 
-#define ENTRY_PAGEDPOOL_PAGES 771
 
-#define ENTRY_HEAPPOOL_PAGES  772
+// pool
+// 0xC0C00000
+#define ENTRY_PAGEDPOOL_PAGES 771   
 
 
+// 0xC1000000
+#define ENTRY_HEAPPOOL_PAGES  772    
 
+
+//0xC1400000
 #define ENTRY_EXTRAHEAP1_PAGES     773
+
+//0xC1800000
 #define ENTRY_EXTRAHEAP2_PAGES     774
+
+//0xC1C00000
 #define ENTRY_EXTRAHEAP3_PAGES     775
+
 
 
 

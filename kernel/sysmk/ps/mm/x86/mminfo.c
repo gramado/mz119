@@ -105,7 +105,7 @@ void memoryShowMemoryInfo (void){
 	printf (" extraheap2 = (%d KB)\n", mm_used_extraheap2 );
 	printf (" extraheap3 = (%d KB)\n", mm_used_extraheap3 );
 
-
+	printf (" frame table = (%d KB)\n", mm_used_frame_table );
 
 	
 	

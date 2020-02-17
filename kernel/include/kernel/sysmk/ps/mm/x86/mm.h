@@ -1,33 +1,33 @@
 /*
  * File: mm/mm.h  
  *
- * Descrição:
- *     Header para o Memory Manager. Gerenciamento de memória.
+ * Descriï¿½ï¿½o:
+ *     Header para o Memory Manager. Gerenciamento de memï¿½ria.
  *
- * Ordem de importância do gerenciamento de memória:
- *     > Endereços dos page directories.
- *     > Endereços das pagetables. 
+ * Ordem de importï¿½ncia do gerenciamento de memï¿½ria:
+ *     > Endereï¿½os dos page directories.
+ *     > Endereï¿½os das pagetables. 
  *     > 
  *
  * Obs:
- *     Em executive, temos áreas de memórias reservadas para o sistema. 
- * Privilégios de executivo.
+ *     Em executive, temos ï¿½reas de memï¿½rias reservadas para o sistema. 
+ * Privilï¿½gios de executivo.
  *
  * @todo: 
  *     Criar blocos livres e alocados. 
  *     1 - Linked List of free blocks.
- *     2 - Procurar por blocos livres de tamanho suficiente para a alocação. 
+ *     2 - Procurar por blocos livres de tamanho suficiente para a alocaï¿½ï¿½o. 
  *     3 - Memory Pool, pre aloca blocos de tamanho fixo, ex: 4096.
- *     Estrutura e manipulação de 'page frames'.
+ *     Estrutura e manipulaï¿½ï¿½o de 'page frames'.
  *     ...
  * @todo: + Mapping kernel mode memory into user address space.
- *          Dentro do espaço disponível para o usuário, ele poderá
- *          ler um conteúdo colocado pelo kernel para ele.
- *          Isso é uma área de transferência. 
+ *          Dentro do espaï¿½o disponï¿½vel para o usuï¿½rio, ele poderï¿½
+ *          ler um conteï¿½do colocado pelo kernel para ele.
+ *          Isso ï¿½ uma ï¿½rea de transferï¿½ncia. 
  *
- * Histórico:
- *     Versão 1.0, 2015 - Esse arquivo foi criado por Fred Nora.
- *     Versão 1.0, 2016 - Revisão.
+ * Histï¿½rico:
+ *     Versï¿½o 1.0, 2015 - Esse arquivo foi criado por Fred Nora.
+ *     Versï¿½o 1.0, 2016 - Revisï¿½o.
  *     ...
  */
 
@@ -35,11 +35,11 @@
     Sobre 'pages' e 'page frames':
 	============================
 	pages: 
-	    São blocos de memória virtual. 
-		?? São blocos de disco equivalentes aos blocos de memória física.??
+	    Sï¿½o blocos de memï¿½ria virtual. 
+		?? Sï¿½o blocos de disco equivalentes aos blocos de memï¿½ria fï¿½sica.??
 		
     pageframes: 
-	    São blocos na memória física equivalentes aos blocos do disco.
+	    Sï¿½o blocos na memï¿½ria fï¿½sica equivalentes aos blocos do disco.
  */ 
  
  
@@ -47,28 +47,28 @@
     Memory map:
     (process page directory).	
 	
-	" Cada processo tem seu diretório e uma configuração de 4GB de memória 
-virtual. Essa é a memória virtual para processos criados, uma padronização que
-será respeitada na hora de criar o diretório de páginas de um processo ".	
-	" Note que o início da memória virtual está disponível para drivers ou 
-bibliotecas de link dinâmico ".   
-	" Todo processo começará em 0x00400000vir e terá o entry point em 
-0x00401000virt ". "Bibliotecas de ligação dinâmica, começarão em 0x0vir
-e não sei se essas bibliotecas tem entry point"
+	" Cada processo tem seu diretï¿½rio e uma configuraï¿½ï¿½o de 4GB de memï¿½ria 
+virtual. Essa ï¿½ a memï¿½ria virtual para processos criados, uma padronizaï¿½ï¿½o que
+serï¿½ respeitada na hora de criar o diretï¿½rio de pï¿½ginas de um processo ".	
+	" Note que o inï¿½cio da memï¿½ria virtual estï¿½ disponï¿½vel para drivers ou 
+bibliotecas de link dinï¿½mico ".   
+	" Todo processo comeï¿½arï¿½ em 0x00400000vir e terï¿½ o entry point em 
+0x00401000virt ". "Bibliotecas de ligaï¿½ï¿½o dinï¿½mica, comeï¿½arï¿½o em 0x0vir
+e nï¿½o sei se essas bibliotecas tem entry point"
 
 	//...
 
  @todo: 	
-     " O ideal é que um processo tenha disponível pra si toda a área baixa de 
-memória virtual, até o início da área do kernel".
-     "A divisão da memória virtual do processo entre a parte que pertence ao 
-processo e a parte que pertence ao kernel tem seguido o seguinte padrão:
-(1) meio à meio, onde o processo fica com os 2GB mais baixos e o kernel fica 
+     " O ideal ï¿½ que um processo tenha disponï¿½vel pra si toda a ï¿½rea baixa de 
+memï¿½ria virtual, atï¿½ o inï¿½cio da ï¿½rea do kernel".
+     "A divisï¿½o da memï¿½ria virtual do processo entre a parte que pertence ao 
+processo e a parte que pertence ao kernel tem seguido o seguinte padrï¿½o:
+(1) meio ï¿½ meio, onde o processo fica com os 2GB mais baixos e o kernel fica 
 com os 2GB superiores, ou (2) O processo fica com os 3GB mais baixos e o
 kernel fica com o 1GB superior."	 
 
 
-    Mapeamento padrão de memória virtual para todos os processos do sistema:
+    Mapeamento padrï¿½o de memï¿½ria virtual para todos os processos do sistema:
     =======================================================================	
 
 
@@ -80,13 +80,13 @@ kernel fica com o 1GB superior."
              +------------------------------------+
              |           Kernel land              | @todo: 
              |                                    | Mudar de lugar. 
-             |                                    | Seder espaço para LFB, que precisa ser grande.
+             |                                    | Seder espaï¿½o para LFB, que precisa ser grande.
     C0800000 |           BackBuffer               | 
              +------------------------------------+	
-             |           Kernel land              |	 Memória da placa de vídeo.
+             |           Kernel land              |	 Memï¿½ria da placa de vï¿½deo.
              |             (4MB)                  |  SHARED_MEMORY (0xC0800000 -0x100)
-             |             ...                    |  Ampliar (TER O TAMANHO DA MEMÓRIA DA PLACA DE VÍDEO) 
-    C0400000 |          FrontBuffer(LFB)          |  Obs: Tamanho da soma das áreas dos monitores, no mínimo.
+             |             ...                    |  Ampliar (TER O TAMANHO DA MEMï¿½RIA DA PLACA DE Vï¿½DEO) 
+    C0400000 |          FrontBuffer(LFB)          |  Obs: Tamanho da soma das ï¿½reas dos monitores, no mï¿½nimo.
              +------------------------------------+
              +====================================+
              |           Kernel land              |
@@ -95,7 +95,7 @@ kernel fica com o 1GB superior."
              |  Heap  = 0xC0100000 ~ 0xC02F7FF0   |	Total 2015 KB.
              |                                    | 
              |  Kernel Entry point = 0xC0001000   | Entry point do kernel.
-             |  Kernel Base = 0xC0000000          |	Início da imagem do 
+             |  Kernel Base = 0xC0000000          |	Inï¿½cio da imagem do 
              |                                    |	processo kernel. 
     C0000000 |        ( Kernel Mode access )      | 
              +------------------------------------+
@@ -105,9 +105,9 @@ kernel fica com o 1GB superior."
              +------------------------------------+
              +------------------------------------+  
              |                                    |
-             |                                    | @todo  Início da pilha em user mode do proesso.
-             |                                    | @todo: Início do heap em user mode do processo.
-             |                                    | ### Por enquando cada processo tem sua própria
+             |                                    | @todo  Inï¿½cio da pilha em user mode do proesso.
+             |                                    | @todo: Inï¿½cio do heap em user mode do processo.
+             |                                    | ### Por enquando cada processo tem sua prï¿½pria
              |                                    |     pilha e heap no fim da imagem do processo. 
              |                                    | 
              |                                    |
@@ -116,9 +116,9 @@ kernel fica com o 1GB superior."
              |       User Mode access             |  
              |------------------------------------|
              |                                    | #importante
-             |                                    | Podemos usar essa área em kernel mode para memória compartilhada.
-             |                                    | Os primeiros 4MB são acessados pelo kernel.
-             |           0 ~ 0x004FFFFF           | Os processos estão herdando esse mapeamento do kernel. 
+             |                                    | Podemos usar essa ï¿½rea em kernel mode para memï¿½ria compartilhada.
+             |                                    | Os primeiros 4MB sï¿½o acessados pelo kernel.
+             |           0 ~ 0x004FFFFF           | Os processos estï¿½o herdando esse mapeamento do kernel. 
     00000000 |         kernel Mode access         | 
              +====================================+
  
@@ -132,7 +132,7 @@ kernel fica com o 1GB superior."
 
 
 *********************************   
- Memória linear para o processo kernel:
+ Memï¿½ria linear para o processo kernel:
 
  Kernel Base        = 0xC0000000
  Kernel Entry point = 0xC0001000
@@ -141,7 +141,7 @@ kernel fica com o 1GB superior."
 
 
 *********************************
- Memória física para o processo kernel: 
+ Memï¿½ria fï¿½sica para o processo kernel: 
 
  Kernel Base        = 0x00100000
  Kernel Entry point = 0x00101000 
@@ -149,8 +149,8 @@ kernel fica com o 1GB superior."
  Stack              =  
  
 	@todo: 
-	    O layout da memória virtual está em fase de desenvolvimento.	   
-	    Criar um layout dos endereços físicos principais usados pelo sistema.
+	    O layout da memï¿½ria virtual estï¿½ em fase de desenvolvimento.	   
+	    Criar um layout dos endereï¿½os fï¿½sicos principais usados pelo sistema.
 */ 
  
 
@@ -188,35 +188,35 @@ static inline void copy_page(void *to, void *from)
 */
  
  //
- // **  ENDEREÇOS DOS PRINCIPAIS PAGE DIRECTORIES **
+ // **  ENDEREï¿½OS DOS PRINCIPAIS PAGE DIRECTORIES **
  //
  
  
 // 
 // Directory:
 // ========== 
-//     Endereço físico de alguns diretórios.
-//     Esses diretórios são dos utilitários principais.
-//     Não tem problema se esses diretórios ficarem isolados.
-//     Serão colocados em cr3.
+//     Endereï¿½o fï¿½sico de alguns diretï¿½rios.
+//     Esses diretï¿½rios sï¿½o dos utilitï¿½rios principais.
+//     Nï¿½o tem problema se esses diretï¿½rios ficarem isolados.
+//     Serï¿½o colocados em cr3.
 //
 
 
-//aqui seria um lugar segura para os diretórios desses processos 
+//aqui seria um lugar segura para os diretï¿½rios desses processos 
 //do ambiente Gramado Core.
-//para os outros ambientes podemos concatenar os diretórios em 
-//outro lugar de fácil acesso.
-//Obs: #bugbug No momento estamos usando apenas o diretório do 
+//para os outros ambientes podemos concatenar os diretï¿½rios em 
+//outro lugar de fï¿½cil acesso.
+//Obs: #bugbug No momento estamos usando apenas o diretï¿½rio do 
 //porcesso kernel para tosos os aplicativos do ambiente Gramado Core.
 
 //#define KERNEL_PAGEDIRECTORY  (0x0009C000)  
                       
 
 
-//Quantas entradas de diretório de páginas cabem em uma página.
+//Quantas entradas de diretï¿½rio de pï¿½ginas cabem em uma pï¿½gina.
 #define PDE_PER_PAGE (1024)
 
-//Quantas entradas de tabela de páginas cabem em uma página.
+//Quantas entradas de tabela de pï¿½ginas cabem em uma pï¿½gina.
 #define PTE_PER_PAGE (1024)
 
 
@@ -229,18 +229,18 @@ unsigned long gTaskmanPageDirectoryAddress;
 
 
 /* 
- * As configurações de memória foram feitas pelo Boot Loader.
- * (aqui os endereços lógico e físicos são iguais.)
+ * As configuraï¿½ï¿½es de memï¿½ria foram feitas pelo Boot Loader.
+ * (aqui os endereï¿½os lï¿½gico e fï¿½sicos sï¿½o iguais.)
  */
 
 
-//Quantidade de diretórios que podem ser criados.
-//obs: cada processo cria seu próprio diretório. 
+//Quantidade de diretï¿½rios que podem ser criados.
+//obs: cada processo cria seu prï¿½prio diretï¿½rio. 
 //@todo: Criar um array de estruturas alocado.
 #define PAGEDIRECTORY_COUNT_MAX 1024  
 
 //Quantidade de page tables criadas...
-//cada diretório pode ter um monte de tabelas.
+//cada diretï¿½rio pode ter um monte de tabelas.
 //@todo: Criar um array de estruturas alocado.
 #define PAGETABLE_COUNT_MAX 1024 
 
@@ -250,17 +250,17 @@ unsigned long gTaskmanPageDirectoryAddress;
 // zones support
 //
 
-//memória total em duas partes.
+//memï¿½ria total em duas partes.
 // 
 
 
 //Zones.
-// ** ESSA ESTRUTURA É A RAIZ DE TODA GERÊNCIA DE MEMÓRIA **
+// ** ESSA ESTRUTURA ï¿½ A RAIZ DE TODA GERï¿½NCIA DE MEMï¿½RIA **
 typedef struct mm_zones_d mm_zones_t;
 struct mm_zones_d
 {
-    struct system_zone_d *system_zone;  //Essa zona é para o sistema.
-    struct window_zone_d *window_zone;  //Essa zona toda é uma user session.
+    struct system_zone_d *system_zone;  //Essa zona ï¿½ para o sistema.
+    struct window_zone_d *window_zone;  //Essa zona toda ï¿½ uma user session.
 };
 mm_zones_t *zones;
 
@@ -269,7 +269,7 @@ mm_zones_t *zones;
 typedef struct system_zone_d system_zone_t;
 struct system_zone_d
 {
-    unsigned long systemzone_start;  //0x00000000. são os 32MB iniciais  
+    unsigned long systemzone_start;  //0x00000000. sï¿½o os 32MB iniciais  
 };
 system_zone_t *systemzone;
 
@@ -279,8 +279,8 @@ typedef struct window_zone_d window_zone_t;
 struct window_zone_d
 {
 	unsigned long windowzone_start;
-	//Endereço onde começa a user session.
-	unsigned long usersession_start;	//ficará dentro de uma área paginada.
+	//Endereï¿½o onde comeï¿½a a user session.
+	unsigned long usersession_start;	//ficarï¿½ dentro de uma ï¿½rea paginada.
     struct usession_d *usersession;    
 };
 window_zone_t *windowzone;
@@ -288,7 +288,7 @@ window_zone_t *windowzone;
 
 
 
-// variáveis blobais de endereços usados no gerenciamento de zonas de memória.
+// variï¿½veis blobais de endereï¿½os usados no gerenciamento de zonas de memï¿½ria.
 
 #define SYSTEMZONE_START 0
 #define SYSTEMZONE_END   0x0FFFFFFF 
@@ -299,7 +299,7 @@ unsigned long systemzoneStart;
 unsigned long systemzoneEnd;
 unsigned long systemzoneSize;
 unsigned long windowzoneStart;
-unsigned long windowzoneEnd;    //?? Devemos levar em consideração o calculo do tamanho da memória
+unsigned long windowzoneEnd;    //?? Devemos levar em consideraï¿½ï¿½o o calculo do tamanho da memï¿½ria
 unsigned long windowzoneSize;
 
 
@@ -311,13 +311,13 @@ unsigned long windowzoneSize;
  * page_directory_d:
  *     Estrutura para o 'page directory' de um processo.
  *
- *     Todo processo tem seu próprio diretório de páginas.
- *     Assim vários processos podem usar o mesmo endereço lógico.
+ *     Todo processo tem seu prï¿½prio diretï¿½rio de pï¿½ginas.
+ *     Assim vï¿½rios processos podem usar o mesmo endereï¿½o lï¿½gico.
  *     Ex: 0x400000
  *     @todo: Um ponteiro para essa estrutura pode estar no PCB do processo.
- *            usar os processos criados por processos para testar a configuração
+ *            usar os processos criados por processos para testar a configuraï¿½ï¿½o
  *           de page directory.
- *     Obs: Um diretório tem ponteiros para page tables. as page tables 
+ *     Obs: Um diretï¿½rio tem ponteiros para page tables. as page tables 
  * funcionam como pools de frames.
  */
 
@@ -333,23 +333,23 @@ struct page_directory_d
 	int used;
 	int magic;
 	
-	//Qual processo é o dono do diretório de páginas.
-	//talvez seja possivel reaproveitar o diretório.
+	//Qual processo ï¿½ o dono do diretï¿½rio de pï¿½ginas.
+	//talvez seja possivel reaproveitar o diretï¿½rio.
 	struct process_d *process;
 	
-	//Endereço onde ficará o diretório de páginas.
-	//Obs: Para configurar um diretório de páginas talvez
-	//tenha que colocar um endereço físico em CR3. Lembre-se
-	//que o malloc do kernel base aloca memória no heap do 
-	//processo kernel que fica no último giga da memória virtual.
+	//Endereï¿½o onde ficarï¿½ o diretï¿½rio de pï¿½ginas.
+	//Obs: Para configurar um diretï¿½rio de pï¿½ginas talvez
+	//tenha que colocar um endereï¿½o fï¿½sico em CR3. Lembre-se
+	//que o malloc do kernel base aloca memï¿½ria no heap do 
+	//processo kernel que fica no ï¿½ltimo giga da memï¿½ria virtual.
 	unsigned long Address;
 	
 	
 	// ?? struct page_directory_entry_d[1024] ??
 	
-	//@todo: Mais informações sobre o diretório de páginas.
+	//@todo: Mais informaï¿½ï¿½es sobre o diretï¿½rio de pï¿½ginas.
 	
-	//Próximo diretório, significa próximo processo.
+	//Prï¿½ximo diretï¿½rio, significa prï¿½ximo processo.
 	//significa processos ligados em um job.
     struct page_directory_d *next;  
 };
@@ -361,13 +361,13 @@ page_directory_t *pagedirectoryShared;           // Shared.
 //...
 
 //
-// Lista de diretórios. (Pois cada processo tem um diretório).
+// Lista de diretï¿½rios. (Pois cada processo tem um diretï¿½rio).
 //
 
-//Lista de estruturas para diretórios de páginas.
+//Lista de estruturas para diretï¿½rios de pï¿½ginas.
 unsigned long pagedirectoryList[PAGEDIRECTORY_COUNT_MAX]; 
 
-//Linked list pode ser uma opção.
+//Linked list pode ser uma opï¿½ï¿½o.
 //Deve estar em sintonia com o scheduler de threads.
 //page_directory_t *pagedirectoryLinkedListHead;
 
@@ -377,7 +377,7 @@ unsigned long pagedirectoryList[PAGEDIRECTORY_COUNT_MAX];
  * page_table_d.
  *     Page table structure.
  *     Obs: Uma page table funciona como um pool de frames.
- *          Também pode ser compartilhada entre processo.(cuidado).
+ *          Tambï¿½m pode ser compartilhada entre processo.(cuidado).
  */
 
 typedef struct page_table_d page_table_t;
@@ -390,22 +390,22 @@ struct page_table_d
 	int used;
 	int magic;
 	
-	//A qual diretório de páginas a page table perrtence.
+	//A qual diretï¿½rio de pï¿½ginas a page table perrtence.
 	//se bem que talvez possamos usar a mesma pagetable
-	//em mais de um diretório. será??
+	//em mais de um diretï¿½rio. serï¿½??
 	struct page_directory_d *directory;
 	
-	//Cada pagetable pertence à um processo.
+	//Cada pagetable pertence ï¿½ um processo.
 	struct process_d *process;
 	
 	//Travando uma pagetable inteira,
-	//nenhuma de suas páginas poderão se descarregadas
+	//nenhuma de suas pï¿½ginas poderï¿½o se descarregadas
 	//para o disco de swap.
 	int locked;
 	
 	// ?? struct page_table_entry_d[1024] ??
 	
-    //@todo: Mais informações sobre a pagetable.
+    //@todo: Mais informaï¿½ï¿½es sobre a pagetable.
 	struct page_table_d *next;
 };
 //page_table_t *pagetableCurrent;
@@ -419,7 +419,7 @@ page_table_t *pagetableCurrent;
 
 unsigned long pagetableList[PAGETABLE_COUNT_MAX]; 
 
-//Linked List talvez seja uma opção.
+//Linked List talvez seja uma opï¿½ï¿½o.
 //page_table_t *pagetableLinkedListHead;
 
 
@@ -429,38 +429,38 @@ unsigned long pagetableList[PAGETABLE_COUNT_MAX];
  **  **  SUPER IMPORTANTE  **
  **
  ** Super block.
- ** ESSAS VARIÁVEIS GLOBAIS MARCARÃO O INÍCIO E O FIM 
- ** DA ÁREA DE MEMÓRIA FÍSICA DESTINADA AOS FRAMES DE MEMÓRIA 
- ** FÍSICA QUE SERÃO USADOS PELO GERENCIADOR DE PÁGINAS.
+ ** ESSAS VARIï¿½VEIS GLOBAIS MARCARï¿½O O INï¿½CIO E O FIM 
+ ** DA ï¿½REA DE MEMï¿½RIA Fï¿½SICA DESTINADA AOS FRAMES DE MEMï¿½RIA 
+ ** Fï¿½SICA QUE SERï¿½O USADOS PELO GERENCIADOR DE Pï¿½GINAS.
  **
- ** Pertencerão ao banco FDB. (Free Data Base).
- ** 0x10000000 é um bom lugar pra começar os frames ,
+ ** Pertencerï¿½o ao banco FDB. (Free Data Base).
+ ** 0x10000000 ï¿½ um bom lugar pra comeï¿½ar os frames ,
  ** na verdade os blocos 4MB, pois cada bloco de 4MB pode ser mapeado 
  ** usando apenas uma pagetable.
  ** 
  ** mmFramesSuperBlockStart = 0x10000000
  ** mmFramesSuperBlockEnd   = 0x1FFFFFFF
  ** 
- ** Esses são endereços físicos.
- ** Obs: Ficarão nesse lugar caso se tenha memória disponível para isso.
+ ** Esses sï¿½o endereï¿½os fï¿½sicos.
+ ** Obs: Ficarï¿½o nesse lugar caso se tenha memï¿½ria disponï¿½vel para isso.
  **
  **/
  
 // Frames Super Block.
-// Variáveis globais parecem ser uma opção melhor de estrutura
+// Variï¿½veis globais parecem ser uma opï¿½ï¿½o melhor de estrutura
 // para esse caso. 
 // Obs: Temos listas de frames em algum lugar. 
-// Criaremos listas aqui para o FSB, que será o nome do gerenciado, 
-// para melhorar o controle dessa área.
-unsigned long mmFramesSuperBlockStart;      //Endereço onde começa o FSB.
-unsigned long mmFramesSuperBlockEnd;        //Endereço onde termina o FSB.
+// Criaremos listas aqui para o FSB, que serï¿½ o nome do gerenciado, 
+// para melhorar o controle dessa ï¿½rea.
+unsigned long mmFramesSuperBlockStart;      //Endereï¿½o onde comeï¿½a o FSB.
+unsigned long mmFramesSuperBlockEnd;        //Endereï¿½o onde termina o FSB.
 unsigned long mmFramesSuperBlockSize;       //Tamanho do FSB dado em bytes.
 unsigned long mmFramesSuperBlockTotal;      //Total de frames.
 unsigned long mmFramesSuperBlockTotalFree;  //Total de frames livres. 
 unsigned long mmFramesSuperBlockTotalUsed;  //Total de frames e uso. 
 //Continua...
 
-// ((0x1FFFFFFF - 0x10000000) / 512)  = QUANTIDADE DE FRAMES NESSA ÁREA.
+// ((0x1FFFFFFF - 0x10000000) / 512)  = QUANTIDADE DE FRAMES NESSA ï¿½REA.
 #define FSB_FRAMES_MAX      (1*1024) //?? @todo: Determinar melhor isso
 #define FSB_FREEFRAMES_MAX  (1*1024) //?? @todo: Determinar melhor isso
 
@@ -497,50 +497,50 @@ unsigned long fsbFreeFrames[FSB_FREEFRAMES_MAX];
 // MM BLOCK.
 // 
 
-//Isso é usdo pelo heap.
+//Isso ï¿½ usdo pelo heap.
 #define MMBLOCK_HEADER_SIZE 64 
  
 
 
-// Quantidade máxima de pageframes.
+// Quantidade mï¿½xima de pageframes.
 // @todo: 
 // #bugbug. 
-// Isso tá errado. 
-// Essa é a quantidade de pageframes de apenas uma page table. 
-// Isso equiva à apenas um pagepool. enão não poderá ser usado
-// em outro lugar enão no contexto de um pagepool.
+// Isso tï¿½ errado. 
+// Essa ï¿½ a quantidade de pageframes de apenas uma page table. 
+// Isso equiva ï¿½ apenas um pagepool. enï¿½o nï¿½o poderï¿½ ser usado
+// em outro lugar enï¿½o no contexto de um pagepool.
 //
 
 #define PAGE_COUNT_MAX 1024    //??
 
 
-// Quantidade máxima de framepools.
-// Um framepool é uma partição da memória física.
-// Cada framepool é composto de 1024 pageframes.
+// Quantidade mï¿½xima de framepools.
+// Um framepool ï¿½ uma partiï¿½ï¿½o da memï¿½ria fï¿½sica.
+// Cada framepool ï¿½ composto de 1024 pageframes.
 //
 // @todo: 
 // #bugbug: 
-// A quantidade de framepools deve ser equivalente à quantidade 
-// de memória física disponível.
-// Por isso devemos criar áreas de memória física alocáveis. O que 
-// facilita a manutenção de listas de framepools.
+// A quantidade de framepools deve ser equivalente ï¿½ quantidade 
+// de memï¿½ria fï¿½sica disponï¿½vel.
+// Por isso devemos criar ï¿½reas de memï¿½ria fï¿½sica alocï¿½veis. O que 
+// facilita a manutenï¿½ï¿½o de listas de framepools.
 //
-// Em outras palavra. Temos que concatenar partições de memória física
-// pra facilitar. Então chamaremos essa área onde estão as partições de
-// área paginável. Pois existem áres de memória que não são pafináveis,
+// Em outras palavra. Temos que concatenar partiï¿½ï¿½es de memï¿½ria fï¿½sica
+// pra facilitar. Entï¿½o chamaremos essa ï¿½rea onde estï¿½o as partiï¿½ï¿½es de
+// ï¿½rea paginï¿½vel. Pois existem ï¿½res de memï¿½ria que nï¿½o sï¿½o pafinï¿½veis,
 // elas simplesmente foram mapeadas para que alguma parte do sistema use.
 //
 // @todo: 
-// Criar um ponteiro que indique o ínício da área páginável, assim como 
-// acontece com o início de um heap.
+// Criar um ponteiro que indique o ï¿½nï¿½cio da ï¿½rea pï¿½ginï¿½vel, assim como 
+// acontece com o inï¿½cio de um heap.
 //
-// À principio todo processo poderia ter acesso à apenas uma partição.
-// Um framepool é garantido para um processo quando esse processo é criado
-// mesmo antes de haver algum mapeamento. Na verdade um processo terá uma lista
+// ï¿½ principio todo processo poderia ter acesso ï¿½ apenas uma partiï¿½ï¿½o.
+// Um framepool ï¿½ garantido para um processo quando esse processo ï¿½ criado
+// mesmo antes de haver algum mapeamento. Na verdade um processo terï¿½ uma lista
 // de framepools.
 //
 
-//List.(1024 framepools de 4MB dá 4GB).
+//List.(1024 framepools de 4MB dï¿½ 4GB).
 #define FRAMEPOOL_COUNT_MAX 1024
 
 //#bugbug
@@ -559,18 +559,18 @@ unsigned long fsbFreeFrames[FSB_FREEFRAMES_MAX];
 #define MEMORY_PARTITION_SIZE (4 * MB)
 
 //
-// Obs: Criamos apenas algumas entradas no diretório de páginas
-// do kernel, mas algumas dessas entradas serão iguais para todos 
-// os processos. Então os diretórios de da páginas dos processos
-// serão configurados de forma semelhante.
+// Obs: Criamos apenas algumas entradas no diretï¿½rio de pï¿½ginas
+// do kernel, mas algumas dessas entradas serï¿½o iguais para todos 
+// os processos. Entï¿½o os diretï¿½rios de da pï¿½ginas dos processos
+// serï¿½o configurados de forma semelhante.
 //
 
 //
 // Page frames da imagem do kernel:
 // ================================
 // Foram alocadas 1024 pageframes para a imagem do kernel.
-// Isso equivale a um pageframe pool. Que é igual a 4MB. Pois
-// são 1024 page frames de pagínas de 4KB cada.
+// Isso equivale a um pageframe pool. Que ï¿½ igual a 4MB. Pois
+// sï¿½o 1024 page frames de pagï¿½nas de 4KB cada.
 //
 
 //
@@ -578,10 +578,10 @@ unsigned long fsbFreeFrames[FSB_FREEFRAMES_MAX];
 // + kernel image = 1024 pageframes (4MB)
 // + user mode area = 1024 pageframes (4MB)
 // + vga = 1024 pageframes (4MB) (Isso transpassa o real tamanho da vga)
-// + lfb = (frontbuffer) 1024 pageframes (4MB) (Isso é muito pouco, pois 
-//         uma placa de vídeo tem mais memória que isso)
-// + backbuffer = 1024 pageframes (4MB) (Isso realmente é pouco, o backbuffer 
-//         deve caner uma imagem grande, que será dividade em vários monitores.)
+// + lfb = (frontbuffer) 1024 pageframes (4MB) (Isso ï¿½ muito pouco, pois 
+//         uma placa de vï¿½deo tem mais memï¿½ria que isso)
+// + backbuffer = 1024 pageframes (4MB) (Isso realmente ï¿½ pouco, o backbuffer 
+//         deve caner uma imagem grande, que serï¿½ dividade em vï¿½rios monitores.)
 //
 //
 
@@ -619,7 +619,7 @@ typedef enum {
 /*
  * mmblockCount:
  *     mm block support.
- *     Conta os blocos de memória dentro de um heap.
+ *     Conta os blocos de memï¿½ria dentro de um heap.
  *     *dentro do heap usado pelo kernel eu acho ?? 
  */
 
@@ -633,15 +633,15 @@ unsigned long mmblockCount;
 
 unsigned long kernel_stack_end;        //va
 unsigned long kernel_stack_start;      //va
-unsigned long kernel_stack_start_pa;   //pa (endereço indicado na TSS).
+unsigned long kernel_stack_start_pa;   //pa (endereï¿½o indicado na TSS).
 
 
 /*
  * process_memory_info_d:
  *
- *     Estrutura para informações sobre a memória utilizada por um processo.
+ *     Estrutura para informaï¿½ï¿½es sobre a memï¿½ria utilizada por um processo.
  * Obs: 
- * O gerenciamento de memória é tarefa do módulo /sm portanto isso não deve 
+ * O gerenciamento de memï¿½ria ï¿½ tarefa do mï¿½dulo /sm portanto isso nï¿½o deve 
  * ir para o /microkernel.
  */
 
@@ -653,11 +653,11 @@ struct process_memory_info_d
 	
 	struct process_d *process;
 	
-	//valor em KB. (quantidade de páginas + tamanho da página.)
+	//valor em KB. (quantidade de pï¿½ginas + tamanho da pï¿½gina.)
 	
 	unsigned long WorkingSet;  //Working Set.
-    unsigned long Private;     //Memória não compartilhada. 
-    unsigned long Shared;	   //Memória compartilhada.
+    unsigned long Private;     //Memï¿½ria nï¿½o compartilhada. 
+    unsigned long Shared;	   //Memï¿½ria compartilhada.
 	//...
 	
 	
@@ -666,7 +666,7 @@ struct process_memory_info_d
 	//??delta de conjunto de trabalho.
 	//...
 };
-//Informações de memória do processo atual.
+//Informaï¿½ï¿½es de memï¿½ria do processo atual.
 process_memory_info_t *pmiCurrent;
 //...
 
@@ -674,7 +674,7 @@ process_memory_info_t *pmiCurrent;
 /*
  * physical_memory_info_d:
  *
- *     Informações sobre a memória física.
+ *     Informaï¿½ï¿½es sobre a memï¿½ria fï¿½sica.
  *     O arquivo system.h deve usar isso. 
  */
 
@@ -684,10 +684,10 @@ struct physical_memory_info_d
 	object_type_t objectType;
 	object_class_t objectClass;
 	
-	//?? dúvidas.
-	unsigned long Total;     //Total de memória física.(RAM).
-	unsigned long InCache;   //Parte do total que está em cache.(foi paginada e está em cache).
-	unsigned long Free;      //Livre.(Existe na RAM mas não foi paginada??).
+	//?? dï¿½vidas.
+	unsigned long Total;     //Total de memï¿½ria fï¿½sica.(RAM).
+	unsigned long InCache;   //Parte do total que estï¿½ em cache.(foi paginada e estï¿½ em cache).
+	unsigned long Free;      //Livre.(Existe na RAM mas nï¿½o foi paginada??).
     //...	
 };
 physical_memory_info_t *pmiMemoryInfo;
@@ -696,8 +696,8 @@ physical_memory_info_t *pmiMemoryInfo;
 
 /*
  * memory_info_d:
- *     Informações sobre a memória.
- *     Isso pode ser usado pela configuração do sistema. 
+ *     Informaï¿½ï¿½es sobre a memï¿½ria.
+ *     Isso pode ser usado pela configuraï¿½ï¿½o do sistema. 
  */
 
 typedef struct memory_info_d memory_info_t;
@@ -723,93 +723,93 @@ memory_info_t *miMemoryInfo;
  *****************************************************************
  * mmblock_d:
  *     Estrutura para memory blocks.
- *     Temos vários blocos de memória espalhados em lugares diferentes 
+ *     Temos vï¿½rios blocos de memï¿½ria espalhados em lugares diferentes 
  * dentro de um heap.
- *     Essa estrutura é usada pelo kernel para controlar as áreas de memória
- * alocadas dinâmicamente dentro do heap do kernel. Porém poderemos
- * usar essa mesma estrutura para alocar memória em outros heaps. Como o heap 
+ *     Essa estrutura ï¿½ usada pelo kernel para controlar as ï¿½reas de memï¿½ria
+ * alocadas dinï¿½micamente dentro do heap do kernel. Porï¿½m poderemos
+ * usar essa mesma estrutura para alocar memï¿½ria em outros heaps. Como o heap 
  * de um processo ou o heap de um desktop. @todo: Para isso essa estrutura 
- * poderia conter informações sobre qual heap estamos usando. Mas me parece 
+ * poderia conter informaï¿½ï¿½es sobre qual heap estamos usando. Mas me parece 
  * que o tamanho do header deve ser fixo.
  *
  * @todo: 
- * Os blocos precisam de alguma organização. 
- * Por enquanto, o total é 256 heaps de tamanhos diferentes.
+ * Os blocos precisam de alguma organizaï¿½ï¿½o. 
+ * Por enquanto, o total ï¿½ 256 heaps de tamanhos diferentes.
  *
- * Os blocos formarão uma lista encadeada que será percorrida para se 
+ * Os blocos formarï¿½o uma lista encadeada que serï¿½ percorrida para se 
  * encontrar um bloco vazio. (walk).
  *
- * *Importante: A memória será organizada em bancos, que conterão memória 
- * privada e memória compartilhada. Os blocos de memória e os heaps 
- * precisam estar associadoas aos bancos, que conterão informações sobre 
- * processos e usuários. @todo:
- * Obs: Os bancos estão definidos em bank.h
+ * *Importante: A memï¿½ria serï¿½ organizada em bancos, que conterï¿½o memï¿½ria 
+ * privada e memï¿½ria compartilhada. Os blocos de memï¿½ria e os heaps 
+ * precisam estar associadoas aos bancos, que conterï¿½o informaï¿½ï¿½es sobre 
+ * processos e usuï¿½rios. @todo:
+ * Obs: Os bancos estï¿½o definidos em bank.h
  * 
- * Obs: Um heap de processo tem vários blocos dentro.
+ * Obs: Um heap de processo tem vï¿½rios blocos dentro.
  *
  * *IMPORTANTE: 
  *     Talvez tenhamos algum limite para o tamanho dessa estrutura 
- * em especial. (Não incluir nenhuma variável por enquanto!).
+ * em especial. (Nï¿½o incluir nenhuma variï¿½vel por enquanto!).
  *****************************************************************
  */ 
 
 struct mmblock_d 
 {
 	
-	// Essa estrutura é para gerenciar áreas de memória alocadas dinamicamente 
-	// dentro do heap do processo kernel. Alocadas em tempo de eecução.
+	// Essa estrutura ï¿½ para gerenciar ï¿½reas de memï¿½ria alocadas dinamicamente 
+	// dentro do heap do processo kernel. Alocadas em tempo de eecuï¿½ï¿½o.
 	
 	// @todo: 
-	// Talvez não seja possível mudar essa estrutura. Éla é diferente.
-	// Portanto não definiremos inada o tipo de objeto que ela é e nem a classe.
+	// Talvez nï¿½o seja possï¿½vel mudar essa estrutura. ï¿½la ï¿½ diferente.
+	// Portanto nï¿½o definiremos inada o tipo de objeto que ela ï¿½ e nem a classe.
 	
 	//object_type_t objectType;
 	//object_class_t objectClass;
 	
     //Identificadores.	
-	unsigned long Header;      //Endereço onde começa o header do heap. *Importante.
+	unsigned long Header;      //Endereï¿½o onde comeï¿½a o header do heap. *Importante.
 	unsigned long headerSize;  //Tamanho do header em bytes.
 	unsigned long Id;          //Id do header.
 	unsigned long Used;        //Flag 'usado' ou 'livre'.
-	unsigned long Magic;       //Magic number. Ver se não está corrompido.
+	unsigned long Magic;       //Magic number. Ver se nï¿½o estï¿½ corrompido.
 	
 	//Status.
-	unsigned long Free;           //Se o bloco esta livre ou não.
+	unsigned long Free;           //Se o bloco esta livre ou nï¿½o.
 	
 	//Mensuradores. (sizes).	
-	unsigned long requestSize;    //Tamanho, em bytes, da área solicitada.
-	unsigned long unusedBytes;    //Quantidade de bytes não usados na área do cliente.	
-	unsigned long userareaSize;   //Tamanho da área reservada para o cliente. 
+	unsigned long requestSize;    //Tamanho, em bytes, da ï¿½rea solicitada.
+	unsigned long unusedBytes;    //Quantidade de bytes nï¿½o usados na ï¿½rea do cliente.	
+	unsigned long userareaSize;   //Tamanho da ï¿½rea reservada para o cliente. 
 	                              //(request size + unused bytes). 
 								  
 	//@todo: 
-	//    Incluir quando possível.
+	//    Incluir quando possï¿½vel.
     // Lembrando que talvez o tamanho dessa estrutura seja fixo.
-    // Talvez não mudaremos nada no tamanho dela.	
+    // Talvez nï¿½o mudaremos nada no tamanho dela.	
 	//struct heap_d *heap;							  
 	
     // User area. 
-	// (Onde começa a área solicitada).
-	unsigned long userArea;    //Início da área alocada.
+	// (Onde comeï¿½a a ï¿½rea solicitada).
+	unsigned long userArea;    //Inï¿½cio da ï¿½rea alocada.
 	
 	// Footer.
-	unsigned long Footer;    //Endereço do início do footer.
+	unsigned long Footer;    //Endereï¿½o do inï¿½cio do footer.
 	
 	// Process info.
-    // (Pertence à qual processo?).	
+    // (Pertence ï¿½ qual processo?).	
 	int processId;
 	struct process_d *process;
 	
 	//
 	// Continua ?? ... 
-	// Talvez não pode.
+	// Talvez nï¿½o pode.
 	//
 	
 	// IMPORTANTE: 
 	// Talvez temos algum limite para o tamanho dessa estrutura em especial. 
-	// Não inluir nada por enquanto.
+	// Nï¿½o inluir nada por enquanto.
 	
-	// Navegação
+	// Navegaï¿½ï¿½o
 	struct mmblock_d *Prev;
 	struct mmblock_d *Next;
 };
@@ -817,7 +817,7 @@ struct mmblock_d *current_mmblock;
 
  
 //Lista de blocos. 
-//lista de blocos de memória dentro de um heap.
+//lista de blocos de memï¿½ria dentro de um heap.
 //@todo: na verdade temos que usar lista encadeada. 
 unsigned long mmblockList[MMBLOCK_COUNT_MAX];  
 
@@ -825,15 +825,15 @@ unsigned long mmblockList[MMBLOCK_COUNT_MAX];
 /*
  ****************************************************************
  * page_frames_d:
- *     Guarda informações sobre um 'page frame' na memória física.
- *     @todo: Incluir todas as informações necessárias.
+ *     Guarda informaï¿½ï¿½es sobre um 'page frame' na memï¿½ria fï¿½sica.
+ *     @todo: Incluir todas as informaï¿½ï¿½es necessï¿½rias.
  */
 
 struct page_d
 {
 	
 	//identificador da estrutura.
-	//é um índice na lista de páginas do pagedpool.
+	//ï¿½ um ï¿½ndice na lista de pï¿½ginas do pagedpool.
 	int id;
 	
 	int used;
@@ -843,23 +843,23 @@ struct page_d
 	// (pa/4096)
 	int frame_number;
 	
-	//Não pode ser descarregado para o disco.
-	//Não pode ser alterado.
+	//Nï¿½o pode ser descarregado para o disco.
+	//Nï¿½o pode ser alterado.
 	int locked;             
 	
-	//A página está livrea para uso pelos processos.
+	//A pï¿½gina estï¿½ livrea para uso pelos processos.
 	int free;    
 	
-	//Contador de referências.
+	//Contador de referï¿½ncias.
     int ref_count;
 	
-	//navegação
+	//navegaï¿½ï¿½o
     struct page_d *next;	
 };
  
 
 // #importante
-// Pool de memória paginável usado para alocação.
+// Pool de memï¿½ria paginï¿½vel usado para alocaï¿½ï¿½o.
 // Aqui ficam os ponteiros para estrutura do tipo page.
 
 unsigned long pageAllocList[PAGE_COUNT_MAX];
@@ -867,8 +867,8 @@ unsigned long pageAllocList[PAGE_COUNT_MAX];
 
 /*
  * frame_pool_d:
- *     Estrutura para uma partição da memória física.
- *     Uma partição da memória física é chamada de framepool.
+ *     Estrutura para uma partiï¿½ï¿½o da memï¿½ria fï¿½sica.
+ *     Uma partiï¿½ï¿½o da memï¿½ria fï¿½sica ï¿½ chamada de framepool.
  *     Cada framepool tem 1024 frames.
  *     @todo: Poderia ser framepool_d ??
  */
@@ -878,32 +878,32 @@ struct frame_pool_d
 	//object_type_t objectType;
 	//object_class_t objectClass;
 	
-	//Índice na lista de frame pools;
+	//ï¿½ndice na lista de frame pools;
 	int id;
 	
 	int used;
 	int magic;
 	
-	//Não pode ser modificada.
+	//Nï¿½o pode ser modificada.
 	int locked;
 	
-	//Endereço do início do framepool.
+	//Endereï¿½o do inï¿½cio do framepool.
 	// va ou pa ??
 	unsigned long address; 
 	
-	//Qual processo é o dono desse framepool.
+	//Qual processo ï¿½ o dono desse framepool.
 	struct process_d *process;
 	
 	struct frame_pool_d *next;
 };
 
 //
-// Cada framepool abaixo é o framepool inicial de uma região.
-// Uma regisão pode ter vários framepools.
+// Cada framepool abaixo ï¿½ o framepool inicial de uma regiï¿½o.
+// Uma regisï¿½o pode ter vï¿½rios framepools.
 //
 
 //kernel space.
-struct frame_pool_d *framepoolKernelSpace;            //0x00000000  Kernel Space. Início do kernel space.
+struct frame_pool_d *framepoolKernelSpace;            //0x00000000  Kernel Space. Inï¿½cio do kernel space.
 
 //user space
 struct frame_pool_d *framepoolSmallSystemUserSpace;   //0x00400000  Para um sistema pequeno o kernel space tem 4MB.
@@ -911,23 +911,23 @@ struct frame_pool_d *framepoolMediumSystemUserSpace;  //
 struct frame_pool_d *framepoolLargeSystemUserSpace;   //0x40000000  Para um sistema grande o kernel space tem um giga. 
 //...
 
-//Cada front buffer é uma placa de vídeo.
-struct frame_pool_d *framepoolFrontBuffer1;   //Início do linear frame buffer 1.
-struct frame_pool_d *framepoolFrontBuffer2;   //Início do linear frame buffer 2.
-struct frame_pool_d *framepoolFrontBuffer3;   //Início do linear frame buffer 3.
-struct frame_pool_d *framepoolFrontBuffer4;   //Início do linear frame buffer 4.
+//Cada front buffer ï¿½ uma placa de vï¿½deo.
+struct frame_pool_d *framepoolFrontBuffer1;   //Inï¿½cio do linear frame buffer 1.
+struct frame_pool_d *framepoolFrontBuffer2;   //Inï¿½cio do linear frame buffer 2.
+struct frame_pool_d *framepoolFrontBuffer3;   //Inï¿½cio do linear frame buffer 3.
+struct frame_pool_d *framepoolFrontBuffer4;   //Inï¿½cio do linear frame buffer 4.
 //...
 
 //Backbuffer
-struct frame_pool_d *framepoolBackBuffer1;   //Início do backbuffer.
-struct frame_pool_d *framepoolBackBuffer2;   //Início do backbuffer.
-struct frame_pool_d *framepoolBackBuffer3;   //Início do backbuffer.
-struct frame_pool_d *framepoolBackBuffer4;   //Início do backbuffer.
+struct frame_pool_d *framepoolBackBuffer1;   //Inï¿½cio do backbuffer.
+struct frame_pool_d *framepoolBackBuffer2;   //Inï¿½cio do backbuffer.
+struct frame_pool_d *framepoolBackBuffer3;   //Inï¿½cio do backbuffer.
+struct frame_pool_d *framepoolBackBuffer4;   //Inï¿½cio do backbuffer.
 //...
 
 
-//Área onde poderemos alocar frames para os processos usarem...
-//Esse é o framepool inicial de usa áre grande de memória.
+//ï¿½rea onde poderemos alocar frames para os processos usarem...
+//Esse ï¿½ o framepool inicial de usa ï¿½re grande de memï¿½ria.
 struct frame_pool_d *framepoolPageableSpace;   
 
 
@@ -950,9 +950,9 @@ unsigned long gPagedPollStart;
 unsigned long gPagedPollEnd;
 
 
-//Obs: ISSO É UM TESTE.
-//Número máximo de framepools na área de alocaçao de frames.
-//Obs: Isso é uma espécie de cache. Porém cache é coisa de disco.
+//Obs: ISSO ï¿½ UM TESTE.
+//Nï¿½mero mï¿½ximo de framepools na ï¿½rea de alocaï¿½ao de frames.
+//Obs: Isso ï¿½ uma espï¿½cie de cache. Porï¿½m cache ï¿½ coisa de disco.
 //
 // ( 1 * 4MB) =   4 MB.
 // ( 2 * 4MB) =   8 MB. (Usando esse num sistema de 32mb de ram).
@@ -972,11 +972,11 @@ unsigned long gPagedPollEnd;
 
 
 //
-// Número máximo de índices de framepool que serão usados nessa área de 
-// alocação de frames.
-// *** Uma certa quantidade de framepools serão usados
-// para alocação de frames para os processos. Durante
-// a alocação sobre demanda os frames usados virão dessa área de memória.
+// Nï¿½mero mï¿½ximo de ï¿½ndices de framepool que serï¿½o usados nessa ï¿½rea de 
+// alocaï¿½ï¿½o de frames.
+// *** Uma certa quantidade de framepools serï¿½o usados
+// para alocaï¿½ï¿½o de frames para os processos. Durante
+// a alocaï¿½ï¿½o sobre demanda os frames usados virï¿½o dessa ï¿½rea de memï¿½ria.
 //
 //
 //
@@ -984,7 +984,7 @@ unsigned long gPagedPollEnd;
 int g_pageable_framepool_index_max;
 
 
-//List.(1024 framepools de 4MB dá 4GB).
+//List.(1024 framepools de 4MB dï¿½ 4GB).
 unsigned long framepoolList[FRAMEPOOL_COUNT_MAX];
 
 
@@ -998,54 +998,54 @@ unsigned long framepoolList[FRAMEPOOL_COUNT_MAX];
 int g_current_framepool;
 
 
-//o indice do framepool da user space para qualquer tamanho de memória.
+//o indice do framepool da user space para qualquer tamanho de memï¿½ria.
 int g_user_space_framepool_index;
 
 
-//O máximo de framepools possíveis dado o tamanho da memória física.
+//O mï¿½ximo de framepools possï¿½veis dado o tamanho da memï¿½ria fï¿½sica.
 unsigned long g_framepool_max;
 
 
-//Tamanho máximo da memória física.
+//Tamanho mï¿½ximo da memï¿½ria fï¿½sica.
 unsigned long g_total_physical_memory;
 
 
 //Contabilidade. kernel(talvez deva fazer uma estrututra) MS.
-//Memória usada pelo kernel.
+//Memï¿½ria usada pelo kernel.
 //+Paginada. paged
-//+não paginada. nonpaged
+//+nï¿½o paginada. nonpaged
 //+fisica paginada
 //+virtual paginada 
 //+paginada limite
-//+naõ pagianda limite.
+//+naï¿½ pagianda limite.
 //
 unsigned long g_kernel_paged_memory;
 unsigned long g_kernel_nonpaged_memory;
 
-// **** GERENCIA DE MEMÓRIA FÍSICA. ****
+// **** GERENCIA DE MEMï¿½RIA Fï¿½SICA. ****
 //MS - Windows 
 // +Resevada para hardware.
 // +Em uso.
 // +Modificada. 
 // +Em espera.
 // +Livre.
-// ?? Aqui não conta a memória de vídeo, somente o tamanho da memória ram física.
-// A memória de vídeo está normalmente no topo da memória física real. Endereço 
-// além do tamanho da memória ram.
+// ?? Aqui nï¿½o conta a memï¿½ria de vï¿½deo, somente o tamanho da memï¿½ria ram fï¿½sica.
+// A memï¿½ria de vï¿½deo estï¿½ normalmente no topo da memï¿½ria fï¿½sica real. Endereï¿½o 
+// alï¿½m do tamanho da memï¿½ria ram.
 //
 
 
-// **** GERENCIA DE MEMÓRIA FÍSICA. ****
+// **** GERENCIA DE MEMï¿½RIA Fï¿½SICA. ****
 //MS - Windows 
 // + Total.
 // + Em cache.
-// + Disponível.
+// + Disponï¿½vel.
 // + Livre.
 //
 
 
 
-//tipo de sistema baseado no tamanho da memória.
+//tipo de sistema baseado no tamanho da memï¿½ria.
 typedef enum {
 	stNull,
     stSmallSystem,
@@ -1054,7 +1054,7 @@ typedef enum {
 }mm_system_type_t;
 
 
-//salva o tipo de sistema baseado no tamanho da memória.
+//salva o tipo de sistema baseado no tamanho da memï¿½ria.
 int g_mm_system_type;
 
 
@@ -1131,11 +1131,11 @@ unsigned long memorysizeAvailablePhysicalMemory;
 
 
 //??
-// Quantidade de memória em uso.
+// Quantidade de memï¿½ria em uso.
 unsigned long memorysizeUsed;
 
 //??
-//Quantidade de memória livre.
+//Quantidade de memï¿½ria livre.
 // ? = total - used.
 unsigned long memorysizeFree;
 
@@ -1149,12 +1149,12 @@ unsigned long mm_used_user_area;    // start = 0x400000 size = 4MB
 unsigned long mm_used_backbuffer;   // start = 0x800000 size = 4MB
 unsigned long mm_used_pagedpool;    // start = 0xC00000 size = 4MB  
 
-//area de memória onde ficarão heaps para os processos.
+//area de memï¿½ria onde ficarï¿½o heaps para os processos.
 unsigned long mm_used_heappool;     // start = 0x01000000 size = 4MB   
 	
 // #importante
-// os processos init, shell e taskman do gramado core são especiais
-// por isso receberão heaps especiais.
+// os processos init, shell e taskman do gramado core sï¿½o especiais
+// por isso receberï¿½o heaps especiais.
 
 
 
@@ -1169,6 +1169,16 @@ unsigned long mm_used_extraheap2;  // start = (0x01000000 + 0x800000) size = 4MB
 unsigned long mm_used_extraheap3;  // start = (0x01000000 + 0xC00000) size = 4MB
 
 
+// 0x02000000 - 32mb mark. 
+unsigned long mm_used_frame_table;
+
+unsigned long frame_table_start; // 0x02000000 - 32mb mark. 
+unsigned long frame_table_end;
+unsigned long frame_table_size_in_bytes;
+
+
+
+// ...
 
 
 unsigned long mm_used_lfb;          // start = ?? size = 4MB
@@ -1203,7 +1213,7 @@ unsigned long memorysizeAvailableVirtualMemory;
 //#define LARGESYSTEM_SIZE_MB  (128)
 
 
-// Tamanho so sitema, dado em quantidade de páginas de 4KB.
+// Tamanho so sitema, dado em quantidade de pï¿½ginas de 4KB.
 #define SMALLSYSTEM_SIZE_PAGES  ( ( 32*1024*1024) / 4096 )
 #define MEDIUMSYSTEM_SIZE_PAGES ( ( 64*1024*1024) / 4096 )
 #define LARGESYSTEM_SIZE_PAGES  ( (128*1024*1024) / 4096 )
@@ -1213,16 +1223,16 @@ unsigned long memorysizeAvailableVirtualMemory;
 
 
 //
-// Protótipos.
+// Protï¿½tipos.
 //
 
 //#bugbug
-//isso é um improviso,rever ...PERIGO
+//isso ï¿½ um improviso,rever ...PERIGO
 unsigned long get_table_pointer(void);
 
 
-//Mostra o inteiro que está na entrada especificada pelo argumento,
-//dado um determinado diretório (va)
+//Mostra o inteiro que estï¿½ na entrada especificada pelo argumento,
+//dado um determinado diretï¿½rio (va)
 void mmShowPDE (int index, unsigned long pd_va);
 void mmShowPDEForAllProcesses (int entry_number);
 
@@ -1236,18 +1246,18 @@ int init_mm (void);
 
 int init_stack (void);
 
-//Configura paginação.
+//Configura paginaï¿½ï¿½o.
 int SetUpPaging (void);    
 
 
-// Coloca o endereço do diretório de páginas de um processo
+// Coloca o endereï¿½o do diretï¿½rio de pï¿½ginas de um processo
 // no registrador cr3 da arquitetura Intel.
 void x86_SetCR3 (unsigned long pa);
 
 
 //mapeando o nic principal.
 //considerando que tenhamos mais de uma placa de rede, 
-//esse mapeamento só será válido para o primeiro.
+//esse mapeamento sï¿½ serï¿½ vï¿½lido para o primeiro.
 unsigned long 
 mapping_nic1_device_address ( unsigned long pa );
 
@@ -1259,8 +1269,8 @@ unsigned long mapping_ahci1_device_address ( unsigned long pa );
 // Directory.
 //
 
-//deve retornar o endereço do diretório de páginas criado,
-//que é um clone do diretório de páginas do kernel.
+//deve retornar o endereï¿½o do diretï¿½rio de pï¿½ginas criado,
+//que ï¿½ um clone do diretï¿½rio de pï¿½ginas do kernel.
 void *CreatePageDirectory (void);
 
 
@@ -1268,8 +1278,8 @@ void *CreatePageDirectory (void);
 // Page tables.
 //
 
-// Cria uma pagetable em um dado diretório de páginas.
-// Uma região de 4MB da memória física é mapeanda nessa pt.
+// Cria uma pagetable em um dado diretï¿½rio de pï¿½ginas.
+// Uma regiï¿½o de 4MB da memï¿½ria fï¿½sica ï¿½ mapeanda nessa pt.
 
 void *CreatePageTable ( unsigned long directory_address_va, 
                         int dir_index, 
@@ -1286,18 +1296,18 @@ int firstSlotForAList (int size);
 
 
 //?? Talvez tenha que mudar de nome.
-//checar se estamos lidando com páginas ou com frames.
+//checar se estamos lidando com pï¿½ginas ou com frames.
 void initializeFramesAlloc (void);
 
 //constructor
-//cria uma estrutura válida de página
-//cujo ponteiro ficará em uma lista.
+//cria uma estrutura vï¿½lida de pï¿½gina
+//cujo ponteiro ficarï¿½ em uma lista.
 
 void *page (void);  	
 
 void *allocPages (int size);
 
- //aloca uma página e retorna seu endereço virtual inicial
+ //aloca uma pï¿½gina e retorna seu endereï¿½o virtual inicial
 void *newPage (void);            
 
 
@@ -1318,7 +1328,7 @@ void pages_calc_mem(void);
 
 void show_memory_structs (void);
 
-//mostra as estruturas de pagina usadas para paginação no pagedpool.
+//mostra as estruturas de pagina usadas para paginaï¿½ï¿½o no pagedpool.
 void showFreepagedMemory ( int max );
 
 

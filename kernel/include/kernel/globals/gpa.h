@@ -203,7 +203,8 @@
 //
 // #### 32 MB ####
 //
-   
+
+#define FRAME_TABLE_START (0x02000000)   // 32mb mark. 
 
 
 //
@@ -220,10 +221,45 @@
 // #### 256 MB ####
 //
 
+// Área de memória para uma frame table grande.
+// De onde pegaremos os frames para mapearmos.
+// É um heap grande de frames.
+// #perigo: Cuidado com a colisão com as próximas
+// entradas indicadas nessa lista.
+
+// A frame table começa aqui e vai até o fim da memória ram
+// disponível ou até um limite.
+
+
+
+
 
 //
 // #### 512 MB ####
 //
+
+/*
+    0x01000000 (16MB)
+    0x02000000 (32MB)
+    0x04000000 (64MB)
+    0x08000000 (128MB)
+    0x10000000   = 256 MB 
+    0x20000000   = 512 MB
+    0x40000000   = 1 GB
+    0x50000000   = 1.24 GB
+    0x60000000   = 1.5 GB
+    0x70000000   = 1.75 GB
+    0x80000000   = 2 GB
+*/
+
+
+
+
+
+
+
+
+
 
 
 
