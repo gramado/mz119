@@ -4500,32 +4500,31 @@ _fwalk(int (*function)(FILE *))
 
 int libcStartTerminal (void){
 
-	int PID;
-	
-	// 'Clona' e executa o noraterm como processo filho. 
-	//PID = (int) system_call ( 900, (unsigned long) "noraterm.bin", 0, 0 );
-	//PID = (int) system_call ( 901, (unsigned long) "noraterm.bin", 0, 0 );
+    int PID;
 
-	PID = (int) gramado_system_call ( 900, (unsigned long) "noraterm.bin", 0, 0 );
+    // 'Clona' e executa o noraterm como processo filho. 
+    //PID = (int) system_call ( 900, (unsigned long) "noraterm.bin", 0, 0 );
 
-	// Exibe o PID para debug.
-	//printf ("PID = %d \n", PID);
+    PID = (int) gramado_system_call ( 900, (unsigned long) "noraterm.bin", 0, 0 );
+
+    // Exibe o PID para debug.
+    //printf ("PID = %d \n", PID);
 
     //registra o terminal como terminal atual.
-	gramado_system_call ( 1003, PID, 0, 0 ); 
-		
-	//invalida a variável.
-	PID = -1;
-		
-	//pega o pid do terminal atual
-	PID = (int) gramado_system_call ( 1004, 0, 0, 0 ); 
-		
-	if ( PID <= 0 )
-	{
+    gramado_system_call ( 1003, PID, 0, 0 ); 
+
+    //invalida a variável.
+    PID = -1;
+
+    //pega o pid do terminal atual
+    PID = (int) gramado_system_call ( 1004, 0, 0, 0 ); 
+
+    if ( PID <= 0 ){
 		printf ("PID fail. We can't send the message\n");
 	    return -1;
 	}
-		
+
+
 	//manda uma mensagem pedindo para o terminal dizer hello.
 	//__SendMessageToProcess ( PID, NULL, MSG_TERMINALCOMMAND, 2001, 2001 );
 
@@ -5313,9 +5312,10 @@ void stdioInitialize (){
 	//terminal___PID = (int) apiStartTerminal ();
 	
 
-	// 'Clona' e executa o noraterm como processo filho. 
-	terminal___PID = (int) system_call ( 900, (unsigned long) "noraterm.bin", 0, 0 );
-	//PID = (int) system_call ( 901, (unsigned long) "noraterm.bin", 0, 0 );
+    // 'Clona' e executa o noraterm como processo filho. 
+    terminal___PID = (int) system_call ( 900, (unsigned long) "noraterm.bin", 0, 0 );
+
+
 		
 	// Exibe o PID para debug.
 	//printf ("PID = %d \n", PID);

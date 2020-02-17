@@ -1197,7 +1197,7 @@ mbProcedure ( struct window_d *window,
 				   break;
 			};
 		    break;
-		    
+
 		//mouse keyup    
 		case 31:
 		    switch (long1)
@@ -3445,12 +3445,12 @@ void gde_show_window (struct window_d *window){
  
 int gde_start_terminal (void){
 
-	int PID;
-	
-	// 'Clona' e executa o noraterm como processo filho. 
-	PID = (int) system_call ( 900, (unsigned long) "noraterm.bin", 0, 0 );
-	//PID = (int) system_call ( 901, (unsigned long) "noraterm.bin", 0, 0 );
-		
+    int PID;
+
+    // Clona e executa o noraterm como processo filho. 
+
+    PID = (int) system_call ( 900, (unsigned long) "noraterm.bin", 0, 0 );
+
 	// Exibe o PID para debug.
 	//printf ("PID = %d \n", PID);
 

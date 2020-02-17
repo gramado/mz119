@@ -3519,17 +3519,15 @@ do_compare:
 	
 	
  
-	
-	//t19
-	int xxx__PID;
-	if ( gramado_strncmp ( prompt, "t19", 3 ) == 0 )
-	{
-		xxx__PID = (int) system_call ( 900, (unsigned long) "noraterm.bin", 0, 0 );
-		//xxx__PID = (int) system_call ( 901, (unsigned long) "noraterm.bin", 0, 0 );
-		
-		printf ("t19:  xxx__PID = %d \n", xxx__PID);
-		//goto exit_cmp;
-		
+
+    // t19
+    int xxx__PID;
+    if ( gramado_strncmp ( prompt, "t19", 3 ) == 0 )
+    {
+        xxx__PID = (int) system_call ( 900, (unsigned long) "noraterm.bin", 0, 0 );
+
+        printf ("t19:  xxx__PID = %d \n", xxx__PID);
+
 		//registra o terminal
 		system_call ( 1003, xxx__PID, 0, 0 ); 
 		
@@ -3609,23 +3607,6 @@ do_compare:
     }
 
 
-    // t901
-    // clona um processo, retorna para o pai e inicializa o processo
-    // filho do seu entrypoint. (#test)	
-    int t901_ret;
-    if ( gramado_strncmp ( prompt, "t901", 4 ) == 0 )
-    {
-	    t901_ret = (int) system_call ( 901, 0, 0, 0 );
-		printf ("t901: t901_ret = %d \n", t901_ret);
-		
-		//if (t901_ret < 0)
-		//if (t901_ret == 0)
-		//if (t901_ret > 0)
-		
-		goto exit_cmp;
-    }
-
-    
     // Virtual Console and tty.
     int __current_virtual_console = -1;
     int ____tty_id = -1;
@@ -3867,7 +3848,7 @@ do_compare:
 		    WAIT_REASON_TEST );
 		
 		printf ("gdeshell: still alive 2 ...\n");
-		        
+
         goto exit_cmp;
     }
 

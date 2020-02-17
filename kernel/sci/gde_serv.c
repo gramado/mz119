@@ -793,25 +793,21 @@ void *gde_extra_services ( unsigned long number,
     }
 
 
-	// t901
-	// Clona um processo, retorna para o pai e inicializa o processo.
-	// Filho do seu entrypoint. (#test)
-	// See: ps/action/process.c
-
-    if ( number == 901 )
-    {
-        return (void *) do_fork_process2 ();
+    // 901
+    // Trying another fork() implementation. 
+    // Nothing for now.
+    if ( number == 901 ){
+        return NULL;
     }
     
     // get screen window.
     // #todo. checar validade
-    if ( number == 955 )
-    {
+    if ( number == 955 ){
         return (void *) gui->screen;
     }    
 
-    if ( number == 956 )
-    {
+
+    if ( number == 956 ){
         return (void *) gui->background;
     } 
     

@@ -4104,13 +4104,9 @@ _fwalk(int (*function)(FILE *))
 
 int libcStartTerminal (void){
 
-	int PID;
-	
-	// 'Clona' e executa o noraterm como processo filho. 
-	//PID = (int) system_call ( 900, (unsigned long) "noraterm.bin", 0, 0 );
-	//PID = (int) system_call ( 901, (unsigned long) "noraterm.bin", 0, 0 );
+    int PID;
 
-	PID = (int) gramado_system_call ( 900, (unsigned long) "noraterm.bin", 0, 0 );
+    PID = (int) gramado_system_call ( 900, (unsigned long) "noraterm.bin", 0, 0 );
 
 	// Exibe o PID para debug.
 	//printf ("PID = %d \n", PID);

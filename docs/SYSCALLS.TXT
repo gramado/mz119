@@ -306,7 +306,7 @@
   
   
   900     do_clone_execute_process
-  901     do_fork_process2
+  901     fork again ?
   
   
   967     network_procedure
