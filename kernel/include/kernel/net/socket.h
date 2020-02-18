@@ -1,16 +1,15 @@
 
 // socket.h
-// suporte a socket da klibc.
-// #todo: isso deve ir para sys/socket
+// suporte a socket dentri do kernel.
 
 
 
-// ...
+
+// ... gramado_ports[]
 #define GRAMADO_SH_PORT 8
 #define GRAMADO_WS_PORT 11
 #define GRAMADO_WM_PORT 12
 // ...
-
 
 // ports for local servers
 // What pid is on each port.
@@ -21,51 +20,6 @@ int gramado_ports[32];
 
 int current_socket;
 
-/*
- **********************
- * socket_d:
- *     Socket strutuct.
- */
-
-struct socket_d
-{
-    object_type_t objectType;
-    object_class_t objectClass;
-    
-    
-    int sock_domain;
-    
-    
-    // Deve ser o mesmo fd do arquivo que possui
-    // um ponteiro para essa estrutura.
-    int _file;
-    
-    
-    //socket type.
-    int type;
-
-    unsigned long ip_long;
-
-	//unsigned char ip[4];
-    unsigned short port;
-
-	// podemos fazer mais coisa aqui.
-	// talvez um arquivo
-	//talvez um descritor, pra ficar igual na libc
-	//talvez incluir ponteiros para as estruturas em sys/socket.h
-	//...
-};
-struct socket_d *CurrentSocket;
-struct socket_d *LocalHostHTTPSocket;
-//...
-
-
-
-//#todo: 
-// Refazer esse limite proviório.
-#define SOCKET_COUNT_MAX 32
-
-unsigned long socketList[SOCKET_COUNT_MAX];
 
 
 struct socket_d *create_socket ( unsigned long ip, unsigned short port );
@@ -117,6 +71,9 @@ typedef	_BSD_SSIZE_T_	ssize_t;
 
 //=========
 /* Supported address families. */
+
+#define AF_GRAMADO 8000
+
 
 #define AF_UNSPEC     0
 #define AF_UNIX       1     /* Unix domain sockets 		*/
@@ -504,7 +461,53 @@ struct sockcred {
 */
 
 
+/*
+ **********************
+ * socket_d:
+ *     Socket strutuct.
+ */
 
+struct socket_d
+{
+    object_type_t objectType;
+    object_class_t objectClass;
+    
+    // Não é um ponteiro.
+	struct sockaddr addr;
+
+    // Cancelar isso e usar a estrutura acima.
+    int sock_domain;
+    
+    
+    // Deve ser o mesmo fd do arquivo que possui
+    // um ponteiro para essa estrutura.
+    int _file;
+    
+    
+    //socket type.
+    int type;
+
+    unsigned long ip_long;
+
+	//unsigned char ip[4];
+    unsigned short port;
+
+	// podemos fazer mais coisa aqui.
+	// talvez um arquivo
+	//talvez um descritor, pra ficar igual na libc
+	//talvez incluir ponteiros para as estruturas em sys/socket.h
+	//...
+};
+struct socket_d *CurrentSocket;
+struct socket_d *LocalHostHTTPSocket;
+//...
+
+
+// #todo:
+// Refazer esse limite proviório.
+#define SOCKET_COUNT_MAX 32
+
+unsigned long socketList[SOCKET_COUNT_MAX];
 
 
 int sys_socket ( int family, int type, int protocol );

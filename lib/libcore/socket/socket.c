@@ -271,6 +271,36 @@ connect ( int sockfd,
 }
 
 
+//  bind a name to a socket.
+// “assigning a name to a socket”.
+//  POSIX.1-2001, POSIX.1-2008, SVr4, 
+//  4.4BSD (bind() first appeared in 4.2BSD).
+int 
+bind ( int sockfd, 
+       const struct sockaddr *addr,
+       socklen_t addrlen )
+{
+    int __status = -1;
+    
+    __status = (int) gramado_system_call ( 7003, 
+                     (unsigned long) sockfd, 
+                     (unsigned long) addr, 
+                     (unsigned long) addrlen );
+
+    if(__status<0)
+        printf ("bind: Couldn't bind\n");
+     
+     
+    //On success, zero is returned.  On error, -1 is returned, and errno is
+    //   set appropriately.
+
+          
+    return (int) __status;
+}
+
+
+
+
 //
 // End.
 //

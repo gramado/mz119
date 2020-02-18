@@ -63,6 +63,9 @@ See: https://wiki.osdev.org/Graphics_stack
 #include <api.h>
 
 
+#include <sys/socket.h>
+
+
 int running = 0;
 
 // Our desktop;
@@ -422,6 +425,30 @@ int main (int argc, char **argv){
     //gramado_system_call (7006, 11, getpid(), 0 );
 
 
+
+
+    struct sockaddr addr;
+    addr.sa_family = AF_GRAMADO;
+    addr.sa_data[0] = 'w';
+    addr.sa_data[1] = 's';    
+
+    int server_fd = -1;
+
+    server_fd = (int) socket(AF_GRAMADO, SOCK_STREAM, 0);
+    
+    if (server_fd<0){
+        printf("gws: Couldn't create the server socket\n");
+        exit(1);
+    }
+ 
+ 
+    int bind_status = -1;
+    bind_status = bind ( server_fd, (struct sockaddr *) &addr, sizeof(addr) );
+
+    if (bind_status<0){
+        printf("gws: Couldn't bind to the socket\n");
+        exit(1);
+    }
 
 //
 // =======================================

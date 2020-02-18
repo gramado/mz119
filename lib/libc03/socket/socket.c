@@ -241,7 +241,7 @@ bind ( int sockfd,
                      (unsigned long) addrlen );
 
     if(__status<0)
-        printf ("connect: Couldn't bind\n");
+        printf ("bind: Couldn't bind\n");
      
      
     //On success, zero is returned.  On error, -1 is returned, and errno is

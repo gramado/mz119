@@ -199,7 +199,7 @@ int sys_socket ( int family, int type, int protocol ){
     
     // Criamos um socket vazio.
     
-    // ip and port.
+    // IN: ip and port.
     __socket = (struct socket_d *) create_socket ( (unsigned long) 0, (unsigned short) 0 );
   
     if ( (void *) __socket == NULL ){
@@ -208,6 +208,9 @@ int sys_socket ( int family, int type, int protocol ){
         return -1;
     }
     
+    // salva o domínio na estrutura de socket.
+    __socket->addr.sa_family = family;
+
 
 
 
@@ -532,9 +535,10 @@ sys_connect ( int sockfd,
      // no máximo 5.
      tp->accept[0] = freefd;
      
-     printf ("sys_connect: *done.\n");
-     refresh_screen();
-     return 1;
+    debug_print("sys_connect: connect ok\n");
+    printf ("sys_connect: *done.\n");
+    refresh_screen();
+    return 0;
      
      //
      // socket ok.
@@ -673,12 +677,17 @@ int sys_accept (int sockfd, struct sockaddr *addr, socklen_t *addrlen)
 }   
 
 
-
+/*
+  When a socket is created with socket(2), it exists in a 
+  name space (address family) but has no address assigned to it. 
+  bind() assigns the address specified by addr to the socket 
+  referred to by the file descriptor sockfd.
+ */
 
 int 
 sys_bind ( int sockfd, 
-       const struct sockaddr *addr,
-       socklen_t addrlen )
+           const struct sockaddr *addr,
+           socklen_t addrlen )
 {
     struct process_d *p;
     struct file_d *f;
@@ -686,34 +695,26 @@ sys_bind ( int sockfd,
 
 
 
-    if ( sockfd < 0 || sockfd >= 32 )
-    {
+    if ( sockfd < 0 || sockfd >= 32 ){
         printf ("sys_bind: sockfd fail\n");
         refresh_screen();
         return -1;
     }
-   
-    //
-    // 
-    //
-    
-    
+
     // process
     p = (struct process_d *) processList[current_process];
  
-    if ( (void *) p == NULL )
-    {
+    if ( (void *) p == NULL ){
         printf ("sys_bind: p fail\n");
         refresh_screen();
         return -1;
     }
  
  
-    //file
+    // file
     f = (file *) p->Objects[sockfd];
 
-    if ( (void *) f == NULL )
-    {
+    if ( (void *) f == NULL ){
         printf ("sys_bind: f fail\n");
         refresh_screen();
         return -1;
@@ -723,35 +724,43 @@ sys_bind ( int sockfd,
     //socket
     s = (struct socket_d *) f->priv;
 
-    if ( (void *) s == NULL )
-    {
+    if ( (void *) s == NULL ){
         printf ("sys_bind: s fail\n");
         refresh_screen();
         return -1;
     }
- 
-    //
-    // socket ok.
-    //
    
     // Usando a estrutura que nos foi passada.
-    if ( (void *) addr == NULL )
-    {
+    if ( (void *) addr == NULL ){
         printf ("sys_bind: addr fail\n");
         refresh_screen();
         return -1;
     }
 
 
+    // Everything is ok.
+    // So now we need to include the 'name' into the socket structure
+    // respecting the socket's family.
+    int n = 0;
+    if (s->addr.sa_family == AF_GRAMADO)
+    {
+        // Binding the name to the socket.
+        printf ("~Binding the name to the socket.\n");
+        
+        // Always 14.
+        for(n=0; n<14; n++)
+            s->addr.sa_data[n] = addr->sa_data[n];
+
+        
+        debug_print ("sys_bind: bind ok\n");
+        return 0;
+    }
     
-    
-     printf ("process %d ; family %d ; len %d \n", 
-         current_process, addr->sa_family, addrlen  );
+    printf ("process %d ; family %d ; len %d \n", 
+        current_process, addr->sa_family, addrlen  );
  
      
-    
- 
-    printf ("sys_bind: #todo\n");
+    printf ("sys_bind: fail\n");
     refresh_screen();
     return -1;
 }   
