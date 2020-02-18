@@ -63,6 +63,8 @@ See: https://wiki.osdev.org/Graphics_stack
 #include <api.h>
 
 
+int running = 0;
+
 // Our desktop;
 struct desktop_d *__desktop;
 
@@ -88,7 +90,83 @@ gwsProcedure ( struct window_d *window,
                int msg, 
                unsigned long long1, 
                unsigned long long2 );
-                   
+
+
+
+void
+ws_connection_loop()
+{
+    //
+    //  Accepting one connection.
+    //
+    
+    int client_fd = -1;
+    char __buffer[32];
+    while(1){
+
+        client_fd = gramado_system_call(7005,0,0,0);
+        if(client_fd>0)
+        {
+            //printf ("gws: accepted socket %d",client_fd);
+            dtextDrawText ( (struct window_d *) __mywindow,
+                60, 60, 
+                COLOR_RED, 
+                "gws: The server accepted a socket\n" );
+           
+            gde_show_backbuffer ();
+
+            sprintf(__buffer,"gws: Magic message!\n");
+            write(client_fd, __buffer, sizeof(__buffer));
+
+            break;
+        }
+    }
+
+}
+
+
+
+void
+ws_message_loop()
+{
+    //
+    // Event loop
+    //
+
+    // Message loop and compositor loop.
+
+    unsigned long message_buffer[5];   
+    
+
+    while (1)
+    {
+        gde_enter_critical_section ();
+        gramado_system_call ( 111,
+            (unsigned long) &message_buffer[0],
+            (unsigned long) &message_buffer[0],
+            (unsigned long) &message_buffer[0] );
+        gde_exit_critical_section ();
+
+        if ( message_buffer[1] != 0 )
+        {
+            gwsProcedure ( (struct window_d *) message_buffer[0], 
+                (int) message_buffer[1], 
+                (unsigned long) message_buffer[2], 
+                (unsigned long) message_buffer[3] );
+
+            message_buffer[0] = 0;
+            message_buffer[1] = 0;
+            message_buffer[3] = 0;
+            message_buffer[4] = 0;
+            
+            //compositor_loop ();
+        };
+    };
+}  
+
+
+
+
 int 
 gwsProcedure ( struct window_d *window, 
                int msg, 
@@ -185,7 +263,12 @@ gwsProcedure ( struct window_d *window,
  */
  
 int main (int argc, char **argv){
-    
+
+
+    // Flag usada no loop.
+    running = 1;
+
+
     // #todo
     // Use the debug funcion via serial port.
     
@@ -295,75 +378,34 @@ int main (int argc, char **argv){
     //gramado_system_call (7006, 11, getpid(), 0 );
 
 
-    //
-    //  Accepting one connection.
-    //
+
+//
+// =======================================
+//
+
+// Loop de mensagens e loop de accept.
+
+__loop:
+
+    // Aceita uma conecção e 
+    // pega uma mensagem no loop de eventos.
     
-    int client_fd = -1;
-    char __buffer[32];
-    while(1){
+    while (running == 1){
 
-        client_fd = gramado_system_call(7005,0,0,0);
-        if(client_fd>0)
-        {
-            //printf ("gws: accepted socket %d",client_fd);
-            dtextDrawText ( (struct window_d *) __mywindow,
-                60, 60, 
-                COLOR_RED, 
-                "gws: The server accepted a socket\n" );
-           
-            gde_show_backbuffer ();
-
-            sprintf(__buffer,"gws: Magic message!\n");
-            write(client_fd, __buffer, sizeof(__buffer));
-
-            break;
-        }
-    }
-
-
-    //
-    // Event loop
-    //
-
-    // Message loop and compositor loop.
-
-    unsigned long message_buffer[5];   
-    
-event_loop:
-
-    while (1)
-    {
-        gde_enter_critical_section ();
-        gramado_system_call ( 111,
-            (unsigned long) &message_buffer[0],
-            (unsigned long) &message_buffer[0],
-            (unsigned long) &message_buffer[0] );
-        gde_exit_critical_section ();
-
-        if ( message_buffer[1] != 0 )
-        {
-            gwsProcedure ( (struct window_d *) message_buffer[0], 
-                (int) message_buffer[1], 
-                (unsigned long) message_buffer[2], 
-                (unsigned long) message_buffer[3] );
-
-            message_buffer[0] = 0;
-            message_buffer[1] = 0;
-            message_buffer[3] = 0;
-            message_buffer[4] = 0;
-            
-            //compositor_loop ();
-        };
+        ws_connection_loop();
+        
+        //drain event messages.
+        ws_message_loop();
+        //...
     };
 
-
-
-// Error
-
-    return 1; 
+    //Done.
+    
+    return 0; 
 }
- 
+
+
+
 
 
 
