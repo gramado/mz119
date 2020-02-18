@@ -1119,6 +1119,7 @@ void *gde_extra_services ( unsigned long number,
     }
     
 
+    // See: net/socket.c
     // IN: índice em p->accept[i].
     if (number == 7005){
         return (void *) sys_accept_sender ( (int) arg2 );  

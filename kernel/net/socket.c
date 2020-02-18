@@ -571,18 +571,27 @@ int sys_accept_sender(int n)
 {
     struct process_d *p;
 
+    int __value = -1;
+    
     if(n<0 || n>4)
         return -1;
 
     p = (struct process_d *) processList[current_process];
-    if( (void *)p == NULL)
+    if( (void *) p == NULL)
         return -1;
 
     //todo: validation.
 
     //todo: tem 5 possíveis conexões.
-    return (int) p->accept[n];
+
+    __value = (int) p->accept[n];
+
+    p->accept[n] = 0;
+
+    return (int) __value;
 }
+
+
 
 
 int sys_accept (int sockfd, struct sockaddr *addr, socklen_t *addrlen)

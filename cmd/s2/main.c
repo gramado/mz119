@@ -73,17 +73,32 @@ int main ( int argc, char *argv[] )
     //send(client_fd , hello , strlen(hello) , 0 ); 
 
     char __buffer[32];
+    
+   // Isso permite ler a mensagem na forma de longs.
+    unsigned long *message_buffer = (unsigned long *) &__buffer[0];   
+
     int n=-1;
+
     while(1){
-        n = read(client_fd, __buffer, sizeof(__buffer));
-        if(n>0)
-        {
-            //break;
-            printf ("s2: Received: %s \n",__buffer);            
-        }
+
+        //read test. 
+        //n = read(client_fd, __buffer, sizeof(__buffer));
+        //if(n>0){
+            //printf ("s2: Received: %s \n",__buffer);            
+        //}
+
+        message_buffer[0] = 0; //window. 
+        message_buffer[1] = 1000;  //msg = hello friend.
+        message_buffer[2] = 0;
+        message_buffer[3] = 0;
+
+       // write test.
+       //sprintf(__buffer,"s2: Magic message!\n");
+       write(client_fd, __buffer, sizeof(__buffer));
+       //break;
     }
 
-    printf ("s2: Received: %s \n",__buffer);
+    //printf ("s2: Received: %s \n",__buffer);
     
     return 0;
 

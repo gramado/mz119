@@ -26,6 +26,29 @@
 
 
 
+
+unsigned long __device_width;
+unsigned long __device_height;
+
+
+
+
+unsigned long gws_get_device_width(void)
+{
+    return (unsigned long) __device_width;
+}
+
+
+
+unsigned long gws_get_device_height(void)
+{
+    return (unsigned long) __device_height;
+}
+
+
+
+
+
 /*
  ************************************
  * gwsInit:
@@ -35,8 +58,6 @@
 
 int gwsInit (){
 
-    unsigned long __device_width;
-    unsigned long __device_height;
 
     // Fonte atual.
     gws_currentfont_address = (unsigned long) &font_nelson_cole2[0]; 

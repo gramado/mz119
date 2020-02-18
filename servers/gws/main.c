@@ -94,7 +94,7 @@ gwsProcedure ( struct window_d *window,
 
 
 void
-ws_connection_loop()
+ws_connection_loop(void)
 {
     //
     //  Accepting one connection.
@@ -102,9 +102,20 @@ ws_connection_loop()
     
     int client_fd = -1;
     char __buffer[32];
+    
+
+    // Isso permite ler a mensagem na forma de longs.
+    unsigned long *message_buffer = (unsigned long *) &__buffer[0];   
+
+    int n_reads = 0;
+
     while(1){
 
         client_fd = gramado_system_call(7005,0,0,0);
+        
+        if(client_fd<=0)
+            break;
+
         if(client_fd>0)
         {
             //printf ("gws: accepted socket %d",client_fd);
@@ -115,19 +126,42 @@ ws_connection_loop()
            
             gde_show_backbuffer ();
 
-            sprintf(__buffer,"gws: Magic message!\n");
-            write(client_fd, __buffer, sizeof(__buffer));
+            // write test.
+            //sprintf(__buffer,"gws: Magic message!\n");
+            //write(client_fd, __buffer, sizeof(__buffer));
+            
+
+            //read test.
+            n_reads = read(client_fd, __buffer, sizeof(__buffer));
+
+            if(n_reads>0)
+            {
+                //send the message to the procedure.
+                if (message_buffer[1] != 0 )
+                {
+                    gwsProcedure ( (struct window_d *) message_buffer[0], 
+                        (int) message_buffer[1], 
+                        (unsigned long) message_buffer[2], 
+                        (unsigned long) message_buffer[3] );
+
+                    message_buffer[0] = 0;
+                    message_buffer[1] = 0;
+                    message_buffer[3] = 0;
+                    message_buffer[4] = 0;
+                    break;
+                }
+            }
 
             break;
         }
     }
-
 }
 
 
 
+
 void
-ws_message_loop()
+ws_message_loop(void)
 {
     //
     // Event loop
@@ -147,6 +181,10 @@ ws_message_loop()
             (unsigned long) &message_buffer[0] );
         gde_exit_critical_section ();
 
+        //se não tem mensagem
+        if ( message_buffer[1] == 0 )
+            break; 
+
         if ( message_buffer[1] != 0 )
         {
             gwsProcedure ( (struct window_d *) message_buffer[0], 
@@ -160,6 +198,8 @@ ws_message_loop()
             message_buffer[4] = 0;
             
             //compositor_loop ();
+
+            break;
         };
     };
 }  
@@ -199,11 +239,11 @@ gwsProcedure ( struct window_d *window,
         
             //draw text inside a window.
             dtextDrawText ( (struct window_d *) __mywindow,
-                40, 60,
-                COLOR_RED,
+                60, 70,
+                COLOR_GREEN,
                 "Hello friend. This is the Window Server!" );
                 
-             printf ("Hello friend! %d %d \r \n", long1, long2 );
+            //printf ("Hello friend! %d %d \r \n", long1, long2 );
             
              //#todo: send response.
             
@@ -257,11 +297,11 @@ gwsProcedure ( struct window_d *window,
 
 
 /*
+ ******************************
  * main: 
- *     
  * 
  */
- 
+
 int main (int argc, char **argv){
 
 
@@ -306,42 +346,46 @@ int main (int argc, char **argv){
       // gui->screen, 0, xCOLOR_GRAY3, xCOLOR_GRAY3 );
 
 
+    //
+    // Task bar
+    //
+
+    unsigned long w,h;
+
+    w = gws_get_device_width();
+    h = gws_get_device_height();
+
     
-    __mywindow = (struct window_d *) createwCreateWindow ( WT_OVERLAPPED, 
-                                         1, 1, "overlapped",  
-                                         20, 20, 
-                                         480, 320,   
+    __mywindow = (struct window_d *) createwCreateWindow ( WT_SIMPLE, //WT_OVERLAPPED, 
+                                         1, 1, "gws-taskbar",  
+                                         0, 0, 
+                                         w, 36,   
                                          gui->screen, 0, 
-                                         xCOLOR_GRAY3, xCOLOR_GRAY3 );
+                                         COLOR_PINK, COLOR_BLUE );
 
  
+
+
+    // Draw text inside a window.
+    // Refresh screen.
+
+    dtextDrawText ( (struct window_d *) __mywindow,
+        4, 4, COLOR_RED, "gws: Calling child" );
+
+    gde_show_backbuffer ();
+
+
     //
     // Calling child.
     //
 
-
-    // Draw text inside a window.
-    dtextDrawText ( (struct window_d *) __mywindow,
-        40, 40, 
-        COLOR_RED, "gws: Calling child" );
-      
-
-
     // #test
     // Nesse test, s2 usará socket para se conectar
     // AF_GRAMADO.
-    gde_clone_and_execute ("s2.bin");        
+      gde_clone_and_execute ("s2.bin"); 
     //gde_clone_and_execute ("iliinit.bin");        
-
     // ...
 
-    //
-    // Refresh screen.
-    //
-
-    gde_show_backbuffer ();
-   
-   
     //
     // Desktop
     //

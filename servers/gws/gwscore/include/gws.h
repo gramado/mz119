@@ -23,6 +23,11 @@ unsigned long  ____BACKBUFFER_VA;
 #include "gws/window.h"
 #include "gws/ws.h"
 
+
+unsigned long gws_get_device_width(void);
+unsigned long gws_get_device_height(void);
+
+
 int gwsInit ();
 
 
