@@ -232,9 +232,10 @@ extern void do_executa_new_task (void);
 // kservers (v)
 #include <kernel/sysio/kservers/kgwm/kgwm.h>
 #include <kernel/sysio/kservers/kgws/kgws/ws.h>
-#include <kernel/sysio/kservers/kgws/user/usession.h>
-#include <kernel/sysio/kservers/kgws/user/room.h>
-#include <kernel/sysio/kservers/kgws/user/desktop.h>
+
+
+
+
 #include <kernel/sysio/kservers/kgws/kgws/window.h>
 #include <kernel/sysio/kservers/kgws/kgws/menu.h>
 #include <kernel/sysio/kservers/kgws/kgws/grid.h>
@@ -242,7 +243,18 @@ extern void do_executa_new_task (void);
 #include <kernel/sysio/kservers/kgws/terminal/line.h>
 #include <kernel/sysio/kservers/kgws/terminal/terminal.h>
 #include <kernel/sysio/kservers/kgws/kgws/guiconf.h>
-#include <kernel/sysio/kservers/kgws/user/user.h>
+
+
+//
+// Security
+//
+
+#include <kernel/security/usession.h>
+#include <kernel/security/room.h>
+#include <kernel/security/desktop.h>
+#include <kernel/security/user.h>
+
+
 #include <kernel/sysio/kservers/kgws/logon/logon.h>
 #include <kernel/sysio/kservers/kgws/logoff/logoff.h>
 #include <kernel/sysio/kservers/kgws/kgws.h>

@@ -10,7 +10,7 @@
 VERSION = 1
 PATCHLEVEL = 30
 SUBLEVEL = 0
-EXTRAVERSION = -rc16
+EXTRAVERSION = -rc17
 NAME = 
 
 
@@ -468,12 +468,21 @@ KERNEL.BIN:
 	gcc -c kernel/sysio/kservers/kgws/terminal/input.c     $(KINCLUDE) $(CFLAGS) -o input.o
 	gcc -c kernel/sysio/kservers/kgws/terminal/output.c    $(KINCLUDE) $(CFLAGS) -o output.o
 	gcc -c kernel/sysio/kservers/kgws/terminal/terminal.c  $(KINCLUDE) $(CFLAGS) -o terminal.o
-	
-	gcc -c kernel/sysio/kservers/kgws/user/userenv.c   $(KINCLUDE) $(CFLAGS) -o userenv.o
-	gcc -c kernel/sysio/kservers/kgws/user/desktop.c   $(KINCLUDE) $(CFLAGS) -o desktop.o
-	gcc -c kernel/sysio/kservers/kgws/user/room.c      $(KINCLUDE) $(CFLAGS) -o room.o
-	gcc -c kernel/sysio/kservers/kgws/user/usession.c  $(KINCLUDE) $(CFLAGS) -o usession.o
-	
+
+
+
+	#
+	# Security
+	#
+
+
+	gcc -c kernel/security/desktop.c   $(KINCLUDE) $(CFLAGS) -o desktop.o
+	gcc -c kernel/security/room.c      $(KINCLUDE) $(CFLAGS) -o room.o
+	gcc -c kernel/security/userenv.c   $(KINCLUDE) $(CFLAGS) -o userenv.o
+	gcc -c kernel/security/usession.c  $(KINCLUDE) $(CFLAGS) -o usession.o
+
+
+
 	gcc -c kernel/sysio/kservers/kgws/kgws.c $(KINCLUDE) $(CFLAGS) -o kgws.o
 
 

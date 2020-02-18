@@ -321,7 +321,11 @@ struct process_d
     pid_t pid;
     pid_t ppid;
 
-    uid_t uid;
+    //
+    // Privilégios.
+    //
+
+    uid_t uid;   
     gid_t gid;
 
 	// State.
