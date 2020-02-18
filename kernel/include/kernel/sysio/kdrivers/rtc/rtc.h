@@ -9,6 +9,17 @@
  */ 
  
 
+#define  RTC_IRQ   8 
+ 
+ 
+//ports 
+#define RTC_ADDRESS_PORT 0x70 
+#define RTC_DATA_PORT    0x71
+
+unsigned short rtcGetBaseMemory (void);
+
+
+
 
 //Time
 #define  RTC_SEC    0x00  //*RTC seconds. 

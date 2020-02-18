@@ -1,8 +1,9 @@
 /*
  * File: rtc.c 
  *
+ * Real-Time Clock
+ * 
  * Descrição:
- *     Real Time Controller ?!!
  *     Controlador RTC, Data e Hora.
  * @todo: Criar métodos para acessar os valores salvos na estrutura Rtc.
  *     
@@ -28,6 +29,12 @@
 	071 CMOS RAM data  (AT,PS/2)
 */
  
+ 
+// See:
+// https://en.wikipedia.org/wiki/Real-time_clock 
+// https://wiki.osdev.org/RTC
+
+
  
 #include <kernel.h>
 

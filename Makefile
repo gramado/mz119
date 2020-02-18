@@ -10,7 +10,7 @@
 VERSION = 1
 PATCHLEVEL = 30
 SUBLEVEL = 0
-EXTRAVERSION = -rc15
+EXTRAVERSION = -rc16
 NAME = 
 
 
@@ -150,7 +150,7 @@ ifeq ($(ARCH),x86)
 	usb.o \
 	video.o vsync.o screen.o xproc.o \
 	i8042.o keyboard.o mouse.o ps2kbd.o ps2mouse.o ldisc.o \
-	apic.o pic.o rtc.o serial.o timer.o  
+	apic.o pic.o rtc.o serial.o pit.o  
 	
 	KSERVERS_OBJECTS := cf.o format.o pipe.o fs.o read.o search.o write.o \
 	cedge.o bg.o bmp.o button.o char.o createw.o dtext.o font.o grid.o \
@@ -313,13 +313,18 @@ KERNEL.BIN:
 	gcc -c kernel/syslib/libcore/string.c  $(KINCLUDE) $(CFLAGS) -o string.o
 	gcc -c kernel/syslib/libcore/unistd.c  $(KINCLUDE) $(CFLAGS) -o unistd.o
 
+	# kdrivers rtc
+	gcc -c kernel/sysio/kdrivers/rtc/rtc.c     $(KINCLUDE) $(CFLAGS) -o rtc.o
 
-	gcc -c kernel/sysio/kdrivers/apic.c    $(KINCLUDE) $(CFLAGS) -o apic.o
-	gcc -c kernel/sysio/kdrivers/pic.c     $(KINCLUDE) $(CFLAGS) -o pic.o
-	gcc -c kernel/sysio/kdrivers/rtc.c     $(KINCLUDE) $(CFLAGS) -o rtc.o
-	gcc -c kernel/sysio/kdrivers/serial.c  $(KINCLUDE) $(CFLAGS) -o serial.o
-	gcc -c kernel/sysio/kdrivers/timer.c   $(KINCLUDE) $(CFLAGS) -o timer.o
+	# kdrivers serial
+	gcc -c kernel/sysio/kdrivers/serial/serial.c  $(KINCLUDE) $(CFLAGS) -o serial.o
 
+
+	# kdrivers x86
+	gcc -c kernel/sysio/kdrivers/arch/x86/apic.c  $(KINCLUDE) $(CFLAGS) -o apic.o
+	gcc -c kernel/sysio/kdrivers/arch/x86/pic.c   $(KINCLUDE) $(CFLAGS) -o pic.o
+	gcc -c kernel/sysio/kdrivers/arch/x86/pit.c   $(KINCLUDE) $(CFLAGS) -o pit.o
+	
 
 	# kdrivers/ahci 
 	# todo

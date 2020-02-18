@@ -110,20 +110,18 @@ extern void do_executa_new_task (void);
 //...
 
 
+#include <kernel/sysmk/ps/mm/mm.h>
 
 // sysmk
 #include <kernel/sysmk/ps/mm/x86/memmap.h> 
-#include <kernel/sysmk/ps/mm/memory2.h>
+#include <kernel/sysmk/ps/mm/x86/intelmm.h>
 
 
 // kdrivers
-#include <kernel/sysio/kdrivers/intel.h>
-#include <kernel/sysio/kdrivers/cpuid.h>
 #include <kernel/sysio/kdrivers/x/display.h>
 #include <kernel/sysio/kdrivers/x/video/screen.h>
 #include <kernel/sysio/kdrivers/x/video/video.h>
 #include <kernel/sysio/kdrivers/x/video/virtcon.h>
-#include <kernel/sysio/kdrivers/rtc2.h>
 
 // kservers
 #include <kernel/sysio/kservers/kgws/kgws/fonts.h>
@@ -170,14 +168,26 @@ extern void do_executa_new_task (void);
 #include <kernel/syssm/storage/storage.h>          
 
 
-// kdrivers
+
+// kdrivers serial
 #include <kernel/sysio/kdrivers/serial/serial.h>
+
+// kdrivers ps2
 #include <kernel/sysio/kdrivers/ps2/ps2.h>
-#include <kernel/sysio/kdrivers/timer.h>
-#include <kernel/sysio/kdrivers/pic.h>
-#include <kernel/sysio/kdrivers/apic.h>
-#include <kernel/sysio/kdrivers/rtc.h>
+
+// kdrivers x86
+#include <kernel/sysio/kdrivers/arch/x86/pit.h>
+#include <kernel/sysio/kdrivers/arch/x86/pic.h>
+#include <kernel/sysio/kdrivers/arch/x86/apic.h>
+#include <kernel/sysio/kdrivers/arch/x86/cpuid.h>
+
+// kdrivers rtc
+#include <kernel/sysio/kdrivers/rtc/rtc.h>
+
+//floppy
 #include <kernel/sysio/kdrivers/floppy/floppy.h>
+
+//x
 #include <kernel/sysio/kdrivers/x/xproc.h>
 #include <kernel/sysio/kdrivers/x/i8042/keyboard.h>
 #include <kernel/sysio/kdrivers/x/i8042/vk.h>
@@ -282,7 +292,6 @@ extern void do_executa_new_task (void);
 #include <kernel/net/network/network.h>     //(network) Gerenciamento de rede.  
 
 
-#include <kernel/sysio/kdrivers/dd.h>
 
 // devices
 #include <kernel/sysio/devices.h>
@@ -312,12 +321,13 @@ extern void do_executa_new_task (void);
 
 
 // sysmk (^)
-#include <kernel/sysmk/ps/mm/x86/mmglobal.h>      // Deve ficar mais acima.
-#include <kernel/sysmk/ps/mm/x86/heap.h>          // Heap pointer support.
-#include <kernel/sysmk/ps/mm/x86/aspace.h>        // Address Space, (data base account).
-#include <kernel/sysmk/ps/mm/x86/dspace.h>        // Disk Space, (data base account).
-#include <kernel/sysmk/ps/mm/x86/bank.h>          // Bank. database
-#include <kernel/sysmk/ps/mm/x86/mm.h>            // mm, memory manager support.
+#include <kernel/sysmk/ps/mm/x86/mmglobal.h>  // Deve ficar mais acima.
+#include <kernel/sysmk/ps/mm/x86/heap.h>      // Heap pointer support.
+#include <kernel/sysmk/ps/mm/x86/aspace.h>    // Address Space, (data base account).
+#include <kernel/sysmk/ps/mm/x86/dspace.h>    // Disk Space, (data base account).
+#include <kernel/sysmk/ps/mm/x86/bank.h>      // Bank. database
+#include <kernel/sysmk/ps/mm/x86/x86mm.h>     // mm, memory manager support.
+
 
 
 // kservers

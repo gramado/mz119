@@ -3,7 +3,7 @@ Allocating common symbols
 Common symbol       size              file
 
 _timerShowTextCursor
-                    0x4               timer.o
+                    0x4               pit.o
 _framepoolBackBuffer3
                     0x4               main.o
 _guiMenu            0x4               main.o
@@ -241,7 +241,7 @@ _file_Init          0x4               main.o
 _KeInitPhase        0x4               main.o
 _tty_table          0x10              tty.o
 _windows_count      0x4               main.o
-_timerColor         0x4               timer.o
+_timerColor         0x4               pit.o
 _pagetableList      0x1000            main.o
 _combobox_window    0x4               main.o
 _framepoolBackBuffer1
@@ -280,7 +280,7 @@ _g_module_logoff_initialized
                     0x4               main.o
 _pagetableCurrent   0x4               main.o
 _timerTextCursorStatus
-                    0x4               timer.o
+                    0x4               pit.o
 _____boot____disk   0x4               main.o
 _g8x14fontAddress   0x4               main.o
 _Irq12              0x4               main.o
@@ -288,7 +288,7 @@ _g_profiler_ints_irq1
                     0x4               main.o
 _LARGE_extraheap2_address
                     0x4               main.o
-_timerStatus        0x4               timer.o
+_timerStatus        0x4               pit.o
 _mainButton1        0x4               main.o
 _g_profiler_ints_irq7
                     0x4               main.o
@@ -688,7 +688,7 @@ _kgws_mouse_event_mouse_buttom_3
 _CurrentTTYDRV      0x4               main.o
 _g_navigationbar_width
                     0x4               main.o
-_timerIdleState     0x4               timer.o
+_timerIdleState     0x4               pit.o
 _gws_currentfont_address
                     0x4               main.o
 _windowList         0x1000            main.o
@@ -699,7 +699,7 @@ _file_CS            0x4               main.o
 _memorysizeFree     0x4               main.o
 _contextECX         0x4               x86cont.o
 _Irq6               0x4               main.o
-_timerError         0x4               timer.o
+_timerError         0x4               pit.o
 _gInitPageDirectoryAddress
                     0x4               main.o
 _IDE                0x14              main.o
@@ -960,7 +960,7 @@ _kgws_mouse_event_moving
                     0x4               kgws.o
 _server_stdout      0x4               main.o
 _contextEDI         0x4               x86cont.o
-_timerLock          0x4               timer.o
+_timerLock          0x4               pit.o
 _currentNIC         0x4               main.o
 ___breaker_ps2keyboard_initialized
                     0x4               main.o
@@ -1050,7 +1050,7 @@ _pmiCurrent         0x4               main.o
 _g_profiler_ints_irq9
                     0x4               main.o
 _Pci                0x4               main.o
-_timerLine          0x4               timer.o
+_timerLine          0x4               pit.o
 _mouse_buttom_2     0x4               main.o
 _CurrentConnection  0x4               main.o
 _CurrentUser        0x4               main.o
@@ -1700,7 +1700,7 @@ Linker script and memory map
                 0x00000000c0019883                _serial_write_char
                 0x00000000c00198c5                _serial_init_port
                 0x00000000c001996b                _serial_init
- .text          0x00000000c0019a08      0x8ab timer.o
+ .text          0x00000000c0019a08      0x8ab pit.o
                 0x00000000c0019a08                _KiTimer
                 0x00000000c0019a2e                _timer
                 0x00000000c0019d61                _timerEnableTextCursor
@@ -2525,7 +2525,7 @@ Linker script and memory map
  .rodata        0x00000000c003b689       0x61 rtc.o
  .rodata        0x00000000c003b6ea        0x7 serial.o
  *fill*         0x00000000c003b6f1        0x3 
- .rodata        0x00000000c003b6f4      0x103 timer.o
+ .rodata        0x00000000c003b6f4      0x103 pit.o
  *fill*         0x00000000c003b7f7        0x1 
  .rodata        0x00000000c003b7f8      0x11e cf.o
  .rodata        0x00000000c003b916        0x7 format.o
@@ -2739,7 +2739,7 @@ Linker script and memory map
                                         0x13c (size before relaxing)
  .eh_frame      0x00000000c0044994       0xe0 serial.o
                                          0xf8 (size before relaxing)
- .eh_frame      0x00000000c0044a74      0x320 timer.o
+ .eh_frame      0x00000000c0044a74      0x320 pit.o
                                         0x338 (size before relaxing)
  .eh_frame      0x00000000c0044d94       0x80 cf.o
                                          0x98 (size before relaxing)
@@ -3007,7 +3007,7 @@ Linker script and memory map
  *fill*         0x00000000c005250c       0x14 
  .data          0x00000000c0052520      0x1ec serial.o
  *fill*         0x00000000c005270c       0x14 
- .data          0x00000000c0052720      0x1ec timer.o
+ .data          0x00000000c0052720      0x1ec pit.o
  *fill*         0x00000000c005290c       0x14 
  .data          0x00000000c0052920      0x1ec cf.o
  *fill*         0x00000000c0052b0c       0x14 
@@ -3928,7 +3928,7 @@ Linker script and memory map
                 0x00000000c00af8ec                _rtcError
                 0x00000000c00af8f0                _rtcTicks
                 0x00000000c00af8f4                _rtcStatus
- COMMON         0x00000000c00af8f8       0x20 timer.o
+ COMMON         0x00000000c00af8f8       0x20 pit.o
                 0x00000000c00af8f8                _timerShowTextCursor
                 0x00000000c00af8fc                _timerColor
                 0x00000000c00af900                _timerTextCursorStatus
@@ -4085,7 +4085,7 @@ Linker script and memory map
  .bss           0x00000000c00c054c       0x2c pic.o
  .bss           0x00000000c00c0578       0x2c rtc.o
  .bss           0x00000000c00c05a4       0x2c serial.o
- .bss           0x00000000c00c05d0       0x2c timer.o
+ .bss           0x00000000c00c05d0       0x2c pit.o
  .bss           0x00000000c00c05fc       0x2c cf.o
  .bss           0x00000000c00c0628       0x2c format.o
  .bss           0x00000000c00c0654       0x2c pipe.o
@@ -4227,7 +4227,7 @@ LOAD apic.o
 LOAD pic.o
 LOAD rtc.o
 LOAD serial.o
-LOAD timer.o
+LOAD pit.o
 LOAD cf.o
 LOAD format.o
 LOAD pipe.o
@@ -4366,7 +4366,7 @@ OUTPUT(KERNEL.BIN elf32-i386)
  .comment       0x0000000000000011       0x12 pic.o
  .comment       0x0000000000000011       0x12 rtc.o
  .comment       0x0000000000000011       0x12 serial.o
- .comment       0x0000000000000011       0x12 timer.o
+ .comment       0x0000000000000011       0x12 pit.o
  .comment       0x0000000000000011       0x12 cf.o
  .comment       0x0000000000000011       0x12 format.o
  .comment       0x0000000000000011       0x12 pipe.o
@@ -4566,7 +4566,7 @@ OUTPUT(KERNEL.BIN elf32-i386)
  .note.GNU-stack
                 0x0000000000000000        0x0 serial.o
  .note.GNU-stack
-                0x0000000000000000        0x0 timer.o
+                0x0000000000000000        0x0 pit.o
  .note.GNU-stack
                 0x0000000000000000        0x0 cf.o
  .note.GNU-stack
