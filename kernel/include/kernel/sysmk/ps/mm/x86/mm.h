@@ -1205,7 +1205,7 @@ struct frame_table_d FT;
 
 
 
-/*
+
 // #test
 
 //
@@ -1215,13 +1215,22 @@ struct frame_table_d FT;
 // This structure is gonna handle a free frame.
 struct frame_d
 {
+    pid_t owner;
+
+    int count; //reference count.
+
+    int age; //reference time.
+
+    unsigned long virtual_address;
+
     // O número da entrada na tabela FT.frame_table[entry_number].
     // Também é o índice que representa o offset de lba
-    // no armazenamento secindário.
+    // no armazenamento secundário.
     int entry_number;
     
     // Se esse frame está no disco.
     // Isso significa que o frame pode ser considerado livre.
+    // The pointer is in the SWAPPED_FRAMES[] list.
     int swapped;
 };
 
@@ -1230,11 +1239,25 @@ struct frame_d
 
 // 1024 frames de fácil acesso.
 // pode ser usado pra alocar rapidamente memória para um novo processo.
-// NULL = entrada vazi
+// NULL = entrada vazia
 // !NULL = ponteiro para a estrutura do tipo free_frame_d.
+
+// Lista de processos livres.
+// Isso facilita, possivelmente evitando a busca 
+// na tabela global FT.frame_table[]
 struct frame_d FREE_FRAMES[1024];
+
+//This entries are in the disk.
 struct frame_d SWAPPED_FRAMES[1024];
-*/
+
+// Maybe we can have more lists here.
+// ...
+
+
+
+
+
+
 
 
 

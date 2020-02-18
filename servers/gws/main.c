@@ -4,6 +4,23 @@
 // para que em client side começem com gws_
 
 
+/*
+See: https://wiki.osdev.org/Graphics_stack
+
+    > Application Layer
+    > Interoperation Layers
+        +Desktop Management Layer
+        +Window Management Layer 
+    > Presentation Layers
+        +Compositing Layer
+        +Widget Toolkit Layer
+        +Rendering Layer 
+    > Display Layers
+        +Device Driver Layer
+        +Hardware Layer 
+
+*/
+
 /*	$NetBSD: tty.c,v 1.8 2011/09/06 18:34:57 joerg Exp $	*/
 
 /*
