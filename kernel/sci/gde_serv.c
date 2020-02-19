@@ -1132,6 +1132,17 @@ void *gde_extra_services ( unsigned long number,
         return (void *) socket_set_gramado_port( (int) arg2, (int) arg3 );
     }
 
+    // sys_getsockname()
+    // fd, sockaddr struct pointer, addr len.
+    if ( number == 7007 ){
+
+        return (void *) sys_getsockname ( (int) arg2, 
+                            (struct sockaddr *) arg3,
+                            (socklen_t *) arg4 );
+
+     }
+    
+    
     //...
     
         

@@ -730,6 +730,8 @@ sys_bind ( int sockfd,
         return -1;
     }
    
+    //addr 
+    
     // Usando a estrutura que nos foi passada.
     if ( (void *) addr == NULL ){
         printf ("sys_bind: addr fail\n");
@@ -766,6 +768,94 @@ sys_bind ( int sockfd,
 }   
 
 
+
+int 
+sys_getsockname ( int sockfd, 
+                  struct sockaddr *addr, 
+                  socklen_t *addrlen )
+{
+    struct process_d *p;
+    struct file_d *f;
+    struct socket_d *s;
+
+
+
+    if ( sockfd < 0 || sockfd >= 32 ){
+        printf ("sys_getsockname: sockfd fail\n");
+        refresh_screen();
+        return -1;
+    }
+
+    // process
+    p = (struct process_d *) processList[current_process];
+ 
+    if ( (void *) p == NULL ){
+        printf ("sys_getsockname: p fail\n");
+        refresh_screen();
+        return -1;
+    }
+
+
+    // file
+    f = (file *) p->Objects[sockfd];
+
+    if ( (void *) f == NULL ){
+        printf ("sys_getsockname: f fail\n");
+        refresh_screen();
+        return -1;
+    }
+    
+ 
+    //socket
+    s = (struct socket_d *) f->priv;
+
+    if ( (void *) s == NULL ){
+        printf ("sys_getsockname: s fail\n");
+        refresh_screen();
+        return -1;
+    }
+
+
+    //addr 
+    
+    // Usando a estrutura que nos foi passada.
+    if ( (void *) addr == NULL ){
+        printf ("sys_getsockname: addr fail\n");
+        refresh_screen();
+        return -1;
+    }
+
+
+    // Everything is ok.
+    // So now we need to include the 'name' into the socket structure
+    // respecting the socket's family.
+    int n = 0;
+    if (s->addr.sa_family == AF_GRAMADO)
+    {
+        // Binding the name to the socket.
+        printf ("~Getting the name and the size\n");
+        
+        addrlen[0] = n;
+        
+        // Always 14.
+        for(n=0; n<14; n++)
+            addr->sa_data[n] = s->addr.sa_data[n];
+
+        
+        debug_print ("sys_getsockname: bind ok\n");
+        return 0;
+    }
+    
+    printf ("process %d ; family %d ; len %d \n", 
+        current_process, addr->sa_family, addrlen  );
+ 
+     
+    printf ("sys_getsockname: fail\n");
+    refresh_screen();
+    return -1;
+}
+      
+      
         
 
 int sys_listen (int sockfd, int backlog)      

@@ -925,8 +925,8 @@ long pathconf (const char *pathname, int name)
 
 
 //deletar.
-static char   __libc_hostname[HOST_NAME_MAX];
-static char   __libc_username[HOST_NAME_MAX];
+//static char   __libc_hostname[HOST_NAME_MAX];
+//static char   __libc_username[HOST_NAME_MAX];
 
 
 
@@ -934,20 +934,18 @@ static char   __libc_username[HOST_NAME_MAX];
 /*
  * __gethostname:
  * 
- * 
  */
  
-//isso funciona.
 char __Hostname_buffer[64];
-
 char *__gethostname (void)
 {
     gramado_system_call ( 801, 
        (unsigned long) &__Hostname_buffer[0],
        (unsigned long) &__Hostname_buffer[0],
        (unsigned long) &__Hostname_buffer[0] );
-	
-	return __Hostname_buffer;
+
+
+    return __Hostname_buffer;
 }
 
 
@@ -965,14 +963,14 @@ char *__gethostname (void)
 
 int gethostname (char *name, size_t len){
 
-    int len_ret;
+    int len_ret = -1;
     
     len_ret = (int) gramado_system_call ( 38, 
                         (unsigned long) name,
                         (unsigned long) name,
                         (unsigned long) name );
      
-     return len_ret;
+     return (int) len_ret;
 }
 
 
@@ -987,25 +985,27 @@ int sethostname (const char *name, size_t len){
 }
 
 
+/*
+ * getlogin: 
+ * 
+ */
 
 char __Login_buffer[64];
-
-//#todo
 char *getlogin (void)
 {
-	//passamos um buffer para o kernel.
-	gramado_system_call ( 803, 
-	    (unsigned long) &__Login_buffer[0],
-	    (unsigned long) &__Login_buffer[0],
-	    (unsigned long) &__Login_buffer[0] );
-	
-	//strcpy(__Login, "test");
-	return __Login_buffer;
+
+    gramado_system_call ( 803, 
+        (unsigned long) &__Login_buffer[0],
+        (unsigned long) &__Login_buffer[0],
+        (unsigned long) &__Login_buffer[0] );
+
+
+    return __Login_buffer;
 }
 
-//#todo
-int setlogin(const char *name)
-{
+
+
+int setlogin (const char *name){
 
     //#todo: pegar retorno da função
     //return (int) 
@@ -1025,7 +1025,7 @@ int setlogin(const char *name)
  */
  
 // #todo
-//usar  setlogin 
+// usar  setlogin 
  
 int getusername (char *name, size_t len)
 {
@@ -1356,6 +1356,404 @@ int access(const char *pathname, int mode)
     return -1;
 }
 
+
+
+/*
+int getsuf (char s[]);
+int getsuf (char s[]){
+	
+	int c;
+	char t, *os;
+
+	c = 0;
+	os = s;
+	
+	while (t = *s++)
+		if (t=='/')
+			c = 0;
+		else
+			c++;
+	s =- 3;
+	if (c<=8 && c>2 && *s++=='.' && *s=='f')
+		return('f');
+		
+	return(0);
+}
+*/
+
+
+/*
+void setsuf (char s[]);
+void setsuf (char s[]){
+	
+	while (*s++);
+	s[-2] = 'o';
+}
+*/
+
+
+/*
+int nodup ( char *l[], char s[]);
+int nodup ( char *l[], char s[]){
+	
+	char *t, *os, c;
+
+	os = s;
+	
+	while (t = *l++)
+	{
+		s = os;
+		while(c = *s++)
+			if (c != *t++) goto ll;
+		if (*t++ == '\0') return (0);
+ll:;
+	}
+	return (1);
+}
+*/
+
+
+
+
+/*
+//???
+char *nxtarg ( int ap, int	ac, char **av );
+char *nxtarg ( int ap, int	ac, char **av ){
+
+	if (ap>ac)
+	    return ( 0*ap++ );
+	    
+	return ( av[ap++] );
+}
+*/
+
+
+
+/*
+// ?? tipos
+int tio ( int a, int f);
+int tio ( int a, int f){
+
+	a = open (a,f);
+	
+	if (a>=0)
+	{
+		close (a);
+		return(1);
+	}
+	
+	return(0);
+}
+*/
+
+
+
+/* ??
+int tcreat ( int a)
+{
+	return(1);
+}
+*/
+
+
+
+
+int eq (char *a, char *b){
+
+    int i;
+
+    i = 0;
+
+l:
+    if (a[i] != b[i])
+        return (0);
+
+    if (a[i++] == '\0')
+        return (1);
+
+    goto l;
+}
+
+
+
+
+
+
+
+// pega uma label em uma linha do arquivo
+// para comparar strings;
+int getlin(char s[]){
+
+    int ch, i;
+
+    i = 0;
+l:
+
+    // Se acabou a string.
+    if ( ( ch=getc() ) == '\0' ) 
+        return (1);
+
+
+    // Se não for o marcador de label.
+    if ( ch != ':' )
+    {
+        // Avançamos até o fim da linha ou até o fim da string;
+        while ( ch != '\n' && ch != '\0' )
+            ch = getc();
+
+        goto l;
+    }
+
+    // Nesse momento ja encontramos o ':'.
+    // Vamos colocar o que segue dentro do array.
+    // Não queremos os espaços.
+
+    // Pulamos os espaços.
+    while ((ch=getc())==' ');
+
+    
+    while ( ch != ' ' && ch != '\n' && ch != '\0' ) 
+    {
+        s[i++] = ch;
+        ch = getc();
+    }
+
+    s[i] = '\0';
+
+    return(0);
+}
+
+
+
+
+/*
+//label?
+int unix_getlin ( char s[] )
+{
+    int ch, i;
+
+	i = 0;
+
+
+l:
+    if ( (ch=getc())=='\0' ) 
+        return(1);
+
+
+	if (ch != ':') 
+	{
+		while ( ch != '\n' && ch != '\0' )
+			ch = getc();
+		
+		goto l;
+	}
+
+	while ( (ch=getc()) == ' ' );
+
+
+	while ( ch != ' '  && 
+	        ch != '\n' && 
+	        ch != '\0' )
+	{
+		s[i++] = ch;
+		
+		ch = getc();
+	}
+	
+	s[i] = '\0';
+	
+	return(0);
+}
+*/
+
+
+
+/*
+void printn ( int n, int b);
+void printn ( int n, int b){
+	
+	//extern putchar;
+	//auto a;
+    int a;
+    
+    if ( b == 0 )
+        return;
+
+	if(a=n/b)    //assignment, not test for equality
+		printn (a, b);    //recursive 
+		
+		
+	//if (b == 0)
+	    //return;
+	    	
+	putchar (n%b + '0');
+}
+*/
+
+
+
+
+
+/*
+int match ( char *s, char *p );
+int match ( char *s, char *p ){
+	
+	if (*s=='.' && *p!='.') 
+	    return (0);
+	    
+	return ( amatch(s, p) );
+}
+*/
+
+
+/*
+int amatch (char *s, char *p);
+int amatch (char *s, char *p){
+	
+	int c, cc, ok, lc, scc;
+
+	scc = *s;
+	
+	lc = 077777;
+	
+	switch (c = *p) {
+
+	case '[':
+		ok = 0;
+		while (cc = *++p) 
+		{
+			switch (cc) 
+			{
+			    case ']':
+				    if (ok)
+					    return ( amatch(++s, ++p) );
+				    else
+					    return(0);
+
+			    case '-':
+				    ok =| lc <= scc & scc <= (cc=p[1]); //?? 
+			}
+			if (scc==(lc=cc)) ok++;
+		}
+		return(0);
+
+
+	case '?':
+	
+	    caseq: //label
+		    if(scc) return(amatch(++s, ++p));
+		    return(0);
+		
+	case '*':
+		return(umatch(s, ++p));
+		
+	case 0:
+		return(!scc);
+	}
+	
+	if (c==scc) 
+	    goto caseq;
+	
+	return(0);
+}
+*/
+
+/*
+int umatch(char *s, char *p);
+int umatch(char *s, char *p){
+	
+	if( *p == 0 ) 
+	    return (1);
+	    
+	while (*s)
+		if ( amatch(s++,p) ) return (1);
+		
+	return(0);
+}
+*/
+
+
+
+
+
+
+
+// Compare
+// Not tested yet.
+int compar(char *s1, char *s2){
+
+    int c1, c2;
+
+loop:
+
+    if ((c1 = *s1++) == 0) 
+        return(0);
+        
+    if ((c2 = *s2++) == 0) 
+        return(1);
+
+    if (c1==c2) 
+        goto loop;
+
+
+    return (c1 > c2);
+}
+
+
+
+
+/*
+//copy
+char *copy (char *s1);
+char *copy (char *s1)
+{
+	char *ts;
+
+	ts = string;
+	while(*string++ = *s1++);
+	return(ts);
+}
+*/
+
+/*
+// concatenate
+char *cat ( char *s1, char *s2);
+char *cat ( char *s1, char *s2){
+	
+	char *ts;
+
+	ts = string;
+	while(*string++ = *s1++);
+	string--;
+	while(*string++ = *s2++);
+	return(ts);
+}
+*/
+
+
+
+/*
+int __dup ( char **l, char s[] );
+int __dup ( char **l, char s[] ){
+
+	char *t, *os, c;
+
+	os = s;
+	
+	while (t = *l++) 
+	{
+		s = os;
+		
+		while (c = *s++)
+			if (c != *t++)
+				break;
+		if (*t++ == '\0') 
+			return (1);
+	}
+	
+	return (0);
+}
+*/
 
 //
 // End.

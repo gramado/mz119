@@ -3,13 +3,18 @@
  *
  */
 
-// See: http://man7.org/linux/man-pages/man2/socket.2.html
-// 
+// See: 
+// http://man7.org/linux/man-pages/man2/socket.2.html
+
+
+
 
 #include <sys/types.h>  
 #include <sys/select.h>
 #include <sys/socket.h>
 //#include <unistd.h>
+
+
 
 
 //sortix style;
@@ -112,7 +117,11 @@ int socketpair (int domain, int type, int protocol, int sv[2]){
 // POSIX.1-2001, POSIX.1-2008, SVr4, 4.4BSD, 
 //(connect() first appeared in 4.2BSD).
 // initiate a connection on a socket
-           
+
+// If the connection or binding succeeds, zero is returned.  
+// On error, -1 is returned, and errno is set appropriately.
+
+
 int 
 connect ( int sockfd, 
           const struct sockaddr *addr,
@@ -128,10 +137,7 @@ connect ( int sockfd,
     if(__status<0)
         printf ("connect: Couldn't connect\n");
      
-     
-    //If the connection or binding succeeds, zero is returned.  On error,
-    //   -1 is returned, and errno is set appropriately.
-          
+
     return (int) __status;
 }
            
@@ -149,6 +155,13 @@ connect ( int sockfd,
   The original socket sockfd is unaffected by this call.
 */
 
+
+//  On success, these system calls return a nonnegative integer 
+//  that is a file descriptor for the accepted socket.  
+// On error, -1 is returned, errno is set appropriately, 
+// and addrlen is left unchanged.
+
+
 int accept (int sockfd, struct sockaddr *addr, socklen_t *addrlen)
 {
     int __fd = -1;
@@ -160,13 +173,8 @@ int accept (int sockfd, struct sockaddr *addr, socklen_t *addrlen)
 
     if(__fd<0)
         printf ("accept: Couldn't accept the connection\n");
-   
-       /*
-       On success, these system calls return a nonnegative integer that is a
-       file descriptor for the accepted socket.  On error, -1 is returned,
-       errno is set appropriately, and addrlen is left unchanged.
-       */
-            
+
+
     return (int) __fd;
 }
 
@@ -228,6 +236,10 @@ int pselect(int nfds, fd_set *readfds, fd_set *writefds,
 // “assigning a name to a socket”.
 //  POSIX.1-2001, POSIX.1-2008, SVr4, 
 //  4.4BSD (bind() first appeared in 4.2BSD).
+
+// On success, zero is returned.  
+// On error, -1 is returned, and errno is set appropriately.
+
 int 
 bind ( int sockfd, 
        const struct sockaddr *addr,
@@ -244,10 +256,6 @@ bind ( int sockfd,
         printf ("bind: Couldn't bind\n");
      
      
-    //On success, zero is returned.  On error, -1 is returned, and errno is
-    //   set appropriately.
-
-          
     return (int) __status;
 }
 
@@ -257,6 +265,9 @@ bind ( int sockfd,
 /*
  * listen:
  */
+
+// On success, zero is returned.  
+// On error, -1 is returned, and errno is set appropriately.     
 
 int listen (int sockfd, int backlog)
 {
@@ -270,9 +281,7 @@ int listen (int sockfd, int backlog)
     if(__status<0)
         printf ("connect: Couldn't listen\n");
      
-    // On success, zero is returned.  On error, -1 is returned, and errno is
-    //   set appropriately.     
-          
+
     return (int) __status;
 }
 
@@ -284,7 +293,13 @@ int listen (int sockfd, int backlog)
 
 ssize_t send ( int sockfd, const void *buf, size_t len, int flags )
 {
-    //falta flags.
+
+
+    //#todo: Usar esse.
+    //return (ssize_t) sendto ( (int) sockfd, 
+        //(const void *) buf, (size_t) len, (int) flags,
+        //(const struct sockaddr *) dest_addr, (socklen_t) addrlen );
+
 
     return (ssize_t) write ( sockfd, (const void *) buf, len );
 }
@@ -301,7 +316,9 @@ sendto ( int sockfd,
          const struct sockaddr *dest_addr, 
          socklen_t addrlen )
 {
-    return -1;
+
+    return (ssize_t) write ( sockfd, (const void *) buf, len );
+    //return -1;
 }
 
 
@@ -322,7 +339,13 @@ ssize_t sendmsg (int sockfd, const struct msghdr *msg, int flags)
 
 ssize_t recv ( int sockfd, void *buf, size_t len, int flags )
 {
-   //falta flags.
+
+    // #todo: Usar esse.
+    //return (ssize_t) recvfrom ( (int) sockfd, 
+        //(void *) buf, (size_t) len, (int) flags,
+        //(struct sockaddr *) src_addr, (socklen_t *) addrlen );
+
+ 
    return (ssize_t) read ( sockfd, (const void *) buf, len );
 }
 
@@ -336,7 +359,9 @@ recvfrom ( int sockfd,
            struct sockaddr *src_addr, 
            socklen_t *addrlen )
 {
-     return -1;
+
+     return (ssize_t) read ( sockfd, (const void *) buf, len );
+     //return -1;
 }
 
 
@@ -365,7 +390,18 @@ getsockname ( int sockfd,
               struct sockaddr *addr, 
               socklen_t *addrlen )
 {
-    return -1;
+    int __status = -1;
+    
+    __status = (int) gramado_system_call ( 7007, 
+                     (unsigned long) sockfd, 
+                     (unsigned long) addr, 
+                     (unsigned long) addrlen );
+
+    if(__status<0)
+        printf ("getsockname: fail\n");
+     
+     
+    return (int) __status;
 }
 
 
@@ -379,9 +415,21 @@ getsockname ( int sockfd,
  *     shut down part of a full-duplex connection    
  */
 
+// See:
+// https://linux.die.net/man/3/shutdown
+
+// how: 
+// Muda as flags do arquivo. 
+// Alterando permissões de leitura ou escrita.
+
 int shutdown ( int sockfd, int how ){
 
-    return -1; //#todo
+    // #todo
+    // Deve existir uma rotina na libc que mude
+    // as permissões de um arquivo. Então é ela que devemos
+    // chamar agora e não uma system call.
+
+    return -1; 
 }
 
 

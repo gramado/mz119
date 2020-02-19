@@ -334,5 +334,19 @@ int fchown(int fd, uid_t owner, gid_t group);
 int lchown(const char *pathname, uid_t owner, gid_t group);
 
 
+// Compare
+// Not tested yet.
+int compar(char *s1, char *s2);
+
+// pega uma label em uma linha do arquivo
+// para comparar strings;
+int getlin(char s[]);
+
+int eq (char *a, char *b);
+
 #endif /* _UNISTD_H */
+
+
+
+
 

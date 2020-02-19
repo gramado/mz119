@@ -1052,15 +1052,15 @@ int prompt_strcat (char *string)
 
 int prompt_flush ( int con_id )
 {
-	size_t len;
-	
-	if ( con_id < 0 )
-	    return -1;
-	    
-	if ( con_id >= 4 )
-	    return -1;
+    size_t len;
 
-	//finaliza.
+    if ( con_id < 0 )
+        return -1;
+    
+    if ( con_id >= 4 )
+        return -1;
+
+    //finaliza.
     input ('\0'); 
     len = strlen( (const char *) prompt );  
 
@@ -1069,6 +1069,7 @@ int prompt_flush ( int con_id )
     
     return 0; 
 }
+
 
 void prompt_clean (){
 
@@ -2658,13 +2659,14 @@ char *gets (char *s)
 	return(s);
 }
 
+
 int puts (const char *s)
 {
-	register c;
+    register c;
 
-	while (c = *s++)
-		putchar(c);
-	return(putchar('\n'));
+    while (c = *s++)
+        putchar(c);
+    return (putchar('\n'));
 }
 
 
@@ -2690,15 +2692,16 @@ char *fgets (char *s, int size, FILE *stream)
 	return(s);
 }
 
+
 //s iop
 int fputs ( const char *s, FILE *stream )
 {
-	register r;
-	register c;
+    register r;
+    register c;
 
-	while (c = *s++)
-		r = putc(c,stream);
-	return(r);
+    while (c = *s++)
+        r = putc(c,stream);
+    return(r);
 }
 
 
@@ -4666,29 +4669,34 @@ static int skip_atoi(const char **s)
 	return i;
 }
 
-#define ZEROPAD	1		/* pad with zero */
-#define SIGN	2		/* unsigned/signed long */
-#define PLUS	4		/* show plus */
-#define SPACE	8		/* space if plus */
-#define LEFT	16		/* left justified */
-#define SPECIAL	32		/* 0x */
-#define SMALL	64		/* use 'abcdef' instead of 'ABCDEF' */
+#define ZEROPAD  1   /* pad with zero */
+#define SIGN     2   /* unsigned/signed long */
+#define PLUS     4   /* show plus */
+#define SPACE    8   /* space if plus */
+#define LEFT     16  /* left justified */
+#define SPECIAL  32  /* 0x */
+#define SMALL    64  /* use 'abcdef' instead of 'ABCDEF' */
 
 #define do_div(n,base) ({ \
 int __res; \
 __asm__("divl %4":"=a" (n),"=d" (__res):"0" (n),"1" (0),"r" (base)); \
 __res; })
 
-static char * number(char * str, int num, int base, int size, int precision
-	,int type)
-{
-	char c,sign,tmp[36];
-	const char *digits="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	int i;
 
-	if (type&SMALL) digits="0123456789abcdefghijklmnopqrstuvwxyz";
-	if (type&LEFT) type &= ~ZEROPAD;
-	if (base<2 || base>36)
+static char *number ( char *str, 
+                      int num, 
+                      int base, 
+                      int size, 
+                      int precision, 
+                      int type )
+{
+    char c, sign, tmp[36];
+    const char *digits="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    int i;
+
+    if (type&SMALL) digits="0123456789abcdefghijklmnopqrstuvwxyz";
+    if (type&LEFT) type &= ~ZEROPAD;
+    if (base<2 || base>36)
 		return 0;
 	c = (type & ZEROPAD) ? '0' : ' ' ;
 	if (type&SIGN && num<0) {

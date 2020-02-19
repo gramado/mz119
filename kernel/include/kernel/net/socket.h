@@ -534,7 +534,12 @@ sys_bind ( int sockfd,
            const struct sockaddr *addr,
            socklen_t addrlen );
        
-       
+
+int 
+sys_getsockname ( int sockfd, 
+                  struct sockaddr *addr, 
+                  socklen_t *addrlen );
+ 
        
 int sys_listen (int sockfd, int backlog);          
                
