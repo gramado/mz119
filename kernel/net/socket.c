@@ -841,8 +841,8 @@ sys_getsockname ( int sockfd,
         for(n=0; n<14; n++)
             addr->sa_data[n] = s->addr.sa_data[n];
 
-        
-        debug_print ("sys_getsockname: bind ok\n");
+
+        debug_print ("sys_getsockname: copy ok\n");
         return 0;
     }
     
