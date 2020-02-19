@@ -10,6 +10,9 @@
  */
 
 
+// See:
+// See sci/fs/fs.c for mounted volumes structure.
+
 #include <kernel.h>
 
 
