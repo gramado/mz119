@@ -39,10 +39,81 @@
  *    2019 - fred, pwd and cd support.
  *    ...
  */
+
+
+
+// #todo
+// A tabela de montagem guarda relação com os volumes existentes.
+// Esses volumes podem ser de vários tipos.
+// See: syssm/storage/storage.c
+
  
 
 #include <kernel.h>
 
+
+// Local. Encapsulado.
+// Estrutura para um volume montado.
+// Ele pode ser de vários tipos.
+struct mounted_d
+{
+    int id;
+    int used;
+    int magic;
+    
+    // Ponteiro para a estrutura de disco.
+    struct disk_d *disk;
+    
+    // Ponteiro para a estrutura de volume.
+    struct volume_d *volume;
+    
+    //maybe
+    //struct mounted_d *next;
+};
+
+// Lista de ponteiros para estruturas de columes montados.
+unsigned long mountedList[128];
+
+
+
+
+/*
+//IN: Índice na lista de volumes. volumeList[i].
+int fs_mount_volume (struct disk_d *d, struct volume_d *v);
+int fs_mount_volume (struct disk_d *d, struct volume_d *v)
+{}
+*/
+
+/*
+void fs_initialize_mounted_list(void);
+void fs_initialize_mounted_list(void)
+{
+   int i;
+   for (i=0; i<128; i++)
+       mountedList[i] = (unsigned long) 0;
+}
+*/
+
+
+/*
+int fs_get_mounted_free_slot(void);
+int fs_get_mounted_free_slot(void)
+{
+   int i;
+   for (i=0; i<128; i++)
+   {
+       // Empty
+       if( mountedList[i] == 0 )
+           goto __ok;
+   }
+    
+   //fail
+   return -1;
+
+__ok:
+    return i;
+}
+*/
 
 
 int fs_get_free_fd ( int pid )
