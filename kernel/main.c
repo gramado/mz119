@@ -70,16 +70,16 @@ int kernel_main (int arch_type){
     // Initialize all the ports.
     serial_init ();
 
-	debug_print("============================================\n");    
-	debug_print("== main.c: Architechture independent part ==\n");    
-	debug_print("============================================\n");    
+    debug_print("============================================\n");
+    debug_print("== main.c: Architechture independent part ==\n");
+    debug_print("============================================\n");
 	
-	debug_print("[Kernel] kernel_main: \n");
-	debug_print("[Kernel] kernel_main: Initializing the part in C ...\n");
+    debug_print("[Kernel] kernel_main: \n");
+    debug_print("[Kernel] kernel_main: Initializing the part in C ...\n");
 
-	switch (current_arch)
-	{
-	    case CURRENT_ARCH_X86:
+    switch (current_arch)
+    {
+        case CURRENT_ARCH_X86:
             debug_print ("[Kernel] kernel_main: x86? \n");
             break;
 
@@ -95,16 +95,16 @@ int kernel_main (int arch_type){
             debug_print ("[Kernel] kernel_main: Current arch not defined!\n *hang");
 			goto fail;
             break; 
-	};
+    };
 
 
     //
-	// Kernel status.
-	//
+    // Kernel status.
+    //
 
     KernelStatus = KERNEL_NULL;
 
-	//Initializing the global spinlock.
+    //Initializing the global spinlock.
 
     __spinlock_ipc = 1;
 
@@ -112,7 +112,7 @@ int kernel_main (int arch_type){
 	// #test.
 	// Initializing zorder list.
 	
-	// #todo
+    // #todo
     // Move this to another place.
 
     for ( z=0; z < KGWS_ZORDER_MAX; z++ ){
@@ -158,6 +158,7 @@ int kernel_main (int arch_type){
         VideoBlock.useGui = GUI_OFF;
         debug_print ("[Kernel] kernel_main: GUI_OFF\n");
 		debug_print ("[Kernel] kernel_main: Text mode not supported! *hang");
+
         while (1){
             asm ("cli \n");
             asm ("hlt \n");
@@ -264,7 +265,7 @@ int kernel_main (int arch_type){
 	};
 
     //
-	// Fail!
+    // Fail!
     //
 
 fail:
