@@ -72,10 +72,30 @@ __ok:
 
 
 //IN: Índice na lista de volumes. volumeList[i].
-int fs_mount_volume (struct disk_d *d, struct volume_d *v){
+int 
+fs_mount_volume ( struct disk_d *d, 
+                  struct volume_d *v,
+                  char *name,
+                  size_t len )
+{
 
     struct mounted_d *m;
     int __slot = -1;
+    int i;
+    
+    
+    if ( (void *) name == NULL ){
+        debug_print ("fs_mount_volume: name");
+        return -1;
+    }
+    
+    
+    if (len<0 || len>63){
+        debug_print ("fs_mount_volume: len");
+        len = 8;
+        //return -1;    
+    }
+    
     
     __slot = fs_get_mounted_free_slot();
     
@@ -98,6 +118,14 @@ int fs_mount_volume (struct disk_d *d, struct volume_d *v){
 
         m->disk = (struct disk_d *) d;
         m->volume = (struct volume_d *) v;
+        
+        
+        m->mountedName_len = len;
+    
+        for (i=0; i<len; i++)
+            m->__mountedname[i] = name[i];
+            
+        m->__mountedname[i+1] = 0;  
     
         if (__slot >= 128)
             panic("fs_mount_volume: __slot limits");
@@ -121,9 +149,10 @@ void fs_initialize_mounted_list(void)
    
    //Vamos montar os volumes criados em storage.c
    
-   fs_mount_volume (NULL, volume_vfs );
-   fs_mount_volume (____boot____disk, volume_bootpartition );
-   fs_mount_volume (____boot____disk, volume_systempartition );
+
+   fs_mount_volume (____boot____disk, volume_bootpartition, "/", 1 );  //root
+   fs_mount_volume (____boot____disk, volume_systempartition, "/data", 5 ); //system
+   fs_mount_volume (NULL, volume_vfs, "/vfs", 4 );
 }
 
 
@@ -147,6 +176,8 @@ void fs_show_mounted(int i)
         printf ("id %d\n",m->id);
         printf ("used %d\n",m->used);
         printf ("magic %d\n",m->magic);
+
+        printf ("name %s\n",m->__mountedname);
 
         if ( (void *) m->disk != NULL )
             diskShowDiskInfo(m->disk->id);

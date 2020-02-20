@@ -702,7 +702,11 @@ unsigned long mountedList[128];
 
 
 int fs_get_mounted_free_slot(void);
-int fs_mount_volume (struct disk_d *d, struct volume_d *v);
+int 
+fs_mount_volume ( struct disk_d *d, 
+                  struct volume_d *v,
+                  char *name,
+                  size_t len );
 void fs_initialize_mounted_list(void);
 void fs_show_mounted(int i);
 void fs_show_mounted_list(void);
