@@ -660,41 +660,41 @@ void init_globals (void){
  */ 
 
 int init (void){
-	
+
     int Status = 0;
 
 
-	debug_print ("==== init:\n");
-	
-	//Check kernel phase.
-	
-	if ( KeInitPhase != 0 )
-	{
-		debug_print ("init: KeInitPhase fail\n");
-		panic ("sm-init-init: KeInitPhase\n");
-	}
-	
-	
+    debug_print ("==== init:\n");
+
+    // Check kernel phase.
+
+    if ( KeInitPhase != 0 ){
+        debug_print ("init: KeInitPhase fail\n");
+        panic ("sm-init-init: KeInitPhase\n");
+    }
+
+
 	//
-	// ### IMPORTANTE ###
+	// # IMPORTANTE
 	//
 	
-	
-    //Globals.
-	init_globals ();
-	
-	
+
+    // Globals.
+    debug_print ("init: Globals\n");
+    init_globals ();
+
+
 	// #importante
 	// À partir daqui podemos exibir strings na tela.
-	
+
 
 	
 	
 	
-#ifdef EXECVE_VERBOSE	
-	printf("sm-init-init: init_globals ok\n");     
+#ifdef EXECVE_VERBOSE
+    printf ("sm-init-init: init_globals ok\n");     
 #endif  
-	
+
 	
 	//#bugbug:
 	//Depois de iniciar as globais, provavelmente o cursor mude 
@@ -705,85 +705,108 @@ int init (void){
     //Object manager.	
 #ifdef EXECVE_VERBOSE	
 	printf ("sm-init-init: init_object_manager\n");
-#endif	
-	
-	init_object_manager();
-	
-	//i/o Manager.
+#endif
+
+
+    debug_print ("init: Object manager\n");
+    init_object_manager ();
+
+
+    //i/o Manager.
 #ifdef EXECVE_VERBOSE	
 	printf("sm-init-init: ioInit\n");	
 #endif	
-	
-	ioInit ();
+
+
+    debug_print ("init: io manager\n");
+    ioInit ();
 
     // Inicializa o gerenciamento de dispositivos.
     // Inicializa a lista de dispositivos.
+    debug_print ("init: device manager\n");
+    
     init_device_manager ();
-	
+
     //
-	// =================== ## STORAGE ## ===========================
-	//
-	
+    // =================== ## STORAGE ## ===========================
+    //
+
     // #ordem:
-	// +storage
-	// +disk
-	// +volume 
-	// +file system
-	
+    // +storage
+    // +disk
+    // +volume 
+    // +file system
+
 	//#importante 
 	//A estrutura 'storage' vai ser o nível mais baixo.
 	//É nela que as outras partes devem se basear.
-		
-	storage = (void *) kmalloc ( sizeof(struct storage_d) );
-	
-	if ( (void *) storage == NULL )
-	{
-	    panic ("sm-init-init: storage");
-	}	
-	
-		
-#ifdef EXECVE_VERBOSE	
-	printf("sm-init-init: disk_init\n");
+    debug_print ("init: storage structure\n");
+    
+    storage = (void *) kmalloc ( sizeof(struct storage_d) );
+
+    if ( (void *) storage == NULL ){
+       panic ("sm-init-init: storage");
+    }
+
+
+#ifdef EXECVE_VERBOSE
+    printf ("sm-init-init: disk_init\n");
 #endif  
-	
-	disk_init ();
-	
-#ifdef EXECVE_VERBOSE	
-	printf("sm-init-init: volume_init\n");
+
+    debug_print ("init: disk\n");
+    disk_init ();
+
+
+#ifdef EXECVE_VERBOSE
+    printf("sm-init-init: volume_init\n");
 #endif
-	
-	volume_init ();
-	
-	
+
+    debug_print ("init: volume\n");
+    volume_init ();
+
+
 	
 #ifdef EXECVE_VERBOSE	
 	printf ("fsInit: VFS..\n");
 #endif
-	
-	vfsInit ();
-	
-	
-//deletar	
-#ifdef EXECVE_VERBOSE	
-	printf ("sm-init-init: fsInit\n");
-#endif   
-	
-	fsInit ();
-	    
 
+    debug_print ("init: vfs\n");
+    vfsInit ();
+
+
+//deletar
 #ifdef EXECVE_VERBOSE	
-	printf("sm-init-init: initialize_system_message_queue\n");
-#endif	
-	
-	initialize_system_message_queue (); 
+    printf ("sm-init-init: fsInit\n");
+#endif   
+
+    debug_print ("init: fs\n");
+    fsInit ();
+
+
+    // #todo
+    // Mount root fs.
+    // See: mountedList[] in sci/fs/fs.c
+    // #test: Vamos tentar montar o volume root em mountedList[0].
+    debug_print ("init: [FIXME] Initialize mounted list in fs.c\n");
+
+    // Inicializa a lista.
+    fs_initialize_mounted_list ();
+        
+
+#ifdef EXECVE_VERBOSE
+    printf("sm-init-init: initialize_system_message_queue\n");
+#endif
+
+    initialize_system_message_queue (); 
     
     
 	//
 	// Network
 	//
-	
-	networkInit ();
-	
+
+    debug_print ("init: network\n");
+    networkInit ();
+
 	
 	
     //
@@ -796,15 +819,16 @@ int init (void){
 
     // #important
     // This is the Root struct. :)
-
+    debug_print ("init: Platform struct\n");
+    
     Platform = (void *) kmalloc ( sizeof(struct platform_d) );
 
-    if( (void *) Platform ==  NULL )
-    {
-        panic ("sm-init-init: Platform\n");	
+    if ( (void *) Platform ==  NULL ){
+        panic ("sm-init-init: Platform\n");
+
     }else{
 
-		//Hardware
+        // Hardware
         Hardware = (void *) kmalloc ( sizeof(struct hardware_d) );
 		
 	    if( (void *) Hardware ==  NULL )
@@ -869,28 +893,30 @@ int init (void){
     }
 
 
-	
-	// #importante
-	// So podemos carregar o diretorio raiz depois que inicializamos o 
-    // controlador de IDE e as estruturas de sistema de arquivos.
-	
-	fs_load_rootdir ();
-	
-	
-	KeInitPhase = 2;
-	
-	
+
+    // #importante
+    // Só podemos carregar o diretório raiz depois que 
+    // inicializamos o controlador de IDE e as estruturas de 
+    // sistema de arquivos.
+
+    debug_print ("init: load root dir.\n");
+    fs_load_rootdir ();
+
+
+    KeInitPhase = 2;
+
+
     //#debug
-   // printf ("init: *breakpoint\n"); 
-   // refresh_screen();
-   // while(1){}	
-	
+    // printf ("init: *breakpoint\n"); 
+    // refresh_screen();
+    // while(1){}	
+
 	//
 	//  ==============  #### LOGON #### ===============
 	//
-	
-	
-	
+
+    debug_print ("init: logon\n");
+
 	
 	//printf("#breakpoint before logon");
 	//refresh_screen();
@@ -903,30 +929,33 @@ int init (void){
 	//Fase3: Logon. 
 //Logon:
 
-	//
-	// Logon. 
+    //
+    // Logon. 
     // Cria Background, main window, navigation bar.
     // de acordo com predefinição.
     //
 
-	if ( g_useGUI == 1 )
-	{
+
+    if ( g_useGUI == 1 )
+    {
 
 #ifdef EXECVE_VERBOSE
-	printf ("sm-init-init: calling create_logon ...\n");
+    printf ("sm-init-init: calling create_logon ...\n");
 #endif
-		create_logon ();
+        create_logon ();
 
 #ifdef EXECVE_VERBOSE
-	printf ("sm-init-init: calling init_logon ...\n");
+    printf ("sm-init-init: calling init_logon ...\n");
 #endif
-		//Libera. (Aceita argumentos).
-		init_logon (0,0);    
+        //Libera. (Aceita argumentos).
+        init_logon (0,0);    
 
         //Obs: *IMPORTANTE Usa-se o procedimento de janela do Logon.
-	};	
-	KeInitPhase = 3; 
-	
+    };
+
+    KeInitPhase = 3; 
+
+
 
     //#debug
     //printf ("init: *breakpoint :) \n"); 

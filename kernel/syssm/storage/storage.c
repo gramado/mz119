@@ -372,13 +372,12 @@ int volumeShowVolumeInfo ( int descriptor ){
 
     v = (struct volume_d *) volumeList[descriptor];
 
-	if( (void *) v == NULL )
-	{
+    if( (void *) v == NULL ){
 		printf("struct fail\n");
 		goto fail;
-		
-	}else{
-		
+
+    }else{
+	
 		
 		if( v->used != 1 || v->magic != 1234 )
 		{
@@ -398,7 +397,7 @@ int volumeShowVolumeInfo ( int descriptor ){
 		
 		printf("name={%s}\n",v->name);
 		
-		printf("path_string={%s}\n",v->path_string);
+		//printf("path_string={%s}\n",v->path_string);
 		
 		//printf("");
 		//printf("");
@@ -481,13 +480,9 @@ int volume_init (void){
     }
 
 
-    // root: - Volume 0 (vfs)
-    // root:/volume0 - Links para o raiz.   
-    // root:/volume1 - volume da partição de boot.
-    // root:/volume2 - volume da partição de sistema.
+    // ??? Esse é o root ???
 
-	
-	
+
 	// Volume.
     volume_vfs = (void *) kmalloc( sizeof(struct volume_d) );
 
@@ -514,7 +509,7 @@ int volume_init (void){
         volume_vfs->name = (char *) strdup ( (const char *) name_buffer);  
 
         //#todo
-        volume_vfs->cmd = "root:";
+        volume_vfs->cmd = "#TODO";
 
         volumeList[0] = (unsigned long) volume_vfs;
         storage->vfs_volume = (struct volume_d *) volume_vfs; 
@@ -548,7 +543,7 @@ int volume_init (void){
         
         
         //#todo
-		volume_bootpartition->cmd = "root:/volume1";
+		volume_bootpartition->cmd = "#TODO";
 		
 		//Volume atual
         current_volume = 1;
@@ -585,7 +580,7 @@ int volume_init (void){
 
 
         //#todo 
-		volume_systempartition->cmd = "root:/volume2";
+		volume_systempartition->cmd = "#TODO";
 
         volumeList[2] = (unsigned long) volume_systempartition;
         storage->system_volume = (struct volume_d *) volume_systempartition; 

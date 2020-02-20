@@ -1165,6 +1165,14 @@ void *gde_extra_services ( unsigned long number,
         return NULL;
         //return (void *) sys_fcntl ( ... #todo );
     }
+    
+    
+    // Mostra a lista de volumes montados.
+    if (number == 8500){
+        fs_show_mounted_list();
+        return NULL;
+    }
+    
 
     //test
     //raise window.
@@ -2968,7 +2976,6 @@ void *gde_services ( unsigned long number,
         case SYS_GETSYSTEMMETRICS:
             return (void *) syssm_get_system_metrics ( (int) arg2 );
             break;
-
 
         // 251
         // See: sci/sys/sys.c

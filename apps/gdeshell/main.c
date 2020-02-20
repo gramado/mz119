@@ -2877,6 +2877,12 @@ do_compare:
         goto exit_cmp;
     }
 
+    // mounted
+    if ( gramado_strncmp( prompt, "mounted", 7 ) == 0 ){
+        gramado_system_call( 8500,0,0,0);
+        goto exit_cmp;
+    }
+
 
     // network
     if ( gramado_strncmp( prompt, "network", 7 ) == 0 ){

@@ -132,6 +132,9 @@ struct volume_d
 struct volume_d *volume_vfs;             // volume 0
 struct volume_d *volume_bootpartition;   // volume 1
 struct volume_d *volume_systempartition; // volume 2
+// ...
+
+
 
 //#importante:
 //Esses são os três volumes básicos do sistema 

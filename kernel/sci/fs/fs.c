@@ -52,51 +52,117 @@
 #include <kernel.h>
 
 
-// Local. Encapsulado.
-// Estrutura para um volume montado.
-// Ele pode ser de vários tipos.
-struct mounted_d
-{
-    int id;
-    int used;
-    int magic;
-    
-    // Ponteiro para a estrutura de disco.
-    struct disk_d *disk;
-    
-    // Ponteiro para a estrutura de volume.
-    struct volume_d *volume;
-    
-    //maybe
-    //struct mounted_d *next;
-};
-
-// Lista de ponteiros para estruturas de columes montados.
-unsigned long mountedList[128];
 
 
 
 
-/*
+
 //IN: Índice na lista de volumes. volumeList[i].
-int fs_mount_volume (struct disk_d *d, struct volume_d *v);
-int fs_mount_volume (struct disk_d *d, struct volume_d *v)
-{}
-*/
 
-/*
-void fs_initialize_mounted_list(void);
+int fs_mount_volume (struct disk_d *d, struct volume_d *v)
+{
+    int __slot = -1;
+    
+    __slot = fs_get_mounted_free_slot();
+    
+    if(__slot < 0){
+        debug_print("fs_mount_volume: no more slots");
+        panic("fs_mount_volume: no more slots");
+    }
+    
+    struct mounted_d *m;
+    
+    m = (struct mounted_d *) kmalloc( sizeof(struct mounted_d) );
+    
+    
+    //todo: message
+    if ( (void *) m == NULL )
+        return -1;
+    
+    
+    m->id = __slot;
+    m->used = 1;
+    m->magic = 1234;
+    
+    
+    m->disk = d;
+    m->volume = v;
+    
+    if (__slot >= 128)
+        panic("fs_mount_volume: __slot limits");
+
+
+    mountedList[__slot] = (unsigned long) m;
+
+    return 0;
+}
+
+
+void fs_show_mounted(int i)
+{
+    struct mounted_d *m;
+    
+    
+    printf ("fs_show_mounted: \n");
+    
+    if(i<0)
+        return;
+        
+       
+    m = (struct mounted_d *) mountedList[i];
+
+    if( (void *) m == NULL )
+        return;
+        
+        
+    printf ("id %d\n",m->id);
+    printf ("used %d\n",m->used);
+    printf ("magic %d\n",m->magic);
+    
+    if ( (void *) m->disk != NULL )
+        diskShowDiskInfo(m->disk->id);
+    
+
+    if ( (void *) m->volume != NULL )
+        volumeShowVolumeInfo(m->volume->id);
+
+    //...
+    
+    refresh_screen();
+}
+
+
+
+//mostra a lista de volumes montados.
+void fs_show_mounted_list(void)
+{
+   int i;
+   for (i=0; i<128; i++)
+   {
+       if( mountedList[i] != 0)
+           fs_show_mounted(i);
+   }
+}
+
 void fs_initialize_mounted_list(void)
 {
    int i;
    for (i=0; i<128; i++)
        mountedList[i] = (unsigned long) 0;
+   
+   
+   //Vamos montar os volumes criados em storage.c
+   
+   fs_mount_volume(____boot____disk, volume_vfs );
+   fs_mount_volume(____boot____disk, volume_bootpartition );
+   fs_mount_volume(____boot____disk, volume_systempartition );
+
 }
-*/
 
 
-/*
-int fs_get_mounted_free_slot(void);
+
+
+
 int fs_get_mounted_free_slot(void)
 {
    int i;
@@ -113,9 +179,9 @@ int fs_get_mounted_free_slot(void)
 __ok:
     return i;
 }
-*/
 
 
+// na lista de arquivos do processo.
 int fs_get_free_fd ( int pid )
 {
 
@@ -833,6 +899,17 @@ void fs_init_structures (void){
         
         
         root->name = (char *) ____root_name;
+        
+        
+        // Se o volume do vfs ainda não foi criado 
+        // então não podemos prosseguir.
+        if ( (void *) volume_vfs == NULL ){
+            debug_print("fs_init_structures: volume_vfs not initialized");
+            panic("fs_init_structures: volume_vfs not initialized");
+        }
+        
+        volume_vfs->fs = root;
+        
         
         storage->fs = root;
         //...

@@ -335,7 +335,7 @@ struct filesystem_d
 };
 
 struct filesystem_d *root;
-struct filesystem_d *CurrentFileSystem;
+//struct filesystem_d *CurrentFileSystem;
 // ...
 
 
@@ -672,6 +672,38 @@ void fsInitTargetDir (void);
 
 void fs_show_root_fs_info(void);
 
+
+
+
+struct mounted_d
+{
+    int id;
+    int used;
+    int magic;
+    
+    // Ponteiro para a estrutura de disco.
+    struct disk_d *disk;
+    
+    // Ponteiro para a estrutura de volume.
+    struct volume_d *volume;
+    
+    //maybe
+    //struct mounted_d *next;
+};
+
+// Lista de ponteiros para estruturas de columes montados.
+unsigned long mountedList[128];
+
+
+
+void fs_show_mounted(int i);
+void fs_show_mounted_list(void);
+
+
+int fs_mount_volume (struct disk_d *d, struct volume_d *v);
+//void fs_initialize_mounted_list(void);
+
+int fs_get_mounted_free_slot(void);
 
 /*
  * Initialization support.
