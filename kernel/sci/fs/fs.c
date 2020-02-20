@@ -85,8 +85,8 @@ int fs_mount_volume (struct disk_d *d, struct volume_d *v)
     m->magic = 1234;
     
     
-    m->disk = d;
-    m->volume = v;
+    m->disk = (struct disk_d *) d;
+    m->volume = (struct volume_d *) v;
     
     if (__slot >= 128)
         panic("fs_mount_volume: __slot limits");
@@ -153,9 +153,9 @@ void fs_initialize_mounted_list(void)
    
    //Vamos montar os volumes criados em storage.c
    
-   fs_mount_volume(____boot____disk, volume_vfs );
-   fs_mount_volume(____boot____disk, volume_bootpartition );
-   fs_mount_volume(____boot____disk, volume_systempartition );
+   fs_mount_volume (NULL, volume_vfs );
+   fs_mount_volume (____boot____disk, volume_bootpartition );
+   fs_mount_volume (____boot____disk, volume_systempartition );
 
 }
 
