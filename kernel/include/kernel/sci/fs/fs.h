@@ -681,6 +681,10 @@ struct mounted_d
     int used;
     int magic;
     
+    
+    char __mountedname[64];    // buffer for string.
+    size_t mountedName_len;    // len   
+    
     // Ponteiro para a estrutura de disco.
     struct disk_d *disk;
     
@@ -696,14 +700,18 @@ unsigned long mountedList[128];
 
 
 
+
+int fs_get_mounted_free_slot(void);
+int fs_mount_volume (struct disk_d *d, struct volume_d *v);
+void fs_initialize_mounted_list(void);
 void fs_show_mounted(int i);
 void fs_show_mounted_list(void);
 
 
-int fs_mount_volume (struct disk_d *d, struct volume_d *v);
-//void fs_initialize_mounted_list(void);
 
-int fs_get_mounted_free_slot(void);
+
+
+
 
 /*
  * Initialization support.
