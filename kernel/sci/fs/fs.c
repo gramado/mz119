@@ -172,12 +172,14 @@ void fs_show_mounted(int i)
 
     }else{
 
-        printf ("fs_show_mounted: \n");
-        printf ("id %d\n",m->id);
-        printf ("used %d\n",m->used);
-        printf ("magic %d\n",m->magic);
 
-        printf ("name %s\n",m->__mountedname);
+        printf ("\n====================================\n");
+        printf ("%d) %s\n",m->id,m->__mountedname);
+        //printf ("fs_show_mounted: \n");
+        //printf ("id %d\n",m->id);
+        //printf ("used %d\n",m->used);
+        //printf ("magic %d\n",m->magic);
+
 
         if ( (void *) m->disk != NULL )
             diskShowDiskInfo(m->disk->id);

@@ -21,7 +21,7 @@
 //
 
 
-//Mostra informações sobre o disco atual.
+//Mostra informaï¿½ï¿½es sobre o disco atual.
 
 void diskShowCurrentDiskInfo (void)
 {
@@ -30,7 +30,7 @@ void diskShowCurrentDiskInfo (void)
 }
 
 
-//Mostra informações sobre um disco dado seu descritor.
+//Mostra informaï¿½ï¿½es sobre um disco dado seu descritor.
 int diskShowDiskInfo ( int descriptor ){
 
     struct disk_d *d;
@@ -45,7 +45,7 @@ int diskShowDiskInfo ( int descriptor ){
     }
 
 
-	d = (struct disk_d *) diskList[descriptor];
+    d = (struct disk_d *) diskList[descriptor];
 
     if ( (void *) d == NULL ){
         printf ("struct fail\n");
@@ -59,19 +59,20 @@ int diskShowDiskInfo ( int descriptor ){
 			goto fail;
         }
 
-		printf ("id={%d} used={%d} magic={%d} \n", 
-		    d->id, d->used, d->magic );
-		    
-		printf ("boot_disk={%d}\n",d->boot_disk_number);
+        printf ("disk %d - %s \n", d->id, d->name );
 
-		printf ("diskType={%d}\n", d->diskType );
-		printf ("name={%s}\n", d->name );
+        //printf ("id={%d} used={%d} magic={%d} \n", 
+            //d->id, d->used, d->magic );
+
+        printf ("boot_disk={%d}\n",d->boot_disk_number);
+        printf ("diskType={%d}\n", d->diskType );
+        //printf ("name={%s}\n", d->name );
 		//...
 		goto done;
     };
 
 	goto done;
-	
+
 	
 fail:
     printf("fail\n");
@@ -129,7 +130,7 @@ void *disk_get_current_disk_info (void)
  ********************************************************
  * disk_init:
  *     Inicializa o Disk Manager.
- *     Que é um módulo do tipo MB.
+ *     Que ï¿½ um mï¿½dulo do tipo MB.
  *
  */
  
@@ -160,7 +161,7 @@ int disk_init (void){
     struct disk_d *d;
 
 	//#importante
-	//Essa estrutura é vital, não podemos ficar sem ela.
+	//Essa estrutura ï¿½ vital, nï¿½o podemos ficar sem ela.
 	
     d = (void *) kmalloc( sizeof(struct disk_d) );
     
@@ -234,13 +235,13 @@ int disk_init (void){
 
 /*
  * init_test_disk:
- *     Testando operações com disco.
+ *     Testando operaï¿½ï¿½es com disco.
  *
  *     @todo: Essa rotina pode virar um aplicativo de teste.
  *
  * + Carrega o arquivo KCONFIG.TXT se estiver presente e 
- *   sonda informações de configuração contidas nele, exibindo as
- *   informações.
+ *   sonda informaï¿½ï¿½es de configuraï¿½ï¿½o contidas nele, exibindo as
+ *   informaï¿½ï¿½es.
  */
 
 void init_test_disk (void){
@@ -265,7 +266,7 @@ void init_test_disk (void){
 	// Alocando no heap do kernel. (Root dir de 32 setores).
 	//
 	
-	//@todo: Usar constantes ou variáveis para esses valores.
+	//@todo: Usar constantes ou variï¿½veis para esses valores.
 	
 	addr = (void *) kmalloc(512*32); 
 	if( (void *) addr ==  NULL)
@@ -295,7 +296,7 @@ void init_test_disk (void){
 
 	
 	
-	//@todo: Checar esse valor máximo.
+	//@todo: Checar esse valor mï¿½ximo.
 	
 	Index = 0;
 	while(Index < 128)
@@ -342,7 +343,7 @@ done:
 //    ### volume support ###
 //
 
-//Mostra informações sobre o volume atual.
+//Mostra informaï¿½ï¿½es sobre o volume atual.
 
 void volumeShowCurrentVolumeInfo (void){
 
@@ -378,24 +379,23 @@ int volumeShowVolumeInfo ( int descriptor ){
 
     }else{
 	
-		
-		if( v->used != 1 || v->magic != 1234 )
-		{
-			printf("flags fail\n");
-			goto fail;
-		}
-		
-		printf("id={%d}\n",v->id);
-		
-		printf("used={%d}\n",v->used);
-		printf("magic={%d}\n",v->magic);
-		
-		printf("volumeType={%d}\n",v->volumeType);
+
+        if ( v->used != 1 || v->magic != 1234 ){
+            printf("flags fail\n");
+            goto fail;
+        }
+
+        printf ("volume %d - %s \n", v->id, v->name );
+
+        //printf("used={%d}\n",v->used);
+        //printf("magic={%d}\n",v->magic);
+
+        printf("volumeType={%d}\n",v->volumeType);
 		
 		//#bugbug
-		//@todo: Esse nome temos que pegar no diretório raiz.
+		//@todo: Esse nome temos que pegar no diretï¿½rio raiz.
 		
-		printf("name={%s}\n",v->name);
+        //printf("name={%s}\n",v->name);
 		
 		//printf("path_string={%s}\n",v->path_string);
 		
@@ -480,7 +480,7 @@ int volume_init (void){
     }
 
 
-    // ??? Esse é o root ???
+    // ??? Esse ï¿½ o root ???
 
 
 	// Volume.
@@ -496,7 +496,7 @@ int volume_init (void){
         //volume_vfs->objectClass = ?;
 		
 		
-		// Será usado pelo VFS.
+		// Serï¿½ usado pelo VFS.
 		volume_vfs->volumeType = VOLUME_TYPE_BUFFER;
 		
 	    volume_vfs->id = 0;
@@ -529,7 +529,7 @@ int volume_init (void){
         //volume_bootpartition->objectClass = ?;
 		
 		
-		// Será usado pelo VFS.
+		// Serï¿½ usado pelo VFS.
 		volume_bootpartition->volumeType = VOLUME_TYPE_DISK_PARTITION;
 
         volume_bootpartition->id = 1;
@@ -566,7 +566,7 @@ int volume_init (void){
         //volume_systempartition->objectClass = ?;
 		
 		
-		// Será usado pelo VFS.
+		// Serï¿½ usado pelo VFS.
 		volume_systempartition->volumeType = VOLUME_TYPE_DISK_PARTITION;
 		
 	    volume_systempartition->id = 2;
@@ -610,16 +610,16 @@ void volume_show_info (void)
 
 
 /*
- * pegaremos informações sobre um disco ide checando o mbr.
- * o índice determina qual informações pegaremos.
+ * pegaremos informaï¿½ï¿½es sobre um disco ide checando o mbr.
+ * o ï¿½ndice determina qual informaï¿½ï¿½es pegaremos.
  * -1 = sem assinatura.
- * -2 = nenhuma partição ativa. (80)
+ * -2 = nenhuma partiï¿½ï¿½o ativa. (80)
  * ...
  *
  * checar o mbr de uma das quatro portas do controlador ide.
  * #obs: o mbr pertence ao disco todo na interface ide, 
- * mas pode dizer alguma coisa sobre as partições,
- * se olharmos na tabela de partições.
+ * mas pode dizer alguma coisa sobre as partiï¿½ï¿½es,
+ * se olharmos na tabela de partiï¿½ï¿½es.
  */
 
 int get_ide_disk_info ( int port, unsigned long buffer, int master ){
@@ -662,9 +662,9 @@ int get_ide_disk_info ( int port, unsigned long buffer, int master ){
 /*
  * show_ideports_info:
  *     #importante: Testando se tem discos nas portas IDE.
- *     Se está válida então carregamos o primeiro setor do disco,
+ *     Se estï¿½ vï¿½lida entï¿½o carregamos o primeiro setor do disco,
  *     checamos pela assinatura no fim do MBR e imprimimos o nome do disco,
- *     que está presente no BPB.
+ *     que estï¿½ presente no BPB.
  */
 
 void show_ideports_info (void){
@@ -719,12 +719,12 @@ void show_ideports_info (void){
 	};
 	
 	//#bugbug
-	//como aqui o que temos é um disco (CD) a interface é ATAPI 
-	//e possivelmente SCSI, Então as regras são diferentes,
+	//como aqui o que temos ï¿½ um disco (CD) a interface ï¿½ ATAPI 
+	//e possivelmente SCSI, Entï¿½o as regras sï¿½o diferentes,
 	//vamos testar isso depois.
 	//secondary slave (.ISO) (1024 bytes)
 	//Para teste vamos colocar outro disco HD aqui.
-	//ok, está funcionando com os 4 discos hd
+	//ok, estï¿½ funcionando com os 4 discos hd
     printf("\n Testing secondary slave \n");
 	if ( ide_ports[2].used ==  1 )
 	{
