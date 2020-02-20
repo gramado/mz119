@@ -677,9 +677,29 @@ P0:
 .flag:                db  0x80     
 .hcs_inicial:         db  1, 1, 0       ; h,c,s      
 .os_type:             db  0xEF          ; EFI FAT12/FAT16.       
-.hcs_final:           db  3, 255, 16    ; h,c,s 
+.hcs_final:           db  0x03, 0x4A, 0xCF  ; h,c,s (3, 255, 16)    0001 0000b
 .lba_inicial:         dd  0x3F          ; First sector. (63, vbr).
-.tamanho_da_particao: dd  17406
+.tamanho_da_particao: dd  65512         ; in sectors. 
+
+; (obs: Os dois bits mais altos de s pertencem al c)
+; (17406*512)=8911872
+; (8911872/1024) = 8703 kb
+
+
+; s
+; 0001 0000b
+; (11)01 0000b  *bits exportados;
+; 11010000 = d0
+; 11001111 = cf
+
+; c
+; 34a = 842 ...    
+; 34a = 0011 0100 1010
+; 00(11) 0100 1010   *bits inportados de s.
+
+;size
+;0x0000FFE8 = 65512
+
 
 ; Partition 1, 2 and 3.
 P1: dd 0,0,0,0 
