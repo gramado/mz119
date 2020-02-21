@@ -6,13 +6,15 @@
  * Data types
  */
 
+
 //#ifndef socklen_t
 //typedef __socklen_t	socklen_t;
 //#define	socklen_t	__socklen_t
 //#endif
 
+
 #ifdef  _BSD_SIZE_T_
-typedef _BSD_SIZE_T_	size_t;
+typedef  _BSD_SIZE_T_  size_t;
 #undef  _BSD_SIZE_T_
 #endif
 
@@ -43,20 +45,27 @@ typedef _BSD_SIZE_T_	size_t;
 #endif
 
 
-struct	servent {
-	char	*s_name;	/*%< official service name */
-	char	**s_aliases;	/*%< alias list */
-	int	s_port;		/*%< port # */
-	char	*s_proto;	/*%< protocol to use */
-};
 
-struct	protoent {
-	char	*p_name;	/*%< official protocol name */
-	char	**p_aliases;	/*%< alias list */
-	int	p_proto;	/*%< protocol # */
+
+struct servent {
+
+    char  *s_name;      /*%< official service name */
+    char  **s_aliases;  /*%< alias list */
+    int   s_port;       /*%< port # */
+    char  *s_proto;     /*%< protocol to use */
 };
 
 
+struct protoent {
+
+    char  *p_name;      /*%< official protocol name */
+    char  **p_aliases;  /*%< alias list */
+    int   p_proto;      /*%< protocol # */
+};
+
+
+
+//extern int h_errno;
 
 /*%
  * Error return codes from gethostbyname() and gethostbyaddr()
@@ -64,14 +73,17 @@ struct	protoent {
  */
 
 #if defined(_NETBSD_SOURCE)
-#define	NETDB_INTERNAL	-1	/*%< see errno */
-#define	NETDB_SUCCESS	0	/*%< no problem */
+#define  NETDB_INTERNAL  -1  /*%< see errno */
+#define  NETDB_SUCCESS   0   /*%< no problem */
 #endif
+
 //#define	NO_ADDRESS	NO_DATA		/* no address, look for MX record */
-#define	HOST_NOT_FOUND	1 /*%< Authoritative Answer Host not found */
-#define	TRY_AGAIN	2 /*%< Non-Authoritive Host not found, or SERVERFAIL */
-#define	NO_RECOVERY	3 /*%< Non recoverable errors, FORMERR, REFUSED, NOTIMP */
-#define	NO_DATA		4 /*%< Valid name, no data record of requested type */
+#define  HOST_NOT_FOUND  1  /*%< Authoritative Answer Host not found */
+#define  TRY_AGAIN       2  /*%< Non-Authoritive Host not found, or SERVERFAIL */
+#define  NO_RECOVERY     3  /*%< Non recoverable errors, FORMERR, REFUSED, NOTIMP */
+#define  NO_DATA         4  /*%< Valid name, no data record of requested type */
+
+
 #if defined(_NETBSD_SOURCE)
 //#define	NO_ADDRESS	NO_DATA		/*%< no address, look for MX record */
 #endif
