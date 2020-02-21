@@ -1972,6 +1972,7 @@ void *gde_services ( unsigned long number,
 
         // 72
         // See: sci/sys/sys.c
+        // Cria uma thread e coloca ela pra rodar.
         case SYS_CREATETHREAD:
             return (void *) sys_create_thread ( NULL,  NULL, NULL, 
                                 arg2,             // init eip
@@ -1984,6 +1985,7 @@ void *gde_services ( unsigned long number,
 
         // 73
         // See: sci/sys/sys.c
+        // Cria um processo e coloca a thread primária pra rodar.
         case SYS_CREATEPROCESS:
             return (void *) sys_create_process ( NULL, NULL, NULL, 
                                 arg2, arg3, 

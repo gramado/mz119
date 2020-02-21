@@ -44,12 +44,12 @@ int sys_write (unsigned int fd,char *buf,int count);
 void *sys_create_process ( struct room_d *room,
                            struct desktop_d  *desktop,
                            struct window_d *window,
-                           unsigned long init_eip, 
+                           unsigned long res1, 
                            unsigned long priority, 
                            int ppid, 
                            char *name, 
                            unsigned long iopl,
-                           unsigned long directory_address );
+                           unsigned long res2 );
 
 
 

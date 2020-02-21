@@ -335,7 +335,7 @@ void __x86StartInit (void){
 
     }else{
 
-        fs_initialize_process_pwd ( InitProcess->pid, "no-directory" );
+        fs_initialize_process_pwd ( InitProcess->pid, "no-pwd" );
     };
 
 
@@ -345,8 +345,7 @@ void __x86StartInit (void){
 	
     InitThread = (void *) createCreateInitThread ();
 
-    if ( (void *) InitThread == NULL )
-    {
+    if ( (void *) InitThread == NULL ){
         panic ("__x86StartInit: IdleThread\n");
 
     }else{

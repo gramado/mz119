@@ -515,29 +515,129 @@ int sys_fcntl(unsigned int fd, unsigned int cmd, unsigned long arg)
 void *sys_create_process ( struct room_d *room,
                            struct desktop_d  *desktop,
                            struct window_d *window,
-                           unsigned long init_eip, 
+                           unsigned long res1, 
                            unsigned long priority, 
                            int ppid, 
                            char *name,
                            unsigned long iopl, 
-                           unsigned long directory_address )
+                           unsigned long res2 )
 {
+
+   //#bugbug
+   // o argumento directory_address está errado.
+   // deletar esse argumento. outra coisa no lugar.
+   // o argumento init_eip também ta errado.
+
+    struct process_d *p;
+    struct thread_d *t;
+    
+    
+   //
+   // Carregar num endereço virtual temporário ..
+   // converte o endereço virtual em físico, para
+   // remapearmos depois.
+   // Mas antes precisamos saber o tamanho da imagem.
+   //
+    
+    unsigned long tmp_va = 0;
+    unsigned long tmp_pa = 0;
+        
+
+    int fileret = -1;
+    
+    
+    
+    debug_print("sys_create_process:\n");
+
+    //? kb 1024*?/4096 = 
+    tmp_va = (unsigned long) allocPages(40); //40 páginas;
+
+    //#todo: validation
+
+    tmp_pa = (unsigned long) virtual_to_physical ( tmp_va, 
+                                 gKernelPageDirectoryAddress ); 
+
+            
+            
+	// loading image.
+	
+
+    
+    fileret = (unsigned long) fsLoadFile ( VOLUME1_FAT_ADDRESS, 
+                                  VOLUME1_ROOTDIR_ADDRESS, 
+                                  name, 
+                                  (unsigned long) tmp_va );
+
+
+    // Se não encontramos init.bin
+    if ( fileret != 0 )
+    {
+        fileret = (unsigned long) fsLoadFile ( VOLUME1_FAT_ADDRESS, 
+                                      VOLUME1_ROOTDIR_ADDRESS, 
+                                      name, 
+                                      (unsigned long) tmp_va );
+
+        
+        if ( fileret != 0 ){
+            panic ("sys_create_process: fileret \n");
+        }
+    }
+ 
+
+    p = (void *) create_process ( room, desktop, window, 
+                      (unsigned long) 0x00400000, //base
+                      priority, 
+                      ppid, 
+                      name, 
+                      RING3, //iopl??
+                      (unsigned long ) CloneKernelPageDirectory() );
+
+    if ( (void *) p == NULL ){
+        panic ("sys_create_process: p\n");
+
+    }else{
+
+        fs_initialize_process_pwd ( p->pid, "no-pwd" );
+    };
+    
+    
+     // #bugbug
+     // Precisa alocar um endereço físico para a nova imagem
+     // mapear esse endereço em 0x400000 do diretorio do processo que
+     // acabamos de criar;
+     
+     p->ImagePA = tmp_pa;
+
+     CreatePageTable ( (unsigned long) p->DirectoryVA, 
+            ENTRY_USERMODE_PAGES, p->ImagePA );
+            
+     // Com base no endereço físico, usamos a função acima
+     // para atribuírmos um novo endereço virtual para a imagem.
+     p->Image = 0x400000; // com base na entrada escolhida (ENTRY_USERMODE_PAGES)            
+ 
+    
     //
-	// @todo: Create some interface routine.
-	//
-	
-	//@todo: Filtros para ponteiros NULL.
-	
-	// Create process.
-	
-    return (void *) create_process ( room, desktop, 
-                        window, 
-                        init_eip, 
+    // Thread.
+    //
+
+	// Create thread.
+    t = (struct thread_d *) create_thread ( room, desktop, window, 
+                        0x00401000,  //entrypoint 
                         priority, 
-                        ppid, 
-                        name, 
-                        iopl, 
-                        (unsigned long) directory_address );
+                        p->pid, 
+                        "control-thread" ); 
+
+    if ( (void *) t == NULL ){
+        return NULL;
+    }
+
+    // Marca ela como thread de cotnrole.
+    p->control = t;
+    
+    SelectForExecution ( (struct thread_d *) t );
+
+
+    return (struct process_d *) p;
 }
 
 
@@ -638,21 +738,30 @@ void *sys_create_thread( struct room_d *room,
                          int ppid, 
                          char *name )
 {
-    //
-	// @todo: Create some interface routine.
-	//
-	
+    struct thread_d *t;
+
+
+    debug_print("sys_create_thread:\n");
+
 	//@todo filtros, para ponteiros NULL.
-	
-	
+
 	// Create thread.
-    return (void *) create_thread ( room, desktop, 
-                        window, 
+    t = (struct thread_d *) create_thread ( room, desktop, window, 
                         init_eip, 
                         priority, 
                         ppid, 
                         name ); 
+
+    if ( (void *) t == NULL ){
+        return NULL;
+    }
+
+    SelectForExecution ( (struct thread_d *) t );
+
+    return (struct thread_d *) t;
 }
+
+
 
 
 

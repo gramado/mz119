@@ -3397,15 +3397,16 @@ do_compare:
 
 
 
-	//t17 - create process
+	// t17 - create process
     void *P;
-    if ( gramado_strncmp( prompt, "t17", 3 ) == 0 )	
+    if ( gramado_strncmp( prompt, "t17", 3 ) == 0 )
     {
-        printf ("Creating processes ...\n");	
+        printf (" Creating process\n");
         
         // ?? critical session ??
+        //#bugbug: O primeiro argumento está errado.
         P = (void *) gde_create_process ( 0x400000, 
-                        PRIORITY_HIGH, "PROCESS-TEST-1" );
+                        PRIORITY_HIGH, "REBOOT2 BIN" );
         if ( (void *) P == NULL ){
             printf ("Fail creating process\n");
         }

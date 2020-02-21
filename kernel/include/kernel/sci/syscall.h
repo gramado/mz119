@@ -222,16 +222,18 @@
 
 
 //process and thread support.
-#define	SYS_EXIT             70    // Uma thread terminou.
-#define	SYS_FORK             71    // fork.
-#define	SYS_CREATETHREAD     72    // Create Thread.
-#define	SYS_CREATEPROCESS    73    // Create process. 
-#define	SYS_CLOSEALLPROCESS  74    // FECHA TODOS PROCESSO.
-#define	SYS_EXECVE           75    // execve 
-#define	SYS_GETNEXTPROCESS   76    // get next process
-#define	SYS_SETNEXTPROCESS   77
-#define	SYS_GETNEXTTHREAD    78    // get next thread.
-#define	SYS_SETNEXTTHREAD    79
+#define  SYS_EXIT             70    // Um processo saiu.
+#define  SYS_FORK             71    // fork.
+#define  SYS_CREATETHREAD     72    // *Create thread and execute it.
+#define  SYS_CREATEPROCESS    73    // *Create process and execute it. 
+#define  SYS_CLOSEALLPROCESS  74    // FECHA TODOS PROCESSO.
+#define  SYS_EXECVE           75    // execve 
+#define  SYS_GETNEXTPROCESS   76    // get next process
+#define  SYS_SETNEXTPROCESS   77
+#define  SYS_GETNEXTTHREAD    78    // get next thread.
+#define  SYS_SETNEXTTHREAD    79
+
+
 
 //process support.
 #define	SYS_CURRENTPROCESSINFO  80  // Informações sobre o processo atual.
@@ -258,6 +260,7 @@
 #define	SYS_88 88  //sendo usada pra outra coisa.
 #define SYS_SEMAPHORE_UP 89
 
+
 //90~98 reservado para thread support
 #define	SYS_DEADTHREADCOLLECTOR    90
 #define	SYS_ALERTTHREAD 91
@@ -267,7 +270,8 @@
 #define	SYS_95 95
 #define	SYS_96 96
 #define	SYS_97 97
-#define	SYS_RESUMETHREAD 98  //retomar thrad.
+#define	SYS_RESUMETHREAD 98  //retomar thread.
+
 
 //Window procedure arguments: window, msg, long1, long2.
 #define	SYS_GETHWINDOW             99

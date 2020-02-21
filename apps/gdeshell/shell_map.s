@@ -705,8 +705,8 @@ Linker script and memory map
 .rodata         0x0000000000410000     0x44c3
  .rodata        0x0000000000410000       0x36 crt0.o
  *fill*         0x0000000000410036        0xa 
- .rodata        0x0000000000410040     0x1e14 main.o
- *fill*         0x0000000000411e54        0xc 
+ .rodata        0x0000000000410040     0x1e0c main.o
+ *fill*         0x0000000000411e4c       0x14 
  .rodata        0x0000000000411e60      0x536 net.o
  *fill*         0x0000000000412396        0xa 
  .rodata        0x00000000004123a0      0x6cf shellui.o
