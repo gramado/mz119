@@ -102,6 +102,11 @@ void ps2 (void){
 }
 
 
+// Inicialização preliminar. Sem mouse.
+// Ela existe porque a emulação de ps2 na máquina real 
+// apresenta falhas.
+// No gdeshell.bin incluiremos os comando "ps2-init"
+// para obtermos a inicialização completa.
 void early_ps2_init (void)
 {
     // mas simples...

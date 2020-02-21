@@ -330,6 +330,16 @@ void *gde_extra_services ( unsigned long number,
     */
     
     
+    // Inicializar ou reinicializar componentes do sistema
+    // depois da inicialização completa do kernel.
+    // Isso poderá ser chamado pelo init.bin, pelo shell
+    // ou qualquer outro.
+    if ( number == 350 ){
+        return (void *) syssm_initialize_component ((int) arg2);
+    }
+    
+    
+    
     struct window_d *__window;
     
     //veja se essa � overlapped.
