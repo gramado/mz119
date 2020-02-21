@@ -299,7 +299,16 @@ int main ( int argc, char *argv[] )
     
     
     
+
+
+    //int __ret = -1;
     
+    //__ret = fork();
+
+    //printf (">>>>Oi, eu sou PID %d \n", getpid() );
+    
+    //gramado_system_call ( 82, 0, 0, 0 );
+    //while(1){}
     
     return 0;
 }

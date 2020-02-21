@@ -2431,9 +2431,10 @@ do_compare:
 
 		int pidFORK = (int) fork ();
 		
-		//gde_debug_print("fork hang\n");
+		gde_debug_print("fork hang\n");
 		//while(1){}
 
+        
 		// Erro.
 		if ( pidFORK < 0 ){
 		    printf ("gdeshell: fork() falhou\n");
@@ -2472,6 +2473,7 @@ do_compare:
 			//printf ("gdeshell: folho, execve falhou.\n");
 			//exit (1);
 		}
+		
 
 		//#TODO
 		//se aqui estivermos rodando o filho, devemos analizar
@@ -2980,7 +2982,7 @@ do_compare:
 
     // process-info
     if ( gramado_strncmp ( prompt, "process-info", 12 ) == 0 ){
-        system_call ( 82, 0, 0, 0 );
+        gramado_system_call ( 82, 0, 0, 0 );
         goto exit_cmp; 
     }
 

@@ -480,7 +480,10 @@ pid_t fork (void){
     pid_t ret;
 
 
+    //ret = (pid_t) fork2 (0,0,0,0);
     ret = (pid_t) fast_fork (0,0,0,0);
+
+    printf ("unistd-fork: fast_fork returned\n");
 
     if ( ret == -1 )
     {

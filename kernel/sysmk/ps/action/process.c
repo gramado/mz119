@@ -1006,7 +1006,7 @@ int processCopyMemory ( struct process_d *process ){
     // usado por questão de segurança.
     // Podemos tentar usar pilha com endereço virtual aleatório.
 
-    // 200 KB.
+    // 200 KB.   200kb/4096 =  quantidade de páginas.
     // Allocating memory for the process's image.
     // #todo: We need this size.
 
@@ -1253,10 +1253,13 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
     // entry point da imagem do processo filho, e sim para
     // o endereço virtual obtido na alocação.
 
+
+
     Process2->Image    = Process1->childImage; // #bugbug: Esse endereço não é 0x400000
     Process2->ImagePA  = Process1->childImage_PA;
     Process2->childImage    = 0;
     Process2->childImage_PA = 0;
+
 
 
     //heap

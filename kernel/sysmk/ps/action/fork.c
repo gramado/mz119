@@ -5,8 +5,18 @@
 #include <kernel.h>
 
 
-
-
+/*
+// Nesse caso vamos 
+// >copiar o diretório de páginas do processo pai.
+// >o filho vai usar a memória física da imagem do pai.
+// >depois o execv copia a imagem do pai para uma nova memória física
+// e mapeia para a memória virtual tradicional 0x400000;
+pid_t do_fork_process2 (void);
+pid_t do_fork_process2 (void)
+{
+    return -1;
+}
+*/
 
 
 /*
@@ -69,11 +79,12 @@ pid_t do_fork_process (void){
         }
 
 
+        // ?? why???
         // #test
         // Virtual Address of the current process.
         dir = (unsigned long *) Current->DirectoryVA;
+        //old_dir_entry0 = dir01];    // Saving it.
         old_dir_entry1 = dir[1];    // Saving it.
-
 
         // Saving the physical address.
 		//old_image_pa = (unsigned long) virtual_to_physical ( Current->Image, gKernelPageDirectoryAddress ); 		
@@ -175,8 +186,12 @@ do_clone:
         // 4MB ??
 
         CreatePageTable ( (unsigned long) Clone->DirectoryVA, 
-            ENTRY_USERMODE_PAGES, Current->childImage_PA );
-
+            ENTRY_USERMODE_PAGES, Clone->ImagePA );
+            //ENTRY_USERMODE_PAGES, Current->childImage_PA );
+          
+        // Com base no endereço físico, usamos a função acima
+        // para atribuírmos um novo endereço virtual para a imagem.
+        Clone->Image = 0x400000; // com base na entrada escolhida (ENTRY_USERMODE_PAGES)
 
         // #bugbug
         // A rotina acima resolve o mapeamento da imagem do processo clone.
@@ -260,15 +275,15 @@ do_clone:
 		//memcpy ( (void *) Clone->Image, (const void *) Current->Image, (1024*200) );  //bugbug
 
         //====
-		Clone->control->ownerPID = Clone->pid;
-		Clone->control->type  = Current->control->type; 
-		Clone->control->plane = Current->control->plane;
+		Clone->control->ownerPID      = Clone->pid;
+		Clone->control->type          = Current->control->type; 
+		Clone->control->plane         = Current->control->plane;
 		Clone->control->base_priority = Current->control->base_priority;
-		Clone->control->priority = Current->control->priority;
-		Clone->control->iopl = Current->control->iopl;
-		Clone->control->preempted = Current->control->preempted;
-		Clone->control->step = Current->control->step;
-		Clone->control->quantum = Current->control->quantum;
+		Clone->control->priority      = Current->control->priority;
+		Clone->control->iopl          = Current->control->iopl;
+		Clone->control->preempted     = Current->control->preempted;
+		Clone->control->step          = 0;//Current->control->step;
+		Clone->control->quantum       = Current->control->quantum;
 		Clone->control->quantum_limit = Current->control->quantum_limit;
 		
 		// A thread do processo clone ainda n�o rodou.
@@ -289,8 +304,8 @@ do_clone:
         }
 
 		Clone->control->ticks_remaining = Current->control->ticks_remaining;
-		Clone->control->signal = Current->control->signal;
-		Clone->control->signalMask = Current->control->signalMask;
+		Clone->control->signal          = Current->control->signal;
+		Clone->control->signalMask      = Current->control->signalMask;
 		
 		// CPU context
 
@@ -303,7 +318,7 @@ do_clone:
         // In the fork() routine we need the same esp from father,
         // and not the start of the stack.
 
-        Clone->control->ss          = Current->control->ss;
+        Clone->control->ss   = Current->control->ss;
         
         //
         // Clild stack
@@ -341,8 +356,16 @@ do_clone:
 
         Clone->control->eflags      = Current->control->eflags;
         Clone->control->cs          = Current->control->cs;
-        Clone->control->eip         = Current->control->eip; 
+        
+        Clone->control->eip         = Current->control->eip;  // mesmo do pai.
+        //Clone->control->eip = 0x401000; //teste: para o clone começar do início.
+
+
         Clone->control->initial_eip = Current->control->initial_eip;
+
+        printf (">> %x\n",Current->control->eip);
+        printf (">> %x\n",Clone->control->eip);
+
 
 		// more registers.
 		Clone->control->ds = Current->control->ds;
@@ -358,6 +381,7 @@ do_clone:
 		Clone->control->ebp = Current->control->ebp;
 
         // tss
+        // mesma tss
         Clone->control->tss = Current->control->tss;
 
         Clone->control->Next = NULL;
@@ -366,9 +390,9 @@ do_clone:
 
 
        Clone->ppid = Current->pid; 
-       Clone->uid = Current->uid;
-       Clone->gid = Current->gid;
-       Clone->tty = Current->tty;
+       Clone->uid  = Current->uid;
+       Clone->gid  = Current->gid;
+       Clone->tty  = Current->tty;
        //strncpy(proc->name, curr_proc->name, NAME_MAX);
        Clone->plane = Current->plane;
        Clone->personality = Clone->personality;
