@@ -936,17 +936,6 @@ int getprocessname ( int pid, char *buffer );
 pid_t do_clone_execute_process (char *filename);
 
 
-/*
- ***************************************
- * do_fork_process
- *     (Fun��o em desenvolvimento)
- *     Clona um processo sem thread.
- *     Clona o processo atual.
- *     Retorna o PID do clone.
- */
-
-pid_t do_fork_process (void);
-
 
 //cria uma estrutura do tipo processo, mas n�o inicializada.
 struct process_d *processObject (void);

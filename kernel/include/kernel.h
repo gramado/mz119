@@ -215,8 +215,11 @@ extern void do_executa_new_task (void);
 #include <kernel/sysmk/ps/ts.h>
 #include <kernel/sysmk/ps/tasks.h>
 #include <kernel/sysmk/ps/image.h>
+
+#include <kernel/sysmk/ps/fork.h>
 #include <kernel/sysmk/ps/process.h>
 #include <kernel/sysmk/ps/thread.h>
+
 #include <kernel/sysmk/ps/sched/sched.h>
 #include <kernel/sysmk/ps/ipc/ipc.h>
 #include <kernel/sysmk/ps/ipc/ipccore.h>

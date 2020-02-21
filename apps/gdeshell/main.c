@@ -2430,6 +2430,9 @@ do_compare:
         printf ("gdeshell: Trying to fork the current process ...\n");
 
 		int pidFORK = (int) fork ();
+		
+		//gde_debug_print("fork hang\n");
+		//while(1){}
 
 		// Erro.
 		if ( pidFORK < 0 ){
