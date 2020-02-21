@@ -2418,90 +2418,9 @@ do_compare:
 		ShellFlag = SHELLFLAG_EXIT;
 		goto exit_cmp;
     }
-
-
-
-    // fork
-	// Retorna no filho e chamamos execve.
-	// #todo: N�o usar fork no garden, use apenas no atacama!
-	
-    if ( gramado_strncmp ( prompt, "fork", 4 ) == 0 )
-    {
-        printf ("gdeshell: Trying to fork the current process ...\n");
-
-		int pidFORK = (int) fork ();
-		
-		gde_debug_print("fork hang\n");
-		//while(1){}
-
-        
-		// Erro.
-		if ( pidFORK < 0 ){
-		    printf ("gdeshell: fork() falhou\n");
-			printf ("getpid=%d ", getpid());
-			printf ("pidFORK=%d \n", pidFORK);
-            while(1){}
-		}
-		
-		// Pai.
-		if ( pidFORK > 0 )
-		{
-			printf("\n");
-		    printf ("gdeshell: Estamos no >>>>> PAI\n");
-			printf ("getpid=%d ", getpid());
-			printf ("pidFORK=%d \n", pidFORK);
-			printf ("gdeshell: *hang Parando no pai.\n");
-			while(1){}
-			//exit (0);
-		}
-		
-		// Filho.
-		if ( pidFORK == 0 )
-		{
-			printf("\n");
-		    printf ("gdeshell: estamos no >>>> FILHO\n");
-			printf ("getpid=%d ", getpid());
-			printf ("pidFORK=%d \n", pidFORK);
-			printf ("gdeshell: *hang Parando no filho.\n");
-			while(1){}
-			
-			//execve ("launcher.bin", NULL, NULL );
-			//execve ("jackpot.bin", NULL, NULL );
-			//execve ("gramcode.bin", NULL, NULL );
-			//execve ("jackpot.bin", NULL, NULL );
-			//execve ("noraterm.bin", NULL, NULL );
-			//printf ("gdeshell: folho, execve falhou.\n");
-			//exit (1);
-		}
-		
-
-		//#TODO
-		//se aqui estivermos rodando o filho, devemos analizar
-		//porque ela trava olhando o registrador.
-		
-		//execve ("jackpot.bin", NULL, NULL );
-		//exit (0);
-		//while (1){}
-		
-		//shellShowKernelInfo ();
-
-		//printf ("gdeshell: retornamos do fork");
-		//printf ("gdeshell: *hang");
-		//while (1){}
-
- 		//Mostra o ID do processo clone.
-		//printf("Clone PID={%d}\n", pidFORK );
-		
-		//mostra o id do processo atual.
-		//shellShowPID ();
-		
-		//printf("gdeshell: done\n");
-        
-		goto exit_cmp;
-	}
-
-
-
+    
+    
+   
     // gethostname 
     char *my_hostname;
     char hostbuffer[256]; 
@@ -2520,7 +2439,7 @@ do_compare:
 		//printf("\n");
 
         goto exit_cmp;
-    };
+    }
 
     /*
     // getusername 

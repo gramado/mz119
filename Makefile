@@ -164,7 +164,7 @@ ifeq ($(ARCH),x86)
 	
 	
 	MK_OBJECTS := x86cont.o x86fault.o x86start.o \
-	dispatch.o pheap.o process.o fork.o queue.o spawn.o \
+	dispatch.o pheap.o process.o clone.o queue.o spawn.o \
 	tasks.o theap.o thread.o threadi.o ts.o tstack.o \
 	callout.o callfar.o ipc.o ipccore.o sem.o \
 	memory.o mminfo.o mmpool.o pages.o \
@@ -259,7 +259,7 @@ KERNEL.BIN:
 	gcc -c  kernel/sysmk/ps/action/pheap.c     $(KINCLUDE)  $(CFLAGS) -o pheap.o
 	
 	gcc -c  kernel/sysmk/ps/action/process.c   $(KINCLUDE)  $(CFLAGS) -o process.o
-	gcc -c  kernel/sysmk/ps/action/fork.c      $(KINCLUDE)  $(CFLAGS) -o fork.o
+	gcc -c  kernel/sysmk/ps/action/clone.c      $(KINCLUDE)  $(CFLAGS) -o clone.o
 	
 	gcc -c  kernel/sysmk/ps/action/queue.c     $(KINCLUDE)  $(CFLAGS) -o queue.o
 	gcc -c  kernel/sysmk/ps/action/spawn.c     $(KINCLUDE)  $(CFLAGS) -o spawn.o

@@ -392,109 +392,6 @@ void exit (int status){
 
 
 
-/*
- **************************
- * fast_fork:
- *     Isso é uma systemcall especial usada somente para a
- * função fork(). Ela tem sua própria interrupção.
- * 
- */
-
-pid_t 
-fast_fork ( unsigned long ax, 
-            unsigned long bx, 
-            unsigned long cx, 
-            unsigned long dx )
-{
-    pid_t Ret = 0;
-
-
-    asm volatile ( " int %1 \n"
-                 : "=a"(Ret)
-                 : "i"(133), "a"(ax), "b"(bx), "c"(cx), "d"(dx) );
-
-    return (pid_t) Ret;
-}
-
-
-/*
- **************
- * fork:
- *     Essa implementação de fork() usa uma systemcall especial, usada 
- * somente na função fork. Essa systemcall tem sua própria interrupção.
- *
- */
-
-pid_t fork (void){
-
-    pid_t ret;
-
-
-    ret = (pid_t) fast_fork (0,0,0,0);
-
-    if ( ret == -1 )
-    {
-		// #todo: 
-		// Configurar o errno.
-
-        return (pid_t) ret;
-    }
-
-
-    if (ret == 0)
-    {
-		// We're the child in this part.
-
-        return 0;
-    }
-
-
-	// Estamos no pai. 
-	// Vamos retornar o PID do filho.
-
-    return (pid_t) ret;
-}
-
-
-/*
- ****************************** 
- * sys_fork:
- *     Essa é uma implementação da função fork() usando
- * a systemcall padrão com a interrupção do sistema.
- */
-
-pid_t sys_fork (void){
-
-    pid_t ret;
-
-    ret = (int) gramado_system_call ( UNISTD_SYSTEMCALL_FORK, 
-                    (unsigned long) 0, 
-                    (unsigned long) 0, 
-                    (unsigned long) 0 ); 
-
-
-    if ( ret == -1 )
-    {
-		// #todo: 
-		// Configurar o errno.
-
-        return (pid_t) ret;
-    }
-
-
-	// We're the child in this part.
-    if (ret == 0)
-    {
-        return 0;
-    }
-
-
-    // Estamos no pai. 
-    // Vamos retornar o PID do filho.
-
-    return (pid_t) ret;
-}
-
 
 
 /*
@@ -1148,6 +1045,33 @@ int stat(const char *path, struct stat *buf)
 	return ret;
 }
 */
+
+
+
+/*
+ **************************
+ * xxx_todo_int133:
+ *     Isso é uma systemcall especial.
+ *     #todo: mudar o retorno.
+ */
+
+pid_t 
+xxx_todo_int133 ( unsigned long ax, 
+                  unsigned long bx, 
+                  unsigned long cx, 
+                  unsigned long dx )
+{
+    pid_t Ret = 0;
+
+
+    asm volatile ( " int %1 \n"
+                 : "=a"(Ret)
+                 : "i"(133), "a"(ax), "b"(bx), "c"(cx), "d"(dx) );
+
+    return (pid_t) Ret;
+}
+
+
 
 //
 // End.

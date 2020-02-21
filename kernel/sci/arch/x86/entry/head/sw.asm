@@ -102,16 +102,17 @@ _int100:
 
 
 ;;=====================================
-;; _int133_fork:
+;; _int133:
 ;;
-;;     Interrup��o 133.
-;;     usada exclusivamente para a fun��o fork();
+;; New interrupt.
+;; Interrupt 133.
+;; #todo
 ;;
 
-extern _gde_fork
+extern _gde_133
 
-global _int133_fork
-_int133_fork:  
+global _int133
+_int133:  
 
     cli 
 
@@ -173,7 +174,7 @@ _int133_fork:
     ;; Chamando o handler exclusivo para a fun��o fork().
     ;; Est� em: execve/sci/gde/gde_serv.c
 
-    call _gde_fork
+    call _gde_133
     mov dword [__int133Ret], eax    
 
     pop eax

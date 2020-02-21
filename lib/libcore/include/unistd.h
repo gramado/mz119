@@ -150,17 +150,6 @@ int execve ( const char *filename, char *argv[], char *envp[] );
 void exit (int status);
 
 
-pid_t fork (void);
-
-pid_t sys_fork (void);
-	
-pid_t 
-fast_fork ( unsigned long ax, 
-            unsigned long bx, 
-            unsigned long cx, 
-            unsigned long dx );
-
-
 int setuid ( uid_t uid );
 
 uid_t getuid (void);
@@ -279,6 +268,11 @@ int isatty(int fd);
 int getopt (int argc, char * const argv[], const char *optstring);
 
 
+pid_t 
+xxx_todo_int133 ( unsigned long ax, 
+                  unsigned long bx, 
+                  unsigned long cx, 
+                  unsigned long dx );
 
 
 #endif /* _UNISTD_H */

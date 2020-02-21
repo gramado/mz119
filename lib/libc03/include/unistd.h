@@ -158,14 +158,6 @@ void exit (int status);
 
 pid_t fork (void);
 
-pid_t sys_fork (void);
-	
-pid_t 
-fast_fork ( unsigned long ax, 
-            unsigned long bx, 
-            unsigned long cx, 
-            unsigned long dx );
-
 
 int setuid ( uid_t uid );
 
@@ -343,6 +335,14 @@ int compar(char *s1, char *s2);
 int getlin(char s[]);
 
 int eq (char *a, char *b);
+
+
+pid_t 
+xxx_todo_int133 ( unsigned long ax, 
+                  unsigned long bx, 
+                  unsigned long cx, 
+                  unsigned long dx );
+
 
 #endif /* _UNISTD_H */
 

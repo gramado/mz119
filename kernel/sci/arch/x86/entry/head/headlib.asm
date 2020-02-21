@@ -461,7 +461,7 @@ setup_vectors:
 
     ;;test
 	;;fork
-	mov eax, dword _int133_fork
+	mov eax, dword _int133
 	mov ebx, dword 133
 	call _setup_system_interrupt  
 

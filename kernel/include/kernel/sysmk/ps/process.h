@@ -931,11 +931,6 @@ int getprocessname ( int pid, char *buffer );
 
 
 
-// t900
-//clona e executa o filho dado o nome do filho.
-pid_t do_clone_execute_process (char *filename);
-
-
 
 //cria uma estrutura do tipo processo, mas n�o inicializada.
 struct process_d *processObject (void);

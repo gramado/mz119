@@ -786,10 +786,10 @@ void *gde_extra_services ( unsigned long number,
 	// 900
 	// Clona e executa o filho dado o nome do filho.
 	// Isso � usado pelo terminal virtual. (noraterm)
-	// See: See: ps/action/process.c
+	// See: See: ps/action/clone.c
 
     if ( number == 900 ){ 
-        return (void *) do_clone_execute_process ( (char *) arg2 );
+        return (void *) clone_and_execute_process ( (char *) arg2 );
     }
 
 
@@ -1959,11 +1959,13 @@ void *gde_services ( unsigned long number,
 
 
         // 71
-        // #suspenso: Logo abaixo temos uma implementa��o
-        // de um handler de uma interrup��o especial para o fork()
-        // da libc. que chamar� do_fork_process();
+        // Implementação padrão de fork para a libc
+        // obs: Não teremos fork na libcore. 
+        // Talvez alguma variante.
+        // A libcore porde virar algum tipo de api.
+        // See: action/fork.c
         case SYS_FORK: 
-            return NULL;
+            return (void *) sys_fork_process();
             break;
 
 
@@ -3233,18 +3235,15 @@ void servicesPutChar ( int c )
 
 /*
  ***************************************
- * gde_fork:
- *
- *     fork() implementation for libcore.
- *     This function was called by gde_fork().
- *     It has its own interrupt number. (133)  
+ * gde_133:
  *
  *     This routine was called by the interrupt 133.
  *     See the handler at: x86/entry/head/sw.inc.
- *     At function: _int133_fork.
+ *     At function: _int133.
  */
 
-void *gde_fork ( unsigned long number, 
+
+void *gde_133 ( unsigned long number, 
                  unsigned long arg2, 
                  unsigned long arg3, 
                  unsigned long arg4 )
@@ -3256,33 +3255,15 @@ void *gde_fork ( unsigned long number,
     save_current_context ();
 
 
-    // fork() implementation.
-    // See: ps/action/process.c
-
-    ret = (void *) do_fork_process ();
-
+   // ret = (void *) ?????();
 
 	//Restaura os registradores e o cr3.
     restore_current_context ();
 
-	// #debug
-	// #important
-    // We can use this breakpoint to see the register
-    // for the current thread.
-    // But the current thread is the father, and the father 
-    // is running well.
-    // #todo: We need to see the register for the child.
-
-	//show_currentprocess_info ();
-	//show_process_information ();
-	//mostra_slot (current_thread);
-	//mostra_reg (current_thread);
-	//printf ("*breakpoint\n\n");
-	//refresh_screen();
-	//while(1){}
-
     return (void *) ret; 
 }
+
+
 
 //
 // End.
