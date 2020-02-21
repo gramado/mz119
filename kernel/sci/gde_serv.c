@@ -1987,7 +1987,7 @@ void *gde_services ( unsigned long number,
                                 arg2, arg3, 
                                 0, (char *) a4, 
                                 RING3, 
-                                (unsigned long ) CreatePageDirectory() ); 
+                                (unsigned long ) CloneKernelPageDirectory() ); 
             break;
 
 

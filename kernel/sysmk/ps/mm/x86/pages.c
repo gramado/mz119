@@ -264,9 +264,51 @@ unsigned long get_table_pointer (void)
 
 
 
+// Para clonar um diretório.
+// Queremos clonar o diretório atual,
+// para que o processo filho tenha o memso diretório
+// do processo pai. 
+void *clone_directory( unsigned long directory_va )
+{
+	int i;
+	unsigned long destAddressVA; 
+	
+	 
+    destAddressVA = (unsigned long) get_table_pointer();  //ok
+
+    if ( destAddressVA == 0 ){
+        panic ("CreatePageDirectory: destAddressVA\n");
+    }
+
+
+    unsigned long *src = (unsigned long *) directory_va;  
+
+    unsigned long *dst = (unsigned long *) destAddressVA;  
+
+	for ( i=0; i < 1024; i++ )
+	{
+		dst[i] = (unsigned long) src[i];    
+	};
+	
+	//
+	// Done.
+	//
+	
+	// Retornamos o endere�o virtual do novo diret�rio de p�ginas.
+	
+	return (void *) destAddressVA;
+}
+
+
+
+
+
+
+
+
 /*
  **************************************************
- * CreatePageDirectory:
+ * CloneKernelPageDirectory:
  *
  *     Cria um page directory para um processo.
  *     Vamos clonar o diret�rio de p�ginas do kernel
@@ -282,9 +324,8 @@ unsigned long get_table_pointer (void)
 
 // Clonando o diret�rio do kernel.
 // Isso aparentemente est� funcionando bem,
-// mas poderia se chamar CloneKernelPageDirectory.
 
-void *CreatePageDirectory (void){
+void *CloneKernelPageDirectory (void){
 	
 	int i;
 	unsigned long destAddressVA;  

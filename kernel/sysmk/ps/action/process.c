@@ -490,6 +490,7 @@ pid_t do_clone_execute_process (char *filename){
 
         // #test
         dir = (unsigned long *) Current->DirectoryVA;
+        //old_dir_entry0 = dir[0];    // Saving it.
         old_dir_entry1 = dir[1]; //salvando
 
 
@@ -1210,7 +1211,7 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 	// Mas o taskswitch faz isso pegando o endere�o que estiver na thread, ent�o
 	// esse endere�o precisa ir pra thread.
 
-    Process2->DirectoryVA = (unsigned long) CreatePageDirectory ();
+    Process2->DirectoryVA = (unsigned long) CloneKernelPageDirectory ();
 
     if ( (void *) Process2->DirectoryVA == NULL ){
         panic ("processCopyProcess: DirectoryVA fail");
@@ -2678,7 +2679,7 @@ __execute_new_process ( const char *filename,
                                    __pid,
                                    (char *) filename, 
                                    RING3, 
-                                   (unsigned long ) CreatePageDirectory() ); 
+                                   (unsigned long ) CloneKernelPageDirectory() ); 
 
     if ( (void *) p == NULL )
     {

@@ -316,6 +316,10 @@ void __x86StartInit (void){
 	// tanto o endereço virtual quanto o físico.
 	
 	// > UPROCESS_IMAGE_BASE;
+	
+	// #todo
+	// temos que checar a validade do endereço do dir criado
+	//antes de passarmos..
 
     InitProcess = (void *) create_process ( NULL, NULL, NULL, 
                                (unsigned long) 0x00400000, 
@@ -323,7 +327,7 @@ void __x86StartInit (void){
                                (int) KernelProcess->pid, 
                                "INIT-PROCESS", 
                                RING3, 
-                               (unsigned long ) CreatePageDirectory() );
+                               (unsigned long ) CloneKernelPageDirectory() );
 
     if ( (void *) InitProcess == NULL )
     {

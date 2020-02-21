@@ -1355,9 +1355,15 @@ unsigned long mapping_ahci1_device_address ( unsigned long pa );
 // Directory.
 //
 
+// Para clonar um diretório.
+// Queremos clonar o diretório atual,
+// para que o processo filho tenha o memso diretório
+// do processo pai. 
+void *clone_directory( unsigned long directory_va );
+
 //deve retornar o endere�o do diret�rio de p�ginas criado,
 //que � um clone do diret�rio de p�ginas do kernel.
-void *CreatePageDirectory (void);
+void *CloneKernelPageDirectory (void);
 
 
 //

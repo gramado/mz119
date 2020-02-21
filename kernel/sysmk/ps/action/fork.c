@@ -83,7 +83,7 @@ pid_t do_fork_process (void){
         // #test
         // Virtual Address of the current process.
         dir = (unsigned long *) Current->DirectoryVA;
-        //old_dir_entry0 = dir01];    // Saving it.
+        //old_dir_entry0 = dir[0];    // Saving it.
         old_dir_entry1 = dir[1];    // Saving it.
 
         // Saving the physical address.
