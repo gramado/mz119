@@ -64,19 +64,21 @@ int unistd_file_read ( file *f, char *buffer, int len ){
     p = buffer;
 
   
-    if ( (void *) f == NULL )
-    {
-		printf ("unistd_file_read: file\n");
-		refresh_screen();
+  
+    // file
+    if ( (void *) f == NULL ){
+        printf ("unistd_file_read: file\n");
+        refresh_screen();
         return EOF; 
     }
 
-    if ( (void *) p == NULL )
-    {
-		printf ("unistd_file_read: p\n");
-		refresh_screen();
+    // buffer
+    if ( (void *) p == NULL ){
+        printf ("unistd_file_read: p\n");
+        refresh_screen();
         return EOF; 
     }
+
 
     //rewind(f);
 
@@ -84,9 +86,9 @@ int unistd_file_read ( file *f, char *buffer, int len ){
     //printf ("unistd_file_read: putting %d bytes into the buffer.\n",len);
     //refresh_screen();
  
- 
- 
+
     memcpy ( (void *) buffer, (const void *) f->_base, len ); 
+
  
     //Essa rotina falhou.
     //faltvez fgetc esta falhando.

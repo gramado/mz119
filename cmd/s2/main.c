@@ -88,9 +88,16 @@ int main ( int argc, char *argv[] )
         //}
 
         message_buffer[0] = 0; //window. 
-        message_buffer[1] = 1000;  //msg = hello friend.
+        message_buffer[1] = 1001; //1000;  //msg = hello friend.
         message_buffer[2] = 0;
         message_buffer[3] = 0;
+        
+        message_buffer[4] = 10;   //x
+        message_buffer[5] = 10;   //y
+        message_buffer[6] = 320;  //w
+        message_buffer[7] = 280;  //h
+
+       //...
 
        // write test.
        //sprintf(__buffer,"s2: Magic message!\n");

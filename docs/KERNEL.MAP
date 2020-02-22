@@ -2412,38 +2412,38 @@ Linker script and memory map
                 0x00000000c0035085                _panic
  .text          0x00000000c00350b8       0x13 reboot.o
                 0x00000000c00350b8                _reboot
- .text          0x00000000c00350cb      0x6f6 sys.o
+ .text          0x00000000c00350cb      0x742 sys.o
                 0x00000000c00350cb                _sys_serial_debug_printk
                 0x00000000c00350e6                _sys_ioctl
                 0x00000000c0035171                _sys_fcntl
                 0x00000000c003519a                _sys_open
                 0x00000000c003522a                _sys_close
                 0x00000000c00352a5                _sys_read
-                0x00000000c0035360                _sys_write
-                0x00000000c003543a                _sys_create_process
-                0x00000000c00355d1                _sys_getpid
-                0x00000000c00355db                _sys_getppid
-                0x00000000c0035643                _sys_fork
-                0x00000000c0035650                _sys_exit_process
-                0x00000000c0035672                _sys_create_thread
-                0x00000000c00356cb                _sys_exit_thread
-                0x00000000c00356ea                _sys_dead_thread_collector
-                0x00000000c00356f8                _sys_vsync
-                0x00000000c0035706                _sys_showkernelinfo
-                0x00000000c0035714                _sys_showpciinfo
-                0x00000000c0035721                _sys_reboot
-                0x00000000c003572f                _sys_shutdown
-                0x00000000c003573d                _sys_get_file_size
-                0x00000000c0035774                _sys_show_system_info
- .text          0x00000000c00357c1        0x0 sysio.o
- .text          0x00000000c00357c1        0x0 syslib.o
- .text          0x00000000c00357c1        0x0 sysmk.o
- .text          0x00000000c00357c1       0x43 syssm.o
-                0x00000000c00357c1                _syssm_initialize_component
-                0x00000000c00357ee                _syssm_get_system_metrics
-                0x00000000c0035804                _code_end = .
+                0x00000000c003538c                _sys_write
+                0x00000000c0035486                _sys_create_process
+                0x00000000c003561d                _sys_getpid
+                0x00000000c0035627                _sys_getppid
+                0x00000000c003568f                _sys_fork
+                0x00000000c003569c                _sys_exit_process
+                0x00000000c00356be                _sys_create_thread
+                0x00000000c0035717                _sys_exit_thread
+                0x00000000c0035736                _sys_dead_thread_collector
+                0x00000000c0035744                _sys_vsync
+                0x00000000c0035752                _sys_showkernelinfo
+                0x00000000c0035760                _sys_showpciinfo
+                0x00000000c003576d                _sys_reboot
+                0x00000000c003577b                _sys_shutdown
+                0x00000000c0035789                _sys_get_file_size
+                0x00000000c00357c0                _sys_show_system_info
+ .text          0x00000000c003580d        0x0 sysio.o
+ .text          0x00000000c003580d        0x0 syslib.o
+ .text          0x00000000c003580d        0x0 sysmk.o
+ .text          0x00000000c003580d       0x43 syssm.o
+                0x00000000c003580d                _syssm_initialize_component
+                0x00000000c003583a                _syssm_get_system_metrics
+                0x00000000c0035850                _code_end = .
                 0x00000000c0036000                . = ALIGN (0x1000)
- *fill*         0x00000000c0035804      0x7fc 
+ *fill*         0x00000000c0035850      0x7b0 
 
 .iplt           0x00000000c0036000        0x0
  .iplt          0x00000000c0036000        0x0 boot.o

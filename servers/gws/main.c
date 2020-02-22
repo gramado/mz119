@@ -66,6 +66,14 @@ See: https://wiki.osdev.org/Graphics_stack
 #include <sys/socket.h>
 
 
+//
+// O buffer para  as mensagens recebidas via socket.
+//
+
+char __buffer[512];   
+
+
+
 int running = 0;
 
 // Our desktop;
@@ -93,6 +101,11 @@ gwsProcedure ( struct window_d *window,
                int msg, 
                unsigned long long1, 
                unsigned long long2 );
+               
+               
+               
+//protótio de função interna,
+int serviceCreateWindow ( void );
 
 
 
@@ -104,8 +117,7 @@ ws_connection_loop(void)
     //
     
     int client_fd = -1;
-    char __buffer[32];
-    
+
 
     // Isso permite ler a mensagem na forma de longs.
     unsigned long *message_buffer = (unsigned long *) &__buffer[0];   
@@ -135,7 +147,7 @@ ws_connection_loop(void)
             
 
             //read test.
-            n_reads = read(client_fd, __buffer, sizeof(__buffer));
+            n_reads = read (client_fd, __buffer, sizeof(__buffer));
 
             if(n_reads>0)
             {
@@ -252,6 +264,13 @@ gwsProcedure ( struct window_d *window,
             
              gde_show_backbuffer ();
              break;
+
+
+        //case MSG_CREATE_WINDOW:
+        case 1001:
+            serviceCreateWindow(); // Usará o buffer global
+            break; 
+
                 
          //
          // Testing some drawing routines.
@@ -477,8 +496,43 @@ __loop:
 
 
 
+// wrapper
+// chamaremos a função que cria a janela
+// com base nos argumentos que estão no buffer
+// que é uma variável global nesse documento.
+int serviceCreateWindow (void)
+{
+	//o buffer é uma global nesse documento.
+    unsigned long *message_address = (unsigned long *) &__buffer[0];
+    
+    
+    struct window_d *__mywindow;
+    
+    
+    gde_debug_print("serviceCreateWindow:\n");
+    printf ("serviceCreateWindow:\n");
+    
+    
+    unsigned long x,y,w,h;
+    
+    
+    x=message_address[4];  //x
+    y=message_address[5];  //y
+    w=message_address[6];  //w
+    h=message_address[7];  //h
+    
+     __mywindow = (struct window_d *) createwCreateWindow ( WT_SIMPLE, //WT_OVERLAPPED, 
+                                         1, 1, "test-window",  
+                                         x, y, 
+                                         w, h,   
+                                         gui->screen, 0, 
+                                         COLOR_PINK, COLOR_BLUE );
+   
 
-
+    gde_show_backbuffer ();
+    
+    return -1; //todo
+}
 
 
 

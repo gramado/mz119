@@ -230,7 +230,7 @@ int sys_read (unsigned int fd, char *buf, int count)
     file *__file;
     
     int len;
-    
+    int nbytes = 0;
     
     
     // linux 0.01 style.
@@ -300,11 +300,10 @@ int sys_read (unsigned int fd, char *buf, int count)
 
     __file = ( file * ) __P->Objects[fd];  
     
-    
-    if ( (void *) __file == NULL )
-    {
-		printf ("sys_read: __file\n");
-		refresh_screen();
+
+    if ( (void *) __file == NULL ){
+        printf ("sys_read: __file\n");
+        refresh_screen();
         return -1; 
     }
 
@@ -339,7 +338,27 @@ int sys_read (unsigned int fd, char *buf, int count)
     // #todo
     // Tem que retornar a quantidade de bytes lido.
     
-    return (int) unistd_file_read ( (file *) __file, (char *) buf, (int) count );
+    // Se puder ler.
+    if ( __file->_flags & __SRD )
+    {
+        //printf ("OK TO READ\n");
+        //refresh_screen();
+        
+        nbytes = (int) unistd_file_read ( (file *) __file, (char *) buf, (int) count );
+        
+        
+        // ok to write.
+        __file->_flags = __SWR;
+        
+        return nbytes;
+    }
+    
+    
+    // nenhum byte lido.
+    // ok to write.
+    //__file->_flags = __SWR;    
+    return 0;
+    //panic("TEST: No permission to read.");
 }
 
 
@@ -360,6 +379,8 @@ int sys_write (unsigned int fd,char *buf,int count)
     file *__file;
     
     int len;
+    
+    int nbytes = 0;
     
     
     
@@ -430,19 +451,20 @@ int sys_write (unsigned int fd,char *buf,int count)
     __file = ( file * ) __P->Objects[fd];   //#todo: Use this one!
     
     
-    if ( (void *) __file == NULL )
-    {
-		printf ("sys_write: __file\n");
-		refresh_screen();
+    if ( (void *) __file == NULL ){
+        printf ("sys_write: __file\n");
+        refresh_screen();
         return -1; 
     }
-    
-    //switch
+
+
+    // switch
     // is_char_dev?     read_char(...)
     // is_block_dev?    read_block(...)
     // is_
 
 
+    // >> Console.
     // Se o descritor usado por write() for de um arquivo
     // do tipo console, escreveremos no console 0.
     if ( __file->____object == ObjectTypeVirtualConsole )
@@ -461,14 +483,28 @@ int sys_write (unsigned int fd,char *buf,int count)
     //if socket
     // socket_write()
     
-    
-    
-    
 
     //tem que retonar o tanto de bytes escritos.
     //See: unistd.c
     // Escreve em uma stream uma certa quantidade de chars.
-    return (int) unistd_file_write ( (file *) __file, (char *) buf, (int) count );
+    
+    
+    //#todo: ainda não colocamos essa flag na criação do arquivo.
+    //if (fp->_flags & __SWR)
+        
+    // Normal file.
+    nbytes = (int) unistd_file_write ( (file *) __file, (char *) buf, (int) count );
+    
+
+
+    // Avisa que o arquivo não está mais no modo escrita,
+    // que agora pode ler.
+
+    // Adiciona o bit que permite a leitura.
+    __file->_flags |= __SRD;
+
+
+    return (int) nbytes;
 }
 
 
