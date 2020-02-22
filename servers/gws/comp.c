@@ -11,8 +11,8 @@
 
 
 //fonts
-#include "nc2.h"
-
+//#include "nc2.h"
+#include <nc2.h>
 
 // Repintar os retângulos e as janelas marcadas como dirty.
 // Respeitando a z-order.
