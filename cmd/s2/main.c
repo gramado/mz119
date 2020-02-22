@@ -72,14 +72,14 @@ int main ( int argc, char *argv[] )
     
     //send(client_fd , hello , strlen(hello) , 0 ); 
 
-    char __buffer[32];
+    char __buffer[512];
     
    // Isso permite ler a mensagem na forma de longs.
     unsigned long *message_buffer = (unsigned long *) &__buffer[0];   
 
     int n=-1;
 
-    while(1){
+    while   (1){
 
         //read test. 
         //n = read(client_fd, __buffer, sizeof(__buffer));
@@ -87,15 +87,31 @@ int main ( int argc, char *argv[] )
             //printf ("s2: Received: %s \n",__buffer);            
         //}
 
+        //create window
+        
         message_buffer[0] = 0; //window. 
         message_buffer[1] = 1001; //1000;  //msg = hello friend.
         message_buffer[2] = 0;
         message_buffer[3] = 0;
-        
-        message_buffer[4] = 10;   //x
-        message_buffer[5] = 10;   //y
+        message_buffer[4] = 100;   //x
+        message_buffer[5] = 100;   //y
         message_buffer[6] = 320;  //w
         message_buffer[7] = 280;  //h
+
+        message_buffer[8] = 0x00FF00;   //color
+
+
+        /*
+        //line
+        message_buffer[0] = 0; //window. 
+        message_buffer[1] = 1003; //1000;  //msg = hello friend.
+        message_buffer[2] = 0;
+        message_buffer[3] = 0;
+        message_buffer[4] = 100;   //x1
+        message_buffer[5] = 100;   //y
+        message_buffer[6] = 200;       //x2
+        message_buffer[7] = 0x00FF00;   //color
+        */
 
        //...
 

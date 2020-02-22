@@ -106,7 +106,9 @@ gwsProcedure ( struct window_d *window,
                
 //protótio de função interna,
 int serviceCreateWindow ( void );
-
+int servicepixelBackBufferPutpixel(void);
+int servicelineBackbufferDrawHorizontalLine (void);
+//...
 
 
 void
@@ -270,6 +272,18 @@ gwsProcedure ( struct window_d *window,
         case 1001:
             serviceCreateWindow(); // Usará o buffer global
             break; 
+            
+            
+        case 1002:
+            servicepixelBackBufferPutpixel(); //pixel
+            break;
+
+               
+        case 1003:
+            servicelineBackbufferDrawHorizontalLine();
+            break;
+               
+               
 
                 
          //
@@ -513,26 +527,91 @@ int serviceCreateWindow (void)
     printf ("serviceCreateWindow:\n");
     
     
-    unsigned long x,y,w,h;
-    
-    
+    unsigned long x,y,w,h, color;
+      
     x=message_address[4];  //x
     y=message_address[5];  //y
     w=message_address[6];  //w
     h=message_address[7];  //h
+    color = message_address[8];
+    
     
      __mywindow = (struct window_d *) createwCreateWindow ( WT_SIMPLE, //WT_OVERLAPPED, 
                                          1, 1, "test-window",  
                                          x, y, 
                                          w, h,   
                                          gui->screen, 0, 
-                                         COLOR_PINK, COLOR_BLUE );
+                                         COLOR_PINK, color );
    
 
     gde_show_backbuffer ();
     
-    return -1; //todo
+    
+    //#todo
+    //send response.
+    
+    return 0; //todo
 }
+
+
+
+    // #tests
+    // Isso funciona.
+    //pixelBackBufferPutpixel ( COLOR_RED,   100, 250 );
+    //pixelBackBufferPutpixel ( COLOR_GREEN, 105, 250 );
+    //pixelBackBufferPutpixel ( COLOR_BLUE,  110, 250 );
+    //charBackbufferDrawcharTransparent ( 250,       250, COLOR_RED,   (unsigned long) 'R');
+    //charBackbufferDrawcharTransparent ( 250 +8,    250, COLOR_GREEN, (unsigned long) 'G');
+    //charBackbufferDrawcharTransparent ( 250 +8 +8, 250, COLOR_BLUE,  (unsigned long) 'B');
+    //charBackbufferDrawchar ( 300, 300, (unsigned long) 'X', COLOR_YELLOW, COLOR_RED );
+    //lineBackbufferDrawHorizontalLine ( 400, 88, 500, COLOR_PINK );
+    //rectBackbufferDrawRectangle ( 200, 400, 100, 60, COLOR_YELLOW );
+
+
+int servicepixelBackBufferPutpixel(void)
+{
+	//o buffer é uma global nesse documento.
+    unsigned long *message_address = (unsigned long *) &__buffer[0];
+
+    unsigned long x,y,color;
+      
+    x=message_address[4];  // x
+    y=message_address[5];  // y
+    color=message_address[6];  // color
+
+    pixelBackBufferPutpixel ( color, x, y );
+    
+    gde_show_backbuffer ();
+    
+    return 0;
+}
+
+
+
+
+
+int servicelineBackbufferDrawHorizontalLine (void)
+{
+
+	//o buffer é uma global nesse documento.
+    unsigned long *message_address = (unsigned long *) &__buffer[0];
+
+    //x1,y,x2, color
+    unsigned long x1,y,x2,color;
+      
+    x1=message_address[4];  // 
+    y=message_address[5];   // 
+    x2=message_address[6];  // 
+    color=message_address[6];
+   
+   lineBackbufferDrawHorizontalLine ( x1, y, x2, color );
+   
+   gde_show_backbuffer ();
+       
+   return 0;
+}
+
+
 
 
 
