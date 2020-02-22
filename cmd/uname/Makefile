@@ -77,7 +77,9 @@ all-c:
 
 	
 cat-link:
-	ld -m elf_i386 -T link.ld -o UNAME.BIN $(myObjects) -Map map.s
+	ld -m elf_i386 -T ../link.ld -o UNAME.BIN $(myObjects)    
+
+
 
 finalize:
 	cp UNAME.BIN  ../../bin

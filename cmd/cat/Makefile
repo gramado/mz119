@@ -74,14 +74,16 @@ all-c:
 	cp $(LIBCOBJ)/string.o .
 	cp $(LIBCOBJ)/time.o    .
 	cp $(LIBCOBJ)/unistd.o  .
-
 	cp $(LIBCOBJ)/termios.o  .
 	cp $(LIBCOBJ)/ioctl.o  .
 	cp $(LIBCOBJ)/fcntl.o  .
 
-	
+
 cat-link:
-	ld -m elf_i386 -T link.ld -o CAT.BIN $(myObjects) -Map map.s
+	ld -m elf_i386 -T ../link.ld -o CAT.BIN $(myObjects)    
+
+
+
 
 finalize:
 	cp CAT.BIN  ../bin

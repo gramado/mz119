@@ -77,7 +77,9 @@ all-c:
 	cp $(APIOBJ)/api.o      .
 	
 cat-link:
-	ld -m elf_i386 -T link.ld -o MODLOAD.BIN $(myObjects) -Map map.s
+	ld -m elf_i386 -T ../link.ld -o MODLOAD.BIN $(myObjects)    
+
+
 
 finalize:
 #todo

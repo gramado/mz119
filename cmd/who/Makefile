@@ -78,13 +78,15 @@ all-c:
 #	cp $(APIOBJ)/api.o      .
 	
 cat-link:
-	ld -m elf_i386 -T link.ld -o WHO.BIN $(myObjects) -Map map.s
+	ld -m elf_i386 -T ../link.ld -o WHO.BIN $(myObjects)    
+
+
 
 finalize:
-#	cp HEAD.BIN  ../../bin
+#	cp WHO.BIN  ../../bin
 
 clean:
 	-rm *.o
-#	-rm HEAD.BIN 
+#	-rm WHO.BIN 
 	
 	

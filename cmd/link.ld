@@ -1,10 +1,19 @@
+/*
+ * File: link.ld
+ *    This file is used by ld.
+ *    It's a common file for all the commands in this folder.
+ *    
+ *    2019 - Created by Fred Nora.
+ */
+
+
+
 OUTPUT_FORMAT("elf32-i386")
 ENTRY(main)
 SECTIONS
 { 
-	/* Essa aplicação está usando o diretório do processo kernel. */
-	/* Quando tiver seu próprio diretório de páginas o endereço será 0x00401000.*/
-	
+
+    /* The entry point. It's not the base of the image. */	
 	.text 0x00401000: 
     {
         code = .; 

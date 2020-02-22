@@ -40,8 +40,6 @@ CFLAGS = -m32 \
 
 LIBC    = ../../lib/libc03/include/
 LIBCOBJ = ../../lib/libc03/obj
-#API02   = ../../lib/api02/include/
-#APIOBJ  = ../../lib/api02/obj
 
 
 	##
@@ -80,13 +78,17 @@ all-c:
 	cp $(LIBCOBJ)/stdlib.o .
 	cp $(LIBCOBJ)/string.o .
 	cp $(LIBCOBJ)/unistd.o  .
-
 	cp $(LIBCOBJ)/termios.o  .
 	cp $(LIBCOBJ)/ioctl.o  .
 	cp $(LIBCOBJ)/fcntl.o  .
 
+
+
 jackpot-link:
-	ld -m elf_i386 -T link.ld -o REBOOT.BIN $(myObjects) -Map map.s
+	ld -m elf_i386 -T ../link.ld -o REBOOT.BIN $(myObjects)    
+
+
+
 
 finalize:
 	cp REBOOT.BIN  ../bin

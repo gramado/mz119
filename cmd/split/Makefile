@@ -80,7 +80,10 @@ all-c:
 
 	
 cat-link:
-	ld -m elf_i386 -T link.ld -o SPLIT.BIN $(myObjects) -Map map.s
+	ld -m elf_i386 -T ../link.ld -o SPLIT.BIN $(myObjects)    
+
+
+
 
 finalize:
 	cp SPLIT.BIN  ../bin

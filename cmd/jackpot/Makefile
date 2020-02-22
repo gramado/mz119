@@ -89,7 +89,10 @@ all-c:
 #	cp $(APIOBJ)/api.o      .
 
 jackpot-link:
-	ld -m elf_i386 -T link.ld -o JACKPOT.BIN $(myObjects) -Map map.s
+	ld -m elf_i386 -T ../link.ld -o JACKPOT.BIN $(myObjects)    
+
+
+
 
 finalize:
 	cp JACKPOT.BIN  ../bin

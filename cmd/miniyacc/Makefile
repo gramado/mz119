@@ -85,13 +85,15 @@ all-c:
 
 	
 cat-link:
-	ld -m elf_i386 -T link.ld -o CAT.BIN $(myObjects) -Map map.s
+	ld -m elf_i386 -T ../link.ld -o MINIYACC.BIN $(myObjects)    
+
 
 finalize:
-	cp CAT.BIN  ../../bin
+	cp MINIYACC.BIN  ../../bin
 
 clean:
 	-rm *.o
-	-rm CAT.BIN 
+	-rm MINIYACC.BIN 
+	
 	
 	

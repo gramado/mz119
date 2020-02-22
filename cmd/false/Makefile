@@ -77,7 +77,9 @@ all-c:
 
 	
 false-link:
-	ld -m elf_i386 -T link.ld -o FALSE.BIN $(myObjects) -Map map.s
+	ld -m elf_i386 -T ../link.ld -o FALSE.BIN $(myObjects)    
+
+
 
 finalize:
 	cp FALSE.BIN  ../bin

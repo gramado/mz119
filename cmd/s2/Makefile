@@ -87,7 +87,9 @@ all-c:
 
 
 hello-link:
-	ld -m elf_i386 -T link.ld -o S2.BIN $(myObjects) -Map map.s
+	ld -m elf_i386 -T ../link.ld -o S2.BIN $(myObjects)    
+
+
 
 finalize:
 	cp S2.BIN  ../bin

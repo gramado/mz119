@@ -83,7 +83,9 @@ all-c:
 	cp $(APIOBJ)/api.o      .	
 
 tascii-link:
-	ld -m elf_i386 -T link.ld -o TASCII.BIN $(myObjects) -Map app_map.s
+	ld -m elf_i386 -T ../link.ld -o TASCII.BIN $(myObjects)    
+
+
 
 finalize:
 	cp TASCII.BIN ../../bin

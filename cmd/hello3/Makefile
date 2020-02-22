@@ -84,7 +84,9 @@ all-c:
 	cp $(LIBCOBJ)/crt0.o  .
 
 hello3-link:
-	ld -m elf_i386 -T link.ld -o HELLO3.BIN $(myObjects) -Map app_map.s
+	ld -m elf_i386 -T ../link.ld -o HELLO3.BIN $(myObjects)    
+
+
 
 finalize:
 	cp HELLO3.BIN ../bin
