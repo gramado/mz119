@@ -16,12 +16,11 @@ unsigned long  ____BACKBUFFER_VA;
 //...
 
 
-
-#include "gws/pixel.h"
-#include "gws/char.h"
-#include "gws/line.h"
-#include "gws/window.h"
-#include "gws/ws.h"
+#include "char.h"
+#include "line.h"
+#include "pixel.h"
+#include "window.h"
+#include "ws.h"
 
 
 unsigned long gws_get_device_width(void);
