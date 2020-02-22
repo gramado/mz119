@@ -78,7 +78,10 @@ all-c:
 
 
 cat-link:
-	ld -m elf_i386 -T link.ld -o GLOGON.BIN $(myObjects) -Map map.s
+	ld -m elf_i386 -T ../link.ld -o GLOGON.BIN $(myObjects)    
+	
+	
+	
 
 finalize:
 	cp GLOGON.BIN  ../../bin

@@ -84,7 +84,9 @@ all-c:
 
 
 gramtext-link:
-	ld -m elf_i386 -T link.ld -o GRAMTEXT.BIN $(myObjects) -Map map.s
+	ld -m elf_i386 -T ../link.ld -o GRAMTEXT.BIN $(myObjects)    
+	
+	
 
 finalize:
 	cp GRAMTEXT.BIN  ../../bin

@@ -91,7 +91,9 @@ all-c:
 
 
 gfe-link:
-	ld -m elf_i386 -T link.ld -o GDEWM.BIN $(myObjects) -Map app_map.s
+	ld -m elf_i386 -T ../link.ld -o GDEWM.BIN $(myObjects)   
+	
+	
 
 finalize:
 	cp GDEWM.BIN  ../bin

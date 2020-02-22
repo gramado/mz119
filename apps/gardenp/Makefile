@@ -89,7 +89,10 @@ all-c:
 
 
 sysmon-link:
-	ld -m elf_i386 -T link.ld -o GARDENP.BIN $(myObjects) -Map app_map.s
+	ld -m elf_i386 -T ../link.ld -o GARDENP.BIN $(myObjects)    
+	
+	
+
 
 finalize:
 	cp GARDENP.BIN  ../../bin

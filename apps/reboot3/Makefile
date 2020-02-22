@@ -98,7 +98,10 @@ all-c:
 
 
 app-link:
-	ld -m elf_i386 -T link.ld -o REBOOT3.BIN $(myObjects) -Map app_map.s
+	ld -m elf_i386 -T ../link.ld -o REBOOT3.BIN $(myObjects)    
+	
+	
+
 
 finalize:
 	cp REBOOT3.BIN  ../../bin

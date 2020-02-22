@@ -91,7 +91,10 @@ all-c:
 
 
 gfe-link:
-	ld -m elf_i386 -T link.ld -o WINTEST.BIN $(myObjects) -Map app_map.s
+	ld -m elf_i386 -T ../link.ld -o WINTEST.BIN $(myObjects)    
+	
+	
+	
 
 finalize:
 	cp WINTEST.BIN  ../../bin

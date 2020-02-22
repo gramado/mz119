@@ -94,7 +94,10 @@ all-c:
 
 
 gfe-link:
-	ld -m elf_i386 -T link.ld -o LAUNCHER.BIN $(myObjects) -Map app_map.s
+	ld -m elf_i386 -T ../link.ld -o LAUNCHER.BIN $(myObjects)    
+	
+	
+	
 
 finalize:
 	cp LAUNCHER.BIN  ../bin

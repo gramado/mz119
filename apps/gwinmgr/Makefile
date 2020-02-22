@@ -78,7 +78,9 @@ all-c:
 
 	
 cat-link:
-	ld -m elf_i386 -T link.ld -o GWINMGR.BIN $(myObjects) -Map map.s
+	ld -m elf_i386 -T ../link.ld -o GWINMGR.BIN $(myObjects)   
+	
+	
 
 finalize:
 	cp GWINMGR.BIN  ../../bin

@@ -107,8 +107,9 @@ all-c:
 
 
 shell-link:
-	ld -m elf_i386 -T link.ld -o GDESHELL.BIN $(myObjects) -Map shell_map.s
-
+	ld -m elf_i386 -T ../link.ld -o GDESHELL.BIN $(myObjects)    
+	
+	
 
 finalize:
 	cp GDESHELL.BIN ../bin

@@ -105,7 +105,9 @@ all-c:
 
 
 shell-link:
-	ld -m elf_i386 -T link.ld -o GDETERM.BIN $(myObjects) -Map term_map.s
+	ld -m elf_i386 -T ../link.ld -o GDETERM.BIN $(myObjects)   
+	
+	
 
 finalize:
 	cp GDETERM.BIN ../../bin

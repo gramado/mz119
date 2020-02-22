@@ -104,7 +104,10 @@ all-c:
 	cp $(APIOBJ)/api.o      .	
 
 shell-link:
-	ld -m elf_i386 -T link.ld -o SPR.BIN $(myObjects) -Map map.s
+	ld -m elf_i386 -T ../link.ld -o SPR.BIN $(myObjects)    
+	
+	
+	
 
 finalize:
 	cp SPR.BIN ../bin

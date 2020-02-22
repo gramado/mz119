@@ -88,7 +88,10 @@ all-c:
 
 
 sysmon-link:
-	ld -m elf_i386 -T link.ld -o SYSMON.BIN $(myObjects) -Map app_map.s
+	ld -m elf_i386 -T ../link.ld -o SYSMON.BIN $(myObjects)    
+	
+	
+
 
 finalize:
 	cp SYSMON.BIN  ../bin

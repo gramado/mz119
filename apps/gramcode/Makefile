@@ -92,7 +92,10 @@ all-c:
 
 
 gramcode-link:
-	ld -m elf_i386 -T link.ld -o GRAMCODE.BIN $(myObjects) -Map app_map.s
+	ld -m elf_i386 -T ../link.ld -o GRAMCODE.BIN $(myObjects)    
+	
+	
+
 
 finalize:
 	cp GRAMCODE.BIN  ../bin
