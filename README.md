@@ -12,7 +12,7 @@
   <a href="https://github.com/frednora/gramado/archive/master.zip">
   <img alt="Download " src="https://img.shields.io/badge/Download-latest-green.svg">
   </a>
-  <a href="https://gramado.github.io/projects">
+  <a href="https://gramadoprojects.github.io/projects">
     <img alt="Donate" src="https://img.shields.io/badge/%24-Donate-orange.svg">
   </a>
 </p>
@@ -41,25 +41,27 @@
 
 ## Libraries.
 
-* unix-like libc for commands. (libc03)
-* API for GUI apps. (libcore)
+* unix-like library. (rtl)
+* API for setup environment. (libcore)
 * Lib for the window server's clients. (libgws)
 
+## Fred's compilation on Linux.
+```
+    Linux 5.4.0-42-generic x86_64
+    gcc (Ubuntu) 7.5.0
+    GNU ld (GNU Binutils for Ubuntu) 2.30
+    NASM version 2.13.02
+```
+## How to Build?
 
-## Compiling Gramado on Linux.
-
-    Linux 5.3.0-53-generic x86_64
-    gcc (Ubuntu) 7.5.3
-    GNU ld (GNU Binutils for Ubuntu) 2.30
-    NASM version 2.13.02
-
+See the [Gramado OS build instructions](https://github.com/frednora/gramado/blob/master/base/DOCS/BUILD.MD)
 
 ## VHD
 
 You can run the VHD on Oracle Virtual Box and qemu.
 
+$ ./run
 $ make qemu-test
-
 
 ## Testing
 
@@ -69,9 +71,8 @@ Please, give us some feedback.
 ## More information
 
 Gramado is a Free and Open Source operating system created by Fred Nora.
-
 The source code uses the BSD license.
 
-# Quote:
+# Quotes:
+	Oh boy, there is no spoon!
 
-    WWW - Isolation makes me hungry.

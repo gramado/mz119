@@ -1,9 +1,9 @@
-	gi/ ring 3
-	gf/ ring 0
+	
+	folders:
 
+	base/ Will be copied into the disk.
+	ge/ game engine.
+	setup/ setup the system.
+	games/ games.
 
-	Ex:
-	"gi:something/something"
-	"gf:something/something"
-
-
+	
