@@ -2,7 +2,7 @@
 
 <p align=center>
   <a href="https://github.com/frednora/gramado">
-    <img alt="Gramado" src="https://github.com/gramado/img/blob/master/gramado2.png">
+    <img alt="Gramado" src="https://github.com/gramadoprojects/img/blob/master/gramado10.png">
   </a>
 </p>
 
@@ -56,17 +56,19 @@
 
 See the [Gramado OS build instructions](https://github.com/frednora/gramado/blob/master/base/DOCS/BUILD.MD)
 
-## VHD
-
-You can run the VHD on Oracle Virtual Box and qemu.
-
-$ ./run
-$ make qemu-test
-
 ## Testing
 
+```
+	$ ./run
+	$ make qemu-test
+```
+
+You can run the VHD on Oracle Virtual Box and qemu.
 Please, give us some feedback.
 
+## Documentation
+
+See the [DOCS](https://github.com/frednora/gramado/blob/master/base/DOCS/)
 
 ## More information
 
