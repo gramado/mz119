@@ -6,13 +6,16 @@
  *     Header para o Volume Manager.
  *     Gerência de volumes.
  *
- *
  * History:
  *     2015 - Created by Fred Nora.
  *     2018 - Some new structures.
  */
 
- 
+
+#ifndef  __VOLUME_H
+#define  __VOLUME_H    1
+
+
 #define VOLUME_COUNT_MAX 1024
 
 
@@ -152,7 +155,6 @@ struct volume_d
     struct superblock_d super;
 
 
-
     // Ponteiro para um buffer se o tipo permitir.
     void *priv_buffer;
     unsigned long buffer_size_in_sectors;
@@ -201,7 +203,6 @@ struct volume_d
     char path_string[32];  
 
 
-
     // Se o volume tiver um sistema de arquivos.
     // See: fs.h
     struct filesystem_d *fs;
@@ -230,6 +231,9 @@ struct volume_d *volume_systempartition; // volume 2
 
 unsigned long volumeList[VOLUME_COUNT_MAX];
 
+//
+// == prototypes ==========================================
+//
 
 //show info for all volumes in the list.
 void volume_show_info (void);
@@ -243,6 +247,9 @@ void *volume_get_current_volume_info (void);
 int volumeShowVolumeInfo( int descriptor );
 
 int volume_init (void);
+
+
+#endif    
 
 
 //

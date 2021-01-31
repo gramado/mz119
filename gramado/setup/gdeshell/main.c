@@ -49,8 +49,7 @@ struct window_d *hWindow;
 struct window_d *cpu_window;  //cpu usage test;
 
 
-
-// Ser� configurado na inicializa��o.
+// Sera configurado na inicializaçao.
 int __stdin_fd;
 int __stdout_fd;
 int __stderr_fd;
@@ -60,6 +59,9 @@ int ShellFlag = 0;
 
 //O shell est� rodadndo.
 int _running = 1;
+
+int __home = FALSE;
+int __temple = FALSE;
 
 /* Non-zero when we are executing a top-level command. */
 //o shell est� executando um comando que 
@@ -885,6 +887,37 @@ void xmas_tree (void)
 // ==== Internals ====
 //
 
+void lionlionlion(void)
+{
+    if (__home == TRUE && __temple == TRUE)
+    { 
+        printf ("lion lion lion\n"); 
+        gde_clone_and_execute("gwssrv.bin");
+        exit(0);
+    } 
+    __home = FALSE;
+    __temple = FALSE; 
+}
+
+//backspace
+void do_back(void)
+{
+    // Apaga o char na tela, na linha de comandos e no buffer.
+    if ( textCurrentCol > 0 )
+    { 
+          // ok. funcionou. 
+          // a linha de comandos. prompt[]
+        putchar(0x8);  input(0x8);  // volta
+        putchar(0x20); input(0x20); // apaga
+        putchar(0x8);  input(0x8);  // volta
+        fflush(stdout);             // mostra sem mudar de linha.
+        //o buffer.
+        //volta um char no buffer e apaga na nova posiçao.
+        textCurrentCol--; 
+        LINES[textCurrentRow].CHARS[textCurrentCol] = 0; 
+    }
+}
+
 static inline void pause (void)
 {
     asm volatile ("pause" ::: "memory"); 
@@ -908,7 +941,6 @@ static inline void rep_nop (void)
 // OK: funcionou no qemu.
 void __load_path_test(void)
 {
-
     char __path[] = "/ETC/TEST1.CPP";
 
     void *__address = 0;
@@ -930,9 +962,9 @@ void __load_path_test(void)
 
     // Load
     // Using the libcore.
-    
+
     gde_load_path ( 
-        (char *)         __path, 
+        (const char *)   __path, 
         (unsigned long)  buffer, 
         (unsigned long)  ___size_limit );
 
@@ -1052,7 +1084,6 @@ void reader_loop ()
  *     LOCAL
  */
 
-
 unsigned long 
 shellProcedure ( 
     struct window_d *window, 
@@ -1060,26 +1091,21 @@ shellProcedure (
     unsigned long long1, 
     unsigned long long2 )
 {
-
     unsigned long input_ret=0;
     unsigned long compare_return=0;
     int q=0;
-
     int c=0;
 
-
-    // #bugbug
-    // switch sempre da problemas de compilacao ...
-    // corrija os problemas ... use returns.
+    // #bugbug: Use returns in the cases.
     
-    switch (msg)
-    {
+    switch (msg){
 
         case MSG_KEYDOWN:
             //...
             switch (long1)
             {
-                //case EOF:  break;
+                // #todo
+                // case EOF:  break;
 
                 // Null key.
                 case 0:
@@ -1087,39 +1113,49 @@ shellProcedure (
                     return (unsigned long) 0;
                     break;
 
-                // [Enter].
-                // Finaliza a string e compara.
-                // #obs: 
-                // #importante 
-                // Se essa janela for a janela do gdeshell, então 
-                // a rotina de comparação poderá fazer um refresh 
-                // dessa janela. 
-                // #obs: talvez esse refresh nem seja necessário.
-                // cada rotina chamada que fará seu próprio refresh 
-                // se conseguir.
-                
+                // [Enter] - Finalize the command line and compare.
                 case VK_RETURN:
                     input('\0');
                     shellCompare (window);
                     goto done;
                     break; 
 
+                // #todo: tem que inserir no buffer tambem
+                case VK_TAB: 
+                    printf ("\t");
+                    // for( shellInsertNextChar ( ' ' ); ...
+                    goto done; 
+                    break;
 
-                // #test
-                case VK_TAB: printf ("\t"); goto done; break;
+                // #todo
+                // falta configurar prompt[] usado por input();
+                // falta configurar LINES[]...
                 
-                case 0x07: printf ("TREMA\n"); goto done; break;
-                
-                //keyboard arrows
+                //case 0x7f:   // del
+                case 0x8:      // backspace
+                case VK_BACK:  // 0x0E
+                    do_back();
+                    goto done;
+                    break;
+
+                // keyboard arrows
                 case 0x48: printf ("UP   \n"); goto done; break;
                 case 0x4B: printf ("LEFT \n"); goto done; break;
                 case 0x4D: printf ("RIGHT\n"); goto done; break;
                 case 0x50: printf ("DOWN \n"); goto done; break;
 
-
                 // home end
-                case 0x47: printf ("HOME\n"); goto done; break;
-                case 0x4F: printf ("END \n"); goto done; break;
+                
+                case 0x47: 
+                    printf ("HOME\n");
+                    lionlionlion();
+                    goto done; 
+                    break;
+                    
+                case 0x4F: 
+                    printf ("END \n"); 
+                    goto done; 
+                    break;
 
                 //pageup pagedown
                 case 0x49: printf ("PAGEUP   \n"); goto done; break;
@@ -1129,40 +1165,15 @@ shellProcedure (
                 case 0x52: printf ("INSERT\n"); goto done; break;
                 case 0x53: printf ("DELETE\n"); goto done; break;
 
+                //case 0x07: printf ("TREMA\n"); goto done; break;
 
-                // #todo
-                // falta configurar prompt[] usado por input();
-                // falta configurar LINES[]...
-                case 0x8: // backspace
-                //case 0x7f: // del
-                case VK_BACK:  //0x0E
-                    // Apaga o char na tela, na linha de comandos e no buffer.
-                    if ( textCurrentCol > 0 )
-                    { 
-                        // ok. funcionou. 
-                        // a linha de comandos. prompt[]
-                        putchar(0x8);  input(0x8);  // volta
-                        putchar(0x20); input(0x20); // apaga
-                        putchar(0x8);  input(0x8);  // volta
-                        fflush(stdout);             // mostra sem mudar de linha.
-                        //o buffer.
-                        //volta um char no buffer e apaga na nova posiçao.
-                        textCurrentCol--; 
-                        LINES[textCurrentRow].CHARS[textCurrentCol] = 0;       
-                    }
-                    goto done;
-                    break;
+                // Typing messages.
+                // >> Insert the chars into 'prompt[]' inside the libc.
+                // >> Insert chars into the file buffer and print it to the screen.
 
-
-                // Mensagens de digitação.
-                // Enfilera os caracteres na string 'prompt[]' 
-                // para depois ser comparada com outras strings.
-                // Coloca na memória de video virtual,
-                // Que é semelhante a vga, contendo char e atributo.
-                // Isso mostra o caractere na tela.
                 default:
                     input ( (unsigned long) long1 );  
-                    shellInsertNextChar ( (char) long1 );  
+                    shellInsertNextChar ( (char) long1 );
                     goto done;
                     break; 
             };
@@ -1170,77 +1181,44 @@ shellProcedure (
             break;
 
 
-        case MSG_KEYUP: 
-            break;
+        //case MSG_KEYUP: 
+            //break;
  
 
         case MSG_SYSKEYDOWN: 
             switch (long1)
             {
+                //case VK_F1:  printf("NOTHING\n");  break;
+                //case VK_F2:  printf("NOTHING\n");  break;
+                //case VK_F3:  printf("NOTHING\n");  break;
+                //case VK_F4:  printf("NOTHING\n");  break;
 
-                case VK_F1: 
-                    debug_print(" [F1] "); 
-                    gde_clone_and_execute ("launcher.bin");
-                    exit(0);
-                    break;
-                    
-                case VK_F2: 
-                    debug_print(" [F2] "); 
-                    gde_clone_and_execute ("gramcode.bin");
-                    exit(0);
-                    break;
-                    
-                case VK_F3: 
-                    debug_print(" [F3] "); 
-                    gde_clone_and_execute ("sysmon.bin");
-                    exit(0);
-                    break;
-                    
-                case VK_F4: 
-                    debug_print(" [F4] "); 
-                    gde_clone_and_execute ("gwssrv.bin");
-                    exit(0);
-                    break;
+                //case VK_F5:  printf("NOTHING\n");  break;
+                //case VK_F6:  printf("NOTHING\n");  break;
+                //case VK_F7:  printf("NOTHING\n");  break;
+                //case VK_F8:  printf("NOTHING\n");  break;
 
-                case VK_F9: 
-                    debug_print(" [F9] "); 
-                    gde_clone_and_execute ("reboot.bin");
-                    exit(0);
-                    break;
-
-                case VK_F10: 
-                    debug_print(" [F10] "); 
-                    gde_clone_and_execute ("reboot.bin");
-                    exit(0);
-                    break;
-
-                case VK_F11: 
-                    debug_print(" [F11] "); 
-                    gde_clone_and_execute ("reboot.bin");
-                    exit(0);
-                    break;
-
-                case VK_F12: 
-                    debug_print(" [F12] "); 
-                    gde_clone_and_execute ("reboot.bin");
-                    exit(0);
-                    break;
+                //case VK_F9:  printf("NOTHING\n");  break;
+                //case VK_F10: printf("NOTHING\n");  break;
+                //case VK_F11: printf("NOTHING\n");  break;
+                //case VK_F12: printf("NOTHING\n");  break;
 
             };
             goto done;
             break;
 
-		//Obs:
-		//essas teclas são tratadas pelo procedimento do sistema.
-		//mas alguma tecla personalizada pode ser  tratada pelo aplicativo,
-		//como o context menu [Application Key]
+        // #bugbug: rever
+        // essas teclas são tratadas pelo procedimento do sistema.
+        // mas alguma tecla personalizada pode ser  tratada pelo aplicativo,
+        // como o context menu [Application Key]
+
         case MSG_SYSKEYUP:
             switch (long1)
             {
                 // Menu.
-                case VK_APPS:
-                    gde_message_box ( 3, "gdeshell:", "VK_APPS" );
-                    break;
+                //case VK_APPS:
+                //    gde_message_box ( 3, "gdeshell:", "VK_APPS" );
+                //    break;
             };
             goto done;
             break;
@@ -1251,7 +1229,9 @@ shellProcedure (
             switch (long1)
             {
                 case CMD_ABOUT:
-                    printf ("MSG_COMMAND-CMD_ABOUT\n");
+                    // printf ("MSG_COMMAND-CMD_ABOUT\n");
+                    show_system_version();
+                    show_shell_version();
                     break;
 
                 // Nothing for now!
@@ -1264,7 +1244,7 @@ shellProcedure (
         case MSG_CLOSE:   
             printf ("MSG_CLOSE\n");   
             exit(0);
-            gdeshell_exit();
+            //gdeshell_exit();
             break;
             
         case MSG_DESTROY: printf ("MSG_DESTROY\n"); break;
@@ -1749,6 +1729,7 @@ do_compare:
     // Podemos cancelar esse comandos extra no começo.
     // Pois estao sem uso.
 
+    /*
     if ( strncmp ( (char *) tokenList[0], "dobin", 5 ) == 0 ){
         goto dobin;
     }
@@ -1761,6 +1742,7 @@ do_compare:
     if ( strncmp ( (char *) tokenList[0], "dosh", 4 ) == 0 ){
         goto dosh;
     }
+    */
 
 
     // =============================================================
@@ -1811,6 +1793,7 @@ do_compare:
     // =============================================================
 
 
+
 // =================================================================
 // == The commands start here ======================================
 // =================================================================
@@ -1818,6 +1801,15 @@ do_compare:
     // #obs:
     // Em ordem alfabética.
 
+    if ( strncmp ( prompt, "350", 3 ) == 0 ){
+        __home = TRUE;
+        goto exit_cmp;
+    }
+
+    if ( strncmp ( prompt, "1156", 4 ) == 0 ){
+        __temple = TRUE;
+        goto exit_cmp;
+    }
 
     // about 
     if ( strncmp ( prompt, "about", 5 ) == 0 ){
@@ -2294,10 +2286,15 @@ do_compare:
     }
 
 
+    // dialog-box
+    if ( gramado_strncmp( prompt, "dialog-box", 10 ) == 0 ){
+        gde_dialog_box ( 3, "Dialog Box", "Testing dialog box" );
+        goto exit_cmp;
+    }
+
     // message-box
-    if ( gramado_strncmp( prompt, "message-box", 11 ) == 0 )
-    {
-        gde_message_box ( 3, "MessageBox", "Testing message box." );
+    if ( gramado_strncmp( prompt, "message-box", 11 ) == 0 ){
+        gde_message_box ( 3, "Message Box", "Testing message box" );
         goto exit_cmp;
     }
 
@@ -2899,7 +2896,8 @@ do_compare:
     {
         printf ("t900: Testing the systemcall 900.\n");
         printf ("Clone and execute a new process. (sysmon.bin)\n");
-        system_call ( 900, (unsigned long) "sysmon.bin", 0, 0 );
+        //system_call ( 900, (unsigned long) "sysmon.bin", 0, 0 );
+        sc82 ( 900, (unsigned long) "sysmon.bin", 0, 0 );
         goto exit_cmp;
     }
 
@@ -3063,8 +3061,9 @@ do_compare:
     if ( gramado_strncmp ( prompt, "wait-reason", 11 ) == 0)
     {
         printf ("gdeshell: child ...\n");
-        system_call ( 900, (unsigned long) "false.bin", 0, 0 );
-    
+        //system_call ( 900, (unsigned long) "false.bin", 0, 0 );
+        sc82( 900, (unsigned long) "false.bin", 0, 0 );
+        
         printf ("gdeshell: still alive 1 ...\n");
         
         // Wait for a reason. (current thread.)
@@ -4127,8 +4126,8 @@ void shellTree (void){
  *    prompt foi definido como stdin->_base.
  */
 
-void shellPrompt (void){
-
+void shellPrompt (void)
+{
     int i=0;
 
     // Clean prompt buffer.
@@ -4687,15 +4686,15 @@ void shellFillOutputBuffer( char element, int element_type )
 //usado para teste de scroll.
 //imprime varias vezes o char indicado.
 
-void testScrollChar ( int c ){
-
+void testScrollChar ( int c )
+{
     int i=0;
 
     for ( i=0; i < (wlMaxColumns*26); i++ )
     {
-	    //se chegamos no limite do screen_buffer
-		//...
-		shellInsertNextChar ((char) c);
+        // Se chegamos no limite do screen_buffer
+        // ...
+        shellInsertNextChar ((char) c);
     };
 }
 
@@ -4703,64 +4702,85 @@ void testScrollChar ( int c ){
 /*
  ***************************************************
  * shellInsertNextChar:
- *     Coloca um char na pr�xima posi��o do buffer.
- *     Mem�ria de v�deo virtual, semelhante a vga.
+ *     Insert the char into the file buffer;
+ *     Print it into the virtual console.
  */
 
-void shellInsertNextChar (char c){
-
-
-	// Coloca o char no buffer.
-	LINES[textCurrentRow].CHARS[textCurrentCol] = (char) c;
-
-
-	// refresh
-    //shellRefreshCurrentChar ();
+void shellInsertNextChar (char c)
+{
+    char tmpChar=0;
     
+    // Put the char in the current position
+    // #bugbug: 
+    // Is this a valid position?
+    // We need to check the position validation?!
+
+    LINES[textCurrentRow].CHARS[textCurrentCol] = (char) c;
+
+    // ??
+    // refresh
+    // shellRefreshCurrentChar();
+
+    // Put the char into the libc buffer.
     
-    // #bugbug
-    // A rotina de libc s� vai imprimir quando enche o buffer.
-    printf ("%c", LINES[textCurrentRow].CHARS[textCurrentCol] );
-    fflush (stdout);
+    tmpChar = (char) LINES[textCurrentRow].CHARS[textCurrentCol];
+    printf ("%c",tmpChar);
 
-	// update
-	textCurrentCol++;
+    // Flush the buffer into the console device.
+    // Stay in the same line.
 
+    fflush(stdout);
 
-	if (textCurrentCol >= 80 )
-	{
-		textCurrentCol = 0;
-		
-		textCurrentRow++;
-		
-		if ( textCurrentRow >= 25 )
-		{
-			shellScroll ();
-			while(1){}
-		}
-	}
+    // Update the current column.
 
-    // atualiza posicionamento da string dentro da linha.
-	LINES[textCurrentRow].pos = textCurrentCol;
-	LINES[textCurrentRow].right = textCurrentCol;
+    textCurrentCol++;
+
+    // #todo
+    // We need constants for the limits.
+
+    // eol ?
+    // Back to the start of the line and
+    // jump to the next line.
+
+    if (textCurrentCol >= 80 )
+    {
+        textCurrentCol = 0;
+        textCurrentRow++;
+
+        // #bugbug
+        // #todo
+        // We reach the end of file buffer.
+
+        if ( textCurrentRow >= 25 )
+        {
+            shellScroll();
+            printf ("shellInsertNextChar: [FIXME] end of the buffer\n");
+            while(1){}
+        }
+    }
+
+    // Update our position inside the current row.
+
+    LINES[textCurrentRow].pos   = textCurrentCol;
+    LINES[textCurrentRow].right = textCurrentCol;
 }
 
 
-void shellInsertCR (void){
-    
-	shellInsertNextChar ( (char) '\r' );		
+void shellInsertCR (void)
+{
+    shellInsertNextChar ( (char) '\r' );
 }
 
 
-void shellInsertLF (void){
-	
-	shellInsertNextChar ( (char) '\n' );
+void shellInsertLF (void)
+{
+    shellInsertNextChar ( (char) '\n' );
 }
 
 
-void shellInsertNullTerminator (void){
-	
-	shellInsertNextChar ( (char) '\0' );	
+void shellInsertNullTerminator (void)
+{
+    shellInsertNextChar ( (char) '\0' );
 }
 
 
@@ -4771,9 +4791,10 @@ void shellInsertNullTerminator (void){
  *     Testaremos o setor do mbr.
  */
 
-void shellTestMBR (void){
-	
+void shellTestMBR (void)
+{
     unsigned char buffer[512];
+
 
     printf ("gdeshell.bin: shellTestMBR()\n");
     printf ("Reading the sector to a ring3 buffer\n\n");
@@ -4858,7 +4879,7 @@ void shellTestMBR (void){
  */
 
 void move_to ( unsigned long x, unsigned long y )
-{	
+{
 	if ( x > wlMaxColumns || y > wlMaxRows )
 		return;
 	
@@ -4871,10 +4892,9 @@ void move_to ( unsigned long x, unsigned long y )
 	//screen_buffer_pos = ( screen_buffer_y * wlMaxColumns + screen_buffer_x ) ;
 }
 
-
-//show shell info
-void shellShowInfo (void){
-	
+// show shell info
+void shellShowInfo (void)
+{
 	int PID, PPID;
 	
     printf (" # shellShowInfo: #\n");
@@ -4892,21 +4912,21 @@ void shellShowInfo (void){
 	    printf("ERROR getting PPID\n");	
 	}
 	*/
-  
-	PID = getpid();
-	PPID = getppid();
-		
-	printf ("Process info: PID={%d} PPID={%d} \n", PID, PPID );
-	
-	printf ("wlMaxColumns={%d} \n", wlMaxColumns );
-	printf ("wlMaxRows={%d} \n", wlMaxRows );	
-	//...
+
+    PID  = getpid();
+    PPID = getppid();
+
+    printf ("Process info: PID={%d} PPID={%d} \n", PID, PPID );
+
+    printf ("wlMaxColumns={%d} \n", wlMaxColumns );
+    printf ("wlMaxRows={%d}    \n", wlMaxRows );
+    // ...
 }
 
 
 // metrics
-void shellShowMetrics (void){
-
+void shellShowMetrics (void)
+{
     //reinicializa as metricas do sistema.
     //isso pega os valores e coloca nas vari�veis globais.
 
@@ -4941,8 +4961,8 @@ void shellShowMetrics (void){
 
 
 //show system info
-void shellShowSystemInfo (void){
-	
+void shellShowSystemInfo (void)
+{
 	int ActiveWindowId=0;
 	int WindowWithFocusId=0;
 	
@@ -5030,62 +5050,47 @@ void shellShowWindowInfo (void){
 }
 
 
-
-//??
-//void shellSetScreenColors( ... ){}
-
-//??
-//void *shellGetTerminalWindow(){}
-
-//void shellSetTerminalRectangle(....){}
-
-//void *shellOpenTerminal(.){}
-
-
-
-  
+// Send message for our own window procedure.
 unsigned long 
-shellSendMessage ( struct window_d *window, 
-                   int msg, 
-                   unsigned long long1, 
-                   unsigned long long2 )
+shellSendMessage ( 
+    struct window_d *window, 
+    int msg, 
+    unsigned long long1, 
+    unsigned long long2 )
 {
-	return (unsigned long) shellProcedure ( window, msg, long1, long2 );
+    //if(msg <=0)
+        //return 0;
+        
+    return (unsigned long) shellProcedure ( window, msg, long1, long2 );
 }
 
-
-//copia bytes	
-void shell_memcpy_bytes( unsigned char *Dest, 
-                         unsigned char *Source,
-                         unsigned long Length )
+// Copy bytes.
+void 
+shell_memcpy_bytes ( 
+    unsigned char *Dest, 
+    unsigned char *Source,
+    unsigned long Length )
 {
-    while (Length--)
+    //if(Lenght == 0)
+        //return;
+
+    while (Length--){
         *Dest++ = *Source++;
+    };
 }
 
-
-/*
- * shell_write_to_screen:
- *     refresh de um ret�ngulo ??    
- */
-/* 
-void shell_write_to_screen( struct shell_screen_d *screen, 
-                            struct shell_rect_d *region )
-{
-    //@todo	
-}
-*/
-
- 
-//todo: 
-//Criar rotina de sa�da do shell.
 
 void shellExit (int code)
 {
-	//#todo ...
-    exit (code);
+    // #todo 
+    // Call shutdown routines.
+    // Clean everything.
+
+    printf ("gdeshell: Exiting ...\n");
+
+    exit(code);
 }
- 
+
 
 /*
  *****************************************
@@ -5111,8 +5116,7 @@ void shellUpdateWorkingDiretoryString ( char *string )
     // YES, it is.
     }else{
 
-        if ( (void *) string == NULL )
-        {
+        if ( (void *) string == NULL ){
             gde_debug_print ("shellUpdateWorkingDiretoryString: [FAIL] invalid string\n");
             return;
 
@@ -5128,10 +5132,13 @@ void shellUpdateWorkingDiretoryString ( char *string )
 
             //++
             // Atualizar no gerenciamento feito pelo kernel.
-            system_call ( 175, 
-                (unsigned long) string,
-                (unsigned long) string, 
-                (unsigned long) string );
+            //system_call ( 175, 
+                //(unsigned long) string,
+                //(unsigned long) string, 
+                //(unsigned long) string );
+           
+            // #test
+            chdir ( (const char *) string );
         };
     };
 }
@@ -5147,9 +5154,8 @@ void shellUpdateWorkingDiretoryString ( char *string )
  * ex: root:/volume0>
  */
 
-void shellInitializeWorkingDiretoryString (void){
-
-
+void shellInitializeWorkingDiretoryString (void)
+{
     gde_debug_print ("shellInitializeWorkingDiretoryString: \n");
  
 	//get info
@@ -5205,7 +5211,10 @@ void shellInitializeWorkingDiretoryString (void){
 
 void shellUpdateCurrentDirectoryID ( int id )
 {
-    g_current_workingdirectory_id = (id);
+    if(id<0)
+        return;
+
+    g_current_workingdirectory_id = id;
 }
 
 
@@ -5222,65 +5231,36 @@ void shellUpdateCurrentDirectoryID ( int id )
 // Devemos considerar aqui o que � trabalho do shell e o que �
 // trabalho do terminal virtual.
 
-void shellTaskList (void){
-		
-	// testando posicionamento de strings
-	
-	unsigned long X, Y;
-	int PID=0;
+// #bugbug
+// Deprecated!
 
-	//Pega o PID do processo atual.
-    PID = (int) system_call ( SYSTEMCALL_GETPID, 0, 0, 0 );
-	
-    //X = apiGetCursorX();
-	Y = gde_get_cursor_y();
-	
-	Y++;
-	X=0;
-	shellSetCursor(X,Y);
-    printf("PID ");
-	X=8;
-	shellSetCursor(X,Y);
-	printf("XXXXXXXX");
-	
-	Y++;
-	X=0;
-	shellSetCursor(X,Y);
-    printf("====");
-	X=8;
-	shellSetCursor(X,Y);
-	printf("========");
-
-	Y++;
-	X=0;
-	shellSetCursor(X,Y);
-    printf("%d",PID);
-	X=8;
-	shellSetCursor(X,Y);
-	printf("...\n");
-	
-    //...
+void shellTaskList (void)
+{
+    printf("shellTaskList: deprecated\n");
 }
 
 
 void shellShowPID (void)
 {
-    printf (" ~ Current PID %d\n", (int) getpid () );
+    printf (" ~ Current PID %d\n", (int) getpid() );
 }
+
 
 void shellShowPPID (void)
 {
-    printf (" ~ Current PPID %d\n", (int) getppid () );
+    printf (" ~ Current PPID %d\n", (int) getppid() );
 }
+
 
 void shellShowUID (void)
 {
-    printf (" ~ Current UID %d\n", (int) getuid () );
+    printf (" ~ Current UID %d\n", (int) getuid() );
 }
+
 
 void shellShowGID (void)
 {
-    printf (" ~ Current GID %d\n", (int) getgid () );
+    printf (" ~ Current GID %d\n", (int) getgid() );
 }
 
 
@@ -5305,31 +5285,35 @@ void shellShowDesktopID (void)
 }
 
 
-void shellShowProcessHeapPointer (void){
-
+// Process heap info.
+void shellShowProcessHeapPointer (void)
+{
     unsigned long heap_pointer=0;
-    
-	//int id = (int) system_call ( SYSTEMCALL_GETPID, 0, 0, 0); 
-    int id = (int) getpid(); 
 
-    heap_pointer = (unsigned long) system_call( SYSTEMCALL_GETPROCESSHEAPPOINTER, 
-                                       id, 0, 0 );
+    int MyPID = (int) getpid(); 
+
+    heap_pointer = (unsigned long) gramado_system_call ( 
+                                       SYSTEMCALL_GETPROCESSHEAPPOINTER, 
+                                       MyPID, 
+                                       0, 
+                                       0 );
 
     printf ("Current Process heap pointer address %x\n", 
         (unsigned long) heap_pointer );
 }
 
 
-void shellShowKernelHeapPointer (void){
-
+void shellShowKernelHeapPointer (void)
+{
     unsigned long heap_pointer=0;
 
-	//??
-	//Id do processo kernel.
-    int id = 0;   
+    int MyPID = (int) getpid(); 
 
-    heap_pointer = (unsigned long) system_call( SYSTEMCALL_GETPROCESSHEAPPOINTER, 
-                                       id, 0, 0 );
+    heap_pointer = (unsigned long) gramado_system_call ( 
+                                       SYSTEMCALL_GETPROCESSHEAPPOINTER, 
+                                       MyPID, 
+                                       0, 
+                                       0 );
 
     printf ("Current Process heap pointer address %x\n", 
         (unsigned long) heap_pointer );
@@ -5385,8 +5369,8 @@ void shellShowKernelInfo (void)
  * Credits: Luiz Felipe
  */
 
-void shell_fntos (char *name){
-
+void shell_fntos (char *name)
+{
     int  i, ns = 0;
     char ext[4];
     //const char ext[4];
@@ -5421,170 +5405,29 @@ void shell_fntos (char *name){
     };
 
 
-    for ( i=0; i < 3; i++ )
+    for ( i=0; i < 3; i++ ){
         *name++ = ext[i];
-
+    };
 
     *name = '\0';
 }
 
 
-/*
- *******************************************************
- * shell_gramado_core_init_execve:
- *
- *     Essa � uma rotina alternativa que roda um processo 
- * usando os recursos do processo init.
- */
 
-// #bugbug
-// N�o usar mais esse m�todo no garden. usar apenas no gramado core.
+
+// #deprecated
+// We changes the way we handle the processes.
+// The system does not support this call anymore.
+// Delete it!
 
 int 
 shell_gramado_core_init_execve ( 
-    const char *arg1,     // nome
-    const char *arg2,     // arg (endere�o da linha de comando)
-    const char *arg3 )    // env
+    const char *arg1,
+    const char *arg2,
+    const char *arg3 ) 
 {
-
-	//erro.
-    int Status = 1;
-
-	//unsigned long arg_address = (unsigned long) &argv[0];
-
-	// suprimindo dot-slash
-	// The dot is the current directory and the 
-	// slash is a path delimiter.
-	//if( filename[0] == '.' && filename[1] == '/' )
-	//{ 
-	//    filename++;
-	//    filename++; 
-	//    goto translate;	
-	//};
-
-
-	//suprimindo a barra.
-	//if( *arg1 == '/' || 
-	//    *arg1 == '\\' )
-	//{ 
-	//    arg1++; 
-	//};
-
-
-translate:
-
-	//
-	// ## BUG BUG
-	//
-	// Talvez nesse momento, ao transformar a string ele 
-	// corrompa o espa�o reservado para o argumento seguinte.
-	// vamos fazer um teste no quan a rotina n�o precise 
-	// acrescentar zeros.
-	//
-	
-	//
-	// correto � isso mesmo,
-	// para n�o corromper o espa�o dos argumentos no vetor,
-	// teremos que transformar somente l� no kernel, pouco antes 
-	// de carregarmos o arquivo.
-	//
-	
-	//Isso faz uma convers�o de 'test.bin' em 'TEST    BIN'.
-	//Ok funcionou.
-	//shell_fntos( (char *) arg1);
-	
-	//const char* isso n�o foi testado.
-	//shell_fntos(filename);
-
-
-	// #importante:
-	// Isso deve chamar gramado_core_init_execve() na api.
-								
-	
-	// #obs:
-	// isso chamar� uma rotina especial de execve, somente  
-	// usada no ambiente gramado core. 
-	// Essa � uma rotina alternativa que roda um processo usando os recursos 
-	// do processo init.
-	
-execve:
-
-	// Obs: 
-	// Se retornar o n�mero do processo ent�o podemos esperar por ele 
-	// chamando wait (ret);
-
-
-    Status = (int) system_call ( 167, 
-                       (unsigned long) arg1,    // Nome
-                       (unsigned long) arg2,    // arg (endere�o da linha de comando)
-                       (unsigned long) arg3 );  // env
-
-    if ( Status == 0 )
-    {
-		//N�o houve erro. O aplicativo ir� executar.
-
-		// Nesse momento devemos usar um novo procedimento de janela.
-		// Que vai enviar as mensagens de caractere para um terminal 
-		// espec�fico, para que aplicativos que user aquele terminal 
-		// possam pegar essas mensgens de caractere.
-
-
-#ifdef SHELL_VERBOSE
-        printf ("gdeshell: aplicativo inicializado.\n");
-#endif
-
-		//
-		// ## teste ##
-		//
-		// saindo do shell.
-		//
-		
-		// getpid...
-		// waitforpid(?);
-		
-		//die("Exiting shell.bin\n");
-		
-		//Saindo sem erro.
-		//exit(0);
-		
-		//Sa�da elegante, retornando para o crt0.
-		ShellFlag = SHELLFLAG_EXIT;
-		
-		//ShellFlag = SHELLFLAG_FEEDTERMINAL;
-		goto done;
-	}else{
-		
-		// Se estamos aqui � porque ouve erro 
-		// ainda n�o sabemos o tipo de erro. 
-		// Status indica o tipo de erro.
-		// Se falhou significa que o aplicativo n�o vai executar,
-		// ent�o n�o mais o que fazer.
-		
-		//#importante: Error message.
-		printf("shell: aplicativo nao foi inicializado.\n");
-		
-		ShellFlag = SHELLFLAG_COMMANDLINE;
-		goto fail;
-	};
-
-
-	//fail.
-	
-	// Retornaremos. 
-	// Quem chamou essa rotina que tome a decis�o 
-	// se entra em wait ou n�o.
-
-
-fail:
-
-    //#importante: Error message.
-    //status = 1.
-	
-    printf ("shell_gramado_core_init_execve: \n fail retornando ao interpretador\n");
-	
-done:
-
-    return (int) Status;
+    printf ("shell_gramado_core_init_execve: deprecated\n");
+    return (int) -1;
 }
 
 
@@ -6255,14 +6098,37 @@ int is_sh1 ( char *cmd ){
 }
 
 
+void show_system_version (void)
+{
+    FILE *fp;
+    fp=(FILE*) fopen("edition.txt","r+");
+    char buffer[32];
+    int nreads=0;
+
+    puts("\n");
+    printf("Gramado edition:\n");
+    
+    nreads=read(fileno(fp),buffer,sizeof(buffer));
+    if(nreads>0)
+    {
+        buffer[31]=0;
+        printf("%s\n",buffer);
+        fclose(fp);
+    }
+}
+
+
 /* 
  * Give version information about this shell. 
  */
 
 void show_shell_version (void)
 {
-    if ( (void *) shell_name != NULL &&
-         (void *) dist_version != NULL &&
+    puts("\n");
+    printf("Application info:\n");
+
+    if ( (void *) shell_name    != NULL &&
+         (void *) dist_version  != NULL &&
          (void *) build_version != NULL )
     {
         printf ("%s version %s.%s \n", 

@@ -9,6 +9,14 @@
  */
 
 
+// # 
+// The goal of this module is not to do any low level
+// nic initialization.
+// The goal here is to build a network manager support routines.
+// So this way, the network manager application can call these routines
+// here to do its job.
+
+
 // See:
 // https://wiki.osdev.org/Network_Stack
 // https://wiki.osdev.org/Intel_Ethernet_i217
@@ -110,18 +118,19 @@ int network_buffer_in( void *buffer, int len )
 {
     void *dst_buffer;
     int tail=0;
-    
+
 
     // check args
 
-    if ( (void*) buffer == NULL )
-        panic ("network_buffer_in: buffer");
-        
-    if(len>1500)
-        return -1;
+    if ( (void*) buffer == NULL ){
+        panic ("network_buffer_in: buffer\n");
+    }
 
-   
-    tail = NETWORK_BUFFER.receive_tail;
+    if(len>1500){
+        return -1;
+    }
+
+    tail = (int) NETWORK_BUFFER.receive_tail;
 
     //circula.
     NETWORK_BUFFER.receive_tail++;
@@ -175,12 +184,18 @@ sys_network_receive (
     int head=0;
 
     debug_print("sys_network_receive:\n");
-    
-    
+
+
+    if ( (void*) ubuf == NULL )
+    {
+        debug_print("sys_network_receive: [ERROR] ubuf\n");
+        return -1;
+    }
+
+
     // Pega do head. 
     // Primeiro da fila.
-    head = NETWORK_BUFFER.receive_head;
-
+    head = (int) NETWORK_BUFFER.receive_head;
 
     // Round the buffer.
     NETWORK_BUFFER.receive_head++;
@@ -238,18 +253,19 @@ int network_buffer_out ( void *buffer, int len )
 
     // check args
 
-    if ( (void*) buffer == NULL )
+    if ( (void*) buffer == NULL ){
         panic ("network_buffer_out: buffer");
-    
-    if (len>1500)
-        return -1;
+    }
 
+    if (len>1500){
+        return -1;
+    }
 
     // Vamos pegar um numero de buffer para enviarmos o pacote.
     // o kernel vai retirar do head ... 
     // o que foi colocado pelo aplicativo em tail.
 
-    head = NETWORK_BUFFER.send_head;
+    head = (int) NETWORK_BUFFER.send_head;
 
     // circula.
     NETWORK_BUFFER.send_head++;
@@ -265,9 +281,10 @@ int network_buffer_out ( void *buffer, int len )
     //refresh_screen();
 
         
-    if(head<0)
+    if(head<0){
         return -1;
-        
+    }
+
     // Pega o destination buffer.
     if (head<8)
     {
@@ -300,18 +317,24 @@ sys_network_send (
     void *ubuf, 
     int size )
 {
-
     void *src_buffer;
     int tail=0;
-
 
     // #bugbug
     // Do not use this buffer here.
     // It is too big to be inside the kernel.
+
     char xxxbuffer[4096];
 
 
     debug_print("sys_network_send:\n");
+
+
+    if ( (void*) ubuf == NULL )
+    {
+        debug_print("sys_network_send: [ERROR] ubuf\n");
+        return -1;
+    }
 
 
     // O aplicativo esta colocando no tail.
@@ -404,9 +427,10 @@ network_procedure (
     __process = (struct process_d *) processList[current_process];
 
     if ( (void *) __process == NULL )
+    {
         return 0;
+    }
 
-    
     switch (msg)
     {
 
@@ -428,12 +452,16 @@ network_procedure (
                 refresh_screen();
                 break; 
             }
-            // Mensagem.
-           __process->control->window  = NULL;
-           __process->control->msg     = (int) MSG_AF_INET;    //Temos uma mensagem. 
-           __process->control->long1   = (unsigned long) 0;
-           __process->control->long2   = (unsigned long) 0;
-           __process->control->newmessageFlag = 1;
+
+            // Kernel single event.
+            // It is not the event queue.
+
+           __process->control->ke_window  = NULL;
+           __process->control->ke_msg     = (int) MSG_AF_INET;
+           __process->control->ke_long1   = (unsigned long) 0;
+           __process->control->ke_long2   = (unsigned long) 0;
+
+           __process->control->ke_newmessageFlag = TRUE;
 
             // pty_send_message_to_thread ( (unsigned long) msg_buffer, (int) t->tid );  
             //network_status = ; //apto a
@@ -455,11 +483,16 @@ network_procedure (
             sprintf( (char *) ____network_file->_base, "Hello friend!\n");
             //memcpy ( (void *), (const void *), (size_t) );
 
-           __process->control->window = NULL;
-           __process->control->msg = (int) MSG_NET_DATA_IN;  //temos uma mensagem. 
-           __process->control->long1 = (unsigned long) long1;  
-           __process->control->long2 = (unsigned long) long2;  
-           __process->control->newmessageFlag = 1;
+            // Kernel single event.
+            // It is not the event queue.
+
+           __process->control->ke_window = NULL;
+           __process->control->ke_msg    = (int) MSG_NET_DATA_IN;
+           __process->control->ke_long1  = (unsigned long) long1;
+           __process->control->ke_long2  = (unsigned long) long2;
+
+           __process->control->ke_newmessageFlag = TRUE;
+
            break;
 
 		//send ARP packet
@@ -499,11 +532,17 @@ network_procedure (
             sprintf( (char *) ____network_file->_base, 
                 "Hello process. We've got your ipv4 packet!\n");
             //memcpy ( (void *), (const void *), (size_t) );
-            __process->control->window = NULL;
-            __process->control->msg = (int) MSG_NETWORK_NOTIFY_PROCESS;   
-            __process->control->long1 = (unsigned long) long1; 
-            __process->control->long2 = (unsigned long) long2; 
-            __process->control->newmessageFlag = 1;
+
+            // Kernel single event.
+            // It is not the event queue.
+
+            __process->control->ke_window = NULL;
+            __process->control->ke_msg    = (int) MSG_NETWORK_NOTIFY_PROCESS;   
+            __process->control->ke_long1  = (unsigned long) long1; 
+            __process->control->ke_long2  = (unsigned long) long2; 
+
+            __process->control->ke_newmessageFlag = TRUE;
+
             break;
 
    
@@ -517,9 +556,9 @@ network_procedure (
         //...
     } 
 
-
 	//printf ("network_procedure: done\n");
 	//refresh_screen();
+
     return (unsigned long ) 0;
 }
 
@@ -527,7 +566,6 @@ network_procedure (
 
 void networkSetstatus (int status)
 {
-
     if ( status < 0 || status > 1 )
         return;
 
@@ -545,13 +583,12 @@ int networkGetStatus (void)
  **********************************************************
  * networkInit:
  * 
- * It only initializes the some network structures. 
+ * It only initializes some network structures. 
  * Not the adapters.
  */ 
 
-int networkInit (void){
-
-
+int networkInit (void)
+{
     debug_print ("networkInit:\n");
 
     // #importante
@@ -559,16 +596,23 @@ int networkInit (void){
     // Aquela chamada por processos inicializadores em ring3.
     // Com essa flag acionada o handler do nic poderá
     // decodificar o buffer, caso contrário deve ignorar.
+
     ____network_late_flag=0;
-    
-    
+
+
+
     //
-    // buffers
+    // buffers:
+    // We will create 32 buffers to receive data and
+    // 8 buffers to send data.
     //
+
     void *nbuffer;
     int i=0;
-    
-    //receive buffers,
+
+    // =====================================
+    // receive buffers
+
     for (i=0;i<32;i++)
     {
         nbuffer = (void*) newPage();
@@ -580,9 +624,10 @@ int networkInit (void){
     }
     NETWORK_BUFFER.receive_tail =0;
     NETWORK_BUFFER.receive_head =0;
-    
 
-    //send buffers,
+    // ========================================
+    // send buffers
+
     for (i=0;i<8;i++)
     {
         nbuffer = (void*) newPage();
@@ -596,29 +641,28 @@ int networkInit (void){
     NETWORK_BUFFER.send_head =0;
 
 
+    // =====================================
 
     // Status.
     networkSetstatus(0);
 
-
-	// Host info struct. 
-	// See: host.h
+    // =====================================
+    
+    // Host info struct. 
+    // See: include/rtl/net/host.h
 
     HostInfo = (struct host_info_d *) kmalloc( sizeof( struct host_info_d ) ); 
 
-    if ( (void *) HostInfo == NULL )
-    {
-        panic("networkInit: HostInfo");
-
+    if ( (void *) HostInfo == NULL ){
+        panic("networkInit: HostInfo\n");
     }else{
-
-        // #todo object header
-
         HostInfo->used = 1;
         HostInfo->magic = 1234;
+        // #todo object header
 
-        //HostInfo->__hostname =
-        HostInfo->hostName_len = (size_t) HOSTNAME_BUFFER_SIZE;
+        // #todo
+        HostInfo->__hostname[0] = 'h';
+        HostInfo->hostName_len = (size_t) HOST_NAME_MAX;
 
         HostInfo->hostVersion = NULL;
 
@@ -641,11 +685,8 @@ int networkInit (void){
 
     LocalHostHTTPSocket = (struct socket_d *) create_socket_object();  
 
-    if ( (void *) LocalHostHTTPSocket == NULL )
-    {
-        panic ("networkInit: Couldn't create LocalHostHTTPSocket");
-        //return -1;
-    
+    if ( (void *) LocalHostHTTPSocket == NULL ){
+        panic ("networkInit: Couldn't create LocalHostHTTPSocket\n");
     }else{
         LocalHostHTTPSocket->ip   = 0;
         LocalHostHTTPSocket->port = 0;
@@ -818,60 +859,30 @@ void show_current_nic_info (void){
 //#todo
 //ipv6 needs to have its own document.
 
-int handle_ipv6 ( struct ipv6_header_d *header ){
+// #bugbug
+// No, no, no ... we will not do this job here in the base kernel.
 
-    //debug_print ("handle_ipv6: Initializing ...\n");
-    //printf("handle_ipv6: Initializing ...\n");
-
-    if ( (void *) header == NULL ){
-        printf ("handle_ipv6: header fail\n");
-        return -1;
-
-    }else{
-
-        //printf("ver_tc_label=%x len=%d next_header=%x hop_limit=%d \n",
-        //    header->ver_tc_label,
-        //    header->len,
-        //    header->next_header,
-        //    header->hop_limit );
-
-		//32bit
-		//printf("ver=%d ", header->ver_tc_label & 0xF0000000 );
-		//printf("tc=%d ", header->ver_tc_label  & 0x0FF00000 );
-		//printf("label=%d ", header->ver_tc_label  & 0x000FFFFF );
-	    
-		//16bit
-		//printf("len=%d ", header->len  & 0xFFFF );
-		
-		//8bit
-		//printf("next=%d ", header->next_header & 0xFF );
-
-		//8bit
-		//printf("hop_limit=%d \n", header->hop_limit & 0xFF );
-		
-		//...
-
-        return 0;
-    };
-
-
-    return 1;
+int handle_ipv6 ( struct ipv6_header_d *header )
+{
+    debug_print ("handle_ipv6: Not supported in this module\n");
+    printf      ("handle_ipv6: Not supported in this module\n");
+    return 0;
 }
 
 
-
 /*
- * Network_test:
+ *************************
+ * network_test:
  *     Debug routine.
  *     Called by a ring3 process.
  */
 
 void network_test(void)
 {
-    debug_print("network_test: \n");
+    debug_print("network_test:\n");
     
     // Nic info.
-    debug_print("network_test: Test NIC \n");
+    debug_print("network_test: Test NIC\n");
     testNIC();
 
     // Network info.
@@ -1458,7 +1469,6 @@ SendARP ( int op,   //operation
     if ( currentNIC == NULL ){
         printf ("SendARP: currentNIC fail\n");
         return;
-
     }else{
 
 		// Source IP.
@@ -1488,7 +1498,6 @@ SendARP ( int op,   //operation
     if ( (void *) eh == NULL){
         printf ("SendARP: eh struct fail\n");
         return;
- 
     }else{
 
 		// Coloca na estrutura do ethernet header os seguintes valores: 
@@ -2067,8 +2076,8 @@ int do_ipv6 ( unsigned long buffer )
 // See:
 // https://en.wikipedia.org/wiki/Address_Resolution_Protocol
 
-int do_arp ( unsigned long buffer ){
-
+int do_arp ( unsigned long buffer )
+{
     struct ether_header  *eh;
     struct ether_arp     *ah;
     int i=0;
@@ -2077,7 +2086,12 @@ int do_arp ( unsigned long buffer ){
     // #debug
     // printf ("do_arp: \n");
     debug_print ("do_arp: \n");
-        
+
+    if ( buffer == 0 ){
+        debug_print ("do_arp: [FAIL] buffer\n");
+        return -1;
+    }
+
     eh = (struct ether_header *) (buffer + 0);
     ah = (struct ether_arp *)    (buffer + 14);
     
@@ -2085,7 +2099,7 @@ int do_arp ( unsigned long buffer ){
     // printf ("todo: Address Resolution Protocol (ARP) ");
   
     if ((void *) ah == NULL){
-        debug_print ("do_arp: arp header struct\n");
+        debug_print ("do_arp: [FAIL] arp header struct\n");
         //printf()
         return 1;
     }

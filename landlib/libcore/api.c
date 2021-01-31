@@ -33,8 +33,14 @@
 
 // Buttons
 struct window_d  *first_responder;
+
+// Message box:
+// It only needs on button.
 struct window_d  *messagebox_button1;
-struct window_d  *messagebox_button2;
+//struct window_d  *messagebox_button2;
+
+// Dialog box:
+// Two buttons. [OK] and [CANCEL]
 struct window_d  *dialogbox_button1;
 struct window_d  *dialogbox_button2;
 // ...
@@ -285,19 +291,25 @@ gde_load_bitmap_16x16 (
  * 
  */
 
-// IN: ??
+// IN: 
+// pathname, ring3 buffer, ring3 buffer limit.
 
 int 
 gde_load_path ( 
-    char *path, 
+    const char *path, 
     unsigned long buffer, 
     unsigned long buffer_len )
 {
     int status = -1;
-
+    size_t Size=0;
 
     if ( (void*) path == NULL ){
         printf ("gde_load_path: [FAIL] path\n");
+        return (int) -1;
+    }
+
+    if (*path != '/'){
+        printf ("gde_load_path: [FAIL] It's not an absolute pathname\n");
         return (int) -1;
     }
 
@@ -306,12 +318,22 @@ gde_load_path (
         return (int) -1;
     }
 
+    Size = strlen(path);
+    
+    if (Size == 0){
+        printf ("gde_load_path: [FAIL] Size\n");
+        return (int) -1;
+    }
 
-    //if ( buffer = 0 )
-    //{
-        // msg
-    //    return -1;
-    //}
+    if (buffer == 0){
+        printf ("gde_load_path: [FAIL] buffer\n");
+        return (int) -1;
+    }
+
+    if (buffer_len == 0){
+        printf ("gde_load_path: [FAIL] buffer_len\n");
+        return (int) -1;
+    }
 
     status = (int) gramado_system_call ( 4004, 
                        (unsigned long) path, 
@@ -356,6 +378,9 @@ void gde_init_background (void)
 /*
  ***************************************************
  * gde_message_box:
+ * 
+ *     Create and display a message box.
+ * 
  *     Message box on gui->screen.
  *     Types=[1~5]
  *     @todo: Devemos considerar o retorno? E se a chamada falhar?
@@ -365,6 +390,10 @@ void gde_init_background (void)
 // It can be usefull in the setup environment.
 // #todo: 
 // usar get system metrics
+
+
+// #todo
+// Message box only needs one button. [OK] 
 
 int __mb_current_button; 
 
@@ -428,6 +457,30 @@ gde_message_box (
     __mb_current_button = 1;
     first_responder = messagebox_button1;
 
+
+
+    if ( (void*) string1 == NULL ){
+        gde_debug_print ("gde_message_box: string1\n");
+        return -1;
+     }
+
+    if ( (void*) string2 == NULL ){
+        gde_debug_print ("gde_message_box: string2\n");
+        return -1;
+    }
+
+    if (*string1 == 0){
+        gde_debug_print ("gde_message_box: *string1\n");
+        return -1;
+    }
+
+    if (*string2 == 0){
+        gde_debug_print ("gde_message_box: *string2\n");
+        return -1;
+    }
+
+
+
 	// Obs: 
 	// Por enquanto para todos os tipos de messagebox 
 	// estamos usando o mesmo tipo de janela.
@@ -469,8 +522,11 @@ do_create_messagebox_3:
     Button = 1;
     //...
     
+    // #bugbug
+    // Check NULL pointers.
 
     //++
+    // The main window.
     gde_enter_critical_section ();
     
     hWnd = (void *) gde_create_window ( 
@@ -519,7 +575,7 @@ do_create_messagebox_3:
 
     messagebox_button1 = (void *) gde_create_window ( 
                                       WT_BUTTON, 1, 1, "[F1] OK", 
-                                      ((cx/2)*0), ((cy/8)*6), (cx/2), 24,
+                                      ((cx/2)*1), ((cy/8)*6), (cx/2), 24,
                                       hWnd, 0, 
                                       xCOLOR_GRAY1, xCOLOR_GRAY1 );
 
@@ -535,6 +591,11 @@ do_create_messagebox_3:
     //--
 
 
+
+    // #test
+    // Message box only needs one button. [OK]
+
+    /*
     //++
 	// button 2
 	gde_enter_critical_section ();
@@ -555,6 +616,11 @@ do_create_messagebox_3:
     
     gde_exit_critical_section();
     //--
+    */
+
+
+
+
 
     // string
     // apiDrawText ( (struct window_d *) hWnd,
@@ -590,9 +656,9 @@ Mainloop:
         {
             Response = (int) mbProcedure ( 
                                  (struct window_d *) message_buffer[0], 
-                                 (int) message_buffer[1], 
-                                 (unsigned long) message_buffer[2], 
-                                 (unsigned long) message_buffer[3] );
+                                 (int)               message_buffer[1], 
+                                 (unsigned long)     message_buffer[2], 
+                                 (unsigned long)     message_buffer[3] );
 
             // Temos uma resposta.
             if (Response > 100){
@@ -621,9 +687,12 @@ exit_messagebox:
 /*
  **************************************************
  * mbProcedure:
- *     O procedimento padrão de message box. 
- *     #interna
+ *     Dialog for message box.
  */
+
+// #todo
+// Message box does not need answers,
+// so, e need only one button.
 
 unsigned long 
 mbProcedure ( 
@@ -635,72 +704,79 @@ mbProcedure (
 
     switch (msg)
     {
-		// MSG_MOUSEKEYDOWN
-		case 30:
-		    switch (long1)
-		    {
-				case 1://botão 1
-					if ( window == messagebox_button1 )
-					{
-                    gramado_system_call ( 9900,   
-                          (unsigned long) window, 
-                          (unsigned long) window, 
-                          (unsigned long) window );
-						  return (unsigned long) 0;
-						break;
-					}	
-					if ( window == messagebox_button2 )
-					{
-                     gramado_system_call ( 9900,   
-                          (unsigned long) window, 
-                          (unsigned long) window, 
-                          (unsigned long) window );
-						return (unsigned long) 0;
-						break;
-					}
-				   break;
-			};
-		    break;
+        // MSG_MOUSEKEYDOWN
+        case 30:
+            switch (long1)
+            {
+                case 1:
+                    if ( window == messagebox_button1 )
+                    {
+                        gramado_system_call ( 
+                            9900,   
+                            (unsigned long) window, 
+                            (unsigned long) window, 
+                            (unsigned long) window );
+                        return (unsigned long) 0;
+                        break;
+                    }
+                    /*
+                    if ( window == messagebox_button2 )
+                    {
+                        gramado_system_call ( 
+                            9900,   
+                            (unsigned long) window, 
+                            (unsigned long) window, 
+                            (unsigned long) window );
+                        return (unsigned long) 0;
+                        break;
+                    }
+                    */
+                break;
+            };
+            break;
 
-		//mouse keyup    
-		case 31:
-		    switch (long1)
-		    {
-				case 1://botão 1
-					if ( window == messagebox_button1 )
-					{
-                    gramado_system_call ( 9901,   
-                          (unsigned long) window, 
-                          (unsigned long) window, 
-                          (unsigned long) window );
-						return (unsigned long) 102; //resposta ok
-						break;
-					}	
-					if ( window == messagebox_button2 )
-					{
-                     gramado_system_call ( 9901,   
-                          (unsigned long) window, 
-                          (unsigned long) window, 
-                          (unsigned long) window );
-						return (unsigned long) 101; //resposta no
-						break;
-					}
-				   break;
-			};
-		    break;
+        //mouse keyup    
+        case 31:
+            switch (long1)
+            {
+                case 1:
+                    if ( window == messagebox_button1 )
+                    {
+                        gramado_system_call ( 
+                            9901,   
+                            (unsigned long) window, 
+                            (unsigned long) window, 
+                            (unsigned long) window );
+                        // Response [YES]
+                        return (unsigned long) 102;
+                        break;
+                    }
+                    /*
+                    if ( window == messagebox_button2 )
+                    {
+                        gramado_system_call ( 
+                            9901,   
+                            (unsigned long) window, 
+                            (unsigned long) window, 
+                            (unsigned long) window );
+                        // Response [NO]
+                        return (unsigned long) 101; 
+                        break;
+                    }
+                    */
+                    break;
+            };
+            break;
 
         case MSG_KEYUP:
             switch(long1)
             {
-				    
-				case VK_RETURN:
-				    //goto __release_current_button;
-				    return (unsigned long) 0;
-				    break;
-				   
+                case VK_RETURN:
+                    return (unsigned long) 0;
+                    break;
+
                 default:
-				    //printf ("defaul keydown\n");
-				    return (unsigned long) 0;
+                    return (unsigned long) 0;
                     break; 
             };
             break;
@@ -709,134 +785,51 @@ mbProcedure (
         case MSG_KEYDOWN:
             switch(long1)
             {
+                // Response [NO]
                 case VK_ESCAPE:
-				    printf ("scape\n");
-                    return (unsigned long) 101; //resposta no
-				    break;
-				    
-				 case VK_TAB:
-				     //if ( __mb_current_button == 1 )
-				     //{
-						// __mb_current_button = 2; 
-						 //first_responder = messagebox_button2; 
-						 //gde_set_focus (first_responder);
-						 //return (unsigned long) 0;
-						 //break; 
-				     //}
-				     //if ( __mb_current_button == 2 )
-				     //{
-						// __mb_current_button = 1; 
-						 //first_responder = messagebox_button1;
-						 //gde_set_focus (first_responder);
-						 //return (unsigned long) 0;
-						 //break; 
-					 //}
-					 return (unsigned long) 0;
-				     break;
-				    
-				case VK_RETURN:
-				    //goto __press_current_button;
-				    return (unsigned long) 0;
-				    break;
-				   
+                    return (unsigned long) 101; 
+                    break;
+
+                // Response [YES]
+                case VK_RETURN:
+                    return (unsigned long) 102;
+                    break;
+
                 default:
-				    //printf ("defaul keydown\n");
-				    return (unsigned long) 0;
+                    return (unsigned long) 0;
                     break; 
             };
             break;
-            
+
 
         case MSG_SYSKEYDOWN: 
-            switch(long1)	       
-            {	
-				//Test.
-				case VK_F1:
-				    printf ("f1 Yes\n");
-                    return (unsigned long) 102; //resposta ok.
-					break;
-					
+            switch (long1)
+            {
+                // Response [OK].
+                case VK_F1:
+                    printf ("F1: YES\n");
+                    return (unsigned long) 102;
+                    break;
+
+                // Response [NO]
                 case VK_F2:
-				    printf ("f2 No\n");
-                    return (unsigned long) 101; //resposta no.
-					break;
+                    printf ("F2: NO\n");
+                    return (unsigned long) 101;
+                    break;
 
-				default:
-				    //printf ("default sys key down\n");
-				    return (unsigned long) 0;
-				    break;
-		    };              
+                default:
+                    return (unsigned long) 0;
+                    break;
+            };
             break;
-		
-	    case MSG_SYSKEYUP:
-		   //printf ("sys key up\n");
-		   return (unsigned long) 0; 
-           break;
-		
-        //@todo case command .. button ??
-		
-		default:
-		    //printf ("default message\n");
-		    return (unsigned long) 0;
+
+        default:
+            return (unsigned long) 0;
             break;
-	};
-
-	printf ("done\n");
-	return (unsigned long) 0;
-	
-	
-/*	
-__press_current_button:
-
-    // button_down
-    // Quando um botão é clicado ou pressionado,
-    // ele será repintado com a aparência de botão apertado.
-    switch ( __mb_current_button )
-    {
-		case 1:
-        gramado_system_call ( 9900,   
-             (unsigned long) window, 
-             (unsigned long) window, 
-             (unsigned long) window );
-		     break;
-		     
-		case 2:
-        gramado_system_call ( 9900,   
-             (unsigned long) window, 
-             (unsigned long) window, 
-             (unsigned long) window );
-		     break;
     };
+
+    printf ("done\n");
     return (unsigned long) 0;
-*/
-
-/*
-__release_current_button:
-
-    // button_down
-    // Quando um botão é clicado ou pressionado,
-    // ele será repintado com a aparência de botão apertado.
-    switch ( __mb_current_button )
-    {
-		case 1:
-        gramado_system_call ( 9901,   
-             (unsigned long) window, 
-             (unsigned long) window, 
-             (unsigned long) window );
-             return (unsigned long) 102;
-		     break;
-		     
-		case 2:
-        gramado_system_call ( 9901,   
-             (unsigned long) window, 
-             (unsigned long) window, 
-             (unsigned long) window );
-             return (unsigned long) 101;
-		     break;
-    };
-	return (unsigned long) 0; 
-*/
-   
 }
 
 
@@ -844,40 +837,28 @@ __release_current_button:
  ******************************
  * gde_dialog_box:
  *     
+ *     Create and display a dialog box.
+ * 
  *     Types=[1~5]
  *     @todo: Devemos considerar o retorno? E se a chamada falhar? 
  */
 
-// Antes nós chamávamos o kernel, agora tentaremos implantar na api.
-    
+
+
 int gde_dialog_box ( int type, char *string1, char *string2 )
 {
-
-	
-	//system_call ( SYSTEMCALL_MESSAGE_BOX, (unsigned long) type, 
-	//	(unsigned long) string1, (unsigned long) string2 );
-	
-
-	//#debug
-	//printf ("Testing dialog Box type=%d \n", type);
-
     int Response = 0;
     int running = 1;
-
-    // Draw !
 
     struct window_d *hWnd;    //Window.
     struct window_d *pWnd;    //Parent.
     struct window_d *bWnd;    //Button.
 
-
-
     unsigned long deviceWidth  = gde_get_system_metrics(1); 
     unsigned long deviceHeight = gde_get_system_metrics(2);
 
-    if ( deviceWidth == 0 || deviceHeight == 0 )
-    {
-        printf ("gde_dialog_box: device size\n");
+    if ( deviceWidth == 0 || deviceHeight == 0 ){
+        printf ("gde_dialog_box: [FAIL] device size\n");
         return -1;
     }
 
@@ -912,7 +893,28 @@ int gde_dialog_box ( int type, char *string1, char *string2 )
     WindowClientAreaColor = COLOR_YELLOW;
     WindowColor           = COLOR_PINK;
 
-    gde_debug_print ("gde_dialog_box: [DEPRECATED]\n");
+    gde_debug_print ("gde_dialog_box:\n");
+
+
+    if ( (void*) string1 == NULL ){
+        gde_debug_print ("gde_dialog_box: string1\n");
+        return -1;
+     }
+
+    if ( (void*) string2 == NULL ){
+        gde_debug_print ("gde_dialog_box: string2\n");
+        return -1;
+    }
+
+    if (*string1 == 0){
+        gde_debug_print ("gde_dialog_box: *string1\n");
+        return -1;
+    }
+
+    if (*string2 == 0){
+        gde_debug_print ("gde_dialog_box: *string2\n");
+        return -1;
+    }
 
 
     // Obs: 
@@ -951,26 +953,29 @@ int gde_dialog_box ( int type, char *string1, char *string2 )
                                WT_POPUP, 1, 1, string1, 
                                x, y, cx, cy, NULL, 0, 
                                WindowClientAreaColor, WindowColor); 
-	        break;
+            break;
 
 
-		// Com botão, Título de alerta.	
-	    case 3:
-		    //janela de aplicativo.
-	        Button = 1;
-			hWnd = (void*) gde_create_window ( WT_OVERLAPPED, 1, 1, "Alert", 
-			                x, y, cx, cy, NULL, 0, 
-							WindowClientAreaColor, WindowColor); 
-	        break;
-			
-		//Com botão, título de mensagem do sistema.	
-	    case 4:
+        // Com botão, Título de alerta.
+        // Criamos agora a janela de aplicativo.
+        case 3:
+            Button = 1;
+            hWnd = (void*) gde_create_window ( 
+                               WT_OVERLAPPED, 1, 1, "Alert", 
+                               x, y, cx, cy, NULL, 0, 
+                               WindowClientAreaColor, WindowColor ); 
+            break;
+
+
+        // Com botão, título de mensagem do sistema.	
+        case 4:
 		    Button = 1;
 	        hWnd = (void*) gde_create_window ( WT_OVERLAPPED, 1, 1, "System Message", 
 			                x, y, cx, cy, NULL, 0, 
 							WindowClientAreaColor, WindowColor); 
 	        break;
-			
+
+
 		//Tipo negligenciado. Usamos o formato padrão.	
 		default:
 		    Button = 1;
@@ -978,9 +983,9 @@ int gde_dialog_box ( int type, char *string1, char *string2 )
 			                x, y, cx, cy, NULL, 0, 
 							WindowClientAreaColor, WindowColor); 
 		    break;
-	};
-	
-	
+    };
+
+
 	//
 	// button
 	//
@@ -994,57 +999,58 @@ int gde_dialog_box ( int type, char *string1, char *string2 )
 	//unsigned long app2Top = app1Top; 
 
 
+    // =========
+    // button 1 
+    dialogbox_button1 = (void *) gde_create_window ( 
+                                     WT_BUTTON, 1, 1, "OK", 
+                                     (cx/3), ((cy/8)*5), 80, 24,
+                                     hWnd, 0, 
+                                     xCOLOR_GRAY1, xCOLOR_GRAY1 );
 
-	// button 1 	
-	dialogbox_button1 = (void *) gde_create_window ( WT_BUTTON, 1, 1, "OK",     
-                                     (cx/3), ((cy/8)*5), 80, 24,    
-                                     hWnd, 0, xCOLOR_GRAY1, xCOLOR_GRAY1 );
-								
-	if ( (void *) dialogbox_button1 == NULL ){
-	    printf("button fail \n");
+    if ( (void *) dialogbox_button1 == NULL ){
+        printf("gde_dialog_box: dialogbox_button1 fail\n");
+        return -1;
+    }else{
+        gde_register_window (dialogbox_button1);
+    };
 
-	}else{
-        gde_register_window (dialogbox_button1);   	
-	}
 
-     
-	// button 2
-	dialogbox_button2 = (void *) gde_create_window ( WT_BUTTON, 1, 1, "CANCEL",     
+    // ============
+    // button 2
+    dialogbox_button2 = (void *) gde_create_window ( 
+                                     WT_BUTTON, 1, 1, "CANCEL",     
                                      ((cx/3)*2), ((cy/8)*5), 80, 24,    
-                                     hWnd, 0, xCOLOR_GRAY1, xCOLOR_GRAY1 );
-								
-	if ( (void *) dialogbox_button2 == NULL ){
-	    printf("button fail \n");
+                                     hWnd, 0, 
+                                     xCOLOR_GRAY1, xCOLOR_GRAY1 );
 
-	}else{
-        gde_register_window (dialogbox_button2);   	
-	}
-	
-	
-	//
-	// string
-	//
-	
-    //apiDrawText ( (struct window_d *) hWnd,
-    //    1*(cx/16), 1*(cy/3), COLOR_WINDOWTEXT, string1 );	
-	
-    gde_draw_text ( (struct window_d *) hWnd,
-        1*(cx/16), 1*(cy/3), COLOR_WHITE, string1 );	
-        
+    if ( (void *) dialogbox_button2 == NULL ){
+        printf("gde_dialog_box: dialogbox_button2 fail\n");
+        return -1;
+    }else{
+        gde_register_window (dialogbox_button2);
+    };
+
+
+    // Draw and show a string.
+
+    gde_draw_text ( 
+        (struct window_d *) hWnd,
+        1*(cx/16), 1*(cy/3), 
+        COLOR_WHITE, string1 );
 
     gde_show_window (hWnd);
-	
-	//==================================
-	// loop support;
-	//
+
+// ================================
+// event loop
 
     unsigned long message_buffer[5];
+
     message_buffer[0] = 0;
     message_buffer[1] = 0;
     message_buffer[3] = 0;
     message_buffer[4] = 0;
 
-Mainloop:
+EventLoop:
 
     while (running){
 
@@ -1055,26 +1061,25 @@ Mainloop:
             (unsigned long)&message_buffer[0] );
         gde_exit_critical_section();
 
+        if ( message_buffer[1] != 0 )
+        {
+            Response = (int) dbProcedure ( 
+                               (struct window_d *) message_buffer[0], 
+                               (int)               message_buffer[1], 
+                               (unsigned long)     message_buffer[2], 
+                               (unsigned long)     message_buffer[3] );
 
-		if ( message_buffer[1] != 0 )
-		{
-	        
-			Response = (int) dbProcedure ( (struct window_d *) message_buffer[0], 
-		                        (int) message_buffer[1], 
-		                        (unsigned long) message_buffer[2], 
-		                        (unsigned long) message_buffer[3] );
-
-			if (Response > 100)
-			{
-				printf ("Response=%d \n", Response );
-				goto exit_dialogbox;
-			}
+            if (Response > 100)
+            {
+                printf ("Response=%d \n", Response );
+                goto exit_dialogbox;
+            }
 
             message_buffer[0] = 0;
             message_buffer[1] = 0;
             message_buffer[3] = 0;
             message_buffer[4] = 0;
-        };
+        }
     };
 
 
@@ -1095,7 +1100,12 @@ exit_dialogbox:
 /*
  **************************************************
  * dbProcedure:
- *     O procedimento padrão de dialog box. */
+ *     O procedimento padrão de dialog box. 
+ */
+
+// Dialog box with two buttons,
+// YES and NO.
+// It depends on the type.
 
 unsigned long 
 dbProcedure ( 
@@ -1106,63 +1116,49 @@ dbProcedure (
 {
 
     switch (msg)
-	{
+    {
+
         case MSG_KEYDOWN:
             switch(long1)
             {
                 case VK_ESCAPE:
-                    //printf ("scape\n");
-                    return (unsigned long) 101;  
-				    break;
-				   
+                    return (unsigned long) 101; 
+                    break;
+
                 default:
-				    //printf ("defaul keydown\n");
-				    return (unsigned long) 0;
+                    return (unsigned long) 0;
                     break; 
             };
             break;
-	
-        case MSG_SYSKEYDOWN:                 
-            switch(long1)	       
-            {	
-				//Test.
-				case VK_F1:
-				    printf ("f1\n");
-                    return (unsigned long) 102;
-					break;
-					
-                //case VK_F2:
-				    //Nothing.
-				//	break;
-									
-				default:
-				    //printf ("default sys key down\n");
-				    return (unsigned long) 0;
-				    break;
-		    };              
-            break;
-		
-	    case MSG_SYSKEYUP:
-		   //printf ("sys key up\n");
-		   return (unsigned long) 0; 
-           break;
-		
-        //@todo case command .. button ??
-		
-		default:
-		    //printf ("default message\n");
-		    return (unsigned long) 0;
-            break;		
-	};
-	
-	//Refresh screen. 
-	//?? deletar.
-	//if(VideoBlock.useGui == 1){
-	//    refresh_screen();
-	//};
 
-	printf ("done\n");
-	return (unsigned long) 0;
+
+        case MSG_SYSKEYDOWN: 
+            switch (long1)
+            {
+                case VK_F1:
+                    printf ("F1: YES\n");
+                    return (unsigned long) 102;
+                    break;
+
+                case VK_F2:
+                    printf ("F2: NO\n");
+                    return (unsigned long) 101;
+                    break;
+
+                default:
+                    return (unsigned long) 0;
+                    break;
+            };
+            break;
+
+
+        default:
+            return (unsigned long) 0;
+            break;
+    };
+
+    printf ("done\n");
+    return (unsigned long) 0;
 }
 
 
@@ -3254,7 +3250,8 @@ int gde_clone_and_execute ( char *name )
         return -1;
     }
 
-    return (int) gramado_system_call ( 900, (unsigned long) name, 0, 0 );
+    //return (int) gramado_system_call ( 900, (unsigned long) name, 0, 0 );
+    return (int) sc82 ( 900, (unsigned long) name, 0, 0 );
 }
 
 

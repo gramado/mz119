@@ -2654,15 +2654,24 @@ void windowUnblockFocus (void)
  *
  * ...
  */
- 
+
 // wm.
- 
+
 // #bugbug
 // Revendo a questão de repintar a janela mãe quando se seta o foco. 
- 
+
+// #todo
+// Setar o foco na janela e marcar a thread de controle associada a
+// essa janela como foreground thread, para que ela receba input.
+
 void SetFocus ( struct window_d *window )
 {
     // priority stuff
+    
+    
+    // Essa eh a thread associada com a janela que esta recebendo o foco.
+    // Ela deve se tornar a foreground thread, para que receba o input.
+    // Usamos a tid 'foreground_thread'
     struct thread_d *thread;
 
 	// #debug
@@ -2707,10 +2716,17 @@ void SetFocus ( struct window_d *window )
     // Focus, priority and quantum.
     if ( (void *) window->control != NULL )
     {
+        
+        
         // Focus!!
         // Who can read the input.
+        
         active_process = window->control->ownerPID; 
         active_thread  = window->control->tid;
+        
+        foreground_process = active_process;
+        foreground_thread  = active_thread;
+      
       
         // Current virtual console.
         CONSOLE_TTYS[fg_console].control = (struct thread_d *) window->control;
@@ -2942,51 +2958,35 @@ fail:
  
 void KillFocus ( struct window_d *window )
 {
-	
-	// #debug
-	// suspensa para testes na máquina real
-	
-	return;
-	
+
+    // #debug
+    // suspensa para testes na máquina real
+    // Nao queremos ficar sem foco algum.
+
+    return;
+
 	//
 	// ====== cut here for now =====
 	//
-	
-	
-	if ( (void *) window == NULL )
-	{
-		printf ("KillFocus: window\n");
-	    goto fail; 
-	}else {
-		
-		if ( window->used == 1 && window->magic == 1234 )
-		{
-			window->focus = 0;
-			
-			window_with_focus = 0; //#test
-			WindowWithFocus = NULL;
-			
 
-            // Validade da thread.
-            if ( (void *) window->control != NULL )
-            {
-                // Validade da thread.
-                if ( window->control->used == 1 || 
-                     window->control->magic == 1234 )
-			    {
-			        // mandamos a mensagem
-			        // o aplicativo decide o que fazer com ela.
-			        window->control->window = window;
-			        window->control->msg = MSG_KILLFOCUS;
-			        window->control->long1 = 0;
-			        window->control->long2 = 0;
-			        window->control->newmessageFlag = 1;
-			    }
-		    }
-		
-		};
-	};
 
+    if ( (void *) window == NULL ){
+        printf ("KillFocus: window\n");
+        goto fail; 
+    }else {
+        if ( window->used == 1 && window->magic == 1234 )
+        {
+            window_with_focus = 0; //#test
+
+            window->focus = 0;
+
+            WindowWithFocus = NULL;
+
+            foreground_process = 0;
+            foreground_thread = 0;
+            return;
+        };
+    };
 
 fail:
     return;
@@ -3931,9 +3931,7 @@ int windowOverLappedScan ( unsigned long x, unsigned long y ){
 
 			};
 		};
-
-	}; //for
-
+    }; //for
 
     return (int) -1;
 }
@@ -3953,30 +3951,34 @@ void windowUpdateWindow ( struct window_d *window )
         //(unsigned long) 0 );
         
         
-		//window = (struct window_d *) arg2;
+    //window = (struct window_d *) arg2;
 
-        if ( (void *) window == NULL ){  return; }
+    if ( (void *) window == NULL ){  return; }
 
-        if ( window->type == WT_OVERLAPPED || window->type == WT_SIMPLE )
+    if ( window->type == WT_OVERLAPPED || window->type == WT_SIMPLE )
+    {
+
+        // Validade da thread.
+        // mandamos a mensagem
+        // o aplicativo decide o que fazer com ela.
+
+        if ( (void *) window->control != NULL )
         {
-		    // Validade da thread.
-            if ( (void *) window->control != NULL )
+            if ( window->control->used == 1 || 
+                 window->control->magic == 1234 )
             {
-			    // Validade da thread.
-			    if ( window->control->used == 1 || 
-			         window->control->magic == 1234 )
-			    {
-			       // mandamos a mensagem
-			       // o aplicativo decide o que fazer com ela.
-			        window->control->window = window;
-			        window->control->msg = MSG_PAINT;
-			        window->control->long1 = 0;
-			        window->control->long2 = 0;
-			        window->control->newmessageFlag = 1;
-			    }
-		    }
-        };
 
+                // Single kernel event.
+
+                window->control->ke_window = window;
+                window->control->ke_msg    = MSG_PAINT;
+                window->control->ke_long1  = 0;
+                window->control->ke_long2  = 0;
+
+                window->control->ke_newmessageFlag = TRUE;
+            }
+        }
+    }
 }
 
 

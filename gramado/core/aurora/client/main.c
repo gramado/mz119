@@ -72,7 +72,7 @@ int gws(void)
     struct sockaddr addr; 
     int addrlen;
     
-    addr.sa_family = AF_GRAMADO;  //8000
+    addr.sa_family = AF_GRAMADO; 
     addr.sa_data[0] = 'w';
     addr.sa_data[1] = 's';  
 
@@ -132,6 +132,50 @@ int gws(void)
 
 
     return (int) client_fd;
+}
+
+
+// local
+int 
+gwsProcedure ( 
+    void *window, 
+    int msg, 
+    unsigned long long1, 
+    unsigned long long2 )
+{
+    switch (msg){
+
+        // 20 = MSG_KEYDOWN
+        case MSG_KEYDOWN:
+            printf("%c",long1); fflush(stdout);
+            break;
+            
+        // 22 = MSG_SYSKEYDOWN
+        case MSG_SYSKEYDOWN:
+            printf ("MSG_SYSKEYDOWN\n");
+
+            switch (long1){
+
+                case VK_F1: gws_clone_and_execute("editor.bin");   break;
+                case VK_F2: gws_clone_and_execute("gwm.bin");      break;
+                case VK_F3: gws_clone_and_execute("fileman.bin");  break;
+                case VK_F4: gws_clone_and_execute("terminal.bin"); break;
+
+                case VK_F5: gws_clone_and_execute("browser.bin"); break;
+                case VK_F6: gws_clone_and_execute("browser.bin"); break;
+                case VK_F7: gws_clone_and_execute("browser.bin"); break;
+                case VK_F8: gws_clone_and_execute("browser.bin"); break;
+                
+                case VK_F9 : gws_clone_and_execute("browser.bin"); break;
+                case VK_F10: gws_clone_and_execute("browser.bin"); break;
+                case VK_F11: gws_clone_and_execute("browser.bin"); break;
+                case VK_F12: gws_clone_and_execute("browser.bin"); break;
+                // ...
+            };
+            break;
+    };
+
+    return 0;
 }
 
 
@@ -420,7 +464,7 @@ int main ( int argc, char *argv[] )
     printf ("LOOP:\n");
    
     // #debug
-    while (1){
+    //while (1){
 
         gws_draw_char ( client_fd, main_window, 
             20, 20, COLOR_RED, 'X' );
@@ -438,12 +482,34 @@ int main ( int argc, char *argv[] )
         
         //gws_refresh_window (client_fd, main_window);
         //gws_yield();
-    }
+    //}
+
+
+
+
+    // Loop
+
+
+
+    //=================================
     
+    //get current thread
+    int cThread = (int) sc82 (10010,0,0,0);
+    //set foreground thread.
+    sc82 (10011,cThread,cThread,cThread);
+    
+    while(1){
+        if ( rtl_get_event() == TRUE ){  
+            gwsProcedure( (void*) RTLEventBuffer[0], RTLEventBuffer[1], RTLEventBuffer[2], RTLEventBuffer[3] );
+        }
+    };
+    //=================================
+
 
     // Isso ehestranho ... um cliente remoto nao deve poder fazer isso.
     //gws_debug_print ("gws: Sending command to close the server. \n");
     gws_async_command(client_fd,1);
+    //exit(0);
 
     // Asking to server to send me an notification
     // telling me to close myself

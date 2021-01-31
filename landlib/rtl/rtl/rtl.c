@@ -1395,6 +1395,67 @@ rtl_load_path (
 
 
 
+ssize_t rtl_console_beep(void)
+{
+    char BeepChar = '\a';
+    
+    return (ssize_t) write ( 
+                         fileno(stdout), 
+                         (const void *) &BeepChar, 
+                         1 );
+}
+
+
+
+/* compare two ASCII strings ignoring case */
+// #todo: toupper support.
+/*
+int 
+rtl_strcaseequal (
+    const char *d, 
+    const char *s );
+int 
+rtl_strcaseequal (
+    const char *d, 
+    const char *s )
+{
+
+    char ch=0;
+
+    while ((ch = toupper(*s++)) == toupper(*d++))
+        if (ch == '\0')
+            return 1;
+
+    return 0;
+}
+*/
+
+
+/*
+int     __argc_save;
+char  **__argv_save;
+int rtl_check_parm (char *check);
+int rtl_check_parm (char *check)
+{
+    int i=0;
+
+    for (i = 1;i<__argc_save;i++)
+    {
+        if ( !strcasecmp(check, __argv_save[i]) ){
+            return (int) i;
+        }
+    };
+
+    return 0;
+}
+*/
+
+
+
+
+
+
+
 
 
 

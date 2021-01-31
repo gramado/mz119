@@ -11,9 +11,7 @@
  * 2018 - Created by Fred Nora.
  */
 
-
 #include "gramcode.h"
-
 
 
 #define WINDOW_LEFT      0
@@ -22,13 +20,11 @@
 #define WINDOW_HEIGHT  200
 
 
-    // main window.
-    struct window_d *hWindow;
+// main window.
+struct window_d *hWindow;
 
-    // save button.
-    struct window_d *save_button;
-
-
+// save button.
+struct window_d *save_button;
 
 
 //static int running = 1;
@@ -39,8 +35,6 @@ int running = 1;
 //static unsigned char dest_msg[512];
 
 
-
-
 //
 // internal
 //
@@ -48,28 +42,20 @@ int running = 1;
 
 void editorClearScreen(void); 
 int editor_save_file (void);
-
 void teditorTeditor (void);
-
 void shellInitSystemMetrics(void);
 void shellInitWindowLimits(void);
 void shellInitWindowPosition(void);
 void shellInitWindowSizes(void);
-
-
-
 void teditorInsertNextChar (char c);
 void teditorRefreshCurrentChar (void); 
-
 void gramcodeLinesInsertChar ( int line_number, int at, int c );
-
 
 void *teditorProcedure ( 
     struct window_d *window, 
     int msg, 
     unsigned long long1, 
     unsigned long long2 );
-
 
 int
 __SendMessageToProcess ( 
@@ -80,7 +66,6 @@ __SendMessageToProcess (
     unsigned long long2 );
 
 
-
 /*
  * editorClearScreen:
  * Limpar a tela 
@@ -89,15 +74,15 @@ __SendMessageToProcess (
 
 void editorClearScreen (void){
 
-
-    int lin=0; 
+    int lin=0;
     int col=0;
 
 
-	// @todo:
-	//system( "cls" ); // calls the cls command.
-	
-    gde_set_cursor (0,0);
+    // #todo
+    // We need to get the system metrics
+    // for display info.
+
+    gde_set_cursor(0,0);
 
 	// Tamanho da tela. 80x25
 
@@ -114,7 +99,6 @@ void editorClearScreen (void){
             printf ("%c",' ');
         };
     };
-
 
     gde_set_cursor (0,2);
 }
@@ -185,7 +169,6 @@ int editor_save_file (void){
 	//len = (size_t) strlen (file_1);
     len = (size_t) strlen ( RAW_TEXT );
 
-
     if (len <= 0)
     {
         printf ("editor_save_file: [FAIL] Empty file.\n");
@@ -227,16 +210,16 @@ int editor_save_file (void){
         return (int) 1;
     }
 
-	//
-	// Save
-	//
 
+    // Save
     // name, number of sectors, size in bytes, address, flag.
 
-    Ret = (int) gde_save_file ( file_1_name, 
-                    number_of_sectors, len,            
+    Ret = (int) gde_save_file ( 
+                    file_1_name,
+                    number_of_sectors, 
+                    len,
                     &RAW_TEXT[0], 
-                    0x20 );    
+                    0x20 );
 
     printf ("done\n");
 
@@ -263,9 +246,11 @@ void *teditorProcedure (
     int key_state = -1;
 
 
+    unsigned long CursorX=0;
+    unsigned long CursorY=0;
+
     switch (msg)
     {
-
         case MSG_CREATE: 
             saveCreateButton(); 
             goto done;
@@ -302,32 +287,57 @@ void *teditorProcedure (
                 case VK_BACK:
                     //printf ("");
                     break;
+                
+                
+                // keyboard arrows
+                // #bugbug: estamos pegando o valor, 
+                // mas nao atualizou bem.
+                
+                case 0x48: 
+                    printf ("UP   \n");
+                    //CursorX = gde_get_cursor_x();
+                    //CursorY = gde_get_cursor_y();
+                    //CursorY--;
+                    //gde_set_cursor (CursorX,CursorY);
+                    //return NULL;
+                    break;
+                case 0x4B: printf ("LEFT \n");  break;
+                case 0x4D: printf ("RIGHT\n");  break;
+                case 0x50: printf ("DOWN \n");  break;
 
-				// #importante:
-				// Teclas de digitação.
+                // #importante:
+                // Teclas de digitação.
+
                 default:
                     // [Control + s]
                     if ( long1 == 's' )
                     {
-						key_state = (int) gramado_system_call ( 138, 
-						                      (unsigned long) VK_CONTROL, 
-						                      (unsigned long) VK_CONTROL, 
-						                      (unsigned long) VK_CONTROL );
-					    // pressionada
-						if ( key_state == 1 )
-					    {
-						    editor_save_file ();
-							key_state = -1;
-							break;
-						}
-					}
-					//Colocando no buffer e exibindo na tela.
-				    teditorInsertNextChar ( (char) long1 );  
-				    goto done;
-				    break;
-			};
-			//...
-			return NULL; //break;
+                        // get key state.
+                        key_state = (int) gramado_system_call ( 
+                                            138, 
+                                            (unsigned long) VK_CONTROL, 
+                                            (unsigned long) VK_CONTROL, 
+                                            (unsigned long) VK_CONTROL );
+                        // pressionada
+                        if ( key_state == TRUE )
+                        {
+                            editor_save_file();
+                            key_state = FALSE;
+                            return NULL;
+                            break;
+                        }
+                    }
+
+                    // Colocando no buffer e exibindo na tela.
+                    // Valido inclusive para o 's' caso o control
+                    // nao estiver pressionado.
+                   
+                    teditorInsertNextChar ( (char) long1 );  
+                    goto done;
+                    break;
+            };
+            //...
+            return NULL; //break;
 
 
 		case MSG_SYSKEYDOWN:
@@ -360,64 +370,72 @@ void *teditorProcedure (
 			return 0; //break;
 
 
-
-		// MSG_MOUSEKEYDOWN
-		case 30:
-			//qual botão?
-			switch (long1)
-			{
-				case 1:
-					if ( window == save_button )
-					{
-                        gramado_system_call ( 9900,   
+        // MSG_MOUSEKEYDOWN
+        case 30:
+            switch (long1)
+            {
+                // Clicked on save button.
+                case 1:
+                    // Change the view.
+                    // #todo: Not working
+                    if ( window == save_button )
+                    {
+                        gramado_system_call ( 
+                            9900,   
                             (unsigned long) window, 
                             (unsigned long) window, 
                             (unsigned long) window );
-					}
-					break;
-					
-				//case 2: break;
-				//case 3: break;
-			};
-			//...
-			return 0; //break;
+                    }
+                    break;
 
+                //case 2: break;
+                //case 3: break;
+            };
+            return 0; 
+            break;
 
         // mouse key up
-		case 31:
-			//qual botão?
-			switch (long1)
-			{
-				case 1:
-					if ( window == save_button )
-					{
-                        gramado_system_call ( 9901,   
+        case 31:
+            switch (long1)
+            {
+                case 1:
+
+                    // key up: save button
+                    // Change the view and save file.
+                    if ( window == save_button )
+                    {
+                        gramado_system_call ( 
+                            9901,   
                             (unsigned long) window, 
                             (unsigned long) window, 
                             (unsigned long) window );
-						 editor_save_file ();
-					}
-					break;
-					
-				//case 2: break;
-				//case 3: break;
-			};
-			//...
-			return 0; //break;
 
+                        editor_save_file();
+                        return 0;
+                    }
+                    
+                    // click on client area ?
+                    
+                    break;
+
+                //case 2: break;
+                //case 3: break;
+            };
+            return 0; 
+            break;
 
         default:
-            gde_debug_print("teditorProcedure: [FIXME] default message\n");
+            gde_debug_print ("teditorProcedure: [FIXME] default message\n");
             break;
     };
 
-
-    // done
-
 done:
 
+    // #todo:
     // Esse tratamento pode ir para essa chamada na api.
-    if ( (void *) window == NULL ){
+
+    if ( (void *) window == NULL )
+    {
         return NULL;
     }
 
@@ -431,7 +449,7 @@ done:
  * teditorTeditor:
  *     Contrutor e inicialização.
  */
- 
+
 void teditorTeditor (void){
 
     int i=0;
@@ -482,7 +500,7 @@ void shellInitSystemMetrics (void){
     smMousePointerHeight = gde_get_system_metrics(6);
 
     smCharWidth =  gde_get_system_metrics(7);
-    smCharHeight = gde_get_system_metrics(8);	
+    smCharHeight = gde_get_system_metrics(8);
     
     //...
 }
@@ -564,10 +582,8 @@ void shellInitWindowPosition (void)
  *     Memória de vídeo virtual, semelhante a vga.
  */
 
-void teditorInsertNextChar (char c){
-	
-
-    // Isso funcionou.
+void teditorInsertNextChar (char c)
+{
     char buff[2];
     buff[0] = (char) c;
     buff[1] = (char) '\0';
@@ -592,30 +608,31 @@ void teditorInsertNextChar (char c){
 
     if (textCurrentCol >= 80 )
     {
-		textCurrentCol = 0;
-		
-		textCurrentRow++;
-		
-		if ( textCurrentRow >= 25 )
-		{
+        textCurrentCol = 0;
+        textCurrentRow++;
+
+        if ( textCurrentRow >= 25 )
+        {
 			//teditorScroll ();
 			printf(" *SCROLL");
 			while(1){ asm("pause"); }
-		}
-    };
+        }
+    }
 
-
-    LINES[textCurrentRow].pos = textCurrentCol;
+    LINES[textCurrentRow].pos   = textCurrentCol;
     LINES[textCurrentRow].right = textCurrentCol;
 }
 
 
-
 void 
-gramcodeLinesInsertChar ( int line_number, 
-                          int at, 
-                          int c )
+gramcodeLinesInsertChar ( 
+    int line_number, 
+    int at, 
+    int c )
 {
+    if (line_number<0){ return; }
+    if (at<0)         { return; }
+    
     LINES[line_number].CHARS[at] = (char) c;
 }
 
@@ -635,8 +652,8 @@ void teditorRefreshCurrentChar (void)
  *
  */
 
-int saveCreateButton(void){
-
+int saveCreateButton(void)
+{
     // Device info
     unsigned long ScreenWidth  = gde_get_system_metrics(1);
     unsigned long ScreenHeight = gde_get_system_metrics(2); 
@@ -690,8 +707,7 @@ __SendMessageToProcess (
 	message_buffer[3] = (unsigned long) long2;
 	//...
 
-
-    return (int) gramado_system_call ( 112 , 
+    return (int) gramado_system_call ( 112, 
                      (unsigned long) &message_buffer[0], 
                      (unsigned long) pid, 
                      (unsigned long) pid );
@@ -709,7 +725,7 @@ __SendMessageToProcess (
  
 int main ( int argc, char *argv[] ){
 
-    //The pointer for the main window is in the top of the document.
+    // The pointer for the main window is in the top of the document.
     struct window_d *editbox_bg_Window;
     struct window_d *editboxWindow;
     
@@ -727,9 +743,8 @@ int main ( int argc, char *argv[] ){
 	
 	// #todo: 
 	// Analizar a contagem de argumentos.
-		
-	goto skip_test;
-	
+
+    goto skip_test;
 
 
     /*
@@ -795,8 +810,7 @@ hangz:
 	//
 	//  ========= skip test ============
 	//
-	
-	
+
 skip_test:
 
 
@@ -858,11 +872,10 @@ skip_test:
     // Forget the old configuration.
     // Let's do this again. full screen.
     
-    wpWindowLeft=0;
-    wpWindowTop=0;
+    wpWindowLeft   = 0;
+    wpWindowTop    = 0;
     wsWindowWidth  = deviceWidth;
     wsWindowHeight = deviceHeight;
-
 
     //
     // frame ================
@@ -879,13 +892,16 @@ skip_test:
     unsigned long ebw_height;
 
 
-    // frame
-    // Criando uma janela para meu editor de textos.
+    // =====================
+    // main window.
+
+    // #bugbug
+    // The window name can NOT be NULL.
 
     //++
     gde_begin_paint (); 
     hWindow = (void *) gde_create_window ( 
-                           WT_OVERLAPPED, 1, 1, argv[1],
+                           WT_OVERLAPPED, 1, 1, "GRAMCODE",  //WT_OVERLAPPED, 1, 1, argv[1],
                            wpWindowLeft, wpWindowTop, 
                            wsWindowWidth, wsWindowHeight,    
                            0, 0, COLOR_GRAY, COLOR_GRAY );
@@ -894,7 +910,6 @@ skip_test:
         gde_end_paint ();
         printf ("gramcode: hWindow fail\n");
         goto fail;
-
     }else{
         gde_register_window (hWindow);
         gde_set_active_window (hWindow);       
@@ -904,9 +919,9 @@ skip_test:
     //--
 
 
-    //
-    // Background
-    //
+    // =====================
+    // background window.
+
 
     bgw_left   = 4;
     bgw_top    = 4 +36;
@@ -933,9 +948,8 @@ skip_test:
     //--
 
 
-    //
-    // Editbox.
-    //
+    // =====================
+    // editbox window.
 
     ebw_left   = 1;
     ebw_top    = 1;
@@ -946,12 +960,17 @@ skip_test:
     // A janelas eh realmente relativa a janela mae?
 
     //++
-    gde_enter_critical_section ();  
-    editboxWindow = (void *) gde_create_window ( WT_EDITBOX, 1, 1, "editbox",     
-                                ebw_left, ebw_top, ebw_width, ebw_height, 
-                                editbox_bg_Window, 0, COLOR_WHITE, COLOR_WHITE );
-    if ( (void *) editboxWindow == NULL){
-        gde_exit_critical_section ();  
+    gde_enter_critical_section();
+    editboxWindow = (void *) gde_create_window ( 
+                                 WT_EDITBOX, 1, 1, "editbox", 
+                                 ebw_left, ebw_top, 
+                                 ebw_width, ebw_height, 
+                                 editbox_bg_Window, 0, 
+                                 COLOR_WHITE, COLOR_WHITE );
+
+    if ( (void *) editboxWindow == NULL)
+    {
+        gde_exit_critical_section();
         printf ("editboxWindow fail");
         while(1){}
     }
@@ -960,7 +979,6 @@ skip_test:
     gde_show_window (editboxWindow);
     gde_exit_critical_section ();  
     //--
-
 
 
     // #test 
@@ -981,7 +999,8 @@ skip_test:
 
 
 
-    //gde_set_cursor (8,8);
+    gde_set_cursor (8,8);
+    
     system_call ( 244, 
         (unsigned long) 0, (unsigned long) 0, (unsigned long) 0 ); 
         
@@ -1056,7 +1075,6 @@ skip_test:
 
         while (1){
             ch_test = (int) fgetc (fp);
-
             if ( ch_test == EOF ){
                 goto out;
             }else{
@@ -1154,35 +1172,25 @@ Mainloop:
             
         if ( message_buffer[1] != 0 )
         {
-            teditorProcedure ( (struct window_d *) message_buffer[0], 
-                (int) message_buffer[1], 
-                (unsigned long) message_buffer[2], 
-                (unsigned long) message_buffer[3] );
+            teditorProcedure ( 
+                (struct window_d *) message_buffer[0], 
+                (int)               message_buffer[1], 
+                (unsigned long)     message_buffer[2], 
+                (unsigned long)     message_buffer[3] );
 
             message_buffer[0] = 0;
             message_buffer[1] = 0;
             message_buffer[2] = 0;
             message_buffer[3] = 0;
-        };
+        }
     };
 
-
-
 fail:
-    printf ("fail.\n");
-
-
+    printf ("fail\n");
 done:
     //running = 0;
     printf ("Exiting editor ...\n");
-    printf ("done.\n");
-
-
+    printf ("done\n");
     return 0;
 }
-
-
-
-
-
 

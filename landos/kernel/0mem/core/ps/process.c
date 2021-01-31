@@ -723,9 +723,7 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
     // Check Process1
     if ( (void *) Process1 == NULL ){
         printf ("processCopyProcess: Process1\n"); goto fail;
-
     }else{
-
         if ( Process1->used != 1 || Process1->magic != 1234 )
         {
            printf ("processCopyProcess: Process1 validation \n");
@@ -738,10 +736,8 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
     Process2 = (struct process_d *) processList[p2];
 
     if ( (void *) Process2 == NULL ){
-        printf ("processCopyProcess: Process1\n"); goto fail;
-    
+        printf ("processCopyProcess: Process1\n"); goto fail; 
     }else{
-
         if ( Process2->used != 1 || Process2->magic != 1234 )
         {
            printf ("processCopyProcess: Process2 validation \n");
@@ -824,9 +820,9 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
         panic ("processCopyProcess: CloneKernelPageDirectory fail");
     }
 
-    Process2->DirectoryPA = (unsigned long) virtual_to_physical ( Process2->DirectoryVA, 
-                                                gKernelPageDirectoryAddress ); 
-
+    Process2->DirectoryPA = (unsigned long) virtual_to_physical ( 
+                                              Process2->DirectoryVA, 
+                                              gKernelPageDirectoryAddress ); 
 
     // #bugbug
     // Lembrando que na rotina de fork() nos obtemos
@@ -892,24 +888,19 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
     Process2->base_priority = (unsigned long) BasePriority;
     Process2->priority      = (unsigned long) Process1->priority;
 
-
-    //
     // == Security ====================================
-    //
-    
+
     Process2->usession = Process1->usession;
     Process2->room     = Process1->room;
     Process2->desktop  = Process1->desktop;
 
-    // pathname absolute.
-    Process2->root       = Process1->root;
+    // absolute pathname and relative pathname. 
+
+    Process2->file_root  = Process1->file_root;
+    Process2->file_cwd   = Process1->file_cwd;
+
     Process2->inode_root = Process1->inode_root;
-    
-    // pathname relative.
-    Process2->cwd        = Process1->cwd;
     Process2->inode_cwd  = Process1->inode_cwd;
-
-
 
     // =============
     // #IMPORTANTE
@@ -1097,9 +1088,9 @@ fail:
 // Cria uma tty pra esse processo.
 
 struct process_d *create_process ( 
-    struct room_d *room,
+    struct room_d    *room,
     struct desktop_d *desktop,
-    struct window_d *window,
+    struct window_d  *window,
     unsigned long base_address, 
     unsigned long priority, 
     int ppid, 
@@ -1122,12 +1113,53 @@ struct process_d *create_process (
     // conexoes pendentes do processo servidor.
     register int sIndex=0;
 
-
     unsigned long BasePriority=0;
     unsigned long Priority=0;
 
 
-    debug_print ("process-create_process: It's a work in progress!\n");
+    debug_print ("create_process: [FIXME] It's a work in progress!\n");
+
+
+    //=================================
+    // check parameters
+
+    if( (void*) room == NULL ){
+        debug_print ("create_process: [FIXME] room parameter is NULL\n");
+    }
+    
+    if( (void*) desktop == NULL ){
+        debug_print ("create_process: [FIXME] desktop parameter is NULL\n");
+    }
+    
+    if( (void*) window == NULL ){
+        debug_print ("create_process: [FIXME] window parameter is NULL\n");
+    }
+
+    // #todo
+    // Maybe the virtual 0 is n option in the future. Maybe.
+    if( base_address == 0 ){
+        panic ("create_process: [ERROR] base_address\n");
+    }
+
+    if( ppid < 0 )
+    {
+        panic ("create_process: [ERROR] ppid\n");
+    }
+  
+    if( (void*) name == NULL ){
+        panic ("create_process: [ERROR] name\n");
+    }
+  
+    if( *name == 0 ){
+        panic ("create_process: [ERROR] *name\n");
+    }
+
+    if( directory_address == 0 ){
+        panic ("create_process: [ERROR] directory_address\n");
+    }
+
+    // ...
+    //=================================
 
 	// @todo:
 	// Melhorar esse esquema de numera��o e 
@@ -1568,14 +1600,13 @@ struct process_d *create_process (
     Process->desktop  = desktop;             // Passado via argumento.
 
 
-    // absolute pathname.
-    Process->root = (file *) 0;
-    Process->inode_root = (struct inode_d *) 0;
-    
-    // relative pathname.
-    Process->cwd  = (file *) 0;
-    Process->inode_cwd = (struct inode_d *) 0;
+    // absolute pathname and relative pathname. 
 
+    Process->file_root = (file *) 0;
+    Process->file_cwd  = (file *) 0;
+
+    Process->inode_root = (struct inode_d *) 0;
+    Process->inode_cwd  = (struct inode_d *) 0;
 
     // wait4pid: 
     // O processo esta esperando um processo filho fechar.
@@ -1621,14 +1652,17 @@ struct process_d *create_process (
     //
 
     // loop
-    for (sIndex=0; sIndex<32; ++sIndex){
+    
+    // pending connections;
+    
+    for (sIndex=0; sIndex<SOCKET_MAX_PENDING_CONNECTIONS; ++sIndex)
+    {
         Process->socket_pending_list[sIndex] = 0; 
     };
 
     Process->socket_pending_list_head =0;
     Process->socket_pending_list_tail =0;
-    Process->socket_pending_list_max = 0; //atualizado pelo listen();
-
+    Process->socket_pending_list_max  =0; //atualizado pelo listen();
 
     // tty support
         
@@ -1933,10 +1967,15 @@ void init_tasks (void)
  *   #todo: rever esse nome, pois na verdade estamos inicializando variaveis 
  * usadas no gerenciamento de processo.
  */
- 
+
+// Called by init_microkernel in mk.c
+
 void init_processes (void){
 
     int i=0;
+
+    debug_print("init_processes:\n");
+
 
 	//
 	// Iniciando vari�veis globais.

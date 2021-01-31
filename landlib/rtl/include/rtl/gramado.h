@@ -40,6 +40,9 @@
 // ...
 
 
+// #define RTL_ABS(X)    (((X) < 0) ? (-(X)) : (X))
+
+
 //
 // == prototypes =============================================
 //
@@ -176,6 +179,9 @@ rtl_load_path (
     char *path, 
     unsigned long buffer, 
     unsigned long buffer_len );
+    
+
+ssize_t rtl_console_beep(void);
 
 #endif
 

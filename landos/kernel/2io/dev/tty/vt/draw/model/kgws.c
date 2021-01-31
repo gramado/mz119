@@ -104,7 +104,7 @@ void kgws_disable(void)
 // para assim usar o array certo. ke0 indica o teclado estendido.
 
 
-int KGWS_SEND_KEYBOARD_MESSAGE (unsigned char raw_byte)
+int KGWS_SEND_KEYBOARD_MESSAGE (int tid, unsigned char raw_byte)
 {
 
 //
@@ -691,11 +691,18 @@ done:
                         if (current_input_mode == INPUT_MODE_SETUP)
                         {
                             //if ( EnableKGWS == FALSE ){ return 0; }
-                            kgws_send_to_controlthread_of_currentwindow ( 
+                            //kgws_send_to_controlthread_of_currentwindow ( 
+                            //                    Event_Window,
+                            //    (int)           Event_Message, 
+                            //    (unsigned long) Event_LongASCIICode, 
+                            //    (unsigned long) Event_LongRawByte );
+
+                            kgws_send_to_tid (  tid,
                                                 Event_Window,
                                 (int)           Event_Message, 
                                 (unsigned long) Event_LongASCIICode, 
                                 (unsigned long) Event_LongRawByte );
+                                
                             debug_print ("KGWS_KEYBOARD_SEND_MESSAGE: >>>> [MSG_SYSKEYUP.function] to wwf\n");        
                             return 0;
                         }
@@ -713,11 +720,19 @@ done:
                     if (current_input_mode == INPUT_MODE_SETUP)
                     {
                         //if ( EnableKGWS == FALSE ){ return 0; }
-                        kgws_send_to_controlthread_of_currentwindow ( 
+                        //kgws_send_to_controlthread_of_currentwindow ( 
+                        //                    Event_Window,
+                        //    (int)           Event_Message, 
+                        //    (unsigned long) Event_LongASCIICode, 
+                        //    (unsigned long) Event_LongRawByte );
+
+                        kgws_send_to_tid (  tid,
                                             Event_Window,
                             (int)           Event_Message, 
                             (unsigned long) Event_LongASCIICode, 
                             (unsigned long) Event_LongRawByte );
+
+                            
                         debug_print ("KGWS_KEYBOARD_SEND_MESSAGE: >>>> [MSG_SYSKEYUP.function] to wwf\n");        
                     }
                     
@@ -745,11 +760,18 @@ done:
            if (current_input_mode == INPUT_MODE_SETUP)
            {
                //if ( EnableKGWS == FALSE ){ return 0; }
-               kgws_send_to_controlthread_of_currentwindow ( 
+               //kgws_send_to_controlthread_of_currentwindow ( 
+               //                    Event_Window,
+               //    (int)           Event_Message, 
+               //    (unsigned long) Event_LongASCIICode, 
+               //    (unsigned long) Event_LongRawByte );
+
+               kgws_send_to_tid (  tid,
                                    Event_Window,
                    (int)           Event_Message, 
                    (unsigned long) Event_LongASCIICode, 
                    (unsigned long) Event_LongRawByte );
+                   
                debug_print ("KGWS_KEYBOARD_SEND_MESSAGE: >>>> [default] to wwf\n");
             
                // #test
@@ -798,12 +820,16 @@ done:
 // #obs
 // Isso é chamado pelo mouse em ps2mouse.c
 
-int kgws_mouse_scan_windows (void){
+// Estamos mandando o evento para a thread associada `a
+// janela 'a qual o mouse esta passando por cima.
+// Isso nao muda a thread que esta em foreground.
 
-	// #importante:
-	// Essa será a thread que receberá a mensagem.
+int kgws_mouse_scan_windows (void)
+{
+    // #importante:
+    // Essa será a thread que receberá a mensagem.
+
     struct thread_d *t;
-
 
 	// #importante:
 	// Essa será a janela afetada por qualquer evento de mouse.
@@ -1056,22 +1082,29 @@ int kgws_mouse_scan_windows (void){
                         {
 							//ps2mouse_change_and_show_pointer_bmp(4); //folder bmp
 							//pegamos o total tick
-							kgws_current_totalticks = (unsigned long) get_systime_totalticks();
+                            kgws_current_totalticks = (unsigned long) get_systime_totalticks();
                             kgws_delta_totalticks = (kgws_current_totalticks - kgws_last_totalticks); 
                             //printf ( "x=%d l=%d d=%d \n",
                                //kgws_current_totalticks, kgws_last_totalticks, kgws_delta_totalticks ); 
                                //refresh_screen();
                             kgws_last_totalticks = kgws_current_totalticks;
-                            t->window = Window;
-                            t->msg = MSG_MOUSEKEYDOWN;
+                            
+                            // Kernel single event.
+                            
+                            // Normalizing.
+                            t->ke_window = Window;
+                            t->ke_msg    = MSG_MOUSEKEYDOWN;
+                            t->ke_long1  = 1;
+                            t->ke_long2  = 0;
+
+                            // Modifying event type.
                             if (kgws_delta_totalticks < 1000) //2000
                             {
-								t->msg = MSG_MOUSE_DOUBLECLICKED; 
-								kgws_delta_totalticks=8000; // delta inválido.
-							}
-                            t->long1 = 1;
-                            t->long2 = 0;
-                            t->newmessageFlag = 1;   
+                                t->ke_msg = MSG_MOUSE_DOUBLECLICKED; 
+                                kgws_delta_totalticks=8000; // delta inválido.
+                            }
+
+                            t->ke_newmessageFlag = TRUE;
 							//estamos carregando o objeto
 							//kgws_mouse_event_drag_status = 1;                        
                         }
@@ -1660,6 +1693,107 @@ kgws_send_to_controlthread_of_currentwindow (
 }
 
 
+//==========
+/*
+ *************************************************
+ * kgws_send_to_controlthread_of_currentwindow:
+ * 
+ * 
+ */
+
+// Send a message to the thread associated with the
+// window with focus.
+
+// Called by KEYBOARD_SEND_MESSAGE() in ps2kbd.c.
+
+// #todo:
+// We need to associate the current thread and the current tty.
+// tty->control
+// window->control
+
+int
+kgws_send_to_tid ( 
+    int tid, 
+    struct window_d *window, 
+    int msg, 
+    unsigned long long1, 
+    unsigned long long2 )
+{
+
+    //struct window_d *w;
+    struct thread_d *t;
+    
+    unsigned long tmp_msg=0;
+    unsigned long tmp_ch=0;
+    unsigned long tmp_sc=0;    
+    
+
+    if ( tid<0 ){
+        goto fail;
+    }
+
+    //
+    // Pega a thread alvo. 
+    //
+
+    t = (struct thread_d *) threadList[tid];
+
+    if ( (void *) t == NULL ){
+        panic ("kgws_send_to_controlthread_of_currentwindow: t \n");
+    }
+
+    if ( t->used != 1 || t->magic != 1234 ){
+        panic ("kgws_send_to_controlthread_of_currentwindow: t validation \n");
+    } 
+
+    tmp_msg = (unsigned long) msg;
+    tmp_msg = (unsigned long) ( tmp_msg & 0x0000FFFF );
+
+    tmp_ch = (unsigned long) long1;
+    tmp_ch = (unsigned long) ( tmp_ch & 0x000000FF );
+   
+    // Scan code.
+    tmp_sc = (unsigned long) long2;
+    tmp_sc = (unsigned long) ( tmp_sc & 0x000000FF );
+    
+    //Send system message to the thread.
+    t->window_list[ t->tail_pos ]  = window;
+    t->msg_list[ t->tail_pos ]     = tmp_msg;
+    t->long1_list[ t->tail_pos ]   = tmp_ch;
+    t->long2_list[ t->tail_pos ]   = tmp_sc;
+
+    t->tail_pos++;
+    if ( t->tail_pos >= 31 )
+        t->tail_pos = 0;
+
+    //ok
+    return 0;
+
+fail:
+    // fail
+    return -1;
+}
+
+int
+kgws_send_to_foreground_thread ( 
+    struct window_d *window, 
+    int msg, 
+    unsigned long long1, 
+    unsigned long long2 )
+{
+
+    if( foreground_thread <0 )
+        return -1;
+
+    return (int) kgws_send_to_tid( 
+                     foreground_thread,
+                     window,
+                     msg,
+                     long1,
+                     long2 );
+}
+
+
 int register_ws_process ( pid_t pid ){
 
     if (pid<0 || pid >= PROCESS_COUNT_MAX ){
@@ -1673,7 +1807,6 @@ int register_ws_process ( pid_t pid ){
     }
 
     __gpidWindowServer = (pid_t) pid;
-
 
     return 0;
 }

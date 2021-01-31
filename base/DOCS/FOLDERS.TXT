@@ -1,33 +1,13 @@
-	Main folders of the project:
 
+	Folders:
 
-    //=========================
-    base/ 
-    This folder will be cloned into the real hd to test it in the real machine.
+	admin/     Scripts and design notes.
 
-    //=========================
-    ge/
-    game engine or gramado engine.
-    (gramnt ) Gramado New Technologies. This is the core system.
+	base/      Root dir for the target installation disk.
 
-    ge/init/
-        The init process.
-    ge/aurora/
-        Rhe ring window server.
-    ge/rtl/ 
-    ring3 runtime library. 
-    It has a unix-like low level stuff, but it exports some routines
-     using the rtl_ prefix.
+	gramado/   Gramado Operating system.
 
+	landboot/  The boot loader for Land OS.
+	landlib/   User API. Ring 3 libraries.
+	landos/    Land OS. The kernel and the init process.
 
-    //=========================
-    (gramci) Gramado consistent interface.
-
-    setup0/  
-        grass/  grasspath environment
-    setup1/ 
-        apps/
-    setup2/
-        cmd/
-
-    

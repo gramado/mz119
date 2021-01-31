@@ -603,6 +603,9 @@ int stdlibInitMM (void){
     int Status = 0;
     int i=0;
 
+    //#debug
+    debug_print ("stdlibInitMM:\n");
+
 
 	// @todo: 
 	// Inicializar algumas variáveis globais.
@@ -616,13 +619,15 @@ int stdlibInitMM (void){
     Status = (int) heapInit();
 
     if ( Status != 0 ){
-        printf ("stdlibInitMM fail: heapInit\n");
+        debug_print ("stdlibInitMM: [FAIL] heapInit\n");
+        //printf ("stdlibInitMM: [FAIL] heapInit\n");
         return (int) 1;
     }
 
 
 	// Lista de blocos de memória dentro do heap.
-    while ( i < MMBLOCK_COUNT_MAX ){
+    while ( i < MMBLOCK_COUNT_MAX )
+    {
         mmblockList[i] = (unsigned long) 0;
         i++;
     };
@@ -635,12 +640,15 @@ int stdlibInitMM (void){
 	//#inicializando o índice la lista de ponteiros 
 	//par estruturas de alocação.
 	//#bugbug: temos que inicializar isso no kernel também.
-	
-	mmblockCount = 0;
+
+    mmblockCount = 0;
 	
 	//
 	// Continua...
 	//
+
+    //#debug
+    debug_print ("stdlibInitMM: done\n");
 
     return (int) Status;
 }
@@ -656,28 +664,29 @@ int stdlibInitMM (void){
  * 
  * Obs: 
  * *IMPORTANTE: Essa rotina deve ser chamada entes que a biblioteca
- * C seja usada.
- * 
- * Obs: 
- * Pode haver uma chamada à ela em crt0.s por exemplo.
+ * C seja usada. 
  */
 
+// This routine ws called by crt0() in crt0.c
 
-int libcInitRT (void){
-
+int libcInitRT (void)
+{
     int Status = -1;
 
     //#debug
-    //debug_print ("libcInitRT:\n");
-        
+    debug_print ("libcInitRT:\n");
+
     Status = (int) stdlibInitMM();
 
     if ( Status != 0 ){
-        debug_print ("libcInitRT: stdlibInitMM fail\n");
+        debug_print ("libcInitRT: [FAIL] stdlibInitMM\n");
         return (int) 1; 
     }
 
 	//...
+
+    //#debug
+    debug_print ("libcInitRT: done\n");
 
     // ok.
     return 0;
@@ -1359,6 +1368,22 @@ char *__findenv ( const char *name, int *offset ){
 }
 
 
+/*
+void bak2for(char *str);
+void bak2for(char *str) 
+{
+    //#todo: check pointer validation
+    
+	while (*str) 
+	{
+		if (*str == '\\')
+			*str = '/';
+		
+		str++;
+	};
+}
+*/
+
 
 /*
  ***********************************
@@ -1368,7 +1393,7 @@ char *__findenv ( const char *name, int *offset ){
 
 char *getenv (const char *name)
 {
-    int offset;
+    int offset=0;
     char *result;
 
     debug_print ("getenv:\n");
@@ -1378,8 +1403,15 @@ char *getenv (const char *name)
     //printf ("getenv2: %s \n", (const char *) name);
     //return NULL;
 
-    if ( (void *) name == NULL ){
-        debug_print ("getenv: name fail\n");
+    if ( (void *) name == NULL )
+    {
+        debug_print ("getenv: [FAIL] name\n");
+        return (char *) 0;
+    }
+
+    if (*name == 0)
+    {
+        debug_print ("getenv: [FAIL] *name\n");
         return (char *) 0;
     }
 
@@ -2212,6 +2244,37 @@ qsort_r (
     debug_print("qsort_r: [TODO]\n");
 }
 
+// See:
+// https://linux.die.net/man/3/putenv
+int putenv(char *string)
+{
+    int rval=0;
+    register char *p; 
+    register char *equal;
+
+    if ( (void*) string == NULL )
+        return -1;
+    
+    if (*string == 0)
+        return -1;
+
+    if (!(p = strdup(string)))
+        return(1);
+
+    if (!(equal = index(p, '='))) 
+    {
+        //free(p);
+        return(1);
+    }
+
+    *equal = '\0';
+
+    rval = setenv(p, equal + 1, 1);
+    
+    //free(p);
+
+    return (int) rval;
+}
 
 
 //

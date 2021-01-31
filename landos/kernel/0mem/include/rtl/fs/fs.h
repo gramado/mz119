@@ -1,7 +1,7 @@
 /*
  * File: fs.h
  * 
- * 
+ *
  * 2015 - Created by Fred Nora.
  */
 
@@ -10,27 +10,14 @@
 #define ____FS_H
 
 
-// #order:
-// defines, variables, structures, prototypes.
-
-
-//
-//    ====    Defines    ====
-//
-
-
 
 #ifndef DIRECTORY_SEPARATOR
 # define DIRECTORY_SEPARATOR '/'
 #endif
 
-
-
 #ifndef ISSLASH
 # define ISSLASH(C) ((C) == DIRECTORY_SEPARATOR)
 #endif
-
-
 
 
 // Filesystem types.
@@ -43,32 +30,23 @@
 #define  FS_TYPE_EXT2   1005
 // No more types. 
 
-
-
 // deveria is para disk.h
 #define SECTOR_SIZE    512  
 //#define SECTOR_SIZE  4096  
-
 
 
 //#define MBR_BOOTABLE        0x80
 //#define MBR_SIGNATURE       0xAA55
 
 
-
-
 // short.
 //#define FS_I386_IMAGE  0x014C
-
-
 
 // pwd support
 #define  FS_VFSWORKINGDIRECTORY_ID      0
 #define  FS_BOOTWORKINGDIRECTORY_ID     1
 #define  FS_SYSTEMWORKINGDIRECTORY_ID   2
 #define  FS_UNKNOWNWORKINGDIRECTORY_ID  (-1)
-
-
 
 #define CACHE_SAVED        1
 #define CACHE_NOT_SAVED    0
@@ -77,12 +55,9 @@
 #define CACHE_NOT_LOADED    0
 
 
-
-
 //
 //  == Variables =================================
 //
-
 
 // Boot partition.
 int fat_cache_saved;
@@ -94,9 +69,8 @@ static char *____root_name = "/";
 
 
 //
-// pwd
+// == pwd =============================
 //
-
 
 // A string do diretório de trabalho.
 char current_workingdiretory_string[WORKINGDIRECTORY_STRING_MAX];
@@ -130,9 +104,6 @@ int pwd_initialized;
 //char search_path[?];
 unsigned long search_path_dir_address;
 unsigned long search_path_dir_entries;
-
-
-
 
 
 // ?? - Contagem de diretórios.
@@ -519,12 +490,21 @@ void set_spc(int spc);
 int get_spc (void);
  
 
-
 unsigned long fs_count_path_levels (unsigned char *path);
 
-int fs_load_path ( unsigned char *path, unsigned long address );
 
-int sys_load_path ( unsigned char *path, unsigned long u_address );
+
+int 
+fs_load_path ( 
+    const char *path, 
+    unsigned long address, 
+    unsigned long buffer_size );
+
+int 
+sys_load_path ( 
+    const char *path, 
+    unsigned long u_address, 
+    unsigned long u_address_len );
 
 
 //
@@ -534,8 +514,13 @@ int sys_load_path ( unsigned char *path, unsigned long u_address );
 void fsClearFat (void);   
 void fs_init_fat (void);
 
- 
-void fs_load_fat(void);
+// fat support
+int fs_save_fat (unsigned long fat_address, unsigned long fat_lba, size_t fat_size);
+void fs_load_fat(unsigned long fat_address, unsigned long fat_lba, size_t fat_size);
+
+// root dir support
+int fs_save_rootdir (unsigned long root_address, unsigned long root_lba, size_t root_size);
+void fs_load_rootdir(unsigned long root_address, unsigned long root_lba, size_t root_size); 
 
 
 
@@ -546,11 +531,6 @@ fs_load_metafile (
     unsigned long first_lba, 
     unsigned long size );
 
-// root dir support
-void fs_load_rootdir (void);
-
-int fs_save_rootdir (void);
-int fs_save_fat (void);
 
 void fs_save_entry_on_root(unsigned long eid);
 
@@ -591,7 +571,7 @@ fsLoadFile (
     unsigned long fat_address,
     unsigned long dir_address,
     int dir_entries,
-    unsigned char *file_name, 
+    const char *file_name, 
     unsigned long file_address,
     unsigned long buffer_limit );
 
@@ -623,12 +603,14 @@ fsSaveFile (
     char flag );
 
 
+//
+// Search
+//
 
-int fsSearchFile( unsigned char *file_name);
-int fsSearchFileName( unsigned char *name);
-
-int search_in_root ( char *filename );
-int KiSearchFile( unsigned char *file_name, unsigned long address);
+// See: search.c
+int search_in_dir( const char *file_name, unsigned long dir_address );
+int search_in_root ( const char *file_name );
+int fsSearchFile( const char *file_name );
 
 
 // manipulando a lista de arquivos do kernel.

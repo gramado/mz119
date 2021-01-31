@@ -121,13 +121,22 @@ dessa conta.
 */
 
 
+//
+// socket support
+//
+
+// used by listen()
+// See: process.h
+
+#define SOCKET_MAX_PENDING_CONNECTIONS 32
+
 
 
 // ===================================================
 
 
-// salvando o último endereço válido de memória ram.
-//usado em head.asm
+// Salvando o último endereço válido de memória ram.
+// usado em head.asm
 unsigned long blSavedLastValidAddress;
 unsigned long blSavedMetafileAddress;
 unsigned long blSavedDiskNumber;
@@ -135,7 +144,6 @@ unsigned long blSavedHeads;
 unsigned long blSavedSPT;
 unsigned long blSavedCylinders;
 //...
-
 
 
 int gdefShowLogo;

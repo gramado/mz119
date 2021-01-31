@@ -1,11 +1,11 @@
 # License: BSD License
 # Product configuration
 # See: 0config/version.h
-PRODUCT_NAME  = Gramado Land
-EDITION_NAME  = Gramado Land
+PRODUCT_NAME  = Gramado
+EDITION_NAME  = Land
 VERSION_MAJOR = 1
 VERSION_MINOR = 0
-VERSION_BUILD = 207
+VERSION_BUILD = 218
 KERNELVERSION = $(VERSION_MAJOR)$(if $(VERSION_MINOR),.$(VERSION_MINOR)$(if $(VERSION_BUILD),.$(VERSION_BUILD)))
 
 # Documentation.
@@ -111,17 +111,24 @@ land-os
 land-boot:
 	#::boot
 	@echo "=================== "
-	@echo "Compiling boot/ ... "
+	@echo "Compiling landboot/ ... "
 	# todo: Create a makefile inside  the boot/ folder.
-	$(Q) $(NASM)    boot/x86/0vhd/main.asm -I boot/x86/0vhd/ -o GRAMADO.VHD   
-	$(Q) $(MAKE) -C boot/x86/1bm/ 
-	$(Q) $(MAKE) -C boot/x86/2bl/ 
-	sudo cp boot/x86/bin/BM.BIN  base/
-	sudo cp boot/x86/bin/BM.BIN  base/BOOT
-	sudo cp boot/x86/bin/BM.BIN  base/SBIN
-	sudo cp boot/x86/bin/BL.BIN  base/
-	sudo cp boot/x86/bin/BL.BIN  base/BOOT
-	sudo cp boot/x86/bin/BL.BIN  base/SBIN
+
+	# virtual disks.
+	# Generic name to avoid proprietary stuff.
+	$(Q) $(NASM)  landboot/vd/fat/main.asm -I landboot/vd/fat/ -o GRAMADO.VHD 
+#	$(Q) $(NASM)  landboot/vd/mbr/main.asm -I landboot/vd/mbr/ -o GRAMADO.VHD 
+# ...
+
+	$(Q) $(MAKE) -C landboot/bm1632/x86/ 
+	$(Q) $(MAKE) -C landboot/bl32/x86/ 
+
+	sudo cp landboot/bin/BM.BIN  base/
+	sudo cp landboot/bin/BM.BIN  base/BOOT
+	sudo cp landboot/bin/BM.BIN  base/SBIN
+	sudo cp landboot/bin/BL.BIN  base/
+	sudo cp landboot/bin/BL.BIN  base/BOOT
+	sudo cp landboot/bin/BL.BIN  base/SBIN
 
 
 land-lib:
@@ -184,6 +191,9 @@ gramado-cmd:
 	-sudo cp gramado/cmd/bin/REBOOT.BIN     base/
 #	-sudo cp gramado/cmd/bin/TRUE.BIN       base/
 
+#	-sudo cp gramado/cmd/bin/SHOWFUN.BIN       base/
+#	-sudo cp gramado/cmd/bin/UNAME.BIN       base/
+
 gramado-setup:
 	#::setup
 	$(Q) $(MAKE) -C gramado/setup/
@@ -220,6 +230,9 @@ gramado-shell:
 	$(Q) $(MAKE) -C gramado/shell/apps/
 	-sudo cp gramado/shell/apps/bin/EDITOR.BIN   base/
 	-sudo cp gramado/shell/apps/bin/FILEMAN.BIN  base/
+	-sudo cp gramado/shell/apps/bin/GWM.BIN      base/
+#	-sudo cp gramado/shell/apps/bin/S2.BIN  base/
+#	-sudo cp gramado/shell/apps/bin/S3.BIN  base/
 	-sudo cp gramado/shell/apps/bin/TERMINAL.BIN  base/
 
 	#::ui
@@ -336,10 +349,8 @@ clean-system-files:
 	@echo "==================="
 	@echo "Cleaning all system binaries ..."
 
-	-rm -rf boot/x86/bin/*.BIN
-
+	-rm -rf landboot/bin/*.BIN
 	-rm -rf landlib/fonts/bin/*.FON
-
 	-rm -rf landos/kernel/KERNEL.BIN
 	-rm -rf landos/init/*.BIN
 
@@ -355,43 +366,11 @@ clean-system-files:
 
 ## ==================================================================
 ## The extra stuff.
-## 1) ISO support.
 ## 2) HDD support.
 ## 3) VM support.
 ## 4) Serial debug support.
 ## 5) Clean files support.
 ## 6) Usage support.
-
-#
-# ======== ISO ========
-#
-
-# test
-# todo
-# Create a .ISO file using nasm.
-makeiso-x86:
-	#todo:  
-	#nasm -I kernel/boot/x86/iso/stage1/ \
-	#-I kernel/boot/x86/iso/???/  kernel/boot/x86/iso/main.asm  -o  GRAMADO.ISO
-	
-	@echo "#todo Create ISO using nasm"
-	
-# ISO
-# Mount stage1.bin file with nasm.
-# Create a .ISO file and move all the content of the /bin folder
-# into the .ISO file.
-geniso-x86:
-	
-	#stage1
-	#$(NASM) land/boot/x86/iso/stage1/stage1.asm -f bin -o stage1.bin
-	#cp stage1.bin bin/boot/gramado/
-	#rm stage1.bin
-
-	#.ISO
-#	mkisofs -R -J -c boot/gramado/boot.catalog -b boot/gramado/stage1.bin -no-emul-boot -boot-load-size 4 -boot-info-table -o GRAMADO.ISO bin
-	
-	@echo "iso Success?"	
-
 
 
 #
@@ -513,7 +492,7 @@ generate:
 	touch VERSION.TXT
 	# Save information.
 	@echo $(PRODUCT_NAME)  > PRODUCT.TXT
-	@echo $(EDITION_NAME)  > EDITION.TXT
+	@echo $(PRODUCT_NAME) $(VERSION_MAJOR).$(VERSION_MINOR) $(EDITION_NAME)  > EDITION.TXT
 	@echo $(VERSION_MAJOR) > MAJOR.TXT
 	@echo $(VERSION_MINOR) > MINOR.TXT
 	@echo $(VERSION_BUILD) > BUILD.TXT
@@ -532,13 +511,17 @@ generate:
 #
 
 help:
-	@echo " help:"
-	@echo " all          - make all"
-	@echo " clean        - Remove all .o files"
-	@echo " clean2       - Remove .VHD and .ISO files"
-	@echo " vhd-mount    - Mount VHD"
-	@echo " vhd-unmount  - Unmount VHD"
-	@echo " qemu-test    - Run on qemu" 
-	@echo " oracle-virtual-box-test - Run on virtual-box"
-	@echo " ..."
-
+	@echo " [Usage]"
+	@echo " $ make               - make all"
+	@echo " $ make land-boot     - make landos bootloader"
+	@echo " $ make land-lib      - make landos library"
+	@echo " $ make land-os       - make landos kernel and init process"
+	@echo " $ make gramado-core  - make gramado os core applications"
+	@echo " $ make gramado-cmd   - make gramado os commands"
+	@echo " $ make gramado-setup - make gramado os setup applications"
+	@echo " $ make gramado-shell - make gramado os shell applications"
+	@echo " $ make gramado-edge  - make gramado os edge applications"
+	@echo " $ make clean         - Remove all .o files"
+	@echo " $ make clean-all     - Remove all the object files"
+	@echo " $ ./run              - Run the system on qemu"
+	
