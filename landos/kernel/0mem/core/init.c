@@ -86,31 +86,27 @@ void init_globals (void){
     int i=0;
 
 
-#ifdef EXECVE_VERBOSE
+//#ifdef EXECVE_VERBOSE
     debug_print("init_globals:\n");
     printf     ("init_globals:\n");
-#endif
+//#endif
 
 
-    //Outros.
-    errno = 0;
-
+    // stdio
     // Inicializa as estruturas do fluxo padrão.
     // Isso vai usar a file table.
     // #todo: Mudar para kstdioInitialize.
-    
+
     stdioInitialize();
 
-
-    //
-    // == Now we can print strings in the screen ==================
-    //
+    // Screen
+    // Now we can print strings in the screen.
 
     screenInit();
 
-    //
-    // == First message ====================================
-    //
+//
+// == First message ====================================
+//
 
     // #todo
     // Maybe we can print the banner.
@@ -120,63 +116,55 @@ void init_globals (void){
     printf     ("init_globals: WE HAVE MESSAGES NOW!\n");
 
 
-	//
-	// Runlevel
-	//
-	
-	// 5 	Start the system normally with appropriate 
-	// display manager (with GUI) 	
-	// Same as runlevel 3 + display manager.
-	// Full multi-user graphical mode. 
-    // See: config.h
-    
-    current_runlevel = DEFAULT_RUNLEVEL;
-    //current_runlevel = 5;
+    // ===================
+    // Vamos atrasar configuração de janela 
+    // em favor de configuração de mensagem
 
-
-    //===================	
-	//vamos atrasar configuração de janela em favor de configuração de mensagem
-
-	//Atalho para a próxima mensagem de teclado..(test) debug
+    // ??
+    // What is this?
+    // Atalho para a próxima mensagem de teclado..(test) debug
     gNextKeyboardMessage = (int) 0;
-	
-	//Essa flag bloqueia e impede que uma janela obtenha o foco.
+
+    // Essa flag bloqueia e impede que uma janela obtenha o foco.
     gFocusBlocked = (int) 0;
 
-	
-	//
-	// ==== Profiler ====
-	//
-	
-	// See: include/kernel/profiler/pints.h
-	
-	// Interrupção para serviços do sistema.
-	g_profiler_ints_gde_services = 0;
+//
+// == Profiler =============================
+//
+
+// See: 
+// include/kernel/profiler/pints.h
+
 
     // Legacy hardware interrupts (irqs) (legacy pic)
-    g_profiler_ints_irq0 = 0;  
-    g_profiler_ints_irq1 = 0;  
-    g_profiler_ints_irq2 = 0;  
-    g_profiler_ints_irq3 = 0;  
-    g_profiler_ints_irq4 = 0;  
-    g_profiler_ints_irq5 = 0;  
-    g_profiler_ints_irq6 = 0;  
-    g_profiler_ints_irq7 = 0;  
-    g_profiler_ints_irq8 = 0;   
-    g_profiler_ints_irq9 = 0;   
-    g_profiler_ints_irq10 = 0;  
-    g_profiler_ints_irq11 = 0;  
-    g_profiler_ints_irq12 = 0;  
-    g_profiler_ints_irq13 = 0;  
-    g_profiler_ints_irq14 = 0;  
-    g_profiler_ints_irq15 = 0;  
+    g_profiler_ints_irq0  = 0;
+    g_profiler_ints_irq1  = 0;
+    g_profiler_ints_irq2  = 0;
+    g_profiler_ints_irq3  = 0;
+    g_profiler_ints_irq4  = 0;
+    g_profiler_ints_irq5  = 0;
+    g_profiler_ints_irq6  = 0;
+    g_profiler_ints_irq7  = 0;
+    g_profiler_ints_irq8  = 0;
+    g_profiler_ints_irq9  = 0;
+    g_profiler_ints_irq10 = 0;
+    g_profiler_ints_irq11 = 0;
+    g_profiler_ints_irq12 = 0;
+    g_profiler_ints_irq13 = 0;
+    g_profiler_ints_irq14 = 0;
+    g_profiler_ints_irq15 = 0;
     // ...
 
+    // Interrupção para serviços do sistema.
+    g_profiler_ints_gde_services = 0;
 
-	//
+
+//
+// == User ===========================================
+//
+
 	// As globais relativas à usuário são independentes do 
 	// ambiente gráfico.
-	//
 
     // =========================================
     //User and group.
@@ -191,6 +179,11 @@ void init_globals (void){
     current_room        = (int) 0;
     current_desktop     = (int) 0;
 
+
+//
+// == ps ===================================================
+//
+
     // =========================================
     // Process, Thread.
     // See: kernel.h
@@ -202,6 +195,10 @@ void init_globals (void){
     current_thread     = (int) 0;
 
 
+//
+// == Network ===================================
+//
+
     // =========================================
     // Initialize the ports table used by the socket infrastruture.
     // todo: Create socket_init_gramado_ports();
@@ -210,17 +207,23 @@ void init_globals (void){
         gramado_ports[i] = 0;
     };
 
-    // =========================================
-    // The kernel request.
+//
+// == Kernel requests ===================================
+//
+
+    // The kernel request
     // See: request.c
+
     clear_request();
-    //kernel_request = 0;
 
 
+//
+// == kgws ===========================================
+//
 
     // =========================================
-    if ( g_useGUI != 1 ){
-        panic("init_globals: No GUI");
+    if ( g_useGUI != TRUE ){
+        panic("init_globals: No GUI\n");
     }
 
     // ===============================================
@@ -238,11 +241,16 @@ void init_globals (void){
     // #todo: Delete?
     init_menus();
 
-    //Continua...
+    // Continua...
 
-
+    // ??
     // Messages.
     g_new_message = 0;
+
+
+//
+// == fs ==============================
+//
 
     // ==============================
     // fs support
@@ -268,7 +276,7 @@ void init_globals (void){
 	
 	//#bugbug isso esta dando problemas.
 //#ifdef EXECVE_VERBOSE
-    backgroundDraw ( (unsigned long) COLOR_BLUE ); 
+    // backgroundDraw ( (unsigned long) COLOR_BLUE ); 
 //#endif
 
     //printf("#breakpoint glob");
@@ -299,7 +307,7 @@ void init_globals (void){
  *    Descrever aqui as fazer dessa rotina.
  */ 
 
-// It was called by systemStartUp() in core/system.c
+// It was called by x86Main() in x86/x86init.c
 
 int init (void){
 
@@ -336,15 +344,6 @@ int init (void){
 
     PROGRESS("Kernel:2:2\n"); 
     // Create the progress bar.
-
-    //
-    // == progress bar ===================================
-    //
-    
-    // Precisa ser depois de inicializar as globais
-    // pois considera o runlevel.
-
-    CreateProgressBar();
 
 
 #ifdef EXECVE_VERBOSE
@@ -516,8 +515,8 @@ int init (void){
         if ( (void *) System ==  NULL ){
             panic ("core-init: System\n");
         }else{
-            System->used  = 1;    //Sinaliza que a estrutura esta em uso.
-            System->magic = 1234; //sinaliza que a estrutura não esta corrompida.
+            System->used  = TRUE;  // Sinaliza que a estrutura esta em uso.
+            System->magic = 1234;  // Sinaliza que a estrutura não esta corrompida.
             
             Platform->System = (void *) System;
             //printf(".");
@@ -637,8 +636,8 @@ int init (void){
     // This is the window manager embedded in the base kernel.
 
     // Text mode not supported.
-    
-    if (g_useGUI != 1){
+
+    if (g_useGUI != TRUE){
         panic ("init_architecture_independent: [PANIC] No ring0 GUI!\n");
     }
 
@@ -647,7 +646,17 @@ int init (void){
     printk ("init_architecture_independent: init_window_manager\n");
 #endif
 
+    // debug
+    //printf("W\n");
+    //refresh_screen();
+    //while(1){}
+    
     init_window_manager();
+
+    // debug
+    //printf("~W\n");
+    //refresh_screen();
+    //while(1){}
 
 
     // More? ...
@@ -670,10 +679,6 @@ int init (void){
     printf("=========================\n");
     printf("core-init: end of phase 0\n");
     
-    // 1. Fim da fase 0.
-    IncrementProgressBar();
-    //refresh_screen();
-    //while(1){}
 
     //
     // == phase 1 ? ================================================
@@ -738,17 +743,14 @@ int init (void){
     // == Processor ===================================
     //
 
-    // #test
-    // This initialization was missing ...
-    // We are trying to implement it here.
+    // The 'processor' structure.
+    // ?? Is it 'up' or 'smp' ?
 
     processor = (void *) kmalloc ( sizeof( struct processor_d ) ); 
 
-    if ( (void *) processor == NULL )
-    {
+    if ( (void *) processor == NULL ){
         panic("init: processor\n");
     }
-
 
 
     // #todo
@@ -768,13 +770,14 @@ int init (void){
     // get more information about the processor
     // using the cpuid instruction.
     // See: 
-    // arch/x86/x86.c
-    // arch/amd/cpuamd.c
-    
+    // 1pump/arch/x86/x86.c
+    // 1pump/arch/amd/cpuamd.c
+
     ProcessorType = (int) hal_probe_processor_type();
 
-    if (ProcessorType==0){
-        panic("init_architecture_dependent: processor Type\n");
+    // Error
+    if (ProcessorType <= 0){
+        panic("init_architecture_dependent: [ERROR] ProcessorType\n");
     }
 
     processor->Type = (int) ProcessorType;
@@ -784,11 +787,23 @@ int init (void){
         case Processor_AMD:    init_amd();         break;
         // ...
         default:
-            panic ("init_architecture_dependent: default Type\n");
+            panic ("init_architecture_dependent: [ERROR] default Type\n");
             break;
     };
 
 
+    //
+    // qemu
+    //
+
+    // Check if we are running on qemu.
+    // and set flag.
+
+    int isQEMU=FALSE;
+    isQEMU = detect_IsQEMU();
+    if( isQEMU == TRUE ){
+        printf ("Running on QEMU\n");
+    }
 
 
     PROGRESS("Kernel:2:14\n"); 
@@ -802,6 +817,13 @@ int init (void){
     // Continua ...
 
     // Done.
+
+
+    // debug
+    //printf("~P\n");
+    //refresh_screen();
+    //while(1){}
+
 
 //
 // ====================================================================
@@ -829,9 +851,12 @@ int init (void){
 
     // Disable interrupts, lock task switch and scheduler.
 
-    asm ("cli");
-    set_task_status(LOCKED); 
-    scheduler_lock();
+    // # isso ja foi feito no começo da rotina de inicialização do kernel.
+    // Tem que pensar nisso antes de tudo.
+
+    //asm ("cli");
+    //set_task_status(LOCKED); 
+    //scheduler_lock();
 
 
     PROGRESS("Kernel:2:16\n"); 
@@ -847,10 +872,6 @@ int init (void){
     printf("=========================\n");
     printf("core-init: end of phase 1\n");
 
-    //2 - fim da fase 1.
-    IncrementProgressBar();
-    //refresh_screen();
-    //while(1){}
 
     //
     // == phase 2 ? ================================================
@@ -880,6 +901,8 @@ int init (void){
     while (1){ asm ("hlt"); }
 #endif
 
+    // ??
+    // Volta para onde?
 
     // #debug
     //printf("*breakpoint\n");

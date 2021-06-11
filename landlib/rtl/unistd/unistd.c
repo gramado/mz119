@@ -444,29 +444,38 @@ pid_t vfork(void)
 }
 
 
-/*
- * setuid:
- *
- */
-
-// SVr4,  POSIX.1-2001.   
-// Not quite	compatible with	the 4.4BSD call, which
-// sets all	of the real, saved, and	effective user IDs.	  
-
+// ===============================
+// uid
 int setuid ( uid_t uid )
 {
 	//#todo: ainda não temos a suystem call.
 	//SYSTEMCALL_SETCURRENTUSERID
 	return (uid_t) gramado_system_call ( 151, 0, 0, 0 );
 }
-
-
 uid_t getuid (void)
 {
     return (uid_t) gramado_system_call ( 152, 0, 0, 0 );
 }
 
+// ===============================
+// gid
+int setgid(gid_t gid)
+{
+    return -1;
+}
+gid_t getgid (void)
+{
+	//SYSTEMCALL_GETCURRENTGROUPID
+    return (gid_t) gramado_system_call ( 154, 0, 0, 0 );
+}
 
+
+// ===============================
+// euid
+int seteuid(uid_t euid)
+{
+    return -1;
+}
 uid_t geteuid (void)
 {
     debug_print ("geteuid: [TODO]\n");
@@ -475,25 +484,34 @@ uid_t geteuid (void)
 } 
 
 
-/*
- * getpid:
- *
- */
 
-pid_t getpid (void)
+// ===============================
+// egid
+int setegid(gid_t egid)
 {
-    return (pid_t) gramado_system_call ( UNISTD_SYSTEMCALL_GETPID, 0, 0, 0 );
+    return -1;
+}
+gid_t getegid(void)
+{
+    return -1;
 }
 
 
-/*
- * getppid:
- *
- */
+// ===============================
+// pid
+pid_t getpid (void)
+{
+    return (pid_t) gramado_system_call ( 
+                       UNISTD_SYSTEMCALL_GETPID, 0, 0, 0 );
+}
 
+
+// ===============================
+// ppid
 pid_t getppid (void)
 {
-    return (pid_t) gramado_system_call ( UNISTD_SYSTEMCALL_GETPPID, 0, 0, 0 );
+    return (pid_t) gramado_system_call ( 
+                       UNISTD_SYSTEMCALL_GETPPID, 0, 0, 0 );
 }
 
 
@@ -568,25 +586,15 @@ pid_t getpgid(pid_t pid)
 {
     debug_print ("getpgid: [TODO]\n");
 
-    if(pid<0)
+    if(pid<0){
         debug_print ("getpgid: pid\n");
-        
-    return -1;
+    }
+
+    return (pid_t) (-1);
 }
 
 
 
-/*
- * getgid:
- *
- */
-
-gid_t getgid (void)
-{
-	//SYSTEMCALL_GETCURRENTGROUPID
-
-    return (gid_t) gramado_system_call ( 154, 0, 0, 0 );
-}
 
 
 
@@ -638,12 +646,15 @@ char *getcwd (char *buf, size_t size)
     debug_print ("getcwd: [TODO]\n");
 
 
-    if( (void*) buf == NULL )
+    if( (void*) buf == NULL ){
+        // msg
         return (char *) 0;
+    }
     
     
-    if ( size<0 )
+    if ( size<0 ){
         return (char *) 0;
+    }
 
     /*
     if (!buffer) {
@@ -659,13 +670,14 @@ char *getcwd (char *buf, size_t size)
 char *getwd (char *buf)
 {
     debug_print ("getwd: [TESTING]\n");
-    
-    if( (void*) buf == NULL )
+
+
+    if ( (void*) buf == NULL ){
         return (char *) 0;
-    
-    
+    }
+
     char *p = getcwd(buf, PATH_MAX);
-    
+
     return (char *) p;
 }
 
@@ -1212,23 +1224,26 @@ char *__gethostname (void)
 
 int gethostname (char *name, size_t len)
 {
-    int len_ret = -1;
 
-    if( (void*) name == NULL )
-        return -1;
-    
-    if(*name == 0)
-        return -1;
+    int retValue = -1;
 
-    if(len<0)
+    if( (void*) name == NULL ){
+        printf ("gethostname: buffer fail\n");
         return -1;
+    }
+
+    if(len<0){
+        printf ("gethostname: len fail\n");
+        return -1;
+    }
     
-    len_ret = (int) gramado_system_call ( 38, 
+    retValue = (int) gramado_system_call ( 
+                        38, 
                         (unsigned long) name,
                         (unsigned long) name,
                         (unsigned long) name );
-     
-     return (int) len_ret;
+
+     return (int) retValue;
 }
 
 
@@ -1296,11 +1311,15 @@ char *getlogin (void)
 int setlogin (const char *name)
 {
 
-    if( (void*) name == NULL )
+    if( (void*) name == NULL ){
+        //msg
         return -1;
+    }
     
-    if(*name == 0)
+    if(*name == 0){
+        //msg
         return -1;
+    }
 
 
     //#todo: pegar retorno da função
@@ -1329,17 +1348,16 @@ int getusername (char *name, size_t len)
     int __len_ret=0;
 
 
-    if( (void*) name == NULL )
+    if ( (void*) name == NULL ){
+        printf ("getusername: buffer fail\n");
         return -1;
+    }
     
-    if(*name == 0)
-        return -1;
-
 
     if ( len < 0 || len > HOST_NAME_MAX )
     {
-	    printf ("getusername: len\n");
-	    return -1;
+        printf ("getusername: len\n");
+        return -1;
     }
 
 
@@ -2411,8 +2429,14 @@ int spawnveg(const char* command, char** argv, char** envv, pid_t pgid)
 }
 
 
-
-
+// #todo
+// get file descriptor table size
+// See: https://www.man7.org/linux/man-pages/man2/getdtablesize.2.html
+int getdtablesize(void)
+{
+    debug_print ("getdtablesize: [TODO] not implemented yet\n"); 
+    return -1;
+}
 
 
  

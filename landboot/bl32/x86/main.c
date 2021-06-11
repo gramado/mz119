@@ -34,40 +34,47 @@
 //static char **envp = { NULL, NULL, NULL };
 
 
-
-// Prototypes.
+//
+// == Prototypes ==========================================
+//
 
 unsigned long init_testing_memory_size (int mb);
 
-void BlLoadKernel(void);
+int LandOSLoadKernelImage(void);
 
 void BlSetupPaging(void);
 
 
 
+// Show menu.
 void blShowMenu (void){
 
     int i=0;
 
 
+    // Cursor.
     g_cursor_x = 0;
     g_cursor_y = 0;
-    clear_backbuffer();  //black
-    
+
+    // Clear backbuffer.
+    // Black color.
+    clear_backbuffer();
+
+
     for (i=0; i<8; i++)
     {
         printf ("\n");
-        
-        if (MENU[i].used == 1)
+
+        if (MENU[i].used == TRUE)
         {
-            if( i == menu_highlight){
+            if ( i == menu_highlight){
                 printf ("* %s \n",MENU[i].string);
             }else{
                 printf ("  %s \n",MENU[i].string);
             };
         }
     };
-    
+
     refresh_screen(); 
 }
 
@@ -99,9 +106,10 @@ BlMenu(void)
     
     //mostra o menu.
     //blShowMenu(); 
-    
-    while(1)
-    {
+
+
+    while (1){
+
         blShowMenu();
         
         Key = keyboard_wait_key();
@@ -147,13 +155,18 @@ ____go:
 
 void BlMain (void){
 
+    // #todo
+    // Podemos cair num shell de recuperaçcao
+    // caso o carregamento der errado.
+
+
     int Status = (-1);
 
     // main flags.
-    gdefLegacyBIOSBoot = FALSE;
-    gdefEFIBoot = FALSE;
-    gdefSafeBoot = FALSE;
-    gdefShowLogo = FALSE;
+    gdefLegacyBIOSBoot  = FALSE;
+    gdefEFIBoot         = FALSE;
+    gdefSafeBoot        = FALSE;
+    gdefShowLogo        = FALSE;
     gdefShowProgressBar = FALSE;
     // ...
 
@@ -217,6 +230,9 @@ void BlMain (void){
     // printf("habilitando as interrupcoes\n");
     // refresh_screen();
 
+    // #todo:
+    // Talvez devamos adiar esse sti.
+
     asm ("sti");
 
 
@@ -263,22 +279,24 @@ void BlMain (void){
 	//Carrega arquivos.
 #ifdef BL_VERBOSE
     printf ("BlMain: Loading files..\n");
-    refresh_screen ();
+    refresh_screen();
 #endif
 
 
-	// #importante:
-	// Carregando o diret�rio raiz e a fat na mem�ria.
-	// Evitando repeti��o de carregamento.
+    // #todo
+    // Maybe we need the return from these routines.
 
+
+    // Load root dir.
 
     fs_load_rootdirEx();
+    g_fat16_root_status = TRUE;
+
+
+    // Load FAT.
+
     fs_load_fatEx();
-
-
-    g_fat16_root_status = 1;
-    g_fat16_fat_status = 1;
-
+    g_fat16_fat_status = TRUE;
 
 
     // #todo
@@ -303,12 +321,21 @@ void BlMain (void){
     //
 
 
-   // Loading kernel image.
-    BlLoadKernel();
-
-
     // ?? maybe.
     // BlLoadConfigFiles ();   
+
+
+    // Loading the kernel image.
+    // Helper function in this document.
+
+    //Status = AnotherOSLoadKernelImage();
+    Status = LandOSLoadKernelImage();
+
+    if (Status<0){
+         printf("BlMain: LandOSLoadKernelImage fail. \n");
+         goto run_rescue_shell;
+    }
+
 
 
 	// Paging:
@@ -337,6 +364,8 @@ void BlMain (void){
     //clear_backbuffer();  //black
 
 
+
+    // ============================================
 	
 	//@todo: Atualizar status.
 
@@ -356,26 +385,103 @@ void BlMain (void){
     while(1){};
 #endif
 
+
+
+done:
+    return;
+
+
+    // ============================================
+
+    //
+    // rescue Shell
+    //
+
+
+run_rescue_shell:
+
+    printf("BlMain: Initializing rescue shell\n");
+    refresh_screen();
+
+    // #todo
+    // Vamos criar um shell de recuperação que
+    // funcione caso o carregamento falhe.
+    // Mas para isso as rotinas de carregamento
+    // precisam de retorno tipo int.
+    
+    // See:
+    // ?
+    
+    Status = rescueShell();
+
+    if( Status < 0)
+    {
+        printf("BlMain: rescueShell fail. *hang\n");
+        refresh_screen();
+        
+        // abort();
+        
+        while(1){
+            asm ("cli");
+            asm ("hlt");
+        };
+    }
+    
+    // ok
+    // Vamos excutar o que o rescue shell carregou.
+
+    return;
 }
 
 
 /*
- ***************************************************************
- * BlLoadKernel: 
+ ************************************
+ * LandOSLoadKernelImage: 
+ * 
  *     It loads the kernel image at 0x00100000.
  *     The entry point is at 0x00101000.
  */ 
 
-void BlLoadKernel(void){
+    // #todo
+    // This way can chose the filename from a
+    // configuration file.
+    // This routine will try to load the default filename
+    // if the provide name fail.
 
+    // This routine will build the pathname
+    // to search in the default folder.
+    
+    // Called by BlMain()
+
+int LandOSLoadKernelImage(void)
+{
     int Status = -1;
 
-    Status = (int) load_kernel();
+    // Standard name.
+    // #todo: Maybe we need some options, some config file.
 
-    if ( Status != 0 ){
-        printf ("BlLoadKernel:\n");
-        die();
+    char *image_name = "KERNEL.BIN";
+
+    // #bugbug
+    // Precisamos que essa rotina retorne
+    // para termos a change de inicializarmos o
+    // rescue shell. Mas acontece que por enquanto
+    // essa função aborta ao primeiro sinal de perigo.
+
+
+    Status = (int) elfLoadKernelImage(image_name);
+
+    // Fail
+    if ( Status != 0 )
+    {
+        printf ("LandOSLoadKernelImage: elfLoadKernelImage fail\n");
+        refresh_screen();
+        
+        return (int) (-1);
     }
+    
+    // ok
+    return Status;
 }
 
 

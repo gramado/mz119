@@ -49,9 +49,10 @@ int fs_load_file ( unsigned char *file_name, unsigned long file_address ){
  */
  
 /*
-int fs_search_file(unsigned char *file_name){
+int fs_search_file(unsigned char *file_name)
+{
 	return (int) 0;
-};
+}
 */
 
 
@@ -71,7 +72,7 @@ unsigned short is_FAT16()
     {	
 		return 1;
 	}
-};
+}
 */
 
 
@@ -139,7 +140,8 @@ void fs_format ()
 
 /*
  * fs_search_empty_entry: 
- *     Encontrar uma entrada vazia em um dado diretório. */
+ *     Encontrar uma entrada vazia em um dado diretório. 
+ */
 
 unsigned long fs_search_empty_entry (unsigned long id)
 {
@@ -431,8 +433,9 @@ void fs_relood_dir (unsigned long id)
 
 
 /*
- *****************************************************************
+ *******************************************************
  * fsLoadFile:
+ * 
  *     Carrega um arquivo na memória. (#fat16)
  *     O Boot Loader utiliza essa rotina para carregar os arquivos 
  * do sistema.
@@ -451,8 +454,6 @@ fsLoadFile (
 {
 
     int Status = 0;
-
-	//Declara variáveis.
 
     unsigned long i = 0;
     unsigned long j = 0;
@@ -483,7 +484,6 @@ fsLoadFile (
 
 
 
-
     // Check
 
     if ( (void*) name == NULL ){
@@ -500,9 +500,10 @@ fsLoadFile (
 	//#bugbug
 	//Essa refresh screen leva muito tempo.
 
-	//Debug
-	printf ("fsLoadFile: Loading %s\n", (unsigned char*) name );
-	//refresh_screen();
+    // #debug
+
+    printf ("fsLoadFile: [DEBUG] Loading %s\n", (unsigned char*) name );
+    //refresh_screen();
 
 
     // check
@@ -577,7 +578,7 @@ fsLoadFile (
 // Se o arquivo não for encontrado.
 
 file_not_found:
-    printf ("fsLoadFile: File not found\n"); 
+    printf ("fsLoadFile: [FAIL] File not found\n"); 
     goto fail;
 
 
@@ -601,8 +602,9 @@ found:
     
     if ( cluster <= 0 || cluster > 0xFFF0 )
     {
-        printf ("fsLoadFile fail: Cluster limits File=[%s] Cluster=[%d]\n", 
-            &dir[z], cluster );
+        printf ("fsLoadFile: [FAIL] Cluster limits File=[%s] Cluster=[%d]\n", 
+            &dir[z], 
+            cluster );
 
         goto fail;
     }
@@ -731,9 +733,10 @@ done:
 
     // #debug
     
-    printf ("bl.bin: File LOADED!\n");
+    printf ("BL.BIN: File LOADED!\n");
     return 0;
 }
+
 
 // =========================
 // path count
@@ -772,7 +775,10 @@ unsigned long path_count (unsigned char *path)
  */
 
 // IN:
-// path de dois níveis, andereço onde carregar.
+// path de dois níveis, endereço onde carregar.
+
+// IN:
+// pathname, virtual address.
 
 //   0 ---> ok.
 // !=0 ---> fail
@@ -780,25 +786,31 @@ unsigned long path_count (unsigned char *path)
 int load_path ( unsigned char *path, unsigned long address )
 {
 
-    int level=0;
-    
-    int i=0;         // Deslocamento dentro do buffer.
-
-    char buffer[12];
-    unsigned char *p;
+    // #test
+    // Removing all the abort(),
+    // We are giving a chance to the rescur shell.
 
     int Ret = -1;    // fail. Usado na função que carrega o arquivo.
+    
+    int i=0;         // Deslocamento dentro do buffer.
+    char buffer[12];
 
+    // path pointer.
+    unsigned char *p;
+
+
+    //#todo
+    //unsigned long ImageBase=0;
+    //unsigned long ImageSize=0;
 
     //onde carregaremos o diretório.
     void *__src_buffer;
     void *__dst_buffer;
     void *__file_buffer;
 
+    int level=0;
     unsigned long n_levels = 0;
     int l=0;
-
-
 
     //
     // Checks.
@@ -807,22 +819,22 @@ int load_path ( unsigned char *path, unsigned long address )
     //====================
     // path
     
-    if ( (void*) path == NULL )
-    {
+    if ( (void*) path == NULL ){
         printf ("bl-load_path: path\n");
-        abort ();
+        goto fail;
+        //abort();
     }    
 
-    if (*path == 0)
-    {
+    if (*path == 0){
         printf ("bl-load_path: *path\n");
-        abort ();
+        goto fail;
+        //abort();
     }
 
-    if (*path != '/')
-    {
-        printf ("bl-load_path: It's not an absolute path.\n");
-        abort ();
+    if (*path != '/'){
+        printf ("bl-load_path: It's not an absolute path\n");
+        goto fail;
+        //abort();
     }
 
     p = path;
@@ -831,7 +843,8 @@ int load_path ( unsigned char *path, unsigned long address )
     
     if(n_levels==0){
         printf ("bl-load_path: n_levels\n");
-        abort ();
+        goto fail;
+        //abort ();
     }    
 
     level = 0;
@@ -841,7 +854,8 @@ int load_path ( unsigned char *path, unsigned long address )
 
     if (address == 0){
         printf ("bl-load_path: address\n");
-        abort ();
+        goto fail;
+        //abort ();
     }
 
     // =======================
@@ -851,19 +865,19 @@ int load_path ( unsigned char *path, unsigned long address )
     
     // primeiro src =  root address;
     __src_buffer = (void *) FAT16_ROOTDIR_ADDRESS;
-    
 
     // =======================
     // levels
 
-    for(l=0; l<n_levels; l++)
+    for (l=0; l<n_levels; l++)
     {
         printf ("\n[LEVEL %d]\n\n",l);
         
         // Tem que começar o level com '/'
         if ( p[0] != '/' ){
             printf ("bl-load_path: The level needs to start with '/' \n");
-            abort ();   
+            goto fail;
+            //abort();
         }
         p++; //pula o '/' 
 
@@ -872,7 +886,7 @@ int load_path ( unsigned char *path, unsigned long address )
         for ( i=0; i<12; i++ )
         {
             // #debug
-            printf ("%c", (char) *p);
+            // printf ("%c", (char) *p);
 
             // Copia o char para o buffer até que o char seja '/'
             // indicando próximo nível.
@@ -886,7 +900,8 @@ int load_path ( unsigned char *path, unsigned long address )
                 if ( l != (n_levels-1) )
                 {
                     printf ("bl-load_path: Directory name with '.'\n");
-                    abort ();
+                    goto fail;
+                    //abort ();
                 }
                 
                 //se o ponto está além do limite permitido.
@@ -894,7 +909,8 @@ int load_path ( unsigned char *path, unsigned long address )
                 {
                     printf ("bl-load_path: '.' fail.\n");
                     printf ("Name size bigger than 8.\n");
-                    abort ();
+                    goto fail;
+                    //abort ();
                 }
                 
                 // se o ponto for antes do nono slot.
@@ -935,18 +951,18 @@ int load_path ( unsigned char *path, unsigned long address )
     
                 if ( (void *) __dst_buffer == NULL ){
                     printf ("bl-load_path: __dir\n");
-                    abort ();
+                    goto fail;
+                    //abort();
                 }
-
 
                 Ret = fsLoadFile ( 
                           (unsigned char *) buffer, 
                           (unsigned long) __dst_buffer,    // Onde carregar
                           (unsigned long) __src_buffer );  // Onde procurar.
-                // ok.
-                if ( Ret == 0 )
-                {
-                    printf ("level %d carregado com sucesso.\n",l);
+                // ok
+                if ( Ret == 0 ){
+
+                    // printf ("level %d loaded.\n",l);
                     
                     // #importante
                     // Esse nível tinha ponto, então deveria ser o último.
@@ -954,7 +970,8 @@ int load_path ( unsigned char *path, unsigned long address )
                     {
                         printf ("bl-load_path: Directory name with '.'\n");
                         printf ("It needs to be the last level.\n");
-                        abort ();
+                        goto fail;
+                        //abort();
                     }
 
                     // SUCCESS ?!!
@@ -964,8 +981,9 @@ int load_path ( unsigned char *path, unsigned long address )
                     break;
 
                 }else{
-                    printf ("load_path: fail loading level 0\n");
-                    abort ();
+                    printf ("load_path: [FAIL] Fail loading level 0\n");
+                    goto fail;
+                    //abort();
                 };
             }
 
@@ -999,17 +1017,18 @@ int load_path ( unsigned char *path, unsigned long address )
                 if ( (void *) __dst_buffer == NULL )
                 {
                     printf ("bl-load_path: __dir\n");
-                    abort ();
+                    goto fail;
+                    //abort();
                 }
-                
+
                 Ret = fsLoadFile ( 
                           (unsigned char *) buffer, 
                           (unsigned long) __dst_buffer,    // Onde carregar
                           (unsigned long) __src_buffer );  // Onde procurar.
                 // ok.
-                if ( Ret == 0 )
-                {
-                    printf ("level %d carregado com sucesso.\n",l);
+                if ( Ret == 0 ){
+
+                    //printf ("level %d carregado com sucesso.\n",l);
                     
                     // O endereço onde carregamos o arquivo desse nível
                     // será o endereço onde vamos procurar o arquivo do próximo nível.
@@ -1018,8 +1037,9 @@ int load_path ( unsigned char *path, unsigned long address )
                     break;
                     
                 }else{
-                    printf ("load_path: fail loading level 0\n");
-                    abort ();
+                    printf ("load_path: [FAIL] Fail loading level 0\n");
+                    goto fail;
+                    //abort ();
                 };
             }
 
@@ -1027,6 +1047,14 @@ int load_path ( unsigned char *path, unsigned long address )
             p++;
         };
     };   
+
+
+fail:
+
+    printf ("load_path: fail \n");
+    refresh_screen();
+
+    // REturning to call the rescue shell.
 
     return (-1);
 }
@@ -1044,10 +1072,19 @@ unsigned long fsSearchFile (unsigned char *name)
     int Status=0;
     unsigned long z = 0;        //Deslocamento no rootdir. 
     unsigned long n = 0;        //Deslocamento no nome.
+    
+    // Contando entradas.
+    int i=0;
     unsigned long max = 512;    //Número máximo de entradas no diretório raiz.
+
+
     char name_x[13];
     unsigned short *root = (unsigned short *) FAT16_ROOTDIR_ADDRESS;
 
+
+    // Quando encontrarmos a 'ultima e
+    int EndOfDir = FALSE;
+    int FoundInThisEntry = -1;
 
     // Check args.
 
@@ -1072,9 +1109,9 @@ unsigned long fsSearchFile (unsigned char *name)
     switch (g_file_system_type)
     {
         // Not standard.
-        case 1:  //fat16
-        case 2:  //fat32
-        case 3:  //ext2
+        case 1:  // fat16
+        case 2:  // fat32
+        case 3:  // ext2
         default:
             max = 512;
             break;
@@ -1087,8 +1124,17 @@ unsigned long fsSearchFile (unsigned char *name)
     // Copia o nome e termina incluindo um 0.
     // Compara 11 caracteres.
 
+    // Primeira entrada.
+    i = 0;
+
     while (max > 0)
     {
+        // Encontramos a primeira entrada vazia.
+        if ( root[z] == 0 ){
+            EndOfDir = TRUE;
+        }
+        
+        // Not zero.
         if (root[z] != 0)
         {
             memcpy (name_x, &root[z], 11);
@@ -1096,22 +1142,34 @@ unsigned long fsSearchFile (unsigned char *name)
 
             Status = strncmp(name, name_x, 11);
             
-            if (Status == 0){  goto found;  }
+            if (Status == 0){  
+                FoundInThisEntry = i;
+                goto found;  
+            }
         }
 
-        z += 16;    //(32/2) próxima entrada!
-        max--;      //512 vezes!
+        z += 16;    // (32/2) próxima entrada!
+        max--;      // 512 vezes!
+        i++;        // Contando entrada.
     }; 
 
     // Nothing.
 
 // Se o arquivo não for encontrado.
 file_not_found:
-    printf("fsSearchFile: [FAIL] File not found\n"); 
+    FoundInThisEntry = -1;
+    printf("bl-fsSearchFile: [FAIL] File not found\n"); 
+    if ( EndOfDir == TRUE ){
+        printf("We reached the end of dir\n"); 
+    }
     return (unsigned long) 1;
 
 //Se o arquivo for encontrado.    
 found:
+    if ( FoundInThisEntry < 0 || FoundInThisEntry >= 512 )
+    {
+        panic("bl-fsSearchFile: [ERROR] FoundInThisEntry\n"); 
+    }
     return (unsigned long) 0;
 }
 
@@ -1132,6 +1190,7 @@ unsigned long fsSearchFileName ( unsigned char *name )
 
 
 /*
+ *************************************************
  * fs_load_rootdirEx:    
  *    Carrega o diretório raiz na memória.
  *
@@ -1140,12 +1199,19 @@ unsigned long fsSearchFileName ( unsigned char *name )
  *    Size = 32 setores. 
  *    512 entradas de 32 bytes cada.
  */
+
+    // size = 32 sectors.
+    // #todo: Pegar de estrutura.
  
 void fs_load_rootdirEx()
 {
+
+    // Iteration
     unsigned long i=0;
+    unsigned long RootSize = 32;
+
+    // Address offset support.
     unsigned long n=0;
-    unsigned long RootSize = 32;    //@todo: Pegar de estrutura. 
 
 
 	// debug
@@ -1170,19 +1236,25 @@ void fs_load_rootdirEx()
  *     Carrega a FAT na memória. (size = 64 setores). 
  */
 
-void fs_load_fatEx()
-{
-    unsigned long i=0;
-    unsigned long n=0;
-
     // #bugbug
     // We need to load the whole fat table.
     // Or we will have problems to load the kernel.
     // 64 setores de tamanho.
     // Talvez seja 246.
 
-    //unsigned long FatSize = 64; 
+void fs_load_fatEx()
+{
+    
+    // #bugbug
+    // Is this size right?
+    
+    // Iteration.
+    unsigned long i=0;
     unsigned long FatSize = 128; 
+    
+    // Address offset support.
+    unsigned long n=0;
+
     
 	// debug
 	// printf("Loading Cluster Table.\n");//fat
@@ -1216,27 +1288,29 @@ void fs_put_list_on_fat (){
 
     for ( i=0; i < lista_size; i++ )
     {
-        //último elemento da lista.
-		if ( file_cluster_list[i] == 0xFFFF || 
-		     file_cluster_list[i] == 0xFFF8 )
+        // último elemento da lista.
+        if ( file_cluster_list[i] == 0xFFFF || 
+             file_cluster_list[i] == 0xFFF8 )
         {
-	        fs_set_fat_entry ( file_cluster_list[i], 0xFFFF );
-			return;
-			//goto done;
-        };
-		
-		//um elemento qualquer da lista.
-   	    if ( file_cluster_list[i] > 0 && 
-		     file_cluster_list[i] < lista_size )
-        {	
-	        fs_set_fat_entry ( file_cluster_list[i], file_cluster_list[i+1] );
-        };
+            fs_set_fat_entry ( file_cluster_list[i], 0xFFFF );
+            return;
+        }
+
+        // um elemento qualquer da lista.
+        if ( file_cluster_list[i] > 0 && 
+             file_cluster_list[i] < lista_size )
+        {
+            fs_set_fat_entry ( 
+                file_cluster_list[i], 
+                file_cluster_list[i+1] );
+        }
     };
 }
 
 
 /*
- * fs_find_n_empty_entries: */
+ * fs_find_n_empty_entries: 
+ */
  
 unsigned long fs_find_n_empty_entries (unsigned long n){
 
@@ -1246,86 +1320,98 @@ unsigned long fs_find_n_empty_entries (unsigned long n){
     unsigned short lista_size = 1024;
 
 
-	//@todo: Pegar de estrutura.
-	//Número max de entradas na FAT.
-    unsigned short fat_max = (64*512/2);    
+    // #todo: 
+    // Pegar de estrutura.
+    // Número max de entradas na FAT.
+
+    // #bugbug
+    // What is this?
+    
+    unsigned short fat_max = (64*512/2); 
 
 
-	// Limits.
-	
+    // Limits.
+
+    // #bugbug
+    // It is 'unsigned long'
+
     if ( n < 0 || n > lista_size )
     {
         goto fail;
     }
 
 
-	for(i = 0; i < n; i++)
-	{
-		empty = fs_find_empty_entry();
-		
-		//cria a lista de entradas vazias.
-		if( empty != 0 && empty < fat_max )
-		{
-		    file_cluster_list[l] = empty;
+    for (i = 0; i < n; i++)
+    {
+        empty = fs_find_empty_entry();
+
+        // cria a lista de entradas vazias.
+        if( empty != 0 && empty < fat_max ){
+            file_cluster_list[l] = empty;
             l++;
-		}else{
-		    goto fail;
-		};
-	};
+        }else{
+            goto fail;
+        };
+    };
 
-
-    file_cluster_list[l] = 0xFFFF;    
-
+    file_cluster_list[l] = 0xFFFF; 
 
 //
 // Done.
 //
 
+
 // Retorna o primeiro da lista.
-
 done:
-
     return file_cluster_list[0];
-
-
 fail:
     return 0;
 }
-
-
 
  
 /* 
  * fs_load_rootdir: 
  *     Carrega o diretório raiz na memória. 
  */ 
- 
-void fs_load_rootdir ()
+
+void fs_load_rootdir()
 {
-    fs_load_rootdirEx ();
+    fs_load_rootdirEx();
 }
 
 
 
 /*
+ ***************************************************
  * read_lba: 
  *     Lê uma lba no hd. (um setor)
  *     Operação de hardware. 
  */
- 
+
+// #todo
+// Move this function to a file for low level routines.
+
 void read_lba ( unsigned long address, unsigned long lba )
-{   
+{
+    // if ( address == 0 ){}
+    
     my_read_hd_sector ( address, lba, 0, 0 );
 }
 
 
 /*
+ *********************************************
  * write_lba: 
  *     Grava uma lba no HD. (um setor). 
  */
- 
+
+// #todo
+// Move this function to a file for low level routines.
+
 void write_lba ( unsigned long address, unsigned long lba )
 {
+    // if ( address == 0 ){}
+    
     my_write_hd_sector ( address, lba, 0, 0 );     
 }
 
@@ -1509,62 +1595,65 @@ unsigned long fsCreateDir ( char *name , unsigned long id )
 }
 
 
+
 /* 
  * fsCreateFile: 
  *     Cria um arquivo. 
  */
 
+// #todo
+// Maybe we need this for a log.
+
 unsigned long fsCreateFile ( char *name, unsigned long id )
 {
     unsigned long fat_entry=0;
     unsigned long dir_entry=0;
-	unsigned long size = 1;
-	
-	//encontra uma entrada vazia na fat.
-	fat_entry = fs_find_empty_entry();
-	
+    unsigned long size = 1;
+
+    //encontra uma entrada vazia na fat.
+    fat_entry = fs_find_empty_entry();
+
 	//testar antes a validade da entrada.
-	
-	if( fat_entry == 0 ){
-	    printf("fs_create_file: error, o cluster vazio eh 0 \n" );
-		goto fail;
-	};
-			
+
+    if ( fat_entry == 0 ){
+        printf("fs_create_file: error, o cluster vazio eh 0 \n" );
+        goto fail;
+    }
+
 	//erro 2 - nao ha mais entradas vazias
-	if( fat_entry == FAT_ERRO_1 ){
+    if ( fat_entry == FAT_ERRO_1 ){
 		printf("FAT_ERRO_1 nao ha mais entradas vazias\n" );
 		goto fail;
-	};
-		
+    }
+	
 	//
-	if( fat_entry < 0 || fat_entry > 1024 ){
+    if ( fat_entry < 0 || fat_entry > 1024 ){
 	    printf("FAT entry fora dos limites!\n");
 		goto fail;
-	};
-			
+    }
+
 	//marca na entrada da fat como fim de arquivo.(size 1)
 	//fs_set_fat_entry( fat_entry, 0x0000fff8 );
-	fs_set_fat_entry( fat_entry, 0x0000FFFF );  //EOF 0x0000fff8
-		
+     fs_set_fat_entry( fat_entry, 0x0000FFFF );  //EOF 0x0000fff8
+
 	//procura uma entrada vazia no diretorio.
-	dir_entry = fs_search_empty_entry(id);
-	
+    dir_entry = fs_search_empty_entry(id);
+
     if( dir_entry == 0 ){
         printf("fs_create_file: nao ha entradas vazias no diretorio escolhido\n");
         goto fail;		
-	};	
-  		 
-	if ( dir_entry < 0 || dir_entry > 64 )
-	{
-        printf("fs_create_file: entrada fora dos limites\n");
-        goto fail;		
-	};	
-	
+    }
+   
+    if ( dir_entry < 0 || dir_entry > 64 )
+    {
+        printf("fs_create_file: entry out of range\n");
+        goto fail;
+    }
+
 	//cria a entrada no diretorio
 	fs_create_entry( name, id, dir_entry, fat_entry, size ); 
 	
 	//fs_save_entry_on_root(i);
-
 
 done:
 
@@ -1572,8 +1661,7 @@ done:
     printf ("fs_create_file: done ! cluster = %d \n",fat_entry);
 #endif    
 
-    return 0;	
-
+    return 0;
 
 fail:   
     printf ("fail cluster = %d \n",fat_entry);
@@ -1618,7 +1706,7 @@ int fsCheckFat ()
 		if(fat_entry == 0){
 			printf("%c ",'#');
 		}else{
-			printf("%d ",fat_entry);		
+			printf("%d ",fat_entry);
 		};
 		//Nothing.
 	};	
@@ -1668,6 +1756,7 @@ void fsInitStructures()
 /*
  ***********************
  * fsInit:
+ * 
  *     Inicializa o sistema de arquivos da partição do sistema.
  *     Obs: Isso deve ficar no fim do arquivo. 
  */

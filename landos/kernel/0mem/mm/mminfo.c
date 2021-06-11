@@ -218,7 +218,32 @@ void memoryShowMemoryInfo (void){
 	
 #endif
 */
-	
+
+
+
+    //
+    // kernel image 
+    //
+
+
+    //#todo
+    //unsigned long imageStart = KERNEL_IMAGE_BASE;
+    //unsigned long imageEnd;
+    //unsigned long imageSize = 
+
+    unsigned long imageAvailableAreaStart = KERNEL_IMAGE_BASE;
+    unsigned long imageAvailableAreaEnd   = (kernel_heap_start - 8);
+    unsigned long imageAvailableAreaSize_in_Bytes = (imageAvailableAreaEnd - imageAvailableAreaStart);
+    unsigned long imageAvailableAreaSize_in_KB    = (imageAvailableAreaSize_in_Bytes/1024);
+
+    printf("\n\n");
+    printf("IMAGE SIZE: #todo \n");
+
+    printf("\n\n");
+    printf("IMAGE AVAILABLE AREA:  [%x...%x] Total={%d KB} \n",
+        imageAvailableAreaStart, 
+        imageAvailableAreaEnd, 
+        imageAvailableAreaSize_in_KB );
 
     //
     //  heap e stack 
@@ -345,13 +370,12 @@ void testingPageAlloc (void){
 	//8KB. Para imagem pequena.
 	unsigned long tmp_size = (2*4096);
 	RetAddress = (void *) allocPages (2); 
-	
-	if ( (void *) RetAddress == NULL )
-	{
-	    printf ("RetAddress fail\n");
-        goto fail;		
-	}
-		
+
+    if ( (void *) RetAddress == NULL ){
+        printf ("RetAddress fail\n");
+        goto fail;
+    }
+
 	//printf ("BaseOfList={%x} Showing #32 \n", RetAddress );
     
 	// show info.
@@ -371,15 +395,15 @@ void testingPageAlloc (void){
 
     //===================================
 
-    fileret = fsLoadFile (  VOLUME1_FAT_ADDRESS, 
+    fileret = fsLoadFile (  
+                  VOLUME1_FAT_ADDRESS, 
                   VOLUME1_ROOTDIR_ADDRESS, 
-                  32, //#bugbug: Number of entries. 
+                  FAT16_ROOT_ENTRIES, //#bugbug: Number of entries. 
                   "BMP1    BMP", 
                   (unsigned long) RetAddress,
                   tmp_size ); 
 
-	if (fileret != 0)
-	{
+    if (fileret != 0){
 		printf ("BMP1    BMP FAIL\n");
 		//escrevendo string na janela
 	    //draw_text( gui->main, 10, 500, COLOR_WINDOWTEXT, "DENNIS  BMP FAIL");
@@ -387,13 +411,11 @@ void testingPageAlloc (void){
 		//draw_text( gui->main, 10, 500, COLOR_WINDOWTEXT, "GOONIES BMP FAIL");	
         //draw_text( gui->main, 10, 500, COLOR_WINDOWTEXT, "GRAMADO BMP FAIL");
 		//draw_text( gui->main, 10, 500, COLOR_WINDOWTEXT, "BMP1    BMP FAIL");
-	}else{
-		
-	    bmpDisplayBMP ( (char *) RetAddress, 20, 20 );	
-	    refresh_rectangle ( 20, 20, 16, 16 );
+    }else{
+        bmpDisplayBMP ( (char *) RetAddress, 20, 20 );	
+        refresh_rectangle ( 20, 20, 16, 16 );
     };
     //===================================	
-
 
     panic ("mminfo-testingPageAlloc: *hang\n");
 

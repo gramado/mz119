@@ -1,8 +1,0 @@
-
-
-    grass/
-
-
-    This is the grass patch environment.
-    The applications here uses the window server inside the base kernel.
-

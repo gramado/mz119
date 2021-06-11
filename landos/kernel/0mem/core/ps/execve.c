@@ -1,22 +1,15 @@
 /*
- * File: ps/action/execve.c 
+ * File: ps/execve.c
  * 
- * Gramado Executive - The main file for the Executive module in the 
- * kernel base. 
- * 
- * (c) Copyright 2015-2019 Fred Nora.
  */
-
 
 // #todo
 // Rotinas de execve podem ir para sysmk.
 
 
- 
 #include <kernel.h>
+
 //#include "eidata.h"  //Executive Internal Data.
-
-
 
 
 /*
@@ -28,7 +21,7 @@
 // service 248
 // execve support.
 // executa um programa usando o processo atual.
-// #bugbug: A intenção é carregar a imagem num novo endereço físico
+// #bugbug: A intenÃ§Ã£o Ã© carregar a imagem num novo endereÃ§o fÃ­sico
 // e continuar usando o processo clone criado pode fork.
 
 

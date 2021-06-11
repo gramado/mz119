@@ -5,8 +5,8 @@
  *     Ring 0. Kernel base persistent code.
  *
  * Credits:
+ *     2018 - Created by Fred Nora.
  *     2018 - Nelson Cole.
- *     2019 - Fred Nora.
  */
 
 
@@ -16,8 +16,6 @@
 
 
 #include <kernel.h>
-
-
 
 
 
@@ -32,42 +30,6 @@
 #define I8042_MOUSE_BUFFER 0x20
 #define I8042_KEYBOARD_BUFFER 0x00
  */
-
-//vamos apenas carregar um arquivo qualquer.
-void __load_path_test(void)
-{
-    int status = -1;
-
-    char __path[] = "/ETC/TEST1.CPP";
-
-    void *__address = 0;
-    
-    // Endereço para carregar o arquivo
-    // 400 KB.
- 
-    size_t Size = (400*1024);
-
-    __address = (void *) kmalloc(Size);
-
-    status = fs_load_path (
-                 (const char *) __path,
-                 (unsigned long) __address,
-                 (unsigned long) Size );
-
-    if ( status < 0 ){
-        printf ("__load_path_test: fs_load_path fail\n");
-    }
-
-    // Show file.
-
-    if ( status == 0 )
-        printf("%s \n",__address);    
-    
-    refresh_screen();
-}
-
-
-
 
 
 /*
@@ -187,296 +149,45 @@ int BAT_TEST (void);
 
 
 
+// #test
+// Loadng a file using a pathname as parameter.
+// vamos apenas carregar um arquivo qualquer.
 
-/*
- ******************************************************************* 
- * __local_ps2kbd_procedure:
- * 
- *       This function handle the emergency keys F5, F6, F6 and F8.
- *       MSG_SYSKEYUP only.
- */
-
-// Local function.
-
-// #bugbug
-// Isso nao seria trabalho do window manager?
-// kgwm
-
-unsigned long 
-__local_ps2kbd_procedure ( 
-    struct window_d *window, 
-    int msg, 
-    unsigned long long1, 
-    unsigned long long2 )
+void __load_path_test(void)
 {
+    int status = -1;
 
-   // #test
-   // Testando uma rotina de pintura que usa escape sequence.
-   // Queremos que ela funcione na máquina real.
-   // Vamos testar os ponteiros.
+    char __path[] = "/ETC/TEST1.CPP";
 
+    void *__address;
 
-    char buffer[128];
-    sprintf (buffer,"My super \x1b[8C string!!\n"); 
-
-    int Status = -1;
-
-
-    if (msg<0)
-        return 0;
+    // Endereço para carregar o arquivo
+    // 400 KB.
+ 
+    size_t Size = (400*1024);
 
 
-    switch (msg){
-
-        // Pressionadas: teclas de funçao
-        case MSG_SYSKEYDOWN: 
-            switch (long1)  
-            {
-
-                case VK_F1:
-                    if (ctrl_status == 1){
-                        printf ("__local_ps2kbd_procedure: control + f1\n");
-                        refresh_screen();
-                    }
-                    if (alt_status == 1){
-                        printf ("__local_ps2kbd_procedure: alt + f1\n");
-                        refresh_screen();
-                    }
-                    if (shift_status == 1){
-                        printf ("__local_ps2kbd_procedure: shift + f1\n");
-                        jobcontrol_switch_console(1);
-                        refresh_screen();
-                    }
-                    return 0;
-                    break;
-
-                case VK_F2:
-                    if (ctrl_status == 1){
-                        printf ("__local_ps2kbd_procedure: control + f2\n");
-                        refresh_screen();
-                    }
-                    if (alt_status == 1){
-                        printf ("__local_ps2kbd_procedure: alt + f2\n");
-                        refresh_screen();
-                    }
-                    if (shift_status == 1){
-                        printf ("__local_ps2kbd_procedure: shift + f2\n");
-                        jobcontrol_switch_console(2);
-                        refresh_screen();
-                    }
-                    return 0;
-                    break;
-
-                case VK_F3:
-                    if (ctrl_status == 1){
-                        printf ("__local_ps2kbd_procedure: control + f3\n");
-                        refresh_screen();
-                    }
-                    if (alt_status == 1){
-                        printf ("__local_ps2kbd_procedure: alt + f3\n");
-                        refresh_screen();
-                    }
-                    if (shift_status == 1){
-                        printf ("__local_ps2kbd_procedure: shift + f3\n");
-                        jobcontrol_switch_console(3);
-                        refresh_screen();
-                    }
-                    return 0;
-                    break;
-
-                case VK_F4:
-                    if (ctrl_status == 1){
-                        printf ("__local_ps2kbd_procedure: control + f4\n");
-                        refresh_screen();
-                    }
-                    if (alt_status == 1){
-                        printf ("__local_ps2kbd_procedure: alt + f4\n");
-                        refresh_screen();
-                    }
-                    if (shift_status == 1){
-                        printf ("__local_ps2kbd_procedure: shift + f4\n");
-                        refresh_screen();
-                    }
-                    return 0;
-                    break;
 
 
-                // Reboot
-                case VK_F5:
-                    if (ctrl_status == 1){
-                    reboot();
-                    //__load_path_test(); //local ok
-                    //do_clone_execute_process ("init2.bin");
-                    }
-                    if (alt_status == 1){
-                        printf ("__local_ps2kbd_procedure: alt + f5\n");
-                        refresh_screen();
-                    }
-                    if (shift_status == 1){
-                        printf ("__local_ps2kbd_procedure: shift + f5\n");
-                        refresh_screen();
-                    }
-                    return 0;
-                    break;
+    __address = (void *) kmalloc(Size);
 
-                // 
-                case VK_F6:
-                    if (ctrl_status == 1){
-                    ws_show_info();
-                    //initialize_frame_table();
-                    //printf (">> %x \n", get_new_frame() );
-                    //pages_calc_mem();
-                    //testNIC();
-                    // #se o processo não existe vai dar problema.
-                    //tty_send_message (103,buffer, 32, 444, 0, 0);
-                    //tty_send_message (104,buffer, 32, 444, 0, 0);
-                    //refresh_screen();
-                    }
-                    if (alt_status == 1){
-                        printf ("__local_ps2kbd_procedure: alt + f6\n");
-                        refresh_screen();
-                    }
-                    if (shift_status == 1){
-                        printf ("__local_ps2kbd_procedure: shift + f6\n");
-                        refresh_screen();
-                    }
-                    return 0;
-                    break;
+    status = fs_load_path (
+                 (const char *)  __path,
+                 (unsigned long) __address,
+                 (unsigned long) Size );
 
-                // Test 1.
-                case VK_F7:
-                    if (ctrl_status == 1){
-                    //fs_show_file_info(stdin);
-                    //fs_show_file_info(stdout);
-                    //fs_show_file_info(stderr);
-                    fs_show_file_table();
-                    fs_show_inode_table();
-                   
-                    
-                    //bg_load_image(); //ok
-                    //console_write (0, buffer,62);
-                    //Status = (int) KiSearchFile ( "GRAMADO TXT", VOLUME1_ROOTDIR_ADDRESS );
-                    //Status = (int) KiSearchFile ( "GRAMADOxTXT", VOLUME1_ROOTDIR_ADDRESS );
-                    //if (Status == 1){
-                    //    printf("found\n");
-                    //}else{
-                    //    printf("not found\n");
-                    //};
-                    //refresh_screen();
-                    }
-                    if (alt_status == 1){
-                        printf ("__local_ps2kbd_procedure: alt + f7\n");
-                        refresh_screen();
-                    }
-                    if (shift_status == 1){
-                        printf ("__local_ps2kbd_procedure: shift + f7\n");
-                        refresh_screen();
-                    }
-                    return 0;
-                    break;
+    if ( status < 0 ){
+        printf ("__load_path_test: fs_load_path fail\n");
+    }
 
-                // Test 2.
-                case VK_F8:
-                    if (ctrl_status == 1){
-                    //printf (">> %x \n", get_new_frame() );
-                    //refresh_screen();
-                    // testNIC ();
-                    //pciInfo ();
-                    // ahciSATAInitialize (1);
-                    //refresh_screen();
-                    }
-                    if (alt_status == 1){
-                        printf ("__local_ps2kbd_procedure: alt + f8\n");
-                        refresh_screen();
-                    }
-                    if (shift_status == 1){
-                        printf ("__local_ps2kbd_procedure: shift + f8\n");
-                        refresh_screen();
-                    }
-                    return 0;
-                    break;
+    // Show file.
 
-                case VK_F9:
-                    if (ctrl_status == 1){
-                        printf ("__local_ps2kbd_procedure: control + f9\n");
-                        kgws_disable();  // Disable kgws
-                        refresh_screen();
-                    }
-                    if (alt_status == 1){
-                        printf ("__local_ps2kbd_procedure: alt + f9\n");
-                        refresh_screen();
-                    }
-                    if (shift_status == 1){
-                        //kgwm_mode = KGWM_SINGLE;
-                        printf ("__local_ps2kbd_procedure: shift + f9\n");
-                        refresh_screen();
-                    }
-                    return 0;
-                    break;
-
-                case VK_F10:
-                    if (ctrl_status == 1){
-                        printf ("__local_ps2kbd_procedure: control + f10\n");
-                        kgws_enable();  // Enable kgws
-                        refresh_screen();
-                    }
-                    if (alt_status == 1){
-                        printf ("__local_ps2kbd_procedure: alt + f10\n");
-                        refresh_screen();
-                    }
-                    if (shift_status == 1){
-                        //kgwm_mode = KGWM_DOUBLE;
-                        printf ("__local_ps2kbd_procedure: shift + f10\n");
-                        refresh_screen();
-                    }
-                    return 0;
-                    break;
-
-                case VK_F11:
-                    if (ctrl_status == 1){
-                        printf ("__local_ps2kbd_procedure: control + f11\n");
-                        refresh_screen();
-                    }
-                    if (alt_status == 1){
-                        printf ("__local_ps2kbd_procedure: alt + f11\n");
-                        refresh_screen();
-                    }
-                    if (shift_status == 1){
-                        //kgwm_mode = KGWM_TRIPLE;
-                        printf ("__local_ps2kbd_procedure: shift + f11\n");
-                        refresh_screen();
-                    }
-                    return 0;
-                    break;
-
-                case VK_F12:
-                    if (ctrl_status == 1){
-                        printf ("__local_ps2kbd_procedure: control + f12\n");
-                        refresh_screen();
-                    }
-                    if (alt_status == 1){
-                        printf ("__local_ps2kbd_procedure: alt + f12\n");
-                        refresh_screen();
-                    }
-                    if (shift_status == 1){
-                        //kgwm_mode = KGWM_QUAD;
-                        printf ("__local_ps2kbd_procedure: shift + f12\n");
-                        refresh_screen();
-                    }
-                    return 0;
-                    break;
-
-                default:
-                    // nothing
-                    return 0;
-            
-            }
-    };
+    if ( status == 0 ){
+        printf("%s \n",__address);    
+    }
 
     refresh_screen();
-    return 0;
 }
-
 
 
 
@@ -536,7 +247,7 @@ int BAT_TEST (void){
 
     for (i=0; i<99000; i++)
     {
-        wait_ns (400);
+        wait_ns(400);
     };
 
 
@@ -544,29 +255,25 @@ int BAT_TEST (void){
     {
         val = (int) xxx_keyboard_read();
 
-		//Ok funcionou o auto teste
-        if(val == 0xAA)
-		{
-			printf ("ps2kbd.c: BAT_TEST OK\n");
-			return (int) 0;
-		
-		//falhou
-		}else if ( val == 0xFC ){
-        
-			printf ("ps2kbd.c: BAT_TEST fail\n");
+        // Ok funcionou o auto teste
+        if (val == 0xAA){
+            printf ("ps2kbd.c: BAT_TEST OK\n");
+            return (int) 0;
+        // falhou
+        }else if ( val == 0xFC ){
+            printf ("ps2kbd.c: BAT_TEST fail\n");
             return (int) -1; 
         }
-    
-		// #bugbug
-		// Tentar novamente, indefinidas vezes.
+
+        // #bugbug
+        // Tentar novamente, indefinidas vezes.
         // Esse é o problema. Vamos tentar apenas algumas vezes e falhar se não der certo.
-		// Reenviar o comando. 
+        // Reenviar o comando. 
         // obs: este comando não é colocado em buffer
         
         //printf ("ps2kbd.c: BAT_TEST %d\n", i);
-        xxx_keyboard_write (0xFE);       
+        xxx_keyboard_write (0xFE);
     };
-
 
     // Fail
     printf ("ps2kbd.c: BAT_TEST %d times\n",i);
@@ -574,29 +281,44 @@ int BAT_TEST (void){
 }
 
 
+/*
+ *************************
+ * ps2kbd_globals_initialize:
+ * 
+ *     ioControl_keyboard,
+ *     PS2keyboardTTY
+ *     
+ * 
+ */
+
+// Initialize globals.
 
 int ps2kbd_globals_initialize (void){
 
-
     int i=0;
-    
-	//user.h
+
+    // slot na file table.
+    int slot=-1;  
+
+
+    // See: user.h
+
     ioControl_keyboard = (struct ioControl_d *) kmalloc ( sizeof(struct ioControl_d) );
 
-    if ( (void *) ioControl_keyboard == NULL )
-    {
-        panic ("ps2_keyboard_initialize: ioControl_keyboard fail");
+    if ( (void *) ioControl_keyboard == NULL ){
+        panic ("ps2_keyboard_initialize: [FAIL] ioControl_keyboard\n");
+    }else{
 
-    } else {
+        ioControl_keyboard->used  = TRUE;
+        ioControl_keyboard->magic = 1234;
 
-	    ioControl_keyboard->id = 0;
-	    ioControl_keyboard->used = 1;
-	    ioControl_keyboard->magic = 1234;
+        ioControl_keyboard->id = 0;
 
-		//qual thread está usando o dispositivo.
-		ioControl_keyboard->tid = 0;  
+		// qual thread está usando o dispositivo ?
+        ioControl_keyboard->tid = 0;  
 	    //ioControl_keyboard->
     };
+
 
 
     //int Type = 0;
@@ -638,11 +360,6 @@ int ps2kbd_globals_initialize (void){
 
 
 
-
-    int slot=-1;  //slot na file table.
-
-
-
     //
     // == _rbuffer =========================================
     //
@@ -652,20 +369,20 @@ int ps2kbd_globals_initialize (void){
     file *current_stdin;
 
     slot = get_free_slots_in_the_file_table();
-    if(slot<0 || slot >=NUMBER_OF_FILES)
-        panic("ps2kbd_globals_initialize: current_stdin file slot");
-   
-    current_stdin = file_table[slot];
+    if (slot<0 || slot >=NUMBER_OF_FILES){
+        panic("ps2kbd_globals_initialize: current_stdin file slot\n");
+    }
+    current_stdin =  (file *) file_table[slot];
     current_stdin->filetable_index = slot;
     current_stdin->____object = ObjectTypeFile; //Regular file (tty buffer)
-    current_stdin->used = 1;
-    current_stdin->magic = 1234;
+    current_stdin->used   = TRUE;
+    current_stdin->magic  = 1234;
     current_stdin->_flags = (__SWR | __SRD); 
     
     // Struct.
     // Allocate memory for the struct.
     unsigned char *current_stdin_struct_buffer;
-    current_stdin_struct_buffer = (unsigned char *) newPage ();
+    current_stdin_struct_buffer = (unsigned char *) newPage();
     current_stdin = (file *) &current_stdin_struct_buffer[0];
 
     // Buffer.
@@ -678,8 +395,8 @@ int ps2kbd_globals_initialize (void){
     current_stdin->_p = (unsigned char *) &current_stdin_data_buffer[0];    
     current_stdin->_r = 0;
     current_stdin->_w = 0;
-    current_stdin->_cnt = 128;  //Limitando. na verdade e' 4KB.
-    current_stdin->_tmpfname = "KBDIN   TXT";
+    current_stdin->_cnt       = 128;  //Limitando. na verdade e' 4KB.
+    current_stdin->_tmpfname  = "KBDIN   TXT";
     current_stdin->fd_counter = 1;
 
     // #test
@@ -691,7 +408,6 @@ int ps2kbd_globals_initialize (void){
     };
     keybuffer_head = 0;
     keybuffer_tail = 0;
-
 
     // Exportando o buffer para o driver usar.
     // Acessível através da tty.
@@ -708,20 +424,20 @@ int ps2kbd_globals_initialize (void){
     file *current_stdout;
 
     slot = get_free_slots_in_the_file_table();
-    if(slot<0 || slot >=NUMBER_OF_FILES)
-        panic("ps2kbd_globals_initialize: current_stdout file slot");
-   
-    current_stdout = file_table[slot];
+    if(slot<0 || slot >=NUMBER_OF_FILES){
+        panic("ps2kbd_globals_initialize: current_stdout file slot\n");
+    }
+    current_stdout = (file *) file_table[slot];
     current_stdout->filetable_index = slot;
     current_stdout->____object = ObjectTypeFile; //Regular file (tty buffer)
-    current_stdout->used = 1;
-    current_stdout->magic = 1234;
+    current_stdout->used   = TRUE;
+    current_stdout->magic  = 1234;
     current_stdout->_flags = (__SWR | __SRD); 
     
     // Struct.
     // Allocate memory for the struct.
     unsigned char *current_stdout_struct_buffer;
-    current_stdout_struct_buffer = (unsigned char *) newPage ();
+    current_stdout_struct_buffer = (unsigned char *) newPage();
     current_stdout = (file *) &current_stdout_struct_buffer[0];
 
     // Buffer.
@@ -734,21 +450,16 @@ int ps2kbd_globals_initialize (void){
     current_stdout->_p = (unsigned char *) &current_stdout_data_buffer[0];    
     current_stdout->_r = 0;
     current_stdout->_w = 0;
-    current_stdout->_cnt = 128;  //Limitando. na verdade e' 4KB.
-    current_stdout->_tmpfname = "KBDOUT  TXT";
+    current_stdout->_cnt       = 128;  //Limitando. na verdade e' 4KB.
+    current_stdout->_tmpfname  = "KBDOUT  TXT";
     current_stdout->fd_counter = 1;
 
     PS2keyboardTTY._obuffer = current_stdout;
 
 
 
-	//
-	// Set abnt2.
-	//
 
-    abnt2 = (int) 1;
-
-    //Checar quem está tentando inicializar o módulo.    
+    //Checar quem está tentando inicializar o módulo.
 
 	//model.
 	
@@ -756,22 +467,30 @@ int ps2kbd_globals_initialize (void){
 
 
     //Key status.
-    key_status = 0;
-    escape_status = 0;
-    tab_status = 0;
-    winkey_status = 0;
-    ctrl_status = 0;
-    alt_status = 0;
-    shift_status = 0;
-    capslock_status = 0;
-    scrolllock_status = 0;
-    numlock_status = 0;
-    //...
+ 
+    key_status        = FALSE;
+    escape_status     = FALSE;
+    tab_status        = FALSE;
+    winkey_status     = FALSE;
+    ctrl_status       = FALSE;
+    alt_status        = FALSE;
+    shift_status      = FALSE;
+    capslock_status   = FALSE;
+    scrolllock_status = FALSE;
+    numlock_status    = FALSE;
+    // ...
+
+
+	//
+	// Set abnt2.
+	//
+
+    abnt2 = (int) TRUE;
 
 
 	//Debug support.
-	scStatus = 0;    
-    
+	scStatus = 0;
+
     return 0;
 }
 
@@ -810,17 +529,33 @@ void ps2kbd_initialize_device (void)
     //++
     //=================================================
     
+    //
+    // Reset
+    //
+    
     // #obs:
     // A rotina abaixo reseta o teclado.
     // #bugbug: Isso reseta o controlador ps2.
-    
+
+    // #todo:
+    // Podemos melhorar esse ack, e construirmos uma rotina
+    // de ack igual a que existe na inicialização de mouser.
+
+    // Reset.
     wait_then_write ( 0x60, 0xFF );
-
 	// ACK
+	// #bugbug: Danger, Danger !!
+	// loop infinito
     wait_ns (400);
     wait_ns (400);
-    while ( xxx_keyboard_read() != 0xFA );  // #bugbug: Danger, Danger !!
+    wait_ns (400);
+    wait_ns (400);
+    while ( xxx_keyboard_read() != 0xFA );  
 
+    // #todo
+    // Talvez tenhamos que pegar mais coisa depois do reset,
+    // assim como acontece no reset do mouse.
+    
     //=================================================
     //--
 
@@ -834,7 +569,7 @@ void ps2kbd_initialize_device (void)
     // Essa é uma rotina de auto-teste.
     // Conhecida como: Basic Assurance Test - (BAT).
 
-    if ( BAT_TEST () != 0 ){
+    if ( BAT_TEST() != 0 ){
         printf ("[WARMING] ps2kbd.c:  BAT_TEST ignored\n");
     }  
 
@@ -1582,6 +1317,268 @@ void *__do_111 ( unsigned long buffer )
 } 
 
 
+
+/*
+ *************************** 
+ * ps2tty_get_byte_from_input_buffer:
+ */
+
+// Low level keyboard reader.
+// Isso poderia usar uma rotina de tty
+
+// #importante
+// Isso é usado pelo serviço que pega mensagens de input. (111).
+// Pega o scancode.
+// Renova a fila do teclado
+// O teclado esta lidando no momento com um buffer pequeno, 128 bytes.
+
+// Called by thread_getchar in thread.c
+
+// #bugbug
+// Nada foi colocado do buffer de input ainda.
+// KGWS_SEND_KEYBOARD_MESSAGE colocou ascii code no buffer canonico.
+
+int ps2tty_get_byte_from_input_buffer (void)
+{
+    unsigned long SC = 0;
+
+    // Getting a byte from the input buffer
+    // of the ps2 keyboard tty.
+
+    SC = (unsigned char) PS2keyboardTTY._rbuffer->_base[keybuffer_head];
+
+    // Clean the slot.
+
+    PS2keyboardTTY._rbuffer->_base[keybuffer_head] = 0;
+
+    // Increment and round the queue.
+
+    keybuffer_head++;
+
+    if ( keybuffer_head >= PS2keyboardTTY._rbuffer->_lbfsize )
+    { 
+        keybuffer_head = 0; 
+    }
+
+    // Return the byte.
+
+    return (int) SC; 
+}
+
+
+void ps2tty_put_byte_into_input_buffer( char c )
+{
+    debug_print ("ps2tty_put_byte_into_input_buffer: [FIXME]\n");
+    
+    // #todo: 
+    // Aqui podemos retornar.
+    // Pois vamos precisar dessa estrutura para o buffer.
+    
+    if ( (void *) PS2keyboardTTY._rbuffer == NULL )
+    {
+        panic ("put_scancode: PS2keyboardTTY._rbuffer \n");
+    }
+
+    // #bugbug
+    // Checar a validade.
+
+    PS2keyboardTTY._rbuffer->_base[keybuffer_tail++] = (char) c;
+    
+    if ( keybuffer_tail >= PS2keyboardTTY._rbuffer->_lbfsize )
+    {
+        keybuffer_tail = 0;
+    }
+
+}
+
+
+
+/*
+ * *******************************************************
+ * DeviceInterface_PS2Keyboard: 
+ * 
+ *     Vamos pegar o raw code.
+ * 
+ *     Keyboard handler for abnt2 keyboard.
+ *     fica dentro do driver de teclado.
+ *
+ *     A interrupção de teclado vai chamar essa rotina.
+ *     @todo: Usar keyboardABNT2Handler().
+ * void keyboardABNT2Handler() 
+ * Esse será o handler do driver de teclado
+ * ele pega o scacode e passa para a entrada do line discipline dentro do kernel.
+ *
+ * @TODO: ISSO DEVERÁ IR PARA UM ARQUIVO MENOR ... OU AINDA PARA UM DRIVER.
+ * Pega o scacode cru e envia para a disciplina de linhas que deve ficar no kernelbase.
+ * Essa é a parte do driver de dispositivo de caractere.
+ *
+ * #importante:
+ * O driver deverá de alguma maneira notificar o kernel sobrea a ocorrência
+ * do evento de input. Para que o kernel acorde as trheads que estão esperando 
+ * por eventos desse tipo.
+ */
+
+	//#importante:
+	// Provavelmente uma interrupção irá fazer esse trabalho de 
+	// enviar o scancode para o kernel para que ele coloque na fila.
+	// Nesse momento o kernel de sentir-se alertado sobre o evento de 
+	// input e acordar a threa que está esperando por esse tipo de evento. 
+
+    // #obs: 
+    // Esse buffer está em gws/user.h 
+
+// Low level keyboard writter.
+// Isso poderia usar uma rotina de tty
+// O teclado esta lidando no momento com um buffer pequeno, 128 bytes.
+
+// PUT SCANCODE
+
+void DeviceInterface_PS2Keyboard(void){
+
+    static int __has_e0_prefix = 0;
+    static int __has_e1_prefix = 0;
+
+
+    // ??
+    // See: Serenity os.
+    //u8 status = IO::in8(I8042_STATUS);
+    //if (!(((status & I8042_WHICH_BUFFER) == I8042_KEYBOARD_BUFFER) && (status & I8042_BUFFER_FULL)))
+        //return;
+
+
+    //não precisamos perguntar para o controlador se
+    //podemos ler, porque foi uma interrupção que nos trouxe aqui.
+    // #obs:
+    // O byte pode ser uma resposta à um comando ou 
+    // um scancode.
+
+    unsigned char __raw = 0;
+    unsigned char val   = 0;
+
+sc_again:
+
+    //===========================================
+    // #test
+    // Testing with ack
+    // credits: minix
+    // #define KEYBD   0x60  /* I/O port for keyboard data */
+    // #define PORT_B  0x61  /* I/O port for 8255 port B (kbd, beeper...) */
+    // #define KBIT    0x80  /* bit used to ack characters to keyboard */
+
+//
+// Get the raw byte for the key struck.
+//
+
+    __raw = in8(0x60);
+
+
+    //===========================================
+    
+    // Get
+    
+    // strobe the keyboard to ack the char
+    val = in8(0x61); 
+    
+    // Send back
+    
+    // Strobe the bit high 
+    out8(0x61, val | 0x80);  
+    
+    // now strobe it low
+    out8(0x61, val);         
+    //===========================================
+
+
+
+    //===========================================
+    // #todo
+    // Temos que checar se o primeiro byte é um ack ou um resend.
+    // isso acontece logo apos a inicialização.
+
+    // #todo
+    // me parece que o primeiro byte pode ser um ack ou resend.
+    
+    // #define ACKNOWLEDGE         0xFA	
+    // #define RESEND              0xFE
+
+    if ( __raw == 0xFA ){
+
+        //#test
+        printf ("DeviceInterface_PS2Keyboard: [test.first_byte] ack\n");
+        refresh_screen();
+    }
+
+    if ( __raw == 0xFE ){
+        
+        //#test
+        printf ("DeviceInterface_PS2Keyboard: [test.first_byte] resend\n");
+        refresh_screen();
+    }
+    //===========================================
+
+
+
+//
+// == Queue ====================================
+//
+
+     // #bugbug
+     // [Enter] in the numerical keyboard isn't working.
+     // teclas do teclado extendido.
+     // Nesse caso pegaremos dois sc da fila.
+    // #obs:
+    // O scancode é enviado para a rotina,
+    // mas ela precisa conferir ke0 antes de construir a mensagem,
+    // para assim usar o array certo.
+    // See: ws/ps2kbd.c
+    
+    // #bugbug
+    // Esse tratamento do scancode não faz sentido quando temos um
+    // window server instalado. Nesse caso deveríamos deixar o
+    // window server pegar os scancodes.
+    // Mas por enquanto, essa rotina manda mensagens para o ws
+    // caso tenha um instalado.
+
+
+     if ( __raw == 0 )   {                      goto done;  }
+     if ( __raw == 0xE0 ){ __has_e0_prefix = 1; goto done;  }
+     if ( __raw == 0xE1 ){ __has_e1_prefix = 1; goto done;  }
+
+
+// do_put:
+
+    // + Build the message and send it to the thread's queue.
+    // This routine will select the target thread.
+    // + Or send the message to the input TTY.
+    // This way the foreground process is able to get this data.
+    // See: ps2kbd.c
+    // See: user/console.c
+
+    // IN: 
+    // device type, data.
+    // 1=keyboard
+
+    if ( foreground_thread < 0 ){
+        debug_print ("DeviceInterface_PS2Keyboard: Invalid foreground_thread\n");
+        // Clean the mess.
+        __has_e0_prefix = 0;
+        __has_e1_prefix = 0;
+        goto done;
+    }
+
+    console_interrupt (
+        foreground_thread,
+        CONSOLE_DEVICE_KEYBOARD,
+        __raw );
+
+
+    // Clean the mess.
+    __has_e0_prefix = 0;
+    __has_e1_prefix = 0;
+
+done:
+    return;
+}
 
 
 

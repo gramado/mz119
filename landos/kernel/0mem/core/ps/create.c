@@ -4,21 +4,24 @@
  *   cria a thread idle do processo init;
  */
 
- 
 #include <kernel.h>
 
 
 /*
  ******************************************************
- * KiCreateRing0Idle:
+ * create_CreateEarlyRing0IdleThread:
  *    Criando manualmente uma thread em ring 0.
  *    Para o processador ficar em hlt quando não tiver outra 
  * thread rodando.
  */
 
-void *create_CreateRing0IdleThread(void)
+void *create_CreateEarlyRing0IdleThread(void)
 {
-    struct thread_d  *t;
+    
+    struct thread_d  *kThread;
+    
+    int TID = 0;
+
 
     // loops
     register int r=0;    // Wait reason.
@@ -26,16 +29,16 @@ void *create_CreateRing0IdleThread(void)
     register int q=0;    // Message queue.
 
 
-    char *ThreadName = "Ring0IdleThread";
+    char *ThreadName = "EarlyRing0IdleThread";
 
     // Stack pointer.
-    void *ring0IdleStack; 
+    void *earlyRing0IdleStack; 
 
 
     // The kernel process.
 
     if ( (void *) KernelProcess == NULL ){
-        panic ("create_CreateRing0IdleThread: KernelProcess\n");
+        panic ("create_CreateEarlyRing0IdleThread: KernelProcess\n");
     }
 
     // ??
@@ -45,34 +48,49 @@ void *create_CreateRing0IdleThread(void)
     // Struct.
     // Começamos a inicializaçao da estrtutura.
 
-    t = (void *) kmalloc ( sizeof(struct thread_d) );
+    kThread = (void *) kmalloc ( sizeof(struct thread_d) );
 
-    if ( (void *) t == NULL ){
-        panic ("create_CreateRing0IdleThread: t \n");
+    if ( (void *) kThread == NULL ){
+        panic ("create_CreateEarlyRing0IdleThread: kThread \n");
     }else{  
 
-        // Identificadores 
-        t->used = 1;
-        t->magic = 1234;
-        t->tid = 0;  
-        t->ownerPID = (int) KernelProcess->pid; 
-        t->name_address = (unsigned long) ThreadName; 
-        t->process = (void *) KernelProcess;
+        kThread->objectType  = ObjectTypeThread;
+        kThread->objectClass = ObjectClassKernelObjects;
+        kThread->used  = TRUE;
+        kThread->magic = 1234;
+
+
+        kThread->type = THREAD_TYPE_SYSTEM; 
+
+        // #todo
+        // #important
+        // This will affect the input model
+        kThread->input_model = THREAD_INPUTMODEL_KERNEL;
+
+        kThread->position = KING;
+
+        kThread->tid = TID;
+
+        // #bugbug: 
+        // Is this a valid pointer?
+        // is this a valid pid?
+        kThread->ownerPID     = (int) KernelProcess->pid;
+        
+        kThread->name_address = (unsigned long) ThreadName; 
+        kThread->process      = (void *) KernelProcess;
 
         // Características.
-        t->iopl  = RING0;
-        t->type  = THREAD_TYPE_SYSTEM; 
-        t->state = INITIALIZED; 
+        kThread->iopl  = RING0;
+        kThread->type  = THREAD_TYPE_SYSTEM; 
+        kThread->state = INITIALIZED; 
 
         // Execution plane.
-        t->plane = BACKGROUND;    
+        kThread->plane = BACKGROUND;    
 
         // ...
     };
 
 
-
- 
     // Stack.
 
     // #bugbug
@@ -80,30 +98,34 @@ void *create_CreateRing0IdleThread(void)
     // nesse caso serve para a thread idle em ring 0.
     // 8KB
 
-    ring0IdleStack = (void *) kmalloc (8*1024);
+    int StackSize = (8*1024);
 
-    if ( (void *) ring0IdleStack == NULL ){
-        panic ("create_CreateRing0IdleThread: ring0IdleStack\n");
+    earlyRing0IdleStack = (void *) kmalloc (StackSize);
+
+    if ( (void *) earlyRing0IdleStack == NULL ){
+        panic ("create_CreateEarlyRing0IdleThread: earlyRing0IdleStack\n");
     }
 
+    // #todo
+    // Clear stack
 
     // Page Directory
 
-    t->DirectoryPA = (unsigned long ) KernelProcess->DirectoryPA;
+    kThread->DirectoryPA = (unsigned long ) KernelProcess->DirectoryPA;
 
-    if ( t->DirectoryPA == 0 ){
-        panic("create_CreateRing0IdleThread: t->DirectoryPA\n");
+    if ( kThread->DirectoryPA == 0 ){
+        panic("create_CreateEarlyRing0IdleThread: kThread->DirectoryPA\n");
     }
 
     // loop
     // Clean the 'wait reason'.
-    for ( r=0; r<8; ++r ){ t->wait_reason[r] = (int) 0; };
+    for ( r=0; r<8; ++r ){ kThread->wait_reason[r] = (int) 0; };
 
     // ??
     // The system window procedure used by this thread.
     // This is a dialog inside the base kernel.
 
-    t->procedure = (unsigned long) &system_procedure;
+    kThread->procedure = (unsigned long) &system_procedure;
 
     //
     // == message support =============
@@ -111,83 +133,84 @@ void *create_CreateRing0IdleThread(void)
 
     // Single kernel event
 
-    t->ke_window = NULL;
-    t->ke_msg    = 0;
-    t->ke_long1  = 0;
-    t->ke_long2  = 0;
+    kThread->ke_window = NULL;
+    kThread->ke_msg    = 0;
+    kThread->ke_long1  = 0;
+    kThread->ke_long2  = 0;
 
-    t->ke_newmessageFlag =  FALSE;
+    kThread->ke_newmessageFlag =  FALSE;
 
 
     // loop
     // Message queue.  
     for ( i=0; i<32; ++i )
     {
-        t->window_list[i] = 0;
-        t->msg_list[i]    = 0;
-        t->long1_list[i]  = 0;
-        t->long2_list[i]  = 0;
-        t->long3_list[i]  = 0;
-        t->long4_list[i]  = 0;
+        kThread->window_list[i] = 0;
+        kThread->msg_list[i]    = 0;
+        kThread->long1_list[i]  = 0;
+        kThread->long2_list[i]  = 0;
+        kThread->long3_list[i]  = 0;
+        kThread->long4_list[i]  = 0;
     };
-    t->head_pos = 0;
-    t->tail_pos = 0;
+    kThread->head_pos = 0;
+    kThread->tail_pos = 0;
 
     // loop
     // Message queue.
-    for ( q=0; q<32; ++q ){ t->MsgQueue[q] = 0; }
-    t->MsgQueueHead = 0;
-    t->MsgQueueTail = 0;
+    for ( q=0; q<32; ++q ){ kThread->MsgQueue[q] = 0; }
+    kThread->MsgQueueHead = 0;
+    kThread->MsgQueueTail = 0;
 
 
     // Priorities.
     // This is a ring0 thread, only used for sti/hlt.
     // Maybe it is gonna be a idle thread to manage the energy.
 
-    t->base_priority = PRIORITY_MIN;    // Static
-    t->priority      = PRIORITY_MIN;    // Dynamic
+    kThread->base_priority = PRIORITY_MIN;    // Static
+    kThread->priority      = PRIORITY_MIN;    // Dynamic
 
-    t->saved = 0;
-    t->preempted = UNPREEMPTABLE;
+    kThread->saved = FALSE;
+    kThread->preempted = UNPREEMPTABLE;
 
 
     // Temporizadores.
     
-    t->step = 0;
+    
+    // Jiffies
+    kThread->step = 0;
     
 
     // QUANTUM_BASE   (PRIORITY_NORMAL*TIMESLICE_MULTIPLIER)
-    //t->quantum = QUANTUM_BASE;
-    t->quantum  = ( t->priority * TIMESLICE_MULTIPLIER);
+    //kThread->quantum = QUANTUM_BASE;
+    kThread->quantum  = ( kThread->priority * TIMESLICE_MULTIPLIER);
     
     // QUANTUM_LIMIT  (PRIORITY_MAX *TIMESLICE_MULTIPLIER)
-    t->quantum_limit = QUANTUM_LIMIT;
+    kThread->quantum_limit = QUANTUM_LIMIT;
 
 
     // Contadores.
 
-    t->standbyCount = 0;
-    t->runningCount = 0;    //Tempo rodando antes de parar.
-    t->readyCount = 0;      //Tempo de espera para retomar a execução.
+    kThread->standbyCount = 0;
+    kThread->runningCount = 0;  //Tempo rodando antes de parar.
+    kThread->readyCount   = 0;  //Tempo de espera para retomar a execução.
 
-    t->initial_time_ms = get_systime_ms();
-    t->total_time_ms = 0;
+    kThread->initial_time_ms = get_systime_ms();
+    kThread->total_time_ms = 0;
 
     // Quantidade de tempo rodadndo dado em ms.
-    t->runningCount_ms = 0;
+    kThread->runningCount_ms = 0;
 
-    t->ready_limit = READY_LIMIT;
-    t->waitingCount  = 0;
-    t->waiting_limit = WAITING_LIMIT;
-    t->blockedCount = 0;    //Tempo bloqueada.
-    t->blocked_limit = BLOCKED_LIMIT;
+    kThread->ready_limit = READY_LIMIT;
+    kThread->waitingCount  = 0;
+    kThread->waiting_limit = WAITING_LIMIT;
+    kThread->blockedCount = 0;    //Tempo bloqueada.
+    kThread->blocked_limit = BLOCKED_LIMIT;
 
-    t->ticks_remaining = 1000;
+    kThread->ticks_remaining = 1000;
 
     // Signal
-    t->signal = 0;
-    t->umask = 0;
-
+    kThread->signal = 0;
+    kThread->umask = 0;
 
     //
     // #obs: 
@@ -202,58 +225,46 @@ void *create_CreateRing0IdleThread(void)
     // Queremos que esse thread rode em ring0.
 
     // Stack frame.
-    t->ss     = 0x10 | 0; 
-    t->esp    = (unsigned long) ( ring0IdleStack + (8*1024) );  //Stack
-    t->eflags = 0x0200;    // # Atenção !!  
-    t->cs     = 8 | 0; 
-    t->eip    = (unsigned long) ring0_IdleThread;  //See: main.c
+    kThread->ss     = 0x10 | 0; 
+    kThread->esp    = (unsigned long) ( earlyRing0IdleStack + (8*1024) );  //Stack
+    kThread->eflags = 0x0200;    // # Atenção !!  
+    kThread->cs     = 8 | 0; 
+    kThread->eip    = (unsigned long) early_ring0_IdleThread;  //See: head.asm
 
-    t->ds = 0x10 | 0;
-    t->es = 0x10 | 0;
-    t->fs = 0x10 | 0;
-    t->gs = 0x10 | 0;
+    kThread->ds = 0x10 | 0;
+    kThread->es = 0x10 | 0;
+    kThread->fs = 0x10 | 0;
+    kThread->gs = 0x10 | 0;
     
-    t->eax = 0;
-    t->ebx = 0;
-    t->ecx = 0;
-    t->edx = 0;
+    kThread->eax = 0;
+    kThread->ebx = 0;
+    kThread->ecx = 0;
+    kThread->edx = 0;
 
-    t->esi = 0;
-    t->edi = 0;
-    t->ebp = 0;
+    kThread->esi = 0;
+    kThread->edi = 0;
+    kThread->ebp = 0;
     // ...
 
     // O endereço incial, para controle.
-    t->initial_eip = (unsigned long) t->eip; 
+    kThread->initial_eip = (unsigned long) kThread->eip; 
 
 
 	//#bugbug
 	//Obs: As estruturas precisam já estar decidamente inicializadas.
-	//IdleThread->root = (struct _iobuf *) file_root;
-	//IdleThread->pwd  = (struct _iobuf *) file_pwd;	
+	//kThread->root = (struct _iobuf *) file_root;
+	//kThread->pwd  = (struct _iobuf *) file_pwd;	
 
 	//CPU stuffs.
-	//t->cpuID = 0;              //Qual processador.
-	//t->confined = 1;           //Flag, confinado ou não.
-	//t->CurrentProcessor = 0;   //Qual processador.
-	//t->NextProcessor = 0;      //Próximo processador. 
+	//kThread->cpuID = 0;              //Qual processador.
+	//kThread->confined = 1;           //Flag, confinado ou não.
+	//kThread->CurrentProcessor = 0;   //Qual processador.
+	//kThread->NextProcessor = 0;      //Próximo processador. 
 
-    t->next = NULL;
+    kThread->next = NULL;
 
     // Coloca na lista de estruturas.
-    threadList[ t->tid ] = (unsigned long) t;
-
-
-    //
-    // == Idle thread ==============================
-    //
-
-    // #todo
-    // We can use a method in the scheduler for this.
-    // Or in the dispatcher?
-
-    ____IDLE = (struct thread_d *) t;
-
+    threadList[TID] = (unsigned long) kThread;
 
     //
     // == counter =================================
@@ -269,7 +280,10 @@ void *create_CreateRing0IdleThread(void)
     // == Queue =====================================
     //
 
-    queue_insert_data (queue, (unsigned long) t, QUEUE_INITIALIZED);
+    queue_insert_data ( 
+        queue, 
+        (unsigned long) kThread, 
+        QUEUE_INITIALIZED );
 
     //
     // == Execution ===============================
@@ -278,20 +292,20 @@ void *create_CreateRing0IdleThread(void)
     // #todo
     // This method really need a prefix.
     
+    // With this movement, this thread is gonna run in the next
+    // task switch.
+    
     // * MOVEMENT 1 (Initialized --> Standby).
-    SelectForExecution (t);    
+    SelectForExecution(kThread); 
 
-    return (void *) t;
+    return (void *) kThread;
 }
-
-
-
 
 
 
 /*
  *******************************************************************
- * createCreateInitThread:
+ * create_CreateRing3InitThread:
  * 
  *     Criando init-thread manualmente.
  *     Essa eh a thread do processo init. (init.bin)
@@ -302,6 +316,10 @@ void *create_CreateRing0IdleThread(void)
 
 void *create_CreateRing3InitThread (void)
 {
+
+    struct thread_d  *t;
+    int TID = 1;
+
 
     // loops
     register int r=0;    // Wait reason.
@@ -324,30 +342,47 @@ void *create_CreateRing3InitThread (void)
 
     // Struct.
 
-    InitThread = (void *) kmalloc ( sizeof(struct thread_d) );
+    t = (void *) kmalloc ( sizeof(struct thread_d) );
 
-    if ( (void *) InitThread == NULL ){
-        panic ("create_CreateRing3InitThread: InitThread\n");
+    if ( (void *) t == NULL ){
+        panic ("create_CreateRing3InitThread: t\n");
     } else {
+
+        // #todo
+        // Isso jah foi feito logo acima.
+        // Remover.
+        
         if ( (void *) InitProcess == NULL ){
             panic ("create_CreateRing3InitThread: InitProcess\n");
         }else{
 
-            // Identificadores 
-            InitThread->used = 1;
-            InitThread->magic = 1234;
-            InitThread->tid = 1;
-            InitThread->ownerPID = (int) InitProcess->pid; 
-            InitThread->name_address = (unsigned long) ThreadName; 
-            InitThread->process = (void *) InitProcess;
+            // #todo
+            // Object header.
             
+            // Identificadores 
+            
+            t->used  = TRUE;
+            t->magic = 1234;
+
+            t->position = SPECIAL_GUEST;
+
+            t->tid = TID;
+
+            // #bugbug: 
+            // Is this a valid pointer?
+            // is this a valid pid?
+            t->ownerPID     = (int) InitProcess->pid; 
+            
+            t->name_address = (unsigned long) ThreadName; 
+            t->process      = (void *) InitProcess;
+      
             // Caracteristicas.
-            InitThread->iopl  = RING3; 
-            InitThread->type  = THREAD_TYPE_IDLE;
-            InitThread->state = INITIALIZED;
+            t->iopl  = RING3; 
+            t->type  = THREAD_TYPE_IDLE;
+            t->state = INITIALIZED;
 
             // Execution plane.
-            InitThread->plane = BACKGROUND;
+            t->plane = BACKGROUND;
             // ...
         };
         // ...
@@ -387,94 +422,96 @@ void *create_CreateRing3InitThread (void)
 
     // Page Directory
 
-    InitThread->DirectoryPA = (unsigned long ) InitProcess->DirectoryPA;
+    t->DirectoryPA = (unsigned long ) InitProcess->DirectoryPA;
     
-    if ( InitThread->DirectoryPA == 0 ){
-        panic("create_CreateRing3InitThread: InitThread->DirectoryPA\n");
+    if ( t->DirectoryPA == 0 ){
+        panic("create_CreateRing3InitThread: t->DirectoryPA\n");
     }
 
     // loop
     // Clean the 'wait reason'.
-    for ( r=0; r<8; ++r ){ InitThread->wait_reason[r] = (int) 0; };
+    for ( r=0; r<8; ++r ){ t->wait_reason[r] = (int) 0; };
 
     // ??
     // The system window procedure used by this thread.
     // This is a dialog inside the base kernel.
 
-    InitThread->procedure = (unsigned long) &system_procedure;
+    t->procedure = (unsigned long) &system_procedure;
 
 
     // Single kernel event.
 
-    InitThread->ke_window = NULL;
-    InitThread->ke_msg    = 0;
-    InitThread->ke_long1  = 0;
-    InitThread->ke_long2  = 0;
+    t->ke_window = NULL;
+    t->ke_msg    = 0;
+    t->ke_long1  = 0;
+    t->ke_long2  = 0;
 
-    InitThread->ke_newmessageFlag =  FALSE;
+    t->ke_newmessageFlag =  FALSE;
 
     // loop
     // Clean the message queue.
     for ( i=0; i<32; ++i )
     {
-        InitThread->window_list[i] = 0;
-        InitThread->msg_list[i]    = 0;
-        InitThread->long1_list[i]  = 0;
-        InitThread->long2_list[i]  = 0;
-        InitThread->long3_list[i]  = 0;
-        InitThread->long4_list[i]  = 0;
+        t->window_list[i] = 0;
+        t->msg_list[i]    = 0;
+        t->long1_list[i]  = 0;
+        t->long2_list[i]  = 0;
+        t->long3_list[i]  = 0;
+        t->long4_list[i]  = 0;
     };
-    InitThread->head_pos = 0;
-    InitThread->tail_pos = 0;
+    t->head_pos = 0;
+    t->tail_pos = 0;
 
     // loop
     // Message queue.
-    for ( q=0; q<32; ++q ){ InitThread->MsgQueue[q] = 0; };
-    InitThread->MsgQueueHead = 0;
-    InitThread->MsgQueueTail = 0;
+    for ( q=0; q<32; ++q ){ t->MsgQueue[q] = 0; };
+    t->MsgQueueHead = 0;
+    t->MsgQueueTail = 0;
 
     // Priorities.
     // The idle thread has the lowest priority possible.
 
-    InitThread->base_priority = PRIORITY_MIN;    // Static
-    InitThread->priority      = PRIORITY_MIN;    // Dynamic
+    t->base_priority = PRIORITY_MIN;    // Static
+    t->priority      = PRIORITY_MIN;    // Dynamic
 
 
-    InitThread->saved = 0; 
-    InitThread->preempted = UNPREEMPTABLE; 
+    t->saved = 0; 
+    t->preempted = UNPREEMPTABLE; 
 
     // Temporizadores.
-    InitThread->step = 0; 
-        
-    //InitThread->quantum  = QUANTUM_BASE;
-    InitThread->quantum  = ( InitThread->priority * TIMESLICE_MULTIPLIER);
+
+    // Jiffies
+    t->step = 0; 
+
+    //t->quantum  = QUANTUM_BASE;
+    t->quantum  = ( t->priority * TIMESLICE_MULTIPLIER);
 
     // QUANTUM_LIMIT  (PRIORITY_MAX *TIMESLICE_MULTIPLIER)
-    InitThread->quantum_limit = QUANTUM_LIMIT;
+    t->quantum_limit = QUANTUM_LIMIT;
 
 
     // Contadores.
-    InitThread->standbyCount = 0;
-    InitThread->runningCount = 0;    //Tempo rodando antes de parar.
-    InitThread->readyCount = 0;      //Tempo de espera para retomar a execu��o.
+    t->standbyCount = 0;
+    t->runningCount = 0;  // Tempo rodando antes de parar.
+    t->readyCount   = 0;  // Tempo de espera para retomar a execu��o.
 
-    InitThread->initial_time_ms = get_systime_ms ();
-    InitThread->total_time_ms = 0;
+    t->initial_time_ms = get_systime_ms();
+    t->total_time_ms   = 0;
 
     // Quantidade de tempo rodando dado em ms.
-    InitThread->runningCount_ms = 0;
+    t->runningCount_ms = 0;
 
-    InitThread->ready_limit = READY_LIMIT;
-    InitThread->waitingCount  = 0;
-    InitThread->waiting_limit = WAITING_LIMIT;
-    InitThread->blockedCount = 0;    //Tempo bloqueada.
-    InitThread->blocked_limit = BLOCKED_LIMIT;
+    t->ready_limit   = READY_LIMIT;
+    t->waitingCount  = 0;
+    t->waiting_limit = WAITING_LIMIT;
+    t->blockedCount  = 0;    //Tempo bloqueada.
+    t->blocked_limit = BLOCKED_LIMIT;
 
-    InitThread->ticks_remaining = 1000;
+    t->ticks_remaining = 1000;
 
     // Signal
-    InitThread->signal = 0;
-    InitThread->umask = 0;
+    t->signal = 0;
+    t->umask  = 0;
 
     //
     // #obs: 
@@ -489,31 +526,37 @@ void *create_CreateRing3InitThread (void)
     // #todo: 
     // Isso deve ser uma estrutura de contexto.
 
+    // #
+    // 0x3200 é o estado inicial de eflags.
+    // Existe um spawn especial para essa thread,
+    // onde eflags inicia com o valor 0x3000.
+    // See: x86init.c
+
     // Stack frame.
 
-    InitThread->ss     = 0x23; 
-    InitThread->esp    = (unsigned long) CONTROLTHREAD_STACK; 
-    InitThread->eflags = 0x3200;    // #atencao!
-    InitThread->cs     = 0x1B;  
-    InitThread->eip    = (unsigned long) CONTROLTHREAD_ENTRYPOINT; 
+    t->ss     = 0x23; 
+    t->esp    = (unsigned long) CONTROLTHREAD_STACK; 
+    t->eflags = 0x3200;    // #atenção!
+    t->cs     = 0x1B;  
+    t->eip    = (unsigned long) CONTROLTHREAD_ENTRYPOINT; 
 
-    InitThread->ds = 0x23;
-    InitThread->es = 0x23;
-    InitThread->fs = 0x23;
-    InitThread->gs = 0x23;
+    t->ds = 0x23;
+    t->es = 0x23;
+    t->fs = 0x23;
+    t->gs = 0x23;
 
-    InitThread->eax = 0;
-    InitThread->ebx = 0;
-    InitThread->ecx = 0;
-    InitThread->edx = 0;
+    t->eax = 0;
+    t->ebx = 0;
+    t->ecx = 0;
+    t->edx = 0;
 
-    InitThread->esi = 0;
-    InitThread->edi = 0;
-    InitThread->ebp = 0;
+    t->esi = 0;
+    t->edi = 0;
+    t->ebp = 0;
     // ...
 
     // O endereço incial, para controle.
-    InitThread->initial_eip = (unsigned long) InitThread->eip; 
+    t->initial_eip = (unsigned long) t->eip; 
 
 
 	//#bugbug
@@ -528,10 +571,10 @@ void *create_CreateRing3InitThread (void)
 	//IdleThread->CurrentProcessor = 0;   //Qual processador.
 	//IdleThread->NextProcessor = 0;      //Pr�ximo processador. 
 
-    InitThread->next = NULL;
+    t->next = NULL;
     
     // Coloca na lista de estruturas.
-    threadList[ InitThread->tid ] = (unsigned long) InitThread;
+    threadList[TID] = (unsigned long) t;
 
 
     //
@@ -541,7 +584,7 @@ void *create_CreateRing3InitThread (void)
     // #todo
     // We can use a method in the scheduler for this.
 
-    rootConductor = (struct thread_d *) InitThread;
+    rootConductor = (struct thread_d *) t;
 
 
     //
@@ -576,8 +619,7 @@ void *create_CreateRing3InitThread (void)
 	// se logo em seguida estamos selecionando para execu��o 
 	// colocando no estado standby.
     
-    queue_insert_data ( queue, 
-        (unsigned long) InitThread, QUEUE_INITIALIZED );
+    queue_insert_data ( queue, (unsigned long) t, QUEUE_INITIALIZED );
 
 
     // == Execution ===============================
@@ -585,9 +627,9 @@ void *create_CreateRing3InitThread (void)
     // This method really need a prefix.
     // * MOVEMENT 1 ( Initialized ---> Standby ).
     
-    SelectForExecution(InitThread);    
+    SelectForExecution(t);    
 
-    return (void *) InitThread;
+    return (void *) t;
 }
 
 

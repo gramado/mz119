@@ -1,5 +1,5 @@
 ;
-; File: x86/head.asm 
+; File: x86/pumpcore/head.asm 
 ; 
 ;     The kernel entry point for x86 processors.
 ;     32 bit.
@@ -105,18 +105,19 @@ extern _x86main
 ;;    ecx = BootBlock pointer.
 ;;    edx = BootBlock pointer.
 ;;    ebp = BootBlock pointer.
-;; Called by _kernel_begin in hwi/init/x86/boot.asm
+;; Called by _kernel_begin in head_32.asm
 
 head_init:
 
-    ;; Saving ...
+; Saving
+
     mov dword [_kArg1], eax
     mov dword [_kArg2], ebx
     mov dword [_kArg3], ecx
     mov dword [_kArg4], edx
 
-    ;; #debug
-    ;; The vga memory was mapped in 0x800000 by the boot loader.
+; #debug
+; The vga memory was mapped in 0x800000 by the boot loader.
 
     ;mov byte [0x800000], byte "K"
     ;mov byte [0x800001], byte 9
@@ -139,44 +140,46 @@ head_init:
     ;; Magic byte for gui mode.
     ;;
 
-    ;; This flag tell us that we are in graphics mode.
-    cmp al, byte 'G'
-    je .useGUI
+; This flag tell us that we are in graphics mode.
 
-;; Fail. No GUI.
-.fail_nogui:
-    mov byte [0xb8000], byte "t"
+    cmp al, byte 'G'
+    je .LuseGUI
+
+; Fail. No GUI.
+.Lfail_nogui:
+    mov byte [0xb8000], byte "T"
     mov byte [0xb8001], byte 9
-    mov byte [0xb8002], byte "m"
+    mov byte [0xb8002], byte "M"
     mov byte [0xb8003], byte 9
+.Lnogui_hang:
     cli
-.nogui_hang:
     hlt
-    jmp .nogui_hang
+    jmp .Lnogui_hang
 
-;;
-;; == Use GUI =======================================
-;;
+;
+; == Use GUI =======================================
+;
 
-.useGUI:
+.LuseGUI:
 
-    ;; Check again.
+; Check again.
+
     cmp al, byte 'G'
-    jne .fail_nogui
+    jne .Lfail_nogui
 
-    ;; #important
-    ;; Saving flags.
-    ;; 1=gui
+; #important
+; Saving flags.
+; 1=gui
 
     mov dword [_g_useGUI],       dword 1
     mov dword [_SavedBootMode],  dword 1
 
 
-    ;;
-    ;; == Boot block ========================================
-    ;;
+;
+; == Boot block ========================================
+;
 
-    ;; Now we're gonna grap all the offsets in the block.
+; Now we're gonna grap all the offsets in the block.
 
     ;; #todo:
     ;; We need to put all these information in the same document
@@ -194,9 +197,10 @@ head_init:
     ;;mov dword [_SavedBootBlock], ebp
 
 
-    ; 0 - LFB.
-    ; FrontBuffer Address, (LFB)
-    ; Physical address.
+; 0 - LFB.
+; FrontBuffer Address, (LFB)
+; Physical address.
+
     xor eax, eax
     mov eax, dword [edx +0] 
     mov dword [_SavedLFB],          eax
@@ -253,14 +257,16 @@ head_init:
     ;; We can create a robust bootblock.
     ;; ...
 
-    ;;
-    ;; == Interrupts support ==============================
-    ;;
+;
+; == Interrupts support ==============================
+;
 
-    ;; Theis is the order here:
+    ;; This is the order here:
     ;; gdt, idt, ldt, tss+tr.
 
-    ;; No interrupts for now.
+
+; No interrupts for now. 
+; It was already done is head_32.asm
 
     cli
     
@@ -268,38 +274,62 @@ head_init:
     ;; Memory management registes:
     ;; GDTR, IDTR, LDTR and TR.
 
-    ;;
-    ;; == GDT ================================================
-    ;;
+;
+; == GDT ================================================
+;
 
-    ;; We have another configuration in another place.
+; We have another configuration in another place.
 
     lgdt [_GDT_register] 
 
 
-    ;;
-    ;; == IDT ================================================
-    ;;
+    ;; #todo
+    ;; Vamos tentar colocar aqui a configuração dos registradores
+    ;; de segmento. Essa configuração no momento está logo abaixo.
+    ;; Pelo menos os segmentos de dados.
 
-    ;; We have another configuration in another place.
+    ; #todo
+    ; Temos que configurar os registradores novamente,
+    ; logo após configurarmos a GDT.
+    
+    ; #todo
+    ; Devemos fazer o mesmo se o código em C carregar uma 
+    ; nova GDT, e ele faz.
+
+    ;xor eax, eax
+    ;mov ax, word 0x10
+    mov ax, word  __BOOT_DS
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+
+
+;
+; == IDT ================================================
+;
+
+; We have another configuration in another place.
 
     call setup_idt      ; Create a common handler, 'unhandled_int'.
     call setup_faults   ; Setup vectors for faults and exceptions.
     call setup_vectors  ; Some new vectors.
     lidt [_IDT_register] 
 
-    ;;
-    ;; == LDT ================================================
-    ;;
+;
+; == LDT ================================================
+;
 
-    ;; Clear LDT
+; Clear LDT
+
     xor eax, eax
     lldt ax
 
 
-    ;;
-    ;; == TR. (tss) ======================================
-    ;;
+;
+; == TR (tss) ======================================
+;
+
 
     ;; The tr configuration is little bit confused here.
     ;; There is another configuration in another place.
@@ -319,41 +349,45 @@ head_init:
     ;; We already did this. (103)
     ;; mov word [gdt6], tss0_end - tss0 - 1 
 
-    ;; This is the address os our tss ?
+; This is the address os our tss ?
+
     mov eax, dword tss0
 
-    ;; This is the place for the tss0 into the gdt.
+; This is the place for the tss0 into the gdt.
+
     mov [gdt6 + 2], ax
     shr eax, 16
     mov [gdt6 + 4],  al
     mov [gdt6 + 7],  ah
 
-    ;; Load TR.
-    ;; 0x2B = (0x28+3).
+; Load TR.
+; 0x2B = (0x28+3).
+
     mov ax, word 0x2B
     ltr ax
 
-    ;;
-    ;; ========================================================
-    ;;
+;
+; ========================================================
+;
 
+; Jump to flush it.
 
-    ;; Jump to flush it.
-
-    jmp 8:_trJumpToFlush
+    ;; jmp 8:_trJumpToFlush
+    jmp __BOOT_CS:_trJumpToFlush
     nop
 _trJumpToFlush:
     nop
 
-    ;; Order:
-    ;; PIC and PIT early initialization 
+
+; Order:
+; PIC and PIT early initialization 
 
 
-    ;;
-    ;; == PIC ========================================
-    ;;
+;
+; == PIC ========================================
+;
 
-    ; Early PIC initialization.
+; Early PIC initialization.
 
 picEarlyInitialization:
 
@@ -393,23 +427,23 @@ picEarlyInitialization:
     out 0xA1, al
     IODELAY
 
-    ;; =======================
-    ;; Mask all interrupts.
-    ;; =======================
+
+; Mask all interrupts.
+
 
     cli
     mov  al, 255
-    out  0xa1,  al
+    out  0xA1,  al
     IODELAY
     out  0x21,  al
     IODELAY
 
 
-    ;;
-    ;; == PIT ========================================
-    ;;
+;
+; == PIT ========================================
+;
 
-    ; Early PIT initialization.
+; Early PIT initialization.
 
 pitEarlyInitialization:
 
@@ -435,68 +469,73 @@ pitEarlyInitialization:
     IODELAY
 
 
-    ;;
-    ;; == RTC ========================================
-    ;;
+;
+; == RTC ========================================
+;
 
-    ; Early RTC initialization.
+; Early RTC initialization.
 
 ;rtcEarlyInitialization:
     ;#todo 
     ; Nothing for now
 
 
-
     ;; #todo: 
     ;; memory caching control.
 
 
-    ;; =======================
-    ;; Unmask all interrupts.
-    ;; =======================
+; Unmask all interrupts.
 
     mov al, 0
-    out 0xa1, al
+    out 0xA1, al
     IODELAY
     out 0x21, al
     IODELAY
 
-    ;; No interrupts.
+; No interrupts.
+
     cli
 
 
-    ;;
-    ;; == Set up registers ==================================
-    ;;
+;
+; == Set up registers ==================================
+;
 
-    ;; Debug registers:
-    ;; DR0 ~ DR7
 
-    ; Debug registers.
-    ; Disable break points.
+; Debug registers:
+; DR0 ~ DR7
+; Debug registers.
+; Disable break points.
 
     xor eax, eax
     ;mov dr2, eax
     mov dr7, eax
     ;; ...
 
-    ;; Data segments for ring 0.
-    ;;  ...
-    
+
+;
+; Data segments for ring 0.
+;
+
+    ;; #todo
+    ;; Devemos antecipar essa configuração o máximo possível,
+    ;; colocarmos perto do carregamento do gdtr.
+
     ;xor eax, eax
-    mov ax, word 0x10  
+    ;mov ax, word 0x10
+    mov ax, word  __BOOT_DS
     mov ds, ax
     mov es, ax
-    ;mov fs, ax
-    ;mov gs, ax
-    ;; ...
+    mov fs, ax
+    mov gs, ax
 
-    ;;
-    ;; STACK
-    ;;
 
-    ;; Initialize and save.
-    ;; Is it the same in the tss ?
+;
+; Stack
+;
+
+; Initialize and save.
+; Is it the same in the tss ?
     
     mov eax, 0x003FFFF0 
     mov esp, eax 
@@ -504,9 +543,9 @@ pitEarlyInitialization:
     mov dword [_kernel_stack_start_pa], eax 
 
 
-    ;;
-    ;; == Kernel Status ===================================
-    ;;
+;
+; == Kernel Status ===================================
+;
 
     ;; #bugbug
     ;; It does not make sanse.
@@ -516,12 +555,26 @@ pitEarlyInitialization:
     mov dword [_KernelStatus], dword 1
     ;; mov dword [_KernelStatus], dword 0
 
-    ;;
-    ;; == Calling the C part ===============================
-    ;;
 
-    ;; We only have one argument. The arch type.
-    ;; See: kernel/main.c 
+    ; # test: 
+    ; Clean flags.
+    ; # perigo
+    ; Como ficam as interrupções?
+
+    ;; push dword 0
+    ;; popfd 
+
+
+;
+; == Calling the C part ===============================
+;
+
+
+;; .Lcall_c_code:
+
+
+; We only have one argument. The arch type.
+; See: kernel/0mem/main.c 
 
     mov eax, dword HEAD_CURRENT_ARCH_X86
     push eax
@@ -531,22 +584,36 @@ pitEarlyInitialization:
     xor ecx, ecx
     xor edx, edx
 
+; #bugbug
+; We need to check what kind of jum we can use in this case.
+; For AMD and for Intel.
+; 32 ? 64 ?
+; call ? ret ?
+; There are limitations.
+
     call _kernel_main
 
-    ;; We really don't wanna reach this point.
-    ;; We are in graphics mode and we can't print an error message.
-    ;; We will not return to boot.asm.
+; We really don't wanna reach this point.
+; We are in graphics mode and we can't print an error message.
+; We will not return to boot.asm.
 
+    jmp _EarlyRing0IdleThread
+
+; #todo
+; Maybe we can export this
+; as a main loop for all processes.
+; For now we have a idle thread.
+
+global _EarlyRing0IdleThread
+_EarlyRing0IdleThread:
     cli
-
-han__g:
     hlt
-    jmp han__g
+    jmp _EarlyRing0IdleThread
 
 
-	;
-	; ====================================
-	;
+;
+; == Data area ==================================
+;
 
 
 ;; ====================================================
@@ -631,7 +698,8 @@ NULL_SEL equ $-_gdt
     dd 0
     dd 0
 ;Selector 8 - Code, kernel mode.  
-CODE_SEL equ $-_gdt
+__BOOT_CS equ $-_gdt
+CODE_SEL  equ $-_gdt
     dw 0xFFFF
     dw 0
     db 0
@@ -639,7 +707,8 @@ CODE_SEL equ $-_gdt
     db 0xCF
     db 0
 ;Selector 0x10 - Data, kernel mode.
-DATA_SEL equ $-_gdt
+__BOOT_DS equ $-_gdt
+DATA_SEL  equ $-_gdt
     dw 0xFFFF
     dw 0
     db 0 
@@ -703,9 +772,8 @@ global _end_gdt
 _end_gdt:
     dd 0
 
-;
-; GDT_register - registro
-;
+; _GDT_register
+
 global  _GDT_register
 _GDT_register:
     dw  (_end_gdt-_gdt)-1

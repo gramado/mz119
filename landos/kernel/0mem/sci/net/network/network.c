@@ -1,5 +1,5 @@
 /*
- * File: sci/net/network.c
+ * File: sci/net/network/network.c
  *     
  *     Network sopport. 
  *     Ring 0, kernel base.
@@ -126,16 +126,26 @@ int network_buffer_in( void *buffer, int len )
         panic ("network_buffer_in: buffer\n");
     }
 
+    // #todo
+    // Veja na configuração do dispositivo, que o buffer 
+    // configurado para o hardware é de 0x3000 bytes.
     if(len>1500){
-        return -1;
+        debug_print("network_buffer_in: [FIXME] len\n");
+        len = 1500;
+        //return -1;
+    }
+
+    if (NETWORK_BUFFER.initialized != TRUE){
+        panic ("network_buffer_in: Shared buffers not initialized\n");
     }
 
     tail = (int) NETWORK_BUFFER.receive_tail;
 
     //circula.
     NETWORK_BUFFER.receive_tail++;
-    if (NETWORK_BUFFER.receive_tail >= 32)
+    if (NETWORK_BUFFER.receive_tail >= 32){
         NETWORK_BUFFER.receive_tail=0;
+    }
 
 	// #todo
 	// MTU: maximim transmition unit.
@@ -145,19 +155,39 @@ int network_buffer_in( void *buffer, int len )
     //refresh_screen();
 
 
-        
-    if(tail<0)
+    if (tail<0){
         return -1;
-        
+    }
+
+
     // Pega o destination buffer.
     if (tail<32)
     {
+        // Se o buffer está cheio é porque ele não foi consumido.
+        // Vamos sobrepor ?
+        if ( NETWORK_BUFFER.receive_status[tail] == TRUE )
+        {
+            // #bugbug
+            // #todo: Podemos criar um contador de vezes que isso acontece.
+            
+            //
+            // Isso acontece frequentemente.
+            //
+            
+            // panic ("network_buffer_in: [TEST] Not responding ...\n");
+            //printf ("network_buffer_in: [FIXME] Can't write. This buffer is full.\n");
+            //refresh_screen();
+        }
+
         dst_buffer = (void*) NETWORK_BUFFER.receive_buffer[tail];
        
         if ((void*)dst_buffer != NULL){
             memcpy( dst_buffer, buffer, len);
         }        
     
+        // Avisamos que esse buffer está cheio.
+        NETWORK_BUFFER.receive_status[tail] = TRUE;
+        
         //printf("network_buffer_in: ok\n");
         //refresh_screen();
         return 0;//ok
@@ -170,9 +200,20 @@ int network_buffer_in( void *buffer, int len )
 /*
  ******************************************
  * sys_network_receive:
+ * 
  *     Service 890.
  *     The app receives a packet from the system.
  */
+
+// #bugbug
+// Na verdade o tamanho total é no mínimo 
+// 14 + 20 + 20 + 1460.
+// #todo:
+// Devemos respeitar o tamanho indicado pelo usuário.
+
+// IN:
+// usermode buffer, max size.
+// OUT: ??
 
 int 
 sys_network_receive (
@@ -181,17 +222,40 @@ sys_network_receive (
 {
 
     void *src_buffer;
+    int Size=0;
     int head=0;
+
 
     debug_print("sys_network_receive:\n");
 
-
-    if ( (void*) ubuf == NULL )
-    {
+    if ( (void*) ubuf == NULL ){
         debug_print("sys_network_receive: [ERROR] ubuf\n");
-        return -1;
+        return FALSE;
     }
 
+    Size = size;
+
+    if (Size<=0){
+        debug_print("sys_network_receive: [ERROR] Size\n");
+        return FALSE;
+    }
+
+    if (Size>1500){
+        Size=1500;
+        debug_print("sys_network_receive: [FIXME] Size limit\n");
+        //return -1;
+    }
+
+    // #todo
+    // Onde está essa estrutura?
+    // See: include/rtl/net/network.h
+
+
+    // #todo
+    // O problema aqui é que estamos relendo o mesmo buffer
+    // depois de cicularmos.
+    // Sendo assim, temos que ter um status de cada um dos buffers.
+    // #todo: ... ainda não sei se aqui ou no driver.
 
     // Pega do head. 
     // Primeiro da fila.
@@ -204,34 +268,60 @@ sys_network_receive (
         NETWORK_BUFFER.receive_head=0;
     }
 
-
     if (head<32)
     {
-        src_buffer = NETWORK_BUFFER.receive_buffer[head];
-    
-        if((void*)ubuf== NULL){
-            printf("sys_network_receive: [FAIL] ubuf\n");
-            goto fail;
+
+        // Desistimos desse buffer, pois ele está vazio.
+        if ( NETWORK_BUFFER.receive_status[head] == FALSE )
+        {
+            debug_print("sys_network_receive: [] Empty buffer \n");
+            return FALSE;
         }
+
+        // SE O BUFFER ESTA CHEIO
+        if ( NETWORK_BUFFER.receive_status[head] == TRUE )
+        {
         
-        if((void*)src_buffer== NULL){
-            printf("sys_network_receive: [FAIL] src_buffer\n");
-            goto fail;
+            src_buffer = NETWORK_BUFFER.receive_buffer[head];
+    
+            // Source buffer
+            // pertence ao driver de dispositivo
+            // não pode ser null de jeito nenhum, senão a inicialização falhou.
+            if ((void*)src_buffer== NULL){
+                panic ("sys_network_receive: [FAIL] src_buffer\n");
+                //printf("sys_network_receive: [FAIL] src_buffer\n");
+                //goto fail;
+            }
+
+            // Destination buffer
+            if ((void*)ubuf== NULL){
+                printf("sys_network_receive: [FAIL] ubuf\n");
+                
+                // #test libera o buffer
+                NETWORK_BUFFER.receive_status[head] =  FALSE;
+                goto fail;
+            }
+
+            // Copy
+
+            // Copia do kernel para user mode.
+            if ( (void *) ubuf != NULL ){
+                memcpy( ubuf, src_buffer, Size);
+            } 
+
+            // Now the buffer is empty
+            // Então esse buffer não será lido por essa rotina
+            // até que o driver mude essa flag.
+            NETWORK_BUFFER.receive_status[head] =  FALSE;
+        
+            // ok: temos mensagem.
+            return TRUE;
         }
-
-        // Copy.
-
-        // Copia do kernel para user mode.
-        if ( (void *) ubuf != NULL ){
-            memcpy( ubuf, src_buffer, size);
-        } 
-
-        return 0;
     }
 
 fail:
     refresh_screen();        
-    return -1;
+    return FALSE;  // não temos mensagem.
 }
 
 
@@ -254,13 +344,24 @@ int network_buffer_out ( void *buffer, int len )
     // check args
 
     if ( (void*) buffer == NULL ){
-        panic ("network_buffer_out: buffer");
+        panic ("network_buffer_out: [FAIL] buffer\n");
     }
 
+    // #bugbug:
+    // Isso pode ser maior se considerarmos todos os headers.
+    // #todo
+    // Veja na configuração do dispositivo, que o buffer 
+    // configurado para o hardware é de 0x3000 bytes.
     if (len>1500){
-        return -1;
+        debug_print("network_buffer_out: [FIXME] len\n");
+        len=1500;
+        //return -1;
     }
 
+    if (NETWORK_BUFFER.initialized != TRUE){
+        panic ("network_buffer_out: Shared buffers not initialized\n");
+    }
+    
     // Vamos pegar um numero de buffer para enviarmos o pacote.
     // o kernel vai retirar do head ... 
     // o que foi colocado pelo aplicativo em tail.
@@ -290,6 +391,7 @@ int network_buffer_out ( void *buffer, int len )
     {
         src_buffer = (void*) NETWORK_BUFFER.send_buffer[head];
        
+        // Aqui pode estar errado.
         if ((void*)src_buffer != NULL){
             memcpy( buffer, src_buffer, len );
         } 
@@ -319,16 +421,20 @@ sys_network_send (
 {
     void *src_buffer;
     int tail=0;
+    int Size=0;
 
     // #bugbug
     // Do not use this buffer here.
     // It is too big to be inside the kernel.
 
-    char xxxbuffer[4096];
-
+    //char xxxbuffer[4096];
+    char xxxbuffer[2048];
 
     debug_print("sys_network_send:\n");
 
+
+    // O buffer em ring3 onde está os dados 
+    // que o usuário quer enviar.
 
     if ( (void*) ubuf == NULL )
     {
@@ -336,6 +442,22 @@ sys_network_send (
         return -1;
     }
 
+
+    Size = size;
+
+    if (Size<=0){
+        debug_print("sys_network_send: [ERROR] Size\n");
+        return FALSE;
+    }
+
+    if (Size>1500){
+        Size=1500;
+        debug_print("sys_network_send: [FIXME] Size limit\n");
+        //return -1;
+    }
+
+
+    // ---
 
     // O aplicativo esta colocando no tail.
     tail = NETWORK_BUFFER.send_tail;
@@ -352,20 +474,20 @@ sys_network_send (
     {
         src_buffer = NETWORK_BUFFER.send_buffer[tail];
     
-        if ((void*)ubuf== NULL){
-            printf("sys_network_send: [FAIL] ubuf\n");
+        if ((void*)src_buffer== NULL){
+            printf("sys_network_send: [FAIL] src_buffer\n");
             goto fail;
         }
 
-        if ((void*)src_buffer== NULL){
-            printf("sys_network_send: [FAIL] src_buffer\n");
+        if ((void*)ubuf== NULL){
+            printf("sys_network_send: [FAIL] ubuf\n");
             goto fail;
         }
 
         // Copiamos do buffer do usuario para um dos buffers
         // do nic.
         if ( (void *) ubuf != NULL ){
-            memcpy ( src_buffer, ubuf, size); 
+            memcpy ( src_buffer, ubuf, Size ); 
         }
         
         // #bugbug
@@ -379,13 +501,10 @@ sys_network_send (
         // Coloque nesse buffer o conteúdo do head
         // na lista de buffers para enviar.
         // depois enviaremos abaixo.
-        
-        // ??
-        // 
+
         network_buffer_out (xxxbuffer,1500);
-        
-        // ??
         network_send_packet (xxxbuffer,1500);
+
 
         // OK.
         return 0;
@@ -567,7 +686,9 @@ network_procedure (
 void networkSetstatus (int status)
 {
     if ( status < 0 || status > 1 )
+    {
         return;
+    }
 
     network_status = (int) status;
 }
@@ -585,6 +706,12 @@ int networkGetStatus (void)
  * 
  * It only initializes some network structures. 
  * Not the adapters.
+ * 
+ *     Initialize the buffers used by the NIC adapter.
+ *     Initialize HostInfo structure.
+ *     Create a default socket structure for localhost. 
+ *     CurrentSocket = LocalHostHTTPSocket
+ * 
  */ 
 
 int networkInit (void)
@@ -606,40 +733,50 @@ int networkInit (void)
     // We will create 32 buffers to receive data and
     // 8 buffers to send data.
     //
+    
+    // 
 
     void *nbuffer;
     int i=0;
 
+    debug_print ("networkInit: Initializing buffers for the NIC controller.\n");
+
+    NETWORK_BUFFER.initialized = FALSE;
+
     // =====================================
     // receive buffers
 
-    for (i=0;i<32;i++)
+    for (i=0; i<32; i++)
     {
         nbuffer = (void*) newPage();
         
-        if ((void *)nbuffer == NULL)
-            panic("networkInit: receive nbuffer");
-    
+        if ((void *)nbuffer == NULL){
+            panic("networkInit: [FAIL] receive nbuffer\n");
+        }
         NETWORK_BUFFER.receive_buffer[i] = (unsigned long) nbuffer;
-    }
+        NETWORK_BUFFER.receive_status[i] = FALSE;  //EMPTY
+    };
     NETWORK_BUFFER.receive_tail =0;
     NETWORK_BUFFER.receive_head =0;
 
     // ========================================
     // send buffers
 
-    for (i=0;i<8;i++)
+    for (i=0; i<8; i++)
     {
         nbuffer = (void*) newPage();
         
-        if((void *)nbuffer == NULL)
-            panic("networkInit: send nbuffer");
-    
+        if((void *)nbuffer == NULL){
+            panic("networkInit: [FAIL] send nbuffer\n");
+        }
         NETWORK_BUFFER.send_buffer[i] = (unsigned long) nbuffer;
-    }
+        NETWORK_BUFFER.send_status[i] = FALSE;  //EMPTY 
+    };
     NETWORK_BUFFER.send_tail =0;
     NETWORK_BUFFER.send_head =0;
 
+    // flag.
+    NETWORK_BUFFER.initialized = TRUE;
 
     // =====================================
 
@@ -656,20 +793,42 @@ int networkInit (void)
     if ( (void *) HostInfo == NULL ){
         panic("networkInit: HostInfo\n");
     }else{
-        HostInfo->used = 1;
-        HostInfo->magic = 1234;
+
         // #todo object header
 
-        // #todo
-        HostInfo->__hostname[0] = 'h';
-        HostInfo->hostName_len = (size_t) HOST_NAME_MAX;
+        HostInfo->used  = TRUE;
+        HostInfo->magic = 1234;
+
+        //
+        // hostname
+        //
+
+        //HostInfo->__hostname[0] = 'h';
+        //HostInfo->hostName_len = (size_t) HOST_NAME_MAX;
+
+        sprintf(HostInfo->__hostname,"gramado");
+        HostInfo->hostName_len = (size_t) strlen("gramado");
+        if ( HostInfo->hostName_len >= HOST_NAME_MAX )
+        {
+            panic("networkInit: hostname\n");
+        }
+
 
         HostInfo->hostVersion = NULL;
 
-        HostInfo->hostVersionMajor = 0;
-        HostInfo->hostVersionMinor = 0; 
+        // #todo
+        // Call some helpers to get these values.
+        // Maybe the init process needs to setup these values.
+        // It's because these values are found in files.
+
+        HostInfo->hostVersionMajor    = 0;
+        HostInfo->hostVersionMinor    = 0; 
         HostInfo->hostVersionRevision = 0;
-        HostInfo->hostArchitecture = 0; 
+
+        // #todo
+        // Where is this information?
+
+        HostInfo->hostArchitecture    = 0; 
 
         // ...
     };
@@ -688,6 +847,7 @@ int networkInit (void)
     if ( (void *) LocalHostHTTPSocket == NULL ){
         panic ("networkInit: Couldn't create LocalHostHTTPSocket\n");
     }else{
+
         LocalHostHTTPSocket->ip   = 0;
         LocalHostHTTPSocket->port = 0;
         // ...
@@ -697,10 +857,13 @@ int networkInit (void)
 
 	// ...
 
+    // ??
+    // What is this?
+    
     socket_init();
 
 	// Status
-    networkSetstatus (1);
+    networkSetstatus(1);
 
     debug_print ("networkInit: done\n");
     
@@ -877,6 +1040,12 @@ int handle_ipv6 ( struct ipv6_header_d *header )
  *     Called by a ring3 process.
  */
 
+// This is the service 968
+    // 968 - Testing network.
+    // Initialize the network infrastructure
+    // this way a ring3 process will be able to 
+    // use some buffer ro send/receive packets.
+
 void network_test(void)
 {
     debug_print("network_test:\n");
@@ -911,6 +1080,9 @@ void network_test(void)
 // Subrotina chamada por rotinas de teste.
 // Essa rotina aciona uma flag que (DESTRAVA) o handler da interrupção.
 
+// Called by network_test().
+// 
+
 void testNIC (void){
 
     debug_print ("testNIC:\n");
@@ -938,7 +1110,7 @@ void testNIC (void){
     target_ip_address[0] = 192;
     target_ip_address[1] = 168;
     target_ip_address[2] = 1; 
-    target_ip_address[3] = 105;//111; 
+    target_ip_address[3] = 88; //105;//111; 
 
     // MAC for broadcast.
     // 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF.
@@ -1335,21 +1507,44 @@ network_SendIPV4_UDP (
 
 
 
-//IN: 
-//buffer: a packet sent by the user.
+// Low level routine to send a packet to the network
+// using the nic controller.
+// #todo: Move this routine to io/ folder.
+// This routine belongs to device driver.
+// IN: 
+// buffer: a packet sent by the user.
+
+// #bugbug
+// Esse buffer aí nem fou usado.
+// Talvez precisamos copiar o conteúdo que está nesse buffer
+// para o buffer encontrado da estrutura do driver de dispositivo.
+
 void network_send_packet(void *ubuffer, int len)
 {
     debug_print ("network_send_packet: done\n");
-    
+
+    // The current nic controller.
+    // #todo: We need to receive this pointer as a parameter.
+
     if ( currentNIC == NULL ){
         printf ("network_send_packet: currentNIC fail\n");
         return;
     }
-    
-    //#bugbug
-    //è esse o buffer certo para enviar???
+
+
+    // Pegamos o buffer que usaremos para enviar.
+    // #bugbug
+    // É esse o buffer certo para enviar?
+
     uint16_t old = currentNIC->tx_cur;
+
     unsigned char *dst_buf = (unsigned char *) currentNIC->tx_descs_virt[old];
+
+    // #todo
+    // Precisamos copiar o conteúdo de ubuffer em dst_buf ?
+
+
+    // Configuramos o seu tamanho.
 
     currentNIC->legacy_tx_descs[old].length = (len);
 
@@ -1364,20 +1559,15 @@ void network_send_packet(void *ubuffer, int len)
 	//currentNIC->legacy_tx_descs[0].cmd = TDESC_CMD_IFCS | TDESC_CMD_RS | TDESC_CMD_EOP;
 	//currentNIC->legacy_tx_descs[0].cmd = TDESC_EOP | TDESC_RS; //intel code
 
-	//cmd
+	// cmd
     currentNIC->legacy_tx_descs[old].cmd = 0x1B;
 
-	//status
+	// status
     currentNIC->legacy_tx_descs[old].status = 0;
-
-	// Current TX.
-	// Qual � o buffer atual para transmiss�o.
-    currentNIC->tx_cur = ( currentNIC->tx_cur + 1 ) % 8;
 
 
 	//css
 	//currentNIC->legacy_tx_descs[0].css
-
 
 	//??
 	//special ?
@@ -1385,22 +1575,26 @@ void network_send_packet(void *ubuffer, int len)
 
 
 
-
-	//
-	// ==== # SEND # ======
-	//
-
+//
+// == Send ========================================
+//
 
 
     // #importante: 
     // Diga ao controlador qual é o índice do descritor a ser usado 
     // para transmitir dados.
 
-	// TDH	= 0x3810,    /* Tx Descriptor Head */
-	// TDT	= 0x3818,    /* Tx Descriptor Tail */
+    // TDH	= 0x3810,    /* Tx Descriptor Head */
+    // TDT	= 0x3818,    /* Tx Descriptor Tail */
 
-	// *( (volatile unsigned int *)(currentNIC->mem_base + 0x3810)) = 0;
+    // ?
+    // *( (volatile unsigned int *)(currentNIC->mem_base + 0x3810)) = 0;
+
+    // #bugbug: Esse é o indice depois de circularmos.
+    // Deveríamos usar aqui o 'old', que é o indice antes de circularmos.
+    // *( (volatile unsigned int *)(currentNIC->mem_base + 0x3818)) = old;
     *( (volatile unsigned int *)(currentNIC->mem_base + 0x3818)) = currentNIC->tx_cur;
+
 
 
 	// #debug
@@ -1414,11 +1608,14 @@ void network_send_packet(void *ubuffer, int len)
          if ( (currentNIC->legacy_tx_descs[old].status & 0xFF) == 1 )
          {
               debug_print ("network_send_packet: done [timeout]\n");
-              //printf ("Ok");
-              return;
+              printf ("Ok");
+              goto done;
+              //return;
          }
     }
-    
+
+done:
+
     //#todo
     /*
     while ( !(currentNIC->legacy_tx_descs[old].status & 0xFF) )
@@ -1426,6 +1623,16 @@ void network_send_packet(void *ubuffer, int len)
         // Nothing.
     };
     */
+
+    // Circulando depois de usarmos.
+    // Current TX.
+    // Qual é o buffer atual para transmissao.
+    // ?? Acho que aqui estamos circulando e definindo qual
+    // será o próximo que usaremos quando chamarmos essa 
+    // rotina novamente.
+
+    currentNIC->tx_cur = ( currentNIC->tx_cur + 1 ) % 8;
+
 
     debug_print ("metwork_send_packet: done\n");
 }

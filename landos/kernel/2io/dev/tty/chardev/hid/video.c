@@ -491,9 +491,9 @@ void videoSetupVGAStartAddress( unsigned long address)
 //#todo
 //isso pode ser incluido em 'get system parameters' system call.
 
-unsigned long videoGetMode (void){
-	
-	return (unsigned long) g_current_video_mode;
+unsigned long videoGetMode (void)
+{
+    return (unsigned long) g_current_video_mode;
 }
 
 
@@ -501,12 +501,17 @@ unsigned long videoGetMode (void){
  * videoSetMode:
  *     Configura o modo de video atual.
  */
-void videoSetMode (unsigned long mode){
+void videoSetMode (unsigned long mode)
+{
 	
     unsigned long VideoMode;
     unsigned long Width;
 	unsigned long Height;
 	//continua...(outros parametros)
+
+
+    debug_print ("videoSetMode: [BUGBUG] This routine is wrong\n");
+
 
 	
 	VideoMode = (unsigned long) mode;
@@ -692,8 +697,8 @@ int videoInit (void){
     }
 
 
-    g_useGUI = 1;
-    VideoBlock.useGui = 1;
+    g_useGUI          = TRUE;
+    VideoBlock.useGui = TRUE;
 
 
     //
@@ -780,7 +785,7 @@ int videoInit (void){
 	//Na verdade video.c não tem acesso a essa variável,
 	//é preciso chamar o servidor através de um método para configurá-la.
 
-    gwsSetCurrentFontAddress ( VIDEO_BIOS_FONT8X8_ADDRESS );		
+    gwsSetCurrentFontAddress ( VIDEO_BIOS_FONT8X8_ADDRESS );
  
     // #todo: 
     // Usar a função que configura essas variáveis.
@@ -811,20 +816,20 @@ int videoInit (void){
        
     CONSOLE_TTYS[fg_console].cursor_color = COLOR_WHITE;
 
-    //position
-    CONSOLE_TTYS[fg_console].cursor_x = 0;
-    CONSOLE_TTYS[fg_console].cursor_y = 8;
-
-    //margin
+    // Cursor margin
     CONSOLE_TTYS[fg_console].cursor_left = 0;      // Margem esquerda dada em linhas.
-    CONSOLE_TTYS[fg_console].cursor_top = 0;       // Margem superior dada em linhas.
+    CONSOLE_TTYS[fg_console].cursor_top  = 0;      // Margem superior dada em linhas.
     
-    //limits
+    // Cursor limits
     CONSOLE_TTYS[fg_console].cursor_right  = 256;  // Margem direita dada em linhas.
     CONSOLE_TTYS[fg_console].cursor_bottom = 256;  // Margem inferior dada em linhas.
 
-    // Onde esta isso?
+
+    // Cursor position
+    // See: system.c
     set_up_cursor(0,0);
+    CONSOLE_TTYS[fg_console].cursor_x = 0;
+    CONSOLE_TTYS[fg_console].cursor_y = 0;
 
 
 	//Continua ...
@@ -837,10 +842,8 @@ int videoInit (void){
     // @todo: Sizes, atribute, atribute color, row, column
 	//
 
-    g_driver_video_initialized = 1;
-	
-	
-	
+
+
 	
 	// #DEBUG
 	// breakpoint
@@ -888,7 +891,10 @@ int Video_initialize(void)
     videoVideo();
     videoInit();
     // ...
-    
+
+    // Done
+    g_driver_video_initialized = TRUE;
+   
     return 0;
 }
 

@@ -159,6 +159,8 @@ static char *systemSwapFilePathName      = "/root/swap";  //'Arquivo' de paginaç
  *     @todo: Isso pode ir para outro lugar.   
  */
 
+// #todo: Maybe move this to user/
+
 void set_up_color ( unsigned long color )
 {
     g_system_color = (unsigned long) color;
@@ -174,6 +176,8 @@ void set_up_color ( unsigned long color )
  *     @todo: Isso pode ir para outro lugar.
  */
 
+// #todo: Maybe move this to user/
+
 void 
 set_up_text_color ( 
     unsigned char forecolor, 
@@ -183,47 +187,10 @@ set_up_text_color (
 }
 
 
-/*
- * set_up_cursor:
- *     Setup cursor for the current virtual console.
- */
 
-// We can move this to another place.
-
-void set_up_cursor ( unsigned long x, unsigned long y )
-{
-    if (fg_console<0){ return; }
-
-    CONSOLE_TTYS[fg_console].cursor_x = (unsigned long) x;
-    CONSOLE_TTYS[fg_console].cursor_y = (unsigned long) y;
-}
-
-/*
- * get_cursor_x:
- *     Pega o valor de x.
- *     @todo: Isso pode ir para outro lugar.
- */
-
-unsigned long get_cursor_x (void)
-{
-    return (unsigned long) CONSOLE_TTYS[fg_console].cursor_x;
-}
-
-/*
- * get_cursor_y:
- *     Pega o valor de y.
- *     @todo: Isso pode ir para outro lugar.
- */
-
-unsigned long get_cursor_y (void)
-{
-    return (unsigned long) CONSOLE_TTYS[fg_console].cursor_y; 
-}
-
-
+// used?
 void *systemNull (void)
 {
-    // ?
     return NULL;
 }
 
@@ -305,10 +272,8 @@ void systemSetupVersion (void){
         //pois existem aplicações que dependem da versão do sistema 
         //para funcionarem corretamente.. 
 
-    if ( (void *) VersionInfo == NULL )
-    {
-        panic ("systemSetupVersion: VersionInfo");
-
+    if ( (void *) VersionInfo == NULL ){
+        panic ("systemSetupVersion: VersionInfo\n");
     }else{
 
         // #todo
@@ -363,7 +328,7 @@ int SystemMenu (void){
 
 	// Tentativa de utilizar control menu não estando no modo gráafico.
 
-    if ( VideoBlock.useGui != 1 )
+    if ( VideoBlock.useGui != TRUE )
     {
         // #todo: 
         // Notificar erro via modo texto.
@@ -372,35 +337,26 @@ int SystemMenu (void){
     }
 
 
-	//
 	// Usar a estrutura da Client Area.
 	// A área da tela menos a área da barra de tarefas, ou barra de menu.
-	//
 
-
-	//
-	// ?? desktop ?? 
-	// Uma estrutura de janela , dentro da estrutura gui.
-	//
-
-    if ( (void *) gui->desktop == NULL )
+    if ( (void *) gui->root_window == NULL )
     {
-        gui->desktop = (void *) gui->screen;
+        gui->root_window = (void *) gui->screen;
 
 		//No Screen.
-        if ( (void *) gui->desktop == NULL )
+        if ( (void *) gui->root_window == NULL )
         {
 			//erro.
             return (int) 1;    
         }
     }
 
-
 	//Set current.
 
-    if ( (void *) gui->desktop != NULL )
+    if ( (void *) gui->root_window != NULL )
     {
-        Current = (void *) gui->desktop;
+        Current = (void *) gui->root_window;
     }
 
 
@@ -1449,6 +1405,12 @@ unsigned long systemGetSystemMetrics ( int index )
            //refresh_screen();
            return (unsigned long) WindowServer_initialized; 
            break;
+        
+        // is quemu
+        case 300:
+            return (unsigned long) g_is_qemu;
+            break;
+           
 
         // ...
                 

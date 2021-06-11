@@ -17,7 +17,6 @@
  * 
  * History:
  *     2015 - Create by Fred Nora.
- *     2016 - Revision.
  */
 
 
@@ -420,7 +419,7 @@ void thread_show_profiler_info (void){
 
 struct thread_d *threadCopyThread ( struct thread_d *thread ){
 
-    struct thread_d *clone;
+    struct thread_d  *clone;
 
     // Counters.
     int w=0;
@@ -453,8 +452,13 @@ struct thread_d *threadCopyThread ( struct thread_d *thread ){
     // thread->eip
     // thread->esp
     
-    clone = (struct thread_d *) create_thread ( NULL, NULL, NULL, 
-                                    thread->eip, thread->esp, //0, 0,  
+    // #todo:We need a better name
+    // use a buffer for that
+    // char nameBuffer[32];
+    
+    clone = (struct thread_d *) create_thread ( 
+                                    NULL, NULL, NULL, 
+                                    thread->eip, thread->esp,
                                     current_process, "clone-thread" );
 
     // The copy.
@@ -463,15 +467,25 @@ struct thread_d *threadCopyThread ( struct thread_d *thread ){
     }
 
 
+//
+// Saving ...
+//
+
     // Saving.
     // See: thread.h
+
     ClonedThread = clone;
 
-	//
-	// Caracteristicas.
-	//
 
-    clone->type = thread->type; 
+//
+// input model
+//
+
+    // type and input model.
+
+    clone->type        = thread->type; 
+    clone->input_model = thread->input_model; 
+
 
 	// #importante
 	// Esse momento � critico.
@@ -523,30 +537,38 @@ struct thread_d *threadCopyThread ( struct thread_d *thread ){
     // step - Quantas vezes ela usou o processador no total.
     // quantum_limit - (9*2);  O boost n�o deve ultrapassar o limite. 
 
-    clone->step = thread->step; 
 
+//
+// == Jiffies ==============
+//
+
+    clone->step = 0;
+
+    // clone->step          = thread->step; 
+    
     clone->quantum       = thread->quantum; 
     clone->quantum_limit = thread->quantum_limit;
+
 
 	// runningCount - Tempo rodando antes de parar.
 	// readyCount - Tempo de espera para retomar a execução.
 	// blockedCount - Tempo bloqueada.
 
-    clone->standbyCount = thread->standbyCount;
-    clone->runningCount = thread->runningCount; 
-
+    clone->standbyCount    = thread->standbyCount;
+    clone->runningCount    = thread->runningCount; 
     clone->initial_time_ms = thread->initial_time_ms;
     clone->total_time_ms   = thread->total_time_ms;
+
 
     //quantidade de tempo rodadndo dado em ms.
     clone->runningCount_ms = thread->runningCount_ms;
 
-    clone->readyCount    = thread->readyCount; 
-    clone->ready_limit   = thread->ready_limit;
-    clone->waitingCount  = thread->waitingCount;
-    clone->waiting_limit = thread->waiting_limit;
-    clone->blockedCount  = thread->blockedCount; 
-    clone->blocked_limit = thread->blocked_limit;
+    clone->readyCount      = thread->readyCount; 
+    clone->ready_limit     = thread->ready_limit;
+    clone->waitingCount    = thread->waitingCount;
+    clone->waiting_limit   = thread->waiting_limit;
+    clone->blockedCount    = thread->blockedCount; 
+    clone->blocked_limit   = thread->blocked_limit;
 
     // Not used now. But it works fine.
 
@@ -678,6 +700,8 @@ struct thread_d *threadCopyThread ( struct thread_d *thread ){
          clone->msg_list[q]    = 0;
          clone->long1_list[q]  = 0;
          clone->long2_list[q]  = 0;
+         
+         // ...
     };
     clone->head_pos = 0;
     clone->tail_pos = 0;
@@ -850,19 +874,21 @@ struct thread_d *create_thread (
 	//Checar se a prioridade � um argumento v�lido.
 	//if( priority == 0 ){}
 
-	
-	// Filtrar o processo ao qual a thread pertencer�.
-	
-	ProcessID = (int) pid;
-	
+    // #todo
+    // Filtrar o processo ao qual a thread pertencer�.
+
+    ProcessID = (int) pid;
+
     if( ProcessID < 0 || 
         ProcessID >= PROCESS_COUNT_MAX )
     {
 		// #bugbug:
 		// N�o sabemos a condi��o do processo atual para 
 		// permitirmos que ele seja o dono da thread.
-		ProcessID = current_process;
+		
+        ProcessID = current_process;
     }
+
 
 	// Ja temos um PID para o processo que � dono da thread.
 
@@ -878,11 +904,14 @@ struct thread_d *create_thread (
     Thread = (void *) kmalloc ( sizeof(struct thread_d) );
 
     if ( (void *) Thread == NULL ){
-        panic ("create_thread: Thread\n");
-    }else{  
+        panic ("create_thread: [FAIL] Thread\n");
+    }else{
+        
         //Indica � qual proesso a thread pertence.
-       //Thread->process = (void*) Process;
+        
+        // Thread->process = (void*) Process;
     };
+
 
 	//Nothing.
 
@@ -911,11 +940,21 @@ get_next:
         goto get_next;
     
     }else{
-        // Object and validation.
+
         Thread->objectType  = ObjectTypeThread;
         Thread->objectClass = ObjectClassKernelObjects;
-        Thread->used = 1;
-        Thread->magic = 1234;
+        Thread->used  = TRUE;
+        Thread->magic = THREAD_MAGIC;
+
+        Thread->type = THREAD_TYPE_NULL; 
+
+        // #todo
+        // #important
+        // This will affect the input model
+        Thread->input_model = THREAD_INPUTMODEL_NULL;
+
+        // Undefined
+        Thread->position = 0;
 
         // c,Put in list.
         // Iniciamos em 100. 
@@ -1021,6 +1060,9 @@ get_next:
         // step: 
         // How many jiffies. total_jiffies.
         // Quantas vezes ela já rodou no total.
+        
+        // Jiffies.
+        
         Thread->step = 0;
 
         // Quantum. 
@@ -1515,118 +1557,14 @@ struct thread_d *process_from_tid( int thread_tid )
 
 
 
-/*
- **********************************************************
- * thread_getchar:
- *     Esse eh o serviço 137.
- */
-
-// #bugbug
-// Rever isso.
-
-// Isso eh um metodo alternativo de pegar input.
-// Ainda esta sobre avaliaçao.
-// Isso eh usado pela biblioteca stdio em user mode
-// na funçao 'getchar()'
-// Isso tambem eh usado por gde_getchar em libcore/ em grass/
-// ??? Pega caractere no stdin do teclado.
-
-
-// only keydown
-
+// #bugbug 
+// It's a work in progress
 int thread_getchar (void)
 {
-
-    unsigned char SC=0;
-    int save=0;
-
-	// #bugbug
-	// Pode ser que esse aplicativo n�o tenha janela,
-	// mas esteja rodando na janela do shell.
-
-
-    struct thread_d  *t;
-    struct window_d  *w;
-
-	//
-	// Bloqueia pra que nenhum aplicativo pegue mensagens 
-	// na estrutura de janela at� que window_getch termine.
-	//
-	
-	//window_getch_lock = 1;
- 
-	//pega o char em current_stdin.
-	//isso est� em kdrivers/x/i8042/keyboard.c
-
-    // Translate and put the event in the threds event queue.
-    // Isso coloca a mensagem na thread de controle da 
-    // janela com o foco de entrada.
-
-    SC = (unsigned char) get_scancode(); 
-
-    // #todo
-    //  trocar isso por foreground_thread.
-
-    KGWS_SEND_KEYBOARD_MESSAGE ( foreground_thread, SC ); 
-
-
-    // Get the event.
-    // #importante
-    // Deve ser a thread da janela com o foco de entrada.
-    // Window.
-
-    w = (void *) windowList[window_with_focus];
-
-    if ( (void *) w == NULL ){
-        panic ("thread_getchar: w");
-    }else{
-        if ( w->used != 1 || w->magic != 1234 ){
-            panic ("thread_getchar: w validation");
-        }
-
-        // Thread.
-        t = (void *) w->control;
-        
-        // Invalid
-        if ( (void *) t == NULL ){  goto fail;  }
-    };
-
-    // Thread validation.
-    if ( (void *) t != NULL )
-    {
-        // validation
-        if ( t->used == TRUE && t->magic == 1234 )
-        {
-            if ( t->ke_newmessageFlag != 1 ){  goto fail; }
-            
-            // == Only keydown ====================================
-            if ( t->ke_msg != MSG_KEYDOWN ){  goto fail;  }
-    
-            // salva o char.
-            save = (int) t->ke_long1;
-
-            // Limpa.
-            // Sinaliza que a mensagem foi consumida, 
-            // e que nao temos nova mensagem.
-            
-            // Kernel single event.
-
-            t->ke_window = NULL;
-            t->ke_msg    = 0;
-            t->ke_long1  = 0;
-            t->ke_long2  = 0;
-
-            t->ke_newmessageFlag = FALSE;
-
-            // OK. Return the char.
-            return (int) save;
-        }
-    }
-
-// Fail.
-fail:
-    return (int) -1; 
+    debug_print ("thread_getchar: [FIXME]\n");
+    return (int) ps2tty_get_byte_from_input_buffer(); 
 }
+
 
 
 

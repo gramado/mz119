@@ -1,5 +1,5 @@
 /*
- * File: pages.c
+ * File: mm/pages.c
  *
  *     Faz a configura��o da pagina��o de mem�ria e oferece rotinas de
  * suporte ao mapeamento de mem�ria f�sica.
@@ -1049,7 +1049,14 @@ int mmSetUpPaging (void)
     unsigned long *extraheap2_page_table = (unsigned long *) PAGETABLE_EXTRAHEAP2;
     unsigned long *extraheap3_page_table = (unsigned long *) PAGETABLE_EXTRAHEAP3;
 
-    //...
+    // ...
+    
+    
+    debug_print("mmSetUpPaging:\n");
+
+
+
+
 
 	//
 	// SYSTEM MEMORY * PAGED POOLS 
@@ -1062,9 +1069,12 @@ int mmSetUpPaging (void)
 
     // Message. (verbose).
 
-#ifdef PS_VERBOSE
-    printf ("mmSetUpPaging: Initializing Pages..\n");
-#endif
+
+// #debug
+//#ifdef PS_VERBOSE
+    // printf ("mmSetUpPaging: Initializing Pages..\n");
+    // refresh_screen();
+//#endif
 
 
 	//
@@ -1136,8 +1146,8 @@ int mmSetUpPaging (void)
 
     for ( i=0; i < 1024; ++i )
     {
-        km_page_table[i] = (unsigned long) SMALL_origin_pa | 3;     
-        SMALL_origin_pa  = (unsigned long) SMALL_origin_pa + 4096;  
+        km_page_table[i] = (unsigned long) SMALL_origin_pa | 3; 
+        SMALL_origin_pa  = (unsigned long) SMALL_origin_pa + 4096; 
     };
     page_directory[ENTRY_KERNELMODE_PAGES] = (unsigned long) &km_page_table[0];      
     page_directory[ENTRY_KERNELMODE_PAGES] = (unsigned long) page_directory[ENTRY_KERNELMODE_PAGES] | 3;  
@@ -1280,6 +1290,11 @@ int mmSetUpPaging (void)
 
     // #importante:	
     // O endere�o f�sico e virtual s�o iguais para essa tabela.
+    // #todo
+    // Não precisamos mapear todos os 4MB para esse fim.
+    // somente o tamanho da memória de video.
+    // NO fim das contas a gente nem usa essa memória, pois o
+    // kernel ainda não suporta o modo texto. Mas quem sabe algum dia.
 
     for ( i=0; i < 1024; ++i )
     {
@@ -1450,10 +1465,10 @@ int mmSetUpPaging (void)
     // Endere�o virtual do pool de heaps.
     // Os heaps nessa �rea ser�o dados para os processos.
 
-    g_heappool_va = (unsigned long) XXXHEAPPOOL_VA; //0xC1000000;
-    g_heap_count = 0;
+    g_heappool_va    = (unsigned long) XXXHEAPPOOL_VA; //0xC1000000;
+    g_heap_count     = 0;
     g_heap_count_max = G_DEFAULT_PROCESSHEAP_COUNTMAX;
-    g_heap_size = G_DEFAULT_PROCESSHEAP_SIZE;
+    g_heap_size      = G_DEFAULT_PROCESSHEAP_SIZE;
 
 
     // >> (user mode).
@@ -1486,8 +1501,8 @@ int mmSetUpPaging (void)
     // +++++++
     // Extra heap 1.
     // >>> (user mode).
-    g_extraheap1_va = (unsigned long) XXXEXTRAHEAP1_VA;  //0xC1400000;
-    g_extraheap1_size = G_DEFAULT_EXTRAHEAP_SIZE;        //4MB
+    g_extraheap1_va   = (unsigned long) XXXEXTRAHEAP1_VA;  //0xC1400000;
+    g_extraheap1_size = G_DEFAULT_EXTRAHEAP_SIZE;          //4MB
 
 
     // 4096 KB = (4 MB).
@@ -1509,8 +1524,8 @@ int mmSetUpPaging (void)
     // +++++++
     // Extra heap 2.
     // >>> (user mode).
-    g_extraheap2_va = (unsigned long) XXXEXTRAHEAP2_VA;  //0xC1800000;
-    g_extraheap2_size = G_DEFAULT_EXTRAHEAP_SIZE;        //4MB
+    g_extraheap2_va   = (unsigned long) XXXEXTRAHEAP2_VA;  //0xC1800000;
+    g_extraheap2_size = G_DEFAULT_EXTRAHEAP_SIZE;          //4MB
 
 
     // 4096 KB = (4 MB).
@@ -1622,10 +1637,9 @@ int mmSetUpPaging (void)
     };
 
 
-    //
-    // Memory size.
-    //
-
+//
+// Memory size
+//
 
     // #Importante
     // Agora vamos calcular a quantidade de mem�ria f�sica usada 
@@ -1641,8 +1655,6 @@ int mmSetUpPaging (void)
     // Tem a quest�o do dma a se considerar tamb�m.
     // Tem dma abaixo da marca de 16mb.
     // Tem dma que usa mem�ria virtual.
-
-
 
     // Used.
     memorysizeUsed = (unsigned long) ( mm_used_kernel_area + 
@@ -1729,21 +1741,6 @@ int mmSetUpPaging (void)
 	//     #verbose.
 
 
-#ifdef PS_VERBOSE
-    printf ("Debug:\n");
-    printf ("Setup CR3={%x}\n", (unsigned long) &page_directory[0]);
-    printf ("Page={%x} \n",     (unsigned long) &km_page_table[0]);
-    printf ("Page={%x} \n",     (unsigned long) &km2_page_table[0]);
-    printf ("Page={%x} \n",     (unsigned long) &um_page_table[0]);
-    printf ("Page={%x} \n",     (unsigned long) &cga_page_table[0]);
-    printf ("Page={%x} \n",     (unsigned long) &frontbuffer_page_table[0]);
-    printf ("Page={%x} \n",     (unsigned long) &backbuffer_page_table[0]);
-    printf ("Page={%x} \n",     (unsigned long) &pagedpool_page_table[0]);
-    // ...
-	//refresh_screen();
-	//while(1){};
-#endif
-
 	// Obs: 
 	// Podemos reaproveitas pagetables em diferentes processos.
 
@@ -1824,7 +1821,7 @@ int mmSetUpPaging (void)
     if ( (void *) kfp != NULL  )
     {
 		kfp->id = 0;
-		kfp->used = 1;
+		kfp->used  = TRUE;
 		kfp->magic = 1234;
 		
 		//?? Come�a em 0 MB. ??
@@ -1858,7 +1855,7 @@ int mmSetUpPaging (void)
     if ( (void *) small_fp != NULL  )
     {
 		small_fp->id = 1;
-		small_fp->used = 1;
+		small_fp->used  = TRUE;
 		small_fp->magic = 1234;
 		
 		//Come�a em 4 MB.
@@ -1897,7 +1894,7 @@ int mmSetUpPaging (void)
     if( (void *) pageable_fp != NULL  )
     {
 		pageable_fp->id = 5;   //quinto �ndice.
-		pageable_fp->used = 1;
+		pageable_fp->used  = TRUE;
 		pageable_fp->magic = 1234;
 		
 		//Come�a em 20 MB.
@@ -1919,12 +1916,9 @@ int mmSetUpPaging (void)
 
 	// More ?
 
-// Done.
-	
-#ifdef MK_VERBOSE
-    printf ("Done\n");
-#endif
 
+//done:
+    debug_print("mmSetUpPaging: done\n");
     return 0;
 }
 
@@ -1932,6 +1926,7 @@ int mmSetUpPaging (void)
 
 
 // Checar se a estrutura de p'agina � nula
+// This is very ugly
 int pEmpty (struct page_d *p)
 {
     return p == NULL ? 1 : 0;
@@ -1980,10 +1975,10 @@ virtual_to_physical (
 {
 
     if (dir_va == 0){
-        panic ("virtual_to_physical: invalid dir va");
+        panic ("virtual_to_physical: invalid dir_va\b");
     }
 
-    // Directory.
+    // Directory
     unsigned long *dir = (unsigned long *) dir_va;
 
     unsigned long tmp=0;
@@ -1995,19 +1990,16 @@ virtual_to_physical (
 
 
 
-	// Temos o endere�o da pt junto com as flags.
+    // Temos o endereço da pt junto com as flags.
     tmp = (unsigned long) dir[d];
-
 
     // Page table.
     unsigned long *pt = (unsigned long *) (tmp & 0xFFFFF000);
 
-
-	// Encontramos o endereço base do page frame.
+    // Encontramos o endereço base do page frame.
     tmp = (unsigned long) pt[t];
 
     address = (tmp & 0xFFFFF000);
-
 
     return (unsigned long) (address + o);
 }

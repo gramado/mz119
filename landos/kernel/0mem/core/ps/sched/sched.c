@@ -142,7 +142,8 @@ struct thread_d *pick_next_thread (void){
 prepare_next:
 
 	//
-	// # Checando a validade da next thread. #
+	// # Checando a validade da next thread. # 
+	// THREAD_COUNT_MAX
 	//
 
     next = (void *) threadList[next_thread];
@@ -182,6 +183,31 @@ prepare_next:
     return NULL;
 }
 
+
+// Double shot the current thread.
+void sched_double_shot(void)
+{
+    struct thread_d  *t;
+
+    // #todo:
+    // Check max limit
+    
+    if (current_thread < 0 || current_thread >= THREAD_COUNT_MAX)
+    {
+        return;  //fail
+    }
+
+    t = (void *) threadList[current_thread];
+    
+    if ( (void*) t == NULL ){ return; }
+    
+    if ( t->used != TRUE || t->magic != 1234 )
+    {
+        return;  //fail
+    }
+    
+    t->DoubleShot = TRUE;
+}
 
 
 
@@ -223,10 +249,13 @@ prepare_next:
 
 int scheduler (void){
 
+    int FirstTID = -1;
+
     // loop
     register int i=0;
 
-    struct thread_d *TmpThread;
+
+    struct thread_d  *TmpThread;
 
 
 #ifdef SERIAL_DEBUG_VERBOSE
@@ -234,20 +263,80 @@ int scheduler (void){
 #endif
 
 
-    // tmpConductor and it's next. 
-    tmpConductor       = (void *) rootConductor;
-    tmpConductor->next = (void *) ____IDLE;
+//
+// rootConductor: 
+// The ring0 idle thread.
+//
 
-    // The global conductor.
-    Conductor = (void *) tmpConductor->next;
+    rootConductor = (void *) ____IDLE;
+
+    // Check
+    if ( (void*) rootConductor == NULL )
+        panic ("scheduler: rootConductor\n");
+
+    if (rootConductor->used != TRUE || rootConductor->magic != 1234)
+        panic ("scheduler: rootConductor validation\n");
+
+    FirstTID = (int) rootConductor->tid;
+
+    if ( FirstTID < 0 || FirstTID >= THREAD_COUNT_MAX )
+        panic ("scheduler: FirstTID\n");
+
+//
+// rootConductor->next: 
+// The control thread of the ring3 init process.
+//
+
+    if ( (void*) InitProcess == NULL )
+        panic ("scheduler: InitProcess\n");
+
+    if ( (void*) InitProcess->control == NULL )
+        panic ("scheduler: InitProcess->control\n");
+
+    rootConductor->next = (void*) InitProcess->control;
+
+    // Check
+    if ( (void*) rootConductor->next == NULL )
+        panic ("scheduler: rootConductor->next\n");
+
+//
+// Conductor
+//
+
+    Conductor = (void *) rootConductor;
+
+//
+// Conductor->next
+//
+
+    Conductor->next = (void *) rootConductor;
+
+//
+// tmpConductor
+//
+
+    tmpConductor = (void *) rootConductor;
+
+//
+// tmpConductor->next
+//
+
+    tmpConductor->next = (void *) rootConductor;
+
+
+//
+// Walking ...
+//
 
     // READY threads in the threadList[].
+ 
     for ( i=0; i < THREAD_COUNT_MAX; ++i )
     {
         TmpThread = (void *) threadList[i];
 
         if ( (void *) TmpThread != NULL )
         {
+            // Single shot
             if ( TmpThread->used  == TRUE && 
                  TmpThread->magic == 1234 && 
                  TmpThread->state == READY )
@@ -259,6 +348,7 @@ int scheduler (void){
         }
     };
 
+
     // #todo
     // Let's try some other lists.
 
@@ -268,9 +358,11 @@ int scheduler (void){
     tmpConductor->next = NULL;
 
 
-    return (int) rootConductor->tid;
-    //return (int) tmpConductor->tid;
-    //return (int) Conductor->tid;
+// done:
+
+    // Start with the idle thread.
+
+    return (int) FirstTID;
 }
 
 

@@ -1,14 +1,13 @@
 ;
-; File: x86/hw.inc 
+; File: x86/pumpcore/hw.inc 
 ;
 ; Descrição:
 ;     Interrupções de hardware.
 ;     Irqs e interrupções reservadas (faults,etc).
 ;     Ordem: Primeiro as irqs, depois as outras.
 ;
-; Histórico:
-;     Versão: 1.0, 2015 - Esse arquivo foi criado por Fred Nora.
-;     Versão: 1.0, 2016 - Revisão.
+; History:
+;     2015 - Created by Fred Nora.
 ;
 
 
@@ -86,11 +85,21 @@ extern _current_process_pagedirectory_address
 ;; IRQ 0. 
 ;; Timer interrupt handler
 ;;
+;; See:
+;; 1pump/arch/x86/pit.c
+;; 0mem/core/ps/disp/ts.c
+;;
+
+; extern _irq0PendingEOI
 
 global _irq0
 _irq0:
 
     cli
+    
+    ; No caso do dispatcher lançar uma nova thread,
+    ; então ele deve acionar enviar um EIO.
+    ; mov dword [_irq0PendingEOI], 1
 
     ;; == Save context ====================
     
@@ -126,6 +135,8 @@ _irq0:
     ;; #important:
     ;; We are using the kernel segment registers.
     ;; Kernel data segments and stack.
+    ;; #bugbug: sempre a mesma pilha?
+    ;; Que pilha as interrupçoes de softwar estao usando?
 
     xor eax, eax
     mov ax, word KERNEL_DS
@@ -188,7 +199,11 @@ dummy_flush:
     mov al, 20h
     out 20h, al  
     IODELAY  
-    
+
+    ;; variável usada pelo dispatcher.
+    ;mov dword [_irq0PendingEOI], 0
+
+
     ; Acumulator.
     mov eax, dword [_contextEAX]
 
@@ -210,19 +225,6 @@ global _timer_test
 _timer_test:
     jmp unhandled_irq
     jmp $
-    ;cli
-    ;mov al, 20h
-    ;out 20h, al  
-    ;sti
-    ;iretd
-
-
-
-;--------------------------------------- 
-; timer_interrupt:
-;    Timer interrupt handler.
-;    Provisório.
-;
 
 timer_interrupt:
     jmp unhandled_irq
@@ -230,7 +232,10 @@ timer_interrupt:
 
 
 
-;;; ????????
+
+;; ??
+;; #todo:
+;; Move these thing to another place.
 
 _currentTask:
     dd 0
@@ -247,6 +252,9 @@ _stackPointers:
 ; _irq1:
 ;     IRQ 1 - Keyboard.
 ;
+; See:
+; 2io/dev/tty/chardev/hid/i8042/keyboard.c
+;
 
 global _irq1  
 _irq1:
@@ -254,6 +262,7 @@ _irq1:
     cli
 
     ;; Acumulator.
+    ; #todo: push eax
     push dword eax
 
     pushad
@@ -383,11 +392,11 @@ _irq4:
 
 
 
-
 ;===================================================
-;IRQ 7 parallel port 1. It is used for printers 
+;IRQ 7 parallel port 1. 
+; It is used for printers 
 ; or for any parallel port 
-;if a printer is not present. It can also be potentially 
+; if a printer is not present. It can also be potentially 
 ; be shared with a secondary sound card with careful 
 ; management of the port.
 
@@ -396,8 +405,6 @@ _irq4:
 ;; If it is a real IRQ then it is treated the same as any other real 
 ;; IRQ. If it is a spurious IRQ then you ignore it 
 ;; (and do not send the EOI). 
-
-
 
 global _irq7
 _irq7:
@@ -476,6 +483,10 @@ extern _xxxe1000handler
 
 global _irq9
 _irq9:
+    
+    ;; #test
+    jmp unhandled_irq
+    jmp $
 
     cli
     pushad
@@ -499,12 +510,16 @@ _irq9:
 
 
 ;========================================================
-; IRQ 10 – The Interrupt is left open for the use 
+; IRQ 10  The Interrupt is left open for the use 
 ; of peripherals (open interrupt/available, SCSI or NIC)
 ; nvidia
 
 global _irq10
 _irq10:
+
+    ;; #test
+    jmp unhandled_irq
+    jmp $
 
     cli
     pushad
@@ -522,7 +537,6 @@ _irq10:
     popad
     sti
     iretd
-
 
 
 ;;===============================================
@@ -546,13 +560,16 @@ _nic_handler:
     iretd
 
 
-
 ;=======================================
 ; IRQ 11 - The Interrupt is left open for 
 ; the use of peripherals (open interrupt/available, SCSI or NIC)
 ; audio.
 global _irq11
 _irq11:
+
+    ;; #test
+    jmp unhandled_irq
+    jmp $
 
     cli
     pushad
@@ -577,6 +594,9 @@ _irq11:
 ;=======================================
 ; IRQ 12 - mouse on PS/2 connector
 ;
+; See:
+; 2io/dev/tty/chardev/hid/i8042/mouse.c
+;
 
 global _irq12
 _irq12:
@@ -595,8 +615,10 @@ _irq12:
     ;; EOI.
     ;; Order: Second, first.
     mov al, 0x20
+    
     out 0xA0, al 
     IODELAY 
+    
     out 0x20, al
     IODELAY 
 
@@ -621,6 +643,10 @@ _irq12:
 global _irq13
 _irq13:
 
+    ;; #test
+    jmp unhandled_irq
+    jmp $
+
     cli
     push ax 
 
@@ -640,14 +666,12 @@ _irq13:
     iretd
 
 
-;=================================================	
+;============================================
 ; _irq14:
 ;     Tratador de interrupções para unidade master.
 ;     IRQ 14 - primary ATA channel 
 ;     ( ATA interface usually serves hard disk drives and CD drives ) 
 ;     O timer precisa ser desbilitado. ??
-;
-
 
 global _irq14
 _irq14:
@@ -680,7 +704,6 @@ _irq14:
 ;     Tratador de interrupções para unidade slave.
 ;     IRQ 15 - secondary ATA channel
 ;     O timer precisa ser desbilitado. ??
-;
 
 ;; The correct way to handle an IRQ 15 is similar, but a little trickier 
 ;; due to the interaction between the slave PIC and the master PIC. 
@@ -690,8 +713,6 @@ _irq14:
 ;; EOI to the slave PIC; however you will still need to send the EOI 
 ;; to the master PIC because the master PIC itself won't know that it 
 ;; was a spurious IRQ from the slave. 
-
-
 
 global _irq15
 _irq15:
@@ -766,7 +787,8 @@ unhandled_irq:
 extern _faults
 
 ;
-; Obs: Enquanto tratamos uma excessão ou flaul, não desejamos
+; Obs: 
+; Enquanto tratamos uma excessão ou fault, não desejamos
 ; que uma interrupção de timer atrapalhe, então vamos desabilitar
 ; as interrupções.
 ;
@@ -1082,20 +1104,20 @@ all_faults:
     ;;
     
     ; Chama a rotina em C.
-    ;Passa o argumento via pilha.
+    ; Passa o argumento via pilha.
     push dword [save_fault_number]
 
-    ;Chama código em C. (faults.c)
+    ; Chama código em C. (faults.c)
     call _faults 
-
+;.Lhang
 .hang:
     cli
     hlt
     jmp .hang
 
 
-	; @todo: 
-	;     Existe ERROR NUMBER em algumas exceções ?
+; @todo: 
+;     Existe ERROR NUMBER em algumas exceções ?
 
 ;Salva aqui o número da fault.	
 save_fault_number: 

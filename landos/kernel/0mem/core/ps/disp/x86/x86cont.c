@@ -1,5 +1,5 @@
 /*
- * File: ps/disp/x86cont.c
+ * File: ps/disp/x86/x86cont.c
  *
  * Context switching:
  * Saving and restoring the x86 cpu context.
@@ -7,7 +7,6 @@
  *
  * History:
  *     2015 - Created by Fred Nora.
- *     //...
  */
 
 
@@ -17,9 +16,9 @@
 extern void set_page_dir (void);
 
 
-static inline void ckSetCr3 ( unsigned long value )
+static inline void ckSetCr3 ( unsigned long physical_address )
 {
-    asm ( "mov %0, %%cr3" : : "r" (value) );
+    asm ( "mov %0, %%cr3" : : "r" (physical_address) );
 }
 
 
@@ -32,45 +31,39 @@ static inline uint32_t ckGetCr3()
 }
 */
 
-
-//
-// Vari�veis internas. 
-//
-
-//int contextStatus;
-//int contextError;
-//int contextCpuType;
-//...
+// ===============================================
 
 
 // Context:
-//     Vari�veis para salvar o contexto.
-//     Essas vari�veis devem permanecer encapsuladas
-//     nesse arquivo d� m�dulo. Somente esse
-//     arquivo ter� acesso � essas vari�veis.
-//     
-//     *IMPORTANTE:
-//         Obviamente a rotina _irq0, que � o handler
-//         do timer est� acessando essas vari�veis
-//         fazendo uso d 'extern'. 
-
+// Variáveis para salvar o contexto para x86.
+// Essas variáveis devem permanecer encapsuladas nesse arquivo 
+// do módulo. 
+// Somente esse arquivo terá acesso direto à essas informações.
+// #importante
+// Algumas poucas rotinas vão importar essas variáveis.
 
 unsigned long contextSS;        // User mode.
 unsigned long contextESP;       // User mode.
 unsigned long contextEFLAGS; 
 unsigned long contextCS;
 unsigned long contextEIP;
+
 unsigned long contextDS;
 unsigned long contextES;
 unsigned long contextFS;
 unsigned long contextGS;
+
 unsigned long contextEAX;
 unsigned long contextEBX;
 unsigned long contextECX;
 unsigned long contextEDX;
+
 unsigned long contextESI;
 unsigned long contextEDI;
+
 unsigned long contextEBP;
+
+// ===============================================
 
 //
 // #todo: 
@@ -102,7 +95,7 @@ unsigned long contextEBP;
 
 void save_current_context (void){
 
-    struct thread_d *t;
+    struct thread_d  *t;
 
     // Context.
 	unsigned long *contextss  = (unsigned long *) &contextSS;
@@ -124,56 +117,61 @@ void save_current_context (void){
 	// Continua...
 
 
-    // Structure ~ Colocando o contexto na estrutura.	
+    // Structure ~ Colocando o contexto na estrutura.
+
+    if ( current_thread < 0 || current_thread >= THREAD_COUNT_MAX )
+    {
+        printk ("save_current_context: TID=%d\n", current_thread );
+        goto fail0;
+    }
 
     t = (void *) threadList[current_thread];
 
     if ( (void *) t == NULL ){
-        printf ("save_current_context error: Struct Thread={%d}\n",
+        printf ("save_current_context: [ERROR] Struct Thread={%d}\n",
             current_thread );
-        show_process_information ();    
-        die ();
+        goto fail1;
+    }
 
-    }else{
+    if ( t->used != TRUE || t->magic != 1234 )
+    {
+        printf ("save_current_context: [ERROR] Validation Thread={%d}\n",
+            current_thread );
+        goto fail1;
+    }
 
-        if ( t->used != 1 || t->magic != 1234 ){
-	        printf ("save_current_context error: Validation Thread={%d}\n",
-		        current_thread );
-		    show_process_information ();    
-            die();
-        }
+    // Fill the structure.
 
-	    // 
-	    // @todo: Checar. 
-	    //
+    // Stack frame
+    t->ss     = (unsigned long) contextss[0];      // usermode
+    t->esp    = (unsigned long) contextesp[0];     // usermode
+    t->eflags = (unsigned long) contexteflags[0];
+    t->cs     = (unsigned long) contextcs[0];
+    t->eip    = (unsigned long) contexteip[0];
 
+    // Segments
+    t->ds = (unsigned long) contextds[0];
+    t->es = (unsigned long) contextes[0];
+    t->fs = (unsigned long) contextfs[0];
+    t->gs = (unsigned long) contextgs[0];
 
-        t->ss     = (unsigned long) contextss[0];      //usermode.
-        t->esp    = (unsigned long) contextesp[0];     //usermode.
-        t->eflags = (unsigned long) contexteflags[0];
-        t->cs     = (unsigned long) contextcs[0];
-        t->eip    = (unsigned long) contexteip[0];
+    t->eax = (unsigned long) contexteax[0];
+    t->ebx = (unsigned long) contextebx[0];
+    t->ecx = (unsigned long) contextecx[0];
+    t->edx = (unsigned long) contextedx[0];
+    t->esi = (unsigned long) contextesi[0];
+    t->edi = (unsigned long) contextedi[0];
+    t->ebp = (unsigned long) contextebp[0];
 
-        t->ds = (unsigned long) contextds[0];
-        t->es = (unsigned long) contextes[0];
-        t->fs = (unsigned long) contextfs[0];
-        t->gs = (unsigned long) contextgs[0];
+    // ...
 
-        t->eax = (unsigned long) contexteax[0];
-        t->ebx = (unsigned long) contextebx[0];
-        t->ecx = (unsigned long) contextecx[0];
-        t->edx = (unsigned long) contextedx[0];
-        t->esi = (unsigned long) contextesi[0];
-        t->edi = (unsigned long) contextedi[0];
-        t->ebp = (unsigned long) contextebp[0];
-        //Continua...
-    };
-
-	//
-	// Flag. ??? Saved.
-	//
+//done:
+    return;
+fail1:
+    show_process_information();
+fail0:
+    die();
 }
-
 
 
 /*
@@ -190,7 +188,7 @@ void save_current_context (void){
 
 void restore_current_context (void){
 
-    struct thread_d *t;
+    struct thread_d  *t;
 
     // Context.
     unsigned long *contextss  = (unsigned long *) &contextSS;
@@ -212,69 +210,66 @@ void restore_current_context (void){
     // Continua ...
 
 
-    // Structure.
+    if ( current_thread < 0 || current_thread >= THREAD_COUNT_MAX )
+    {
+        printk ("restore_current_context: TID=%d\n", current_thread );
+        goto fail0;
+    }
+
     t = (void *) threadList[current_thread]; 
 
     if ( (void *) t == NULL ){
         printf("restore_current_context error: t\n");
-        show_process_information ();    
-        die ();
+        goto fail1;
+    }
 
-    } else {
+    // Validation
+    if ( t->used != TRUE || t->magic != 1234 )
+    {
+        printf("restore_current_context error: t validation\n");
+        goto fail1;
+    }
 
-        //
-        // Restore.
-        //
+//
+// Restore
+//
 
-        contextss[0]     = (unsigned long) t->ss & 0xffff;  // usermode.
-        contextesp[0]    = (unsigned long) t->esp;          // usermode. 
-        contexteflags[0] = (unsigned long) t->eflags;
-        contextcs[0]     = (unsigned long) t->cs & 0xffff;  
-        contexteip[0]    = (unsigned long) t->eip;
+    // Stack frame
+    contextss[0]     = (unsigned long) t->ss & 0xffff;  // usermode
+    contextesp[0]    = (unsigned long) t->esp;          // usermode 
+    contexteflags[0] = (unsigned long) t->eflags;
+    contextcs[0]     = (unsigned long) t->cs & 0xffff;  
+    contexteip[0]    = (unsigned long) t->eip;
 
-        contextds[0] = (unsigned long) t->ds & 0xffff;
-        contextes[0] = (unsigned long) t->es & 0xffff; 
-        contextfs[0] = (unsigned long) t->fs & 0xffff; 
-        contextgs[0] = (unsigned long) t->gs & 0xffff; 
- 
-        contexteax[0] = (unsigned long) t->eax;  
-        contextebx[0] = (unsigned long) t->ebx; 
-        contextecx[0] = (unsigned long) t->ecx;  
-        contextedx[0] = (unsigned long) t->edx; 
-        contextesi[0] = (unsigned long) t->esi;  
-        contextedi[0] = (unsigned long) t->edi; 
-        contextebp[0] = (unsigned long) t->ebp;  
-        // Continua...
-		
-		
-		//
-		//  ## CR3 ##
-		//
-		
-		// #importante
-		// Esse � o grande momento.
-		// � nessa hora em que colocamos o endere�o F�SICO do 
-		// diret�rio de p�ginas usado pela thread no registrador CR3.
-		
-		ckSetCr3 ( (unsigned long) t->DirectoryPA );
+    // Segments
+    contextds[0] = (unsigned long) t->ds & 0xffff;
+    contextes[0] = (unsigned long) t->es & 0xffff; 
+    contextfs[0] = (unsigned long) t->fs & 0xffff; 
+    contextgs[0] = (unsigned long) t->gs & 0xffff; 
 
-		
-		//
-		//  ## flush TLB ##
-		//
-	    
-		// #bugbug
-		// Esse flush � desnecess�rio, pois o assembly faz isso 
-		// pouco antes do iretd.
+    contexteax[0] = (unsigned long) t->eax;  
+    contextebx[0] = (unsigned long) t->ebx; 
+    contextecx[0] = (unsigned long) t->ecx;  
+    contextedx[0] = (unsigned long) t->edx; 
+    contextesi[0] = (unsigned long) t->esi;  
+    contextedi[0] = (unsigned long) t->edi; 
+    contextebp[0] = (unsigned long) t->ebp;  
+    // Continua...
 
-        asm ("movl %cr3, %eax");
-        // asm ("nop");
-        asm ("movl %eax, %cr3");
-    };
 
-	//
-	//flag ??...
-	//
+    // Restore CR3 and flush TLB.
+
+    ckSetCr3 ( (unsigned long) t->DirectoryPA );
+    asm ("movl %cr3, %eax");
+    asm ("movl %eax, %cr3");
+
+//done:
+    return;
+fail1:
+    show_process_information(); 
+fail0:
+    die();
+    //return;
 }
 
 
@@ -298,71 +293,54 @@ int contextCheckThreadRing3Context (int tid){
 
     struct thread_d *t; 
  
-	//Error. (default).
-    int Status = 1;    
-
-
     //...
-	
+
 	// Limits.
 	// Erro. Status.
-	
-	if ( tid < 0 || tid >= THREAD_COUNT_MAX )
-	{
-	    return (int) 1;    
-	}
-	
-	//Structure.
-	
-	t = (void *) threadList[tid]; 
-    
-	if ( (void *) t == NULL )
-	{
-	    //Erro. Status.
-		return (int) 1; 
-	
-	}else{
-		
-	    // validation.
-	    		
-	    if ( t->used != 1 || t->magic != 1234 )
-		{
-	        printf ("contextCheckThreadRing3Context: validation\n");
-		    return (int) 1;
-	    }  
-	
-	    //se � ring 3.
-		
-	    if ( t->iopl != 3 )
-		{
-	        printf("contextCheckThreadRing3Context: iopl\n");
-		    return (int) 1;
-	    };
-		
-		
-	    //Checa se os segmentos tem os valores v�lidos para ring 3.
-	    //0x1B para c�digo e 0x23 para dados.
-		
-	    if ( t->cs != 0x1B || 
-	         t->ds != 0x23 || 
-	         t->es != 0x23 ||
-	         t->fs != 0x23 ||
-	         t->gs != 0x23 ||
-	         t->ss != 0x23 ) 
-	    {
-	        printf ("contextCheckThreadRing3Context: segments fail t={%d}\n", 
-				tid );
-	        return (int) 1; 
-	    }
 
-    	//@todo: Continua checagem ...	
-	};
+    if ( tid < 0 || tid >= THREAD_COUNT_MAX )
+    {
+        return FALSE;
+    }
 
+    t = (void *) threadList[tid]; 
 
-	// Ok o contexto foi aprovado para ring 3. 
-	// Retorna 0.
+    if ( (void *) t == NULL )
+    {
+        return FALSE;
+    }
 
-	return (int) 0;
+    if ( t->used != TRUE || t->magic != 1234 )
+    {
+        debug_print("contextCheckThreadRing3Context: validation\n");
+        return FALSE;
+    }
+
+    // iopl
+
+    if ( t->iopl != 3 )
+    {
+        debug_print("contextCheckThreadRing3Context: iopl\n");
+        return FALSE;
+    }
+
+    // Segments
+
+    if ( t->cs != 0x1B || 
+         t->ds != 0x23 || 
+         t->es != 0x23 ||
+         t->fs != 0x23 ||
+         t->gs != 0x23 ||
+         t->ss != 0x23 ) 
+    {
+        debug_print("contextCheckThreadRing3Context: segments fail\n" );
+        return FALSE; 
+    }
+
+    // ...
+
+    // OK: This is a valid thread for ring3.
+    return TRUE;
 }
 
 

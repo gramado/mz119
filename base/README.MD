@@ -4,25 +4,8 @@
 	This is the root dir for the boot partition.
 	It uses the FAT16 files system. This is why we 
 	have 8.3 DOS style here.
-	
+
 	system partition:
 	We will create the system partition, it will be formated
 	in the ext2 file system format and it will use lowercase names.
 	
-	===================================================
-	
-	Folders:
-	
-	BIN/      Applications.
-	BOOT/     Boot time resources. The base kernel lives here.
-	DEV/      Devices.
-	DOCS/     Docummentation.
-	EFI/      EFI standard folder.
-	ETC/      stuff
-	HOME/     This is a place for user's directories.
-	LIB/      Libraries.
-	MNT/      Mounting point for new volumes.
-	RES/      Resources.
-	SBIN/     System applications.
-	TMP/      Temporary files.
-	USERS/    This is a place for user's information.

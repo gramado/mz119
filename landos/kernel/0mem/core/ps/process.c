@@ -1,8 +1,8 @@
 /*
  * File: ps/process.c 
  *
+ *     PM - Process Manager 
  *     Gerenciamento de processos.
- *     PM - Process Manager (Parte fundamental do Kernel Base).
  *     Interfaces para o kernel chamar as rotinas de gerenciamento de
  * processos. 
  *     As rotinas aqui s�o independentes da arquitetura, quem se preocupa
@@ -128,57 +128,61 @@ void power_pid (int pid, int power)
 }
 
 
-// Enter critical session.
-void process_enter_criticalsection (int pid){
-
-    struct process_d *p;
-
-    if (pid<0)
-        panic ("process_enter_criticalsection: pid \n");
-
-    // Process.
-
-    p = (void *) processList[pid];
-
-    if ( (void *) p == NULL ){
-        panic ("process_enter_criticalsection: p \n");
-
-    } else {
-
-        // todo: validation
-        
-        __spinlock_ipc = 1;
-        criticalsection_pid = (pid_t) pid;
-        p->_critical = 1;
-    };
-}
-
-
-// Exit critical session.
-void process_exit_criticalsection(int pid)
+// Service 227
+// Entering critical section.
+// Close gate. Turn it FALSE.
+void process_close_gate(int pid)
 {
     struct process_d *p;
 
 
     if (pid<0)
-        panic ("process_exit_criticalsection: pid \n");
+        panic ("process_close_gate: pid \n");
 
     // Process.
  
     p = (void *) processList[pid];
 
     if ( (void *) p == NULL ){
-        panic ("process_exit_criticalsection: p \n");
+        panic ("process_close_gate: p \n");
 
     } else {
 
         // todo: validation
         
-        __spinlock_ipc = 0;
+        __spinlock_ipc = __GATE_CLOSED; //0;
         criticalsection_pid = (pid_t) 0;
-        p->_critical = 0;
+        p->_critical = FALSE;  //0;
     };
 }
+
+
+// Service 228
+// Exiting critical section
+// Open gate. Turn it TRUE.
+void process_open_gate (int pid){
+
+    struct process_d *p;
+
+    if (pid<0)
+        panic ("process_open_gate: pid \n");
+
+    // Process.
+
+    p = (void *) processList[pid];
+
+    if ( (void *) p == NULL ){
+        panic ("process_open_gate: p \n");
+    } else {
+
+        // todo: validation
+        
+        __spinlock_ipc = __GATE_OPEN; //1;
+        criticalsection_pid = (pid_t) pid;
+        p->_critical = TRUE; //1;
+    };
+}
+
 
 
 
@@ -672,7 +676,12 @@ int processCopyMemory ( struct process_d *process ){
  *
  *     Isso � chamado por do_fork_process.
  */
- 
+
+// Called by clone_and_execute_process at clone.c
+
+// #
+// It will also copy the control thread.
+
 // IN:
 // p1 = atual.
 // p2 = clone. 
@@ -683,8 +692,8 @@ int processCopyMemory ( struct process_d *process ){
 
 int processCopyProcess ( pid_t p1, pid_t p2 ){
 
-    struct process_d *Process1;
-    struct process_d *Process2;
+    struct process_d  *Process1;
+    struct process_d  *Process2;
     
     int Status=0;
     int i=0;
@@ -927,7 +936,7 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
             // Quantos descritores de arquivo apontam para essa mesma estrutura.
             __f->fd_counter++;
         }
-    }
+    };
 
 
     // O fluxo padrão foi criando antes em klib/kstdio.c
@@ -964,6 +973,10 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 	// chamarmos o fork, que � onde est� o �ltimo ponto de salvamento.
 
 
+//
+// == Clone the control thread =================================
+//
+
     // Clonando a thread de controle.
     // obs: Isso precisa funcionar direito. Não podemos ficar sem isso.
     // See: thread.c
@@ -974,9 +987,9 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
         panic ("processCopyProcess: threadCopyThread fail");
     }
 
-    //
-    // Directory.
-    //
+//
+// Page Directory.
+//
 
 	// #importante
 	// Um diret�rio de p�ginas para a thread de controle.
@@ -985,32 +998,28 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
 	// � importante deixarmos esse endere�o na estrutura da thread, pois
 	// � a� que o taskswitch espera encontra-lo.
 
-
     Process2->control->DirectoryPA = Process2->DirectoryPA;
+
+
+//
+// Owner PID
+//
 
     Process2->control->ownerPID = Process2->pid;
 
 
-	//?? herda a lista de threads ??
+    //#todo: review
+    
+    //?? herda a lista de threads ??
     Process2->threadListHead = Process1->threadListHead;
-
     Process2->zombieChildListHead = Process1->zombieChildListHead;
-
     Process2->dialog_address = Process1->dialog_address;
 
-    //#bugbug
-    //deleta isso.
-    //message support.
-    //Process2->window = Process1->window;    //arg1. 
-    //Process2->msg    = Process1->msg;       //arg2.
-    //Process2->long1  = Process1->long1;     //arg3.
-    //Process2->long2  = Process1->long2;     //arg4.
 
+//
+// == TTY ======================
+//
 
-    //
-    // == TTY ======================
-    //
-    
     // Vamos criar uma tty para o processo clone.
     // Ela será uma tty privada, mas precisa ter um
     // uma estrutura de arquivo que aponte para ela
@@ -1024,7 +1033,6 @@ int processCopyProcess ( pid_t p1, pid_t p2 ){
     }
     tty_start (Process2->tty);
     //--
-
 
     // panic()
     debug_print ("processCopyProcess: [FIXME] No slot for tty\n");
@@ -1099,8 +1107,9 @@ struct process_d *create_process (
     unsigned long directory_address )
 {
 
+    struct process_d  *Process;
     pid_t PID = -1;
-    struct process_d *Process;
+
 
     // Para a entrada vazia no array de processos.
     struct process_d *EmptyEntry; 
@@ -1141,8 +1150,7 @@ struct process_d *create_process (
         panic ("create_process: [ERROR] base_address\n");
     }
 
-    if( ppid < 0 )
-    {
+    if( ppid < 0 ){
         panic ("create_process: [ERROR] ppid\n");
     }
   
@@ -1187,7 +1195,7 @@ struct process_d *create_process (
     // #todo: 
     // Aqui pode retornar NULL.
     if ( (void *) Process == NULL ){
-        panic ("process-create_process: Process");
+        panic ("create_process: Process\n");
     }
 
 
@@ -1217,13 +1225,17 @@ struct process_d *create_process (
  
  
      //====================
-    
 
-    // Object and validation
     Process->objectType  = ObjectTypeProcess;
     Process->objectClass = ObjectClassKernelObjects;
-    Process->used = 1;
-    Process->magic = 1234;
+
+    Process->used  = TRUE;
+    Process->magic = PROCESS_MAGIC;
+
+    // Undefined
+    Process->position = 0;
+
+    Process->iopl = iopl; 
 
     // Not a protected process!
     Process->_protected = 0;
@@ -1470,7 +1482,7 @@ struct process_d *create_process (
     if ( g_heap_count < 0 || 
          g_heap_count >= g_heap_count_max )
     {
-        panic ("create_process: [FAIL] g_heap_count limits");
+        panic ("create_process: [FAIL] g_heap_count limits\n");
     }
 
 
@@ -1528,10 +1540,6 @@ struct process_d *create_process (
     Process->StackOffset = (unsigned long) UPROCESS_DEFAULT_STACK_OFFSET;  //??
 
 
-    // iopl.
-
-    Process->iopl = iopl; 
-
 
 		//PPL - (Process Permition Level).(gdef.h)
 		//Determina as camadas de software que um processo ter� acesso irrestrito.
@@ -1557,25 +1565,31 @@ struct process_d *create_process (
     Process->priority      = (unsigned long) Priority;
 
 
-        //Que tipo de scheduler o processo utiliza. (rr, realtime ...).
-        //Process->scheduler_type = ; 
+    //Que tipo de scheduler o processo utiliza. (rr, realtime ...).
+    //Process->scheduler_type = ; 
 
-		//Process->step
-		//Process->quantum
-		//Process->timeout
-		//Process->ticks_remaining
+    
+    // Syscalls counter.
+    Process->syscalls_counter = 0;
 
-		//As threads do processo iniciam com esse quantum.
-		//Process->ThreadQuantum   
+    // #todo
+    // Counters
 
+    //Process->step
+    //Process->quantum
+    //Process->timeout
+    //Process->ticks_remaining
 
-		//Process->threadCount = 0;    //N�mero de threads do processo.
-		
-		//Process->tList[32] 
+    //As threads do processo iniciam com esse quantum.
+    //Process->ThreadQuantum   
+
 
     //
     // == Thread =====================
     //
+
+    //Process->threadCount = 0;    //N�mero de threads do processo.
+    //Process->tList[32] 
 
     Process->threadListHead = NULL;
 
@@ -1820,37 +1834,42 @@ void show_process_information (void)
 {
     // loop
     int i=0;
-    
     struct process_d *p;
-
 
     printf ("\n\n show_process_information: \n\n");
 
 
     for ( i=0; i<PROCESS_COUNT_MAX; i++ )
     {
+
         p = (void *) processList[i];
 
         if ( (void *) p != NULL && 
-                      p->used == 1 && 
+                      p->used  == TRUE && 
                       p->magic == 1234 )
         { 
 
             //printf("\n");
             printf("\n=====================================\n");
-            printf(">>[%s]\n",p->__processname);
+            printf(">>[%s]\n", p->__processname);
             printf("PID=%d PPID=%d \n", p->pid,  p->ppid );
             
-            printf("image-base =%x image-size =%d \n", p->Image, p->ImageSize );
-            printf("heap-base  =%x heap-size  =%d \n", p->Heap, p->HeapSize );
-            printf("stack-base =%x stack-size =%d \n", p->Stack, p->StackSize );
+            printf("image-base =%x image-size =%d \n", 
+                p->Image, p->ImageSize );
+            printf("heap-base  =%x heap-size  =%d \n", 
+                p->Heap,  p->HeapSize );
+            printf("stack-base =%x stack-size =%d \n", 
+                p->Stack, p->StackSize );
 
-            printf("dir-pa=%x dir-va=%x \n", p->DirectoryPA, p->DirectoryVA );
+            printf("dir-pa=%x dir-va=%x \n", 
+                p->DirectoryPA, p->DirectoryVA );
 
-            printf("iopl=%d prio=%d state=%d \n", p->iopl, p->priority, p->state );
+            printf("iopl=%d prio=%d state=%d \n", 
+                p->iopl, p->priority, p->state );
+
+            printf("syscalls = { %d }\n", p->syscalls_counter );
         }
-
-		//Nothing.
+    // Nothing.
     };
 
     refresh_screen();
@@ -2022,6 +2041,11 @@ void init_processes (void){
  * Fechar as threads seguindo a lista encadeada.
  */
 
+
+// #bugbug
+// When closing a process in it's critical section
+// we need do change open the gate.
+
 void exit_process ( pid_t pid, int code ){
 
     struct process_d *Process;
@@ -2088,14 +2112,22 @@ void exit_process ( pid_t pid, int code ){
         */
 
         Process->exit_code = (int) code; 
-        Process->state = PROCESS_TERMINATED; 
+        Process->state = PROCESS_TERMINATED;  //zombie.
         
         // #important
         // Isso é para evitar deadlock.
         // Não queremos que um processo feche estando na sua
         // seção crítica.
-        process_exit_criticalsection(pid);
-        
+        // Temos que deixar o portao aberto para que 
+        // outros processos possam entrar em suas sessoes criticas.
+
+        // #bugbug
+        // When closing a process in it's critical section
+        // we need do change open the gate.
+
+        //process_close_gate(pid);
+        process_open_gate(pid);
+  
         // ...
     };
 
@@ -2850,8 +2882,7 @@ process_execve (
 	// Transformando o nome do arquivo em mai�scula, pois estamos 
 	// usando FAT16, que exige isso.
 
-    read_fntos ( (char *) arg1 );
-
+    fs_fntos ( (char *) arg1 );
 
     //
     // Searching for the file only on the root dir.
@@ -2918,9 +2949,18 @@ process_execve (
 
     unsigned long BUGBUG_IMAGE_SIZE_LIMIT = (512 * 4096);
 
-    Status = (int) fsLoadFile ( VOLUME1_FAT_ADDRESS, 
+    // Load file from root dir.
+
+    // #todo
+    // Esses endereços podem ser passados via parâmetros?
+
+    // #bugbug
+    // The limit of entries is '32'.
+
+    Status = (int) fsLoadFile ( 
+                       VOLUME1_FAT_ADDRESS, 
                        VOLUME1_ROOTDIR_ADDRESS, 
-                       32, //#bugbug: Number of entries.
+                       32,
                        (unsigned char *) arg1, 
                        (unsigned long) process->Image, 
                        BUGBUG_IMAGE_SIZE_LIMIT );
@@ -3167,20 +3207,18 @@ format_ok:
         //refresh_screen();
         //while(1){}
 
-        KiSpawnTask ( Thread->tid );
-
         // No return!
-                
-        panic ("process_execve: KiSpawnTask returned ");
+
+        KiSpawnThread ( Thread->tid );
+
+        panic ("process_execve: KiSpawnThread returned\n");
     };
 
 	// fail
-	
+
 fail:
-
     printf ("process_execve: Fail\n");
-	// refresh_screen ();
-
+    // refresh_screen ();
 done:
 
 	//#debug

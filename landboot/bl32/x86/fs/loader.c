@@ -1,15 +1,15 @@
 /*
- * File: loader.c
+ * File: fs/loader.c
  *
- * Descrição:
+ * Descriï¿½ï¿½o:
  *     Rotinas para carregar o Kernel, os programas do sistema e os 
- * arquivos de inicialização.
+ * arquivos de inicializaï¿½ï¿½o.
  *
- * Obs: Por enquanto o módulo loader somente carrega imagens do tipo PE. (M$)
+ * Obs: Por enquanto o mï¿½dulo loader somente carrega imagens do tipo PE. (M$)
  * @todo: Incluir suporte a imgens do tipo ELF.
  * 
  * In this file:
- *     + load_kernel: Carrega o KERNEL.BIN.
+ *     + elfLoadKernelImage: Carrega o KERNEL.BIN.
  *     + load_files: 
  *
  * History:
@@ -36,7 +36,7 @@
 int total = 1000;
 int step = 0;
 
-//protótipos de funções locais.
+//protï¿½tipos de funï¿½ï¿½es locais.
 size_t blstrlen(const char *s);
 void DoProgress( char label[], int step, int total );
 void updateProgressBar();
@@ -47,15 +47,17 @@ void updateProgressBar();
 
 /* 
  ******************************************** 
- * load_kernel: 
- *     Carrega o KERNEL.BIN na memória. 
+ * elfLoadKernelImage: 
+ *     Carrega o KERNEL.BIN na memï¿½ria. 
  */
 
 // Address.
 // pa = 0x00100000.
 // va = 0xC0000000.
- 
-int load_kernel ()
+
+// Called by LandOSLoadKernelImage()
+
+int elfLoadKernelImage (const char *file_name)
 {
     int Status = -1;
 
@@ -67,13 +69,21 @@ int load_kernel ()
 
     unsigned char *kernel = (unsigned char *) KERNEL_ADDRESS;      
 
+
+    // Path
+    char Path[64];
+    char DefaultPath[64];
+
     // Name.
-    char *kernel_name = "KERNEL.BIN";
+
+    char *kernel_name;
+    kernel_name = file_name;
+
 
     // Message.
 
 #ifdef BL_VERBOSE
-    printf ("load_kernel: Loading %s .. PA=%x | VA=%x \n", 
+    printf ("elfLoadKernelImage: Loading %s .. PA=%x | VA=%x \n", 
         kernel_name, kernel_pa, kernel_va );
 #endif
 
@@ -82,26 +92,37 @@ int load_kernel ()
     // Load kernel image
     //
 
+
+    // The name given by function parameter.
+    strcpy (Path, "/GRAMADO");
+    strcat (Path, "/");
+    strcat (Path, kernel_name );
+
+    // Default
+    strcpy (DefaultPath, "/GRAMADO/KERNEL.BIN");
+
+
     // Load KERNEL.BIN on a physical address.
-    // Search the file in the /SBIN/ and /BOOT/ subdirectories
+    // Search the file in the /LANDOS/ and /BOOT/ subdirectories
     // of the boot partition.
+    // See: fs.c
 
+    Status = (int) load_path( Path, (unsigned long) kernel_pa );
 
-    Status = (int) load_path(
-                       "/SBIN/KERNEL.BIN", 
-                       (unsigned long) kernel_pa );
     // Fail
+    // Try default name.
+
     if ( Status != 0 ){
         // Try again
-        Status = (int) load_path(
-                           "/BOOT/KERNEL.BIN", 
-                           (unsigned long) kernel_pa );
+        Status = (int) load_path( DefaultPath,(unsigned long) kernel_pa );
     }
 
+    // Fail.
     if (Status != 0 ){
-        printf("load_kernel: [FAIL] Couldn't load the kernel image\n");
+        printf("elfLoadKernelImage: [FAIL] Couldn't load the kernel image\n");
         goto fail;    
     }
+
 
     //
     // Check signature.
@@ -113,8 +134,8 @@ int load_kernel ()
     if ( kernel[0] != 0x7F || 
          kernel[1] != 'E' || kernel[2] != 'L' || kernel[3] != 'F' )
     {
-        printf ("load_kernel: [FAIL] %s ELF image validation\n", 
-            kernel_name );  
+        printf ("elfLoadKernelImage: [FAIL] %s ELF image validation\n", 
+            kernel_name ); 
         goto fail;
     }
 
@@ -124,20 +145,20 @@ int load_kernel ()
 	
 	
 	// #importante:
-	// Checando se o kernel base contém o header 
+	// Checando se o kernel base contï¿½m o header 
 	// do multiboot.
 	// Obs: Para o Gramado Boot isso significa apenas
-	// mais um ítem de segurança, pois o Gramado Boot
-	// fará a inicialização do mesmo modo de sempre e enviará 
+	// mais um ï¿½tem de seguranï¿½a, pois o Gramado Boot
+	// farï¿½ a inicializaï¿½ï¿½o do mesmo modo de sempre e enviarï¿½ 
 	// os mesmos argumentos de sempre.
-	// Porém se um multiboot carregar o kernel, certamente 
-	// não passará os mesmos argumentos que o Gramado Boot,
-	// então o kernel inicializará de forma diferente,
+	// Porï¿½m se um multiboot carregar o kernel, certamente 
+	// nï¿½o passarï¿½ os mesmos argumentos que o Gramado Boot,
+	// entï¿½o o kernel inicializarï¿½ de forma diferente,
 	// provavelmente apenas em modo texto.
 
 	
     // Multiboot magic signature.
-    // O header está em 0xC0001000.	
+    // O header estï¿½ em 0xC0001000.
     // 0x1BADB002
     // tem um jmp antes do header.
 
@@ -145,14 +166,14 @@ int load_kernel ()
          kernel[0x1009] != 0xB0 ||
          kernel[0x100A] != 0xAD || 
          kernel[0x100B] != 0x1B )
-    {    
-        
+    {
+
 		//#debug
-		printf ("0x1BADB002 found!\n");
+		printf ("elfLoadKernelImage: [FAIL] 0x1BADB002 found!\n");
 		//refresh_screen();
 		//while(1){}
-    }
 
+    }
 
 
 	//Continua ...
@@ -170,13 +191,23 @@ int load_kernel ()
     return 0; 
 
 
+    // =================================
+
 // Fail 
-// O Kernel não pôde ser carregado.	
+// O Kernel nï¿½o pï¿½de ser carregado.
 
 fail:
-    printf ("load_kernel: Fail\n");
-    abort ();
+
+    printf ("elfLoadKernelImage: Fail\n");
+    refresh_screen();
+
+    // #test
+    // Vamos retornar para dar a chace ao rescue shell.
+    // abort();
+    
+    return (int) (-1);
 }
+
 
 
  

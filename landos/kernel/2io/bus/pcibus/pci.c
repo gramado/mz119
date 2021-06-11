@@ -1,5 +1,5 @@
 /*
- * File: pci/pci.c
+ * File: pcibus/pci.c
  *
  *     PCI interface.
  *     ring0.
@@ -7,10 +7,6 @@
  * History:
  *     2013 - Created by Fred Nora.
  */
-
-
-// See:
-// ./dn_pci.txt
 
 
 #include <kernel.h>
@@ -169,6 +165,7 @@ interface (if any) so that device independent software can interact with the dev
  *     Credits: Nelson Cole.
  */
 
+/*
 typedef struct {
 
     //0, 'Class code' 'Subclass' 'Prog IF',
@@ -177,11 +174,15 @@ typedef struct {
     char *name;
 
 }pci_classnames_t;
+*/
 
 
+//0, 'Class code' 'Subclass' 'Prog IF',
 // PCI Express, compatibility to PCI local Bus 3.0 
 // Credits: Nelson Cole.
- 
+
+
+/*
 pci_classnames_t pci_classnames [256] = {
     { 0x000000,  "Non-VGA-Compatible devices"		},
     { 0x000100,  "VGA-Compatible Device"			},
@@ -345,7 +346,7 @@ supports both channels switched to ISA compatibility mode, supports bus masterin
     { 0x118000,  "Other Signal Processing Controller"			},
     { 0x000000,  "Null"	}
 };
-
+*/
 
 //========================================
 // end - estrutura do Nelson
@@ -521,28 +522,44 @@ static const char* sbc_subclass_strings[] = {
 */
 
 
-//
-// Funções internas.
-//
 
- 
+void DeviceInterface_SharedPCIDevice0(void)
+{
+    debug_print ("DeviceInterface_SharedPCIDevice0:\n");
+    // g_profiler_ints_irq???++;
+}
 
-//...
+void DeviceInterface_SharedPCIDevice1(void)
+{
+    debug_print ("DeviceInterface_SharedPCIDevice1:\n");
+    // g_profiler_ints_irq???++;
+}
+
+void DeviceInterface_SharedPCIDevice2(void)
+{
+    debug_print ("DeviceInterface_SharedPCIDevice2:\n");
+    // g_profiler_ints_irq???++;
+}
+
+void DeviceInterface_SharedPCIDevice3(void)
+{
+    debug_print ("DeviceInterface_SharedPCIDevice3:\n");
+    // g_profiler_ints_irq???++;
+}
 
 
-//
 // Obs: 
-//     Os dispositivos podem compartilhar a mesma interrupção no PIC/APIC. 
-// Então para uma IRQ destinada à PCI terá que identificar qual dispositivo 
-// gerou a interrupção, para chamar a rotina apropriada.
-//
+// Os dispositivos podem compartilhar a mesma interrupção no PIC/APIC. 
+// Então para uma IRQ destinada à PCI terá que identificar 
+// qual dispositivo gerou a interrupção, 
+// para chamar a rotina apropriada.
 
 
 /*
  *****************************************
  * irq_SHARED0: 
  * 
- *     **** PCI HANDLER ****
+ * PCI HANDLER
  *
  *     Todas as interrupções geradas pelos dispositivos PCI
  * usarão o mesmo isr (handler). 
@@ -552,20 +569,16 @@ static const char* sbc_subclass_strings[] = {
  */
 
 __VOID_IRQ 
-irq_SHARED0 (void)
+irq_SHARED0(void)
 {
-    debug_print ("irq_SHARED0:\n");
-    //...
-    return;
+    DeviceInterface_SharedPCIDevice0();
 }
 
 
 /*
  * irq_SHARED1: 
  * 
- *     **** PCI HANDLER ****
- *
- *     **** PCI HANDLER ****
+ * PCI HANDLER
  *
  *     Todas as interrupções geradas pelos dispositivos PCI
  * usarão o mesmo isr (handler). 
@@ -577,18 +590,14 @@ irq_SHARED0 (void)
 __VOID_IRQ 
 irq_SHARED1 (void)
 {
-    debug_print ("irq_SHARED1:\n");
-    //...
-    return;
+    DeviceInterface_SharedPCIDevice1();
 }
 
 
 /*
  * irq_SHARED2: 
  * 
- *     **** PCI HANDLER ****
- *
- *     **** PCI HANDLER ****
+ * PCI HANDLER
  *
  *     Todas as interrupções geradas pelos dispositivos PCI
  * usarão o mesmo isr (handler). 
@@ -600,18 +609,14 @@ irq_SHARED1 (void)
 __VOID_IRQ 
 irq_SHARED2 (void)
 {
-    debug_print ("irq_SHARED2:\n");
-    //...
-    return;
+    DeviceInterface_SharedPCIDevice2();
 }
 
 
 /*
  * irq_SHARED3: 
  * 
- *     **** PCI HANDLER ****
- *
- *     **** PCI HANDLER ****
+ * PCI HANDLER
  *
  *     Todas as interrupções geradas pelos dispositivos PCI
  * usarão o mesmo isr (handler). 
@@ -623,9 +628,7 @@ irq_SHARED2 (void)
 __VOID_IRQ 
 irq_SHARED3 (void)
 {
-    debug_print ("irq_SHARED3:\n");
-	//...
-    return;
+    DeviceInterface_SharedPCIDevice3();
 }
 
 
@@ -993,7 +996,7 @@ pciGetBAR (
 	// #todo: 
 	// Filtros para argumentos.
 
-    if ( number <0 || number > 5 )
+    if ( number < 0 || number > 5 )
     {
         // ?? msg
         return 0;
@@ -1148,7 +1151,7 @@ pciHandleDevice (
     }else{
         D->objectType  = ObjectTypePciDevice;
         D->objectClass = ObjectClassKernelObjects;
-        D->used  = (int) 1;
+        D->used  = (int) TRUE;
         D->magic = (int) 1234;
 
         D->id = (int) pciListOffset;
@@ -1159,8 +1162,8 @@ pciHandleDevice (
         D->func = (unsigned char) fun; 
 
         // PCI Header.
-        D->Vendor = (unsigned short) pciCheckVendor (bus,dev);
-        D->Device = (unsigned short) pciCheckDevice (bus,dev);
+        D->Vendor = (unsigned short) pciCheckVendor(bus,dev);
+        D->Device = (unsigned short) pciCheckDevice(bus,dev);
 
         D->name = "pci-device-no-name";
 
@@ -1170,15 +1173,15 @@ pciHandleDevice (
 
         //OK, it is working
         data = (uint32_t) diskReadPCIConfigAddr ( bus, dev, fun, 8 );
-        D->classCode = data >> 24 & 0xff;
-        D->subclass  = data >> 16 & 0xff;
+        D->classCode = (data >> 24) & 0xff;
+        D->subclass  = (data >> 16) & 0xff;
 
 		//#bugbug: Isso falhou. Deletar isso e trabalhar essas funções.
 		//D->classCode = (unsigned char) pciGetClassCode(bus, dev);
 		//D->subclass = (unsigned char) pciGetSubClass(bus, dev); 
 
-        D->irq_line = (unsigned char) pciGetInterruptLine (bus,dev);
-        D->irq_pin  = (unsigned char) pciGetInterruptPin (bus,dev);
+        D->irq_line = (unsigned char) pciGetInterruptLine(bus,dev);
+        D->irq_pin  = (unsigned char) pciGetInterruptPin(bus,dev);
 
         // Next device.
         D->next = NULL; 
@@ -1238,16 +1241,24 @@ pciHandleDevice (
         // == NIC Intel. ===================
         //
 
+        // #bugbug
+        // Ver em que hora que os buffers são configurados.
+        // precisam ser os mesmos encontrados na 
+        // infraestrutura de network e usados pelos aplicativos.
+
+        // e1000 = 0x8086 0x100E
+        // 82540EM Gigabit Ethernet Controller
         if ( (D->Vendor == 0x8086)  && 
              (D->Device == 0x100E ) && 
              (D->classCode == PCI_CLASSCODE_NETWORK) )
         {
             //serial debug
-            debug_print ("0x8086:0x100E found \n"); 
+            debug_print ("pciHandleDevice: [0x8086:0x100E] e1000 found \n"); 
             //printf("b=%d d=%d f=%d \n", D->bus, D->dev, D->func );
             //printf("82540EM Gigabit Ethernet Controller found\n");
 
-            //See: network/nicintel.c
+            // See: 
+            // 2io/dev/tty/netdev/e1000/e1000.c
 
             Status = (int) e1000_init_nic ( 
                                (unsigned char) D->bus, 
@@ -1255,30 +1266,31 @@ pciHandleDevice (
                                (unsigned char) D->func, 
                                (struct pci_device_d *) D );
 
+            // OK. Setup e1000 nic device.
             if (Status == 0)
             {
-                // # irq and reset.
-                //printf("8086:100e initialized\n");
-
-                e1000_setup_irq ();
-                e1000_reset_controller ();
+                //irq and reset.
+                // See: 
+                // 2io/dev/tty/netdev/e1000/e1000.c
                 
-                //testNIC();
+                // #debug
+                // currentNIC foi configurado pela rotina acima.
+                if ( D->irq_line != currentNIC->pci->irq_line )
+                {
+                     panic("pciHandleDevice: D->irq_line fail\n");
+                }
+                
+                e1000_setup_irq( D->irq_line );  //currentNIC->pci->irq_line
+                e1000_reset_controller();
                 printf ("pciHandleDevice: Unlocking interrupt handler \n");
-                e1000_interrupt_flag = 1;
-
-                //printf("8086:100e done\n");
-                //printf("#debug breakpoint");
-                //refresh_screen();
-                //while(1){} 
-                
-                //network device,
+                e1000_interrupt_flag = TRUE;
+                //class=network device,
                 __class = 3;
  
             }else{
                 panic ("pciHandleDevice: NIC Intel [0x8086:0x100E]");
             };
-        };
+        }
 
 
         // 8086:1237
@@ -1390,9 +1402,9 @@ pciHandleDevice (
     if ( (void *) __file == NULL ){
         panic("pciHandleDevice: __file fail, can't register device\n");
     }else{
-        __file->used  = 1;
+        __file->used  = TRUE;
         __file->magic = 1234;
-        __file->isDevice = 1;
+        __file->isDevice = TRUE;
 
         // Register
 
@@ -1422,9 +1434,10 @@ pciHandleDevice (
 /*
  ***************************************
  * init_pci:
+ * 
  *     Inicializa o módulo PCI em Kernel Mode, dentro do Kernel Base. 
  * 
- * @todo: 
+ * todo: 
  *     +Pega informações sobre PCI.
  *     +Pegar as informações e por em estrutura e registro.
  *
@@ -1460,14 +1473,13 @@ int init_pci (void){
 
     // STATUS_NOT_SUPPORTED
     // Can we live with no pci support. Maybe ISA.
-    if ( data != 0x80000000 )
-    {
-        pci_supported = 0;
-        panic ("init_pci: [FIXME] PCI NOT supported\n");
+
+    pci_supported = FALSE;
+
+    if ( data != 0x80000000 ){
+        panic ("init_pci: [FIXME] PCI not supported\n");
     }
-    
-    pci_supported = 1;
-    //printf("PCI supported!");
+    pci_supported = TRUE;
 
 
 	//#todo: 
@@ -1494,6 +1506,7 @@ int init_pci (void){
 
 	// Encontrar os dispositivos PCI e salvar as informações sobre eles
 	// em suas respectivas estruturas.
+	// See: pciscan.c
 
     Status = (int) pci_setup_devices();
     
@@ -1501,9 +1514,9 @@ int init_pci (void){
         panic ("init_pci: pci_setup_devices fail\n");
     }
 
-    //...
+    // ...
 
-    g_driver_pci_initialized = (int) 1; 
+    g_driver_pci_initialized = (int) TRUE; 
 
 	//printf("Done\n");
 

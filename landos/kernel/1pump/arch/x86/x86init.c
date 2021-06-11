@@ -81,39 +81,48 @@ static inline void __local_x86_set_cr3 (unsigned long value)
 
 void x86mainStartFirstThread (void){
 
-    struct thread_d *Thread;
+    struct thread_d  *Thread;
     int i=0;
 
 
     debug_print("x86mainStartFirstThread:\n");
 
-    // Select the idle thread.
+
+    // The first thread to run will the control thread 
+    // of the init process. It is called InitThread.
 
     Thread = InitThread; 
 
 
-    if ( (void *) Thread == NULL )
-    {
-        panic ("x86mainStartFirstThread: Thread\n");
-    } 
+    if ( (void *) Thread == NULL ){
+        panic("x86mainStartFirstThread: Thread\n");
+    }
 
-    if ( Thread->used != 1 || Thread->magic != 1234)
+    if ( Thread->used != TRUE || Thread->magic != 1234 )
     {
         printf ("x86mainStartFirstThread: tid={%d} magic \n", 
             Thread->tid);
          die();
     }
 
-    if ( Thread->saved != 0 )
-    {
-        panic ("x86mainStartFirstThread: saved\n");
+    // It its context is already saved, so this is not the fist time.
+    
+    if ( Thread->saved != FALSE ){
+        panic("x86mainStartFirstThread: saved\n");
     }
 
-    set_current ( Thread->tid );       
+    if ( Thread->tid < 0 ){
+        panic("x86mainStartFirstThread: tid\n");
+    }
+
+    // Set the current thread.
+    set_current( Thread->tid ); 
 
     // ...
 
-    // State  
+    // State
+    // The thread needs to be in Standby state.
+
     if ( Thread->state != STANDBY )
     {
         printf ("x86mainStartFirstThread: state tid={%d}\n", 
@@ -125,7 +134,11 @@ void x86mainStartFirstThread (void){
     if ( Thread->state == STANDBY )
     {
         Thread->state = RUNNING;
-        queue_insert_data ( queue, (unsigned long) Thread, QUEUE_RUNNING);
+        
+        queue_insert_data( 
+            queue, 
+            (unsigned long) Thread, 
+            QUEUE_RUNNING );
     }
 
     // Current process.
@@ -149,6 +162,18 @@ void x86mainStartFirstThread (void){
     turn_task_switch_on();
 
 
+
+
+    // #todo
+    // Isso deve ser liberado pelo processo init
+    // depois que ele habilitar as interrupções.
+    
+    taskswitch_lock();
+    scheduler_lock();
+
+
+
+
     // timerInit8253 ( HZ );
     // timerInit8253 ( 800 );
     // timerInit8253 ( 900 );
@@ -161,7 +186,7 @@ void x86mainStartFirstThread (void){
     // isso não é necessário se chamarmos spawn ela faz isso.
     __local_x86_set_cr3 ( (unsigned long) Thread->DirectoryPA );
     
-    // flush
+    // flush tlb
     asm ("movl %cr3, %eax");
     //#todo: delay.
     asm ("movl %eax, %cr3");  
@@ -169,7 +194,6 @@ void x86mainStartFirstThread (void){
 
     // See: x86/headlib.asm
     x86_clear_nt_flag ();   
-
 
 	//vamos iniciar antes para que
 	//possamos usar a current_tss quando criarmos as threads
@@ -211,6 +235,7 @@ void x86mainStartFirstThread (void){
 
 	//base dos arquivos.
 
+    // Image buffer
     unsigned char *buff1 = (unsigned char *) 0x00400000;
 
 
@@ -230,28 +255,41 @@ void x86mainStartFirstThread (void){
     refresh_screen ();
 
 
-    PROGRESS("-- Fly --------------------------------------------\n");
+    PROGRESS("-- Fly -----------------------------------\n");
+
+
+    // #important:
+    // This is an special scenario,
+    // Where we're gonna fly with the eflags = 0x3000,
+    // it means that the interrupts are disabled,
+    // and the init process will make a software interrupt
+    // to reenable the interrupts. 
+    // Softwre interrupts are not affecte by this flag, I guess.
+
+    // #bugbug
+    // This routine is very ugly and very gcc dependent.
+    // We deserve a better thing.
 
     // Fly!
     // We need to have the same stack in the TSS.
     // ss, esp, eflags, cs, eip;
 
-    asm volatile ( " movl $0x003FFFF0, %esp \n"
-                   " movl $0x23,       %ds:0x10(%esp)  \n"
-                   " movl $0x0044FFF0, %ds:0x0C(%esp)  \n"
-                   " movl $0x3000,     %ds:0x08(%esp)  \n"
-                   " movl $0x1B,       %ds:0x04(%esp)  \n"
-                   " movl $0x00401000, %ds:0x00(%esp)  \n"
-                   " movl $0x23, %eax  \n"
-                   " mov %ax, %ds      \n"
-                   " mov %ax, %es      \n"
-                   " mov %ax, %fs      \n"
-                   " mov %ax, %gs      \n"
-                   " iret              \n" );
-
+    asm volatile ( 
+        " movl $0x003FFFF0, %esp \n"
+        " movl $0x23,       %ds:0x10(%esp)  \n"
+        " movl $0x0044FFF0, %ds:0x0C(%esp)  \n"
+        " movl $0x3000,     %ds:0x08(%esp)  \n"
+        " movl $0x1B,       %ds:0x04(%esp)  \n"
+        " movl $0x00401000, %ds:0x00(%esp)  \n"
+        " movl $0x23, %eax  \n"
+        " mov %ax, %ds      \n"
+        " mov %ax, %es      \n"
+        " mov %ax, %fs      \n"
+        " mov %ax, %gs      \n"
+        " iret              \n" );
 
     // Paranoia
-    panic ("x86mainStartFirstThread: FAIL");
+    panic ("x86mainStartFirstThread: FAIL\n");
 }
 
 
@@ -275,15 +313,21 @@ void __x86StartInit (void){
     //
     // INIT.BIN
     //
-    
-    
+
+    // #importante
+    // Carregado do diretório raiz
+ 
     unsigned long BUGBUG_IMAGE_SIZE_LIMIT = (512 * 4096);
 
 	// loading image.
     
-    fileret = (unsigned long) fsLoadFile ( VOLUME1_FAT_ADDRESS, 
+    // #bugbug
+    // Loading from root dir. 512 entries limit.
+
+    fileret = (unsigned long) fsLoadFile ( 
+                                  VOLUME1_FAT_ADDRESS, 
                                   VOLUME1_ROOTDIR_ADDRESS, 
-                                  32, //#bugbug: Number of entries.
+                                  FAT16_ROOT_ENTRIES,    //#bugbug: number of entries.
                                   "INIT    BIN", 
                                   (unsigned long) 0x00400000,
                                   BUGBUG_IMAGE_SIZE_LIMIT );
@@ -306,7 +350,8 @@ void __x86StartInit (void){
 	// temos que checar a validade do endereço do dir criado
 	//antes de passarmos..
 
-    InitProcess = (void *) create_process ( NULL, NULL, NULL, 
+    InitProcess = (void *) create_process ( 
+                               NULL, NULL, NULL, 
                                (unsigned long) 0x00400000, 
                                PRIORITY_HIGH, 
                                (int) KernelProcess->pid, 
@@ -316,21 +361,28 @@ void __x86StartInit (void){
 
     if ( (void *) InitProcess == NULL ){
         panic ("__x86StartInit: InitProcess\n");
-
     }else{
-        fs_initialize_process_pwd ( InitProcess->pid, "no-pwd" );
+
+        InitProcess->position = SPECIAL_GUEST;
+ 
+        fs_initialize_process_cwd ( InitProcess->pid, "/" );
     };
 
 
-
 	//====================================================
-	//Create  
+	// Create
+
+    // #
+    // Criamos um thread em ring3.
+    // O valor de eflags é 0x3200.
 
     InitThread = (void *) create_CreateRing3InitThread();
 
     if ( (void *) InitThread == NULL ){
         panic ("__x86StartInit: InitThread\n");
     }else{
+
+        InitThread->position = SPECIAL_GUEST;
 
         //IdleThread->ownerPID = (int) InitProcess->pid;
 
@@ -339,18 +391,18 @@ void __x86StartInit (void){
         
         // [Processing time]
         current_process = InitProcess->pid;
-        current_thread = InitThread->tid;
+        current_thread  = InitThread->tid;
         
         // [Focus]
         active_process = current_process;
-        active_thread = current_thread;
+        active_thread  = current_thread;
+        
+        // foreground thread ?
         
         // [Scheduler stuff]
         next_thread = InitThread->tid;
-
     };
-    
-    
+
 
     InitProcess->Heap = (unsigned long) g_extraheap1_va;
 
@@ -391,8 +443,8 @@ int x86main (void)
 
     if (current_arch != CURRENT_ARCH_X86)
     {
-        debug_print ("[x86] x86main: Arch fail\n");
-        panic       ("[x86] x86main: Arch fail\n"); 
+        debug_print ("[x86] x86main: current_arch fail\n");
+        panic       ("[x86] x86main: current_arch fail\n"); 
     }
 
 
@@ -404,15 +456,16 @@ int x86main (void)
     UPProcessorBlock.threads_counter = 0;
 
 
+//================================
     PROGRESS("Kernel:1:1\n"); 
     // sse support.
 
-    x86_sse_init ();
+    x86_sse_init();
 
 
 
 //
-// =====================================================================
+// =================================================================
 //
 
     //
@@ -425,8 +478,20 @@ int x86main (void)
     // edition flag.
     
     KeInitPhase = 0;
+
     gSystemStatus = 1;
+    
+    // ?? #todo: this is not a x86 thing.
     gSystemEdition = 0;
+
+    //
+    // hypervisor
+    //
+
+    // ?? #todo: this is not a x86 thing.
+
+    g_is_qemu = FALSE;
+
 
     debug_print ("====\n");
     debug_print ("x86main:\n");
@@ -453,15 +518,6 @@ int x86main (void)
         KiAbort();
     }
 
-    // Disable interrupts, lock taskswitch and scheduler.
-    //Set scheduler type. (Round Robin).
-    // #todo: call a hal routine for cli.
-
-    asm ("cli");  
-    taskswitch_lock();
-    scheduler_lock();
-    schedulerType = SCHEDULER_RR; 
-
 
 	// Obs: 
 	// O video já foi inicializado em main.c.
@@ -473,7 +529,7 @@ int x86main (void)
         
     //set_up_cursor (0,1);
 
-
+//================================
     PROGRESS("Kernel:1:2\n"); 
     // Calling 'init' kernel module. 
 
@@ -521,11 +577,6 @@ int x86main (void)
     printf("======================\n");
     printf("x86main: end of phase 2\n");
 
-    // 3 - fim da fase 2.
-    IncrementProgressBar();
-    
-    //refresh_screen();
-    //while(1){}
 
 //
 // == phase 3 ? ================================================
@@ -534,21 +585,39 @@ int x86main (void)
     KeInitPhase = 3; 
 
 
+//================================
     PROGRESS("Kernel:1:3\n"); 
     // Initialize all the kernel graphics support.
+
+
 
     // Initialize all the kernel graphics support.
     // some extra things like virtual terminal and tty.
     // #todo: rever essa inicializaçao.
-    // See; windows/model/kgws.c
+    // See: users/kgws.c
+
     KGWS_initialize();
 
 
+    // debug
+    //printf("~kgws\n");
+    //refresh_screen();
+    //while(1){}
+
+
+//================================
     PROGRESS("Kernel:1:4\n"); 
     // Initialize window server manager.
 
     //ws.c
     ws_init();
+
+
+    // debug
+    //printf("~ws\n");
+    //refresh_screen();
+    //while(1){}
+
 
     // #debug:  
     // Esperamos alcaçarmos esse alvo.
@@ -565,10 +634,10 @@ int x86main (void)
     //while(1){}
 
 //
-//=======================================================================================================
+// ===================================================================
 //
 
-
+//================================
     PROGRESS("Kernel:1:5\n"); 
     // Setup GDT again.
     // We already made this at kernel startup.
@@ -584,6 +653,10 @@ int x86main (void)
     printf      ("[x86] x86main: Initializing GDT\n");
         
     x86_init_gdt();
+    
+    // #todo
+    // Depois de renovarmos a GDT precisamos
+    // recarregar os registradores de segmento.
 
     //printf("*breakpoint\n");
     //refresh_screen();
@@ -598,6 +671,7 @@ int x86main (void)
     printf      ("[x86] x86main: processes and threads\n");
 
 
+//================================
     PROGRESS("Kernel:1:6\n"); 
     // Creating kernel process.
 
@@ -625,11 +699,14 @@ int x86main (void)
     if ( (void *) KernelProcess == NULL ){
         panic ("[x86] x86main: KernelProcess\n");
     }else{
-        fs_initialize_process_pwd ( KernelProcess->pid, "no-directory" ); 
+
+        KernelProcess->position = KING;
+
+        fs_initialize_process_cwd ( KernelProcess->pid, "/" ); 
         //...
     };
 
-
+//================================
     PROGRESS("Kernel:1:7\n"); 
     // Creating a ring 0 thread for the kernel.
 
@@ -645,61 +722,80 @@ int x86main (void)
 	// obs: Mesmo não sendo ela o primeiro TID.
 	// See: core/ps/create.c
 
-    RING0IDLEThread = (void *) create_CreateRing0IdleThread();
+    // #bugbug
+    // O problema é que se essa thread começa afuncionar
+    // antes mesmo do processo init habilitar as interrupções,
+    // então o sistema vai falhar.
+    // #todo
+    // Como essa thread funciona sendo apenas uma rotina sti/hlt,
+    // podemos deixar ela como idle thread somente nos estágios 
+    // iniciais, sendo substituida por outra quando fot possível.
 
-    if ( (void *) RING0IDLEThread == NULL ){
-        panic ("x86main: RING0IDLEThread\n");
+    EarlyRING0IDLEThread = (void *) create_CreateEarlyRing0IdleThread();
+
+    if ( (void *) EarlyRING0IDLEThread == NULL ){
+        panic ("x86main: EarlyRING0IDLEThread\n");
     }else{
 
+        // Idle thread
         // #todo
-        //processor->IdleThread  = (void *) RING0IDLEThread;    
-        //____IDLE = (void *) RING0IDLEThread;  
+        // We can use a method in the scheduler for this.
+        // Or in the dispatcher?
 
-        //RING0IDLEThread->ownerPID =  (int) KernelProcess->pid; 
-
-        RING0IDLEThread->tss = current_tss;
-		
-		// priority and quantum.
-	    //set_thread_priority ( (struct thread_d *) RING0IDLEThread,
-	        //PRIORITY_HIGH4 );
-
-	    //set_thread_priority ( (struct thread_d *) RING0IDLEThread,
-	        //PRIORITY_LOW1 );
+        ____IDLE = (struct thread_d *) EarlyRING0IDLEThread;
 
 
-	    //set_thread_priority ( (struct thread_d *) RING0IDLEThread,
-	        //PRIORITY_LOW3 );
+        EarlyRING0IDLEThread->position = KING;
+        
+        // #todo
+        //processor->IdleThread  = (void *) EarlyRING0IDLEThread;    
+        //____IDLE = (void *) EarlyRING0IDLEThread;  
 
-        // funcionou no mínimo.
-        // com multiplicador 3. quantum = (1*3=3)
-        set_thread_priority ( (struct thread_d *) RING0IDLEThread,
+        //EarlyRING0IDLEThread->ownerPID =  (int) KernelProcess->pid; 
+
+        EarlyRING0IDLEThread->tss = current_tss;
+
+        set_thread_priority ( 
+            (struct thread_d *) EarlyRING0IDLEThread,
             PRIORITY_MIN );
-
-        //set_thread_priority ( (struct thread_d *) RING0IDLEThread,
-            //PRIORITY_NORMAL );
 
 		// #importante
 		// Sinalizando que ainda não podemos usar as rotinas que dependam
 		// de que o dead thread collector esteja funcionando.
 		// Esse status só muda quando a thread rodar.
 
-		dead_thread_collector_status = 0;
-		//...
+        dead_thread_collector_status = FALSE;
+
+        // ...
     };
+
+    // debug
+    //printf("I\n");
+    //refresh_screen();
+    //while(1){}
 
 
     //============================================================
 
+
+//================================
     PROGRESS("Kernel:1:8\n"); 
     // Cria e inicializa apenas o INIT.BIN
 
-    __x86StartInit ();
+    __x86StartInit();
+
+    // debug
+    //printf("~I\n");
+    //refresh_screen();
+    //while(1){}
+
 
     //printf("*breakpoint\n");
     //refresh_screen();
     //while(1){}
 
 
+//================================
     PROGRESS("Kernel:1:9\n"); 
     // Check some initialization flags.
 
@@ -725,10 +821,11 @@ int x86main (void)
 
     //Inicializando as variáveis do cursor piscante do terminal.
     //isso é um teste.
-    timer_cursor_used = 0;   //desabilitado.
+    timer_cursor_used   = 0;   //desabilitado.
     timer_cursor_status = 0;
 
 
+//================================
     PROGRESS("Kernel:1:10\n"); 
     // Early ps/2 initialization.
 
@@ -754,7 +851,7 @@ int x86main (void)
     PS2_early_initialization();
 
 
-
+//================================
     PROGRESS("Kernel:1:11\n"); 
     // Loading some system files.
     // icons, bmps, etc ...
@@ -785,6 +882,7 @@ int x86main (void)
     //while(1){}
 
 
+//================================
     PROGRESS("Kernel:1:12\n"); 
     // font support.
 
@@ -839,6 +937,7 @@ int x86main (void)
 
 
 
+//================================
     PROGRESS("Kernel:1:13\n"); 
     // Testing some rectangle support.
 
@@ -886,17 +985,26 @@ int x86main (void)
 	// done !
 done:
 
+//================================
     PROGRESS("Kernel:1:14\n"); 
     // Start first thread ever.
 
     debug_print ("[x86] x86main: done\n");
     debug_print ("==============\n");
 
+
+
+    // debug
+    //printf("T\n");
+    //refresh_screen();
+    //while(1){}
+
+
     //
     // Starting idle thread.
     //
 
-    // Return to assembly file, (head.s).
+
     if ( KernelStatus == KERNEL_INITIALIZED )
     {
         debug_print ("[x86] x86main: Initializing INIT ..\n");
@@ -906,14 +1014,15 @@ done:
     refresh_screen();
 #endif
 
+        //
+        // No return!
+        //
+
         x86mainStartFirstThread(); 
 
-        printf ("[x86] x86main: No idle thread selected\n");
-        goto fail;
+        panic("x86mainStartFirstThread: Couldn't spawn the first thread!\n");
     }
 
-    // ok
-    return 0;
 
     // ===============================
 
@@ -924,7 +1033,7 @@ done:
 	// em ring 0, isso depois de criadas as threads em user mode.
 
 fail:
-    
+//================================
     PROGRESS("Kernel:1:00\n"); 
     
     debug_print ("[x86] x86main: fail\n");

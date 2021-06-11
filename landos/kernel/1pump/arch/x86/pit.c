@@ -1,5 +1,5 @@
 /*
- * File: timer.c 
+ * File: pit.c 
  *  
  * Descrição:
  *     Arquivo principal do driver do PIT. 
@@ -17,10 +17,6 @@
  *
  * Histórico:
  *     Versão: 1.0, 2013 - Esse arquivo foi criado por Fred Nora.
- *     Versão: 1.0, 2014 - Revisão. 
- *     Versão: 1.0, 2015 - Aprimoramento geral das rotinas básicas.
- *     Versão: 1.0, 2016 - Revisão.
- *     ...
  */
 
  
@@ -64,7 +60,8 @@ Bits         Usage
  PIT: mode=3 count=0x2e9a (11930) - 100.01 Hz (ch=0) (Oracle, Virtualbox).
  PIT: mode=3 count=0x2e9b (11931) - 100.00 Hz (ch=0) (Oracle, Virtualbox).
  */ 
- 
+
+
 #include <kernel.h>
 
 
@@ -95,35 +92,42 @@ int timerLock;
 int timerError;
 
 
+//
+// Text cursor
+//
 
-int timerShowTextCursor;     //se tá habilitado ou não
-int timerTextCursorStatus;   //0=apaga 1=acende 
+int timerShowTextCursor;  
+
+
 
 //??
 //unsigned long timerCountSeconds;  //Count Seconds.
 //...
 
 
-//
-// Funções internas.
-//
 
-
-//Rotina principal.
-void timer (void);        
-//...
 
 
 /*
- ************************************
- * irq0_TIMER:
- *     Chama o handler do kernel que está no kernel base.
- * #todo: Observar alguns procedimentos antes de chamar a rotina.
+ *****************************************************
+ * DeviceInterface_PIT: 
+ *    
+ *     device interface for pit device.
+ *
+ *     (Contagem de tempo, tempo das tarefas, 
+ * quantum ...).
+ *     (tick tick tick)
  */
- 
-__VOID_IRQ 
-irq0_TIMER (void)
-{
+
+void DeviceInterface_PIT (void){
+
+    // Timers.
+    int i = 0;
+
+    struct timer_d  *Timer;
+
+    struct thread_d *Thread;
+
 
     // Se o timer não estiver inicializado !
     if ( __breaker_timer_initialized == 0 )
@@ -138,46 +142,17 @@ irq0_TIMER (void)
     g_profiler_ints_irq0++;
 
 
-	//#debug
-	//vamos checar se o primeiro iret está trazendo
-	//o fluxo para cá.
-	//quando não houver falha vai fazer uma bagunça...
-	//mas no caso de falha vai ficar limpo.
-	//também podemos usar o debug via porta serial.
-	//kprintf ("#debug KiTimer ");
-	//refresh_screen();
-	//refresh_screen();
-	//while(1){}
-
-    timer();
-}
 
 
-
-/*
- *****************************************************
- * timer: 
- *     Handler chamado pelo ISR do timer (IRQ 0).
- *     (Contagem de tempo, tempo das tarefas, 
- * quantum ...).
- *     (tick tick tick)
- */
-
-void timer (void){
-
-    // Timers.
-    int i = 0;
-
-    struct timer_d  *t;
-    struct thread_d *Thread;
-
-
+    /*
+    // #delete
+    // I was used by the old blinking cursor support.
     unsigned long __cWidth  = gwsGetCurrentFontCharWidth();
     unsigned long __cHeight = gwsGetCurrentFontCharHeight();
-
     if ( __cWidth == 0  ||  __cHeight == 0 ){
-        panic ("timer: char size\n");
+        panic ("pitTimer: char size\n");
     }
+    */
 
 
     //#bugbug
@@ -297,147 +272,132 @@ void timer (void){
 
     if ( jiffies % 100 == 0 ){ extra = 1; }
 
-	//
-	// ## cursor blink ##
-	//
-	
-	//#todo:
-	//podemos chamar uma função
-	
-	//#todo rever isso.
-	//de tempos em tempos atualiza o cursor
-	//a cada segundo. sendo ele 100 ou 1000 ... tanto faz.
-	//#todo: mas poderia ser exatamente o hz configurado par ao mouse
-	
-	
-	//#bubug
-	//estamos desabilitando isso pois 
-	//pode ser a causa de problemas na maquina real.
-	// alguma problema com os valores da TTY
+
+
+    //
+    // The blinking cursor.
+    //
+    
+    // #test
+    // The goal:
+    // Show the blinking cursor on a virtual console in fullscreen mode.
+    // Ok. It is working on qemu
+    // See: user/console.c
 
     /*
-	//if ( jiffies % mouse_cursor_hz == 0 )
-	//if ( jiffies % sys_time_hz == 0 )
-    if ( jiffies % 70 == 0 )
+    //if ( (jiffies % mouse_cursor_hz) == 0 )
+    if ( (jiffies % (1000/2) ) == 0 )
     {
-        // Se o cursor piscante está habilitado.
-        // Essa flag é acionada pelo aplicativo.
-
-        if (timerShowTextCursor == 1)
-        {
-            // Apaga.
-            if ( timerTextCursorStatus != 1 )
-            { 
-                refresh_rectangle ( (TTY[current_vc].cursor_x + 1)  * __cWidth, 
-                    TTY[current_vc].cursor_y * __cHeight, 
-                    16, 16 );
-
-                timerTextCursorStatus = 1;
-                goto cursorExit;
-            }
-
-            // Acende.
-            if ( timerTextCursorStatus == 1 )
-            {
-                bmpDisplayCursorBMP ( shared_buffer_cursor_icon, 
-                    (TTY[current_vc].cursor_x + 1) * __cWidth, 
-                    TTY[current_vc].cursor_y       * __cHeight );
-         
-                timerTextCursorStatus = 0;
-                goto cursorExit;
-            }
+        if (timerShowTextCursor == TRUE){
+            consoleBlinkTextCursor();
         }
     }
     */
+    
 
+    //
+    // Timers
+    //
 
-cursorExit:
 
     // Lista de timers.
     // Podemos percorrer a lista de timer e decrementar,
     // quando um timer chegar a 0, mandamos uma mensagem
     // para a thread associada à esse timer..
 
+    // #todo
+    // Call a helper function for that.
+
 
     for ( i=0; i<32; i++ )
     {
-		//pega um da lista
-	    t = (struct timer_d *) timerList[i];
+        // pega um da lista
+        Timer = (struct timer_d *) timerList[i];
 
-        //checa
-        if ( (void *) t != NULL )
+        if ( (void *) Timer != NULL )
         {
-			//validação.
-			if ( t->used == 1 && t->magic == 1234 )
-			{
-				if ( t->count_down > 0 )
-				{
-				    t->count_down--;
+            if ( Timer->used == TRUE && Timer->magic == 1234 )
+            {
+                if ( Timer->count_down > 0 )
+                {
+                    Timer->count_down--;
                     
-                    //Chegamos ao 0.
-                    if ( t->count_down == 0 )
+                    // Chegamos ao 0.
+                    if ( Timer->count_down == 0 )
                     {
-						//enviamos a mensagem para a thread que é dona do timer.
-						//#todo: podemos usar uma função para isso.
-						
-						//Thread = (struct thread_d *) t->thread;
-						Thread = (struct thread_d *) threadList[ t->tid ];
-						
-						//se a thread for válida.
-						//if ( (void *) t->thread != NULL )
-						if ( (void *) Thread != NULL )
-						{
-							if ( Thread->used == 1 && Thread->magic == 1234 )
-							{
-                                //Send system message to the thread.
-                                Thread->window_list[ Thread->tail_pos ] = t->window; //#bugbug:fail
-                                Thread->msg_list[ Thread->tail_pos ]    = MSG_TIMER;    
-                                Thread->long1_list[ Thread->tail_pos ]  = t->times;   //quantas vezes esse timer se esgotou.
-                                Thread->long2_list[ Thread->tail_pos ]  = t->status;  //?/status.
+                        // Enviamos a mensagem para a thread 
+                        // que é dona do timer.
+                        // #todo:
+                        // Create a helper function for that.
+
+                        //Thread = (struct thread_d *) Timer->thread;
+                        Thread = (struct thread_d *) threadList[ Timer->tid ];
+
+                        if ( (void *) Thread != NULL )
+                        {
+                            if ( Thread->used == TRUE && Thread->magic == 1234 )
+                            {
+                                // Send system message to the thread.
+                                Thread->window_list[ Thread->tail_pos ] = Timer->window;  //#bugbug:fail
+                                Thread->msg_list[    Thread->tail_pos ] = MSG_TIMER;    
+                                Thread->long1_list[  Thread->tail_pos ] = Timer->times;   //quantas vezes esse timer se esgotou.
+                                Thread->long2_list[  Thread->tail_pos ] = Timer->status;  //status.
 
                                 Thread->tail_pos++;
-                                if ( Thread->tail_pos >= 31 )
+                                if ( Thread->tail_pos >= 31 ){
                                     Thread->tail_pos = 0;
-
-                                //#debug ok
+                                }
+                                //#debug
                                 //printf("*"); refresh_screen();
-							}
-							
-						}
-						
+                            }
+                        }
+
 						//analisando o tipo.
 						//dependendo do tipo, devemos parar ou recomeçar.
-						
-						//one shot
-                        if ( t->type == 1 ){ t->count_down = 0; }
-						//intermitente
-                        if ( t->type == 2 ){t->count_down = t->initial_count_down;}
-                        
+						//one shot or intermitente
+
+                        if ( Timer->type == 1 ){ Timer->count_down = 0; }
+                        if ( Timer->type == 2 ){ Timer->count_down = Timer->initial_count_down; }
                         //...
-					}	
-				}
-			    
-			}
-		}
-		//nothing
-	};
-	
-	
+                    }
+                }
+            }
+        }
+    };
+
 
 done:
     return;
+//fail:
+    //return;
 }
+
+
+
+/*
+ ************************************
+ * irq0_TIMER:
+ *     Chama o handler do kernel que está no kernel base.
+ * #todo: Observar alguns procedimentos antes de chamar a rotina.
+ */
+ 
+__VOID_IRQ 
+irq0_TIMER (void)
+{
+    DeviceInterface_PIT();
+}
+
 
 
 void timerEnableTextCursor (void)
 {
-    timerShowTextCursor = 1;
+    timerShowTextCursor = TRUE;
 }
 
 
 void timerDisableTextCursor (void)
 {
-    timerShowTextCursor = 0;
+    timerShowTextCursor = FALSE;
 }
 
 
@@ -482,7 +442,7 @@ struct timer_d *create_timer (
     int ID = -1;  //erro;
 
 
-    debug_print("===================\n");
+    debug_print("=============\n");
     debug_print("create_timer:\n");
     
     //printf     ("create_timer: pid=%d ms=%d type=%d\n",
@@ -553,10 +513,12 @@ struct timer_d *create_timer (
             //return NULL;
 
         }else{
-            Timer->id = ID;
-            Timer->used = 1;
+
+            Timer->used  = TRUE;
             Timer->magic = 1234;
 
+            Timer->id = ID;
+            
             // ms/(ms por tick)
             Timer->initial_count_down = (unsigned long) ( ms / (1000/sys_time_hz) );
             Timer->count_down = Timer->initial_count_down;
@@ -567,10 +529,10 @@ struct timer_d *create_timer (
             
             // Pegamos logo acima.
             Timer->process = (struct process_d *) Process;
-            Timer->thread  = (struct thread_d *) Thread;
-            Timer->pid = pid;
-            Timer->tid = current_thread;
-            
+            Timer->thread  = (struct thread_d *)  Thread;
+            Timer->pid     = pid;
+            Timer->tid     = current_thread;
+
             //printf("create_timer: done t={%d} :) \n",
             //    Timer->initial_count_down);
 
@@ -582,12 +544,16 @@ struct timer_d *create_timer (
     // #debug
     debug_print("create_timer: done\n");
     refresh_screen ();
+
     return (struct timer_d *) Timer;
 
 fail:
+
     debug_print("create_timer: [FAIL]\n");
     printf     ("create_timer: [FAIL]\n");
+
     refresh_screen ();
+
     return NULL;
 }
 
@@ -615,104 +581,101 @@ void timerInit8253 ( unsigned long hz ){
 	
 	//#todo:
 	//podemos fazer filtros.
-	
-	unsigned short clocks_per_sec = (unsigned short) hz;
-	
-	unsigned short period =  ( (3579545L/3) / clocks_per_sec );
-	
-	
-	// Canal 0, LSB/MSB, modo 3, contar em binário.
-	out8 ( 0x43, 0x36 );
-	
-	// LSB.
-	out8 ( 0x40, period & 0xFF ); 
-	//out8 ( 0x40, 0xA9 );  //test 1000
-	
-	
-	// MSB.
-	out8 ( 0x40, period >> 8 );	 
-	//out8 ( 0x40, 0x04 );   // test 1000
-	
+
+    unsigned short clocks_per_sec = (unsigned short) hz;
+
+    unsigned short period =  ( (3579545L/3) / clocks_per_sec );
+
+    // Canal 0, LSB/MSB, modo 3, contar em binário.
+    out8 ( 0x43, 0x36 );
+
+    // LSB.
+    out8 ( 0x40, period & 0xFF ); 
+    //out8 ( 0x40, 0xA9 );  //test 1000
+
+    // MSB.
+    out8 ( 0x40, period >> 8 );
+    //out8 ( 0x40, 0x04 );   // test 1000
+
+
 	//#BUGBUG Não faremos isso aqui,
 	//faremos quando ermos spawn da idle thread.
 	//irq_enable(0x00); // Timer
 	
 	// #importante
 	// Isso será uma variável para fazermos testes de desempenho. 
-	
-	sys_time_hz = (unsigned long) hz;
+
+    // #??
+    // Onde isso foi definido.
+    // Podemos ter uma variável global com nome melhor?
+
+    sys_time_hz = (unsigned long) hz;
 }
 
 
-/* set_quantum: */
-void set_quantum ( unsigned long q){
-	
+// set_quantum:
+void set_quantum ( unsigned long q)
+{
     quantum = (unsigned long) q;
 }
 
-
-/* get_quantum: */
-unsigned long get_quantum (void){
-	
+// get_quantum:
+unsigned long get_quantum (void)
+{
     return (unsigned long ) quantum;
 }
 
-
-/* set_current_quantum: */
-void set_current_quantum (unsigned long q){
-	
+// set_current_quantum: 
+void set_current_quantum (unsigned long q)
+{
     current_quantum = (unsigned long) q;
 }
 
 
-/* get_current_quantum: */
-unsigned long get_current_quantum (void){
-	
+// get_current_quantum:
+unsigned long get_current_quantum (void)
+{
     return (unsigned long ) current_quantum;
 }
 
-
-/* set_next_quantum: */
-void set_next_quantum (unsigned long q){
-	
+// set_next_quantum:
+void set_next_quantum (unsigned long q)
+{
     next_quantum = (unsigned long) q;
 }
 
-
-/* get_next_quantum: */
-unsigned long get_next_quantum (void){
-	
+// get_next_quantum:
+unsigned long get_next_quantum (void)
+{
     return (unsigned long ) next_quantum;
 }
 
-
-/* systime in ms */
-unsigned long now (void){
-	
-    return (unsigned long) get_systime_ms ();
+// systime in ms
+unsigned long now (void)
+{
+    return (unsigned long) get_systime_ms();
 }
-
 
 void set_systime_hz ( unsigned long hz )
 {
     sys_time_hz = hz;
 }
 
-/* systime hz */
-unsigned long get_systime_hz (void){
-	
+// systime hz
+unsigned long get_systime_hz (void)
+{
     return (unsigned long) sys_time_hz;
 }
 
 
-/* systime in ms */
-unsigned long get_systime_ms (void){
-	
+// systime in ms
+unsigned long get_systime_ms (void)
+{
     return (unsigned long) sys_time_ms;
 }
 
 
-/* get_systime_totalticks: */
+// get_systime_totalticks:
 unsigned long get_systime_totalticks (void)
 {
     return (unsigned long) jiffies;
@@ -728,68 +691,88 @@ unsigned long get_jiffies (void)
 }
 */
 
+
 /*
  ***********************
  * get_systime_info:
- *     
+ * 
  */
+
 unsigned long get_systime_info (int n){
-	
-	//#todo criar um enum para isso.
-	
+
+    // #todo 
+    // Criar um enum para isso.
+    // Comentar uma descrição em cada item.
+
     switch (n){
-		
-		case 1:
-		    return (unsigned long) get_systime_hz ();
-            break;
-			
-		case 2:
-		    return (unsigned long) get_systime_ms ();
-            break;
-			
-		case 3:
-		    return (unsigned long) get_systime_totalticks ();
-			break;
-		
-		//...
-		
-		default:
-		    return (unsigned long) 0;
-		    break;
-	};	
+
+    case 1:
+    return (unsigned long) get_systime_hz();
+    break;
+
+    case 2:
+    return (unsigned long) get_systime_ms();
+    break;
+
+    case 3:
+    return (unsigned long) get_systime_totalticks();
+    break;
+
+    // ...
+
+    default:
+    return (unsigned long) 0;
+    break;
+    
+    };
+
+    // fail.
+    return (unsigned long) 0;
 }
 
 
 /*
  ***************************************
- * sleep: #todo
+ * sleep: 
+ * 
+ * #todo
  *     Apenas uma espera, um delay.
  *     Essa não é a função que coloca uma 
  * tarefa pra dormir no caso de evento.
  *   #todo: Usar o ms do contador do sys_time
  */
 
-void sleep (unsigned long ms){
-	
-    unsigned long t = (unsigned long) ( ms * 512 );
-	
-	while(t > 0){
-		t--;
-	}
+void sleep (unsigned long ms)
+{
+    unsigned long t=1;
+
+
+    if ( ms == 0 ){
+        ms=1;
+    }
+
+    // #bugbug
+    // Is there a limit?
+
+    t = (unsigned long) ( ms * 512 );
+
+    while (t > 0)
+    {
+        t--;
+    };
 }
 
 
-/* set_timeout: #todo */
-void set_timeout ( unsigned long ticks ){
-
-	time_out = (unsigned long) ticks;
+// set_timeout: #todo 
+void set_timeout ( unsigned long ticks )
+{
+    time_out = (unsigned long) ticks;
 }
 
-
-/* get_timeout: #todo */
-unsigned long get_timeout (void){
-	
-	return (unsigned long) time_out;
+// get_timeout: #todo
+unsigned long get_timeout (void)
+{
+    return (unsigned long) time_out;
 }
 
 
@@ -824,7 +807,7 @@ int timerTimer (void){
     profiler_ticks_count = 0;
     profiler_ticks_limit = PROFILER_TICKS_DEFAULT_LIMIT;
     
-    //...
+    // ...
 
     return 0;
 }
@@ -841,10 +824,15 @@ int timerTimer (void){
 
 int timerInit (void){
 
-    __breaker_timer_initialized = 0;
-
-
     int i=0;
+
+    //
+    // Breaker
+    //
+
+    __breaker_timer_initialized = FALSE;
+
+
 
 	//Constructor.
     timerTimer();
@@ -872,65 +860,63 @@ int timerInit (void){
 	// Começaremos com 100 HZ
 	// Mas o timer poderá ser atualizado por chamada.
 	// e isso irá atualizar a variável que inicializamos agora.
-	
-	sys_time_hz = (unsigned long) HZ;
-	timerInit8253 ( sys_time_hz );
-   
-   
-    /*
-     * @todo: criar a estrutura do timer.
-	 */
 
-	//
-	//@todo:
-	//    alocar memoria para a estrutura do timer.
-	//    inicializar algumas variaveis do timer.
-	//    por enquanto estamos usando variaveis globais.
-	//    ?? Não se se ja foi configurado o timer.
+    sys_time_hz = (unsigned long) HZ;
+
+    timerInit8253 ( sys_time_hz );
+
+
+
+	// #todo:
+	// alocar memoria para a estrutura do timer.
+	// inicializar algumas variaveis do timer.
+	// por enquanto estamos usando variaveis globais.
+	// ?? Não se se ja foi configurado o timer.
 	// ou devemos chamr init_8253() agora. ou depois.
-	//
-	
-	
+
 
 	
 	//timerCountSeconds = 0;
-	
-	//Configura quantum.
-	
-	set_current_quantum (QUANTUM_BASE);
-	
-	set_next_quantum (QUANTUM_BASE);
-    
-	set_quantum (QUANTUM_BASE);
 
-    //timeout 
-	 
-	set_timeout (0);
-	
-	
+
+    // quantum support
+
+    set_current_quantum (QUANTUM_BASE);
+    set_next_quantum (QUANTUM_BASE);
+    set_quantum (QUANTUM_BASE);
+
+
+    // timeout 
+
+    set_timeout(0);
+
+    //
+    // Whatchdogs
+    //
+
     // Initializing whatchdogs.
     // Eles serão zerados pelas interrupções dos dipositivos e
     // incrementados pelo timer.
     // A condição crítica é alcançar um limite, um timeout.
     ____whatchdog_ps2_keyboard = 0;
-    ____whatchdog_ps2_mouse = 0;
+    ____whatchdog_ps2_mouse    = 0;
     //...
 
 
-	
 	//Continua...
-	
-    //Done.
-
-    g_driver_timer_initialized = (int) 1;
-	
-//#ifdef EXECVE_VERBOSE
-//    printf("timerInit: Done\n");
-//#endif
 
 
-    __breaker_timer_initialized = 1;
-        
+
+    //
+    // breaker
+    //
+
+    __breaker_timer_initialized = TRUE;
+
+
+    // Done
+    g_driver_timer_initialized = TRUE;
+
     return 0;
 }
 
@@ -945,20 +931,25 @@ int timerInit (void){
  * quando o kernel é inicialazado.
  * 
  */
- 
+
 int early_timer_init (void){
 
-    __breaker_timer_initialized = 0;
+    int i=0;
 
-    int i;
-	
+    //
+    // Breaker
+    //
+
+    __breaker_timer_initialized = FALSE;
+
+
 	//Constructor.
-	timerTimer();
-	
-	
-	for ( i=0; i<32; i++ ){
-		timerList[i] = (unsigned long) 0;
-	}
+    timerTimer();
+
+
+    for ( i=0; i<32; i++ ){
+        timerList[i] = (unsigned long) 0;
+    };
 
 
     //
@@ -993,36 +984,41 @@ int early_timer_init (void){
     // == Timeout =======================================
     //
 
-
     //timeout 
-	 
-	set_timeout (0);
-	
+
+    set_timeout(0);
+
 	
     // Initializing whatchdogs.
     // Eles serão zerados pelas interrupções dos dipositivos e
     // incrementados pelo timer.
     // A condição crítica é alcançar um limite, um timeout.
     ____whatchdog_ps2_keyboard = 0;
-    ____whatchdog_ps2_mouse = 0;
+    ____whatchdog_ps2_mouse    = 0;
     //...
 
 
 	
 	//Continua...
 	
-    //Done.
 
-    g_driver_timer_initialized = (int) 1;
-	
+
 //#ifdef EXECVE_VERBOSE
 //    printf("timerInit: Done\n");
 //#endif
 
 
-    __breaker_timer_initialized = 1;
-        
-	return 0;
+    //
+    // Breaker
+    //
+
+    __breaker_timer_initialized = TRUE;
+
+
+    // Done
+    g_driver_timer_initialized = TRUE;
+
+    return 0;
 }
 
 

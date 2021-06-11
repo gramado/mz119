@@ -9,26 +9,21 @@
  * Purpose:
  *     + To call interrupt 129 to enable maskable interrupts.
  *     + Hang forever. Some new process will reuse this process.
- *
  *     Esse programa deverá ser chamado sempre que o sistema estiver ocioso,
  * ou com falta de opções viáveis. Então esse programa deve ficar 
  * responsável por alguma rotina de manutenção do equilíbrio de sitema, 
  * ou por gerência de energia, com o objetivo de poupar energia 
  * nesse momento de ociosidade.
- *
  * O processo idle pode solicitar que processos de gerencia de energia entrem em
  * atuação. Pois a chamada do processo idle em si já é um indicativo de ociosidade
  * do sistema. Pode-se também organizar bancos de dados, registros, memória, buffer,
  * cache etc.
- *
  *     O sistema pode configurar o que esse processo faz quando a máquina 
  * está em idle mode. Quando não há nenhum processo pra rodar ou a cpu se 
  * encontra ociosa, pode-se usar alguma rotina otimizada presente neste 
  * programa. Parece que a intel oferece sujestões pra esse caso, não sei.
- * 
  * Obs: O entry point está em head.s
  *      Agora idle pode fazer systemcalls. 
- *
  * #todo: 
  *     Criar argumento de entrada.
  *
@@ -40,11 +35,10 @@
 
 
 //
-// Includes.
+// Includes
 //
 
 #include "init.h"
-
 
 #define COLOR_YELLOW   0x00FFFF00
 
@@ -61,11 +55,8 @@
  6 	Reboot 	Reboots the system.  
  */
 
-
 int __current_runlevel;
-
 int __redpill;
-
 
 //=================================
 // See:
@@ -97,19 +88,11 @@ int idleError;
 // ...
 
 
-
 //
 // == Prototypes =============================================
 //
 
-
-//...
-void enable_maskable_interrupts(void);
-
-
-//
-// ==========
-//
+void x86_enable_maskable_interrupts(void);
 
 
 static inline void pause2 (void)
@@ -118,7 +101,11 @@ static inline void pause2 (void)
 }
 
 
-/* REP NOP (PAUSE) is a good thing to insert into busy-wait loops. */
+/*
+  REP NOP (PAUSE) 
+  is a good thing to insert into busy-wait loops. 
+*/
+
 static inline void rep_nop (void)
 {
     asm volatile ("rep;nop": : :"memory");
@@ -129,14 +116,15 @@ static inline void rep_nop (void)
 
 
 // interna
-// Uma interrupção para habilitar as interrupções mascaráveis.
-// So depois disso a interrupção de timer vai funcionar.
+// Uma interrupÃ§ao para habilitar as interrupÃ§oes mascaraveis.
+// So depois disso a interrupÃ§ao de timer vai funcionar.
+// This is Intel processors.
+// [32~255]
 
-void enable_maskable_interrupts(void)
+void x86_enable_maskable_interrupts(void)
 {
     debug_print ("init.bin: Enable maskable interrupts\n");
     debug_print ("init.bin: Calling int 199\n");
-    
     asm ("int $199 \n");
 }
 
@@ -144,14 +132,14 @@ void enable_maskable_interrupts(void)
 void initialize_product_type (void)
 {
     debug_print ("init.bin: [TODO] Initializing product type ...\n");
- 
+
     //
     // This is the only product we have for now!
     //
 
-   // #todo:
-   // Temos que pegar isso com o kernel.
-   //__product_type = ??;  
+    // #todo:
+    // Temos que pegar isso com o kernel.
+    //__product_type = ??;
 
     // #todo:
     // Call the kernel to setup the product identification.
@@ -164,7 +152,7 @@ void Reboot (void)
     printf ("init.bin: Reboot()\n");
     while(1){}
     // ...
-    
+
     //gde_reboot();
 }
 
@@ -183,8 +171,8 @@ void Logoff (void)
 {
     printf ("init.bin: Logoff()\n");
 
-    if (gReboot == 1)  {  Reboot();  }
-    if (gShutdown == 1){  Shutdown();  }
+    if (gReboot   == TRUE){  Reboot();    }
+    if (gShutdown == TRUE){  Shutdown();  }
 }
 
 
@@ -194,30 +182,31 @@ void CheckRedPill(void)
 
     char buffer[128];
 
-    int nreads  =0;
-    int nwrites =0;
+    int nreads  = 0;
+    int nwrites = 0;
 
+
+    // #todo
+    // Clear buffer.
 
     // flag
-    
-    __redpill = FALSE;
 
+    __redpill = FALSE;
 
     fp = (FILE*) fopen ("redpill.ini","r+");
     //fp = (FILE*) fopen ("init.ini","r+");
-    
+
     if ( (void*)  fp == NULL )
     {
         //printf("init.bin: ERROR\n");
         //fflush(stdout);
         //exit(1);
-        
+
         //ok se falhar ... o arquivo nao existe.
         __redpill = FALSE;
         return;
     }
 
-    
     if ( (void*)  fp != NULL )
     {
         // Read
@@ -232,7 +221,7 @@ void CheckRedPill(void)
     }
 
     // Check buffer
-    
+
     if ( buffer[0] == 'R' &&
          buffer[1] == 'E' &&
          buffer[2] == 'D' &&
@@ -251,40 +240,144 @@ void CheckRedPill(void)
 // Execute the standard command interpreter.
 // It's is not a shell with a virtual terminal,
 // it's only a command interpreter that uses the 
-// the base kernel embedded virtual console.
+// base kernel embedded virtual console.
 
 // #todo
 // Use sc82 system call.
 
-void ExecCommandInterpreter(void)
+int ExecCommandInterpreter(void)
 {
     int Status = -1;
-    
+
     debug_print ("init.bin: Launching gdeshell.bin\n");
 
     // We will not wait here.
     // We need to use the event loop in the main funcion.
-    
-    Status = sc82 ( 900, (unsigned long) "gdeshell.bin", 0, 0 ); 
+
+    //Status = (int) sc82 ( 900, (unsigned long) "gdeshell.bin", 0, 0 );
+    Status = (int) rtl_clone_and_execute("gdeshell.bin");
 
     //if (Status<0)
         // ...
+
+    return Status;
 }
 
-void ExecRedPillApplication(void)
+
+int ExecRedPillApplication(void)
 {
     int Status = -1;
-    
+
+
+    debug_print ("init.bin: Initializing ps2/support\n");
+    //return; 
+
+    //
+    // mouse
+    //
+
+    // Are we running on qemu?
+    // Let's initialize the ps/2 support,
+    // This way we can use the mouse.
+
+    // #bugbug
+    // Suspendendo essa inicialização ...
+    // Estamos tendo problemas com a redpill, talvez por causa disso.
+
+    /*
+    int isQEMU = FALSE;
+    isQEMU = rtl_get_system_metrics(300);
+    if (isQEMU==TRUE){
+        debug_print ("init.bin: Initializing ps2/support\n");
+        gramado_system_call ( 350, 1, 0, 0 );
+    }
+    */
+
+    //
+    // launcher
+    //
+
     debug_print ("init.bin: Launching launcher.bin\n");
 
     // We will not wait here.
     // We need to use the event loop in the main funcion.
-    
-    Status = sc82 ( 900, (unsigned long) "launcher.bin", 0, 0 ); 
 
+    Status = (int) rtl_clone_and_execute("launcher.bin");
     //if (Status<0)
         // ...
+    return Status;
 }
+
+
+int initDialog (int message)
+{
+
+    // See:
+    // landos/kernel/2io/dev/tty/chardev/hid/i8042/ps2kbd.c
+
+    switch (message)
+    {
+
+        // reboot
+        case 9216:
+            debug_print ("init.bin: [9216] Launching reboot\n");
+            printf      ("init.bin: [9216] Launching reboot\n");
+            rtl_clone_and_execute("reboot.bin");
+            break;
+
+        // gdeshell
+        case 9217:
+            debug_print ("init.bin: [9217] Launching the command interpreter\n");
+            printf      ("init.bin: [9217] Launching the command interpreter\n");
+            ExecCommandInterpreter();
+            break;
+
+        // redpill application
+        case 9218:
+            debug_print ("init.bin: [9218] Launching redpill application\n");
+            printf      ("init.bin: [9218] Launching redpill application\n");
+            ExecRedPillApplication();
+            break;
+     
+        // sysmon
+        case 9219:
+            debug_print ("init.bin: [9219] Launching sysmon\n");
+            printf      ("init.bin: [9219] Launching sysmon\n");
+            rtl_clone_and_execute("sysmon.bin");
+            break;
+
+
+        // servers ...
+        
+        // ??
+        case 9220:
+            debug_print ("init.bin: [9220] Launching gwssrv\n");
+            printf      ("init.bin: [9220] Launching gwssrv\n");
+            rtl_clone_and_execute("gwssrv.bin");
+            break;
+
+
+        // ??
+        case 9221:
+            debug_print ("init.bin: [9221] Launching gnssrv\n");
+            printf      ("init.bin: [9221] Launching gnssrv\n");
+            rtl_clone_and_execute("gnssrv.bin");
+            break;
+
+
+        // ...
+        
+        default:
+            sc82 (265,0,0,0); 
+            sc82 (265,0,0,0); 
+            sc82 (265,0,0,0); 
+            sc82 (265,0,0,0); 
+            break; 
+    };
+
+    return 0;
+}
+
 
 
 /*
@@ -316,8 +409,8 @@ int main ( int argc, char *argv[] )
     __current_runlevel = (int) -1;
 
     // Reboot and shutdown flags.
-    gReboot = 0;
-    gShutdown = 0;
+    gReboot   = FALSE;
+    gShutdown = FALSE;
 
     // Product
     initialize_product_type();
@@ -352,13 +445,35 @@ int main ( int argc, char *argv[] )
     // asm ("int $3 \n");
     // while(1){}
 
-    //
-    // Enable the maskable interrupts.
-    //
+//
+// Enable the maskable interrupts.
+//
 
-    enable_maskable_interrupts ();
-    //asm ("int $129 \n");
+    x86_enable_maskable_interrupts();
 
+
+
+    // #important
+    // O task switching e o scheduler só vão funcionar
+    // depois que o processo init habilitar as interrupções.
+
+    // #bugbug
+    // O processo init está rodando sozinho, mas tem seus ticks
+    // contados até que sofra preempção.
+    // Não queremos que ele sofra prempção antes de habilitar
+    // o taskswitch e o scheduler.
+    
+//
+// Unlock the taskswitching support.
+//
+
+    gramado_system_call (641,0,0,0);  // unlock taskswitch
+
+//
+// Unlock the scheduler embedded into the base kernel.
+//
+
+    gramado_system_call (643,0,0,0);  // unlock scheduler
 
     //
     // == Runlevel ======================================
@@ -389,6 +504,7 @@ int main ( int argc, char *argv[] )
     // Get the value in the file.
 
     // Get the current runlevel.
+    // #todo: Create rtl_get_current_runlevel()
 
     __current_runlevel = (int) gramado_system_call ( 288, 0, 0, 0 );
 
@@ -472,7 +588,11 @@ int main ( int argc, char *argv[] )
                 ExecRedPillApplication();
                 break;
             }
+            
             debug_print ("init.bin: Launching the command interpreter\n");
+            
+            // #todo
+            // We need a return in this function.
             ExecCommandInterpreter();
             break;
     };
@@ -494,34 +614,24 @@ int main ( int argc, char *argv[] )
 
         // Get message.
         rtl_enter_critical_section(); 
-        gramado_system_call ( 111,
+        gramado_system_call ( 
+            (unsigned long) 111,
             (unsigned long) &message_buffer[0],
             (unsigned long) &message_buffer[0],
             (unsigned long) &message_buffer[0] );
         rtl_exit_critical_section(); 
 
-        // No message. Yield.
-        if ( message_buffer[1] == 0 )
-        { 
-            sc82(265,0,0,0);
-        }
+        // Dialog
+        // These messages came from base kernel.
+        // The signature is 12 34
 
-        // We've got a message. 
-        // Call the procedure.
-
-        if ( message_buffer[1] == 9216 )
+        if ( message_buffer[2] == 12 && 
+             message_buffer[3] == 34 )
         {
-            printf ("init.bin: Message 9216\n");
-            gReboot   = message_buffer[2];
-            gShutdown = message_buffer[3];
-            goto logoff; 
+            initDialog ( (int) message_buffer[1] );
         }
 
-        // Messages:
-        // + Kill all childs ...
-        // +  ...
-        // ...
-        
+        // Clear
         message_buffer[0] = 0;
         message_buffer[1] = 0;
         message_buffer[2] = 0;
@@ -535,14 +645,10 @@ int main ( int argc, char *argv[] )
 // We can open a alog and close a log.
 // INIT.LOG
 
-    //
-    // Logoff
-    //
 
 logoff:
     printf ("init: logoff\n");
     Logoff();
-
 fail:
     printf ("init: [FAIL] Rebooting ...\n");
     Reboot();

@@ -13,7 +13,7 @@
  *
  * History:
  *     2015 - Created by Fred Nora.
- *     2020 - A lot of new functions.
+ *     2020 - New functions.
  */
 
 
@@ -125,7 +125,8 @@ int stdio_atoi (char *s){
 
 
     //     sign = (*s == '-');
-    if (*s == '-' || *s == '+'){
+    if (*s == '-' || *s == '+')
+    {
         s++;
     }
 
@@ -339,7 +340,7 @@ _strout (
 
 
 //
-// ================= low level =====================
+// == low level =====================
 //
 
 // #importante
@@ -403,6 +404,7 @@ int fflush (FILE *stream)
 
 // real flush.
 // called by fflush();
+
 int __fflush (FILE *stream)
 {
     ssize_t nwrite = -1;
@@ -417,7 +419,10 @@ int __fflush (FILE *stream)
         debug_print( "__fflush: [FAIL] stream\n");
         return (int) (-1);
     }else{
+        
+        // #todo
         // Check something!
+        // ...
     };
 
 
@@ -467,9 +472,9 @@ int __fflush (FILE *stream)
     } 
 
 
-    //
-    // == Write =====================================
-    //
+//
+// == Write =============
+//
 
     // #todo: 
     // This is the desired way.
@@ -498,7 +503,7 @@ int __fflush (FILE *stream)
 
         return EOF;
     }
-    
+
     // #todo
     // Something is wrong
     if ( nwrite != Count )
@@ -537,36 +542,38 @@ int __fflush (FILE *stream)
 
 int ____bfill (FILE *stream){
 
-    int nbyte = 0;
+    int n_read = 0;
 
 
-    // struct
     if ( (void *) stream == NULL )
     {
         debug_print ("____bfill: [FAIL] struct \n");
         printf      ("____bfill: [FAIL] struct \n");
-        
-        stream->_cnt = 0;
         return (int) (-1);
+    }
 
-    }else{
+    // Check buffer size.
+    if ( stream->_lbfsize != BUFSIZ )
+    {
+        debug_print ("____bfill: [FAIL.DEBUG] _lbfsize \n");
+        printf      ("____bfill: [FAIL.DEBUG] _lbfsize %d *hang\n",
+            stream->_lbfsize);
 
-        // Check buffer size.
-        if ( stream->_lbfsize != BUFSIZ )
-        {
-            debug_print ("____bfill: [FAIL] _lbfsize \n");
-            printf      ("____bfill: [FAIL] _lbfsize %d *hang\n",stream->_lbfsize);
-            stream->_cnt = 0; 
-            exit(1); //debug
-            //return EOF;
-        }
-        // ...
-    };
+        stream->_cnt = 0; 
+        
+        // #debug
+        // provisorio
+        exit(1); 
+        
+        //return EOF;
+    }
+    // ...
 
 
-    //
-    // == Read file ============================
-    //
+//
+// == Read file ============================
+//
+
 
     // #importante:
     // Colocaremos no offset e não na base. 
@@ -594,10 +601,10 @@ int ____bfill (FILE *stream){
     // Se o buffer acabou é porque o ponteiro se deslocou até o fim.
     // Temos que reiniciar.
     
-    stream->_cnt = BUFSIZ-1;
-    stream->_p = stream->_base;
-    stream->_w =0;
-    stream->_r =0;
+    stream->_cnt = (BUFSIZ-1);
+    stream->_p   = stream->_base;
+    stream->_w   = 0;
+    stream->_r   = 0;
     
     // cnt tem a quantidade disponível para
     // leitura.
@@ -605,17 +612,27 @@ int ____bfill (FILE *stream){
     // A intenção dessa rotina é reencher o buffer em ring3,
     // pegando uma nova parte do arquivo que está em ring0.
 
-    stream->_cnt = (int) read ( 
-                             fileno(stream), 
-                             stream->_p,
-                             stream->_cnt ); 
+    n_read = (int) read ( 
+                       fileno(stream), 
+                       stream->_p,
+                       stream->_cnt ); 
 
+
+    // saving
+    stream->_cnt = n_read;
+    
     // Read fail ou fim do arquivo
-    if (stream->_cnt < 0)
+    if (n_read < 0)
     {
         debug_print ("____bfill: [FAIL] read fail, nothing to read!\n");
         printf      ("____bfill: [FAIL] read fail, nothing to read!\n");
+        
         stream->_cnt = 0;
+
+        // #todo:
+        // flags, error, eof ...
+        // stream->
+        
         return EOF;
     }
 
@@ -623,29 +640,59 @@ int ____bfill (FILE *stream){
     // Couldn't read.
     // nada foi lido. Mas pode não ser ruin ... pois o arquivo
     // pode existir e estar vazio eu chegado ao fim.
-    if (stream->_cnt == 0)
+    // #todo
+    // Nesse caso um arquivos pode simplesmente ter chegado ao fim,
+    // e não ha erro nisso.
+
+    if (n_read == 0)
     {
-        debug_print ("____bfill: [FAIL] read fail. Zero bytes\n");
-        printf      ("____bfill: [FAIL] read fail. Zero bytes\n");
+        debug_print ("____bfill: [DEBUG] Couldn't read. No bytes\n");
+        
+        // #test
+        // No debug message for now.
+        // printf      ("____bfill: [FAIL] read fail. Zero bytes\n");
+        
+        // #todo:
+        // No more bytes. We are in the end of file.
+        stream->_cnt = 0;
+
+        // #todo:
+        // flags, error, eof ...
+        // stream->
+        
         return EOF;
     }
 
     // Overflow
     // Isso pode corromper memória.
-    if (stream->_cnt > BUFSIZ-1)
+    if (n_read > BUFSIZ-1)
     {
-        debug_print ("____bfill: [BUGBUG] read fail. too much bytes\n");
-        printf      ("____bfill: [BUGBUG] read fail. too much bytes\n");
-        exit (1);
+        debug_print ("____bfill: [ERROR.OVERFLOW] read fail. too much bytes\n");
+        printf      ("____bfill: [ERROR.OVERFLOW] read fail. too much bytes\n");
+        
+        // #debug
+        // #todo: Isso eh provisorio ...
+        
+        exit(1);
     }    
-    
+
     // Retornamos a quantidade disponível para leitura.
     // Isso será usado por __getc.
-    
-    return (int) stream->_cnt;
+
+    // #todo:
+    // flags, error, eof ...
+    // stream->
+
+
+    return (int) n_read;
 }
 
 
+/*
+ *******************************
+ * __getc:
+ * 
+ */
 
 // #todo:
 // #importante
@@ -771,14 +818,24 @@ int __getc ( FILE *stream )
 
     debug_print ("__getc: [BUGBUG] Unexpected return\n");
     printf      ("__getc: [BUGBUG] Unexpected return\n");
+
     return EOF;
 }
 
 
 
+/*
+ ******************* 
+ * __putc:
+ * 
+ */
+
 int __putc (int ch, FILE *stream)
 {
-     
+
+    // #todo
+    //if ( ch<0 ){}
+
     //assert (stream);
     //assert (stream->_w < stream->_lbfsize);
     
@@ -814,23 +871,23 @@ int __putc (int ch, FILE *stream)
         printf     ("__putc: [BUGBUG] Overflow 2\n");
         stream->_cnt = 0;
         fflush (stream);
-        return ch;
+
+        return (int) ch;
     }
 
 
     //if (stream->_flags == _IONBF || (stream->_flags == _IOLBF && ch == '\n'))
-    if ( ch == '\n')
+    if ( ch == '\n' )
     { 
         fflush(stream);
-        return ch;
+        return (int) ch;
     }
 
 
     //if (stream->eof || stream->error)
         //return EOF;
- 
- 
-    return ch;
+
+    return (int) ch;
 }
 
 
@@ -933,7 +990,7 @@ char *fgets (char *s, int size, FILE *stream)
     {
         *cs++ = c;
         
-        if (c=='\n') { break; }
+        if (c=='\n'){ break; }
     };
 
     // Nesse momento, acabou o size, ou
@@ -941,7 +998,7 @@ char *fgets (char *s, int size, FILE *stream)
     
     // Se o último char for EOF
     // e não pegamos char algum. 
-    if ( c<0 && cs==s ) { return (NULL); }
+    if ( c<0 && cs==s ) { return NULL; }
     
     // Finalizamos a string construída.
     *cs++ = '\0';
@@ -955,6 +1012,9 @@ int fputs ( const char *s, FILE *stream ){
 
     register int c=0;
     register int r=0;
+
+    //#todo
+    //if ( (void*) s == NULL ){}
 
     while (c = *s++){
         r = putc(c,stream);
@@ -971,14 +1031,18 @@ int fputs ( const char *s, FILE *stream ){
 
 int getw (FILE *stream){
 
-    register i;
+    register int i=0;
+
+    //#todo
+    //if ( (void*) stream == NULL ){}
 
     i = getc(stream);
 
 	//#todo
 	//if (stream->_flags&_IOEOF)
 		//return(-1);
-		
+
+
     if (stream->eof == 1 ){
         return EOF;
     }
@@ -991,6 +1055,10 @@ int getw (FILE *stream){
 //#test
 int putw (int w, FILE *stream)
 {
+
+    //#todo
+    //if ( (void*) stream == NULL ){}
+
     putc ( w,      stream);
     putc ( w >> 8, stream);
 
@@ -1093,6 +1161,14 @@ FILE *fopen ( const char *filename, const char *mode ){
     int oflags=0;     
 
 
+    // #todo
+    // Check filename validation
+    
+    //if ( (void*) filename == NULL ){}
+    //if ( *filename == 0 ){}
+
+
+
     // #todo:
     // The 'mode' passed via argment will give us the 'flags'
     // used in open().
@@ -1119,10 +1195,14 @@ FILE *fopen ( const char *filename, const char *mode ){
         //fprintf(stderr, "FIXME(LibC): fopen('%s', '%s')\n", pathname, mode);
         //ASSERT_NOT_REACHED();
     };
-    
-    //
-    // Open.
-    //
+
+
+//
+// Open.
+//
+
+    // See:
+    // fcntl.c
 
     fd = open (filename, flags, oflags);  
     
@@ -1140,17 +1220,17 @@ FILE *fopen ( const char *filename, const char *mode ){
         printf ("fopen: __stream fail\n");
         return NULL;
     }else{
-        __stream->used = 1;
+        __stream->used  = TRUE;
         __stream->magic = 1234;
         __stream->_file = fd;
 
         //buffer
         __stream->_lbfsize = BUFSIZ;
-        __stream->_cnt = BUFSIZ; 
+        __stream->_cnt     = BUFSIZ; 
         __stream->_r = 0;
         __stream->_w = 0;
         
-        __stream->_flags = flags;        
+        __stream->_flags = flags; 
 
         // File name.
         // Saving the name in ring3.
@@ -2473,33 +2553,32 @@ int gramado_input ( const char *string, va_list arglist )
 // ??
 // E esse retorno ??
 
-unsigned long 
-input ( unsigned long ch )
+unsigned long input ( unsigned long ch )
 {
-    // Save cursor position.
-    unsigned long tmpX=0; 
-    unsigned long tmpY=0;
-
     // Convert.
-    char c = (char) ch;    
+    char c = (char) ch;
 
     // Ajust prompt max.
     if ( prompt_max == 0 || prompt_max >= PROMPT_MAX_DEFAULT )
     {
         prompt_max = PROMPT_MAX_DEFAULT;
     }
-	
+
 	//Filtra limite.
 	//retornar 1??
 
     if ( prompt_pos > prompt_max )
     {
-        printf ("input: Full buffer!\n");
+        printf ("input: [FAIL] Full buffer!\n");
         return (unsigned long) 0;   
     }
 
 
     // Trata caractere digitado.
+
+    // #obs: 
+    // Não deve ser trabalho de input() atualizar
+    // o cursor do console. Ele somente atua sobre o buffer em ring3.
 
     switch (c){
 
@@ -2535,12 +2614,6 @@ input ( unsigned long ch )
             }
             //Se nao estamos no inicio da linha.
             prompt_pos--;              //volta um no buffer.
-            //Muda a posicao do cursor.
-            //Altera a tela no modo gráfico com janelas.
-            tmpX = stdioGetCursorX(); 
-            tmpY = stdioGetCursorY();
-            tmpX--;
-            stdioSetCursor(tmpX,tmpY);
             break;
 
 
@@ -3801,7 +3874,7 @@ kvprintf (
 				{
 					ladjust = !ladjust;
 					width = -width;
-				};
+				}
 				
 			} else {
 				
@@ -4090,8 +4163,9 @@ kvprintf (
 				while (width--)
 					PCHAR(padc);
 
-			while (*p)
-				PCHAR(*p--);
+            while (*p){
+                PCHAR(*p--);
+            };
 
 			if (ladjust && width && (width -= tmp) > 0)
 				while (width--)
@@ -5276,30 +5350,41 @@ vsnprintf (
     va_list ap )
 {
     debug_print ("vsnprintf: [TODO]\n");
-	return -1; 
+    return -1; 
 }
 
 
 int vscanf (const char *format, va_list ap)
 { 
     debug_print ("vscanf: [TODO]\n");
-	return -1; 
+    return -1; 
 }
 
 
-int vsscanf (const char *str, const char *format, va_list ap)
-{ 
+int 
+vsscanf ( 
+    const char *str, 
+    const char *format, 
+    va_list ap )
+{
     debug_print ("vsscanf: [TODO]\n");
     return -1; 
 }
 
 
-int vfscanf (FILE *stream, const char *format, va_list ap)
+int 
+vfscanf (
+    FILE *stream, 
+    const char *format, 
+    va_list ap )
 { 
     debug_print ("vfscanf: [TODO]\n");
 
-    if ( (void *) stream == NULL )
+    if ( (void *) stream == NULL ){
        return EOF;
+    }
+
+    // ...
 
     return -1; 
 }
@@ -5314,17 +5399,20 @@ FILE *tmpfile (void)
     // + Abre esse arquivo com open.
     // + Cria uma stream para esse fd.
 
-	return (FILE *) 0;
+    return (FILE *) 0;
 }
 
 
 //tmpnam(): 
 //SVr4, 4.3BSD, C89, C99, POSIX.1-2001.  
 //POSIX.1-2008 marks tmpnam() as obsolete.
-char *tmpnam(char *s)
+char *tmpnam (char *s)
 {
     debug_print ("tmpnam: [TODO]\n");
-	return NULL; 
+
+    //if ( (void*) s == NULL ){}
+
+    return NULL; 
 }
 
 
@@ -5335,15 +5423,20 @@ char *tmpnam(char *s)
 char *tmpnam_r (char *s)
 {
     debug_print ("tmpnam_r: [TODO]\n");
-	return NULL; 
-}
 
+    //if ( (void*) s == NULL ){}
+
+    return NULL; 
+}
 
 
 char *tempnam (const char *dir, const char *pfx)
 {
     debug_print ("tempnam: [TODO]\n"); 
-	return NULL; 
+
+    //if ( (void*) dir == NULL ){}
+ 
+    return NULL; 
 }
 
 
@@ -5368,26 +5461,52 @@ char *tempnam (const char *dir, const char *pfx)
        EROFS  Read-only filesystem.
  */
 
+// helper function
+
+// IN: valid fd, mode
 FILE *stdio_make_file( int fd, const char *mode )
 {
     FILE *__file;
 
+
+    // #todo
     
+    //
+    // given fd.
+    //
+
+    //if (fd<0){
+    //    printf("stdio_make_file: [FAIL] not valid fd\n");
+    //    return NULL;
+    //}
+
+
     __file = (FILE *) malloc ( sizeof(FILE) );
 
     if ( (void *) __file == NULL )
     {
+        // debug_print(...)
         return NULL;
     }    
  
-    __file->used = 1;
+
+    __file->used  = TRUE;
     __file->magic = 1234;
-    __file->_cnt = 0;  
-    __file->_file = fd;
+ 
+    __file->_cnt = 0;
+
     
+    //
+    // given fd
+    //
+
+    __file->_file = fd;
+
+
     // flags
     __file->_flags = 0;
-    
+
+
     /*
     switch (*mode) {
 
@@ -5433,15 +5552,17 @@ FILE *stdio_make_file( int fd, const char *mode )
 
 // #test
 // Cria uma nova stream para o fd.
-// O fd foi obtido anteriormente,
+// O fd foi obtido anteriormente
+
+// IN: valid fd, mode
 FILE *fdopen (int fd, const char *mode)
 {
     if (fd<0){
-        printf("fdopen: fd\n");
+        printf("fdopen: [FAIL] not valid fd\n");
         return NULL;
     }
-    
-    return (FILE *) stdio_make_file(fd, (const char *) mode);
+
+    return (FILE *) stdio_make_file( fd, (const char *) mode);
 }
 
 
@@ -5466,6 +5587,7 @@ FILE *fdopen (int fd, const char *mode)
 
 // See:
 // https://linux.die.net/man/3/freopen
+
 FILE *freopen (
     const char *pathname, 
     const char *mode, 
@@ -5476,7 +5598,7 @@ FILE *freopen (
 
     if ( (void *) stream == NULL )
     {
-       printf ("freopen: stream fail\n");
+       printf ("freopen: [FAIL] stream\n");
        return (FILE *) 0;
     }
 
@@ -5575,21 +5697,18 @@ int fgetpos (FILE *stream, fpos_t *pos )
 
 int fsetpos (FILE *stream, const fpos_t *pos)
 {
-
-    if ( (void *) stream == NULL )
-    {
-       printf("fsetpos: [FAIL] stream\n");
-       return EOF;
+    if ( (void *) stream == NULL ){
+        printf("fsetpos: [FAIL] stream\n");
+        return EOF;
     }
 
     return (int) fseek (stream, (long) *pos, SEEK_SET);
 }
 
 
-
 int fpurge (FILE *stream){
 
-    debug_print ("fpurge: TODO: \n");
+    debug_print ("fpurge: [TODO] \n");
     
     if ( (void *) stream == NULL )
     {
